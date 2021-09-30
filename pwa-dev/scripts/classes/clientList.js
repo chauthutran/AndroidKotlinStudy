@@ -77,9 +77,10 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         me.listTableTbodyTag = me.setClassContainerTag( blockTag );
 
         // Other Initial Render Setups - syncDown setup, FavIcons, etc..
-        var favIconsObj = new FavIcons( 'clientListFav', blockTag, me.cwsRenderObj.pageDivTag );
+        var favIconsObj = new FavIcons( 'clientListFav', blockTag, me.cwsRenderObj.pageDivTag, { 'favMainIcon': 'images/favMain_search.svg' } );
         favIconsObj.render();
-        
+
+
         // Populate controls - clientLists, viewFilter/sort, related.
         me.populateControls( me.blockJson, me.hasView, me.clientList, me.listTableTbodyTag );
 

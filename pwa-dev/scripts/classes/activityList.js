@@ -78,7 +78,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
 
         // Other Initial Render Setups - syncDown setup, FavIcons, etc..    
-        var favIconsObj = new FavIcons( 'activityListFav', blockTag, me.cwsRenderObj.pageDivTag );
+        var favIconsObj = new FavIcons( 'activityListFav', blockTag, me.cwsRenderObj.pageDivTag, {'mainFavPreClick': function() {}});
 		favIconsObj.render();
 
 

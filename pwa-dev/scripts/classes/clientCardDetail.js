@@ -94,14 +94,13 @@ function ClientCardDetail( clientId, isRestore )
             //me.renderActivityList( activityListBlockTag, clientJson );
 
 
-            var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag, function( blockTag, blockContianerTag ) 
-            {
+            var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag, { 'mainFavPreClick': function( blockTag, blockContianerTag ) {
                 // Clear the list?
                 blockTag.html( '' ); //activityListBlockTag.html( '' );
 
                 // Get proper client into INFO.client - since other client could been loaded by clicks.
                 INFO.client = ClientDataManager.getClientById( me.clientId );
-            });
+            }});
             favIconsObj.render();
     
         });

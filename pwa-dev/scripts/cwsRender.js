@@ -14,7 +14,6 @@ function cwsRender()
 	// global variables
 	//me.configJson;
 	me.manifest;
-	me.favIconsObj;
 	me.aboutApp;
 	me.settingsApp;
 	me.statisticsObj;
@@ -469,21 +468,6 @@ function cwsRender()
 		$( 'div.Nav__Title' ).html( '' );
 		//$( '#divNavDrawerSummaryData' ).html( '' );
 	};
-
-
-	/*
-    me.favIconsRender = function( favType, parentDiv )
-    {
-		if ( $( 'div.fab' ).hasClass( 'w_button' ) ) 
-		{
-			$( 'div.fab' ).click(); // hide because already opened
-			$( 'div.fab' ).off( 'click' );
-		}
-
-		me.favIconsObj = new FavIcons( me );
-		me.favIconsObj.render( favType, parentDiv );
-	};
-	*/
 
 	// ======================================
 

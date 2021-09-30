@@ -45,11 +45,9 @@ function ClientRelationshipList( clientId, _relationshipTabTag )
         me.renderRelationshipList( me.listTag, me.clientJson.relationships );
 
         
-        var favIconsObj = new FavIcons( 'clientRelFav', me.listTag, me.relationshipTabTag, function() 
-        {
+        var favIconsObj = new FavIcons( 'clientRelFav', me.listTag, me.relationshipTabTag, { 'mainFavPreClick': function( blockTag, blockContianerTag ) {
             INFO.client = me.clientJson;  /// ?? Get/refresh client json by id?
-        });
-
+        }});
         favIconsObj.render();
     };
 

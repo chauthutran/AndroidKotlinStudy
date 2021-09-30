@@ -1,6 +1,6 @@
 // -------------------------------------------
 // -- FavIconList Class/Methods
-function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemClickActionCall, afterItemClickActionCall )
+function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 {
     var me = this;
 
@@ -8,9 +8,9 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
     me.favType = favType;
     me.targetBlockTag = targetBlockTag;
     me.targetBlockContainerTag = targetBlockContainerTag;
+    me.options = options;
 
-    me.beforeItemClickActionCall = beforeItemClickActionCall;
-    me.afterItemClickActionCall = afterItemClickActionCall;
+    me.mainFavPreClick;
 
     // ---------------
     me.favIconsTag;
@@ -21,6 +21,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
     me.favListByType;
 
     me.favIconSize = '40px';
+    //me.favMainIconSize = '56px';
 
     // ========================================
 
@@ -32,9 +33,21 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
     {
         // 1. Create FavIcons Tag 
         me.favIconsTag = $( FavIcons.favButtonContainer );
-        me.targetBlockTag.append( me.favIconsTag );
         me.favReRenderTag = me.favIconsTag.find( 'div.favReRender' );
         me.favMainButtonTag = me.favIconsTag.find( 'div.fab' );
+
+        if ( me.options )
+        {
+            me.mainFavPreClick = me.options.mainFavPreClick;
+
+            if ( me.options.favMainIcon )
+            {
+                me.favMainButtonTag.find( 'svg' ).remove();
+                me.favMainButtonTag.html( '<img src="'+ me.options.favMainIcon + '" style="width:36px; height:36px; margin: 10px 0px 0px 10px;">' );
+            }
+        }
+
+        me.targetBlockTag.append( me.favIconsTag );
         
         // 2. Events Setup
         me.setFavMainClickEvent( me.favMainButtonTag, me.favIconsTag ); //  Default '+' button event..
@@ -155,45 +168,12 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
         {
             if ( evalActions )
             {
-                // Proper INFO variable references
-                //InfoDataManager.setINFOdata( 'form', tag.closest( 'form' ) );
-                //InfoDataManager.setINFOdata( 'tag', tag );
-
-                // Current Client?  LastActivity,  Translations, transDataValues
-
-                // INFO.client  // <-- Should be set when we click on clientDetail.
-                // INFO.activity // <-- Should be set when we click on activity & set client as well.
-                var INFO = InfoDataManager.getINFO();
-                INFO.allTransactions = [];
-                INFO.allTransDataValues = {};
-                INFO.lastActivity = {};
-
-                // TODO: TO BE REMOVED!!!
-                if ( INFO.client )
-                {
-                    INFO.client.activities.forEach( activity => 
-                    {
-                        INFO.lastActivity = activity;
-
-                        activity.transactions.forEach( trans => 
-                        {
-                            INFO.allTransactions.push( trans );
-
-                            if ( trans.dataValues )
-                            {
-                                Util.mergeJson( INFO.allTransDataValues, trans.dataValues );
-                            }
-                        });
-                    });
-                }
-
-
                 // 1. Get FavId array to 'favIdsObj'
                 evalActions.forEach( evalAction => 
                 {
                     var evalActionJson = FormUtil.getObjFromDefinition( evalAction, ConfigManager.getConfigJson().definitionEvalActions );
 
-                    me.performEvalAction( evalActionJson, favIdsObj, INFO );
+                    me.performEvalAction( evalActionJson, favIdsObj );
                 }); 
 
 
@@ -215,13 +195,13 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
         return filteredFavListArr;
     };
 
-	me.performEvalAction = function( evalAction, favIdsObj, INFO )
+	me.performEvalAction = function( evalAction, favIdsObj )
 	{
 		if ( evalAction && ConfigManager.checkByCountryFilter( evalAction.countryFilter ) )
 		{			
 			// If condition does not exist, it is considered as pass/true.
 			// If it exists, check eval to see if condition evaluates as true.
-			if ( evalAction.condition === undefined || me.checkCondition( evalAction.condition, INFO ) === true )
+			if ( evalAction.condition === undefined || me.checkCondition( evalAction.condition ) === true )
 			{
                 // MORE LIKE me.performAdd/Remove..
 				me.performCondiShowHide( evalAction.shows, favIdsObj, true );
@@ -249,7 +229,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
 		}
 	};
 
-	me.checkCondition = function( evalCondition, INFO )
+	me.checkCondition = function( evalCondition )
 	{
 		var result = false;
 
@@ -332,7 +312,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
         {
             if ( favItem )
             {
-                if ( me.beforeItemClickActionCall ) me.beforeItemClickActionCall( targetBlockTag, targetBlockContainerTag );
+                if ( me.mainFavPreClick ) me.mainFavPreClick( targetBlockTag, targetBlockContainerTag );
             
                 if ( runFunc ) runFunc( favItem );
 
@@ -346,9 +326,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, beforeItemC
                 {
                     var actionObj = new Action( SessionManager.cwsRenderObj, {} );
                     actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag );
-                }
-    
-                if ( me.afterItemClickActionCall )  me.afterItemClickActionCall( targetBlockTag, targetBlockContainerTag );                
+                }    
             }
         });
     };

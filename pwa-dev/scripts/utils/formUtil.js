@@ -239,39 +239,30 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 		if ( Util.isTypeString( def ) )
 		{
 			// OPTION NEW 'local to block' - Check for Block preName with '.' (Local Def in block)
-			var blockPreNameIdx = def.indexOf ( '.' );
-			var localObjJson;
-
-			if ( blockPreNameIdx > 0 && def.length > blockPreNameIdx + 1 )
-			{
-				var blockPreName = def.substring( 0, blockPreNameIdx );
-				var localDefName = def.substr( blockPreNameIdx + 1 );
-
-				var blockJson = FormUtil.getObjFromDefinition( blockPreName, ConfigManager.getConfigJson().definitionBlocks );
-
-				if ( blockJson && blockJson.DEFINITIONS && blockJson.DEFINITIONS[ localDefName ] )
-				{
-					localObjJson = blockJson.DEFINITIONS[ localDefName ];
-				}
-			}
-
+			var localObjJson = FormUtil.getBlockLocalDefObj( def );
 			if ( localObjJson ) objJson = localObjJson;
-			else
-			{
-				// OPTION ORIGINAL - Normal definition name (without '.' in name)
-				if ( definitions && definitions[ def ] )
-				{
-					// get object from definition
-					objJson = definitions[ def ];
-				}		
-			}
+			else if ( definitions && definitions[ def ] ) objJson = definitions[ def ]; // Get object from definitions
+
 		}
 		else if ( Util.isTypeObject( def ) || Util.isTypeArray( def ) )
 		{
 			objJson = def;
 
+			/*
 			// TODO: If this is array, but holds string, we need to check the definition of that..
+			if ( Util.isTypeArray( def ) )
+			{
+				var newArrays = [];
 
+				def.forEach( item => 
+				{
+					if ( Util.isTypeString( item ) )
+					{
+						newArrays.push( FormUtil.getObjFromDefinition( item, ConfigManager.getConfigJson().definitionForms ) );
+					}
+				});
+			}
+			*/
 		}
 	}
 	catch ( errMsg )
@@ -282,6 +273,26 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 	return objJson;
 };
 
+FormUtil.getBlockLocalDefObj = function( def )
+{
+	var blockPreNameIdx = def.indexOf ( '.' );
+	var localObjJson;
+
+	if ( blockPreNameIdx > 0 && def.length > blockPreNameIdx + 1 )
+	{
+		var blockPreName = def.substring( 0, blockPreNameIdx );
+		var localDefName = def.substr( blockPreNameIdx + 1 );
+
+		var blockJson = FormUtil.getObjFromDefinition( blockPreName, ConfigManager.getConfigJson().definitionBlocks );
+
+		if ( blockJson && blockJson.DEFINITIONS && blockJson.DEFINITIONS[ localDefName ] )
+		{
+			localObjJson = blockJson.DEFINITIONS[ localDefName ];
+		}
+	}
+
+	return localObjJson;
+};
 
 FormUtil.rotateTag = function( tag, runRotation )
 {
@@ -1515,7 +1526,7 @@ FormUtil.addTag_TermAttr = function( tags, jsonItem )
 };
 
 // Used in activityCard icon rendering..
-FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride, activityJson )
+FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, cwsRenderObj, iconStyleOverride, activityJson )  // TODO: remove unused params
 {
 	try 
 	{
@@ -1530,6 +1541,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 					if ( iconDivTag.find( 'img' ).length === 0 )
 					{
 						iconDivTag.html( '<img src="'+ activityType.icon.path + '" style="width:56px; height:56px;">' );
+						// TODO: if ( statusOpt === undefined && activityJson && activityJson.processing && activityJson.processing.status ) svgTag.css( 'opacity', '0.4' );
 					}
 				});
 			}
