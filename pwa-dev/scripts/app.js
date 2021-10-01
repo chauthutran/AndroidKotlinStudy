@@ -278,18 +278,8 @@ App.browserResizeHandle = function()
         $( '.hideOnKeyboardVisible' ).show();
       }
 
-      //FormUtil.setTimedOut_PositionLoginPwdBlinker();
     }
   });
-  //}
-  //else
-  //{
-  //	// Window Resize detection
-  //	$( window ).on( 'resize', function () 
-  //	{
-  //		//FormUtil.setTimedOut_PositionLoginPwdBlinker();		
-  //	});
-  //}
 };
 
 

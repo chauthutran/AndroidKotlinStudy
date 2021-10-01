@@ -230,12 +230,14 @@ FormUtil.sheetFullSetup = function( template, options )
 
 // -----------------------------------------------
 
-FormUtil.getObjFromDefinition = function( def, definitions )
+FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 {
 	var objJson; // = def;  // default is the passed in object/name
 
 	try
 	{
+		if ( !limitCount ) limitCount = 0;
+
 		if ( Util.isTypeString( def ) )
 		{
 			// OPTION NEW 'local to block' - Check for Block preName with '.' (Local Def in block)
@@ -247,23 +249,10 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 		else if ( Util.isTypeObject( def ) || Util.isTypeArray( def ) )
 		{
 			objJson = def;
-
-			/*
-			// TODO: If this is array, but holds string, we need to check the definition of that..
-			if ( Util.isTypeArray( def ) )
-			{
-				var newArrays = [];
-
-				def.forEach( item => 
-				{
-					if ( Util.isTypeString( item ) )
-					{
-						newArrays.push( FormUtil.getObjFromDefinition( item, ConfigManager.getConfigJson().definitionForms ) );
-					}
-				});
-			}
-			*/
 		}
+
+		// If Definition is array, check if any string def exists and replace them with array. - also, recursively call def
+		if ( Util.isTypeArray( objJson ) ) FormUtil.arrayDefReplace( objJson, definitions, limitCount );
 	}
 	catch ( errMsg )
 	{
@@ -272,6 +261,29 @@ FormUtil.getObjFromDefinition = function( def, definitions )
 
 	return objJson;
 };
+
+
+// form fields array = []
+FormUtil.arrayDefReplace = function( objJson, definitions, limitCount )
+{
+	// if the limitCount is over 5, do not do this, which is recursive call.
+	if ( limitCount < 5 )
+	{
+		for ( var i = objJson.length - 1; i >= 0;  i-- )
+		{
+			var item = objJson[i];
+	
+			if ( Util.isTypeString( item ) )
+			{
+				objJson.splice( i, 1 ); // remove the string 'item' and insert the item array.
+	
+				var itemsArr = FormUtil.getObjFromDefinition( item, definitions, limitCount );
+				if ( itemsArr ) Util.insertItmesOnArray( objJson, i, itemsArr );
+			}
+		}
+	}
+};
+
 
 FormUtil.getBlockLocalDefObj = function( def )
 {
@@ -1541,7 +1553,6 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 					if ( iconDivTag.find( 'img' ).length === 0 )
 					{
 						iconDivTag.html( '<img src="'+ activityType.icon.path + '" style="width:56px; height:56px;">' );
-						// TODO: if ( statusOpt === undefined && activityJson && activityJson.processing && activityJson.processing.status ) svgTag.css( 'opacity', '0.4' );
 					}
 				});
 			}
@@ -1551,272 +1562,6 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	{
 		console.customLog( 'Error on FormUtil.appendActivityTypeIcon, errMsg: ' + errMsg );
 	}
-}
-
-/*
-	if ( activityType.icon.colors )
-	{
-		if ( activityType.icon.colors.background )
-		{
-			svgTag.html( svgTag.html().replace(/{icon.bgfill}/g, activityType.icon.colors.background) );
-			svgTag.html( svgTag.html().replace(/{bgfill}/g, activityType.icon.colors.background) );
-			svgTag.attr( 'colors.background', activityType.icon.colors.background );
-		}
-		if ( activityType.icon.colors.foreground )
-		{
-			svgTag.html( svgTag.html().replace(/{icon.color}/g, activityType.icon.colors.foreground) );
-			svgTag.html( svgTag.html().replace(/{color}/g, activityType.icon.colors.foreground) );
-			svgTag.attr( 'colors.foreground', activityType.icon.colors.foreground );
-		}	
-	}
-
-	if ( statusOpt === undefined && activityJson && activityJson.processing && activityJson.processing.status ) svgTag.css( 'opacity', '0.4' );
-
-	iconObj.find( 'svg' ).remove();
-	iconObj.append( svgTag );
-
-	var activityIconSize = '56px';
-	iconObj.find( 'svg' ).css( 'width', activityIconSize ).css( 'height', activityIconSize );
-
-	//if ( ConfigManager.getConfigJson().settings && ConfigManager.getConfigJson().settings && ConfigManager.getSettingsActivityDef() && svgStyle && $(iconObj).html() )
-	//{ svgTag.attr( 'width', '100%' ).attr( 'height', '100%' ); }
-	
-});	
-*/		
-
-/*
-FormUtil.appendStatusIcon = function ( targetObj, statusOpt, skipGet )
-{
-	if ( ConfigManager.getConfigJson() )
-	{
-		if ( skipGet != undefined && skipGet == true )
-		{
-			var iW, iH, sStyle = 'width:' + 18 + 'px;height:' + 18 + 'px;';
-
-			$( targetObj ).append( $( '<img src="' + statusOpt.icon.path + '" style="' + sStyle + '" />' ) );
-		}
-		else
-		{
-		// read local SVG xml structure, then replace appropriate content 'holders'
-			if ( statusOpt && statusOpt.icon && statusOpt.icon.path )
-			{
-				$.get( statusOpt.icon.path, function(data) {
-
-					var svgTag = $( $(data)[0].documentElement );
-	
-					if ( statusOpt.icon.colors )
-					{
-						if ( statusOpt.icon.colors.background )
-						{
-							svgTag.html( svgTag.html().replace(/{icon.bgfill}/g, statusOpt.icon.colors.background) );
-							svgTag.html( svgTag.html().replace(/{bgfill}/g, statusOpt.icon.colors.background) );
-							svgTag.attr( 'colors.background', statusOpt.icon.colors.background );
-						}
-						if ( statusOpt.icon.colors.foreground )
-						{
-							svgTag.html( svgTag.html().replace(/{icon.color}/g, statusOpt.icon.colors.foreground) );
-							svgTag.html( svgTag.html().replace(/{color}/g, statusOpt.icon.colors.foreground) );
-							svgTag.attr( 'colors.foreground', statusOpt.icon.colors.foreground );
-						}
-					}
-	
-					$( targetObj ).empty();
-					$( targetObj ).append( svgTag );
-
-					var activityDef = ConfigManager.getSettingsActivityDef();
-
-					if ( activityDef.statusIconSize )
-					{
-						svgTag.attr( 'width', activityDef.statusIconSize.width );
-						svgTag.attr( 'height', activityDef.statusIconSize.height );		
-					}
-	
-				});
-	
-			}			
-		}
-
-	}
-
-}
-*/
-
-
-FormUtil.setStatusOnTag = function( statusSecDivTag, itemData, cwsRenderObj ) 
-{
-	try
-	{
-		var imgSyncIconTag = statusSecDivTag.find( 'small.syncIcon img' );
-
-		if ( itemData )
-		{
-
-			if ( itemData.status === Constants.status_submit )
-			{
-				imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
-			}
-			else if ( itemData.status === Constants.status_failed )
-			{
-		
-				if ( !itemData.networkAttempt || (itemData.networkAttempt && itemData.networkAttempt < cwsRenderObj.storage_offline_ItemNetworkAttemptLimit ) )
-				{
-					imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' ); // should show the 'active' icon: sync-banner.svg
-				}
-				else
-				{
-					if ( itemData.networkAttempt && itemData.networkAttempt >= cwsRenderObj.storage_offline_ItemNetworkAttemptLimit )
-					{
-						imgSyncIconTag.attr ( 'src', 'images/sync_error.svg' );
-					}
-					else
-					{
-						imgSyncIconTag.attr ( 'src', 'images/sync-n.svg' );
-					}
-				}
-			}
-			else
-			{
-				imgSyncIconTag.attr ( 'src', 'images/sync-banner.svg' );
-			}	
-		}
-
-		imgSyncIconTag.css ( 'transform', '' );
-	}
-	catch ( errMsg )
-	{
-		console.customLog( 'Error on FormUtil.setStatusOnTag, errMsg: ' + errMsg );
-	}
-}
-
-
-FormUtil.getActivityTypeNA = function( itemData )
-{
-	var retObj = { previewData: [], name: 'Unknown', icon: { path: 'images/na.svg' }, term: '', label: '' };
-
-	if ( itemData.data && itemData.data.previewData )
-	{
-		for ( var i=0; i< itemData.data.previewData.length; i++ )
-		{
-			retObj.previewData.push( itemData.data.previewData[ i ] );
-		}
-	}
-
-	return retObj;
-}
-
-FormUtil.getStatusOpt = function( itemData )
-{
-	try
-	{
-		var opts = ConfigManager.getSettingsActivityDef().statusOptions;
-
-		for ( var i=0; i< opts.length; i++ )
-		{
-			if ( opts[i].name === itemData.status )
-			{
-				return opts[i];
-			}
-		}
-	}
-	catch ( errMsg )
-	{
-		console.customLog( 'Error on FormUtil.getStatusOpt, errMsg: ' + errMsg );
-	}
-}
-
-FormUtil.listItemActionUpdate = function( itemID, prop, value )
-{
-	
-}
-
-FormUtil.gAnalyticsEventAction = function( returnFunc )
-{
-	var dcd = ConfigManager.getConfigJson();
-	var ret = '';
-	if ( dcd && dcd.orgUnitData )
-	{
-		//CUSTOMIZE AS REQUIRED
-		ret = 'country:'+dcd.orgUnitData.countryOuCode + ';userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManagerNew.connStatusStr() + ';appLaunch:' + FormUtil.PWAlaunchFrom();
-	}
-	else
-	{
-		ret = 'country:none;userName:' + SessionManager.sessionData.login_UserName + ';network:' + ConnManagerNew.connStatusStr() + ';appLaunch:' + FormUtil.PWAlaunchFrom();
-	}
-
-	if ( returnFunc ) returnFunc( ret );
-
-}
-
-FormUtil.gAnalyticsEventLabel = function()
-{
-	return 'networkOnline: ' + ConnManagerNew.isAppMode_Online () + ', dataServerOnline: ' + ConnManagerNew.statusInfo.serverAvailable;
-}
-
-FormUtil.PWAlaunchFrom = function()
-{
-	if ( (matchMedia('(display-mode: standalone)').matches) || ('standalone' in navigator) )
-	{
-		// Android and iOS 11.3+
-		return 'homeScreen';
-   	} 
-   else
-   {
-		// useful for iOS < 11.3
-		return 'browser';
-   }
-}
-
-
-FormUtil.jsonReadFormat = function( jsonData )
-{
-	if ( jsonData ) return JSON.stringify( jsonData ).toString().replace(/{/g,'').replace(/}/g,'').replace(/":"/g,': ');
-	else return '';
-}
-
-FormUtil.lookupJsonArr = function( jsonData, fldSearch, fldValue, searchValue )
-{
-	for ( var i=0; i< jsonData.length; i++ )
-	{
-		if ( jsonData[ i ][ fldSearch ] == searchValue )
-		{
-			return jsonData[ i ][ fldValue ];
-		}
-
-	}
-}
-
-FormUtil.shareApp = function() {
-    var text = "See what I've found: an installable Progressive Web App for Connecting with Sara";
-    if ('share' in navigator) {
-        navigator.share({
-            title: 'CwS: Connect App',
-            text: text,
-            url: location.href,
-        })
-    } else {
-        // Here we use the WhatsApp API as fallback; remember to encode your text for URI
-        location.href = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(text + ' - ') + location.href
-    }
-}
-
-FormUtil.shareDataURI = function( title, dataURI ) {
-    //var text = "See what I've found: an installable Progressive Web App for Connecting with Sara";
-    if ('share' in navigator) {
-        navigator.share({
-            title: 'CwS: Connect App',
-            text: title,
-            url: dataURI,
-        })
-    } else {
-        // Here we use the WhatsApp API as fallback; remember to encode your text for URI
-        location.href = 'https://api.whatsapp.com/send?text=' + dataURI
-    }
-}
-
-FormUtil.getGeoLocation = function()
-{ // --> move to new geolocation.js class
-	if ( FormUtil.geoLocationTrackingEnabled ) return FormUtil.geoLocationLatLon;
-	else return '';
 }
 
 FormUtil.getPositionObjectJSON = function( pos )
@@ -1888,61 +1633,6 @@ FormUtil.refreshGeoLocation = function( returnFunc )
 
 }
 
-FormUtil.geolocationAllowed = function()
-{
-	try
-	{
-		navigator.permissions.query({
-			name: 'geolocation'
-		}).then(function(result) {
-	
-			FormUtil.geoLocationState = result.state;
-	
-			/*if (result.state == 'granted') {
-				report(result.state);
-				geoBtn.style.display = 'none';
-			} else if (result.state == 'prompt') {
-				report(result.state);
-				geoBtn.style.display = 'none';
-				navigator.geolocation.getCurrentPosition(revealPosition, positionDenied, geoSettings);
-			} else if (result.state == 'denied') {
-				report(result.state);
-				geoBtn.style.display = 'inline';
-			}*/
-	
-			result.onchange = function() {
-				FormUtil.geoLocationState = result.state;
-			}
-		});	
-	}
-	catch( errMsg )
-	{
-		console.customLog( 'ERROR in FormUtil.geolocationAllowed(), errMsg: ' + errMsg );
-	}
-}
-
-FormUtil.getGeoLocationIndex = function( separator, group )
-{
-	// idea is to provide a 'complex' or 'cluster' set of keys for quick reference when running searches for services
-	// current format is: COUNTRYCODE + '_' + GROUP (IPC/PROV/ALL) + '_' + YYYYMMDD + '_' + LAT + '_' + LONG
-	// numberic prefix is accuracy down to metres (THIS SHOULD CHANGE TO SOMETHING MORE MEANINGFUL )
-
-	var sep = ( separator ? separator : '_')
-	var retIdx = ConfigManager.getConfigJson().countryCode + sep + ( group ? group : 'ALL' ) + sep;
-	var dtmNow = $.format.date( new Date(), "yyyymmdd" );
-	var ArrCoords = FormUtil.geoLocationLatLon.split( ',' );
-
-	retIdx += dtmNow + sep;
-
-	var ret = { '111000': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 0 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 0 ), 
-				'11100': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 1 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 1 ), 
-				'1110': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 2 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 2 ), 
-				'111': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 3 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 3 ), 
-				'11': retIdx + parseFloat( ArrCoords[ 0 ] ).toFixed( 4 ) + sep + parseFloat( ArrCoords[ 1 ] ).toFixed( 4 ) 
-	}
-
-	return ret;
-}
 
 FormUtil.screenMaxZindex = function(parent, limit)
 {
@@ -2046,24 +1736,6 @@ FormUtil.wsExchangeDataGet = function( formDivSecTag, recordIDlist, localResourc
 
 }
 
-FormUtil.getTagValPair = function( getUIDPairList, nameVal )
-{
-	var ret = nameVal;
-
-	for ( var t=0; t< getUIDPairList.length; t++ )
-	{
-		var arrPair = getUIDPairList[ t ].toString().split( ':' );
-
-		if ( arrPair[ 0] == nameVal )
-		{
-			ret = arrPair[ 1 ];
-			break;
-		}
-	}
-
-	return ret;
-
-}
 
 FormUtil.recursiveWSexchangeGet = function( targetDef, dataTargetHierarchy, itm, keyFind, keyValue)
 {
@@ -2091,105 +1763,14 @@ FormUtil.recursiveWSexchangeGet = function( targetDef, dataTargetHierarchy, itm,
 					{
 						return targetArr[ i ];
 					}
-
 				}
-
-			}
-
-		}
-
-	}
-
-
-}
-//REMOVE: no longer used
-FormUtil.setPayloadConfig = function( blockObj, payloadConfig, formDefinition )
-{
-	var formDivSecTag = blockObj.parentTag;
-	var inputTags = formDivSecTag.find( 'input,select' ); // << .dataValue??
-
-	inputTags.each( function()
-	{		
-		var inputTag = $( this );
-		var dataTarg = FormUtil.getFormFieldPayloadConfigDataTarget( payloadConfig, inputTag.attr( 'name' ), formDefinition )
-
-		if ( dataTarg )
-		{
-			if ( dataTarg.dataTargets )
-			{
-				inputTag.attr( 'dataTargets', escape( JSON.stringify( dataTarg.dataTargets ) ) );
-			}
-
-			if ( dataTarg.defaultValue )
-			{
-				if ( dataTarg.defaultValue.indexOf( '{' ) > 0 )
-				{
-					var tagTarget = formDivSecTag.find( '[name="' + dataTarg.id + '"]' );
-
-					FormUtil.evalReservedField( tagTarget.closest( 'form' ), tagTarget, dataTarg.defaultValue );
-				}
-				else
-				{
-					inputTag.val( dataTarg.defaultValue );
-				}
-			}
-		}
-
-	});
-}
-
-
-FormUtil.getFormFieldPayloadConfigDataTarget = function( payloadConfigName, fldId, formDefArr )
-{
-	// fetch payloadConfiguration dataTarget for formDefinition's field/control
-
-	for ( var i=0; i< formDefArr.length; i++ )
-	{
-		if ( formDefArr[ i ].id == fldId )
-		{
-			if ( formDefArr[ i ].payload && formDefArr[ i ].payload[ payloadConfigName ] )
-			{
-				return formDefArr[ i ].payload[ payloadConfigName ];
 			}
 		}
 	}
 }
 
-FormUtil.setTimedOut_PositionLoginPwdBlinker = function()
-{
-	// startup position of blinker in relation to login screen layout (will cause problems if page gets resized)
-	setTimeout( FormUtil.positionLoginPwdBlinker, 200 );
-
-	setTimeout( FormUtil.positionLoginPwdBlinker, 500 );
-
-	setTimeout( FormUtil.positionLoginPwdBlinker, 1000 );
-};
 
 
-FormUtil.positionLoginPwdBlinker = function()
-{
-	var pwdVisibleTag = $( "#pass" );  // visible password tag
-	var pwdValueTag = $( "#passReal" );  // actual value holding password tag
-
-	pwdValueTag.css( 'top', pwdVisibleTag.position().top + ( PWD_INPUT_PADDING_TOP + (PWD_INPUT_PADDING_TOP / 2) ) );
-	pwdValueTag.css( 'left', pwdVisibleTag.position().left + pwdVisibleTag.val().length + 'px' );
-};
-
-
-FormUtil.getCommonDateGroups = function()
-{
-	var z = [ { name: "Last 24 hours", term: "", hours: 24, created: 0 },
-			{ name: "Last 3 days", term: "", hours: 72 , created: 0 },
-			{ name: "Last 7 days", term: "", hours: 168, created: 0 },
-			{ name: "Last 30 days", term: "", hours: 720, created: 0 },
-			{ name: "Last 3 months", term: "", hours: 2160, created: 0 },
-			{ name: "Last 6 months", term: "", hours: 4320, created: 0 },
-			{ name: "Last 3 years", term: "", hours: 25920, created: 0 } ];
-	return z;
-};
-
-
-// REMOVE - not used anywhere
 FormUtil.getActivityTypes = function()
 {
 	// get different 'Areas' or Activity-Types
@@ -2230,18 +1811,6 @@ FormUtil.getActivityTypeByRef = function( field, val )
 		}
 	}
 
-};
-
-FormUtil.loaderEllipsis = function()
-{
-	return '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
-};
-
-
-FormUtil.loaderRing = function()
-{
-	return '<div class="lds-ring"><div></div><div></div><div></div><div></div></div>';
-	//return '<div class="loadingImg" style=""><img src="images/loading_small.svg"></div>';
 };
 
 

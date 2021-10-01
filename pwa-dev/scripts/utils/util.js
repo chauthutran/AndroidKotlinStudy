@@ -48,18 +48,6 @@ Util.isTypeString = function( obj )
 };
 // ------------------------------------
 
-//Util.getSub = function( obj )
-//{
-	//return 
-//};
-
-// undefined is no good.  we can either do 'false' & do prototype on 'boolean'
-// or return object & check the object empty status on calling method..
-//Object.prototype.getProp = function( subProp )
-//{
-//	return ( this && this.subProp ) ? this.subProp : undefined;
-//};
-
 // ----------------------------------
 // Check Variable Related
 
@@ -205,6 +193,162 @@ Util.getNumber = function( n )
 
 // Check Variable Related
 // ----------------------------------
+
+// ----------------------------------
+// Array Operation Related
+
+// MOST USED #1
+Util.getFromList = function( list, value, propertyName )
+{
+	var item;
+
+	if ( list )
+	{
+		// If propertyName being compare to has not been passed, set it as 'id'.
+		if ( propertyName === undefined )
+		{
+			propertyName = "id";
+		}
+
+		for( i = 0; i < list.length; i++ )
+		{
+			var listItem = list[i];
+
+			if ( listItem[propertyName] && listItem[propertyName] === value )
+			{
+				item = listItem;
+				break;
+			}
+		}
+	}
+
+	return item;
+};
+
+
+// MOST USED #2 - remove from list, all.
+Util.RemoveFromArrayAll = function( list, propertyName, value )
+{
+	try
+	{
+		if ( list )
+		{
+			for ( var i = list.length - 1; i >= 0;  i-- )
+			{
+				var arrItem = list[i];
+	
+				if ( arrItem[propertyName] === value )
+				{
+					list.splice( i, 1 );
+				}
+			}
+		}
+	}
+	catch ( errMsg ) { console.log( 'ERROR in Util.RemoveFromArrayAll, ' + errMsg ); }
+};
+
+
+// New - insert array items to 'index' position of list.
+Util.insertItmesOnArray = function( list, index, items )
+{
+	if ( list )
+	{
+		if ( Util.isTypeArray( items ) )
+		{
+			for ( var i = items.length - 1; i >= 0;  i-- )
+			{
+				var item = items[i];
+				list.splice( index, 0, item );
+			}
+		}
+		else
+		{
+			list.splice( index, 0, items );
+		}
+	}
+};
+
+
+Util.arrayReplaceData = function( orig, newData )
+{
+	orig.splice(0); // Remove all data in array
+
+	newData.forEach( item => {
+		orig.push( item );
+	});
+};
+
+
+Util.RemoveFromArray = function( list, propertyName, value )
+{
+	var index;
+
+	$.each( list, function( i, item )
+	{
+		if ( item[ propertyName ] == value ) 
+		{
+			index = i;
+			return false;
+		}
+	});
+
+	if ( index !== undefined ) 
+	{
+		list.splice( index, 1 );
+	}
+
+	return index;
+};
+
+
+Util.getFromListByName = function( list, name )
+{
+	var item;
+
+	for( i = 0; i < list.length; i++ )
+	{
+		if ( list[i].name === name )
+		{
+			item = list[i];
+			break;
+		}
+	}
+
+	return item;
+};
+
+
+Util.getItemFromList = function( list, value, propertyName )
+{
+	return Util.getFromList( list, value, propertyName );
+};
+
+Util.getItemsFromList = function( list, value, propertyName )
+{
+	var items = [];
+
+	if ( list )
+	{
+		// If propertyName being compare to has not been passed, set it as 'id'.
+		if ( propertyName === undefined )
+		{
+			propertyName = "id";
+		}
+
+		for( i = 0; i < list.length; i++ )
+		{
+			var listItem = list[i];
+
+			if ( listItem[propertyName] && listItem[propertyName] === value )
+			{
+				items.push( listItem );
+			}
+		}
+	}
+
+	return items;
+};
+
 
 // ----------------------------------
 // JSON Copy Related
@@ -1139,145 +1283,6 @@ Util.reverseArray = function( arr )
 // ----------------------------------
 // List / Array Related
 
-Util.arrayReplaceData = function( orig, newData )
-{
-	orig.splice(0); // Remove all data in array
-
-	newData.forEach( item => {
-		orig.push( item );
-	});
-};
-
-
-Util.RemoveFromArray = function( list, propertyName, value )
-{
-	var index;
-
-	$.each( list, function( i, item )
-	{
-		if ( item[ propertyName ] == value ) 
-		{
-			index = i;
-			return false;
-		}
-	});
-
-	if ( index !== undefined ) 
-	{
-		list.splice( index, 1 );
-	}
-
-	return index;
-};
-
-
-/*
-Util.RemoveFromArrayAll = function( list, propertyName, value )
-{
-	list.forEach( function(item, index, object) {
-		var prop = item[propertyName];
-		if ( prop && prop === value ) object.splice(index, 1);
-	});
-};
-*/
-
-// Need to test above and this one..
-Util.RemoveFromArrayAll = function( list, propertyName, value )
-{
-	try
-	{
-		if ( list )
-		{
-			for ( var i = list.length - 1; i >= 0;  i-- )
-			{
-				var arrItem = list[i];
-	
-				if ( arrItem[propertyName] === value )
-				{
-					list.splice( i, 1 );
-				}
-			}
-		}
-	}
-	catch ( errMsg ) { console.log( 'ERROR in Util.RemoveFromArrayAll, ' + errMsg ); }
-};
-
-
-Util.getFromListByName = function( list, name )
-{
-	var item;
-
-	for( i = 0; i < list.length; i++ )
-	{
-		if ( list[i].name === name )
-		{
-			item = list[i];
-			break;
-		}
-	}
-
-	return item;
-};
-
-Util.getFromList = function( list, value, propertyName )
-{
-	var item;
-
-	if ( list )
-	{
-		// If propertyName being compare to has not been passed, set it as 'id'.
-		if ( propertyName === undefined )
-		{
-			propertyName = "id";
-		}
-
-		for( i = 0; i < list.length; i++ )
-		{
-			var listItem = list[i];
-
-			if ( listItem[propertyName] && listItem[propertyName] === value )
-			{
-				item = listItem;
-				break;
-			}
-		}
-	}
-
-	return item;
-};
-
-Util.getItemFromList = function( list, value, propertyName )
-{
-	return Util.getFromList( list, value, propertyName );
-};
-
-Util.getItemsFromList = function( list, value, propertyName )
-{
-	var items = [];
-
-	if ( list )
-	{
-		// If propertyName being compare to has not been passed, set it as 'id'.
-		if ( propertyName === undefined )
-		{
-			propertyName = "id";
-		}
-
-		for( i = 0; i < list.length; i++ )
-		{
-			var listItem = list[i];
-
-			if ( listItem[propertyName] && listItem[propertyName] === value )
-			{
-				items.push( listItem );
-			}
-		}
-	}
-
-	return items;
-};
-
-
 Util.getMatchData = function( settingData, matchSet )
 {
 	var returnData = new Array();
@@ -1381,28 +1386,6 @@ Util.recursiveCalls = function( dataObj, i, runMethod, finishCallBack )
 
 // List / Array Related
 // ----------------------------------
-
-
-/*
-Util.getParameterByName = function( name ) 
-{
-	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-		results = regex.exec(location.search);
-	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-};
-*/
-
-
-/*
-Util.getURLParameterByName = function( url, name )
-{
-	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-		results = regex.exec(url);
-	return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-};
-*/
 
 // ------------------------------------------------------------------------------------------------------
 // For URL

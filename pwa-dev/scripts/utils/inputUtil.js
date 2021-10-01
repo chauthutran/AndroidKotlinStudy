@@ -445,49 +445,6 @@ function inputMonitor( cwsRenderObj )
         }
     }
 
-    me.touchEndListItem = function( e )
-    {
-        var bArchive = ( currentX > ( dragXoffsetLimit + ( touchStartTargetWidth / 3 ) ) );
-
-        $( listItemFillerBlock ).remove();
-
-        $( touchStartTargetTag ).removeClass( 'transitionRapid' );
-        $( touchStartTargetTag ).removeClass( 'cardShadow' );
-        $( touchStartTargetTag ).removeClass( 'rounded' );
-        $( touchStartTargetTag ).addClass( 'transitionSmooth' );
-        $( touchStartTargetTag ).detach();
-
-        //reset: snap back to left position with other defaults
-        $( touchStartParentTag ).append( touchStartTargetTag );          
-
-        $( touchStartTargetTag ).css( 'left', 'auto' );
-        $( touchStartTargetTag ).css( 'top', 'initial' );
-        $( touchStartTargetTag ).css( 'width', '100%' );
-        $( touchStartTargetTag ).css( 'position', 'relative' );
-        $( touchStartTargetTag ).css( 'border-bottom-color', $( touchStartTargetTag ).attr( 'initBorderBottomColor' ) );
-        $( touchStartTargetTag ).css( 'background-Color', 'initial' );
-
-        touchStartTargetTag.find( 'div.listItem' ).css( 'width', '100%' );
-
-
-        $( '#listItem_table_' + touchStartTargetTag.attr( 'itemid' ) ).css( 'width', '100%' );
-        $( '#listItem_voucher_status_' + touchStartTargetTag.attr( 'itemid' ) ).show();
-        $( '#listItem_action_sync_' + touchStartTargetTag.attr( 'itemid' ) ).show();
-        $( '#listItem_trExpander_' + touchStartTargetTag.attr( 'itemid' ) ).show();
-
-        if ( listItemWasExpanded)
-        {
-            $( '#listItem_networkResults_' + touchStartTargetTag.attr( 'itemid' ) ).show();
-            $( '#listItem_networkResults_' + touchStartTargetTag.attr( 'itemid' ) ).css( 'display', '' ); // required due to newly created hardcoded display setting 
-        }
-
-        FormUtil.listItemActionUpdate( touchStartTargetTag.attr( 'itemid' ), 'archive', bArchive );
-
-        setTimeout( function() {
-            $( touchStartTargetTag ).removeClass( 'transitionSmooth' );
-        }, 500 );
-
-    }
 
     me.toucheEndNavDrawer = function( e )
     {

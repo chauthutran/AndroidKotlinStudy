@@ -636,9 +636,6 @@ function Login()
 		// menu area user name show
 		$( 'div.navigation__user' ).html( userName );
 
-		// Disabled due to error
-		//FormUtil.geolocationAllowed();
-
 		Menu.renderDefaultTheme();
 		MsgManager.initialSetup();
 
