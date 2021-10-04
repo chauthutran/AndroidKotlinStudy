@@ -136,8 +136,7 @@ function ActivityCardDetail( activityId, isRestore )
         //var client = ClientDataManager.getClientByActivityId( activityId );
         //ClientDataManager.removeClient( client );
 
-        ClientDataManager.saveCurrent_ClientsStore( function()
-        {
+        ClientDataManager.saveCurrent_ClientsStore( () => {
             $( '#pageDiv' ).find("[itemid='" + activityId + "']").remove();
             btnBackTag.click();
         });

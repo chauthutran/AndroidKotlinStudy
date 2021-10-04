@@ -329,7 +329,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
         }        
 
         // Need to create ClientDataManager..
-        ClientDataManager.saveCurrent_ClientsStore( function() {
+        ClientDataManager.saveCurrent_ClientsStore( () => {
             if ( callBack ) callBack( true, mergedActivities );
         });
     } 
@@ -450,7 +450,7 @@ ClientDataManager.removeSampleData = function( callBack )
         }
     });
 
-    ClientDataManager.saveCurrent_ClientsStore( function() {
+    ClientDataManager.saveCurrent_ClientsStore( () => {
         if ( callBack ) callBack( removedCount );
     } );
 };
@@ -503,7 +503,7 @@ ClientDataManager.loadSampleData = function( icount, sampleDataTemplate, callBac
         ClientDataManager.insertClients( JSON.parse( tmp ) );
     }
 
-    ClientDataManager.saveCurrent_ClientsStore( function() {
+    ClientDataManager.saveCurrent_ClientsStore( () => {
         if ( callBack ) callBack();
     });
 };

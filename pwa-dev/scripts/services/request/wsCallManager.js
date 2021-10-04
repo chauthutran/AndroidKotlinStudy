@@ -187,7 +187,7 @@ WsCallManager.serverAvailable = function( callBack )
     }
     catch ( errMsg )
     {
-        console.customLog( 'ERROR in WsCallManager.serverAvailable, errMsg: ' + errMsg );
+        console.log( 'ERROR in WsCallManager.serverAvailable, errMsg: ' + errMsg );
         callBack( false );
     }    
 };

@@ -108,10 +108,10 @@ function ClientCardDetail( clientId, isRestore )
 
         // #3. Relationship
         var relationshipTabTag = sheetFullTag.find( '[tabButtonId=tab_relationships]' );
-        var relationshipListObj = new ClientRelationshipList( clientId, relationshipTabTag );
+        var relationshipListObj = new ClientRelationshipList( clientId, relationshipTabTag, 'clientRelationTab' );
         sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() 
         {
-            relationshipListObj.render();
+            relationshipListObj.render();  // Rendering logic could be replaced with 'itemCardList' definition on 'clientDef'
         });
 
         
@@ -257,46 +257,6 @@ function ClientCardDetail( clientId, isRestore )
 
         return newTempActivity;
     };
-
-
-    /*
-    me.renderActivityList = function( activityListBlockTag, clientJson )
-    {
-        me.populateActivityCardList( clientJson.activities, activityListBlockTag );
-        activityListBlockTag.show();
-    }
-    */
-    
-    /*
-    me.setFullPreviewTabContent_Events = function( sheetFullTag, clientJson )
-    {
-        var activityTabTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
-
-        activityTabTag.find(".fab-wrapper").click( function(){
-        
-            // clear existing data on this tab content
-            sheetFullTag.find("[blockId='activityList']").hide();
-
-            // #1 clientDetails properties = key
-            var passedData = {
-                "displayData": [
-                    { id: "id", value: clientJson._id }
-                ],
-                "resultData": []
-            };
-
-            for( var id in clientJson.clientDetails )
-            {
-                passedData.displayData.push( {"id": id, "value": clientJson.clientDetails[id] } );
-            }
-
-            // Get client Profile Block defition from config.
-            var clientProfileBlockId = ConfigManager.getSettingsClientDef().issueVoucherBlock;
-            FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, sheetFullTag.find("[blockId='addForm']"), passedData );
-
-        });
-    }   
-    */
 
 
     // =============================================

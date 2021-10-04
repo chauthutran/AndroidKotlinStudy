@@ -1,38 +1,34 @@
 
-function ClientRelationshipList( clientId, _relationshipTabTag )
+function ClientRelationshipList( clientId, _relationshipTabTag, blockDefId )
 {
     var me = this;
 
     me.clientId = clientId;
     me.clientJson;
     me.relationshipTabTag =  _relationshipTabTag;
+    me.blockDefId = blockDefId;
+    me.blockDefJson = {};
 
-
-    // ----------------------------------------------------------------------------------------
     // Variables
-
     me.listTag;
     me.addRelationshipBtnTag;
 
-    // ----------------------------------------------------------------------------------------
+    // --------------------------------
     // Init method
-
     me.initialize = function() 
     {
+        me.blockDefJson = ConfigManager.getSettingsClientDef()[ me.blockDefId ];
     }
 
     // ----------------------------------------------------------------------------------------
-
-    me.getListTag = function()
-    {
-        return me.listTag;
-    }
+    me.getListTag = function() { return me.listTag; }
 
     // ----------------------------------------------------------------------------------------
 
     me.render = function()
     {
         me.clientJson = ClientDataManager.getClientById( me.clientId );
+        INFO.client = me.clientJson; // TODO: thiis should be also done on click... right icon of item.
 
         // Reset things..  maybe simply clear it out?  
         me.relationshipTabTag.html( '' );
@@ -42,7 +38,7 @@ function ClientRelationshipList( clientId, _relationshipTabTag )
         me.listTag = $( '<div class="list"></div>' );
         me.relationshipTabTag.append( me.listTag );
 
-        me.renderRelationshipList( me.listTag, me.clientJson.relationships );
+        me.renderRelationshipList( me.listTag, me.clientJson.relationships, me.blockDefJson );
 
         
         var favIconsObj = new FavIcons( 'clientRelFav', me.listTag, me.relationshipTabTag, { 'mainFavPreClick': function( blockTag, blockContianerTag ) {
@@ -54,22 +50,33 @@ function ClientRelationshipList( clientId, _relationshipTabTag )
     // ----------------------------------------------------------------------------------------
     // Render methods
 
-    me.renderRelationshipList = function( listTag, relationships )
+    me.renderRelationshipList = function( listTag, relationships, blockDefJson )
     {
         // Render list of client relationship
         if ( relationships )
         {
             relationships.forEach( rel => 
             {
-                var cardTag = me.renderRelationshipCard( rel );
-                me.setUp_Events( cardTag );
+                INFO.relationship = rel;
+                var targetClientJson = ClientDataManager.getClientById( rel.clientId );
+                INFO.relTargetClient = targetClientJson;
+
+                var itemCardObj = new ItemCard( targetClientJson, listTag, blockDefJson, {}, () => 
+                {
+                    INFO.client = ClientDataManager.getClientById( me.clientId );
+                    INFO.relationship = rel;
+                    //INFO.relationship.client = itemJson;
     
-                listTag.append( cardTag );    
+                    console.log( '--- itemCard callback ----' );
+                    console.log( INFO.client );
+                    console.log( INFO.relationship );
+                });
+                itemCardObj.render(); 
             });
         }
     };
 
-
+    /*
     me.renderAddRelationshipBtn = function( listTag, relationshipTabTag )
     {
         // Render [Add] button
@@ -90,7 +97,6 @@ function ClientRelationshipList( clientId, _relationshipTabTag )
         
         listTag.append( me.addRelationshipBtnTag );
     };
-
 
     me.renderRelationshipCard = function( relationship )
     {       
@@ -119,8 +125,9 @@ function ClientRelationshipList( clientId, _relationshipTabTag )
 
         return divClientCardTag;
     };
+    */
 
-
+    /*
     me.setRelContentDisplay = function( divContentTag, relationship, relClientJson )
     {
         try
@@ -140,7 +147,7 @@ function ClientRelationshipList( clientId, _relationshipTabTag )
             console.customLog( 'ERROR in clientCard.setClientContentDisplay, errMsg: ' + errMsg );
         }
     };
-
+    */
     
     // ----------------------------------------------------------------------------------------
     // Setup Edit / Delete a relationship events

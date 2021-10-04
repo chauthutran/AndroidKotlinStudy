@@ -110,7 +110,12 @@ ActivitySyncUtil.displayStatusLabelIcon = function( divSyncIconTag, divSyncStatu
 		var color = ( statusCustomJson.color ) ? statusCustomJson.color: '#2aad5c';
 
 		divSyncStatusTextTag.css( 'color', color ).html( statusCustomJson.text ).attr( 'term', statusCustomJson.term );
-		imgIcon.attr( 'src', 'images/' + statusCustomJson.img );
+
+		var imgSrc = '';
+		if ( statusCustomJson.img ) imgSrc = 'images/' + statusCustomJson.img;
+		else if ( statusCustomJson.imgFull ) imgSrc = statusCustomJson.imgFull;
+		
+		imgIcon.attr( 'src', imgSrc );
 	}
 	else if ( statusVal === Constants.status_submit )        
 	{

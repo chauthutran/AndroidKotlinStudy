@@ -22,7 +22,7 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
     
     me.blockListDiv_marginBottom = '30px'; // To Lift the list, avoid collpase with Fav.
 
-    me.pagingData = ConfigManager.getSettingPaging();
+    me.pagingData = { "enabled": false, "pagingSize": 100 }; ///ConfigManager.getSettingPaging();
     me.pagingData.currPosition = 0;
 
     me.useLocalClientMatch = true;  // The passed data (client) will check clientId to see if local client exists and usee local one.

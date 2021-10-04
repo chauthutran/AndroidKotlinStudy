@@ -416,7 +416,7 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
 
         ActivityDataManager.insertActivitiesToClient( [ activityJson ], activityPayloadClient, { 'addToTop': true } );
     
-        ClientDataManager.saveCurrent_ClientsStore( function() {
+        ClientDataManager.saveCurrent_ClientsStore( () => {
             if ( callBack ) callBack( activityJson );    
         });    
     }
@@ -823,8 +823,7 @@ ActivityDataManager.activityUpdate_Status = function( activityId, status, return
             activityJson.processing.status = status;
             
             // Need to save storage afterwards..
-            ClientDataManager.saveCurrent_ClientsStore( function() 
-            {
+            ClientDataManager.saveCurrent_ClientsStore( () => {
                 // update ActivityCard is visible..
                 ActivitySyncUtil.displayActivitySyncStatus( activityId );
 

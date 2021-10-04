@@ -7,7 +7,7 @@
 //          - There will be cases where client items are processed (in sync)
 //              without being displayed on the app list.  
 //
-function ItemCard( itemJson, parentTag, blockDefJson, blockObj )
+function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
 {
 	var me = this;
 
@@ -15,6 +15,8 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj )
     me.parentTag = parentTag;
     me.blockDefJson = blockDefJson;
     me.blockObj = blockObj;
+    me.itemClickFunc = itemClickFunc;
+
 
     me.itemCardDivTag;
     me.cardHighlightColor = '#fcffff'; // #fffff9
@@ -77,7 +79,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj )
             divStatusTextTag.empty();
 
 
-            if ( operationType === '' || operationType === 'localDownload' )
+            if ( operationType === 'localDownload' )
             {
                 if ( me.hasMatchingLocalData( itemId ) )
                 {
@@ -94,6 +96,8 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj )
                     // On click, remove the icon/text and allow to load..
                     divStatusIconTag.off( 'click' ).click( function() 
                     {
+                        if ( me.itemClickFunc ) me.itemClickFunc();
+
                         var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and stored.' );
     
                         ClientDataManager.mergeDownloadedClients( { 'clients': [ itemJson ] }, processingInfo, function() 
@@ -116,6 +120,8 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj )
                 // On click, remove the icon/text and allow to load..
                 divStatusIconTag.off( 'click' ).click( function() 
                 {
+                    if ( me.itemClickFunc ) me.itemClickFunc();
+
                     if ( blockDefJson.selectActions )
                     {
                         var formsJson = Util.cloneJson( itemJson.clientDetails );
@@ -124,6 +130,33 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj )
 
                         var actionObj = new Action( SessionManager.cwsRenderObj, me.blockObj );
                         actionObj.handleClickActions( undefined, blockDefJson.selectActions, me.blockObj.parentTag, me.blockObj.blockTag, undefined, blockPassingData );
+                    }
+                });
+            }
+            else if ( blockDefJson.operation && Util.isTypeObject( blockDefJson.operation ) )
+            {
+                var opDef = blockDefJson.operation;
+                var icon = ( opDef.icon ) ? opDef.icon: {};
+                var confirmMsg  = ( opDef.confirmMsg ) ? opDef.confirmMsg: undefined;
+
+                // Icon / Label
+                ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_custom, { text: icon.title, term: icon.term, imgFull: icon.path, color: icon.titleColor } );
+
+                // On click, remove the icon/text and allow to load..
+                divStatusIconTag.off( 'click' ).click( function() 
+                {
+                    if ( me.itemClickFunc ) me.itemClickFunc();
+
+                    var confirmPass = ( confirmMsg ) ? confirm( TranslationManager.translateText( confirmMsg.title, confirmMsg.term ) ) : true;
+  
+                    if ( opDef.onClick && confirmPass )
+                    {
+                        //var formsJson = Util.cloneJson( itemJson.clientDetails );
+                        //formsJson.clientId = itemJson._id;
+                        //var blockPassingData = { formsJson: formsJson };
+
+                        var actionObj = new Action( SessionManager.cwsRenderObj, me.blockObj );
+                        actionObj.handleClickActions( undefined, opDef.onClick, me.blockObj.parentTag, me.blockObj.blockTag );
                     }
                 });
             }

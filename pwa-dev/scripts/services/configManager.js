@@ -508,6 +508,7 @@ ConfigManager.getAreaListByStatus = function( bOnline, callBack )
 // Use this to define the login_userRoles array list.
 ConfigManager.setUpLogin_UserRoles = function( defUserRoles, sessionOrgUnitData, userRolesOverrides )
 {
+    var userRolesObj = {};
     var userRoles = [];
 
     if ( userRolesOverrides ) userRoles = userRolesOverrides;
@@ -520,17 +521,33 @@ ConfigManager.setUpLogin_UserRoles = function( defUserRoles, sessionOrgUnitData,
     
             if ( defUserRoles && ouGroups )
             {
-                for ( var r=0; r < ouGroups.length; r++ )
+                // Should be opposite way around...
+                ouGroups.forEach( oug => 
                 {
-                    for ( var i=0; i< defUserRoles.length; i++ )
+                    var matchOUG_URole = Util.getFromList( defUserRoles, oug.id, 'uid' );
+                    if ( matchOUG_URole )
                     {
-                        // config role definition uid is dhis2 id
-                        if ( defUserRoles[ i ].uid == ouGroups[ r ].id )
-                        {
-                            userRoles.push( defUserRoles[ i ].id );
-                        }
+                        if ( matchOUG_URole.id ) userRolesObj[ matchOUG_URole.id ] = true;
+                        if ( matchOUG_URole.altId ) userRolesObj[ matchOUG_URole.altId ] = true;
                     }
-                }
+
+                    var ougsList = oug.orgUnitGroupSets;
+                    if ( ougsList )
+                    {
+                        ougsList.forEach( ougs => 
+                        {
+                            var matchOUGS_URole = Util.getFromList( defUserRoles, ougs.id, 'uid' );
+
+                            if ( matchOUGS_URole ) 
+                            {
+                                if ( matchOUGS_URole.id ) userRolesObj[ matchOUGS_URole.id ] = true;
+                                if ( matchOUGS_URole.altId ) userRolesObj[ matchOUGS_URole.altId ] = true;
+                            }        
+                        });
+                    }
+                });
+
+                userRoles = Object.keys( userRolesObj );
             }
         }
         catch( errMsg )

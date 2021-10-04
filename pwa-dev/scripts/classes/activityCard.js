@@ -418,11 +418,11 @@ function ActivityCard( activityId, options )
             // Set the status as 'Error' with detail.  Save to storage.  And then, display the changes on visible.
             var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_error, 404, 'Error.  Can not be synced.  msg - ' + errMsg );
             ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
-            ClientDataManager.saveCurrent_ClientsStore();
-
-            ActivitySyncUtil.displayActivitySyncStatus( activityId );
-
-            afterDoneCall( false, errMsg );
+            
+            ClientDataManager.saveCurrent_ClientsStore( () => {
+                ActivitySyncUtil.displayActivitySyncStatus( activityId );
+                afterDoneCall( false, errMsg );
+            });
         }
     };
 
@@ -518,9 +518,9 @@ function ActivityCard( activityId, options )
                     }
 
                     // 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
-                    ClientDataManager.saveCurrent_ClientsStore();
-
-                    if ( callBack ) callBack( operationSuccess );
+                    ClientDataManager.saveCurrent_ClientsStore( () => {
+                        if ( callBack ) callBack( operationSuccess );
+                    });
                 });
             }
             else
@@ -532,12 +532,10 @@ function ActivityCard( activityId, options )
                 var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg );
                 ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
 
-                ClientDataManager.saveCurrent_ClientsStore();                                      
-
-                // Add activityJson processing
-                if ( callBack ) callBack( operationSuccess, errMsg );
-            }
-            
+                ClientDataManager.saveCurrent_ClientsStore( () => {
+                    if ( callBack ) callBack( operationSuccess, errMsg );
+                });                                      
+            }            
         }
         else
         {
@@ -588,10 +586,10 @@ function ActivityCard( activityId, options )
             var processingInfo = ActivityDataManager.createProcessingInfo_Other( newStatus, errStatusCode, errMsg );
             ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
 
-            ClientDataManager.saveCurrent_ClientsStore();                                      
-
-            // Add activityJson processing
-            if ( callBack ) callBack( operationSuccess, errMsg );
+            ClientDataManager.saveCurrent_ClientsStore( () => {
+                // Add activityJson processing
+                if ( callBack ) callBack( operationSuccess, errMsg );
+            });                                      
         } 
     };
 
