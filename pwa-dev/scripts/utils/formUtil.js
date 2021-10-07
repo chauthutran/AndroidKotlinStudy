@@ -503,7 +503,7 @@ FormUtil.renderExtraBlockByBlockIdIfAny = function( passedData, blockJson, formT
 // ---- REST (Retrieval/Submit(POST)) Related ----------
 
 
-FormUtil.mdDateTimePicker = function( e, entryTag, formatDate, yearRange ) 
+FormUtil.mdDatePicker = function( e, entryTag, formatDate, yearRange ) 
 {
 	e.preventDefault();			
 	if ( Util.isMobi() ) entryTag.blur();  // NOTE: TODO: WHY THIS?
@@ -538,7 +538,7 @@ FormUtil.mdDateTimePicker = function( e, entryTag, formatDate, yearRange )
 
 
 // NOTE: Only used on statistics..
-FormUtil.mdDateTimePicker2 = function( e, entryTag, formatDate, yearRange ) 
+FormUtil.mdDatePicker2 = function( e, entryTag, formatDate, yearRange ) 
 {
 	var entryTagVal = entryTag.val();
 	var jsEntryTag = entryTag[0];
@@ -570,7 +570,7 @@ FormUtil.mdDateTimePicker2 = function( e, entryTag, formatDate, yearRange )
 };
 
 
-FormUtil.mdDateTimePicker_New = function( e, entryTag, formatDate, formDefJson ) // yearRange
+FormUtil.mdDatePicker_New = function( e, entryTag, formatDate, formDefJson ) // yearRange
 {
 	e.preventDefault();			
 	if ( Util.isMobi() ) entryTag.blur();  // NOTE: TODO: WHY THIS?
@@ -600,6 +600,39 @@ FormUtil.mdDateTimePicker_New = function( e, entryTag, formatDate, formDefJson )
 	{
 		//var inpDate = $( '[name=' + formItemJson.id + ']' );
 		entryTag.val( mdDTObj.time.format( formatDate ) );
+		FormUtil.dispatchOnChangeEvent( entryTag );
+	});
+};
+
+
+FormUtil.mdTimePicker = function( e, entryTag, formatTime, formDefJson )
+{
+	e.preventDefault();			
+	if ( Util.isMobi() ) entryTag.blur();  // NOTE: TODO: WHY THIS?
+
+	var entryTagVal = entryTag.val();
+	var jsEntryTag = entryTag[0];
+
+	
+	var datePastFuture = FormUtil.getDatePastFuture( formDefJson );
+	//if ( !yearRange ) yearRange = { 'from': -100, 'to': 1 };
+	if ( !formatTime ) formatTime = 'hh:mm';
+
+
+	var mdDTObj = new mdDateTimePicker.default({
+		type: 'time'
+		,init: ( entryTagVal == '') ? moment() : moment( entryTagVal )
+		,orientation: 'PORTRAIT'
+		,autoClose2: true
+	} );
+
+	mdDTObj.toggle();
+
+	mdDTObj.trigger = jsEntryTag;
+	jsEntryTag.addEventListener( 'onOk', function() 
+	{
+		//var inpDate = $( '[name=' + formItemJson.id + ']' );
+		entryTag.val( mdDTObj.time.format( formatTime ) );
 		FormUtil.dispatchOnChangeEvent( entryTag );
 	});
 

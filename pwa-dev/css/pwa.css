@@ -847,7 +847,7 @@ div.errorMsg
   color: #fff;
   font-size: 10px;
   position: relative;
-  border-top: 2px solid red;
+  /* border-top: 2px solid red; */
   top: 0; /*4px;*/
   width: fit-content;
   color: #fff;

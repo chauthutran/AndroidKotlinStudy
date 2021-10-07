@@ -112,11 +112,11 @@ function Statistics( cwsRenderObj )
         });
 
         me.customStartPeriodBtnTag.off( 'click' ).click( function( e ) {
-			FormUtil.mdDateTimePicker2( e, me.inputCustomPeriod_StartTag, 'YYYY-MM-DD' );
+			FormUtil.mdDatePicker2( e, me.inputCustomPeriod_StartTag, 'YYYY-MM-DD' );
         });
 
         me.customEndPeriodBtnTag.off( 'click' ).click( function( e ) {
-			FormUtil.mdDateTimePicker2( e, me.inputCustomPeriod_EndTag, 'YYYY-MM-DD' );
+			FormUtil.mdDatePicker2( e, me.inputCustomPeriod_EndTag, 'YYYY-MM-DD' );
         });
 
     };

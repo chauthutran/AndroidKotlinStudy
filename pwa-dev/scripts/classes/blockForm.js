@@ -216,6 +216,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			{
 				divInputFieldTag = me.createDateFieldTag( fieldDef, formDivSecTag );
 			}
+			else if( controlType == "TIME" ) 
+			{
+				divInputFieldTag = me.createTimeFieldTag( fieldDef, formDivSecTag );
+			}
 			else if( controlType == "DROPDOWN_AUTOCOMPLETE" ) // "RADIO_DIALOG"
 			{
 				divInputFieldTag = me.createRadioDialogFieldTag( fieldDef );
@@ -481,7 +485,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return divInputFieldTag;
 	}
 
-	// TRAN TODO : will organize later
 	me.createDateFieldTag = function( fieldDef, formDivSecTag )
 	{
 		wrapperDad = $('<div class="dateContainer"></div>');
@@ -505,7 +508,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}, [] ).join( dtmSeparator );
 
 		// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
-		entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask + '" name="' + fieldDef.id + '" uid="' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup + '" type="text" placeholder="'+ formatDate +'" size="' + ( formatDate.toString().length > 0 ? formatDate.toString().length : '' ) + '" isDate="true" />' );
+		entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask 
+			+ '" name="' + fieldDef.id + '" uid="' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup 
+			+ '" type="text" placeholder="'+ formatDate 
+			+ '" isDate="true" />' );
 
 		wrapperInput.append( entryTag );
 		wrapperDad.append( wrapperInput, button );
@@ -521,8 +527,59 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
 
 		tagOfClick.click( function(e) {
-			//FormUtil.mdDateTimePicker( e, entryTag, formatDate, fieldDef.yearRange );
-			FormUtil.mdDateTimePicker_New( e, formDivSecTag.find( '[name=' + fieldDef.id + ']' ), formatDate, fieldDef );
+			//FormUtil.mdDatePicker( e, entryTag, formatDate, fieldDef.yearRange );
+			FormUtil.mdDatePicker_New( e, formDivSecTag.find( '[name=' + fieldDef.id + ']' ), formatDate, fieldDef );
+		});
+
+		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );
+		divInputFieldTag.find(".field__left").append( wrapperDad );
+
+		return divInputFieldTag;
+	};
+	
+	me.createTimeFieldTag = function( fieldDef, formDivSecTag )
+	{
+		wrapperDad = $('<div class="dateContainer"></div>');
+		wrapperInput = $('<div class="dateWrapper"></div>');
+		button = $('<button class="dateButton" ></button>');
+		icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
+
+		button.append(icoCalendar);
+
+		var formatDate = me.getFormControlRule( fieldDef, "placeholder" );
+		var dtmSeparator = Util.getDateSeparator( formatDate );
+		var formatMask = formatDate.split( dtmSeparator ).reduce( (acum, item) => 
+		{
+			let arr="";
+			for ( let i = 0; i < item.length; i++ )
+			{
+				arr += "#";
+			}
+			acum.push(arr);
+			return acum;
+		}, [] ).join( dtmSeparator );
+
+		// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
+		entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask 
+			+ '" name="' + fieldDef.id + '" uid="' + fieldDef.uid 
+			+ '" dataGroup="' + fieldDef.dataGroup + '" type="text" placeholder="'+ formatDate 
+			+ '" isDate="true" />' );
+
+		wrapperInput.append( entryTag );
+		wrapperDad.append( wrapperInput, button );
+
+		FormUtil.setTagVal( entryTag, fieldDef.defaultValue );
+
+
+		//function that call datepicker
+		Maska.create( entryTag[0] );
+
+		entryTag.click( e => e.preventDefault() );
+
+		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
+
+		tagOfClick.click( function(e) {
+			FormUtil.mdTimePicker( e, formDivSecTag.find( '[name=' + fieldDef.id + ']' ), formatDate, fieldDef );
 		});
 
 		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );

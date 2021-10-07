@@ -1840,7 +1840,6 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
-  border: 1px solid white;
   -webkit-text-fill-color: #4753A3;
   -webkit-box-shadow: 0 0 0px 1000px white inset;
   -webkit-transition: background-color 5000s ease-in-out 0s;
@@ -3538,7 +3537,7 @@ textarea {
   float: left;
   width: 100%;
   height: auto;
-  min-height: 48px;
+  min-height: 50px;
   margin: 0px 0px 12px 0px;
   border: 1px solid #B1B1B1;
   border-radius: 4px;
@@ -3657,7 +3656,7 @@ textarea {
   float: left;
   width: 100%;
   height: auto;
-  min-height: 48px;
+  min-height: 50px;
   margin: 0px 0px 12px 0px;
   border: 1px solid #B1B1B1;
   border-radius: 4px;
@@ -4986,7 +4985,7 @@ textarea {
   float: left;
   width: 100%;
   height: auto;
-  min-height: 48px;
+  min-height: 50px;
   margin: 0px 0px 12px 0px;
   border: 1px solid #B1B1B1;
   border-radius: 4px;
@@ -5102,7 +5101,7 @@ textarea {
   float: left;
   width: 100%;
   height: auto;
-  min-height: 48px;
+  min-height: 50px;
   margin: 0px 0px 12px 0px;
   border: 1px solid #B1B1B1;
   border-radius: 4px;
@@ -5216,7 +5215,7 @@ textarea {
   float: left;
   width: 100%;
   height: auto;
-  min-height: 48px;
+  min-height: 50px;
   margin: 0px 0px 12px 0px;
   border: 1px solid #B1B1B1;
   border-radius: 4px;
