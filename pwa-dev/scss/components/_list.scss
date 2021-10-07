@@ -1,30 +1,18 @@
 .list {
     width: 100%;
     height: auto;
-    background-color: $color-background;
-
-    td {
-        border: 0;
-    }
-
-    tr:nth-child(odd) {
-        background-color: #FBFBFB;
-    }
-
-    tr:nth-child(even) {
-        background-color: #FFF;
-    }
-
-    tr:hover {
-        background-color: #f2f2f2;
-        cursor: pointer;
-    }
+    background-color: transparent;
 
     .card {
         width: 100%;
         height: auto;
-        border-bottom: 1px solid #ddd;
+        //border-bottom: 1px solid #ddd;
         padding: 4px 0;
+
+        &:hover {
+            background-color: #f9f9f9;
+            //cursor: pointer;
+        }
 
         .card__container {
             display: grid;
@@ -44,15 +32,15 @@
 
             .card__content {
                 grid-area: card__content;
-                @include font-size(16px);
+                font-size: 14px;
                 box-sizing: border-box;
                 margin-left: 4px;
 
                 @include rwd-max (380) {
-                    @include font-size(15px);                    
+                    font-size: 12px;
                 }
-    
-                .card__row{
+
+                .card__row {
                     float: left;
                     width: 100%;
                     box-sizing: border-box;
@@ -67,7 +55,7 @@
                 }
 
                 .card__cta_status {
-                    @include font-size(12px);
+                    font-size: 12px;
                     text-align: right;
                     padding-right: 8px;
                 }

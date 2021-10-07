@@ -108,7 +108,7 @@
     float: left;
     width: 100%;
     height: auto;
-    min-height: 50px;
+    min-height: 48px;
     margin: $field-margin;
     border: 1px solid $comp-border;
     border-radius: $radius;
@@ -465,7 +465,7 @@ $retina-suffix: '@2x';
 
         .fab {
             color: $fc-900;
-            background-color: $bg-600;
+            background-color: $bg-900;
 
             svg {
                 fill: $fc-900;
@@ -477,7 +477,7 @@ $retina-suffix: '@2x';
         }
 
         .primary {
-            background-color: $bg-700;
+            background-color: $bg-900;
         }
 
         .button-outline.primary {
@@ -524,18 +524,17 @@ $retina-suffix: '@2x';
 
             li {
                 background-color: $color_white;
-                border-bottom: 2px solid $color_white;
+                //border-bottom: 2px solid $color_white;
 
                 &.active {
-                    background-color: $color_white;
-                    border-bottom: 2px solid $bg-900;
+                    background-color: $btn-l-emphasis;
                 }
             }
         }
 
         .tab_fs {
             @include rwd-min(558) {
-                border-bottom: 1px solid $bg-100;
+                border-bottom: 2px solid $bg-900;
             }
         }
 

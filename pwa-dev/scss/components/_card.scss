@@ -26,13 +26,9 @@
 
             .card__content {
                 grid-area: card__content;
-                @include font-size(16px);
+                font-size: 14px;
                 box-sizing: border-box;
                 margin-left: 4px;
-
-                @include rwd-max (380) {
-                    @include font-size(15px);                    
-                }
 
                 .card__row{
                     float: left;
@@ -49,7 +45,7 @@
                 }
 
                 .card__cta_status {
-                    @include font-size(12px);
+                    font-size: 12px;
                     text-align: right;
                     padding-right: 8px;
                 }
