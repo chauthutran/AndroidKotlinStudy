@@ -79,6 +79,12 @@ ConfigManager.setConfigJson = function ( configJson, userRolesOverrides )
                 ,[ 'favList', 'areas', 'definitionActivityListViews', 'definitionClientListViews'
                     , 'definitionOptions', 'settings.sync.syncDown' ] );
 
+            // NOTE: Above userRole filtering is done in load time (rather than run time)
+            //  due to roles being placed in some special parts..
+            // For more spratically placed ones (outside of def section), 
+            //  We would need to use in real time..
+
+
             ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
         }
     }
