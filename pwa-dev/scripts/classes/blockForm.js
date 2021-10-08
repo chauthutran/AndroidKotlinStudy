@@ -19,6 +19,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	me.formDef_fieldsArr;   // formDef (from config) which is array of fields
 	me.fieldDefsJson = {};  // fieldDef (from config) by Id..
 
+	me.evalFunctionsToProcess;
+
 	me._childTargetActionDelay = 300; // TODO: TEST FOR LESS?  200?
 	me._groupNoneId = 'zzzGroupNone';
 
@@ -41,6 +43,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var formDef_fieldsArr = FormUtil.getObjFromDefinition( formDef, ConfigManager.getConfigJson().definitionForms );		
 		formDef_fieldsArr = ConfigManager.filterList_ByCountryFilter( formDef_fieldsArr );
 		me.formDef_fieldsArr = formDef_fieldsArr;
+
+
+		me.evalFunctionsToProcess = me.getEvalFormulas();
 
 
 		if ( formDef_fieldsArr !== undefined )
@@ -84,7 +89,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
 				//NOTE (2020/07/22): added sort logic to underlying calculationEval so that 'complex' formulas run last
 				setTimeout( function(){
-					me.evalFormInputFunctions( formTag );
+					me.defaultValEval( formTag, me.evalFunctionsToProcess );
 				}, 500 );
 	
 				// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form
@@ -1091,6 +1096,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var pConf = me.payloadConfigSelection; //FormUtil.block_payloadConfig;
 		var retArr = [];
 
+		// 'calculatedValue' not used likely..
+		// 'payloadConfigSelection' - Something we can remove?   <-- TODO: Questions
+
 		for( var i = 0; i < jData.length; i++ )
 		{
 			var formFieldDef = jData[ i ];
@@ -1130,7 +1138,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					}
 					if ( formFieldDef.defaultValue ) 
 					{
-						retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: formFieldDef.defaultValue, byConfig: '', dependencies: me.getFieldsFromFormula( formFieldDef.defaultValue, formFieldDef.id ) } );
+						var defVal = formFieldDef.defaultValue;
+
+						if ( defVal.indexOf( '$${' ) >= 0 || defVal.indexOf( '##{' ) >= 0 || defVal.indexOf( 'eval{' ) >= 0 ) // Matches pattern in FormUtil.evalReservedField()
+						{
+							retArr.push( { name: formFieldDef.id, type: 'defaultValue', formula: defVal, byConfig: '', dependencies: me.getFieldsFromFormula( defVal, formFieldDef.id ) } );
+						}
 					}
 				}
 
@@ -1224,27 +1237,30 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 
 	// TODO: Need to review and re-orgnize the code..
-	me.evalFormInputFunctions = function( formDivSecTag, thisTag, dispatchChangeEvent )
+	me.defaultValEval = function( formDivSecTag, evalFunctionsToProcess, thisTag, dispatchChangeEvent )
 	{
 		// 1. get all evalFunctions (using calculatedValue / defaultValue)
 		// 2. determine which evalFunctions + controls have reference to thisTag control
 		// 3. only update those controls affected by currentControl value change
 
-		
-		//var jData = me.formDef_fieldsArr;
-		var evalFunctionsToProcess = me.getEvalFormulas();
+		// Example: 
+		//	"id": "phoneNumber_existingClient_voucher",
+		//  "defaultValue":    "eval{$('[name=generateVoucher]').val() === 'NO' ? '' : $('input[name=\"phoneNumber_existingClient\"]').val()}",
+
+		// STEP #1: 'thisTag' = generateVoucher
+
+		// STEP #2: Get all 'defaultValue' with 'evaluations'
 		var affectedControls;
 
 		// only focus on changing control's value (cascade calculatedValue)
 		if ( thisTag )
 		{
+			// STEP #3: Get the 'defaultValue' evaluations that uses 'thisTag' id in the formula
+			// 'affectedControls' are the fields that has this 'defaultValue' 
+			//		ex) 'phoneNumber_existingClient_voucher'
 			affectedControls = evalFunctionsToProcess.filter( function( field ){
 				return field.dependencies.includes( thisTag.attr( 'name' ) ) ;
 			} );
-			/*var evalCalcFunctions = me.getEvalFormulas().filter( function( field ){
-				return field.type === 'calculatedValue';
-			});
-			if ( evalCalcFunctions ) affectedControls.concat( evalCalcFunctions );*/
 		}
 		else
 		{
@@ -1253,6 +1269,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			});
 		}
 
+		// STEP #4: Go through each fields that needs to recalculate the value..
 		for( var i = 0; i < affectedControls.length; i++ )
 		{
 			var tagTarget = formDivSecTag.find( '[name="' + affectedControls[ i ].name + '"]' );
@@ -1300,13 +1317,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				if ( thisTag.attr( 'type' ) === 'checkbox' )
 				{
 					setTimeout( function() {
-						me.evalFormInputFunctions( formDivSecTag, thisTag, true ); //.parent()
+						me.defaultValEval( formDivSecTag, me.evalFunctionsToProcess, thisTag, true );
 						me.performEvalActions( thisTag, fieldDef, formDivSecTag, formFull_IdList );		
 					}, 100 );
 				}
 				else
 				{
-					me.evalFormInputFunctions( formDivSecTag, thisTag, true ); //.parent()
+					me.defaultValEval( formDivSecTag, me.evalFunctionsToProcess, thisTag, true );
 					me.performEvalActions( thisTag, fieldDef, formDivSecTag, formFull_IdList );		
 				}
 			});

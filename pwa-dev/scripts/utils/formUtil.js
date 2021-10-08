@@ -1255,6 +1255,7 @@ FormUtil.evalReservedField = function( form, tagTarget, val, dispatchChangeEvent
 	if ( dispatchChange ) tagTarget.change();
 }
 
+
 FormUtil.setQRdataURI = function( sourceInput, imgInputTag )
 {
 	var qrContainer = $( '#qrTemplate' );

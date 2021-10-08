@@ -58,13 +58,7 @@ function ClientCardDetail( clientId, isRestore )
         var clientJson = ClientDataManager.getClientById( clientId );
     
         // #1 clientDetails properties = key        
-
-        var passedData = {
-            "displayData": [
-                { id: "id", value: clientJson._id }
-            ],
-            "resultData": []
-        };
+        var passedData = { "displayData": [ { id: "id", value: clientJson._id } ], "resultData": [] };
 
         for ( var id in clientJson.clientDetails )
         {
@@ -87,12 +81,8 @@ function ClientCardDetail( clientId, isRestore )
         sheetFullTag.find( '.tab_fs li[rel=tab_clientActivities]' ).click( function() 
         {
             activityTabBodyDivTag.html( '' );
-            //.append( '<div blockId="activityList" /><div blockId="addForm" />' );
-            //var activityListBlockTag = activityTabBodyDivTag.find( '[blockId="activityList"]' );
 
             me.populateActivityCardList( clientJson.activities, activityTabBodyDivTag );
-            //me.renderActivityList( activityListBlockTag, clientJson );
-
 
             var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag, { 'mainFavPreClick': function( blockTag, blockContianerTag ) {
                 // Clear the list?
@@ -146,7 +136,7 @@ function ClientCardDetail( clientId, isRestore )
 
         // -----------------------------------------
         // Default click 'Client'
-        sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click();
+        sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first().click();
     };    
 
     // ------------------------------
