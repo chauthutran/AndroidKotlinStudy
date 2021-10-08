@@ -80,6 +80,30 @@
 .divInputReadOnly {
   background-color: #eee;
 }
+
+/* ----style overwrite/additional setting----------------- */
+
+@media (orientation: portrait) and (min-width: 240px) {
+  .contentBody .field {
+    width: 100%;
+    margin: 0 0 8px;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 320px) {
+  .contentBody .field {
+    width: 100%;
+    margin: 0 0 8px;
+  }
+}
+
+@media (min-width: 558px) {
+  .contentBody .field {
+    width: calc(50% - 8px);
+    margin: 0 4px 8px 4px !important;
+  }
+}
+
 /* --------------------- */
 
 .pointer {

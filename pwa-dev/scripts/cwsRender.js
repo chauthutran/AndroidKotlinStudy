@@ -424,6 +424,8 @@ function cwsRender()
 
 		Menu.renderDefaultTheme();
 		me.loginObj.openForm();
+
+		// .btnBack 
 	};
 
 
@@ -475,7 +477,10 @@ function cwsRender()
 	{
 		// Hide non login related tags..
 		me.Nav1Tag.hide();
-		me.pageDivTag.hide();		
+		me.pageDivTag.hide();	
+		
+		// Hide all the overlap full screen by clicking backbutton..?  or simply hiding them?
+		$( 'div.sheet_full-fs' ).remove();
 	};
 	
 	me.showPageDiv = function()
