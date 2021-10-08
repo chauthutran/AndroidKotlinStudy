@@ -104,6 +104,18 @@
   }
 }
 
+.i-client {
+  background-image: url( '../images/menu_client_list.svg' );
+} 
+
+.i-activity {
+  background-image: url( '../images/menu_records_list.svg' );
+} 
+
+.i-relationship {
+  background-image: url( '../images/menu_enrollment.svg' );
+} 
+
 /* --------------------- */
 
 .pointer {

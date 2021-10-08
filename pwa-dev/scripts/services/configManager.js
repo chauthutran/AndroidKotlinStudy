@@ -235,15 +235,18 @@ ConfigManager.matchUserRoles = function( itemUserRoles, inputUserRoles )
 {
     var isMatch = false;
 
-    for ( var i = 0; i < itemUserRoles.length; i++ )
+    if ( Util.isTypeArray( itemUserRoles ) )
     {
-        var itemUserRole = itemUserRoles[i];
-
-        if ( inputUserRoles.indexOf( itemUserRole ) >= 0 ) 
+        for ( var i = 0; i < itemUserRoles.length; i++ )
         {
-            isMatch = true;
-            break;
-        }
+            var itemUserRole = itemUserRoles[i];
+    
+            if ( inputUserRoles.indexOf( itemUserRole ) >= 0 ) 
+            {
+                isMatch = true;
+                break;
+            }
+        }    
     }
 
     return isMatch;

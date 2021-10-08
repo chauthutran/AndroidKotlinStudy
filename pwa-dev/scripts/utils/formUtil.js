@@ -238,6 +238,7 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 	{
 		if ( !limitCount ) limitCount = 0;
 
+		// 1. Get definition object/array
 		if ( Util.isTypeString( def ) )
 		{
 			// OPTION NEW 'local to block' - Check for Block preName with '.' (Local Def in block)
@@ -251,8 +252,21 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 			objJson = def;
 		}
 
+
+		// 2. More action: Array combining or userRole filter.
 		// If Definition is array, check if any string def exists and replace them with array. - also, recursively call def
 		if ( Util.isTypeArray( objJson ) ) FormUtil.arrayDefReplace( objJson, definitions, limitCount );
+		else if ( Util.isTypeObject( def ) )
+		{
+			// If object were properly loaded, check the userRole exists.  If so, apply it.
+			if ( def.userRoles )
+			{
+				if ( !ConfigManager.matchUserRoles( def.userRoles, ConfigManager.login_UserRoles ) )
+				{
+					objJson = undefined;  // If roles does not exists, return undefined.
+				}
+			}
+		}
 	}
 	catch ( errMsg )
 	{

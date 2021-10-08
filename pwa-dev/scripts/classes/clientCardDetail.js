@@ -343,18 +343,18 @@ ClientCardDetail.cardFullScreen = `
                 <ul class="tab_fs__head" style="background-color: #fff;">
 
                     <li class="primary active" rel="tab_clientDetails">
-                        <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                        <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                         <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
 
                         <ul class="2ndary" style="display: none; z-index: 1;">
 
                             <li class="2ndary" style="display:none" rel="tab_clientActivities">
-                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                                <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activity</span>
                             </li>  
 
                             <li class="2ndary" style="display:none" rel="tab_relationships">
-                                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                                <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 
@@ -372,18 +372,18 @@ ClientCardDetail.cardFullScreen = `
                     </li>
 
                     <li class="primary" rel="tab_clientActivities">
-                        <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                        <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                         <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
 
                         <ul class="2ndary" style="display: none; z-index: 1;">
 
                             <li class="2ndary" style="display:none" rel="tab_clientDetails">
-                                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                                <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                                 <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
                             <li class="2ndary" style="display:none" rel="tab_relationships">
-                                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                                <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 
@@ -401,17 +401,17 @@ ClientCardDetail.cardFullScreen = `
                     </li>
                     
                     <li class="primary" rel="tab_relationships">
-                        <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                        <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                         <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                         <ul class="2ndary" style="display: none; z-index: 1;">
 
                             <li class="2ndary" style="display:none" rel="tab_clientDetails">
-                                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                                <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                                 <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
                             <li class="2ndary" style="display:none" rel="tab_clientActivities">
-                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                                <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
                             </li>
 
@@ -434,17 +434,17 @@ ClientCardDetail.cardFullScreen = `
                         <ul class="2ndary" style="display: none; z-index: 1;">
 
                             <li class="2ndary" style="display:none" rel="tab_clientDetails">
-                                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                                <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                                 <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
                             <li class="2ndary" style="display:none" rel="tab_clientActivities">
-                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                                <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
                             </li>
 
                             <li class="2ndary" style="display:none" rel="tab_relationships">
-                                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                                <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 
@@ -462,17 +462,17 @@ ClientCardDetail.cardFullScreen = `
                         <ul class="2ndary" style="display: none; z-index: 1;">
 
                             <li class="2ndary" style="display:none" rel="tab_clientDetails">
-                                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
+                                <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                                 <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
                             <li class="2ndary" style="display:none" rel="tab_clientActivities">
-                                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
+                                <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
                             </li>
 
                             <li class="2ndary" style="display:none" rel="tab_relationships">
-                                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
+                                <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 

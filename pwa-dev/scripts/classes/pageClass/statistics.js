@@ -476,7 +476,7 @@ StatisticsUtil.periodSelectorOptions = {
         "name": "last Month",
         "term": "stats_period_lastMonth",
         "from": "moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');",
-        "to": "moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');",
+        "to": "moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');",
         "enabled": "true"
     },
     "thisYear": {

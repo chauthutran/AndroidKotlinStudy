@@ -97,29 +97,32 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
         {
             var btnJson = FormUtil.getObjFromDefinition( me.blockDefJson.bottomButton, ConfigManager.getConfigJson().definitionButtons );
 
-            // ---------------------------------
-            // button button..
-            var sheetBottomBtnDivTag = $( Templates.sheetBottomBtn );
-            blockTag.append( sheetBottomBtnDivTag );
-            var sheetBottomBtnTitleTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtnTitle' );
-            sheetBottomBtnTitleTag.text( 'Did you fail to find the correct person?' );
-            var sheetBottomBtnTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtn' );
-            sheetBottomBtnTag.find( 'div.button-label' ).text( 'New Client' );  // btnJson.name
+            if ( btnJson )
+            {
+                // ---------------------------------
+                // button button..
+                var sheetBottomBtnDivTag = $( Templates.sheetBottomBtn );
+                blockTag.append( sheetBottomBtnDivTag );
+                var sheetBottomBtnTitleTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtnTitle' );
+                sheetBottomBtnTitleTag.text( 'Did you fail to find the correct person?' );
+                var sheetBottomBtnTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtn' );
+                sheetBottomBtnTag.find( 'div.button-label' ).text( 'New Client' );  // btnJson.name
 
-    		if ( btnJson.onClick )
-			{
-                sheetBottomBtnTag.click( function() 
-                {        
-                    //GAnalytics.setEvent( 'ButtonClick', btnId, 'formButton', 1 );
-                    MsgManager.msgAreaClearAll();
-                    //if ( me.networkModeNotSupported( btnJson, ConnManagerNew.statusInfo.appMode ) )
-        
-                    var formDivSecTag = undefined;
-                    var passedData = {};
-        
-                    var actionObj = new Action( me.cwsRenderObj, me.blockObj );
-                    actionObj.handleClickActions( sheetBottomBtnTag, btnJson.onClick, me.blockObj.parentTag, blockTag, formDivSecTag, passedData );
-                });        
+                if ( btnJson.onClick )
+                {
+                    sheetBottomBtnTag.click( function() 
+                    {        
+                        //GAnalytics.setEvent( 'ButtonClick', btnId, 'formButton', 1 );
+                        MsgManager.msgAreaClearAll();
+                        //if ( me.networkModeNotSupported( btnJson, ConnManagerNew.statusInfo.appMode ) )
+            
+                        var formDivSecTag = undefined;
+                        var passedData = {};
+            
+                        var actionObj = new Action( me.cwsRenderObj, me.blockObj );
+                        actionObj.handleClickActions( sheetBottomBtnTag, btnJson.onClick, me.blockObj.parentTag, blockTag, formDivSecTag, passedData );
+                    });        
+                }
             }
         }
 
