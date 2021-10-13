@@ -479,8 +479,8 @@ function cwsRender()
 		me.Nav1Tag.hide();
 		me.pageDivTag.hide();	
 		
-		// Hide all the overlap full screen by clicking backbutton..?  or simply hiding them?
-		$( 'div.sheet_full-fs' ).remove();
+		// TODO: Hide all the overlap full screen by clicking backbutton..?  or simply hiding them?
+		// $( 'div.sheet_full-fs' ).remove();  // <-- ALSO REMOVE NON-TEMPORARY ONES..
 	};
 	
 	me.showPageDiv = function()

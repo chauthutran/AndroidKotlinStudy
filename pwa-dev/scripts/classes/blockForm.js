@@ -225,6 +225,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			{
 				divInputFieldTag = me.createTimeFieldTag( fieldDef, formDivSecTag );
 			}
+			else if( controlType == "TIME2" ) 
+			{
+				divInputFieldTag = me.createTime2FieldTag( fieldDef, formDivSecTag );
+			}
 			else if( controlType == "DROPDOWN_AUTOCOMPLETE" ) // "RADIO_DIALOG"
 			{
 				divInputFieldTag = me.createRadioDialogFieldTag( fieldDef );
@@ -492,10 +496,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.createDateFieldTag = function( fieldDef, formDivSecTag )
 	{
-		wrapperDad = $('<div class="dateContainer"></div>');
-		wrapperInput = $('<div class="dateWrapper"></div>');
-		button = $('<button class="dateButton" ></button>');
-		icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
+		var wrapperDad = $('<div class="dateContainer"></div>');
+		var wrapperInput = $('<div class="dateWrapper"></div>');
+		var button = $('<button class="dateButton" ></button>');
+		var icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
 
 		button.append(icoCalendar);
 
@@ -513,10 +517,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}, [] ).join( dtmSeparator );
 
 		// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
-		entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask 
+		var entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask 
 			+ '" name="' + fieldDef.id + '" uid="' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup 
-			+ '" type="text" placeholder="'+ formatDate 
-			+ '" isDate="true" />' );
+			+ '" type="text" placeholder="'+ formatDate + '" isDate="true" />' );
 
 		wrapperInput.append( entryTag );
 		wrapperDad.append( wrapperInput, button );
@@ -544,6 +547,96 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	
 	me.createTimeFieldTag = function( fieldDef, formDivSecTag )
 	{
+		var wrapperDad = $('<div class="dateContainer"></div>');
+		var wrapperInput = $('<div class="dateWrapper"></div>');
+		var button = $('<button class="dateButton" ></button>');
+		var icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
+
+		button.append(icoCalendar);
+
+		var formatDate = me.getFormControlRule( fieldDef, "placeholder" );
+
+		var entryTag = $( '<input class="dataValue displayValue" name="' + fieldDef.id + '" uid="' + fieldDef.uid 
+			+ '" dataGroup="' + fieldDef.dataGroup + '" type="text" placeholder="'+ formatDate + '" isTime="true" />' );
+
+		wrapperInput.append( entryTag );
+		wrapperDad.append( wrapperInput, button );
+
+		FormUtil.setTagVal( entryTag, fieldDef.defaultValue );
+
+
+		entryTag.click( e => e.preventDefault() );
+		entryTag.change( function() {
+			var entryVal = entryTag.val();
+			//var timeStr = me.handleTimePM( entryVal );
+			if ( entryVal ) entryTag.val( moment( entryVal, 'h:mm A' ).format( 'HH:mm' ) );	
+		});
+
+		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
+		tagOfClick.click( function( e ) { e.preventDefault(); });
+
+		var options = ( fieldDef.timeOptions ) ? fieldDef.timeOptions : {}
+		options.events = {
+			timeChanged: function (data) {
+				if ( data.value ) entryTag.val( data.value ).change();
+			},
+			shown: function() { 
+				me.applyInputTime( entryTag.val(), this );
+			}
+		};
+
+		//  is24hour: false/true
+		//  timeFormat: 'hh:mm:ss.000', // format of the time value (data-time attribute)
+		//  format: 'h:mm tt', // format of the input value
+		//  hourPadding: false,
+		// var domTag = tagOfClick[0];
+
+		mdtimepicker( tagOfClick[0], options );
+
+
+		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );
+		divInputFieldTag.find(".field__left").append( wrapperDad );
+
+		return divInputFieldTag;
+	};
+	
+	me.applyInputTime = function( inputVal, timeObj )
+	{
+		try
+		{
+			if ( inputVal )
+			{
+				var mt = moment( inputVal, 'hh:mm' );
+				timeObj.setHour( Number( mt.format( 'h' ) ) );
+				timeObj.setMinute( Number( mt.format( 'mm' ) ) );
+				timeObj.setPeriod( mt.format( 'A' ) );
+			}	
+		}
+		catch( errMsg ) { console.log( 'ERROR in blockForm.getTimeFormattedJson, ' + errMsg ); }
+	};
+
+
+	me.handleTimePM = function( inputVal )
+	{
+		try
+		{
+			if ( inputVal )
+			{
+				if ( inputVal.indexOf( 'PM' ) )
+				var mt = moment( inputVal, 'hh:mm' );
+				timeObj.setHour( Number( mt.format( 'h' ) ) );
+				timeObj.setMinute( Number( mt.format( 'mm' ) ) );
+				timeObj.setPeriod( mt.format( 'A' ) );
+			}	
+		}
+		catch( errMsg ) { console.log( 'ERROR in blockForm.handleTimePM, ' + errMsg ); }
+	};
+
+	//var timeStr = me.handleTimePM( entryVal );
+	//if ( entryVal ) entryTag.val( moment( entryVal, 'hh:mm' ).format( 'HH:mm' ) );	
+
+	me.createTime2FieldTag = function( fieldDef, formDivSecTag )
+	{
 		wrapperDad = $('<div class="dateContainer"></div>');
 		wrapperInput = $('<div class="dateWrapper"></div>');
 		button = $('<button class="dateButton" ></button>');
@@ -552,32 +645,16 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		button.append(icoCalendar);
 
 		var formatDate = me.getFormControlRule( fieldDef, "placeholder" );
-		var dtmSeparator = Util.getDateSeparator( formatDate );
-		var formatMask = formatDate.split( dtmSeparator ).reduce( (acum, item) => 
-		{
-			let arr="";
-			for ( let i = 0; i < item.length; i++ )
-			{
-				arr += "#";
-			}
-			acum.push(arr);
-			return acum;
-		}, [] ).join( dtmSeparator );
 
-		// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
-		entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask 
-			+ '" name="' + fieldDef.id + '" uid="' + fieldDef.uid 
-			+ '" dataGroup="' + fieldDef.dataGroup + '" type="text" placeholder="'+ formatDate 
-			+ '" isDate="true" />' );
+		// TODO: JAMES: ASK GREG TO CHECK THE USAGE..  - data-mask="' + formatMask 
+		var entryTag = $( '<input class="dataValue displayValue" name="' + fieldDef.id + '" uid="' + fieldDef.uid 
+			+ '" dataGroup="' + fieldDef.dataGroup + '" type="text" placeholder="'+ formatDate + '" />' );
 
 		wrapperInput.append( entryTag );
 		wrapperDad.append( wrapperInput, button );
 
 		FormUtil.setTagVal( entryTag, fieldDef.defaultValue );
 
-
-		//function that call datepicker
-		Maska.create( entryTag[0] );
 
 		entryTag.click( e => e.preventDefault() );
 

@@ -628,16 +628,16 @@ FormUtil.mdTimePicker = function( e, entryTag, formatTime, formDefJson )
 	var jsEntryTag = entryTag[0];
 
 	
-	var datePastFuture = FormUtil.getDatePastFuture( formDefJson );
+	//var datePastFuture = FormUtil.getDatePastFuture( formDefJson );
 	//if ( !yearRange ) yearRange = { 'from': -100, 'to': 1 };
 	if ( !formatTime ) formatTime = 'hh:mm';
 
 
 	var mdDTObj = new mdDateTimePicker.default({
 		type: 'time'
-		,init: ( entryTagVal == '') ? moment() : moment( entryTagVal )
-		,orientation: 'PORTRAIT'
-		,autoClose2: true
+		//,init: ( entryTagVal == '') ? moment() : moment( entryTagVal )
+		//,orientation: 'PORTRAIT'
+		//,autoClose2: true
 	} );
 
 	mdDTObj.toggle();

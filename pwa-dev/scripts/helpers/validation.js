@@ -4,6 +4,7 @@ function Validation() {};
 Validation._DisableValidation = false;
 Validation.COLOR_WARNING = '#f19c9c';
 Validation.DATE_FORMAT = 'YYYY-MM-DD';
+Validation.TIME_FORMAT = 'HH:mm';
 
 Validation.disableValidation = function( execFunc )
 {
@@ -67,6 +68,7 @@ Validation.checkValidations = function( tag )
                 Validation.performValidationCheck( tag, 'maxvalue', divErrorMsgTargetTag );
                 Validation.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
                 Validation.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
+                Validation.performValidationCheck( tag, 'isTime', divErrorMsgTargetTag );
                 Validation.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
 
                 Validation.performValidationCheck( tag, 'dateRange', divErrorMsgTargetTag );
@@ -134,6 +136,7 @@ Validation.performValidationCheck = function( tag, type, divTag, alwaysRun )
         else if ( type == 'exactlength' ) valid = Validation.checkValueLen( tag, divTag, type, Number( validationAttr ) );
         else if ( type == 'isNumber' ) valid = Validation.checkNumberOnly( tag, divTag, type );
         else if ( type == 'isDate' ) valid = Validation.checkValidDate( tag, divTag, type );
+        else if ( type == 'isTime' ) valid = Validation.checkValidTime( tag, divTag, type );
         else if ( type == 'phoneNumber' ) valid = Validation.checkPhoneNumberValue( tag, divTag, type );
 
         else if ( type == 'dateRange' ) valid = Validation.checkDateRange( tag, divTag, type, validationAttr, prev_valid );
@@ -280,6 +283,31 @@ Validation.checkValidDate = function( inputTag, divTag, type )
     catch( errMsg )
     {
         console.log( 'ERROR in Validation.checkValidDate(), errMsg: ' + errMsg );
+    }
+
+    return valid;	
+};
+
+
+// Check with 'HH:mm' format (starting..)
+Validation.checkValidTime = function( inputTag, divTag, type )
+{
+    var valid = true;
+    var value = inputTag.val();
+
+    try
+    {
+        valid = moment( value, Validation.TIME_FORMAT, true ).isValid();
+
+        if ( !valid )
+        {
+            var message = Validation.getMessage( type, 'Please enter valid time' );
+            divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
+        }    
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in Validation.checkValidTime(), errMsg: ' + errMsg );
     }
 
     return valid;	
