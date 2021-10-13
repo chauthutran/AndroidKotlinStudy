@@ -272,13 +272,16 @@ Validation.checkValidDate = function( inputTag, divTag, type )
 
     try
     {
-        valid = moment( value, Validation.DATE_FORMAT, true ).isValid();
-
-        if ( !valid )
+        if ( value !== '' )  // allow empty value as valid time format.  mandatory should handle validation seperately
         {
-            var message = Validation.getMessage( type, 'Please enter valid date' );
-            divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
-        }    
+            valid = moment( value, Validation.DATE_FORMAT, true ).isValid();
+
+            if ( !valid )
+            {
+                var message = Validation.getMessage( type, 'Please enter valid date' );
+                divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
+            }    
+        }
     }
     catch( errMsg )
     {
@@ -297,13 +300,16 @@ Validation.checkValidTime = function( inputTag, divTag, type )
 
     try
     {
-        valid = moment( value, Validation.TIME_FORMAT, true ).isValid();
-
-        if ( !valid )
+        if ( value !== '' )  // allow empty value as valid time format.  mandatory should handle validation seperately
         {
-            var message = Validation.getMessage( type, 'Please enter valid time' );
-            divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
-        }    
+            valid = moment( value, Validation.TIME_FORMAT, true ).isValid();
+
+            if ( !valid )
+            {
+                var message = Validation.getMessage( type, 'Please enter valid time' );
+                divTag.append( Validation.getErrorSpanTag( message, 'validationMsg_' + type ) );
+            }        
+        }
     }
     catch( errMsg )
     {
