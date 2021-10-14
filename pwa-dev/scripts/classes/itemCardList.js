@@ -199,10 +199,9 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
             // If already have added emtpyList, no need to add emptyList
             if ( listTableTbodyTag.find( 'div.emptyList' ).length === 0 )
             {
-                listTableTbodyTag.append( $( me.template_divItemDetailEmptyTag ) );
+                if ( blockDefJson.emtpyListMsg ) listTableTbodyTag.append( blockDefJson.emtpyListMsg );
+                else listTableTbodyTag.append( $( me.template_divItemDetailEmptyTag ) );
             }
-
-            //if ( scrollEndFunc ) scrollEndFunc();
         }
         else
         {
