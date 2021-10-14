@@ -232,7 +232,7 @@ FormUtil.sheetFullSetup = function( template, options )
 
 FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 {
-	var objJson; // = def;  // default is the passed in object/name
+	var defJson; // = def;  // default is the passed in object/name
 
 	try
 	{
@@ -242,29 +242,39 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 		if ( Util.isTypeString( def ) )
 		{
 			// OPTION NEW 'local to block' - Check for Block preName with '.' (Local Def in block)
-			var localObjJson = FormUtil.getBlockLocalDefObj( def );
-			if ( localObjJson ) objJson = localObjJson;
-			else if ( definitions && definitions[ def ] ) objJson = definitions[ def ]; // Get object from definitions
+			var localDefJson = FormUtil.getBlockLocalDefObj( def );
+			if ( localDefJson ) defJson = localDefJson;
+			else if ( definitions && definitions[ def ] ) defJson = definitions[ def ]; // Get object from definitions
 
 		}
 		else if ( Util.isTypeObject( def ) || Util.isTypeArray( def ) )
 		{
-			objJson = def;
+			defJson = def;
 		}
 
 
 		// 2. More action: Array combining or userRole filter.
 		// If Definition is array, check if any string def exists and replace them with array. - also, recursively call def
-		if ( Util.isTypeArray( objJson ) ) FormUtil.arrayDefReplace( objJson, definitions, limitCount );
-		else if ( Util.isTypeObject( def ) )
+		if ( Util.isTypeArray( defJson ) ) FormUtil.arrayDefReplace( defJson, definitions, limitCount );
+		else if ( Util.isTypeObject( defJson ) )
 		{
 			// If object were properly loaded, check the userRole exists.  If so, apply it.
-			if ( def.userRoles )
+			if ( defJson.userRoles )
 			{
-				if ( !ConfigManager.matchUserRoles( def.userRoles, ConfigManager.login_UserRoles ) )
+				if ( !ConfigManager.matchUserRoles( defJson.userRoles, ConfigManager.login_UserRoles ) )
 				{
-					objJson = undefined;  // If roles does not exists, return undefined.
+					defJson = undefined;  // If roles does not exists, return undefined.
 				}
+			}
+
+			// If definition obj has 'show
+			if ( defJson && defJson.showConditionEval )
+			{
+				try {
+					evalStr = Util.getEvalStr( defJson.showConditionEval );  // Handle array into string joining
+					if ( evalStr && eval( evalStr ) === false ) defJson = undefined; 
+				}
+				catch( errMsg ) { console.log( 'ERROR in FormUtil.getObjFromDefinition showConditionEval, ' + errMsg ); }
 			}
 		}
 	}
@@ -273,26 +283,26 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 		console.customLog( 'ERROR in FormUtil.getObjFromDefinition, id: ' + def + ', errMsg: ' + errMsg );
 	}
 
-	return objJson;
+	return defJson;
 };
 
 
 // form fields array = []
-FormUtil.arrayDefReplace = function( objJson, definitions, limitCount )
+FormUtil.arrayDefReplace = function( defJson, definitions, limitCount )
 {
 	// if the limitCount is over 5, do not do this, which is recursive call.
 	if ( limitCount < 5 )
 	{
-		for ( var i = objJson.length - 1; i >= 0;  i-- )
+		for ( var i = defJson.length - 1; i >= 0;  i-- )
 		{
-			var item = objJson[i];
+			var item = defJson[i];
 	
 			if ( Util.isTypeString( item ) )
 			{
-				objJson.splice( i, 1 ); // remove the string 'item' and insert the item array.
+				defJson.splice( i, 1 ); // remove the string 'item' and insert the item array.
 	
 				var itemsArr = FormUtil.getObjFromDefinition( item, definitions, limitCount );
-				if ( itemsArr ) Util.insertItmesOnArray( objJson, i, itemsArr );
+				if ( itemsArr ) Util.insertItmesOnArray( defJson, i, itemsArr );
 			}
 		}
 	}
@@ -302,7 +312,7 @@ FormUtil.arrayDefReplace = function( objJson, definitions, limitCount )
 FormUtil.getBlockLocalDefObj = function( def )
 {
 	var blockPreNameIdx = def.indexOf ( '.' );
-	var localObjJson;
+	var localDefJson;
 
 	if ( blockPreNameIdx > 0 && def.length > blockPreNameIdx + 1 )
 	{
@@ -313,11 +323,11 @@ FormUtil.getBlockLocalDefObj = function( def )
 
 		if ( blockJson && blockJson.DEFINITIONS && blockJson.DEFINITIONS[ localDefName ] )
 		{
-			localObjJson = blockJson.DEFINITIONS[ localDefName ];
+			localDefJson = blockJson.DEFINITIONS[ localDefName ];
 		}
 	}
 
-	return localObjJson;
+	return localDefJson;
 };
 
 FormUtil.rotateTag = function( tag, runRotation )

@@ -152,16 +152,21 @@ function BlockButton( cwsRenderObj, blockObj )
 
 	me.renderBlockButton = function( btnId, targetTag, passedData )
 	{
+		var btnTag;
+
 		//var targetDivTag;  // target Div where the buttons will be added.
 		var btnJson = FormUtil.getObjFromDefinition( btnId, ConfigManager.getConfigJson().definitionButtons );
 
-		btnId = FormUtil.getObjDefId( btnId );
+		if ( btnJson )
+		{
+			btnId = FormUtil.getObjDefId( btnId );
 		
-		// For TabButtons Case, they are already generaeted with some html at this point...  Simply adding more details.
-		var btnTag = me.generateBtnTag( btnJson, btnId, targetTag );
-		
-		// Block Button Click Setup
-		me.setUpBtnClick( btnTag, btnJson, btnId, passedData );
+			// For TabButtons Case, they are already generaeted with some html at this point...  Simply adding more details.
+			btnTag = me.generateBtnTag( btnJson, btnId, targetTag );
+			
+			// Block Button Click Setup
+			me.setUpBtnClick( btnTag, btnJson, btnId, passedData );	
+		}
 
 		return btnTag;
 	};
