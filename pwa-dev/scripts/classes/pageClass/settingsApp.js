@@ -167,7 +167,7 @@ function settingsApp( cwsRender )
         });
 
 
-        $( 'img.btnSettingsBack' ).click( () =>
+        me.settingsFormDivTag.find( 'img.btnBack' ).click( () =>
         {
             if ( $( 'img.rotateImg' ).length  )
             {

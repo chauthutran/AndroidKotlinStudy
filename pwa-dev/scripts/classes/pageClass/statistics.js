@@ -41,35 +41,43 @@ function Statistics( cwsRenderObj )
 
     me.render = function()
     {
-        $( '#statsNav2' ).show(); // Stats Nav2       
+        try
+        {
+            $( '#statsNav2' ).show(); // Stats Nav2       
 
-        me.initialize_UI();
-
-        me.loadPeriodOptions( me.statsPeriodSelector, StatisticsUtil.periodSelectorOptions, 'reset' );
-
-        TranslationManager.translatePage();
-
-
-        me.setEvents_OnRender();
-
-        
-        me.loadStatConfigPage( me.statsContentPageTag, function() {
-
-            // Load script defined period options - This '_statsPeriodOptions' (optional) are from the script
-            if ( _statsPeriodOptions ) me.loadPeriodOptions( me.statsPeriodSelector, _statsPeriodOptions );
-
-            me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {
-
-                me._clientList_Clone = me.prepareClientListData( ClientDataManager.getClientList() );            
-
-                // This method should have been loaded by above 'script' content eval
-                renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
-
-                TranslationManager.translatePage();
-            });
-        });    
-
-        me.statisticsFormDiv.fadeIn();
+            me.initialize_UI();
+    
+            me.loadPeriodOptions( me.statsPeriodSelector, StatisticsUtil.periodSelectorOptions, 'reset' );
+    
+            TranslationManager.translatePage();
+    
+    
+            me.setEvents_OnRender();
+    
+            
+            me.loadStatConfigPage( me.statsContentPageTag, function() {
+    
+                // Load script defined period options - This '_statsPeriodOptions' (optional) are from the script
+                if ( _statsPeriodOptions ) me.loadPeriodOptions( me.statsPeriodSelector, _statsPeriodOptions );
+    
+                me.applyPeriodSelection( me.statsPeriodSelector, function( startPeriod, endPeriod ) {
+    
+                    me._clientList_Clone = me.prepareClientListData( ClientDataManager.getClientList() );            
+    
+                    // This method should have been loaded by above 'script' content eval
+                    renderAllStats( me._clientList_Clone, startPeriod, endPeriod );
+    
+                    TranslationManager.translatePage();
+                });
+            });    
+    
+            me.statisticsFormDiv.fadeIn();
+        }
+        catch( errMsg )
+        {
+            MsgManager.msgAreaShow( 'ERROR during statistic rendering', 'ERROR' );
+            console.log( errMsg );
+        }
     };
 
     // -------------------------------------------------

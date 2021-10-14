@@ -481,6 +481,7 @@ function cwsRender()
 		
 		// TODO: Hide all the overlap full screen by clicking backbutton..?  or simply hiding them?
 		// $( 'div.sheet_full-fs' ).remove();  // <-- ALSO REMOVE NON-TEMPORARY ONES..
+		$( '.btnBack' ).click();
 	};
 	
 	me.showPageDiv = function()

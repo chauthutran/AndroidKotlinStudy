@@ -46,7 +46,7 @@ function aboutApp( cwsRender )
         // --------------
         // BUTTON CLICKS
 
-        $( 'img.btnAboutBack' ).click( () =>
+        me.aboutFormDivTag.find( 'img.btnBack' ).click( () =>
         {
             if ( $( 'img.rotateImg' ).length  )
             {
