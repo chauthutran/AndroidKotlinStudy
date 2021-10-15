@@ -115,7 +115,6 @@ SettingsStatic.retrieveFixOperations = function( userName, fixOperationLast, ret
     } }; //, 'dateTime': { "$gte": fixOperationLast } } };
 
     if ( fixOperationLast ) payloadJson.find.dateTime = { "$gte": fixOperationLast };
-    //"date.updatedUTC": { "$gte": "Util.getStr( INFO.syncLastDownloaded_noZ );"
 
     WsCallManager.requestDWS_RETRIEVE( WsCallManager.EndPoint_PWAFixOp_GET, payloadJson, undefined, returnFunc );
 };
