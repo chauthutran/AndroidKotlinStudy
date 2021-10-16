@@ -245,7 +245,7 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 			var localDefJson = FormUtil.getBlockLocalDefObj( def );
 			if ( localDefJson ) defJson = localDefJson;
 			else if ( definitions && definitions[ def ] ) defJson = definitions[ def ]; // Get object from definitions
-
+			else defJson = def;  // definitionJson not found.  So, return just string name.
 		}
 		else if ( Util.isTypeObject( def ) || Util.isTypeArray( def ) )
 		{
@@ -255,7 +255,10 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 
 		// 2. More action: Array combining or userRole filter.
 		// If Definition is array, check if any string def exists and replace them with array. - also, recursively call def
-		if ( Util.isTypeArray( defJson ) ) FormUtil.arrayDefReplace( defJson, definitions, limitCount );
+		if ( Util.isTypeArray( defJson ) ) 
+		{
+			FormUtil.arrayDefReplace( defJson, definitions, limitCount );
+		}
 		else if ( Util.isTypeObject( defJson ) )
 		{
 			// If object were properly loaded, check the userRole exists.  If so, apply it.
@@ -290,19 +293,24 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 // form fields array = []
 FormUtil.arrayDefReplace = function( defJson, definitions, limitCount )
 {
-	// if the limitCount is over 5, do not do this, which is recursive call.
-	if ( limitCount < 5 )
+	if ( defJson && definitions )
 	{
-		for ( var i = defJson.length - 1; i >= 0;  i-- )
+		// if the limitCount is over 5, do not do this, which is recursive call.
+		if ( limitCount < 5 )
 		{
-			var item = defJson[i];
-	
-			if ( Util.isTypeString( item ) )
+			for ( var i = defJson.length - 1; i >= 0;  i-- )
 			{
-				defJson.splice( i, 1 ); // remove the string 'item' and insert the item array.
-	
-				var itemsArr = FormUtil.getObjFromDefinition( item, definitions, limitCount );
-				if ( itemsArr ) Util.insertItmesOnArray( defJson, i, itemsArr );
+				var item = defJson[i];
+		
+				if ( Util.isTypeString( item ) )
+				{
+					var itemsArr = FormUtil.getObjFromDefinition( item, definitions, limitCount );
+					if ( itemsArr ) 
+					{
+						defJson.splice( i, 1 ); // remove the string 'item' and insert the item array.
+						Util.insertItmesOnArray( defJson, i, itemsArr );
+					}		
+				}
 			}
 		}
 	}
@@ -369,7 +377,8 @@ FormUtil.rotateImgTag = function( tag, runRotation )
 // Temp use by 'dataList' for now - might populate it fully for more common use
 FormUtil.renderInputTag = function( dataJson, containerDivTag )
 {
-	var entryTag = $( '<input name="' + dataJson.id + '" uid="' + dataJson.uid + '" class="form-type-text" type="text" />' );
+	var entryTag = $( '<input name="' + dataJson.id + '" class="form-type-text" type="text" />' );
+	if ( dataJson.uid ) entryTag.attr( 'uid', dataJson.uid );
 
 	if ( dataJson.display ) entryTag.attr( 'display', dataJson.display );
 
