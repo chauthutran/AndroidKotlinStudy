@@ -256,6 +256,11 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
                 me.blockTag.find( '.listBottom' ).show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
             }
 
+            // 1. Make it COMMON method for all 'listing' class
+            // 2. [ -------------------- END -------------------- ] <-- use this text for 'MORE' & 'END'
+            // 3.     opacity: 0.7;
+            // 4. --------------- MORE ---------------   <-- or Use down Arrow image for more intuitive ones.
+
             TranslationManager.translatePage();
         }
     };
