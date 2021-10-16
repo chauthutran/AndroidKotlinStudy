@@ -306,14 +306,19 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );
 
-		var entryTag = $( '<input name="' + fieldDef.id + '" uid="' + fieldDef.uid 
-				+ '" dataGroup="' + fieldDef.dataGroup + '" type="text" autocomplete="' + autoComplete 
-				+ '" class="dataValue displayValue" />' );
-		
+		var entryTag = $( '<input name="' + fieldDef.id + '" type="text" autocomplete="' + autoComplete + '" class="dataValue displayValue" />' );		
+		me.addAttrUidDataGroup( entryTag, fieldDef );
+
 		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
 
 		return divInputFieldTag;
 	}
+
+	me.addAttrUidDataGroup = function( entryTag, fieldDef )
+	{
+		if ( fieldDef.uid ) entryTag.attr( 'uid', fieldDef.uid );
+		if ( fieldDef.dataGroup ) entryTag.attr( 'dataGroup', fieldDef.dataGroup );
+	};
 
 	me.createInputFieldTag_Standard = function( fieldDef )
 	{
@@ -339,10 +344,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		Util.decodeURI_ItemList( optionList, "defaultName" );
 
 		// Populate options
-		var entryTag = $( '<select name="' + fieldDef.id + '" uid="' + fieldDef.uid + '"'
-					+ ' options="' + fieldDef.options + '"'
-					+ ' dataGroup="' + fieldDef.dataGroup + '"'
-					+ ' class="dataValue displayValue" />' );
+		var entryTag = $( '<select name="' + fieldDef.id + '" options="' + fieldDef.options + '" class="dataValue displayValue" />' );
+		me.addAttrUidDataGroup( entryTag, fieldDef );
+
  		Util.populateSelect_newOption( entryTag, optionList, { "name": "defaultName", "val": "value" } );
 
 		// When changed/selected, the focus is removed(blured), so that arrow image is switched (defined in css, focus)
@@ -365,8 +369,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		divInputFieldTag.attr( 'uniqueID', uniqueId );
 
 		
-		var showEntryForm = $( '<input name="displayValue_' + fieldDef.id + '" uid="displayValue_' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup + '"type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
-		var entryTag = $( '<input name="' + fieldDef.id + '" uid="' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup + '" type="hidden" class="dataValue" />' );
+		var showEntryForm = $( '<input name="displayValue_' + fieldDef.id + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
+		var entryTag = $( '<input name="' + fieldDef.id + '" type="hidden" class="dataValue" />' );
+		me.addAttrUidDataGroup( entryTag, fieldDef );
 
 		divInputFieldTag.find( 'div.field__left' ).append( showEntryForm );
 		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
@@ -388,8 +393,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		divInputFieldTag.find( 'label.displayName' ).attr( 'term', fieldDef.term ).text( fieldDef.defaultName );
 
-		var showEntryForm = $( '<input name="displayValue_' + fieldDef.id + '" uid="displayValue_' + fieldDef.uid + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
-		var entryTag = $( '<input name="' + fieldDef.id + '" id="' + fieldDef.id + '" dataGroup="' + fieldDef.dataGroup + '" uid="' + fieldDef.uid + '" type="hidden" class="dataValue" />' );
+		var showEntryForm = $( '<input name="displayValue_' + fieldDef.id + '" type="text"  READONLY class="displayValue" />' ); //	Input for to be shown in the app
+		var entryTag = $( '<input name="' + fieldDef.id + '" id="' + fieldDef.id + '" type="hidden" class="dataValue" />' );
+		me.addAttrUidDataGroup( entryTag, fieldDef );
 
 		divInputFieldTag.find( 'div.field__left' ).append( showEntryForm );
 		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
@@ -445,8 +451,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var divInputFieldTag = me.createInputFieldTag_Standard( fieldDef );
 
 		// Add input to display image if the image has payload
-		var inputTag = $( '<input name="' + fieldDef.id + '" uid="' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup + '" type="hidden" class="dataValue" />' );
-		divInputFieldTag.find( 'div.field__left' ).append( inputTag );
+		var entryTag = $( '<input name="' + fieldDef.id + '" type="hidden" class="dataValue" />' );
+		me.addAttrUidDataGroup( entryTag, fieldDef );
+
+		divInputFieldTag.find( 'div.field__left' ).append( entryTag );
 
 		// IMAGE
 		var imgDivTag = $( '<div class="imgQRInput"></div>' );
@@ -518,8 +526,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		// TODO: JAMES: ASK GREG TO CHECK THE USAGE..
 		var entryTag = $( '<input class="dataValue displayValue" data-mask="' + formatMask 
-			+ '" name="' + fieldDef.id + '" uid="' + fieldDef.uid + '" dataGroup="' + fieldDef.dataGroup 
-			+ '" type="text" placeholder="'+ formatDate + '" isDate="true" />' );
+			+ '" name="' + fieldDef.id + '" type="text" placeholder="'+ formatDate + '" isDate="true" />' );
+		me.addAttrUidDataGroup( entryTag, fieldDef );
 
 		wrapperInput.append( entryTag );
 		wrapperDad.append( wrapperInput, button );
@@ -556,8 +564,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		var formatDate = me.getFormControlRule( fieldDef, "placeholder" );
 
-		var entryTag = $( '<input class="dataValue displayValue" name="' + fieldDef.id + '" uid="' + fieldDef.uid 
-			+ '" dataGroup="' + fieldDef.dataGroup + '" type="text" placeholder="'+ formatDate + '" isTime="true" />' );
+		var entryTag = $( '<input class="dataValue displayValue" name="' + fieldDef.id + '" type="text" placeholder="'+ formatDate + '" isTime="true" />' );
+		me.addAttrUidDataGroup( entryTag, fieldDef );
 
 		wrapperInput.append( entryTag );
 		wrapperDad.append( wrapperInput, button );
@@ -647,8 +655,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var formatDate = me.getFormControlRule( fieldDef, "placeholder" );
 
 		// TODO: JAMES: ASK GREG TO CHECK THE USAGE..  - data-mask="' + formatMask 
-		var entryTag = $( '<input class="dataValue displayValue" name="' + fieldDef.id + '" uid="' + fieldDef.uid 
-			+ '" dataGroup="' + fieldDef.dataGroup + '" type="text" placeholder="'+ formatDate + '" />' );
+		var entryTag = $( '<input class="dataValue displayValue" name="' + fieldDef.id + '" type="text" placeholder="'+ formatDate + '" />' );
+		me.addAttrUidDataGroup( entryTag, fieldDef );
 
 		wrapperInput.append( entryTag );
 		wrapperDad.append( wrapperInput, button );
