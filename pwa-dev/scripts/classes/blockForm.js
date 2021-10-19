@@ -1498,7 +1498,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.addStylesForField = function( divInputTag, fieldDef )
 	{
-		var entryTag = divInputTag.find( ".displayValue" ); //select,input
+		var entryTag = divInputTag.find( '.displayValue' ); //select,input
 
 		if( fieldDef.styles !== undefined )
 		{
@@ -1517,7 +1517,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.addRuleForField = function( divInputTag, fieldDef )
 	{
-		var entryTag = divInputTag.find( "select,input" ); // < shouldn't his be .dataValue?
+		var entryTag = divInputTag.find( 'select,input' ); // < shouldn't his be .dataValue?
 		var regxRules = [];
 		var pickerDateRangeJson;
 
@@ -1529,28 +1529,37 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 			if ( ruleJson.name )
 			{
+				// Rule Name is added to attribute of the tag. - By default.
 				entryTag.attr( ruleJson.name, ruleJson.value );
 
-				if ( ruleJson.name === "mandatory" && ruleJson.value === "true" )
+
+				var ruleNameUpper = ruleJson.name.toUpperCase();
+
+				if ( ruleNameUpper === 'MANDATORY' && ruleJson.value === 'true' )  // mandatory
 				{
-					divInputTag.find( 'label' ).first().closest("div").append( $( "<span class='spanMandatory'>*</span>" ) );
+					divInputTag.find( 'label' ).first().closest( 'div' ).append( $( '<span class="spanMandatory">*</span>' ) );
 				}
 
-				var bFontNotGray = ( ruleJson.value === 'fontNotGray' || ruleJson.value === 'fontNotGrey' );
+				if ( me.checkConditionEval( ruleJson ) )
+				{
+					var bFontNotGray = ( ruleJson.value === 'fontNotGray' || ruleJson.value === 'fontNotGrey' );
+					var fieldBlockTag = divInputTag.closest( 'div.fieldBlock' );
+					var inputTags;
 
-				// readonly & disabled css
-				if ( ruleJson.name === 'disabled' )
-				{
-					divInputTag.closest( 'div.fieldBlock' ).addClass( 'divInputReadOnly' ); // background-color #eee
-					divInputTag.closest( 'div.fieldBlock' ).find("input,select,button").attr("disabled", "disabled");
-					if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
-				}
-				else if ( ruleJson.name === 'readonly' && ( ruleJson.startDt === undefined || ( ruleJson.startDt !== undefined && !eval( ruleJson.startDt ) ) ) )
-				{
-					// In Calendar case, allow the button click!!
-					divInputTag.closest( 'div.fieldBlock' ).find("input,select").attr("disabled", "disabled");
-					//divInputTag.closest( 'div.fieldBlock' ).find("input,select,button").attr("disabled", "disabled");
-					if ( !bFontNotGray ) entryTag.css( 'color', '#999' ); // a bit lighter font.
+					// readonly & disabled css
+					if ( ruleNameUpper === 'DISABLED' ) // disabled
+					{
+						fieldBlockTag.addClass( 'divInputReadOnly' ); // background-color #eee
+						inputTags = fieldBlockTag.find( 'input,select,button' ); //.attr( 'disabled', 'disabled' );
+					}
+					else if ( ruleNameUpper === 'READONLY' ) inputTags = fieldBlockTag.find( 'input,select,button' );
+					else if ( ruleNameUpper === 'PICKERONLY' ) inputTags = fieldBlockTag.find( 'input,select' ); // allow the button click!!
+
+					if ( inputTags )
+					{
+						inputTags.attr( 'disabled', 'disabled' );
+						if ( !bFontNotGray ) inputTags.css( 'opacity', '0.6' ); //.css( 'color', '#999' ); // a bit lighter font for all 3 above case?  Disabled ones
+					}
 				}
 			}	
 			else if ( ruleJson.pattern )
@@ -1576,14 +1585,27 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			// all other custom attributes
 			if ( ruleJson.type )
 			{
-				entryTag.attr( "type", ruleJson.type );
+				entryTag.attr( 'type', ruleJson.type );
 			}
 
 		});
 
-		if ( regxRules.length > 0 ) entryTag.attr( "patterns", encodeURI( JSON.stringify( regxRules ) ) );
-		if ( pickerDateRangeJson ) entryTag.attr( "pickerDateRange", encodeURI( JSON.stringify( pickerDateRangeJson ) ) );
+		if ( regxRules.length > 0 ) entryTag.attr( 'patterns', encodeURI( JSON.stringify( regxRules ) ) );
+		if ( pickerDateRangeJson ) entryTag.attr( 'pickerDateRange', encodeURI( JSON.stringify( pickerDateRangeJson ) ) );
+	};
 
+
+	me.checkConditionEval = function( ruleJson )
+	{
+		var isPass = false;
+		if ( ruleJson.conditionEval === undefined ) isPass = true;
+		else
+		{
+			var evalResult = eval( ruleJson.conditionEval );
+			if ( evalResult === true ) isPass = true;
+		}	
+
+		return isPass;
 	};
 
 	
@@ -1723,9 +1745,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				// If not true condition, run 'conditionInverse' (if it exists)
 				if ( evalAction.conditionInverse !== undefined )
 				{
-					if ( evalAction.conditionInverse.indexOf( "shows" ) >= 0 ) me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, false );
-					if ( evalAction.conditionInverse.indexOf( "hides" ) >= 0 ) me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, true );
-					if ( evalAction.conditionInverse.indexOf( "actions" ) >= 0 ) me.performCondiAction( evalAction.actions, formDivSecTag, true );
+					if ( evalAction.conditionInverse.indexOf( 'shows' ) >= 0 ) me.performCondiShowHide( evalAction.shows, formDivSecTag, formFull_IdList, false );
+					if ( evalAction.conditionInverse.indexOf( 'hides' ) >= 0 ) me.performCondiShowHide( evalAction.hides, formDivSecTag, formFull_IdList, true );
+					if ( evalAction.conditionInverse.indexOf( 'actions' ) >= 0 ) me.performCondiAction( evalAction.actions, formDivSecTag, true );
 				}		
 			}
 		}
@@ -1766,9 +1788,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					// limitCases arry filter...
 					var optionListNew = me.filterOptionsByLimitCases( optionList, formTag );
 
-					Util.decodeURI_ItemList( optionListNew, "defaultName" );  // <-- why this?  
+					Util.decodeURI_ItemList( optionListNew, 'defaultName' );  // <-- why this?  
 		
-					Util.populateSelect_newOption( entryTag, optionListNew, { "name": "defaultName", "val": "value" } );
+					Util.populateSelect_newOption( entryTag, optionListNew, { 'name': 'defaultName', 'val': 'value' } );
 				}	
 
 				// Translate Page after the rendering..
@@ -2114,11 +2136,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					{
 						// 2. Do follow up operation after successful set.
 						//var fieldDef = me.fieldDefsJson[ inputTag.attr("name") ];
-						var fieldId = inputTag.attr("name");
+						var fieldId = inputTag.attr( 'name' );
 						var fieldDef = me.fieldDefsJson[ fieldId ];  // fieldDef does not have value..
 						
 						// The value to be set(passed) is in 'dataValue' tag under 'fieldBlock'
-						me.populateFieldDisplayValue( inputTag.closest("div.fieldBlock"), fieldDef );
+						me.populateFieldDisplayValue( inputTag.closest( 'div.fieldBlock' ), fieldDef );
 
 						// NOTE: we perform the .change so that the values get triggered to set proper display value?
 						inputTag.change();
@@ -2187,36 +2209,36 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	me.populateFieldDisplayValue = function( divFieldBlockTag, fieldDef )
 	{
-		var dataValue = divFieldBlockTag.find(".dataValue").val();
+		var dataValue = divFieldBlockTag.find( '.dataValue' ).val();
 
-		if( dataValue !== "" && dataValue !== null && dataValue !== undefined && fieldDef )
+		if( dataValue !== '' && dataValue !== null && dataValue !== undefined && fieldDef )
 		{	
 			var controlType = fieldDef.controlType;
 
-			if( controlType == "YEAR" )
+			if( controlType == 'YEAR' )
 			{
-				divFieldBlockTag.find(".displayValue").val( dataValue );
+				divFieldBlockTag.find('.displayValue').val( dataValue );
 			}
-			else if( fieldDef.options == undefined && controlType == "CHECKBOX" && dataValue == "true" )
+			else if( fieldDef.options == undefined && controlType == 'CHECKBOX' && dataValue == 'true' )
 			{
 				// For TRUE/FALSE case without options defination
-				divFieldBlockTag.find("input.displayValue").prop( "checked", true );
+				divFieldBlockTag.find('input.displayValue').prop( 'checked', true );
 			}
 			else if( fieldDef.options != undefined )
 			{
-				var dataValueList = dataValue.split(",");
+				var dataValueList = dataValue.split(',');
 				var optionList = FormUtil.getObjFromDefinition( fieldDef.options, ConfigManager.getConfigJson().definitionOptions );
 				var displayValues = [];
 
 				dataValueList.forEach( dataVal => 
 				{
-					var searched = Util.getFromList( optionList, dataVal, "value" );
-					if( searched != undefined  && ( controlType == "RADIO" || controlType == "CHECKBOX" ) )
+					var searched = Util.getFromList( optionList, dataVal, 'value' );
+					if( searched != undefined  && ( controlType == 'RADIO' || controlType == 'CHECKBOX' ) )
 					{
-						if ( controlType == 'RADIO' ) divFieldBlockTag.find( "input[type=radio][value=" + dataVal + "]" ).prop( "checked", true );
-						else if ( controlType == 'CHECKBOX' ) divFieldBlockTag.find( "input[type=checkbox][value=" + dataVal + "]" ).prop( "checked", true );
+						if ( controlType == 'RADIO' ) divFieldBlockTag.find( 'input[type=radio][value=' + dataVal + ']' ).prop( 'checked', true );
+						else if ( controlType == 'CHECKBOX' ) divFieldBlockTag.find( 'input[type=checkbox][value=' + dataVal + ']' ).prop( 'checked', true );
 					}
-					else if( controlType == "DROPDOWN_AUTOCOMPLETE" || controlType == "MULTI_CHECKBOX" )
+					else if( controlType == 'DROPDOWN_AUTOCOMPLETE' || controlType == 'MULTI_CHECKBOX' )
 					{	
 						var displayValue = ( searched == undefined ) ? dataVal : TranslationManager.translateText( searched.defaultName, searched.poTerm );
 						displayValues.push( displayValue );
@@ -2225,7 +2247,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				if( displayValues.length > 0 )
 				{
-					divFieldBlockTag.find(".displayValue").val( displayValues.join(",") );
+					divFieldBlockTag.find('.displayValue').val( displayValues.join(',') );
 				}
 			}	
 		}
