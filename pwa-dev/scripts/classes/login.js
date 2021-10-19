@@ -636,7 +636,6 @@ function Login()
 		// menu area user name show
 		$( 'div.navigation__user' ).html( userName );
 
-		Menu.renderDefaultTheme();
 		MsgManager.initialSetup();
 
 		// 2. UI Related Process

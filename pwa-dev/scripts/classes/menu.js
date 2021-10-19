@@ -180,8 +180,6 @@ Menu.populateMenuList = function( areaList, exeFunc )
 
     navMenuUser.append( menuUserName ); //, menuUserRoles
 
-    Menu.renderDefaultTheme(); // after switching between offline/online theme defaults not taking effect
-
     if ( exeFunc ) exeFunc( startMenuTag );
 
 };
@@ -200,23 +198,6 @@ Menu.refreshMenuItems = function()
             } );
         }
     } );
-};
-
-
-// TODO: PLACE IT SOME OTHER PLACE?
-Menu.renderDefaultTheme = function ()
-{
-    if ( ConfigManager.getConfigJson().settings 
-        && ConfigManager.getConfigJson().settings.theme )
-    {
-        var defTheme = ( AppInfoManager.getUserInfo() && AppInfoManager.getUserInfo().theme ) ? AppInfoManager.getUserInfo().theme : "";
-
-        if ( defTheme ) $("body").removeClass().addClass( defTheme );
-    }
-    else
-    {
-        $("body").removeClass().addClass( 'theme-blue' );
-    }		
 };
 
 

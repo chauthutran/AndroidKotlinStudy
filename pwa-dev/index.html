@@ -21,15 +21,11 @@
     var _verDate = '2021-10-19';
     var _ver = '1.3.5l';
     var _versionNote = '- Detail: input readonly vs pickeronly.';
-    var _themeColor = '#000000';
   </script>
 
 
   <!-- Add to home screen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <script>
-    document.write('<meta name="apple-mobile-web-app-status-bar-style" content="' + _themeColor + '">');
-  </script>
   <meta name="apple-mobile-web-app-title" content="WFA">
 
   <link rel="apple-touch-icon" href="images/icons/Connect_144px.png">
@@ -37,19 +33,9 @@
 
   <!-- Windows -->
   <meta name="msapplication-TileImage" content="images/icons/Connect_144px.png">
-  <script>
-    document.write('<meta name="msapplication-TileColor" content="' + _themeColor + '">');
-  </script>
 
   <!-- Chrome, Firefox OS and Opera -->
-  <script>
-    document.write('<meta name="theme-color" content="' + _themeColor + '">');
-  </script>
   <!-- Windows Phone -->
-  <script>
-    document.write('<meta name="msapplication-navbutton-color" content="' + _themeColor + '">');
-  </script>
-
 
   <script type="text/javascript" src="scripts/libraries/jquery-3.4.1.min.js"></script>
   <script type="text/javascript" src="scripts/libraries/jquery.blockUI.js"></script>
@@ -307,17 +293,6 @@
 
           </div>
         </div>
-
-        <div class="field">
-          <div class="field__label"><label term="settings_theme">Theme</label></div>
-          <div class="field__controls">
-            <div class="field__selector">
-              <select id="settingsInfo_ThemeSelect"></select>
-            </div>
-            <div class="field__right"></div>
-          </div>
-        </div>
-
         
         <div class="field">
           <div class="field__label"><label term="settings_other">Others</label></div>

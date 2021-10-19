@@ -8,11 +8,9 @@ function settingsApp( cwsRender )
 
     me.settingsFormDivTag = $( '#settingsFormDiv' );
     me.settingsData;
-    me.themeList;
 
     // ----- Tags -----------
     me.settingsInfo_langSelectTag = $( '#settingsInfo_langSelect' );
-    me.settingsInfo_ThemeSelectTag = $( '#settingsInfo_ThemeSelect' );
     me.settingsInfo_NetworkSync = $( '#settingsInfo_networkSync' );
     me.settingsInfo_logoutDelay = $( '#settingsInfo_logoutDelay' );
     //me.settingsInfo_SoundSwitchInput = $( '#soundSwitchInput' );
@@ -22,10 +20,6 @@ function settingsApp( cwsRender )
     me.easterEgg2Timer = 0; // activate Translations debugging
 
     me.scrimTag = me.settingsFormDivTag.find('.sheet_bottom-scrim');
-
-    me.themeList = [ 'theme-red', 'theme-pink', 'theme-purple', 'theme-deep_purple', 'theme-indigo', 'theme-blue'
-    , 'theme-light_blue', 'theme-cyan', 'theme-teal', 'theme-green', 'theme-light_green', 'theme-lime', 'theme-yellow'
-    , 'theme-amber', 'theme-orange', 'theme-deep_orange', 'theme-brown', 'theme-gray', 'theme-blue_gray', ];
 
     me.syncOptions = [ { 'id': 0, 'name': 'off' }
         ,{ 'id': Util.MS_MIN * 5, 'name': '5 min' }
@@ -147,17 +141,6 @@ function settingsApp( cwsRender )
 			TranslationManager.translatePage();
         });
 
-
-        me.settingsInfo_ThemeSelectTag.change ( () => 
-        {    
-            $("body").removeClass().addClass( me.settingsInfo_ThemeSelectTag.val() );
-
-            var sessData = AppInfoManager.getUserInfo();
-
-            sessData.theme = me.settingsInfo_ThemeSelectTag.val();
-            AppInfoManager.updateUserInfo( sessData );
-        });
-
         me.settingsInfo_NetworkSync.change ( () => 
         {
             // Save Data in AppInfoManager for later use...
@@ -240,19 +223,8 @@ function settingsApp( cwsRender )
     {
         me.populateNetworkSyncList_Show( me.settingsInfo_NetworkSync, me.syncOptions, AppInfoManager.getNetworkSync() );
 
-        me.populateThemeList( me.settingsInfo_ThemeSelectTag, me.themeList );
-
         me.setUpMoreInfoDiv();
     }
-
-    
-    me.populateThemeList = function( settingsInfo_ThemeSelectTag, themeList )
-    {        
-        Util.populateSelect_Simple( settingsInfo_ThemeSelectTag, themeList );
-        
-        settingsInfo_ThemeSelectTag.val( $("body")[0].classList[ 0 ] );
-    };
-
 
     me.renderNonEssentialFields = function( userLoggedIn )
     {

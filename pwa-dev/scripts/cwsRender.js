@@ -403,6 +403,10 @@ function cwsRender()
 	{
 		SessionManager.setLoginStatus( false );
 		SessionManager.unloadDataInSession(); // Include config json unload
+
+		// TODO: Remove/Clear all the data <-- index, clientList, etc..
+
+		
 		
 		ScheduleManager.stopSchedules_AfterLogOut();
 
@@ -422,7 +426,6 @@ function cwsRender()
 		//  Do we need to do this?
 		me.hideActiveSession_UIcontent();
 
-		Menu.renderDefaultTheme();
 		me.loginObj.openForm();
 
 		// .btnBack 

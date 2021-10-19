@@ -8,7 +8,6 @@ function aboutApp( cwsRender )
 
     me.aboutFormDivTag = $( '#aboutFormDiv' );
     me.aboutData;
-    me.themeList;
 
     // ----- Tags -----------
     me.aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );

@@ -152,10 +152,7 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 
 		var dtmNow = ( new Date() ).toISOString();
 		
-		var themeStr = ( loginData 
-			&& loginData.dcdConfig 
-			&& loginData.dcdConfig.settings 
-			&& loginData.dcdConfig.settings.theme ) ? loginData.dcdConfig.settings.theme : "default";
+		//var themeStr = loginData.dcdConfig.settings.theme : "default";
 	
 
 		// NOTE: ...
@@ -163,7 +160,7 @@ SessionManager.saveUserSessionToStorage = function( loginData, userName, passwor
 			createdDate: dtmNow // Last online login
 			//,lastUpdated: dtmNow // Last offline login? <-- do we need this?
 			,pin: Util.encrypt( password, 4 ) // Used on Offline Login password check
-			,theme: themeStr 
+			,theme: 'blue' 
 			//,language: AppInfoManager.getLangCode() // Not Used - Instead, saved in AppInfo.
 		};
 	
