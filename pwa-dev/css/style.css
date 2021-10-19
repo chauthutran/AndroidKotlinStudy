@@ -2553,7 +2553,7 @@ textarea {
   }
 }
 
-.tab_fs .tab_fs__head li {
+.tab_fs .tab_fs__head > li {
   float: left;
   cursor: pointer;
   padding: 0px 8px;
@@ -2571,7 +2571,7 @@ textarea {
 }
 
 @media (orientation: portrait) and (min-width: 240px) {
-  .tab_fs .tab_fs__head li {
+  .tab_fs .tab_fs__head > li {
     width: 100%;
     text-transform: capitalize;
     margin: 0;
@@ -2581,7 +2581,7 @@ textarea {
 }
 
 @media (orientation: landscape) and (min-width: 320px) {
-  .tab_fs .tab_fs__head li {
+  .tab_fs .tab_fs__head > li {
     width: 100%;
     text-transform: capitalize;
     margin: 0;
@@ -2591,7 +2591,7 @@ textarea {
 }
 
 @media (min-width: 558px) {
-  .tab_fs .tab_fs__head li {
+  .tab_fs .tab_fs__head > li {
     width: calc(100%/var(--tabs));
     position: relative;
     display: block;
@@ -2601,7 +2601,41 @@ textarea {
   }
 }
 
-.tab_fs .tab_fs__head li .tab_fs__head-icon {
+@media (orientation: portrait) and (min-width: 240px) {
+  .tab_fs .tab_fs__head > li.active {
+    background-image: url(../images/arrow_drop_down.svg);
+    background-position: right;
+    background-repeat: no-repeat;
+  }
+  .no-svg .tab_fs .tab_fs__head > li.active {
+    background-image: url(../images/arrow_drop_down.png);
+  }
+}
+
+@media only screen and (orientation: portrait) and (min-width: 240px) and (-moz-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 240px) and (-o-min-device-pixel-ratio: 3 / 2), only screen and (orientation: portrait) and (min-width: 240px) and (-webkit-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 240px) and (min-device-pixel-ratio: 1.5) {
+  .no-svg .tab_fs .tab_fs__head > li.active {
+    background-image: url(../images/arrow_drop_down@2x.png);
+  }
+}
+
+@media (orientation: portrait) and (min-width: 320px) {
+  .tab_fs .tab_fs__head > li.active {
+    background-image: url(../images/arrow_drop_down.svg);
+    background-position: right;
+    background-repeat: no-repeat;
+  }
+  .no-svg .tab_fs .tab_fs__head > li.active {
+    background-image: url(../images/arrow_drop_down.png);
+  }
+}
+
+@media only screen and (orientation: portrait) and (min-width: 320px) and (-moz-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 320px) and (-o-min-device-pixel-ratio: 3 / 2), only screen and (orientation: portrait) and (min-width: 320px) and (-webkit-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 320px) and (min-device-pixel-ratio: 1.5) {
+  .no-svg .tab_fs .tab_fs__head > li.active {
+    background-image: url(../images/arrow_drop_down@2x.png);
+  }
+}
+
+.tab_fs .tab_fs__head > li .tab_fs__head-icon {
   float: left;
   width: 24px;
   height: 24px;
@@ -2612,16 +2646,16 @@ textarea {
   -moz-box-sizing: border-box;
 }
 
-.tab_fs .tab_fs__head li:hover {
+.tab_fs .tab_fs__head > li:hover {
   color: #000;
 }
 
-.tab_fs .tab_fs__head li.active {
+.tab_fs .tab_fs__head > li.active {
   display: block;
   opacity: 1;
 }
 
-.tab_fs .tab_fs__head li ul {
+.tab_fs .tab_fs__head > li ul {
   width: 100%;
   padding: 0;
   display: none;
@@ -2635,18 +2669,18 @@ textarea {
 }
 
 @media (orientation: portrait) and (min-width: 240px) {
-  .tab_fs .tab_fs__head li ul {
+  .tab_fs .tab_fs__head > li ul {
     width: calc(100% - 120px);
   }
 }
 
 @media (max-width: 557px) {
-  .tab_fs .tab_fs__head li ul {
+  .tab_fs .tab_fs__head > li ul {
     width: calc(100% - 70px);
   }
 }
 
-.tab_fs .tab_fs__head li ul li {
+.tab_fs .tab_fs__head > li ul > li {
   padding: 0;
   width: 100%;
   position: relative;

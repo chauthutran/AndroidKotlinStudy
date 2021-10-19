@@ -424,7 +424,7 @@ function cwsRender()
 		Menu.navDrawerDivTag.empty();
 
 		//  Do we need to do this?
-		me.hideActiveSession_UIcontent();
+		me.hideActiveSession_UIcontent(); // should be placed in 'hidePageDiv'?
 
 		me.loginObj.openForm();  // includes 'hidePageDiv' which called .btnBack for hiding fullscreen overlay ones
 	};

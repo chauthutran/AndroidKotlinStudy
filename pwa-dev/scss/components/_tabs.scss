@@ -43,7 +43,7 @@ $active-tab :$color-p;
             margin: 0;
         }
 
-        li {
+        & > li {
             float: left;
             cursor: pointer;
             padding: 0px 8px;
@@ -80,6 +80,19 @@ $active-tab :$color-p;
                 @include box-sizing(border-box);
             }
 
+            &.active {
+                @include p-device(240) {
+                    @include background-image('arrow_drop_down');
+                    background-position: right;
+                    background-repeat: no-repeat;    
+                }
+                @include p-device(320) {
+                    @include background-image('arrow_drop_down');
+                    background-position: right;
+                    background-repeat: no-repeat;    
+                }
+            }  
+
             .tab_fs__head-icon {
                 float: left;
                 width: 24px;
@@ -115,7 +128,7 @@ $active-tab :$color-p;
                     width: calc(100% - 70px);
                 }
 
-                li {
+                & > li {
                     padding: 0;
                     width: 100%;
                     //min-width: 240px;

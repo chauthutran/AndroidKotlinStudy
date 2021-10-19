@@ -1034,26 +1034,31 @@ FormUtil.setUpTabAnchorUI = function( tag, targetOff, eventName )
 FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 {	
 	// tag at here is 'blockTag' in mainTab.  li is tab buttons.
-	tag.find( 'li' ).on( 'click', function( e)
+	tag.find( 'li' ).on( 'click', function( e )
 	{
 		e.stopPropagation();
 
-		var Primary = $( this ).hasClass( 'primary' );
-		var Secondary = $( this ).hasClass( '2ndary' );
-		var ulOptionsPopup = $( this ).find( 'ul' );
+		var selLiTag = $( this );
+
+		var Primary = selLiTag.hasClass( 'primary' );
+		var Secondary = selLiTag.hasClass( '2ndary' );
+		var ulOptionsPopup = selLiTag.find( 'ul' );
 
 		if ( FormUtil.orientation() === 'portrait' 
 			&& $( window ).width() <= 568 
-			&& $( this ).hasClass( 'active' )  ) // class 'active' will always be li.primary
+			&& selLiTag.hasClass( 'active' )  ) // class 'active' will always be li.primary
 		{
 			// On Small Screen Case, Show the dropdown (collapsed tab list)
             if ( ulOptionsPopup.is(':visible') ) {
                 ulOptionsPopup.css('display', 'none');
-                $( this ).find( 'li' ).css('display', 'none');
+                selLiTag.find( 'li' ).css('display', 'none');
             } else {
-                ulOptionsPopup.css('display', 'block');
-                $( this ).find( 'li' ).not( '.tabHide' ).css('display', 'block');
-                $( this ).next( 'ul' ).toggle();
+				if ( selLiTag.attr( 'openingClick' ) === 'Y' ) selLiTag.attr( 'openingClick', '' );
+				else {
+					ulOptionsPopup.css('display', 'block');
+					selLiTag.find( 'li' ).not( '.tabHide' ).css('display', 'block');
+					selLiTag.next( 'ul' ).toggle();
+				}
 			}
 		}
 		else
@@ -1065,12 +1070,12 @@ FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 
 			tag.siblings( '.tab_fs__container' ).find( 'div.tab_fs__container-content' ).hide();
 
-			var tab_select = $( this ).attr( 'rel' );
+			var tab_select = selLiTag.attr( 'rel' );
 			var activeTab = tag.siblings( '.tab_fs__container' ).find( '.tab_fs__container-content[tabButtonId="' + tab_select + '"]' );
 
 			if ( Primary )
 			{
-				if ( ! $( this ).hasClass( 'active' ) ) $( this ).addClass( 'active' );
+				if ( ! selLiTag.hasClass( 'active' ) ) selLiTag.addClass( 'active' );
 			}
 			else
 			{
@@ -1078,7 +1083,7 @@ FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 				$( "ul.2ndary" ).hide();
 				$( "li.2ndary" ).hide();
 
-				$( this ).closest( 'li.primary' ).siblings( 'li[rel=' + tab_select + ']' ).addClass( 'active' );
+				selLiTag.closest( 'li.primary' ).siblings( 'li[rel=' + tab_select + ']' ).addClass( 'active' );
 			}
 
 			if ( ! activeTab.hasClass( 'active' ) ) activeTab.addClass( 'active' );

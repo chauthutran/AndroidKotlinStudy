@@ -136,8 +136,12 @@ function ClientCardDetail( clientId, isRestore )
 
         // -----------------------------------------
         // Default click 'Client'
-        sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first().click();
-    };    
+        var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
+        // But wants to not display the selection dropdown when size is mobile..        
+        defaultTab.attr( 'openingClick', 'Y' );
+        defaultTab.click();
+        setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );
+    };
 
     // ------------------------------
 
