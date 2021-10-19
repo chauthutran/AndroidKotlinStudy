@@ -33,18 +33,12 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     // -------- Tags --------------------------
 
     me.listTableTbodyTag;    // was me.blockList_UL_Tag;
-    // --------- Templates --------------------
+    me.listBottomDivTag;
 
+    // --------- Templates --------------------
     me.template_clientListReRenderTag = `<div class="clientListRerender" style="float: left; width: 1px; height: 1px;"></div>`;
 
     me.template_listDivTag = `<div class="list" />`;
-
-    // margin-bottom: 40px;
-    me.template_listBottomDivTag = `<div class="listBottom" style="
-        text-align: center;
-        color: #4753A3;
-        font-style: italic;
-        opacity: 0.2; display:none;"></div>`;
 
     me.template_divClientDetailEmptyTag = `<div class="client emptyList">
             <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
@@ -175,7 +169,8 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         var listTableTag = $( me.template_listDivTag );
         blockTag.append( listTableTag );
 
-        blockTag.append( me.template_listBottomDivTag );
+        me.listBottomDivTag = $( ItemCardList.template_listBottomDivTag );
+        blockTag.append( me.listBottomDivTag );
 
         return listTableTag; //listTableTag.find( 'tbody' );
     };
@@ -251,15 +246,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
 
             // If paging is enabled, display the paging status
-            if ( me.pagingData.enabled ) 
-            {
-                me.blockTag.find( '.listBottom' ).show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
-            }
-
-            // 1. Make it COMMON method for all 'listing' class
-            // 2. [ -------------------- END -------------------- ] <-- use this text for 'MORE' & 'END'
-            // 3.     opacity: 0.7;
-            // 4. --------------- MORE ---------------   <-- or Use down Arrow image for more intuitive ones.
+            if ( me.pagingData.enabled ) ItemCardList.showListButtonNote( me.listBottomDivTag, currPosJson.endReached );
 
             TranslationManager.translatePage();
         }

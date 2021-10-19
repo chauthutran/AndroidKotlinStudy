@@ -32,17 +32,11 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
     // -------- Tags --------------------------
 
     me.listTableTbodyTag;    // was me.blockList_UL_Tag;
+    me.listBottomDivTag;
     // --------- Templates --------------------
 
 
     me.template_listDivTag = `<div class="list" />`;
-
-    // margin-bottom: 40px;
-    me.template_listBottomDivTag = `<div class="listBottom" style="
-        text-align: center;
-        color: #4753A3;
-        font-style: italic;
-        opacity: 0.2; display:none;"></div>`;
 
     me.template_divActivityEmptyTag = `<div class="activity emptyList">
             <div class="list_three_line" term="${Util.termName_listEmpty}">List is empty.</div>
@@ -167,8 +161,8 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
         var listTableTag = $( me.template_listDivTag );
         blockTag.append( listTableTag );
 
-        var listBottomDivTag = $( me.template_listBottomDivTag );
-        blockTag.append( listBottomDivTag );
+        me.listBottomDivTag = $( ItemCardList.template_listBottomDivTag );
+        blockTag.append( me.listBottomDivTag );
 
         return listTableTag; //listTableTag.find( 'tbody' );
     };
@@ -232,8 +226,6 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
         }
         else
         {
-            var listBottomDivTag = $( '.listBottom' );
-
             // Designed to handle with/without scrolling:
             // If setting has no scrolling/paging, me.pagingData has 'enabled': false, and will return endPos as full list size.
             var currPosJson = me.getCurrentPositionRange( activityList.length, me.pagingData );
@@ -259,10 +251,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
 
             // If paging is enabled, display the paging status
-            if ( me.pagingData.enabled ) 
-            {
-                listBottomDivTag.show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
-            }
+            if ( me.pagingData.enabled ) ItemCardList.showListButtonNote( me.listBottomDivTag, currPosJson.endReached );
 
             TranslationManager.translatePage();
             //if ( scrollEndFunc ) scrollEndFunc();
