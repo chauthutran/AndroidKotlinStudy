@@ -28,6 +28,14 @@ ClientDataManager.template_Client = {
 ClientDataManager.tempClientNamePre = 'client_';
 
 // ===================================================
+
+// - Only call this on logOut
+ClientDataManager.clearClientDataInMem = function()
+{
+    ClientDataManager._clientsStore = { 'list': [] };
+    ClientDataManager._clientsIdx = {};
+};
+
 // ----- Get  Client ----------------
 
 // Get ClientList from memory

@@ -404,9 +404,9 @@ function cwsRender()
 		SessionManager.setLoginStatus( false );
 		SessionManager.unloadDataInSession(); // Include config json unload
 
-		// TODO: Remove/Clear all the data <-- index, clientList, etc..
-
-		
+		// NEW: Remove/Clear all the data <-- index, clientList, etc..
+		ClientDataManager.clearClientDataInMem();
+		ActivityDataManager.clearActivityDataInMem();
 		
 		ScheduleManager.stopSchedules_AfterLogOut();
 
@@ -426,9 +426,7 @@ function cwsRender()
 		//  Do we need to do this?
 		me.hideActiveSession_UIcontent();
 
-		me.loginObj.openForm();
-
-		// .btnBack 
+		me.loginObj.openForm();  // includes 'hidePageDiv' which called .btnBack for hiding fullscreen overlay ones
 	};
 
 

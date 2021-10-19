@@ -23,13 +23,9 @@ ActivityDataManager._activityList = []; // Activity reference list - original da
 ActivityDataManager._activityToClient = {};  // Fast reference - activity to client
 //ActivityDataManager._activitiesIdx = {};  // index..  <-- need to put add / delete
 
-ActivityDataManager.jsonSignature_Dhis2 = {
-    "client": {}
-};
-
-ActivityDataManager.jsonSignature_Mongo = {
-    "transactions": []
-};
+// NOTE: BELOW IS USED?
+ActivityDataManager.jsonSignature_Dhis2 = { "client": {} };
+ActivityDataManager.jsonSignature_Mongo = { "transactions": [] };
 
 // - ActivityCoolTime Variables
 ActivityDataManager.activitiesLastSyncedInfo = {};  // "activityId": 'lastSyncDateTime' }, ...
@@ -38,6 +34,13 @@ ActivityDataManager.syncUpCoolDownList = {};
 
 // ===================================================
 // === MAIN FEATURES =============
+
+// - Only call this on logOut
+ActivityDataManager.clearActivityDataInMem = function()
+{
+    ActivityDataManager._activityList = [];
+    ActivityDataManager._activityToClient = {};
+};
 
 // ---------------------------------------
 // --- Get Activity / ActivityList
