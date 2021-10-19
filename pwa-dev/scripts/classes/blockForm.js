@@ -1601,7 +1601,11 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		if ( ruleJson.conditionEval === undefined ) isPass = true;
 		else
 		{
-			var evalResult = eval( ruleJson.conditionEval );
+			var conditionEval = FormUtil.getObjFromDefinition( ruleJson.conditionEval, ConfigManager.getConfigJson().definitionRuleConditions );			
+
+			conditionEval = Util.getEvalStr( conditionEval );
+
+			var evalResult = eval( conditionEval );
 			if ( evalResult === true ) isPass = true;
 		}	
 
