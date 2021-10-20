@@ -1733,6 +1733,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				me.performCondiAction( evalAction.actions, formDivSecTag, false );
 
 				if ( evalAction.optionsChange ) me.evalActions_optionsChange( evalAction.optionsChange, formDivSecTag );
+
 				if ( evalAction.runEval ) 
 				{
 					try {
@@ -1775,34 +1776,43 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		// 'formDivSecTag' is almost same as 'form' tag, thus, renamed here.  
 		//   'form' tag is right below 'formDivSecTag' always.
-		var entryTag = formTag.find( 'select[name="' + tagId + '"]' );
+		var entryTags = formTag.find( 'select[name="' + tagId + '"]' );
 
-		if ( entryTag.length > 0 )
+		if ( entryTags.length > 0 )
 		{
-			var options = entryTag.attr( 'options' );
-			
-			if ( options )
+			entryTags.each( function() 
 			{
-				// Get and resolve options
-				var optionList = FormUtil.getObjFromDefinition( options, ConfigManager.getConfigJson().definitionOptions );
-
-				if ( optionList && Util.isTypeArray( optionList ) )
+				var entryTag = $( this );
+				var options = entryTag.attr( 'options' );
+			
+				if ( options )
 				{
-					// TODO: Filter 'optionList' by 
-					// limitCases arry filter...
-					var optionListNew = me.filterOptionsByLimitCases( optionList, formTag );
+					// Get and resolve options
+					var optionList = FormUtil.getObjFromDefinition( options, ConfigManager.getConfigJson().definitionOptions );
+	
+					if ( optionList && Util.isTypeArray( optionList ) )
+					{
+						var preValue = entryTag.val();
 
-					Util.decodeURI_ItemList( optionListNew, 'defaultName' );  // <-- why this?  
-		
-					Util.populateSelect_newOption( entryTag, optionListNew, { 'name': 'defaultName', 'val': 'value' } );
-				}	
+						// limitCases arry filter...
+						var optionListNew = me.filterOptionsByLimitCases( optionList, formTag );
+	
+						Util.decodeURI_ItemList( optionListNew, 'defaultName' );  // <-- why this?  	
+	
+						Util.populateSelect_newOption( entryTag, optionListNew, { 'name': 'defaultName', 'val': 'value' } );
 
-				// Translate Page after the rendering..
-				TranslationManager.translatePage();
-			}
+						// Restore value after rePopulating - if value existed.
+						if ( preValue ) entryTag.val( preValue );
+					}	
+	
+					// Translate Page after the rendering..
+					TranslationManager.translatePage();
+				}
+			});
 		}		
 	};
 
+	
 	me.filterOptionsByLimitCases = function( optionList, formTag )
 	{
 		var newOptionList = [];

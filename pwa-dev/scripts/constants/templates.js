@@ -504,9 +504,9 @@ Templates.template_dialog = `
 
 
 Templates.sheetBottomBtn = `
-<div class="sheet_bottom-btn3 sheetBottomBtnDiv" style="display: block;">
-  <div class="sbtt-btn__header">
-    <div class="sbtt-btn__header_title sheetBottomBtnTitle" term="">title/label</div>
+<div class="sheet_bottom-btn3 sheetBottomBtnDiv" style="display: block; max-height: 100px;">
+  <div class="sbtt-btn__header" style="height: unset;">
+    <div class="sbtt-btn__header_title sheetBottomBtnTitle" term="" style="font-size: 0.94rem; height: 40px; margin-top: 4px;"></div>
   </div>
   <div class="cta_buttons">
     <div class="button c_500 sheetBottomBtn">

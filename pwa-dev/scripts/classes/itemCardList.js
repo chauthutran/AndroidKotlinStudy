@@ -20,8 +20,9 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
     me.scrollingTimeOutDuration = 2000;  // 1 sec is 1000
     me.scrollFireHeight = 10; // The hight it will fire the scrolling before reaching bottom
     
-    me.blockListDiv_marginBottom = '30px'; // To Lift the list, avoid collpase with Fav.
+    me.blockListDiv_marginBottom = '0px'; // To Lift the list, avoid collpase with Fav.
 
+    // Paging is false..
     me.pagingData = { "enabled": false, "pagingSize": 100 }; ///ConfigManager.getSettingPaging();
     me.pagingData.currPosition = 0;
 
@@ -30,7 +31,7 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
     // -------- Tags --------------------------
 
     me.listTableTbodyTag;    // was me.blockList_UL_Tag;
-    me.listBottomDivTag;
+    //me.listBottomDivTag;
 
     // --------- Templates --------------------
 
@@ -64,8 +65,8 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
         // Clear previous UI & Set containerTag with templates
         me.clearClassTag( blockTag );        
 
-        blockTag.css( 'margin-bottom', me.blockListDiv_marginBottom ); // For 'Fav' button not overlapping..
-
+        // Does not have fav in here.
+        // blockTag.css( 'margin-bottom', me.blockListDiv_marginBottom ); // For 'Fav' button not overlapping..
 
         me.listTableTbodyTag = me.setClassContainerTag( blockTag );
 
@@ -86,46 +87,52 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
         me.populateControls( me.blockDefJson, me.itemCardList, me.listTableTbodyTag );
 
 
-        if ( me.blockDefJson.bottomButton )
-        {
-            var btnJson = FormUtil.getObjFromDefinition( me.blockDefJson.bottomButton, ConfigManager.getConfigJson().definitionButtons );
-
-            if ( btnJson )
-            {
-                // ---------------------------------
-                // button button..
-                var sheetBottomBtnDivTag = $( Templates.sheetBottomBtn );
-                blockTag.append( sheetBottomBtnDivTag );
-
-                var titleDivTag = sheetBottomBtnDivTag.find( 'div.sbtt-btn__header' );
-                var titleMsgTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtnTitle' );
-
-                if ( btnJson.titleMsg ) titleMsgTag.text( btnJson.titleMsg.title ).attr( 'term', btnJson.titleMsg.term );
-                else titleDivTag.hide();
-
-                var sheetBottomBtnTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtn' );
-                sheetBottomBtnTag.find( 'div.button-label' ).text( btnJson.defaultLabel ).attr( 'term', Util.getStr( btnJson.term ) ); //'New Client' );  // btnJson.name
-
-                if ( btnJson.onClick )
-                {
-                    sheetBottomBtnTag.click( function() 
-                    {        
-                        //GAnalytics.setEvent( 'ButtonClick', btnId, 'formButton', 1 );
-                        MsgManager.msgAreaClearAll();
-                        //if ( me.networkModeNotSupported( btnJson, ConnManagerNew.statusInfo.appMode ) )
-            
-                        var formDivSecTag = undefined;
-                        var passedData = {};
-            
-                        var actionObj = new Action( me.cwsRenderObj, me.blockObj );
-                        actionObj.handleClickActions( sheetBottomBtnTag, btnJson.onClick, me.blockObj.parentTag, blockTag, formDivSecTag, passedData );
-                    });        
-                }
-            }
-        }
+        if ( me.blockDefJson.bottomButton ) me.populateBottomButton( me.blockDefJson.bottomButton, me.listTableTbodyTag, blockTag );
 
 
         TranslationManager.translatePage();
+    };
+
+
+    me.populateBottomButton = function( bottomButtonDef, listTableTbodyTag, blockTag )
+    {
+        var btnJson = FormUtil.getObjFromDefinition( bottomButtonDef, ConfigManager.getConfigJson().definitionButtons );
+
+        if ( btnJson )
+        {
+            // NOTE: If bottom button exists, it will add bottom layer, which we should give bottom space on list by margin-bottom
+            listTableTbodyTag.css( 'margin-bottom', '100px' );
+
+            // ---------------------------------
+            // button button..
+            var sheetBottomBtnDivTag = $( Templates.sheetBottomBtn );
+            blockTag.append( sheetBottomBtnDivTag );
+    
+    
+            var titleMsgTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtnTitle' );
+            if ( !btnJson.titleMsg ) btnJson.titleMsg = { title: '', term: '' }; //else titleDivTag.hide();
+            titleMsgTag.text( Util.getStr( btnJson.titleMsg.title ) ).attr( 'term', Util.getStr( btnJson.titleMsg.term ) );
+    
+    
+            var sheetBottomBtnTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtn' );
+            sheetBottomBtnTag.find( 'div.button-label' ).text( btnJson.defaultLabel ).attr( 'term', Util.getStr( btnJson.term ) ); //'New Client' );  // btnJson.name
+    
+            if ( btnJson.onClick )
+            {
+                sheetBottomBtnTag.click( function() 
+                {        
+                    //GAnalytics.setEvent( 'ButtonClick', btnId, 'formButton', 1 );
+                    MsgManager.msgAreaClearAll();
+                    //if ( me.networkModeNotSupported( btnJson, ConnManagerNew.statusInfo.appMode ) )
+        
+                    var formDivSecTag = undefined;
+                    var passedData = {};
+        
+                    var actionObj = new Action( me.cwsRenderObj, me.blockObj );
+                    actionObj.handleClickActions( sheetBottomBtnTag, btnJson.onClick, me.blockObj.parentTag, blockTag, formDivSecTag, passedData );
+                });        
+            }
+        }
     };
 
     // -----------------------------------------------
@@ -157,8 +164,8 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
         var listTableTag = $( me.template_listDivTag );
         blockTag.append( listTableTag );
 
-        me.listBottomDivTag = $( ItemCardList.template_listBottomDivTag );
-        blockTag.append( me.listBottomDivTag );
+        //me.listBottomDivTag = $( ItemCardList.template_listBottomDivTag );
+        //blockTag.append( me.listBottomDivTag );
 
         return listTableTag; //listTableTag.find( 'tbody' );
     };
@@ -226,10 +233,9 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
             }
 
             // If paging is enabled, display the paging status
-            if ( me.pagingData.enabled ) ItemCardList.showListButtonNote( me.listBottomDivTag, currPosJson.endReached );
+            // if ( me.pagingData.enabled ) ItemCardList.showListButtonNote( me.listBottomDivTag, currPosJson.endReached );
 
             TranslationManager.translatePage();
-            //if ( scrollEndFunc ) scrollEndFunc();
         }
     };
 
