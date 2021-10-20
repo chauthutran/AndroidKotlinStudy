@@ -485,7 +485,7 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
 
         // 2. recreate view list based on the sorting? - loop through the group and get full activity list..
         return me.getNewActivityList_FromGroupList( usedGroupList_Sorted, groupByData.groupByDef );
-    }
+    };
 
 
     me.getNewActivityList_FromGroupList = function( groupList, groupByDef )

@@ -96,10 +96,15 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
                 // button button..
                 var sheetBottomBtnDivTag = $( Templates.sheetBottomBtn );
                 blockTag.append( sheetBottomBtnDivTag );
-                var sheetBottomBtnTitleTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtnTitle' );
-                sheetBottomBtnTitleTag.text( 'Did you fail to find the correct person?' );
+
+                var titleDivTag = sheetBottomBtnDivTag.find( 'div.sbtt-btn__header' );
+                var titleMsgTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtnTitle' );
+
+                if ( btnJson.titleMsg ) titleMsgTag.text( btnJson.titleMsg.title ).attr( 'term', btnJson.titleMsg.term );
+                else titleDivTag.hide();
+
                 var sheetBottomBtnTag = sheetBottomBtnDivTag.find( 'div.sheetBottomBtn' );
-                sheetBottomBtnTag.find( 'div.button-label' ).text( 'New Client' );  // btnJson.name
+                sheetBottomBtnTag.find( 'div.button-label' ).text( btnJson.defaultLabel ).attr( 'term', Util.getStr( btnJson.term ) ); //'New Client' );  // btnJson.name
 
                 if ( btnJson.onClick )
                 {

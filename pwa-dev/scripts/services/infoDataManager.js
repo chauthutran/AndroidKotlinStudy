@@ -122,19 +122,45 @@ InfoDataManager.setINFOList_Activity = function( activityList )
 	return newList;
 };
 
+
+InfoDataManager.setINFOList_Client = function( clientList )
+{
+	var newList = [];
+
+	for ( var i = 0; i < clientList.length; i++ )
+	{
+		var client = clientList[ i ];
+		
+		// Create Object => { 'INFO': { 'activity': --, 'client': -- } }
+		var newObj = {};
+		newObj[ InfoDataManager.NAME_INFO ] = { 'client': client };
+		newList.push( newObj );
+	}
+
+	return newList;
+};
+
 // Get Activity List from { 'INFO': { 'activity': --, 'client': -- } }
 InfoDataManager.getActivityList_fromINFOList = function( INFOList_activity )
 {
 	var newActivityList = [];
 
-	for ( var i = 0; i < INFOList_activity.length; i++ )
-	{
-		var data = INFOList_activity[ i ];
-
-		newActivityList.push( data[ InfoDataManager.NAME_INFO ].activity );
-	}
+	INFOList_activity.forEach( item => {
+		newActivityList.push( item[ InfoDataManager.NAME_INFO ].activity );
+	});
 
 	return newActivityList;
+};
+
+InfoDataManager.getClientList_fromINFOList = function( INFOList_client )
+{
+	var newClientList = [];
+
+	INFOList_client.forEach( item => {
+		newClientList.push( item[ InfoDataManager.NAME_INFO ].client );
+	});
+
+	return newClientList;
 };
 
 
