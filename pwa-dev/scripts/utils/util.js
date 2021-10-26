@@ -98,6 +98,7 @@ Util.getJson = function( input )
 	catch( errMsg )
 	{
 		console.log( 'ERROR in Util.getJson, errMsg: ' + errMsg );
+		console.log( input );
 	}
 
 	return value;

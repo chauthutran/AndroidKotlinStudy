@@ -80,6 +80,8 @@ function ClientCardDetail( clientId, isRestore )
         var activityTabBodyDivTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
         sheetFullTag.find( '.tab_fs li[rel=tab_clientActivities]' ).click( function() 
         {
+            console.log( 'tab_clientActivities CLICKED' );
+            
             activityTabBodyDivTag.html( '' );
 
             me.populateActivityCardList( clientJson.activities, activityTabBodyDivTag );

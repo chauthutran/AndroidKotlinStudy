@@ -1007,7 +1007,7 @@ ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode
 };
 
 
-ActivityDataManager.getLastTransDataValue = function( transList, transDVProp )
+ActivityDataManager.getTransDataValue = function( transList, transDVProp )
 {
     var value;
 
@@ -1019,4 +1019,61 @@ ActivityDataManager.getLastTransDataValue = function( transList, transDVProp )
     });    
 
     return value;
+};
+
+ActivityDataManager.getTransClientDetails = function( transList, transCDProp )
+{
+    var value;
+
+    transList.forEach( trans => 
+    {
+        var cdJson = trans.clientDetails;
+
+        if ( cdJson && cdJson[transCDProp] ) value = cdJson[transCDProp];
+    });    
+
+    return value;
+};
+
+// Name changed.  Keep below for backward compatibility
+ActivityDataManager.getLastTransDataValue = function( transList, transDVProp )
+{
+    ActivityDataManager.getTransDataValue( transList, transDVProp );
+};
+
+ActivityDataManager.getAllTrans = function( activityList )
+{
+    // activityList.flatMap( a => a.transactions ); // flat(), flatMap() has later browser compatibility..
+
+    var allTrans = [];
+
+    activityList.forEach( act => 
+    {
+        act.transactions.forEach( tran => {
+            allTrans.push( tran );
+        });
+    });    
+
+    return allTrans;    
+};
+
+// typeList = [ 'v_rdx_hivTEST', 'v_rdx_selfTESTResult' ]  <-- later, create same search by dataValues?
+ActivityDataManager.getActivityByTransType = function( activityList, typeList )
+{
+    var activity;
+
+    if ( Util.isTypeString( typeList ) ) typeList = [ typeList ];
+    else if ( !Util.isTypeArray( typeList ) ) throw "ERROR, ActivityDataManager.getActivityByTransType typeList param should be array or string.";
+
+    if ( activityList )
+    {
+        activityList.forEach( act => 
+        {
+            act.transactions.forEach( tran => {
+                if ( typeList.indexOf( tran.type ) >= 0 ) activity = act;
+            });
+        });  
+    }
+
+    return activity;
 };

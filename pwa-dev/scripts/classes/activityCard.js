@@ -81,12 +81,9 @@ function ActivityCard( activityId, options )
 
     me.getActivityCardDivTag = function()
     {
-        //if ( me.options.parentTag_Override )
-        //    return me.options.parentTag_Override.find( 'div.card[itemid="' + me.activityId + '"]' );
-            
+        //if ( me.options.parentTag_Override ) return me.options.parentTag_Override.find( 'div.card[itemid="' + me.activityId + '"]' );            
         return $( 'div.card[itemid="' + me.activityId + '"]' );
     };
-
 
     // -----------------------------------------------------
 
@@ -165,7 +162,8 @@ function ActivityCard( activityId, options )
 
     me.setUpReRenderByClick = function( activityRerenderTag )
     {
-        activityRerenderTag.off( 'click' ).click( function( e ) {
+        activityRerenderTag.off( 'click' ).click( function( e ) 
+        {
             e.stopPropagation();  // Stops calling parent tags event calls..
             me.render();
         } );    

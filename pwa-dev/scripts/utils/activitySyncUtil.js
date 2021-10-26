@@ -34,7 +34,10 @@ ActivitySyncUtil.setSyncIconClickEvent = function( divSyncIconTag, cardDivTag, a
 			}, function() 
 			{
 				// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
-				ActivitySyncUtil.syncUpActivity_IfOnline( activityId, function() {}
+				ActivitySyncUtil.syncUpActivity_IfOnline( activityId, function() 
+				{
+					ActivitySyncUtil.clientActivityList_FavListReload( cardDivTag );
+				}
 				, function() {
 					MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' );
 				} );
@@ -57,6 +60,18 @@ ActivitySyncUtil.setSyncIconClickEvent = function( divSyncIconTag, cardDivTag, a
 			}
 		}
 	});  
+};
+
+
+// NEW - If current div card belongs to clientDetail Activity List, reload the favList..
+ActivitySyncUtil.clientActivityList_FavListReload = function( cardDivTag )
+{
+	var tabClientActivitiesTag_Visible = cardDivTag.closest( 'div[tabbuttonid=tab_clientActivities]:visible' );
+
+	if ( tabClientActivitiesTag_Visible.length > 0 )
+	{
+		tabClientActivitiesTag_Visible.find( 'div.favReRender' ).click();
+	}        
 };
 
 

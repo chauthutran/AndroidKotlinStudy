@@ -115,7 +115,9 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     me.render = function() 
     {        
         try
-        {        
+        {              
+            console.log( 'favList Rendering..' );
+
             if ( me.favListByType.mainButtonMode )
             {
                 // 1. Get favListArr from online status
