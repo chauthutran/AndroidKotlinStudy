@@ -136,9 +136,22 @@ function ActivityCardDetail( activityId, isRestore )
         //var client = ClientDataManager.getClientByActivityId( activityId );
         //ClientDataManager.removeClient( client );
 
-        ClientDataManager.saveCurrent_ClientsStore( () => {
-            $( '#pageDiv' ).find("[itemid='" + activityId + "']").remove();
+        ClientDataManager.saveCurrent_ClientsStore( () => 
+        {
             btnBackTag.click();
+
+            //var activityCardTags = $( '[itemid="' + activityId + '"]' );  //  $( '#pageDiv' ).   .remove();
+
+            // We also need to find all clientCard Tag with this.. and reload it..
+            var divSyncIconTags = $( 'div.activityStatusIcon[activityId="' + activityId + '"]' );
+            divSyncIconTags.closest( 'div.card__container' ).find( 'div.clientRerender' ).click();
+
+            // tab clientActivity reClick - to influence the activity list & favList..
+            var tabClientActivitiesTag = $( '[itemid="' + activityId + '"]' ).closest( 'div[tabbuttonid=tab_clientActivities]' );
+            if ( tabClientActivitiesTag.length > 0 ) tabClientActivitiesTag.find( 'div.favReRender' ).click();
+
+            // Finally, remove all activityCards of this id.
+            $( '[itemid="' + activityId + '"]' ).remove(); // activityCardTags
         });
     };
 

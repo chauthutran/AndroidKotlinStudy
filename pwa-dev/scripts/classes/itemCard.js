@@ -102,7 +102,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
     
                         ClientDataManager.mergeDownloadedClients( { 'clients': [ itemJson ] }, processingInfo, function() 
                         {
-                            MsgManager.msgAreaShow( 'The client downloaded and stored.' )
+                            MsgManager.msgAreaShow( '<span term="msg_clientDownloaded">The client downloaded and stored.</span>' )
     
                             me.itemJson = ClientDataManager.getClientById( itemId );
     
@@ -115,7 +115,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
             else if ( operationType === 'selectItem' )
             {
                 // Icon / Label
-                ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_custom, { text: 'Choose This Client', term: '', img: 'sync_24.svg' } );
+                ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_custom, { text: 'Choose This Client', term: 'card_chooseThisClient', img: 'sync_24.svg' } );
 
                 // On click, remove the icon/text and allow to load..
                 divStatusIconTag.off( 'click' ).click( function() 
