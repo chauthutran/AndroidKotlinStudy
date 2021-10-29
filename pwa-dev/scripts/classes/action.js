@@ -328,7 +328,6 @@ function Action( cwsRenderObj, blockObj )
 
 					if ( clientCardTag.length > 0 ) 
 					{
-						console.log( 'Rerender tried' );
 						clientCardTag.find( 'div.clientRerender' ).click();
 					}
 	
