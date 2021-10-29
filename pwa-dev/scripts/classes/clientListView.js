@@ -232,7 +232,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
     
         // Once the viewFiltered List is decided and sorted, reRender it 
-        me.clientListObj.reRenderWithList( me.viewFilteredList, me.groupByData );  // there is 'callBack' param..  
+        me.clientListObj.reRenderWithList( me.viewFilteredList, me.groupByData, me.viewDef_Selected );  // there is 'callBack' param..  
 
         
         TranslationManager.translatePage();
@@ -249,18 +249,25 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
         if ( !viewDef.dataFilterEval ) Util.appendArray( filteredData, mainList );
         else
         {
-            var dataFilterEval = Util.getEvalStr( viewDef.dataFilterEval );  // Handle array into string joining
+            var preRunEval = ( viewDef.preRunEval ) ? Util.getEvalStr( viewDef.preRunEval ): undefined;
+            var dataFilterEval = ( viewDef.dataFilterEval ) ? Util.getEvalStr( viewDef.dataFilterEval ): undefined;
 
             mainList.forEach( client => 
             {
                 InfoDataManager.setINFOdata( 'client', client );
                 
-                try {		
+                // 'preRunEval' - if exists, run eval <-- for definitions eval..
+                try {
+                    if ( preRunEval ) eval( Util.getEvalStr( preRunEval ) );
+                } catch( errMsg ) { console.log( 'ClilentListView.viewFilterData, preRunEval, ' + errMsg ); }
+    
+
+                // 'dataFilterEval' - for 'true' condition check
+                try {
                     var returnVal = false;
-                    //inputVal = Util.getEvalStr( dataFilterEval );  // Handle array into string joining
                     if ( dataFilterEval ) returnVal = eval( dataFilterEval );
                     if ( returnVal === true ) filteredData.push( client );
-                } catch( errMsg ) { console.log( 'ClilentListView.viewFilterData, ' + errMsg ); }
+                } catch( errMsg ) { console.log( 'ClilentListView.viewFilterData, dataFilterEval, ' + errMsg ); }
             });                
         }
 
@@ -554,7 +561,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
             {
                 me.sortViewList_ByGroup( me.groupByData );
 
-                me.clientListObj.reRenderWithList( me.viewFilteredList, me.groupByData );
+                me.clientListObj.reRenderWithList( me.viewFilteredList, me.groupByData, me.viewDef_Selected );
             }
             else
             {
@@ -598,7 +605,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
             {
                 me.sortViewList( sortDef, me.viewFilteredList );                        
 
-                me.clientListObj.reRenderWithList( me.viewFilteredList, me.groupByData );  // there is 'callBack' param..            
+                me.clientListObj.reRenderWithList( me.viewFilteredList, me.groupByData, me.viewDef_Selected );  // there is 'callBack' param..            
             }
         });
     };

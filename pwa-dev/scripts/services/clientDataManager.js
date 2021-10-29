@@ -608,15 +608,15 @@ ClientDataManager.getVoucherDataList = function( client )
     
         if ( voucherCodes.length > 0 )
         {
-            // 1. Organize data by voucherCode ->  { voucherCode, createdDateStr, activities([]) }
+            // 1. Organize data by voucherCode ->  { voucherCode, createdDateStr/v_issDateStr, activities([]) }
             voucherCodes.forEach( voucherCode => 
             {
                 voucherDataList.push( ActivityDataManager.getVoucherActivitiesData( client.activities, voucherCode ) );
             });
 
-            // 2. Sort by 'createdDateStr' in ascending order
+            // 2. Sort by 'createdDateStr/v_issDateStr' in ascending order
             voucherDataList.sort( function(a, b) { 
-                    return ( a.createdDateStr >= b.createdDateStr ) ? 1: -1; 
+                    return ( a.v_issDateStr >= b.v_issDateStr ) ? 1: -1; 
                 } 
             );
         }

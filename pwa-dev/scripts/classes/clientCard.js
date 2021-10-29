@@ -175,11 +175,32 @@ function ClientCard( clientId, options )
         try
         {            
             var displayBase = ConfigManager.getClientDisplayBase();
-            var displaySettings = ConfigManager.getClientDisplaySettings();
-        
+            var displaySettings = ConfigManager.getClientDisplaySettings();            
+
             InfoDataManager.setINFOdata( 'client', client );
 
-            FormUtil.setCardContentDisplay( divClientContentTag, displayBase, displaySettings, Templates.cardContentDivTag );
+
+			var view = me.options.viewDef_Selected;
+            var preRunEvalStr;
+            if ( view )
+            {
+                var hasViewDisplayData = false;
+
+                if ( view.displayBase ) {
+                    hasViewDisplayData = true;
+                    displayBase = view.displayBase;
+                } 
+
+                if ( view.displaySettings ) {
+                    hasViewDisplayData = true;
+                    displaySettings = view.displaySettings;
+                }
+
+                // preRunEval string set only if there is 'displayBase/Settings'
+                if ( hasViewDisplayData && view.preRunEval ) preRunEvalStr = Util.getEvalStr( view.preRunEval );
+            }
+            
+            FormUtil.setCardContentDisplay( divClientContentTag, displayBase, displaySettings, Templates.cardContentDivTag, preRunEvalStr );
         }
         catch ( errMsg )
         {

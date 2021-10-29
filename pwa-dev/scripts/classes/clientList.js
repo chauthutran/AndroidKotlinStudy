@@ -13,7 +13,8 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     me.blockTag;
 
     me.clientList = [];
-    me.viewGroupByData; // set from 'blockListView'
+    me.viewGroupByData; // set from '---ListView'
+    me.viewDef_Selected;
 
     me.hasView = false;  
     me.clientListViewObj;
@@ -94,7 +95,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
 
     // Used by viewFilter.. - 
-    me.reRenderWithList = function( newClientList, groupByData, callBack )
+    me.reRenderWithList = function( newClientList, groupByData, viewDef_Selected ) //callBack )
     {
         if ( me.listTableTbodyTag )
         {
@@ -103,6 +104,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
             me.clientList = newClientList;  // NOTE: We expect this list already 'cloned'...
             me.viewGroupByData = groupByData;
+            me.viewDef_Selected = viewDef_Selected;
 
             me.clearExistingList( me.listTableTbodyTag ); // remove li.clientItemCard..
             me.pagingDataReset( me.pagingData );
@@ -112,7 +114,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
             //me.cwsRenderObj.pulsatingProgress.show();
 
             // This removes the top view - if view exists..
-            me.populateClientCardList( me.clientList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
+            me.populateClientCardList( me.clientList, me.viewGroupByData, me.viewDef_Selected, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
 
         }
         else
@@ -131,7 +133,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         {
             var newClientList = Util.cloneJson( ClientDataManager.getClientList() );
 
-            me.reRenderWithList( newClientList, me.viewGroupByData, callBack );    
+            me.reRenderWithList( newClientList, me.viewGroupByData, me.viewDef_Selected ); //, callBack );    
         }
     };
 
@@ -191,7 +193,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         {
             me.pagingDataReset( me.pagingData );
 
-            me.populateClientCardList( clientList, me.viewGroupByData, listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
+            me.populateClientCardList( clientList, me.viewGroupByData, me.viewDef_Selected, listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
         }
     };
 
@@ -209,7 +211,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     // Add paging here as well..
-    me.populateClientCardList = function( clientList, viewGroupByData, listTableTbodyTag, scrollStartFunc, scrollEndFunc )
+    me.populateClientCardList = function( clientList, viewGroupByData, viewDef_Selected, listTableTbodyTag, scrollStartFunc ) //scrollEndFunc )
     {
         if ( clientList.length === 0 ) 
         {
@@ -238,7 +240,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
                 {
                     var clientJson = clientList[i];
 
-                    var clientCardObj = me.createClientCard( clientJson, listTableTbodyTag, viewGroupByData );
+                    var clientCardObj = me.createClientCard( clientJson, listTableTbodyTag, viewGroupByData, viewDef_Selected );
 
                     clientCardObj.render();
                 }    
@@ -332,7 +334,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
         // me.cwsRenderObj.pulsatingProgress.show();
 
         // 2. check current paging, get next paging record data.. - populateClientList has this in it.
-        me.populateClientCardList( me.clientList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
+        me.populateClientCardList( me.clientList, me.viewGroupByData, me.viewDef_Selected, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
 
     };
 
@@ -361,11 +363,11 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
     // ------------------------------------
     // --- Create Client Card Related -------------
 
-    me.createClientCard = function( clientJson, listTableTbodyTag, viewGroupByData )
+    me.createClientCard = function( clientJson, listTableTbodyTag, viewGroupByData, viewDef_Selected )
     {
         var groupAttrVal = me.setGroupDiv( clientJson, viewGroupByData, listTableTbodyTag );
 
-        var clientCard = new ClientCard( clientJson._id );
+        var clientCard = new ClientCard( clientJson._id, { viewDef_Selected: viewDef_Selected } );
 
         listTableTbodyTag.append ( clientCard.generateCardTrTag( groupAttrVal ) );
 

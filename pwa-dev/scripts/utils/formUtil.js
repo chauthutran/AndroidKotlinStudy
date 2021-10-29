@@ -135,12 +135,20 @@ FormUtil.setFormCtrlDisplayValue = function( inputDataValueTag, value )
 
 // ==============================================
 
-FormUtil.setCardContentDisplay = function( divContentTag, displayBase, displaySettings, cardContentTemplate )
+FormUtil.setCardContentDisplay = function( divContentTag, displayBase, displaySettings, cardContentTemplate, preRunEvalStr )
 {
 	try
 	{
 		//var appendContent = '';
 		divContentTag.find( 'div.cardContentDisplay' ).remove();
+
+		// run optional eval for things..
+		try
+		{
+			if ( preRunEvalStr ) eval( preRunEvalStr );
+		}
+		catch( errMsg ) { console.log( 'FormUtil.setCardContentDisplay, failed on preRunEval, ' + errMsg ); }
+
 
 		// Display 1st line
 		try
@@ -148,7 +156,7 @@ FormUtil.setCardContentDisplay = function( divContentTag, displayBase, displaySe
 			var displayBaseContent = eval( Util.getEvalStr( displayBase ) ); // Handle array into string joining		
 			if ( displayBaseContent ) divContentTag.append( $( cardContentTemplate ).html( displayBaseContent ) );
 		}
-		catch( errMsg ) { console.log( 'setCardContentDisplay, failed on displayBaseContent, ' + errMsg ); }
+		catch( errMsg ) { console.log( 'FormUtil.setCardContentDisplay, failed on displayBaseContent, ' + errMsg ); }
 
 		
 		// Display 2nd lines and more
@@ -168,7 +176,7 @@ FormUtil.setCardContentDisplay = function( divContentTag, displayBase, displaySe
 						var displayEvalResult = eval( Util.getEvalStr( dispSettingEvalStr ) );
 						if ( displayEvalResult ) divContentTag.append( $( cardContentTemplate ).html( displayEvalResult ) );
 					}
-					catch( errMsg ) { console.log( 'setCardContentDisplay, failed on displayContent, ' + errMsg ); }
+					catch( errMsg ) { console.log( 'FormUtil.setCardContentDisplay, failed on displayContent, ' + errMsg ); }
 				}
 			}
 		}
