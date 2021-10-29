@@ -294,7 +294,6 @@ Action.actionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, 
 
 				if ( clientCardTag.length > 0 ) 
 				{
-					console.log( 'Rerender tried' );
 					clientCardTag.find( 'div.clientRerender' ).click();
 				}
 

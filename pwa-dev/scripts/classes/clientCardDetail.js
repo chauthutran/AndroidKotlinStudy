@@ -48,30 +48,24 @@ function ClientCardDetail( clientId, isRestore )
         // set tabs contents
         me.setFullPreviewTabContent( me.clientId, me.cardSheetFullTag );
                 
-        //TranslationManager.translatePage();    
+        TranslationManager.translatePage();    
     };
 
     // ----------------------------------------------------
 
     me.setFullPreviewTabContent = function( clientId, sheetFullTag )
     {
-        var clientJson = ClientDataManager.getClientById( clientId );
-    
-        // #1 clientDetails properties = key        
-        var passedData = { "displayData": [ { id: "id", value: clientJson._id } ], "resultData": [] };
 
-        for ( var id in clientJson.clientDetails )
-        {
-            passedData.displayData.push( {"id": id, "value": clientJson.clientDetails[id] } );
-        }
-
+        // #1. Client Details 
         var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
         var clientProfileBlockId = ConfigManager.getSettingsClientDef()[ App.clientProfileBlockId ]; // Get client Profile Block defition from config.
-
         sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click( function() 
         {
             clientDetailsTabTag.html( '' );
+
+            var passedData = me.getPassedData_FromClientDetail( clientId );            
             FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, clientDetailsTabTag, passedData );
+
             clientDetailsTabTag.find( 'div.block' ).css( 'width', '98% !important' );
         });
         
@@ -80,13 +74,15 @@ function ClientCardDetail( clientId, isRestore )
         var activityTabBodyDivTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
         sheetFullTag.find( '.tab_fs li[rel=tab_clientActivities]' ).click( function() 
         {
-            console.log( 'tab_clientActivities CLICKED' );
-            
             activityTabBodyDivTag.html( '' );
+
+            var clientJson = ClientDataManager.getClientById( clientId ); // for changed client data?
 
             me.populateActivityCardList( clientJson.activities, activityTabBodyDivTag );
 
-            var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag, { 'mainFavPreClick': function( blockTag, blockContianerTag ) {
+            var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag
+            , { 'mainFavPreClick': function( blockTag, blockContianerTag ) 
+            {
                 // Clear the list?
                 blockTag.html( '' ); //activityListBlockTag.html( '' );
 
@@ -136,6 +132,7 @@ function ClientCardDetail( clientId, isRestore )
             });    
         } 
 
+
         // -----------------------------------------
         // Default click 'Client'
         var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
@@ -145,6 +142,29 @@ function ClientCardDetail( clientId, isRestore )
         setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );
     };
 
+
+    me.getPassedData_FromClientDetail = function( clientId )
+    {
+        var passedData = { displayData: [], resultData: [] };
+
+        try
+        {
+            var displayDataArr = [];
+            displayDataArr.push( { id: "id", value: clientId } );
+    
+            var clientJson = ClientDataManager.getClientById( clientId );
+    
+            for ( var id in clientJson.clientDetails ) 
+            {
+                displayDataArr.push( { id: id, value: clientJson.clientDetails[id] } );
+            }
+    
+            passedData.displayData = displayDataArr;    
+        }
+        catch( errMsg ) { console.log( 'ERROR in ClientCardDetails.getPassedData_FromClientDetail, ' + errMsg ); }
+
+        return passedData;
+    };
     // ------------------------------
 
     me.setUpClientActivityRequestAdd = function( clientId, devTabTag, sheetFullTag )
