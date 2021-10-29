@@ -257,8 +257,8 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
                 
                 try {		
                     var returnVal = false;
-                    inputVal = Util.getEvalStr( dataFilterEval );  // Handle array into string joining
-                    if ( inputVal ) returnVal = eval( inputVal );
+                    //inputVal = Util.getEvalStr( dataFilterEval );  // Handle array into string joining
+                    if ( dataFilterEval ) returnVal = eval( dataFilterEval );
                     if ( returnVal === true ) filteredData.push( client );
                 } catch( errMsg ) { console.log( 'ClilentListView.viewFilterData, ' + errMsg ); }
             });                

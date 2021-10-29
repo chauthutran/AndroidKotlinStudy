@@ -1066,42 +1066,54 @@ Util.getCombinedJsonInArr = function( objArr )
 // Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
 Util.sortByKey = function( array, key, noCase, order, emptyStringLast ) 
 {
-	if ( array.length == 0 || array[0][key] === undefined ) return array;
-	else
+	try
+	{
+		if ( array && key )
 		{
-		return array.sort( function( a, b ) {
-		
-			var x = a[key]; 
-			var y = b[key];
-
-			if ( x === undefined ) x = "";
-			if ( y === undefined ) y = "";
-
-			if ( noCase !== undefined && noCase )
-			{
-				x = x.toLowerCase();
-				y = y.toLowerCase();
-			}
-
-			if ( emptyStringLast !== undefined && emptyStringLast && ( x == "" || y == "" ) ) 
-			{
-				if ( x == "" && y == "" ) return 0;
-				else if ( x == "" ) return 1;
-				else if ( y == "" ) return -1;
-			}
+			if ( array.length == 0 || array[0][key] === undefined ) return array;
 			else
-			{
-				if ( order === undefined )
 				{
-					return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-				}
-				else
-				{
-					if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-					else if ( order === "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
-				}
+				return array.sort( function( a, b ) {
+				
+					var x = a[key]; 
+					var y = b[key];
+		
+					if ( x === undefined ) x = "";
+					if ( y === undefined ) y = "";
+		
+					if ( noCase !== undefined && noCase )
+					{
+						x = x.toLowerCase();
+						y = y.toLowerCase();
+					}
+		
+					if ( emptyStringLast !== undefined && emptyStringLast && ( x == "" || y == "" ) ) 
+					{
+						if ( x == "" && y == "" ) return 0;
+						else if ( x == "" ) return 1;
+						else if ( y == "" ) return -1;
+					}
+					else
+					{
+						if ( order === undefined )
+						{
+							return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+						}
+						else
+						{
+							if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+							else if ( order === "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
+						}
+					}
+				});
 			}
-		});
+		}
+		else return array;
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in Util.sortByKey, ' + errMsg );
+		return array;
 	}
 };
 
@@ -1119,48 +1131,59 @@ Util.sortByKey2 = function( array, key, order, options )
 		emptyStringLast = ( options.emptyStringLast ) ? options.emptyStringLast : undefined;
 	}
 
-
-	if ( array.length == 0 || array[0][key] === undefined ) return array;
-	else
+	try
 	{
-		return array.sort( function( a, b ) {
-		
-
-			noCase, order, emptyStringLast
-
-
-			var x = a[key]; 
-			var y = b[key];
-
-			if ( x === undefined ) x = "";
-			if ( y === undefined ) y = "";
-
-			if ( noCase !== undefined && noCase )
-			{
-				x = x.toLowerCase();
-				y = y.toLowerCase();
-			}
-
-			if ( emptyStringLast !== undefined && emptyStringLast && ( x == "" || y == "" ) ) 
-			{
-				if ( x == "" && y == "" ) return 0;
-				else if ( x == "" ) return 1;
-				else if ( y == "" ) return -1;
-			}
+		if ( array && key )
+		{
+			if ( array.length == 0 || array[0][key] === undefined ) return array;
 			else
 			{
-				if ( order === undefined )
-				{
-					return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-				}
-				else
-				{
-					if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-					else if ( order == "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
-				}
+				return array.sort( function( a, b ) {
+				
+
+					noCase, order, emptyStringLast
+
+
+					var x = a[key]; 
+					var y = b[key];
+
+					if ( x === undefined ) x = "";
+					if ( y === undefined ) y = "";
+
+					if ( noCase !== undefined && noCase )
+					{
+						x = x.toLowerCase();
+						y = y.toLowerCase();
+					}
+
+					if ( emptyStringLast !== undefined && emptyStringLast && ( x == "" || y == "" ) ) 
+					{
+						if ( x == "" && y == "" ) return 0;
+						else if ( x == "" ) return 1;
+						else if ( y == "" ) return -1;
+					}
+					else
+					{
+						if ( order === undefined )
+						{
+							return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+						}
+						else
+						{
+							if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+							else if ( order == "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
+						}
+					}
+				});
 			}
-		});
+		}
+		else return array;
 	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in Util.sortByKey2, ' + errMsg );
+		return array;
+	}			
 };
 
 

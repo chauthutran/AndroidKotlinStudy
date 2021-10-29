@@ -1316,22 +1316,31 @@ FormUtil.getTagVal = function( tag, option )
 {
 	var val = '';
 
-	if( tag )
+	if ( tag )
 	{
-        // TODO: ADDED FOR 'EDIT' FEATURE
-		if( FormUtil.checkTag_CheckBox( tag ) )
+		try
 		{
-			val = tag.prop( 'checked' ); 
+			if( FormUtil.checkTag_CheckBox( tag ) )
+			{
+				val = tag.prop( 'checked' ); 
+			}
+			else
+			{
+				val = Util.trim( tag.val() ); // Trim the white space front/back of input value
+			}
+
+			// Allow 'false' & '0', but undefined/null should be changed to emtpy string.
+			if ( val === undefined || val === null ) val = '';
 		}
-		else
+		catch( errMsg )
 		{
-			val = Util.trim( tag.val() ); // Trim the white space front/back of input value
-			//if ( val && option === 'removeDBQuote' ) val = val.replace(/"/g, '' );
+			console.log( 'ERROR in FormUtil.getTagVal, ' + errMsg );
 		}
 	}
 
 	return val;
-}
+};
+
 
 FormUtil.getManifest = function()	
 {

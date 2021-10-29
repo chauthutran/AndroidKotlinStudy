@@ -58,6 +58,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			blockTag.append( formDivSecTag );
 
 
+			// STEP #1. Generate input tags by defitnion.
 			// NOTE: JAMES: STOPPED WORKING AT HERE <--- ADDED 'groupId' on return 'formFieldGroups'
 			//   Organizing new data with group info seems to be creatinng a lot of issues..  Bad idea.. 
 			var fieldDataNew_wtGrp = me.setNewFormData_wtGroupInfo( formDef_fieldsArr, ConfigManager.getConfigJson().definitionFormGroups );
@@ -78,6 +79,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			});
 			
 			
+			// STEP #2. Value populate to field, set validation event, trigger change for fields with value, viewOnlyMode
 			Validation.disableValidation( function() 
 			{
 				me.populateFormData( passedData, formTag );
@@ -92,18 +94,33 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					me.defaultValEval( formTag, me.evalFunctionsToProcess );
 				}, 500 );
 	
-				// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form
-				formDivSecTag.find('.dataValue:not(:empty)').change(); // * BUG > only highlights SELECT controls (ignores inputs): https://stackoverflow.com/questions/8639282/notempty-css-selector-is-not-working
 
+				// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form				
+				me.fieldsWtValue_ChangeEvent( formDivSecTag ); // formDivSecTag.find('.dataValue:not(:empty)').change(); // * BUG > only highlights SELECT controls
 
 				// View Only Mode
 				me.setForm_ViewOnlyMode( me.blockObj, blockTag );
 			});
 
 
-			// Translate Page after the rendering..
+			// STEP #3. Run for translation 
 			TranslationManager.translatePage();
 		}
+	};
+
+
+	me.fieldsWtValue_ChangeEvent = function( formDivSecTag )
+	{
+		var fieldTags = formDivSecTag.find( '.dataValue' );
+
+		fieldTags.each( function() 
+		{
+			var tag = $( this );
+			var tagVal = FormUtil.getTagVal( tag );
+
+			// For fields input/select tags that has value (.dataValue), run changes
+			if ( tagVal !== '' ) tag.change();
+		});
 	};
 
 
@@ -1682,19 +1699,15 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		try
 		{
-			var tagVal = FormUtil.getTagVal( tag );
-		
-			// PREVIOUS ONES:
-			// NOTE: WE LIKE TO PERFORM 'evalActions' regardless of the tagVal (even empty..) - especially 'false' (by checkbox)
-			//if ( tagVal !== undefined && tagVal !== '' )
-			//if ( me.isEntryTagVisible( tag ) && fieldDef.evalActions )
-			// Some Greg code for 'null' issue <-- Need to handle this!!
-			if ( tag && tagVal !== undefined && tagVal !== '' && tagVal !== null && fieldDef && fieldDef.evalActions )
+			var tagVal = FormUtil.getTagVal( tag ); // undefined/null are converted to ''
+
+			// Allow tagVal for false/0, etc..  
+			if ( tagVal !== '' && fieldDef && fieldDef.evalActions )
 			{
 				// Proper INFO variable references
 				InfoDataManager.setINFOdata( 'form', tag.closest( 'form' ) );
 				InfoDataManager.setINFOdata( 'tag', tag );
-				InfoDataManager.setINFOdata( 'tagVisible', tag.parent().is( ':visible' ) );
+				InfoDataManager.setINFOdata( 'tagVisible', tag.parent().is( ':visible' ) );  // should use .closest( 'div.fieldBlock' ) ?
 				InfoDataManager.setINFOdata( 'tagVal', tagVal );
 
 				// Old ones - to be obsolete later?
