@@ -1080,3 +1080,86 @@ ActivityDataManager.getActivityByTransType = function( activityList, typeList )
 
     return activity;
 };
+
+// matchCondiArr = [ { 'type': '', 'dataValues': {}, 'clientDetails': {}, etc.. } <-- all optional..
+ActivityDataManager.getActivityByTrans = function( activityList, matchCondiArr )
+{
+    var activity;
+
+    if ( activityList )
+    {
+        activityList.forEach( act => 
+        {
+            // Look though each 'matchCondi'   If it matches any, set as 'activity'..
+            act.transactions.forEach( tran => {
+                if ( ActivityDataManager.isTransMatch( tran, matchCondiArr ) ) activity = act;
+            });
+        });  
+    }
+
+    return activity;
+};
+
+// [ { type: 'v_iss', clientDetails: { 'firstName': 'Polly' } }, { dataValues: { 'age': '23' } }  ]
+// Either one of the condition would work.
+ActivityDataManager.isTransMatch = function( tran, matchCondiArr )
+{
+    var isMatch = false;
+
+    // 0. Look through all array of conditions.  If one of them pass, this 'tran' is a match.
+    for ( var i = 0; i < matchCondiArr.length; i++ )
+    {
+        var matchCondi = matchCondiArr[i];
+        var passAllCondition = true;
+
+        // 1. Go through each property of the matching condition: { 'type': --, 'dataValues': --- }
+        for ( var propName in matchCondi )
+        {
+            // type, dataValues, clientDetails
+            var matchProp = matchCondi[ propName ];
+            var tranProp = tran[ propName ];
+
+            // If tran does not have the prop, return false;
+            if ( !tranProp ) 
+            {
+                passAllCondition = false;
+                break;                    
+            }
+            else
+            {
+                // If prop is string, like 'type', simply match for value.
+                if ( Util.isTypeString( matchProp ) )
+                {
+                    if ( tranProp !== matchProp ) 
+                    {
+                        passAllCondition = false;
+                        break;
+                    }
+                } 
+                // If prop is object, check for all subProperty of the object
+                else if ( Util.isTypeObject( matchProp ) )
+                {    
+                    // All prop within the object need be met. EX. 'dataValues.---'
+                    for ( var spName in matchProp )
+                    {
+                        var sMatchVal = matchProp[ spName ];
+
+                        if ( tranProp[ spName ] !== sMatchVal ) 
+                        {
+                            passAllCondition = false;
+                            break;    
+                        }
+                    }
+                }
+            }
+        }
+
+        if ( passAllCondition )
+        {
+            isMatch = true;
+            break;
+        }
+    }
+
+    return isMatch;
+};
