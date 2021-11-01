@@ -693,21 +693,6 @@ ActivityDataManager.setActivityDateLocal = function( activityJson )
     }
 };
 
-// --------------------------------------------
-// --- Duplicate Voucher Code Check
-
-// for each activities that is voucher..
-// trans.forEach( trans ) {
-// [ 'v_iss', 'v_rdx', 'v_exp' ].indexOf( trans )
-// check against  existing activities?  or simply check against clientDetails?  'voucherCode' or 'voucherCodes' check?
-
-// NOTE: ALSO, CREATE CLIENT.CLIENTDETAILS SEARCH FOR VOUCHER..  
-
-
-// ActivityDataManager.getActivitiesByVoucherCode( voucherCode, opt_TransType, opt_bGetOnlyOnce );
-// var matchActivities = ActivityDataManager.getActivitiesByVoucherCode( voucherCode, 'v_iss', true );
-// if ( matchActivities.length > 0 )
-
 ActivityDataManager.getActivitiesByVoucherCode = function( voucherCode, opt_TransType, opt_bGetOnlyOnce )
 {
     var matchActivities = [];
@@ -1009,6 +994,8 @@ ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode
     return voucherData;
 };
 
+// --------------------------------------------
+// --- Country Config Usage Methods -----------
 
 ActivityDataManager.getTransDataValue = function( transList, transDVProp )
 {
@@ -1162,4 +1149,27 @@ ActivityDataManager.isTransMatch = function( tran, matchCondiArr )
     }
 
     return isMatch;
+};
+
+
+// matchCondiArr = [ { 'type': '', 'dataValues': {}, 'clientDetails': {}, etc.. } <-- all optional..
+ActivityDataManager.getActivitiesSince = function( activityList, dateStr, datePropName )
+{
+    var outActList = [];
+
+    if ( activityList )
+    {
+        activityList.forEach( act => 
+        {
+            try
+            {
+                var actDateStr = act.date[datePropName];
+
+                if ( actDateStr > dateStr ) outActList.push( act );
+            }
+            catch ( errMsg ) { console.log( 'ERROR in ActivityDataManager.getActivitiesSince, ' + errMsg ); }
+        });  
+    }
+
+    return outActList;
 };
