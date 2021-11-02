@@ -448,7 +448,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
             // Which name to use - 'INFO' vs 'LIST'
             var INFOList_client = InfoDataManager.setINFOList_Client( me.viewFilteredList )
 
-            me.evalSort( sortDef.field, INFOList_client, sortDef.order.toLowerCase() );
+            Util.evalSort( sortDef.field, INFOList_client, sortDef.order.toLowerCase() );
 
             // Put the item (in INFO) back to the List..
             me.viewFilteredList = InfoDataManager.getClientList_fromINFOList( INFOList_client );
@@ -509,9 +509,11 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
     {
         Util.tryCatchContinue( function() {
 
-            var INFOList_client = InfoDataManager.setINFOList_Client( group.clients )
-                
-            me.evalSort( contentSort, INFOList_client, contentSortOrder );
+            var INFOList_client = InfoDataManager.setINFOList_Client( group.clients )     
+            
+            // If we want to use global 'INFO' in sortEval, we need to pass in the global 'INFO' as parameter
+            //      + change 'INFO.activity' as 'LIST.activity' to differentiate if... or just 'activity'
+            Util.evalSort( contentSort, INFOList_client, contentSortOrder );
 
             var newGroupClients = InfoDataManager.getClientList_fromINFOList( INFOList_client );
 
@@ -520,27 +522,6 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
         }, "clientListView.groupContentSort()" );
     };
 
-
-    // -------------------------------------------------------
-
-    // If we want to use global 'INFO' in sortEval, we need to pass in the global 'INFO' as parameter
-    //      + change 'INFO.activity' as 'LIST.activity' to differentiate if... or just 'activity'
-    me.evalSort = function( fieldEvalStr, list, orderStr )
-    {
-        var isDescending = orderStr.indexOf( 'desc' );
-
-        list.sort( function(a, b) {
-
-            var sortEval = ( isDescending ) ? '( a.' + fieldEvalStr + ' < b.' + fieldEvalStr + ' ) ? -1 : ' +
-                                ' ( b.' + fieldEvalStr + ' < a.' + fieldEvalStr + ' ) ? 1 ' +
-                                ' : 0 '
-                            : '( a.' + fieldEvalStr + ' > b.' + fieldEvalStr + ' ) ? -1 : ' +
-                                ' ( b.' + fieldEvalStr + ' > a.' + fieldEvalStr + ' ) ? 1 ' +
-                                ' : 0 ';
-    
-            return eval( sortEval );    
-        });          
-    };
 
     // ---------------------------------------------------------
     // -- Events Related

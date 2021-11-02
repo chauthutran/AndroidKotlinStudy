@@ -1064,6 +1064,7 @@ Util.getCombinedJsonInArr = function( objArr )
 // TODO: We can create Util.sortByKey with 'eval' of 'key' part..
 
 // Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
+//	NO NEED TO return!!!  <-- makes changes on itself!!!
 Util.sortByKey = function( array, key, noCase, order, emptyStringLast ) 
 {
 	try
@@ -1072,7 +1073,8 @@ Util.sortByKey = function( array, key, noCase, order, emptyStringLast )
 		{
 			if ( array.length == 0 || array[0][key] === undefined ) return array;
 			else
-				{
+			{
+				// NOTE: no need to 'return' <-- this makes changes on the array itself!!!
 				return array.sort( function( a, b ) {
 				
 					var x = a[key]; 
@@ -1095,14 +1097,12 @@ Util.sortByKey = function( array, key, noCase, order, emptyStringLast )
 					}
 					else
 					{
-						if ( order === undefined )
-						{
-							return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-						}
+						if ( order === undefined ) return Util.sortCompare( x, y );
 						else
 						{
-							if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-							else if ( order === "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
+							// return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+							if ( order === "Acending" || order === "asc" ) return Util.sortCompare( x, y );
+							else if ( order === "Decending" || order === "desc" ) return Util.sortCompare( y, x );
 						}
 					}
 				});
@@ -1117,9 +1117,25 @@ Util.sortByKey = function( array, key, noCase, order, emptyStringLast )
 	}
 };
 
+// For reverse or decending order, call param reversed: Util.sortCompare( y, x )
+Util.sortCompare = function( x, y )
+{
+	var returnVal = 0;
 
+	try
+	{
+		if ( x < y ) returnVal = -1;
+		else if ( x > y ) returnVal = 1;
+		else returnVal = 0;	
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in Util.sortCompare, ' + errMsg );
+	}
 
-// Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
+	return returnVal;
+};
+
 Util.sortByKey2 = function( array, key, order, options ) 
 {
 	var noCase;
@@ -1131,68 +1147,23 @@ Util.sortByKey2 = function( array, key, order, options )
 		emptyStringLast = ( options.emptyStringLast ) ? options.emptyStringLast : undefined;
 	}
 
-	try
-	{
-		if ( array && key )
-		{
-			if ( array.length == 0 || array[0][key] === undefined ) return array;
-			else
-			{
-				return array.sort( function( a, b ) {
-				
-
-					noCase, order, emptyStringLast
-
-
-					var x = a[key]; 
-					var y = b[key];
-
-					if ( x === undefined ) x = "";
-					if ( y === undefined ) y = "";
-
-					if ( noCase !== undefined && noCase )
-					{
-						x = x.toLowerCase();
-						y = y.toLowerCase();
-					}
-
-					if ( emptyStringLast !== undefined && emptyStringLast && ( x == "" || y == "" ) ) 
-					{
-						if ( x == "" && y == "" ) return 0;
-						else if ( x == "" ) return 1;
-						else if ( y == "" ) return -1;
-					}
-					else
-					{
-						if ( order === undefined )
-						{
-							return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-						}
-						else
-						{
-							if ( order === "Acending" || order === "asc" ) return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-							else if ( order == "Decending" || order === "desc" ) return ( ( x > y ) ? -1 : ( ( x < y ) ? 1 : 0 ) );
-						}
-					}
-				});
-			}
-		}
-		else return array;
-	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in Util.sortByKey2, ' + errMsg );
-		return array;
-	}			
+	return Util.sortByKey( array, key, noCase, order, emptyStringLast );
 };
-
-
 
 Util.sortByKey_Reverse = function( array, key ) {
 	return array.sort( function( b, a ) {
-		var x = a[key]; var y = b[key];
-		return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+		var x = a[key]; var y = b[key];  // reversed by use of b, a param rather than a, b param.
+		return Util.sortCompare( x, y ); // ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
 	});
+};
+
+Util.evalSort = function( fieldName, list, orderStr )
+{
+	var isDescending = ( orderStr === 'desc' );
+	var sortEvalStr = 'Util.sortCompare( a.' + fieldName + ', b.' + fieldName + ')';
+
+	if ( !isDescending ) list.sort( function( a, b ) { return eval( sortEvalStr ); });
+	else list.sort( function( b, a ) { return eval( sortEvalStr ); });
 };
 
 // -------------------------------------------

@@ -321,6 +321,10 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
     if ( newActivities.length > 0 ) 
     {
         ActivityDataManager.insertActivitiesToClient( newActivities, appClient, { 'bRemoveActivityTempClient': true } );
+
+        // NOTE: Could sort all activities in this client AT THIS TIME.
+        //  - Whenever there is an activity to add, we can do sort here? oldest(lowest date string value) on top - ascending
+        // appClient.activities.sort( function(a, b) { return Util.sortCompare( a.date.createdOnDeviceUTC, b.date.createdOnDeviceUTC ) } );
     }
 
     // Return the number of added ones.
