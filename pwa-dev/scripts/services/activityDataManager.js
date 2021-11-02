@@ -1087,6 +1087,24 @@ ActivityDataManager.getActivityByTrans = function( activityList, matchCondiArr )
     return activity;
 };
 
+
+ActivityDataManager.getActivitiesByTrans = function( activityList, matchCondiArr )
+{
+    var activities = [];
+
+    if ( activityList )
+    {
+        activityList.forEach( act => 
+        {
+            var matchAct = ActivityDataManager.getActivityByTrans( [ act ], matchCondiArr );
+            if ( matchAct ) activities.push( act );
+        });  
+    }
+
+    return activities;
+};
+
+
 // [ { type: 'v_iss', clientDetails: { 'firstName': 'Polly' } }, { dataValues: { 'age': '23' } }  ]
 // Either one of the condition would work.
 ActivityDataManager.isTransMatch = function( tran, matchCondiArr )
