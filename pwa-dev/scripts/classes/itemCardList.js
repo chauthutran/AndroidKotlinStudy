@@ -207,6 +207,9 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
                 if ( blockDefJson.emtpyListMsg ) listTableTbodyTag.append( blockDefJson.emtpyListMsg );
                 else listTableTbodyTag.append( $( me.template_divItemDetailEmptyTag ) );
             }
+
+            // Need to hide the ending/more indication bottom tag..
+            // me.listBottomDivTag.hide();
         }
         else
         {

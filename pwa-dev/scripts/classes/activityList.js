@@ -222,7 +222,8 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
                 me.listTableTbodyTag.append( $( me.template_divActivityEmptyTag ) );
             }
 
-            //if ( scrollEndFunc ) scrollEndFunc();
+            // Need to hide the ending/more indication bottom tag..
+            me.listBottomDivTag.hide();            
         }
         else
         {

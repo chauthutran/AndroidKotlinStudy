@@ -220,6 +220,9 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
             {
                 me.listTableTbodyTag.append( $( me.template_divClientDetailEmptyTag ) );
             }
+
+            // Need to hide the ending/more indication bottom tag..
+            me.listBottomDivTag.hide();
         }
         else
         {
