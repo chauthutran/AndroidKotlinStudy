@@ -29,6 +29,9 @@ App.displayActivityDetailsMode = 0;
 App.displayActivityDetailsWithDataOnly = false;
 App.clientProfileBlockId = "clientProfileBlock";
 
+
+App.UaData = UAParser();
+
 // -------------------------------
 
 App.run = function()

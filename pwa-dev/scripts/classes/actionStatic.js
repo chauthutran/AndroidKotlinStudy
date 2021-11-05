@@ -429,7 +429,7 @@ Action.actionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, 
 
 
 						// Generete payload - by template or other structure/format from 'forms'
-						var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
+						var formsJsonActivityPayload = ActivityUtil.generateActivityPayload_byFormsJson( clickActionJson, formDivSecTag );
 
 						// TODO: Simply save blockId, payloadJson..
 						SessionManager.saveWSBlockFormsJson( blockId, ActivityUtil.generateFormsJson( formDivSecTag ) );

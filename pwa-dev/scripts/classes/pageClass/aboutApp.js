@@ -110,7 +110,7 @@ function aboutApp( cwsRender )
 
         // Populate data
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html() );
-        $( '#aboutInfo_Browser' ).html( me.getBrowserInfo() );
+        $( '#aboutInfo_info' ).html( me.getNavigatorInfo() );
 
         $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
         $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManagerNew.statusInfo.appMode + '</div>' );
@@ -171,6 +171,58 @@ function aboutApp( cwsRender )
         M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
         if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
         return M.join(' ');
+    };
+
+
+    me.getNavigatorInfo = function()
+    {
+        var returnData = '';
+
+        returnData += '<div>Browser: ' + Util.getStr( App.UaData.browser.name ) + ' ' + Util.getStr( App.UaData.browser.version ).substr( 0, 2 );
+        //returnData += ' Engine: ' + Util.getStr( App.UaData.engine.name ) + Util.getStr( App.UaData.engine.version );
+        returnData += ', OS: ' + Util.getStr( App.UaData.os.name ) + ' ' + Util.getStr( App.UaData.os.version );
+        returnData += ', CPU: ' + Util.getStr( App.UaData.cpu.architecture ) + '(CoreCount ' + Util.getStr( navigator.hardwareConcurrency ) + ')';
+        returnData += ', Memory: at least ' + Util.getStr( navigator.deviceMemory ) + ' GB [Measurement Max 8]';
+        returnData += '</div>'; 
+
+        returnData += '<div class="divAboutInfo2ndRow">Device: ' + Util.getStr( App.UaData.device.type ) + ' ' 
+            + Util.getStr( App.UaData.device.vendor ) + ' ' 
+            + Util.getStr( App.UaData.device.model );
+        returnData += '</div>'; 
+
+        navigator.getBattery().then( function( battery ) 
+        {
+            var batteryChargingYN = ( battery.charging ) ? 'Y': 'N';
+            var chargeLvl = ( battery.level * 100 ).toFixed( 0 ) + '%';
+            var batteryInfo = ', Battery Left: ' + chargeLvl + ', Charging(' + batteryChargingYN + ')';
+
+            $( 'div.divAboutInfo2ndRow' ).append( batteryInfo );
+        });
+
+        if ( 'storage' in navigator && 'estimate' in navigator.storage ) 
+        {
+            navigator.storage.estimate().then(({usage, quota}) => {
+                var spaceStr = ', Storage: [Using] ' + me.getDiffSize( usage, 1000000, 'MB' ) + '/ ' + me.getDiffSize( quota, 1000000000, 'GB' ) + ' [Browser Usable/DeviceFree]';
+
+                $( 'div.divAboutInfo2ndRow' ).append( spaceStr );
+            });
+        }
+          
+
+        return returnData;
+    };
+
+
+    me.getDiffSize = function( inputVal, dividNum, endingStr )
+    {
+        var returnVal = '';
+
+        if ( inputVal )
+        {
+            returnVal = Number( inputVal / dividNum ).toFixed(1) + endingStr;
+        }
+
+        return returnVal;
     };
 
 	// ------------------------------------

@@ -303,6 +303,7 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
                     // NOTE:
                     // If 'dwActivity.date.updateFromMongo' exists and later then appClientActivity one (if exists)
                     // Adding to 'newActivities' would update/replace the activity in 'appClient'
+                    // THIS DOES NOT SEEM TO BE USED CURRENTLY
 
                     // NEED TO TEST THIS
                     ActivityDataManager.insertToProcessing( dwActivity, processingInfo );
@@ -672,22 +673,26 @@ ActivityDataManager.setActivityDateLocal = function( activityJson )
     {
         if ( activityJson.date && activityJson.date.capturedUTC )
         {
-            if ( ConfigManager.isSourceTypeDhis2()
-                    && ( ConfigManager.getConfigJson().sourceAsLocalTime 
-                    || ConfigManager.getConfigJson().dhis2UseLocalTime )
-                )
+            if ( ConfigManager.isSourceTypeDhis2() )
             {
-                var localDateTime = activityJson.date.capturedUTC;
-                if ( localDateTime ) 
+                if ( ConfigManager.getConfigJson().sourceAsLocalTime || ConfigManager.getConfigJson().dhis2UseLocalTime )
                 {
-                    activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );    
-                    activityJson.date.capturedUTC = Util.getUTCDateTimeStr( new Date( localDateTime ), 'noZ' );
+                    var localDateTime = activityJson.date.capturedUTC;
+                    if ( localDateTime ) 
+                    {
+                        activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );    
+                        activityJson.date.capturedUTC = Util.getUTCDateTimeStr( new Date( localDateTime ), 'noZ' );
+                    }
+                } 
+                else
+                {
+                    var localDateTime = Util.dateUTCToLocal( activityJson.date.capturedUTC );
+                    if ( localDateTime ) activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );    
                 }
-            } 
-            else
+            }
+            else // Mongo Type
             {
-                var localDateTime = Util.dateUTCToLocal( activityJson.date.capturedUTC );
-                if ( localDateTime ) activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );    
+                // Mongo type does not need to convert date..  Correct?
             }
         }
     }

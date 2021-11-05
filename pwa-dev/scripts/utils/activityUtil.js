@@ -29,7 +29,7 @@ ActivityUtil.addAsActivity = function( type, defJson, defId, inputsJson )
 // ==== Inputs Json generate / Activity Payload Gen related ==
 
 
-ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, formDivSecTag )
+ActivityUtil.generateActivityPayload_byFormsJson = function( actionDefJson, formDivSecTag )
 {
 	var activityPayload = actionDefJson.activityPayload;
 	var payload = {};
@@ -66,7 +66,47 @@ ActivityUtil.generateFormsJson_ActivityPayloadData = function( actionDefJson, fo
 		payload = ActivityUtil.generateFormsJsonData_ByType( actionDefJson, actionDefJson, formDivSecTag );  
 	}
 
+	// NEW: Set proper payload captureValues dates generated.
+	ActivityUtil.checkNSet_ActivityDates( payload );
+
 	return { 'payload': payload };
+};
+
+
+ActivityUtil.checkNSet_ActivityDates = function( payload )
+{
+	try
+	{
+		if ( payload.captureValues && payload.captureValues.date ) 
+		{
+			var date = payload.captureValues.date;
+	
+			if ( Util.isTypeObject( date ) )
+			{
+				// If 'captureLoc' exists, set 'captureUTC' from it.
+				// If 'captureLoc' not exists, but 'captureUTC' exists, create captureLoc from it.
+				// If above 2 does not exists, create both new with current dateTime. 
+				if ( date.capturedLoc ) 
+				{
+					date.capturedUTC = Util.getUTCDateTimeStr( new Date( date.capturedLoc ), 'noZ' );
+				}
+				else if ( date.capturedUTC ) 
+				{
+					var localDateTime = Util.dateUTCToLocal( date.capturedUTC );
+					if ( localDateTime ) date.capturedLoc = Util.formatDateTime( localDateTime );
+				}
+				else
+				{
+					date.capturedLoc = Util.formatDate( new Date() ); 
+					date.capturedUTC = Util.getUTCDateTimeStr( new Date( date.capturedLoc ), 'noZ' );
+				}
+			}
+		}	
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in ActivityUtil.checkNSet_ActivityDates, ' + errMsg );
+	}
 };
 
 

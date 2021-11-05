@@ -474,7 +474,7 @@ function Action( cwsRenderObj, blockObj )
 							}
 
 							// #1. Generete payload with 'capture/search' structure - by Template & form fields values.
-							var formsJsonActivityPayload = ActivityUtil.generateFormsJson_ActivityPayloadData( clickActionJson, formDivSecTag );
+							var formsJsonActivityPayload = ActivityUtil.generateActivityPayload_byFormsJson( clickActionJson, formDivSecTag );
 
 							// TODO: Simply save blockId, payloadJson..
 							SessionManager.saveWSBlockFormsJson( blockId, ActivityUtil.generateFormsJson( formDivSecTag ) );
