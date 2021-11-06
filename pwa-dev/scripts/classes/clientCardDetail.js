@@ -107,7 +107,7 @@ function ClientCardDetail( clientId, isRestore )
         {
             // #4. Payload TreeView
             sheetFullTag.find( 'li.primary[rel="tab_previewPayload"]' ).attr( 'style', '' );
-            sheetFullTag.find( 'li.2ndary[rel="tab_previewPayload"]' ).removeClass( 'tabHide' );
+            sheetFullTag.find( 'li.secondary[rel="tab_previewPayload"]' ).removeClass( 'tabHide' );
 
             sheetFullTag.find( '.tab_fs li[rel=tab_previewPayload]' ).click( function() 
             {
@@ -119,7 +119,7 @@ function ClientCardDetail( clientId, isRestore )
 
             // #5. Dev (Optional)
             sheetFullTag.find( 'li.primary[rel="tab_optionalDev"]' ).attr( 'style', '' );
-            sheetFullTag.find( 'li.2ndary[rel="tab_optionalDev"]' ).removeClass( 'tabHide' );
+            sheetFullTag.find( 'li.secondary[rel="tab_optionalDev"]' ).removeClass( 'tabHide' );
 
             var devTabTag = sheetFullTag.find( '[tabButtonId=tab_optionalDev]' );    
             sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click( function() 
@@ -372,24 +372,24 @@ ClientCardDetail.cardFullScreen = `
                         <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                         <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
 
-                        <ul class="2ndary" style="display: none; z-index: 1;">
+                        <ul class="secondary" style="display: none; z-index: 1;">
 
-                            <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                            <li class="secondary" style="display:none" rel="tab_clientActivities">
                                 <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activity</span>
                             </li>  
 
-                            <li class="2ndary" style="display:none" rel="tab_relationships">
+                            <li class="secondary" style="display:none" rel="tab_relationships">
                                 <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 
-                            <li class="2ndary tabHide" style="display:none" rel="tab_previewPayload">
+                            <li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
                                 <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
                                 <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
                             </li>
                             
-                            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+                            <li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
                                 <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
                             </li>
@@ -401,24 +401,24 @@ ClientCardDetail.cardFullScreen = `
                         <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                         <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
 
-                        <ul class="2ndary" style="display: none; z-index: 1;">
+                        <ul class="secondary" style="display: none; z-index: 1;">
 
-                            <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                            <li class="secondary" style="display:none" rel="tab_clientDetails">
                                 <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                                 <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
-                            <li class="2ndary" style="display:none" rel="tab_relationships">
+                            <li class="secondary" style="display:none" rel="tab_relationships">
                                 <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 
-                            <li class="2ndary tabHide" style="display:none" rel="tab_previewPayload">
+                            <li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
                                 <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
                                 <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
                             </li>
                             
-                            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+                            <li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
                                 <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
                             </li>
@@ -429,24 +429,24 @@ ClientCardDetail.cardFullScreen = `
                     <li class="primary" rel="tab_relationships">
                         <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                         <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
-                        <ul class="2ndary" style="display: none; z-index: 1;">
+                        <ul class="secondary" style="display: none; z-index: 1;">
 
-                            <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                            <li class="secondary" style="display:none" rel="tab_clientDetails">
                                 <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                                 <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
-                            <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                            <li class="secondary" style="display:none" rel="tab_clientActivities">
                                 <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
                             </li>
 
-                            <li class="2ndary tabHide" style="display:none" rel="tab_previewPayload">
+                            <li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
                                 <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
                                 <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
                             </li>
 
-                            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+                            <li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
                                 <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
                             </li>
@@ -457,24 +457,24 @@ ClientCardDetail.cardFullScreen = `
                     <li class="primary" rel="tab_previewPayload" style="display: none;">
                         <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
                         <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
-                        <ul class="2ndary" style="display: none; z-index: 1;">
+                        <ul class="secondary" style="display: none; z-index: 1;">
 
-                            <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                            <li class="secondary" style="display:none" rel="tab_clientDetails">
                                 <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                                 <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
-                            <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                            <li class="secondary" style="display:none" rel="tab_clientActivities">
                                 <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
                             </li>
 
-                            <li class="2ndary" style="display:none" rel="tab_relationships">
+                            <li class="secondary" style="display:none" rel="tab_relationships">
                                 <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 
-                            <li class="2ndary tabHide" style="display:none" rel="tab_optionalDev">
+                            <li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
                                 <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
                                 <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
                             </li>
@@ -485,24 +485,24 @@ ClientCardDetail.cardFullScreen = `
                     <li class="primary" rel="tab_optionalDev" style="display: none;">
                         <div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
                         <span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
-                        <ul class="2ndary" style="display: none; z-index: 1;">
+                        <ul class="secondary" style="display: none; z-index: 1;">
 
-                            <li class="2ndary" style="display:none" rel="tab_clientDetails">
+                            <li class="secondary" style="display:none" rel="tab_clientDetails">
                                 <div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
                                 <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
                             </li>
 
-                            <li class="2ndary" style="display:none" rel="tab_clientActivities">
+                            <li class="secondary" style="display:none" rel="tab_clientActivities">
                                 <div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
                                 <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
                             </li>
 
-                            <li class="2ndary" style="display:none" rel="tab_relationships">
+                            <li class="secondary" style="display:none" rel="tab_relationships">
                                 <div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
                                 <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
                             </li>
 
-                            <li class="2ndary tabHide" style="display:none" rel="tab_previewPayload">
+                            <li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
                                 <div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
                                 <span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
                             </li>

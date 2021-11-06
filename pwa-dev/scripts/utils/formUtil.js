@@ -1049,30 +1049,44 @@ FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 		var selLiTag = $( this );
 
 		var Primary = selLiTag.hasClass( 'primary' );
-		var Secondary = selLiTag.hasClass( '2ndary' );
+		var Secondary = selLiTag.hasClass( 'secondary' );
 		var ulOptionsPopup = selLiTag.find( 'ul' );
 
+		// If portrait mode small screen, (which has fullTab on click dropdown show)
+		//   - On Small Screen Case, Show the dropdown (collapsed tab list)
 		if ( FormUtil.orientation() === 'portrait' 
-			&& $( window ).width() <= 568 
+			&& $( window ).width() <= 558 
 			&& selLiTag.hasClass( 'active' )  ) // class 'active' will always be li.primary
 		{
-			// On Small Screen Case, Show the dropdown (collapsed tab list)
-            if ( ulOptionsPopup.is(':visible') ) {
+			// If dropdown is shown, hide it.
+            if ( ulOptionsPopup.is(':visible') ) 
+			{
                 ulOptionsPopup.css('display', 'none');
                 selLiTag.find( 'li' ).css('display', 'none');
-            } else {
+            } 
+			else 
+			{
 				if ( selLiTag.attr( 'openingClick' ) === 'Y' ) selLiTag.attr( 'openingClick', '' );
-				else {
+				else 
+				{
+					// Show the hidden dropdown (ul)
 					ulOptionsPopup.css('display', 'block');
+
 					selLiTag.find( 'li' ).not( '.tabHide' ).css('display', 'block');
-					selLiTag.next( 'ul' ).toggle();
+					selLiTag.next( 'ul' ).toggle();  // Why this?
+
+					FormUtil.setUpHideOnBodyClick( function() {
+						ulOptionsPopup.css('display', 'none');
+						selLiTag.find( 'li' ).css('display', 'none');		
+					});					
 				}
 			}
 		}
 		else
 		{
-			// On tab (li) selection. (On Small Screen Case, not 'active' )
+			// On tab (li) selection, normal cases..
 
+			// Why these?  active has css style for small screen case?
 			tag.find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
 			tag.siblings().find( '.active' ).removeClass( 'active' );  // both 'tabs' and 'tab_Content'
 
@@ -1083,18 +1097,18 @@ FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 
 			if ( Primary )
 			{
-				if ( ! selLiTag.hasClass( 'active' ) ) selLiTag.addClass( 'active' );
+				if ( !selLiTag.hasClass( 'active' ) ) selLiTag.addClass( 'active' );
 			}
 			else
 			{
 				ulOptionsPopup.hide();
-				$( "ul.2ndary" ).hide();
-				$( "li.2ndary" ).hide();
+				$( "ul.secondary" ).hide();
+				$( "li.secondary" ).hide();
 
 				selLiTag.closest( 'li.primary' ).siblings( 'li[rel=' + tab_select + ']' ).addClass( 'active' );
 			}
 
-			if ( ! activeTab.hasClass( 'active' ) ) activeTab.addClass( 'active' );
+			if ( !activeTab.hasClass( 'active' ) ) activeTab.addClass( 'active' );
 			activeTab.fadeIn(); //show();
 
 		}
@@ -2091,4 +2105,20 @@ FormUtil.populateFieldTerms = function( idName, tag )
 			tag.html( fieldJson.defaultName );
 		}
 	}
+};
+
+// ==============================================
+
+// Do add 'show' logic as well?..
+
+FormUtil.setUpHideOnBodyClick = function( hideFunc )
+{
+	// Set if any place is clicked, calling the hiding function (hide list)
+	$('body').off( 'click' ).on('click', function() 
+	{
+		// When clicked, remove this..
+		$('body').off( 'click' );
+
+		if ( hideFunc ) hideFunc();  // hide the list..
+	});
 };

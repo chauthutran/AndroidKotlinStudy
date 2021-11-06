@@ -81,12 +81,7 @@ $active-tab :$color-p;
             }
 
             &.active {
-                @include p-device(240) {
-                    @include background-image('arrow_drop_down');
-                    background-position: right;
-                    background-repeat: no-repeat;    
-                }
-                @include p-device(320) {
+                @include p-mobile {
                     @include background-image('arrow_drop_down');
                     background-position: right;
                     background-repeat: no-repeat;    
@@ -125,7 +120,7 @@ $active-tab :$color-p;
                 }
 
                 @include rwd-max(557) {
-                    width: calc(100% - 70px);
+                    width: calc(100% - 20px);
                 }
 
                 & > li {

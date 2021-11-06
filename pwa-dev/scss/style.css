@@ -2601,7 +2601,7 @@ textarea {
   }
 }
 
-@media (orientation: portrait) and (min-width: 240px) {
+@media (orientation: portrait) and (min-width: 240px) and (max-width: 557px) {
   .tab_fs .tab_fs__head > li.active {
     background-image: url(../images/arrow_drop_down.svg);
     background-position: right;
@@ -2612,24 +2612,7 @@ textarea {
   }
 }
 
-@media only screen and (orientation: portrait) and (min-width: 240px) and (-moz-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 240px) and (-o-min-device-pixel-ratio: 3 / 2), only screen and (orientation: portrait) and (min-width: 240px) and (-webkit-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 240px) and (min-device-pixel-ratio: 1.5) {
-  .no-svg .tab_fs .tab_fs__head > li.active {
-    background-image: url(../images/arrow_drop_down@2x.png);
-  }
-}
-
-@media (orientation: portrait) and (min-width: 320px) {
-  .tab_fs .tab_fs__head > li.active {
-    background-image: url(../images/arrow_drop_down.svg);
-    background-position: right;
-    background-repeat: no-repeat;
-  }
-  .no-svg .tab_fs .tab_fs__head > li.active {
-    background-image: url(../images/arrow_drop_down.png);
-  }
-}
-
-@media only screen and (orientation: portrait) and (min-width: 320px) and (-moz-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 320px) and (-o-min-device-pixel-ratio: 3 / 2), only screen and (orientation: portrait) and (min-width: 320px) and (-webkit-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 320px) and (min-device-pixel-ratio: 1.5) {
+@media only screen and (orientation: portrait) and (min-width: 240px) and (max-width: 557px) and (-moz-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 240px) and (max-width: 557px) and (-o-min-device-pixel-ratio: 3 / 2), only screen and (orientation: portrait) and (min-width: 240px) and (max-width: 557px) and (-webkit-min-device-pixel-ratio: 1.5), only screen and (orientation: portrait) and (min-width: 240px) and (max-width: 557px) and (min-device-pixel-ratio: 1.5) {
   .no-svg .tab_fs .tab_fs__head > li.active {
     background-image: url(../images/arrow_drop_down@2x.png);
   }
@@ -2676,7 +2659,7 @@ textarea {
 
 @media (max-width: 557px) {
   .tab_fs .tab_fs__head > li ul {
-    width: calc(100% - 70px);
+    width: calc(100% - 20px);
   }
 }
 
@@ -5322,6 +5305,10 @@ dialog .dialog__action div {
 
 .theme-blue .tab_fs__head li.active {
   background-color: #A7C1F2;
+}
+
+.theme-blue .tab_fs__head li.secondary {
+  background-color: #F1F6FF;
 }
 
 @media (min-width: 558px) {

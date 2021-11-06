@@ -62,18 +62,27 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     // Fav Main + button click events
     me.setFavMainClickEvent = function( favMainButtonTag, favIconsTag )
     {
-        favMainButtonTag.click( function () 
+        favMainButtonTag.click( function(e)
         {
+            e.stopPropagation(); // other events are canceled..
+
             var thisTag = $( this );
             var favItemsTag = favIconsTag.find( '.fab__child-section' );
 
             if ( thisTag.hasClass( 'c_600' ) )
             {
+                // Show Fav List
                 favItemsTag.css( 'display', 'table-row' );
                 thisTag.addClass( 'w_button' ).removeClass( 'c_600' ).css( 'transform', 'rotate(45deg)' );
+
+                FormUtil.setUpHideOnBodyClick( function() {
+                    favItemsTag.css( 'display', 'none' );
+                    thisTag.removeClass( 'w_button' ).addClass( 'c_600' ).css( 'transform', 'rotate(0deg)' );
+                });		
             }
             else
             {
+                // Hide Fav List
                 favItemsTag.css( 'display', 'none' );
                 thisTag.removeClass( 'w_button' ).addClass( 'c_600' ).css( 'transform', 'rotate(0deg)' );
             }

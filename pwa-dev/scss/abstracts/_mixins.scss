@@ -55,6 +55,14 @@
     }
 }
 
+@mixin p-mobile {
+    @media (orientation: portrait) {
+        @media (min-width: 240px) and (max-width: 557px) {
+            @content;
+        }
+    }
+}
+
 @mixin l-device($breakpoint) {
     @media (orientation: landscape) {
         @media (min-width: $breakpoint+'px') {
@@ -528,6 +536,10 @@ $retina-suffix: '@2x';
 
                 &.active {
                     background-color: $btn-l-emphasis;
+                }
+
+                &.secondary {
+                    background-color: $btn-l-emphasis2;
                 }
             }
         }

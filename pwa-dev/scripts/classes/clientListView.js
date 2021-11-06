@@ -536,8 +536,8 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
     me.setSortOtherEvents = function( sortListButtonTag )
     {
-        me.sortListButtonTag.click(function ( e ) {
-
+        me.sortListButtonTag.click( function ( e ) 
+        {
             if ( me.usedGroupBy( me.groupByData ) )
             {
                 me.sortViewList_ByGroup( me.groupByData );
@@ -547,12 +547,9 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
             else
             {
                 me.showSortList();
-
-                e.stopPropagation();
-
-                $('body').off( 'click' ).on('click', function () {
-                    me.hideSortList();
-                });
+                e.stopPropagation(); // other events are canceled..
+                
+                FormUtil.setUpHideOnBodyClick( me.hideSortList );
             }
         });
     };
@@ -565,10 +562,10 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
     me.hideSortList = function()
     {
-        $('body').off( 'click' );
         me.sortListDivTag.css('display', 'none');
         me.sortListButtonTag.css('transform', 'rotate(0deg)');
     };
+
 
     me.setSortDivTagClickEvent = function( divTag, sortDefs )
     {

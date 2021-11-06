@@ -15,8 +15,8 @@ function BlockButton( cwsRenderObj, blockObj )
 	me.divHeadIcon = ` <div class="tab_fs__head-icon" /> `;
 	me.divHeadIconExp = ` <div class="tab_fs__head-icon_exp" style="cursor: pointer; pointer-events: none;" /> `;  // Quick Fix, but not good one
 	me.divHeadTextSpan = ` <span /> `;
-	me.ulTab2ndary = ` <ul class="2ndary" style="display:none" /> `;
-	me.liTab2ndary = ` <li class="2ndary" style="display:none" /> `;
+	me.ulTabsecondary = ` <ul class="secondary" style="display:none" /> `;
+	me.liTabsecondary = ` <li class="secondary" style="display:none" /> `;
 	me.divTabsTargetElement = ` <div class="tab_fs__container-content" /> `;
 
 	// =============================================
@@ -120,7 +120,7 @@ function BlockButton( cwsRenderObj, blockObj )
 			if ( btnTabsUlTag )
 			{
 				// SECONDARY DISPLAY TAB (hidden, but shown for small screen layout)
-				let ulTabTag = $( me.ulTab2ndary );
+				let ulTabTag = $( me.ulTabsecondary );
 
 				for( var a = 0; a < buttonsId.length; a++ )
 				{
@@ -128,17 +128,17 @@ function BlockButton( cwsRenderObj, blockObj )
 					{
 						var otherTabButtonId = FormUtil.getObjDefId( buttonsId[a] );
 
-						var li2ndaryTabTag = $( me.liTab2ndary );
-						var dv2ndaryTabContentTag = $( me.divHeadIcon );
-						var sp2ndaryTabTextTag = $( me.divHeadTextSpan );
+						var lisecondaryTabTag = $( me.liTabsecondary );
+						var dvsecondaryTabContentTag = $( me.divHeadIcon );
+						var spsecondaryTabTextTag = $( me.divHeadTextSpan );
 
-						li2ndaryTabTag.attr( 'rel',otherTabButtonId );
-						dv2ndaryTabContentTag.attr( 'rel', otherTabButtonId );
-						sp2ndaryTabTextTag.attr( 'rel',otherTabButtonId );
+						lisecondaryTabTag.attr( 'rel',otherTabButtonId );
+						dvsecondaryTabContentTag.attr( 'rel', otherTabButtonId );
+						spsecondaryTabTextTag.attr( 'rel',otherTabButtonId );
 
-						li2ndaryTabTag.append( dv2ndaryTabContentTag );
-						li2ndaryTabTag.append( sp2ndaryTabTextTag );
-						ulTabTag.append( li2ndaryTabTag );
+						lisecondaryTabTag.append( dvsecondaryTabContentTag );
+						lisecondaryTabTag.append( spsecondaryTabTextTag );
+						ulTabTag.append( lisecondaryTabTag );
 					}
 				}
 
