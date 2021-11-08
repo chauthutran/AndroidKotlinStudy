@@ -2109,13 +2109,14 @@ FormUtil.populateFieldTerms = function( idName, tag )
 
 // ==============================================
 
-// Do add 'show' logic as well?..
-
+// SetUp - to close the list/etc on the item click or any other place on body
 FormUtil.setUpHideOnBodyClick = function( hideFunc )
 {
 	// Set if any place is clicked, calling the hiding function (hide list)
-	$('body').off( 'click' ).on('click', function() 
+	$('body').off( 'click' ).on('click', function( e ) 
 	{
+        e.stopPropagation(); // other events are canceled..
+
 		// When clicked, remove this..
 		$('body').off( 'click' );
 
