@@ -2108,10 +2108,15 @@ FormUtil.populateFieldTerms = function( idName, tag )
 };
 
 // ==============================================
+FormUtil.prevHideOnBodyFunc = undefined;
 
 // SetUp - to close the list/etc on the item click or any other place on body
 FormUtil.setUpHideOnBodyClick = function( hideFunc )
 {
+	// PREV 1. WHEN SETTING IT UP, close other(previously added) methods just in case..
+	if ( FormUtil.prevHideOnBodyFunc ) FormUtil.previousHideOnBodyFunc();
+	FormUtil.prevHideOnBodyFunc = hideFunc; // PREV 2. Set for prevHide
+
 	// Set if any place is clicked, calling the hiding function (hide list)
 	$('body').off( 'click' ).on('click', function( e ) 
 	{
@@ -2121,5 +2126,7 @@ FormUtil.setUpHideOnBodyClick = function( hideFunc )
 		$('body').off( 'click' );
 
 		if ( hideFunc ) hideFunc();  // hide the list..
+
+		if ( FormUtil.prevHideOnBodyFunc ) FormUtil.prevHideOnBodyFunc = undefined; // PREV 3. If event is called, remove prevHide func.
 	});
 };
