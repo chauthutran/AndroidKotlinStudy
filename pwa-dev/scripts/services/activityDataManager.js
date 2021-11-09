@@ -77,6 +77,7 @@ ActivityDataManager.getActivityIdCopyList = function()
     return activityIdList;
 };
 
+
 // ---------------------------------------
 // --- Remove Activity
 
@@ -131,7 +132,7 @@ ActivityDataManager.removeIndexedActivity_ById = function( activityId )
 
 
 // ---------------------------------------
-// --- Insert Activity
+// --- Insert Activity to client
 
 ActivityDataManager.insertActivitiesToClient = function( activities, client, option )
 {
@@ -153,9 +154,9 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
     }
 };
 
-// ============================================
-// === ActivityList Regen, update, add (with index data)
 
+// ---------------------------------------
+// --- ActivityList Regen, update, add (with index data)
 
 // Create 'activityList' and 'activityToClient' map.
 ActivityDataManager.regenActivityList_NIndexes = function()
@@ -213,12 +214,22 @@ ActivityDataManager.updateActivityListIdx = function( client, bRemoveActivityTem
 // };
 
 
+
+// If 
+
 ActivityDataManager.updateActivityIdx = function( activityId, activity, client, option )
 {
     // NOTE: Not deleting same 'activityId' activityJson from '_activityList'
     if ( option && option.addToTop ) 
     {
-        ActivityDataManager._activityList.unshift( activity );
+        var position = -1;
+        // NOTE: When adding the activity to top of the list (beginning of activityList),
+        //   If the client is tempClient, add the activity after the client activities - add to position in acitivytList after that activity.
+        if ( option.newPayloadCase ) position = ActivityDataManager.getTempClientActivityLastIndexCase( client );
+
+
+        ActivityDataManager._activityList.splice( position + 1, 0, activity ); // if position is -1, add to top (index 0).  If
+        //ActivityDataManager._activityList.unshift( activity );
     }
     else 
     {
@@ -226,6 +237,27 @@ ActivityDataManager.updateActivityIdx = function( activityId, activity, client, 
     }
 
     ActivityDataManager._activityToClient[ activityId ] = client;
+};
+
+
+ActivityDataManager.getTempClientActivityLastIndexCase = function( client )
+{
+    var position = -1;
+
+    if ( ClientDataManager.isTempClientCase( client._id ) )
+    {
+        // if there is any activity not synced..
+        client.activities.forEach( act => 
+        {
+            if ( SyncManagerNew.checkActivityStatus_SyncUpReady( act ) )
+            {
+                var newPosition = ActivityDataManager._activityList.indexOf( act );
+                if ( newPosition > position ) position = newPosition;
+            }
+        });
+    }
+
+    return position;
 };
 
 
@@ -425,7 +457,10 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
         
         if ( !activityPayloadClient ) activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
 
-        ActivityDataManager.insertActivitiesToClient( [ activityJson ], activityPayloadClient, { 'addToTop': true } );
+
+        // TODO: When adding, check for 'c_reg' activity not yet synced case.  If so, add new activity on bottom..
+        // Better, yet, always add new activity to after unsynced activity postion on main activity List.
+        ActivityDataManager.insertActivitiesToClient( [ activityJson ], activityPayloadClient, { 'addToTop': true, 'newPayloadCase': true } );
     
         ClientDataManager.saveCurrent_ClientsStore( () => {
             if ( callBack ) callBack( activityJson );    

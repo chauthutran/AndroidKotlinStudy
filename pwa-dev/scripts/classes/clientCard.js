@@ -24,7 +24,8 @@ function ClientCard( clientId, options )
     // ----------------------------------------------------
 
     me.render = function()
-    {        
+    {       
+        // clientCardDiv Tags(Multiple selections). 
         var clientCardDivTag = me.getClientCardDivTag();
 
         // If tag has been created), perform render
@@ -140,13 +141,22 @@ function ClientCard( clientId, options )
     // -----------------------------------------------------
 
     me.getClientCardDivTag = function()
-    {
-        //if ( me.options.parentTag_Override )
-        //    return me.options.parentTag_Override.find( '.client[itemid="' + me.clientId + '"]' );
-            
+    {            
         return $( 'div.card[itemid="' + me.clientId + '"]' );
     };
 
+    me.getClientCardDivTagById = function( clientId )
+    {            
+        return $( 'div.card[itemid="' + clientId + '"]' );
+    };
+
+    /*
+    // Used for ClientCard itemId change from tempClient to newClient Id
+    me.clientCardDivTags_ChangeItemId = function( divClientCardTags, newClientId )
+    {
+        divClientCardTags.attr( 'itemid', newClientId );
+    };
+    */
 
     // -----------------------------------------------------
 
@@ -267,6 +277,24 @@ function ClientCard( clientId, options )
     {
         clientRerenderTag.off( 'click' ).click( function( e ) {
             e.stopPropagation();  // Stops calling parent tags event calls..
+
+            // Since this reRender triggers could be multiple same client tags, use this to change just this one.
+            var thisReRenderTag = $( this );
+            var thisClientCardTag = thisReRenderTag.closest( 'div.client[itemid]' );
+
+            // If tempClient changed to new Client case, do 2 things
+            // 1. change me.clientId to new client Id
+            // 2. change this tages..
+
+            var newClientId_FromTempClient = ClientDataManager.tempClient_ToNewClientCase( me.clientId );
+            if ( newClientId_FromTempClient )
+            {
+                me.clientId = newClientId_FromTempClient;
+
+                thisClientCardTag.attr( 'itemid', newClientId_FromTempClient );
+                //me.clientCardDivTags_ChangeItemId( clientCardDivTag, newClientId_FromTempClient );
+            }
+
             me.render();
         } );    
     };

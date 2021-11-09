@@ -504,6 +504,7 @@ function ActivityCard( activityId, options )
                 ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 
                 {
                     // relationship target clients update sync..
+                    /*
                     var otherClients = responseJson.result.otherClients;
                     if ( otherClients )
                     {
@@ -514,7 +515,8 @@ function ActivityCard( activityId, options )
                             console.log( 'merged sync otherClients' );
                         });
                     }
-
+                    */
+                   
                     // 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
                     ClientDataManager.saveCurrent_ClientsStore( () => {
                         if ( callBack ) callBack( operationSuccess );
@@ -645,7 +647,7 @@ function ActivityCard( activityId, options )
             if( activityJson )
             {
                 var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
-                var editReadyStatus = ( statusVal === Constants.status_error );  // SyncManagerNew.isSyncReadyStatus( statusVal ) ||
+                var editReadyStatus = ( statusVal === Constants.status_error );
         
                 //if ( DevHelper.devMode && editReadyStatus && activityJson.processing.form )
                 if ( editReadyStatus && activityJson.processing.form )

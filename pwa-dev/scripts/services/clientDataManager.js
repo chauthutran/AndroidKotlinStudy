@@ -27,6 +27,8 @@ ClientDataManager.template_Client = {
 
 ClientDataManager.tempClientNamePre = 'client_';
 
+ClientDataManager.tempClient_NewClient_IdMap = {}; // when temp client gets removed and converted into new client, we add here for reference.
+
 // ===================================================
 
 // - Only call this on logOut
@@ -434,20 +436,39 @@ ClientDataManager.removeTempClient = function( client, targetNewClient )
     try
     {      
         // Temporary Client case <-- delete client & activity in it.
-        if ( client && client._id && client._id.indexOf( ClientDataManager.tempClientNamePre ) === 0 )
+        if ( client && client._id && ClientDataManager.isTempClientCase( client._id ) )
         {
             var moveOtherActivities = [];
-            
-            // Check if there are other activities in the tempClient to move?
+         
+            // BEFORE REMOVING CLIENT: If not simple removing tempClient case, but moving from tempClient to newClient case, add to map data.
+            if ( targetNewClient ) 
+            {
+                ClientDataManager.addMap_TempClient_NewClient( client._id, targetNewClient._id );
+                //var clientCardDivTags = $( 'div.card[itemid="' + client._id + '"]' );
+                //clientCardDivTags.attr( 'itemid', newClientId );    // <-- Do this on ClientCard, but set in SyncManager.. ?
+            }
+
+            // BEFORE REMOVING CLIENT: Save other activities before delete the tempClient?
             client.activities.forEach( act => {
                 moveOtherActivities.push( Util.cloneJson( act ) );                
             });
 
             ClientDataManager.removeClient( client );
 
+
             // Move the activities to new/existing targetClient..
-            if ( moveOtherActivities.length > 0 && targetNewClient )
+            if ( targetNewClient && moveOtherActivities.length > 0 )
             {
+                // Replace searchValues '_id' of activities if exists.
+                moveOtherActivities.forEach( act => 
+                {
+                    if ( act.processing && act.processing.searchValues )
+                    {
+                        var searchVal = act.processing.searchValues;
+                        if ( searchVal._id ) searchVal._id = targetNewClient._id;
+                    }
+                });
+
                 ActivityDataManager.insertActivitiesToClient( moveOtherActivities, targetNewClient );
             }
         }
@@ -456,6 +477,47 @@ ClientDataManager.removeTempClient = function( client, targetNewClient )
     {
         console.customLog( 'Error on ClientDataManager.removeTempClient, errMsg: ' + errMsg );
     }
+};
+
+
+// -------------------------------------------
+
+ClientDataManager.isTempClientCase = function( clientId )
+{
+    return ( clientId.indexOf( ClientDataManager.tempClientNamePre ) === 0 );
+};
+
+// ClientDataManager.tempClient_NewClient_IdMap = {};
+ClientDataManager.addMap_TempClient_NewClient = function( tempClientId, newClientId )
+{
+    ClientDataManager.tempClient_NewClient_IdMap[ tempClientId ] = newClientId; 
+};
+
+ClientDataManager.getTempClient_NewClientId = function( tempClientId )
+{
+    var returnClientId = tempClientId;
+
+    var newClientId = ClientDataManager.tempClient_NewClient_IdMap[ tempClientId ];
+    if ( newClientId ) returnClientId = newClientId;
+
+    return returnClientId;
+};
+
+ClientDataManager.tempClient_ToNewClientCase = function( clientId )
+{
+    //var case_tempClient_ToNewClient = false;
+    var newClientId;
+
+    // Check if the clientId is tempClient Id.
+    if ( ClientDataManager.isTempClientCase( clientId ) )
+    {
+        // Check if newClient created from tempClient exists - from tempClient deleting logic
+        newClientId = ClientDataManager.tempClient_NewClient_IdMap[ clientId ];
+
+        //if ( newClientId ) case_tempClient_ToNewClient = true;
+    }
+
+    return newClientId;
 };
 
 

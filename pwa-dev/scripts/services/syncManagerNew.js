@@ -182,6 +182,7 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
     if ( syncReadyJson.ready )
     {
         var activityCardObj = new ActivityCard( activityId );
+        var clientId = ClientDataManager.getClientByActivityId( activityId )._id;
 
         activityCardObj.highlightActivityDiv( true );
 
@@ -198,8 +199,12 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
             // Cool Down Related Last synced time Set ...
             if ( SyncManagerNew.coolDownEnabled ) ActivityDataManager.setActivityLastSyncedUp( activityId );
 
+            // Activity Card
             activityCardObj.reRenderActivityDiv();
             activityCardObj.highlightActivityDiv( false );
+
+            // Rerender the client card that holds this activity as well. - if new client case, the id is tempClient, yet.
+            if ( clientId ) $( 'div.card[itemid="' + clientId + '"]' ).find( 'div.clientRerender' ).click();
 
             if ( returnFunc ) returnFunc( syncReadyJson, success, responseJson );
         });
@@ -238,10 +243,10 @@ SyncManagerNew.getActivityItems_ForSync = function( callBack )
     var uploadItems = ActivityDataManager.getActivityList().filter( function( activityItem ) 
     {
         var filterPass = false;
+
         if ( activityItem.processing && activityItem.processing.status )
         {
-            var status = activityItem.processing.status;
-            filterPass = ( status === Constants.status_queued || status === Constants.status_failed );
+            filterPass = SyncManagerNew.statusSynable( activityItem.processing.status );
         }
 
         return filterPass; 
@@ -411,9 +416,13 @@ SyncManagerNew.checkActivityStatus_SyncUpReady = function( activityJson )
                   
 SyncManagerNew.isSyncReadyStatus = function( status )
 {
-    return ( status === Constants.status_queued
-        || status === Constants.status_failed
-        || status === Constants.status_hold );    
+    return ( status === Constants.status_queued || status === Constants.status_failed || status === Constants.status_hold );    
+};
+
+// Another name for 'isSyncReadyStatus'
+SyncManagerNew.statusSynable = function( status ) 
+{ 
+    SyncManagerNew.isSyncReadyStatus( status ); 
 };
 
 
