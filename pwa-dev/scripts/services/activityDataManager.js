@@ -82,67 +82,53 @@ ActivityDataManager.getActivityIdCopyList = function()
 
 ActivityDataManager.removeActivities = function( activities )
 {
-    for ( var i = 0; i < activities.length; i++ )
+    for ( var i = activities.length - 1; i >= 0; i-- )
     {
         var activity = activities[ i ];
-
-        ActivityDataManager.removeActivityById( activity.id );
+        ActivityDataManager.removeIndexedActivity_ById( activity.id );
     }
-}
+};
 
 // After 'syncUp', remove the payload <-- after syncDown?
-ActivityDataManager.removeActivityById = function( activityId )
+ActivityDataManager.removeIndexedActivity_ById = function( activityId )
 {
+    var client;  // return client - for case of temp client removal
+
     try
     {
-        if ( activityId )
+        // NEW - Is this ok?
+        var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );
+
+        if ( activityId && existingActivity )
         {
+            client = ClientDataManager.getClientByActivityId( activityId );
+
             // 1. remove from activityList
             Util.RemoveFromArray( ActivityDataManager._activityList, "id", activityId );
 
             // 2. remove from activityClientMap, 3. remove from client activities
             if ( ActivityDataManager._activityToClient[ activityId ] )
             {
-                var client = ActivityDataManager._activityToClient[ activityId ];
+                var activityClient = ActivityDataManager._activityToClient[ activityId ];
 
                 delete ActivityDataManager._activityToClient[ activityId ];
 
-                Util.RemoveFromArray( client.activities, "id", activityId );
+                Util.RemoveFromArray( activityClient.activities, "id", activityId );
             }   
         }
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error on ActivityDataManager.removePayloadActivityById, errMsg: ' + errMsg );
+        console.customLog( 'Error on ActivityDataManager.removeIndexedActivity_ById, errMsg: ' + errMsg );
     }
+
+    return client;
 };
 
 
-ActivityDataManager.removeActivity_NTempClient = function( activityId, bRemoveActivityTempClient )
-{
-    // NOTE: 2 Cases:
-    //  Case 1 - activity in existing client. remove activity.
-    //  Case 2 - activity in temp client - remove activity & client.
-    
-    try
-    {      
-        // Get client Obj from reference before deleting activity    
-        var client = ClientDataManager.getClientByActivityId( activityId );
+// TODO: should change to 'removeActivity( activity, options )'  options: { targetClient, bRemoveTempClient }
+//ActivityDataManager.removeActivity_NTempClient = function( activityId, targetClient, bRemoveActivityTempClient )
 
-        // Remove the activity (ref, activity in list, activity in client)
-        ActivityDataManager.removeActivityById( activityId );
-
-        // Temporary Client case <-- delete client & activity in it.
-        if ( bRemoveActivityTempClient && client && client._id && client._id.indexOf( ClientDataManager.tempClientNamePre ) === 0 )
-        {
-            ClientDataManager.removeClient( client );
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error on ActivityDataManager.removeActivity_NTempClient, errMsg: ' + errMsg );
-    }
-};
 
 // ---------------------------------------
 // --- Insert Activity
@@ -157,7 +143,10 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
 
         if ( activity.id ) 
         {
-            ActivityDataManager.removeExistingActivity_NTempClient( activity.id, ( option && option.bRemoveActivityTempClient ) );
+            // If this activity ID exists in other client (diff obj), remove it.            
+            ActivityDataManager.removeIndexedActivity_ById( activity.id );
+
+            // Insert the 'activity' to the client
             ActivityDataManager.updateActivityIdx( activity.id, activity, client, option );
         }
         //else throw "ERROR, Downloaded activity does not contain 'id'.";
@@ -196,7 +185,12 @@ ActivityDataManager.updateActivityListIdx = function( client, bRemoveActivityTem
 
             if ( activity.id ) 
             {
-                ActivityDataManager.removeExistingActivity_NTempClient( activity.id, bRemoveActivityTempClient );
+                //ActivityDataManager.removeExistingActivity_NTempClient( activity.id, client, bRemoveActivityTempClient );
+                // Only remove already indexed activity.  In full reindexing or start of app indexing, no activity index exists, thus, nothing to index.
+                var activityClient = ActivityDataManager.removeIndexedActivity_ById( activity.id );
+                if ( bRemoveActivityTempClient && activityClient ) ClientDataManager.removeTempClient( activityClient, client );
+                
+                // ReAdd the activity Idx
                 ActivityDataManager.updateActivityIdx( activity.id, activity, client );
             }
         }
@@ -204,12 +198,19 @@ ActivityDataManager.updateActivityListIdx = function( client, bRemoveActivityTem
 };
 
 
-ActivityDataManager.removeExistingActivity_NTempClient = function( activityId, bRemoveActivityTempClient )
-{
-    // If Existing activity Index exists, use it to check if it is tied to other client (temporary client case).  Delete the client?
-    var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );    
-    if ( existingActivity ) ActivityDataManager.removeActivity_NTempClient( activityId, bRemoveActivityTempClient );
-};
+// TODO: Might merge with ActivityDataManager.removeIndexedActivity_ById
+// ActivityDataManager.removeExistingActivity_NTempClient = function( activityId, targetNewClient, bRemoveActivityTempClient )
+// {
+//     // If Existing activity Index exists, use it to check if it is tied to other client (temporary client case).  Delete the client?
+//     var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );    
+//     if ( existingActivity ) 
+//     {
+//         var activityClient = ActivityDataManager.removeIndexedActivity_ById( activityId );
+//         if ( bRemoveActivityTempClient ) ClientDataManager.removeTempClient( activityClient, targetNewClient );
+//     }
+    
+//     //ActivityDataManager.removeActivity_NTempClient( activityId, client, bRemoveActivityTempClient );
+// };
 
 
 ActivityDataManager.updateActivityIdx = function( activityId, activity, client, option )
@@ -265,6 +266,7 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
 {
     var newActivities = [];
 
+    // NOTE: New Client case will never reach here, thus, tempClient (delete on merge) case will not apply
     downActivities.forEach( dwActivity => 
     {
         try
@@ -321,7 +323,8 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
     // if new list to push to appClientActivities exists, add to the list.
     if ( newActivities.length > 0 ) 
     {
-        ActivityDataManager.insertActivitiesToClient( newActivities, appClient, { 'bRemoveActivityTempClient': true } );
+        //ActivityDataManager.insertActivitiesToClient( newActivities, appClient, { 'bRemoveActivityTempClient': true } );
+        ActivityDataManager.insertActivitiesToClient( newActivities, appClient );
 
         // NOTE: Could sort all activities in this client AT THIS TIME.
         //  - Whenever there is an activity to add, we can do sort here? oldest(lowest date string value) on top - ascending
@@ -357,7 +360,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
         if ( editModeActivityId )
         {
-            ActivityDataManager.removeActivityById( editModeActivityId );
+            ActivityDataManager.removeIndexedActivity_ById( editModeActivityId );
             activityJson.id = editModeActivityId;
         }
 

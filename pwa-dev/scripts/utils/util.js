@@ -283,19 +283,21 @@ Util.arrayReplaceData = function( orig, newData )
 Util.RemoveFromArray = function( list, propertyName, value )
 {
 	var index;
-
-	$.each( list, function( i, item )
+	
+	if ( list && propertyName && value !== undefined )
 	{
-		if ( item[ propertyName ] == value ) 
+		for ( var i = 0; i < list.length; i++ ) 
 		{
-			index = i;
-			return false;
+			var item = list[i];
+	
+			if ( item[ propertyName ] === value ) 
+			{
+				index = i;
+				break;
+			}
 		}
-	});
-
-	if ( index !== undefined ) 
-	{
-		list.splice( index, 1 );
+	
+		if ( index !== undefined ) list.splice( index, 1 );	
 	}
 
 	return index;
