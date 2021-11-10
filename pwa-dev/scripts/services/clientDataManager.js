@@ -98,6 +98,15 @@ ClientDataManager.insertClients = function( clients, bRemoveActivityTempClient )
         var client = clients[ i ];
         list.unshift( client );         
         ClientDataManager.addClientIndex( client );
+
+
+
+        // 'bRemoveActivityTempClient' MOVE OUT?
+
+        // REMOVE 
+
+
+
         ActivityDataManager.updateActivityListIdx( client, bRemoveActivityTempClient );
     }
     // NOTE: Not automatically saved. Manually call 'save' after insert.

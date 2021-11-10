@@ -13,7 +13,7 @@ function ClientCard( clientId, options )
 
     me.clientId = clientId;
     me.options = ( options ) ? options : {};
-    me.divClientCardTag = divClientCardTag;
+    me.divClientCardTag;  // This must be setup after creation by --> me.createClientCardTag(),  me.setClientCardTag()
 
     me.cardHighlightColor = '#fcffff'; // #fffff9
 
@@ -279,11 +279,6 @@ function ClientCard( clientId, options )
             me.render();
         } );    
     };
-
-    me.reRenderClientDiv = function()
-    {
-        me.divClientCardTag.find( 'div.clientRerender' ).click();
-    }
 
     // ----------------------------
 

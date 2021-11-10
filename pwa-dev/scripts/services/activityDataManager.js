@@ -140,17 +140,14 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
     {
         var activity = activities[ i ];
 
+        // If this client or other client have same activity Id, remove those activites.. 1st..
+        // If this activity ID exists in other client (diff obj), remove it.  <-- but if this is 
+        ActivityDataManager.removeIndexedActivity_ById( activity.id );
+
+
         client.activities.push( activity );
-
-        if ( activity.id ) 
-        {
-            // If this activity ID exists in other client (diff obj), remove it.            
-            ActivityDataManager.removeIndexedActivity_ById( activity.id );
-
-            // Insert the 'activity' to the client
-            ActivityDataManager.updateActivityIdx( activity.id, activity, client, option );
-        }
-        //else throw "ERROR, Downloaded activity does not contain 'id'.";
+        // Insert the 'activity' to the client
+        ActivityDataManager.updateActivityIdx( activity.id, activity, client, option );
     }
 };
 
@@ -226,7 +223,6 @@ ActivityDataManager.updateActivityIdx = function( activityId, activity, client, 
         // NOTE: When adding the activity to top of the list (beginning of activityList),
         //   If the client is tempClient, add the activity after the client activities - add to position in acitivytList after that activity.
         if ( option.newPayloadCase ) position = ActivityDataManager.getTempClientActivityLastIndexCase( client );
-
 
         ActivityDataManager._activityList.splice( position + 1, 0, activity ); // if position is -1, add to top (index 0).  If
         //ActivityDataManager._activityList.unshift( activity );
