@@ -102,7 +102,7 @@ function ClientRelationshipList( clientId, _relationshipTabTag, blockDefId )
     {       
         var relClientJson = ClientDataManager.getClientById( relationship.clientId );
 
-        var divClientCardTag = $( ClientCardTemplate.relationshipCardDivTag );
+        var divClientCardTag = $( ClientCard.relationshipCardDivTag );
         divClientCardTag.attr( 'itemId', relationship.clientId );
 
         
@@ -216,7 +216,7 @@ function ClientRelationshipList( clientId, _relationshipTabTag, blockDefId )
     {
         try
         {
-            var iconName = ClientCardTemplate.cardIconTag.replace( '{NAME}', me.getNameSimbol( clientJson ) );
+            var iconName = ClientCard.cardIconTag.replace( '{NAME}', me.getNameSimbol( clientJson ) );
 
             var svgIconTag = $( iconName );
 

@@ -42,8 +42,10 @@ function ClientCardDetail( clientId, isRestore )
 
         // Header content set  <--- This looks for all with $( 'div.card[itemid="' + me.clientId + '"]' );
         //      - this catches not only generated full sheet html card part.
-        var itemCard = new ClientCard( me.clientId , {'detailViewCase': true } );
-        itemCard.render();
+        var clientCard = new ClientCard( me.clientId, {'detailViewCase': true } );
+        var clientCardTag = me.cardSheetFullTag.find( '.client[itemid]' );
+        clientCard.setClientCardTag( clientCardTag );
+        clientCard.render();
 
         // set tabs contents
         me.setFullPreviewTabContent( me.clientId, me.cardSheetFullTag );
@@ -78,7 +80,8 @@ function ClientCardDetail( clientId, isRestore )
 
             var clientJson = ClientDataManager.getClientById( clientId ); // for changed client data?
 
-            me.populateActivityCardList( clientJson.activities, activityTabBodyDivTag );
+            if ( clientJson ) me.populateActivityCardList( clientJson.activities, activityTabBodyDivTag );
+
 
             var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag
             , { 'mainFavPreClick': function( blockTag, blockContianerTag ) 

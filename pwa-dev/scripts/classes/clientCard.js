@@ -13,6 +13,7 @@ function ClientCard( clientId, options )
 
     me.clientId = clientId;
     me.options = ( options ) ? options : {};
+    me.divClientCardTag = divClientCardTag;
 
     me.cardHighlightColor = '#fcffff'; // #fffff9
 
@@ -25,8 +26,10 @@ function ClientCard( clientId, options )
 
     me.render = function()
     {       
+        me.tempClientIdChangeApply( me.clientId, me.divClientCardTag );
+
         // clientCardDiv Tags(Multiple selections). 
-        var clientCardDivTag = me.getClientCardDivTag();
+        var clientCardDivTag = me.divClientCardTag; //me.getClientCardDivTag();
 
         // If tag has been created), perform render
         if ( clientCardDivTag.length > 0 )
@@ -67,18 +70,25 @@ function ClientCard( clientId, options )
                 // 5. clickable rerender setup
                 me.setUpReRenderByClick( clientRerenderTag );
 
-                // Set up "editPaylayLoadBtn"
-                //me.setUpEditActivitiesLoadBtn( clientEditPaylayLoadBtnTag, clientJson );
-
-
-                // ----------------------------------------------------------------------------------------
-                // Set up Add new relationship
-
             }
             catch( errMsg )
             {
                 console.customLog( 'Error on ClientCard.render, errMsg: ' + errMsg );
             }
+        }
+    };
+
+
+    // On ReRender, this could be used to change the tempClientId to new client
+    me.tempClientIdChangeApply = function( clientId, divClientCardTag )
+    {
+        var newClientId_FromTempClient = ClientDataManager.tempClient_ToNewClientCase( clientId );
+
+        if ( newClientId_FromTempClient )
+        {
+            me.clientId = newClientId_FromTempClient;
+
+            divClientCardTag.attr( 'itemid', newClientId_FromTempClient );
         }
     };
 
@@ -127,36 +137,25 @@ function ClientCard( clientId, options )
 
     // ---------------------------------------
 
-    me.generateCardTrTag = function( groupAttrVal )
+    me.createClientCardTag = function( groupAttrVal )
     {        
-        var divClientCardTag = $( ClientCardTemplate.cardDivTag );
+        var divClientCardTag = $( ClientCard.cardDivTag );
 
-        divClientCardTag.attr( 'itemId', me.clientId );
+        me.setClientCardTag( divClientCardTag );
 
         divClientCardTag.attr( 'group', groupAttrVal );
 
         return divClientCardTag;
     };
 
-    // -----------------------------------------------------
 
-    me.getClientCardDivTag = function()
-    {            
-        return $( 'div.card[itemid="' + me.clientId + '"]' );
-    };
+    me.setClientCardTag = function( clientCardTag )
+    {        
+        me.divClientCardTag = clientCardTag;
 
-    me.getClientCardDivTagById = function( clientId )
-    {            
-        return $( 'div.card[itemid="' + clientId + '"]' );
+        me.divClientCardTag.attr( 'itemId', me.clientId );
+        //return divClientCardTag;
     };
-
-    /*
-    // Used for ClientCard itemId change from tempClient to newClient Id
-    me.clientCardDivTags_ChangeItemId = function( divClientCardTags, newClientId )
-    {
-        divClientCardTags.attr( 'itemid', newClientId );
-    };
-    */
 
     // -----------------------------------------------------
 
@@ -226,7 +225,7 @@ function ClientCard( clientId, options )
     {
         try
         {
-            var iconName = ClientCardTemplate.cardIconTag.replace( '{NAME}', me.getNameSimbol( clientJson ) );
+            var iconName = ClientCard.cardIconTag.replace( '{NAME}', me.getNameSimbol( clientJson ) );
 
             var svgIconTag = $( iconName );
 
@@ -277,36 +276,13 @@ function ClientCard( clientId, options )
     {
         clientRerenderTag.off( 'click' ).click( function( e ) {
             e.stopPropagation();  // Stops calling parent tags event calls..
-
-            // Since this reRender triggers could be multiple same client tags, use this to change just this one.
-            var thisReRenderTag = $( this );
-            var thisClientCardTag = thisReRenderTag.closest( 'div.client[itemid]' );
-
-            // If tempClient changed to new Client case, do 2 things
-            // 1. change me.clientId to new client Id
-            // 2. change this tages..
-
-            var newClientId_FromTempClient = ClientDataManager.tempClient_ToNewClientCase( me.clientId );
-            if ( newClientId_FromTempClient )
-            {
-                me.clientId = newClientId_FromTempClient;
-
-                thisClientCardTag.attr( 'itemid', newClientId_FromTempClient );
-                //me.clientCardDivTags_ChangeItemId( clientCardDivTag, newClientId_FromTempClient );
-            }
-
             me.render();
         } );    
     };
 
     me.reRenderClientDiv = function()
     {
-        // There are multiple places presenting same activityId info.
-        // We can find them all and reRender their info..
-        var clientCardTags = $( 'div.card[itemid="' + me.clientId + '"]' );
-        var reRenderClickDivTags = clientCardTags.find( 'div.clientRerender' );   
-        
-        reRenderClickDivTags.click();
+        me.divClientCardTag.find( 'div.clientRerender' ).click();
     }
 
     // ----------------------------
@@ -342,12 +318,10 @@ function ClientCard( clientId, options )
     me.highlightClientDiv = function( bHighlight )
     {
         // If the clientTag is found on the list, highlight it during SyncAll processing.
-        var clientDivTag = $( 'div.card[itemid="' + me.clientId + '"]' );
-
-        if ( clientDivTag.length > 0 )
+        if ( me.divClientCardTag.length > 0 )
         {
-            if ( bHighlight ) clientDivTag.css( 'background-color', me.cardHighlightColor );
-            else clientDivTag.css( 'background-color', '' );
+            if ( bHighlight ) me.divClientCardTag.css( 'background-color', me.cardHighlightColor );
+            else me.divClientCardTag.css( 'background-color', '' );
         }
     }
 
@@ -360,10 +334,21 @@ function ClientCard( clientId, options )
 
 };
 
+// -------  GLOBAL METHODS/TEMPLATES --------------
 
-function ClientCardTemplate() {};
 
-ClientCardTemplate.cardDivTag = `<div class="client card">
+ClientCard.getAllClientCardDivTags = function( clientId )
+{            
+    return $( 'div.card[itemid="' + clientId + '"]' );
+};
+
+
+ClientCard.reRenderClientCardsById = function( clientId )
+{
+    if ( clientId ) ClientCard.getAllClientCardDivTags( clientId ).find( 'div.clientRerender' ).click();
+};
+
+ClientCard.cardDivTag = `<div class="client card">
 
     <div class="clientContainer card__container">
 
@@ -384,7 +369,7 @@ ClientCardTemplate.cardDivTag = `<div class="client card">
 </div>`;
 
 
-ClientCardTemplate.relationshipCardDivTag = `<div class="clientContainer card__container">
+ClientCard.relationshipCardDivTag = `<div class="clientContainer card__container">
 
     <card__support_visuals class="clientIcon card__support_visuals" />
 
@@ -400,113 +385,10 @@ ClientCardTemplate.relationshipCardDivTag = `<div class="clientContainer card__c
 </div>`
 
 
-ClientCardTemplate.cardIconTag = `<svg xlink="http://www.w3.org/1999/xlink" width="50" height="50">
+ClientCard.cardIconTag = `<svg xlink="http://www.w3.org/1999/xlink" width="50" height="50">
     <g id="UrTavla">
         <circle style="fill:url(#toning);stroke:#ccc;stroke-width:1;stroke-miterlimit:10;" cx="25" cy="25" r="23">
         </circle>
         <text x="50%" y="50%" text-anchor="middle" stroke="#ccc" stroke-width="1.5px" dy=".3em">{NAME}</text>
     </g>
 </svg>`;
-
-
-ClientCardTemplate.cardFullScreen = `<div class="wapper_card">
-
-<div class="sheet-title c_900">
-    <img src='images/arrow_back.svg' class='btnBack'>
-    <span>Details</span>
-</div>
-
-<div class="card _tab client">
-    <div class="clientDetailRerender" style="float: left; width: 1px; height: 1px;"></div>
-    <div class="card__container">
-        <card__support_visuals class="clientIcon card__support_visuals" />
-        <card__content class="clientContent card__content" />
-        <card__cta class="activityStatus card__cta">
-            <div class="activityStatusText card__cta_status" />
-            <div class="clientPhone card__cta_one" style="cursor: pointer;"></div>
-            <div class="activityStatusIcon card__cta_two" style="cursor: pointer;"></div>
-        </card__cta>
-        <div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
-    </div>
-
-    <div class="tab_fs">
-
-        <ul class="tab_fs__head" style="background-color: #fff;">
-
-            <li class="primary active" rel="tab_clientDetails">
-                <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                <span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
-
-                <ul class="secondary" style="display: none; z-index: 1;">
-
-                    <li class="secondary" style="display:none" rel="tab_clientActivities">
-                        <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
-                        <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activity</span>
-                    </li>  
-
-                    <li class="secondary" style="display:none" rel="tab_relationships">
-                        <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
-                        <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
-                    </li>
-      
-                </ul>
-            </li>
-
-            <li class="primary" rel="tab_clientActivities">
-                <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
-                <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
-
-                <ul class="secondary" style="display: none; z-index: 1;">
-
-                    <li class="secondary" style="display:none" rel="tab_clientDetails">
-                        <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                        <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
-                    </li>
-
-                    <li class="secondary" style="display:none" rel="tab_relationships">
-                        <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
-                        <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
-                    </li>
-                      
-                </ul>
-            </li>
-            
-            <li class="primary" rel="tab_relationships">
-                <div class="tab_fs__head-icon i-synchronized_24 " rel="tab_relationships"></div>
-                <span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
-                <ul class="secondary" style="display: none; z-index: 1;">
-
-                    <li class="secondary" style="display:none" rel="tab_clientDetails">
-                        <div class="tab_fs__head-icon i-details_24" rel="tab_clientDetails"></div>
-                        <span term="activityDetail_tab_details" rel="tab_clientDetails">Details</span>
-                    </li>
-
-                    <li class="secondary" style="display:none" rel="tab_clientActivities">
-                        <div class="tab_fs__head-icon i-payloads_24" rel="tab_clientActivities"></div>
-                        <span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
-                    </li>
-
-                </ul>
-            </li>
-
-        </ul>
-        <div class="tab_fs__head-icon_exp"></div>
-    </div>
-
-    <div class="tab_fs__container">
-
-        <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_clientDetails"
-            blockid="tab_clientDetails" />
-
-        <div class="tab_fs__container-content" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;">
-            <div class="list"></div>
-        </div>
-
-        <div class="tab_fs__container-content" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
-
-    </div>
-
-</div>
-</div>`;
-
-

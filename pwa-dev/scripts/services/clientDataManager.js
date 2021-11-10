@@ -444,7 +444,6 @@ ClientDataManager.removeTempClient = function( client, targetNewClient )
             if ( targetNewClient ) 
             {
                 ClientDataManager.addMap_TempClient_NewClient( client._id, targetNewClient._id );
-                //var clientCardDivTags = $( 'div.card[itemid="' + client._id + '"]' );
                 //clientCardDivTags.attr( 'itemid', newClientId );    // <-- Do this on ClientCard, but set in SyncManager.. ?
             }
 

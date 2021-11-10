@@ -372,7 +372,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
         var clientCard = new ClientCard( clientJson._id, { viewDef_Selected: viewDef_Selected } );
 
-        listTableTbodyTag.append ( clientCard.generateCardTrTag( groupAttrVal ) );
+        listTableTbodyTag.append ( clientCard.createClientCardTag( groupAttrVal ) );
 
         return clientCard;
     };

@@ -110,7 +110,7 @@ function ActivityCardDetail( activityId, isRestore )
           }
           
           // Set event for "Remove" button for "Pending" client
-          var removeActivityBtn = sheetFullTag.find("#removeActivity");
+          var removeActivityBtn = sheetFullTag.find( '.removeActivity' );
           if ( SyncManagerNew.statusSynable( activityJson.processing.status ) )
           {
               removeActivityBtn.click( function()
@@ -182,7 +182,7 @@ ActivityCardDetail.cardFullScreen = `
 
       <div class="tab_fs">
 
-        <div class="button warning button-full_width" id="removeActivity"
+        <div class="button warning button-full_width removeActivity"
           style="height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
           <div class="button__container">
             <div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Remove Pending Activity</div>

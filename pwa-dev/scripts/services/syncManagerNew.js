@@ -204,7 +204,8 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
             activityCardObj.highlightActivityDiv( false );
 
             // Rerender the client card that holds this activity as well. - if new client case, the id is tempClient, yet.
-            if ( clientId ) $( 'div.card[itemid="' + clientId + '"]' ).find( 'div.clientRerender' ).click();
+            ClientCard.reRenderClientCardsById( clientId );
+
 
             if ( returnFunc ) returnFunc( syncReadyJson, success, responseJson );
         });
@@ -422,7 +423,7 @@ SyncManagerNew.isSyncReadyStatus = function( status )
 // Another name for 'isSyncReadyStatus'
 SyncManagerNew.statusSynable = function( status ) 
 { 
-    SyncManagerNew.isSyncReadyStatus( status ); 
+    return SyncManagerNew.isSyncReadyStatus( status ); 
 };
 
 
