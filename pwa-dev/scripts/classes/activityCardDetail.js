@@ -131,8 +131,8 @@ function ActivityCardDetail( activityId, isRestore )
     
     me.removeActivityNCard = function( activityId, btnBackTag )
     {
-        var client = ActivityDataManager.removeIndexedActivity_ById( activityId );
-        if ( client && client.activities.length === 0 ) ClientDataManager.removeTempClient( client );  // only if other activities does not exists..
+        var client = ActivityDataManager.deleteExistingActivity_Indexed( activityId );
+        if ( client && client.activities.length === 0 ) ClientDataManager.removeClient( client );
 
         ClientDataManager.saveCurrent_ClientsStore( () => 
         {

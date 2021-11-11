@@ -86,12 +86,12 @@ ActivityDataManager.removeActivities = function( activities )
     for ( var i = activities.length - 1; i >= 0; i-- )
     {
         var activity = activities[ i ];
-        ActivityDataManager.removeIndexedActivity_ById( activity.id );
+        ActivityDataManager.deleteExistingActivity_Indexed( activity.id );
     }
 };
 
 // After 'syncUp', remove the payload <-- after syncDown?
-ActivityDataManager.removeIndexedActivity_ById = function( activityId )
+ActivityDataManager.deleteExistingActivity_Indexed = function( activityId )
 {
     var client;  // return client - for case of temp client removal
 
@@ -120,15 +120,11 @@ ActivityDataManager.removeIndexedActivity_ById = function( activityId )
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error on ActivityDataManager.removeIndexedActivity_ById, errMsg: ' + errMsg );
+        console.customLog( 'Error on ActivityDataManager.deleteExistingActivity_Indexed, errMsg: ' + errMsg );
     }
 
     return client;
 };
-
-
-// TODO: should change to 'removeActivity( activity, options )'  options: { targetClient, bRemoveTempClient }
-//ActivityDataManager.removeActivity_NTempClient = function( activityId, targetClient, bRemoveActivityTempClient )
 
 
 // ---------------------------------------
@@ -136,19 +132,20 @@ ActivityDataManager.removeIndexedActivity_ById = function( activityId )
 
 ActivityDataManager.insertActivitiesToClient = function( activities, client, option )
 {
-    for ( var i = 0; i < activities.length; i++ )
+    activities.forEach( activity => 
     {
-        var activity = activities[ i ];
-
         // If this client or other client have same activity Id, remove those activites.. 1st..
         // If this activity ID exists in other client (diff obj), remove it.  <-- but if this is 
-        ActivityDataManager.removeIndexedActivity_ById( activity.id );
+        ActivityDataManager.deleteExistingActivity_Indexed( activity.id );
 
+        // Even on activities merge, (existing client with pendnig acitivty synced, it will remove the activity on this client, and add as a new activity.. )
 
-        client.activities.push( activity );
         // Insert the 'activity' to the client
+        client.activities.push( activity );
+
         ActivityDataManager.updateActivityIdx( activity.id, activity, client, option );
-    }
+
+    });
 };
 
 
@@ -168,51 +165,32 @@ ActivityDataManager.regenActivityList_NIndexes = function()
     {        
         var client = clientList[i];
 
-        ActivityDataManager.updateActivityListIdx( client );
+        ActivityDataManager.updateClientActivityListIdx( client );
     }
 };
 
 
-ActivityDataManager.updateActivityListIdx = function( client, bRemoveActivityTempClient )
+ActivityDataManager.updateClientActivityListIdx = function( client )
 {
+    var removedActivityClient;
+
     if ( client.activities ) 
     {
-        for ( var x = 0; x < client.activities.length; x++ )
+        client.activities.forEach( activity => 
         {
-            var activity = client.activities[ x ];
+            //ActivityDataManager.removeExistingActivity_NTempClient( activity.id, client, bRemoveActivityTempClient );
+            // Only remove already indexed activity.  In full reindexing or start of app indexing, no activity index exists, thus, nothing to index.
+            var deletedActivityClient = ActivityDataManager.deleteExistingActivity_Indexed( activity.id );
+            if ( deletedActivityClient && client !== deletedActivityClient ) removedActivityClient = deletedActivityClient;
 
-            if ( activity.id ) 
-            {
-                //ActivityDataManager.removeExistingActivity_NTempClient( activity.id, client, bRemoveActivityTempClient );
-                // Only remove already indexed activity.  In full reindexing or start of app indexing, no activity index exists, thus, nothing to index.
-                var activityClient = ActivityDataManager.removeIndexedActivity_ById( activity.id );
-                if ( bRemoveActivityTempClient && activityClient ) ClientDataManager.removeTempClient( activityClient, client );
-                
-                // ReAdd the activity Idx
-                ActivityDataManager.updateActivityIdx( activity.id, activity, client );
-            }
-        }
+            // ReAdd the activity Idx
+            ActivityDataManager.updateActivityIdx( activity.id, activity, client );
+        });
     }
+
+    return removedActivityClient;
 };
 
-
-// TODO: Might merge with ActivityDataManager.removeIndexedActivity_ById
-// ActivityDataManager.removeExistingActivity_NTempClient = function( activityId, targetNewClient, bRemoveActivityTempClient )
-// {
-//     // If Existing activity Index exists, use it to check if it is tied to other client (temporary client case).  Delete the client?
-//     var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );    
-//     if ( existingActivity ) 
-//     {
-//         var activityClient = ActivityDataManager.removeIndexedActivity_ById( activityId );
-//         if ( bRemoveActivityTempClient ) ClientDataManager.removeTempClient( activityClient, targetNewClient );
-//     }
-    
-//     //ActivityDataManager.removeActivity_NTempClient( activityId, client, bRemoveActivityTempClient );
-// };
-
-
-
-// If 
 
 ActivityDataManager.updateActivityIdx = function( activityId, activity, client, option )
 {
@@ -240,7 +218,7 @@ ActivityDataManager.getTempClientActivityLastIndexCase = function( client )
 {
     var position = -1;
 
-    if ( ClientDataManager.isTempClientCase( client._id ) )
+    if ( ClientDataManager.isTempClientCase( client ) )
     {
         // if there is any activity not synced..
         client.activities.forEach( act => 
@@ -316,13 +294,18 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
             }
             else
             {
-                // Existing Activity Case - On syncUp activity Id matching case, override it.
+                // Existing Activity Cases:
+                
+                // If the syncUp performed was on this activity, existing client had this activity payload
+                //  , thus simply write over to app activity --> by putting it as 'newActivity'
                 if ( downloadedData.syncUpActivityId && dwActivity.id === downloadedData.syncUpActivityId )
                 {
                     // This 'processingInfo' is already has 'history' of previous activity..
                     ActivityDataManager.insertToProcessing( dwActivity, processingInfo );
                     newActivities.push( dwActivity );
                 }
+                // NOTE: For other activities downloaded and existing, we should not merge it? - Do not add to activity?
+                //  <-- On Mongo case, we should update it..  I think..
                 else if ( dwActivity.date && dwActivity.date.updateFromMongo 
                         && ( !appClientActivity.date.updateFromMongo 
                             || ( appClientActivity.date.updateFromMongo 
@@ -388,7 +371,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
         if ( editModeActivityId )
         {
-            ActivityDataManager.removeIndexedActivity_ById( editModeActivityId );
+            ActivityDataManager.deleteExistingActivity_Indexed( editModeActivityId );
             activityJson.id = editModeActivityId;
         }
 

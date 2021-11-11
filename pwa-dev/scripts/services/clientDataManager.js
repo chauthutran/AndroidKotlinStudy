@@ -84,32 +84,66 @@ ClientDataManager.getClientByActivity = function( activity )
 
 // ----- Insert Client ----------------
 
-
 // CASE: New temp client with 'c_reg' activity is 'SyncUp', this gets called with 2nd param as true.
 // CASE: Other simple client add case.
-ClientDataManager.insertClients = function( clients, bRemoveActivityTempClient )
+ClientDataManager.insertClients = function( clientList ) //, bRemoveActivityTempClient )
 {
-    // Add to the beginning of the list..
-    var list = ClientDataManager.getClientList();
-
-    // Due to using 'unshift' to add to top, we are pushing the back of newActivities list item.
-    for ( var i = clients.length - 1; i >= 0; i-- )
-    {
-        var client = clients[ i ];
-        list.unshift( client );         
-        ClientDataManager.addClientIndex( client );
-
-
-
-        // 'bRemoveActivityTempClient' MOVE OUT?
-
-        // REMOVE 
-
-
-
-        ActivityDataManager.updateActivityListIdx( client, bRemoveActivityTempClient );
-    }
+    clientList.forEach( client => 
+    {        
+        ClientDataManager.insertClient( client );
+    });
     // NOTE: Not automatically saved. Manually call 'save' after insert.
+};
+
+// Insert client to app clientList with Index
+ClientDataManager.insertClient = function( client )
+{
+    ClientDataManager.getClientList().unshift( client ); // Add to top of list...
+
+    ClientDataManager.addClientIndex( client );
+
+    var removedActivityClient = ActivityDataManager.updateClientActivityListIdx( client );
+
+    // If removed Activity is from tempClient, perform the replacement of the tempClient with newClient.
+    if ( removedActivityClient && ClientDataManager.isTempClientCase( removedActivityClient ) )
+    {
+        // TempClient --> New Client MOVE CASE: (delete tempClient, while moving existing activities before delete)
+        ClientDataManager.replaceTempClient_withNewClient( removedActivityClient, client );
+    }
+};
+
+// TempClient --> New Client MOVE CASE:
+ClientDataManager.replaceTempClient_withNewClient = function( tempClient, client )
+{
+    // 1. Add Map for UI ClientCard Tag itemId attribute changing <-- on ClientCard Object ReRender Time.
+    ClientDataManager.addMap_TempClient_NewClient( tempClient._id, client._id );
+
+
+    // 2. Save the Moving activities from TempClient
+    var moveOtherActivities = [];
+
+    tempClient.activities.forEach( act => {
+        moveOtherActivities.push( Util.cloneJson( act ) );                
+    });
+
+
+    // 3. Remove the tempClient - also removes client/activities indexes..
+    ClientDataManager.removeClient( tempClient );
+
+
+    // 4. Modify the moving activity searchValues '_id'
+    moveOtherActivities.forEach( act => 
+    {
+        if ( act.processing && act.processing.searchValues )
+        {
+            var searchVal = act.processing.searchValues;
+            if ( searchVal._id ) searchVal._id = client._id;
+        }
+    });
+
+
+    // 5. Insert the moving activities to the new client
+    ActivityDataManager.insertActivitiesToClient( moveOtherActivities, client );
 };
 
 
@@ -150,7 +184,6 @@ ClientDataManager.removeClientsAll = function()
         console.customLog( 'Error in ClientDataManager.removeAllClient, errMsg: ' + errMsg );
     } 
 };
-
 
 // --------------------------------------------
 
@@ -337,7 +370,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
 
             // NOTE: new client insert -> new activity insert -> during this, we check if other client (temp client case) has same activityId.
             //   and remove the client (temp) & activity (before sync) in it.
-            ClientDataManager.insertClients( newClients, true );
+            ClientDataManager.insertClients( newClients );
         }        
 
         // Need to create ClientDataManager..
@@ -381,7 +414,7 @@ ClientDataManager.createActivityPayloadClient = function( activity )
     acitivityPayloadClient.clientConsent = ActivityDataManager.getData_FromTrans( activity, "clientConsent" );
     acitivityPayloadClient.date = ClientDataManager.dateConvertFromActivityDate( activity );
 
-    ClientDataManager.insertClients( [ acitivityPayloadClient ] );
+    ClientDataManager.insertClient( acitivityPayloadClient );
 
     return acitivityPayloadClient;
 };
@@ -438,61 +471,16 @@ ClientDataManager.getClientsByVoucherCode = function( voucherCode, opt_TransType
     return clients;
 };
 
-
-// NEW **
-ClientDataManager.removeTempClient = function( client, targetNewClient )
-{
-    try
-    {      
-        // Temporary Client case <-- delete client & activity in it.
-        if ( client && client._id && ClientDataManager.isTempClientCase( client._id ) )
-        {
-            var moveOtherActivities = [];
-         
-            // BEFORE REMOVING CLIENT: If not simple removing tempClient case, but moving from tempClient to newClient case, add to map data.
-            if ( targetNewClient ) 
-            {
-                ClientDataManager.addMap_TempClient_NewClient( client._id, targetNewClient._id );
-                //clientCardDivTags.attr( 'itemid', newClientId );    // <-- Do this on ClientCard, but set in SyncManager.. ?
-            }
-
-            // BEFORE REMOVING CLIENT: Save other activities before delete the tempClient?
-            client.activities.forEach( act => {
-                moveOtherActivities.push( Util.cloneJson( act ) );                
-            });
-
-            ClientDataManager.removeClient( client );
-
-
-            // Move the activities to new/existing targetClient..
-            if ( targetNewClient && moveOtherActivities.length > 0 )
-            {
-                // Replace searchValues '_id' of activities if exists.
-                moveOtherActivities.forEach( act => 
-                {
-                    if ( act.processing && act.processing.searchValues )
-                    {
-                        var searchVal = act.processing.searchValues;
-                        if ( searchVal._id ) searchVal._id = targetNewClient._id;
-                    }
-                });
-
-                ActivityDataManager.insertActivitiesToClient( moveOtherActivities, targetNewClient );
-            }
-        }
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'Error on ClientDataManager.removeTempClient, errMsg: ' + errMsg );
-    }
-};
-
-
 // -------------------------------------------
 
-ClientDataManager.isTempClientCase = function( clientId )
+ClientDataManager.isTempClientCase = function( client )
 {
-    return ( clientId.indexOf( ClientDataManager.tempClientNamePre ) === 0 );
+    return ( client && ClientDataManager.isTempClientCaseById( client._id ) );
+};
+
+ClientDataManager.isTempClientCaseById = function( clientId )
+{
+    return ( clientId && clientId.indexOf( ClientDataManager.tempClientNamePre ) === 0 );
 };
 
 // ClientDataManager.tempClient_NewClient_IdMap = {};
@@ -517,7 +505,7 @@ ClientDataManager.tempClient_ToNewClientCase = function( clientId )
     var newClientId;
 
     // Check if the clientId is tempClient Id.
-    if ( ClientDataManager.isTempClientCase( clientId ) )
+    if ( ClientDataManager.isTempClientCaseById( clientId ) )
     {
         // Check if newClient created from tempClient exists - from tempClient deleting logic
         newClientId = ClientDataManager.tempClient_NewClient_IdMap[ clientId ];
