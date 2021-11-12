@@ -2737,6 +2737,8 @@ textarea {
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  padding: 3px;
+  padding-bottom: 50px !important;
 }
 
 @media (min-width: 558px) {
@@ -3398,6 +3400,8 @@ textarea {
 .wapper_card .tab_fs__container .tab_fs__container-content {
   width: 100% !important;
   max-width: 100% !important;
+  padding: 3px;
+  padding-bottom: 50px !important;
 }
 
 .fab-wrapper {

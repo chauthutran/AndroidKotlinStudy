@@ -76,11 +76,12 @@ function ClientCardDetail( clientId, isRestore )
         var activityTabBodyDivTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
         sheetFullTag.find( '.tab_fs li[rel=tab_clientActivities]' ).click( function() 
         {
-            activityTabBodyDivTag.html( '' );
+            activityTabBodyDivTag.html( '<div class="activityList" style="height: fit-content; width: 100%;"></div>' );
+            var activityListDivTag = activityTabBodyDivTag.find( '.activityList' );
 
             var clientJson = ClientDataManager.getClientById( clientId ); // for changed client data?
 
-            if ( clientJson ) me.populateActivityCardList( clientJson.activities, activityTabBodyDivTag );
+            if ( clientJson ) me.populateActivityCardList( clientJson.activities, activityListDivTag );
 
 
             var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag
@@ -519,18 +520,18 @@ ClientCardDetail.cardFullScreen = `
 
             <div class="tab_fs__container" style="padding: 0px !important;">
 
-                <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_clientDetails"
+                <div class="tab_fs__container-content sheet_preview active" tabButtonId="tab_clientDetails"
                     blockid="tab_clientDetails" style="overflow-x: hidden !important;" />
 
-                <div class="tab_fs__container-content tabCardList" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />
+                <div class="tab_fs__container-content sheet_preview" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />
 
-                <div class="tab_fs__container-content" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
+                <div class="tab_fs__container-content sheet_preview" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
 
-                <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;">
+                <div class="tab_fs__container-content sheet_preview" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;">
                     <div class="payloadData"></div>
                 </div>              
 
-                <div class="tab_fs__container-content" tabButtonId="tab_optionalDev" blockid="tab_optionalDev" style="display:none;">
+                <div class="tab_fs__container-content sheet_preview" tabButtonId="tab_optionalDev" blockid="tab_optionalDev" style="display:none;">
                     
                     <div style="margin-top: 5px;">
                         <div> <span style="font-size: small; font-weight: bold; color: #555;">New Activity Json Request: </span> <button class="btnClientActivityCreate">Create</button> <span class="spClientActivityNewResult"></span> </div>

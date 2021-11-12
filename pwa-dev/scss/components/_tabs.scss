@@ -178,6 +178,9 @@ $active-tab :$color-p;
     .tab_fs__container-content {
         @include box-sizing(border-box);
 
+        padding: 3px;
+        padding-bottom: $tabContentPaddingBottom !important;
+
         @include rwd-min(558) {
             width: 100%;
             height: auto;

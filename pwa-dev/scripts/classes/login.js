@@ -22,6 +22,8 @@ function Login()
 	me.loginPinClearTag = $( '#loginPinClear' );
 	//me.loginFieldTag = $( '#loginField' );
 
+	me.splitPasswordTag = $( '.split_password' );
+
 	// ------------
 
 	// Flags
@@ -116,26 +118,22 @@ function Login()
 	
 	me.getCurrentPassword = function()
 	{
-		var splitPasswordTag = $( '.split_password' );
-
 		return { 
-			'p1': splitPasswordTag.find( '.pin1' ).val()
-			,'p2': splitPasswordTag.find( '.pin2' ).val()
-			,'p3': splitPasswordTag.find( '.pin3' ).val()
-			,'p4': splitPasswordTag.find( '.pin4' ).val()
+			'p1': me.splitPasswordTag.find( '.pin1' ).val()
+			,'p2': me.splitPasswordTag.find( '.pin2' ).val()
+			,'p3': me.splitPasswordTag.find( '.pin3' ).val()
+			,'p4': me.splitPasswordTag.find( '.pin4' ).val()
 		};
 	};
 
 	me.restoreCurrentPassword = function( pwdJson )
 	{
-		var splitPasswordTag = $( '.split_password' );
-
 		if ( pwdJson )
 		{
-			if ( pwdJson.p1 ) splitPasswordTag.find( '.pin1' ).val( pwdJson.p1 );
-			if ( pwdJson.p2 ) splitPasswordTag.find( '.pin2' ).val( pwdJson.p2 );
-			if ( pwdJson.p3 ) splitPasswordTag.find( '.pin3' ).val( pwdJson.p3 );
-			if ( pwdJson.p4 ) splitPasswordTag.find( '.pin4' ).val( pwdJson.p4 );
+			if ( pwdJson.p1 ) me.splitPasswordTag.find( '.pin1' ).val( pwdJson.p1 );
+			if ( pwdJson.p2 ) me.splitPasswordTag.find( '.pin2' ).val( pwdJson.p2 );
+			if ( pwdJson.p3 ) me.splitPasswordTag.find( '.pin3' ).val( pwdJson.p3 );
+			if ( pwdJson.p4 ) me.splitPasswordTag.find( '.pin4' ).val( pwdJson.p4 );
 		}
 	};
 
@@ -194,19 +192,23 @@ function Login()
 			me.passRealTag.hide();
 		});
 
+
+		me.splitPasswordTag.find( '.pin1' ).focus( function() {
+			SwManager.checkNewAppFile_OnlyOnline();
+		});
+			
+
 		me.loginBtnTag.click( function() 
 		{
 			$( '.pin_pw_loading' ).hide();
 
 			var loginUserNameVal = me.loginUserNameTag.val();
 			var loginUserPinVal = ''; //me.loginUserPinTag.val();
-
-			var splitPasswordTag = $( '.split_password' );
 			
-			var pin1Val = Util.trim( splitPasswordTag.find( '.pin1' ).val() );
-			var pin2Val = Util.trim( splitPasswordTag.find( '.pin2' ).val() );
-			var pin3Val = Util.trim( splitPasswordTag.find( '.pin3' ).val() );
-			var pin4Val = Util.trim( splitPasswordTag.find( '.pin4' ).val() );
+			var pin1Val = Util.trim( me.splitPasswordTag.find( '.pin1' ).val() );
+			var pin2Val = Util.trim( me.splitPasswordTag.find( '.pin2' ).val() );
+			var pin3Val = Util.trim( me.splitPasswordTag.find( '.pin3' ).val() );
+			var pin4Val = Util.trim( me.splitPasswordTag.find( '.pin4' ).val() );
 
 			if ( pin1Val && pin2Val && pin3Val && pin4Val )
 			{
@@ -423,14 +425,12 @@ function Login()
 				var password = SessionManager.getOfflineUserPin( offlineUserData );
 				if ( password )
 				{
-					var splitPasswordTag = $( '.split_password' );
-
 					for ( var i = 0; i < password.length; i++ ) 
 					{
 						var charVal = password.charAt(i);
 						var pinClassName = '.pin' + ( i + 1 );
 	
-						splitPasswordTag.find( pinClassName ).val( charVal );
+						me.splitPasswordTag.find( pinClassName ).val( charVal );
 					}	
 				}
 			}	
