@@ -646,6 +646,8 @@ function Login()
 
 		ScheduleManager.runSchedules_AfterLogin( SessionManager.cwsRenderObj );
 		//me.loginAfter_LoginPageUIUpdate();
+
+		ConfigManager.runAppRunEvals( 'login' );
 	};
 
 	// ----------------------------------------------

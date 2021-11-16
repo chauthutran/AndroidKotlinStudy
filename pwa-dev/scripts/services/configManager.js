@@ -938,6 +938,29 @@ ConfigManager.filterBySourceType_SyncDownList = function( configJson )
 };
 
 
+// -----------  appRunEvals related ------------
+
+//"appRunEvals": [ { "NOTE_runType": "appStart/login/block", "eval": [] } ],
+//ConfigManager.getAppRunEvals = function( runTypeName )
+ConfigManager.runAppRunEvals = function( runIdName )  // , optionalObjId )
+{
+    var appRunEvals = ConfigManager.getConfigJson().appRunEvals;
+
+    if ( runIdName && appRunEvals )
+    {
+        var matchObj = Util.getFromList( appRunEvals, runIdName, 'runId' );
+
+        if ( matchObj.eval )
+        {
+            try {
+                var evalStr = Util.getEvalStr( matchObj.eval );
+                if ( evalStr ) eval( evalStr );				
+            } catch( errMsg ) { console.log( 'ERROR in ConfigManager.runAppRunEvals, ' + errMsg ); }
+        }
+    }
+};
+
+
 // -----------  Sync Related ------------
 
 ConfigManager.getSettingNetworkSync = function()
