@@ -32,6 +32,11 @@ UtilDate.isDate = function( date ) {
    return ( (new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) ));
 };
 
+// Replacement of 'new Date( -- )' - handles no local time when 'YYYY-MM-dd' is used.
+UtilDate.getDateObj = function( dateStr ) 
+{
+	return ( dateStr ) ? new Date( UtilDate.addTimeStr_IfEmpty( dateStr ) ) : new Date();
+}
 // ----------------------------------
 // Date Formatting Related
 
@@ -143,7 +148,7 @@ UtilDate.getTimePassedMs = function( fromDtStr )
 	try
 	{
 		var currDt = new Date().getTime();
-		var fromDt = new Date( fromDtStr ).getTime();
+		var fromDt = UtilDate.getDateObj( fromDtStr ).getTime();
 
 		var timePassedMs = currDt - fromDt;
 	}
@@ -163,6 +168,8 @@ UtilDate.dateUTCToLocal = function( dateStr )
 	{
 		if ( dateStr )
 		{
+			dateStr = UtilDate.addTimeStr_IfEmpty( dateStr );
+
 			// If the input utc date string does not have 'Z' at the end, add it.  <--- but need to be full length?
 			if ( dateStr.indexOf( 'Z' ) === -1 ) 
 			{
@@ -193,6 +200,12 @@ UtilDate.getUTCDateTimeStr = function( dateObj, optionStr )
 
 	return dtStr;
 };
+
+UtilDate.addTimeStr_IfEmpty = function( dateStr )
+{
+	return ( dateStr && dateStr.length === 10 ) ? dateStr + 'T00:00:00' : dateStr;
+};
+
 
 // Date Formatting Related
 // ----------------------------------

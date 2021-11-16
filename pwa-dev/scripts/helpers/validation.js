@@ -355,7 +355,7 @@ Validation.checkDateRange = function( inputTag, divTag, type, attrVal, prev_vali
         // If previous check were not valid, do not check for this DateRange.  Not valid dates should not check dateRange.
         if ( prev_valid )
         {
-            if ( value ) valueDate = new Date( value );
+            if ( value ) valueDate = UtilDate.getDateObj( value );
             attrVal = Util.trim( attrVal );
     
             if ( valueDate && attrVal )
@@ -370,8 +370,8 @@ Validation.checkDateRange = function( inputTag, divTag, type, attrVal, prev_vali
                 if ( attrValArr.length >= 1 ) dateFromStr = Util.trim( attrValArr[0] );
                 if ( attrValArr.length >= 2 ) dateToStr = Util.trim( attrValArr[1] );
     
-                if ( dateFromStr ) dateFrom = new Date( dateFromStr );
-                if ( dateToStr ) dateTo = new Date( dateToStr );
+                if ( dateFromStr ) dateFrom = UtilDate.getDateObj( dateFromStr );
+                if ( dateToStr ) dateTo = UtilDate.getDateObj( dateToStr );
                 
                 // Finally, check the date against dateFrom/To.
                 if ( dateFrom && valueDate < dateFrom ) valid = false;
@@ -404,7 +404,7 @@ Validation.checkValue_pickerDateRange = function( inputTag, divTag, type, prev_v
     {
         if ( prev_valid )
         {
-            if ( value ) valueDate = new Date( value );    
+            if ( value ) valueDate = UtilDate.getDateObj( value );    
 
             var pickerDateRangeStr = decodeURI( inputTag.attr( "pickerDateRange" ) );
 

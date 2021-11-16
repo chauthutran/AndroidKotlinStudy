@@ -425,9 +425,10 @@ function Statistics( cwsRenderObj )
         {
             for (var i = 0; i < myArr.length; i++)
             {
-                var dtmThis = new Date( myArr[ i ].date[ me.dateFilterField ] ); //myArr[ i ].created
+                var dtmThis = UtilDate.getDateObj( myArr[ i ].date[ me.dateFilterField ] ); //myArr[ i ].created
 
-                if ( new Date( dtmThis ) >= new Date( periodOpt.from ) && new Date( dtmThis ) <= new Date( periodOpt.to ) )
+                if ( UtilDate.getDateObj( dtmThis ) >= UtilDate.getDateObj( periodOpt.from ) 
+                    && UtilDate.getDateObj( dtmThis ) <= UtilDate.getDateObj( periodOpt.to ) )
                 {
                     retArr.push( myArr[ i ] );
                 }

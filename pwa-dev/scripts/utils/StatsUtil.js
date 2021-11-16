@@ -230,8 +230,8 @@ StatsUtil.filterListByDate = function( startPeriod, endPeriod, itemList, datePro
 {    
     var outList = [];
 
-    var startDate = ( startPeriod ) ? new Date( startPeriod ) : undefined;
-    var endDate = ( endPeriod ) ? new Date( endPeriod ) : undefined;
+    var startDate = ( startPeriod ) ? UtilDate.getDateObj( startPeriod ) : undefined;
+    var endDate = ( endPeriod ) ? UtilDate.getDateObj( endPeriod ) : undefined;
     
     itemList.forEach( ( item ) => 
     {
@@ -250,7 +250,7 @@ StatsUtil.isInDate = function( startDate, endDate, item, datePropertyName )
     {
         if ( item.date && item.date[ datePropertyName ] )
         {
-            var itemDate = new Date( item.date[ datePropertyName ] );
+            var itemDate = UtilDate.getDateObj( item.date[ datePropertyName ] );
 
             //  If 'startDate' or 'endDate' is not available, no need to compare for that date for range.
             if ( ( !startDate || itemDate >= startDate ) 

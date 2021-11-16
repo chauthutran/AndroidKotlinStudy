@@ -88,17 +88,17 @@ ActivityUtil.checkNSet_ActivityDates = function( payload )
 				// If above 2 does not exists, create both new with current dateTime. 
 				if ( date.capturedLoc ) 
 				{
-					date.capturedUTC = Util.getUTCDateTimeStr( new Date( date.capturedLoc ), 'noZ' );
+					date.capturedUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.capturedLoc ), 'noZ' );
 				}
 				else if ( date.capturedUTC ) 
 				{
-					var localDateTime = Util.dateUTCToLocal( date.capturedUTC );
-					if ( localDateTime ) date.capturedLoc = Util.formatDateTime( localDateTime );
+					var localDateTime = UtilDate.dateUTCToLocal( date.capturedUTC );
+					if ( localDateTime ) date.capturedLoc = UtilDate.formatDateTime( localDateTime );
 				}
 				else
 				{
-					date.capturedLoc = Util.formatDate( new Date() ); 
-					date.capturedUTC = Util.getUTCDateTimeStr( new Date( date.capturedLoc ), 'noZ' );
+					date.capturedLoc = UtilDate.formatDate( new Date() ); 
+					date.capturedUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.capturedLoc ), 'noZ' );
 				}
 			}
 		}	

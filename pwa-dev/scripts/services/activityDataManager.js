@@ -507,7 +507,7 @@ ActivityDataManager.getHistoryData = function( history )
             if ( foundList.length > 0 ) 
             {
                 var item1st = foundList[0];    
-                if ( item1st.datetime ) historyData.failed1stDate = Util.getUTCDateTimeStr( new Date( item1st.datetime ), 'noZ' );
+                if ( item1st.datetime ) historyData.failed1stDate = Util.getUTCDateTimeStr( UtilDate.getDateObj( item1st.datetime ), 'noZ' );
             }    
         }
         catch ( errMsg )
@@ -698,7 +698,7 @@ ActivityDataManager.setActivityDateLocal = function( activityJson )
                     if ( localDateTime ) 
                     {
                         activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );    
-                        activityJson.date.capturedUTC = Util.getUTCDateTimeStr( new Date( localDateTime ), 'noZ' );
+                        activityJson.date.capturedUTC = Util.getUTCDateTimeStr( UtilDate.getDateObj( localDateTime ), 'noZ' );
                     }
                 } 
                 else
@@ -1197,11 +1197,11 @@ ActivityDataManager.isTransMatch = function( tran, matchCondiArr )
 
 
 // matchCondiArr = [ { 'type': '', 'dataValues': {}, 'clientDetails': {}, etc.. } <-- all optional..
-ActivityDataManager.getActivitiesSince = function( activityList, dateStr, datePropName )
+ActivityDataManager.getActivitiesSince = function( activityList, dateStr, datePropName, optionSameDateAllow  )
 {
     var outActList = [];
 
-    if ( activityList )
+    if ( activityList && dateStr )
     {
         activityList.forEach( act => 
         {
@@ -1209,10 +1209,20 @@ ActivityDataManager.getActivitiesSince = function( activityList, dateStr, datePr
             {
                 var actDateStr = act.date[datePropName];
 
-                if ( actDateStr > dateStr ) outActList.push( act );
+                if ( optionSameDateAllow === true ) 
+                {
+                    var sameDateStr = ( actDateStr.substr(0, 10) === dateStr.substr(0, 10) );
+                 
+                    if ( sameDateStr ) outActList.push( act );
+                    else if ( actDateStr >= dateStr ) outActList.push( act );
+                }
+                else 
+                {
+                    if ( actDateStr > dateStr ) outActList.push( act );
+                }
             }
             catch ( errMsg ) { console.log( 'ERROR in ActivityDataManager.getActivitiesSince, ' + errMsg ); }
-        });  
+        });
     }
 
     return outActList;
