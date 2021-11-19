@@ -185,6 +185,23 @@ ClientDataManager.removeClientsAll = function()
     } 
 };
 
+ClientDataManager.removeClientsByIdArr = function( clientIdsArr )
+{
+    try
+    {
+        for ( var i = 0; i < clientIdsArr.length; i++ )
+        {            
+            var client = ClientDataManager.getClientById( clientIdsArr[i] );
+
+            ClientDataManager.removeClient( client );
+        }
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR in ClientDataManager.removeClientsByIdArr, ' + errMsg );
+    } 
+};
+
 // --------------------------------------------
 
 ClientDataManager.updateClient_wtActivityReload = function( clientId, updateClientJson )

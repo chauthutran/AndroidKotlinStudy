@@ -247,7 +247,7 @@ SyncManagerNew.getActivityItems_ForSync = function( callBack )
 
         if ( activityItem.processing && activityItem.processing.status )
         {
-            filterPass = SyncManagerNew.statusSynable( activityItem.processing.status );
+            filterPass = SyncManagerNew.statusSyncable( activityItem.processing.status );
         }
 
         return filterPass; 
@@ -421,7 +421,7 @@ SyncManagerNew.isSyncReadyStatus = function( status )
 };
 
 // Another name for 'isSyncReadyStatus'
-SyncManagerNew.statusSynable = function( status ) 
+SyncManagerNew.statusSyncable = function( status ) 
 { 
     return SyncManagerNew.isSyncReadyStatus( status ); 
 };

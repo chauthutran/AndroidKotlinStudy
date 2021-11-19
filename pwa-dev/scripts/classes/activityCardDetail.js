@@ -111,7 +111,7 @@ function ActivityCardDetail( activityId, isRestore )
           
           // Set event for "Remove" button for "Pending" client
           var removeActivityBtn = sheetFullTag.find( '.removeActivity' );
-          if ( SyncManagerNew.statusSynable( activityJson.processing.status ) )
+          if ( SyncManagerNew.statusSyncable( activityJson.processing.status ) )
           {
               removeActivityBtn.click( function()
               {    

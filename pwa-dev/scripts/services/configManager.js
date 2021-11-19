@@ -960,6 +960,54 @@ ConfigManager.runAppRunEvals = function( runIdName )  // , optionalObjId )
     }
 };
 
+ConfigManager.runLoginTime_opts = function()
+{
+    var loginTime_opts = ConfigManager.getConfigJson().settings.loginTime_opts;
+
+    if ( loginTime_opts )
+    {
+        var deleteLocalClients = loginTime_opts.deleteLocalClients;
+
+        if ( deleteLocalClients )
+        {
+            if ( deleteLocalClients.daysOld && deleteLocalClients.clientDateField )
+            {
+                var clientIdsArr = [];
+
+                ClientDataManager.getClientList().forEach( client => 
+                {
+                    try 
+                    {            
+                        var daysSince = UtilDate.getDaysSince( client.date[ deleteLocalClients.clientDateField ] );
+
+                        if ( daysSince >= deleteLocalClients.daysOld ) 
+                        {
+                            var passSyncableCheck = true;
+
+                            // If 'unSyncedDelete' is set to 'true', allow deleting client regardless of syncable activities exists. 
+                            //if ( deleteLocalClients.unSyncedDelete ) passSyncableCheck = true;
+                            if ( !deleteLocalClients.unSyncedDelete ) 
+                            {
+                                var syncableCount = client.activities.filter( activity => { return ActivityDataManager.isActivityStatusSyncable( activity ); } );
+                                if ( syncableCount > 0 ) passSyncableCheck = false;    
+                            }
+
+                            if ( passSyncableCheck )
+                            {
+                                clientIdsArr.push( client._id );
+                            }
+                        }
+                    } 
+                    catch( errMsg ) { console.log( 'ERROR in ConfigManager.runLoginTime_opts, ' + errMsg ); }
+                });
+
+                //console.log( 'ConfigManager.runLoginTime_opts delete old client count: ' + clientIdsArr.length );                
+
+                ClientDataManager.removeClientsByIdArr( clientIdsArr );
+            }
+        }
+    }
+};
 
 // -----------  Sync Related ------------
 

@@ -943,6 +943,12 @@ ActivityDataManager.checkActivityCoolDown = function( activityId, optCallBack_co
 	return coolDownPassed;
 };
 
+
+ActivityDataManager.isActivityStatusSyncable = function( activity )
+{
+    return SyncManagerNew.statusSyncable( activity.processing.status );
+};
+
 // ------------------------------------
 //   ResponseCaseAction Related 
 

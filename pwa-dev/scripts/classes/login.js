@@ -644,10 +644,16 @@ function Login()
 		SessionManager.cwsRenderObj.showPageDiv();
 
 
-		ScheduleManager.runSchedules_AfterLogin( SessionManager.cwsRenderObj );
-		//me.loginAfter_LoginPageUIUpdate();
+		// NOTE: After Login Operations BELOW: (Client data are loaded in memory already)
 
+		// #1. "SCH_SyncDown_RunOnce", "SCH_FixOper_RunOnce", "SCH_SyncAll_Background"
+		ScheduleManager.runSchedules_AfterLogin( SessionManager.cwsRenderObj );
+
+		// #2
 		ConfigManager.runAppRunEvals( 'login' );
+
+		// Config > 'settings' > 'loginTime_opts'
+		ConfigManager.runLoginTime_opts();
 	};
 
 	// ----------------------------------------------
