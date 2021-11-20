@@ -426,6 +426,13 @@ SyncManagerNew.statusSyncable = function( status )
     return SyncManagerNew.isSyncReadyStatus( status ); 
 };
 
+SyncManagerNew.statusSynced = function( status ) 
+{ 
+    return ( status === Constants.status_downloaded 
+        || status === Constants.status_submit 
+        || status === Constants.status_submit_wMsg 
+        || status === Constants.status_submit_wMsgRead );    
+};
 
 SyncManagerNew.isSyncAll_Running = function()
 {

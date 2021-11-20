@@ -982,17 +982,17 @@ ConfigManager.runLoginTime_opts = function()
 
                         if ( daysSince >= deleteLocalClients.daysOld ) 
                         {
-                            var passSyncableCheck = true;
+                            var passAllSyncedCheck = true;
 
-                            // If 'unSyncedDelete' is set to 'true', allow deleting client regardless of syncable activities exists. 
-                            //if ( deleteLocalClients.unSyncedDelete ) passSyncableCheck = true;
+                            // If 'unSyncedDelete' is set to 'true', allow deleting client regardless of not synced activities exists. 
+                            // Otherwise, 'unSyncedDelete' not existing or set to 'false', we will only allow client delete if all activities are synced already.
                             if ( !deleteLocalClients.unSyncedDelete ) 
                             {
-                                var syncableCount = client.activities.filter( activity => { return ActivityDataManager.isActivityStatusSyncable( activity ); } );
-                                if ( syncableCount > 0 ) passSyncableCheck = false;    
+                                var notSyncedCount = client.activities.filter( activity => { return !ActivityDataManager.isActivityStatusSynced( activity ); } );
+                                if ( notSyncedCount > 0 ) passAllSyncedCheck = false;    
                             }
 
-                            if ( passSyncableCheck )
+                            if ( passAllSyncedCheck )
                             {
                                 clientIdsArr.push( client._id );
                             }

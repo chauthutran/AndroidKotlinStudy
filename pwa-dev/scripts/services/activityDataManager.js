@@ -949,6 +949,11 @@ ActivityDataManager.isActivityStatusSyncable = function( activity )
     return SyncManagerNew.statusSyncable( activity.processing.status );
 };
 
+ActivityDataManager.isActivityStatusSynced = function( activity )
+{
+    return SyncManagerNew.statusSynced( activity.processing.status );
+};
+
 // ------------------------------------
 //   ResponseCaseAction Related 
 
