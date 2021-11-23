@@ -76,7 +76,7 @@ function ClientCardDetail( clientId, isRestore )
         var activityTabBodyDivTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
         sheetFullTag.find( '.tab_fs li[rel=tab_clientActivities]' ).click( function() 
         {
-            activityTabBodyDivTag.html( '<div class="activityList" style="height: fit-content; width: 100%;"></div>' );
+            activityTabBodyDivTag.html( '<div class="activityList tabContentList"></div>' );
             var activityListDivTag = activityTabBodyDivTag.find( '.activityList' );
 
             var clientJson = ClientDataManager.getClientById( clientId ); // for changed client data?

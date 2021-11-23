@@ -253,90 +253,6 @@ ConfigManager.matchUserRoles = function( itemUserRoles, inputUserRoles )
 };
 
 
-/*
-// Adjust/Filter by userRole <--  definitionOptionList, areaList, favList
-ConfigManager.applyFilter_UserRole = function( configJson, arrList, loginUserRoles )
-{
-    try
-    {
-        if ( arrList && loginUserRoles )
-        {
-            // [ 'favList', 'areas', 'definitionOptions', 'settings.sync.syncDown' ]
-            arrList.forEach( defName => 
-            { 
-                try
-                {
-                    var defList;
-
-                    if ( defName === 'settings.sync.syncDown' ) defList = configJson.settings.sync.syncDown;
-                    else defList = configJson[ defName ];
-
-                    // NOTE, could be more dynamic - Find the 'userRole[]' list (array or object) in deep level and adjust the list or object based on that..
-                    // 'defName' is like 'favList', 'areas', 'definitionOptions', etc..
-
-                    // If Object, look for arrayList in one level below..
-                    if ( Util.isTypeArray( defList ) && ConfigManager.hasUserRole_inArraySubItem( defList ) )
-                    {
-                        // 'syncDown' CASE
-                        // Type1. list: [ { .. userRoles[ ipc ] }, {} ]
-                        ConfigManager.filterListItems_ByUserRoles( defList, loginUserRoles );
-                    }
-                    else if ( Util.isTypeObject( defList ) )
-                    {
-                        // 'favList', areas', definitionOptions' CASE
-                        Object.keys( defList ).forEach( key => 
-                        {
-                            // 'key' = 'online' / 'offline' (in areas case)
-                            var itemObj = defList[key];
-
-                            if ( Util.isTypeArray( itemObj ) && ConfigManager.hasUserRole_inArraySubItem( itemObj ) )
-                            {
-                                // 'areas.online', 'areas.offline', etc..  most of the cases..
-                                // Type2. obj: { item: [ { .. userRoles[ ipc ] }, {} ], [...], .. }
-                                ConfigManager.filterListItems_ByUserRoles( itemObj, loginUserRoles );
-                            }
-                            else if ( Util.isTypeObject( itemObj ) )
-                            {
-                                // If 'favList.activityListFav' itself has userRoles
-                                if ( itemObj.userRoles )
-                                {
-                                    if ( ConfigManager.notMatch_UserRole( itemObj, loginUserRoles ) )
-                                    {
-                                        delete defList[key];
-                                    }
-                                }
-                                else if ( ConfigManager.hasUserRole_InSubItem( itemObj ) ) 
-                                {
-                                    // Type3. obj: { { .. userRoles[ ipc ] }, {} }  <-- not used..
-                                    ConfigManager.filterSubObjsByUserRoles( itemObj, loginUserRoles );
-                                }
-                                // if 'TYPE' is 'favList', it could be obj > array.. that has 'userRoles'
-                                // 'favList.activityListFav' --> 'online'/'offline'
-                                else if ( ConfigManager.hasUserRole_InSubItem_SubArray( itemObj ) )
-                                {
-                                    Object.keys( itemObj ).forEach( itemKey => 
-                                    {
-                                        ConfigManager.filterListItems_ByUserRoles( itemObj[ itemKey ], loginUserRoles );
-                                    });
-                                }
-                            }
-                        });
-                    }
-                }
-                catch( errMsg )
-                {
-                    console.customLog( 'ERROR in ConfigManager.applyFilter_UserRole defName: ' + defName + ', errMsg: ' + errMsg );
-                }               
-            });
-        }
-    }
-    catch( errMsg )
-    {
-        console.customLog( 'ERROR in ConfigManager.applyFilter_UserRole, errMsg: ' + errMsg );
-    }   
-};
-*/
-
 // ----------------------------------------------------
 // === UserRoles Filter/Check Related Methods
 
@@ -658,17 +574,24 @@ ConfigManager.getVoucherCodeReuse = function()
     return ( ConfigManager.getConfigJson().voucherCodeReuse === true );
 };
 
-
-ConfigManager.getSettingPaging = function()
+ConfigManager.getSettings = function()
 {
-    var pagingSetting = ConfigManager.default_SettingPaging
+    var settings = {};
 
     var configJson = ConfigManager.getConfigJson();
 
-    if ( configJson && configJson.settings && configJson.settings.paging )
-    {
-        Util.mergeJson( pagingSetting, configJson.settings.paging );
-    }
+    if ( configJson && configJson.settings ) settings = configJson.settings;
+    
+    return settings;
+};
+
+ConfigManager.getSettingPaging = function()
+{
+    var pagingSetting = ConfigManager.default_SettingPaging;
+
+    var settingsPaging = ConfigManager.getSettings().paging;
+
+    if ( settingsPaging ) Util.mergeJson( pagingSetting, settingsPaging );
     
     return pagingSetting;
 };
@@ -677,9 +600,9 @@ ConfigManager.getSettingsTermId = function( termName )
 {
     var termId = '';
 
-    var configJson = ConfigManager.getConfigJson();
+    var settingsTerms = ConfigManager.getSettings().terms;
 
-    if ( configJson && configJson.settings && configJson.settings.terms )
+    if ( settingsTerms )
     {
         var termIdTemp = configJson.settings.terms[ termName ];
         if ( termIdTemp ) termId = termIdTemp;
@@ -737,6 +660,7 @@ ConfigManager.getActivityDisplayBase = function()
 
     return displayBase;
 };
+
 
 // ---------------------------------------------
 
@@ -960,13 +884,13 @@ ConfigManager.runAppRunEvals = function( runIdName )  // , optionalObjId )
     }
 };
 
-ConfigManager.runLoginTime_opts = function()
+ConfigManager.runLoginTimeRuns = function()
 {
-    var loginTime_opts = ConfigManager.getConfigJson().settings.loginTime_opts;
+    var loginTimeRuns = ConfigManager.getConfigJson().settings.loginTimeRuns;
 
-    if ( loginTime_opts )
+    if ( loginTimeRuns )
     {
-        var deleteLocalClients = loginTime_opts.deleteLocalClients;
+        var deleteLocalClients = loginTimeRuns.deleteLocalClients;
 
         if ( deleteLocalClients )
         {
@@ -998,10 +922,10 @@ ConfigManager.runLoginTime_opts = function()
                             }
                         }
                     } 
-                    catch( errMsg ) { console.log( 'ERROR in ConfigManager.runLoginTime_opts, ' + errMsg ); }
+                    catch( errMsg ) { console.log( 'ERROR in ConfigManager.runLoginTimeRuns, ' + errMsg ); }
                 });
 
-                //console.log( 'ConfigManager.runLoginTime_opts delete old client count: ' + clientIdsArr.length );                
+                //console.log( 'ConfigManager.runLoginTimeRuns delete old client count: ' + clientIdsArr.length );                
 
                 ClientDataManager.removeClientsByIdArr( clientIdsArr );
             }

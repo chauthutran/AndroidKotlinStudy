@@ -32,10 +32,8 @@ function ClientRelationshipList( clientId, _relationshipTabTag, blockDefId )
 
         // Reset things..  maybe simply clear it out?  
         me.relationshipTabTag.html( '' );
-        //me.relationshipTabTag.find( 'div.block' ).remove();
-        //me.listTag.remove();
 
-        me.listTag = $( '<div class="list"></div>' );
+        me.listTag = $( '<div class="tabContentList"></div>' );
         me.relationshipTabTag.append( me.listTag );
 
         me.renderRelationshipList( me.listTag, me.clientJson.relationships, me.blockDefJson );
@@ -75,79 +73,6 @@ function ClientRelationshipList( clientId, _relationshipTabTag, blockDefId )
             });
         }
     };
-
-    /*
-    me.renderAddRelationshipBtn = function( listTag, relationshipTabTag )
-    {
-        // Render [Add] button
-        me.addRelationshipBtnTag = $( FavIcons.favButtonContainer );
-        
-        // Set Click event 
-        me.addRelationshipBtnTag.click( function()
-        {
-            // clear existing data on this tab content
-            relationshipTabTag.find( 'div.block' ).remove();
-            relationshipTabTag.find( 'div.list' ).remove();
-
-            var clientRelSearchBlock = ConfigManager.getSettingsClientDef().clientRelSearchBlock;
-            FormUtil.renderBlockByBlockId( clientRelSearchBlock, SessionManager.cwsRenderObj, relationshipTabTag );
-        
-            //var searchClientRelationshipBlock_DefJson = ConfigManager.getConfigJson().definitionBlocks.blockSearchClientRelationship;
-        });
-        
-        listTag.append( me.addRelationshipBtnTag );
-    };
-
-    me.renderRelationshipCard = function( relationship )
-    {       
-        var relClientJson = ClientDataManager.getClientById( relationship.clientId );
-
-        var divClientCardTag = $( ClientCard.relationshipCardDivTag );
-        divClientCardTag.attr( 'itemId', relationship.clientId );
-
-        
-        // Add Icon
-        me.clientIconDisplay( divClientCardTag.find( ".clientIcon" ), relClientJson );
-
-
-        // Set Content
-        var divClientContentTag = divClientCardTag.find( ".clientContent" );     
-        me.setRelContentDisplay( divClientContentTag, relationship, relClientJson );
-
-
-        divClientContentTag.click( function( e ) 
-        {
-            e.stopPropagation();
-
-            var clientCardDetail = new ClientCardDetail( relClientJson._id );
-            clientCardDetail.render();
-        });
-
-        return divClientCardTag;
-    };
-    */
-
-    /*
-    me.setRelContentDisplay = function( divContentTag, relationship, relClientJson )
-    {
-        try
-        {            
-            var displayBase = ConfigManager.getClientRelDisplayBase();
-            var displaySettings = ConfigManager.getClientRelDisplaySettings();
-            
-            var relationshipCopy = Util.cloneJson( relationship );
-            relationshipCopy.client = relClientJson;
-
-            InfoDataManager.setINFOdata( 'relationship', relationshipCopy );
-
-            FormUtil.setCardContentDisplay( divContentTag, displayBase, displaySettings, Templates.cardContentDivTag );
-        }
-        catch ( errMsg )
-        {
-            console.customLog( 'ERROR in clientCard.setClientContentDisplay, errMsg: ' + errMsg );
-        }
-    };
-    */
     
     // ----------------------------------------------------------------------------------------
     // Setup Edit / Delete a relationship events

@@ -652,8 +652,8 @@ function Login()
 		// #2
 		ConfigManager.runAppRunEvals( 'login' );
 
-		// Config > 'settings' > 'loginTime_opts'
-		ConfigManager.runLoginTime_opts();
+		// Config > 'settings' > 'loginTimeRuns'
+		ConfigManager.runLoginTimeRuns();
 	};
 
 	// ----------------------------------------------

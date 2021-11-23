@@ -557,9 +557,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		entryTag.click( e => e.preventDefault() );
 
-		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
 
-		tagOfClick.click( function(e) {
+		me.getTagOfClick_DateTime( fieldDef, button ).click( function(e) {
 			//FormUtil.mdDatePicker( e, entryTag, formatDate, fieldDef.yearRange );
 			FormUtil.mdDatePicker_New( e, formDivSecTag.find( '[name=' + fieldDef.id + ']' ), formatDate, fieldDef );
 		});
@@ -570,6 +569,24 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return divInputFieldTag;
 	};
 	
+
+	// Depends on mobile or not, and config settings, we like to change the click target
+	//		--> if 'input', then on focus, it will show the popup?
+	me.getTagOfClick_DateTime = function( fieldDef, button )
+	{
+		var tagOfClick = button;
+
+		var config_autoPopupOnMobile = ConfigManager.getSettings().datePickerAutoPopup_OnMobile;
+
+		if ( config_autoPopupOnMobile || fieldDef.datePickerAutoPopup_OnMobile ) // auto popup on mobile view
+		{
+			if ( Util.isMobi() ) tagOfClick = button.parent();
+		}
+		
+		return tagOfClick;
+	};
+
+
 	me.createTimeFieldTag = function( fieldDef, formDivSecTag )
 	{
 		var wrapperDad = $('<div class="dateContainer"></div>');
@@ -597,8 +614,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			if ( entryVal ) entryTag.val( moment( entryVal, 'h:mm A' ).format( 'HH:mm' ) );	
 		});
 
-		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
+		var tagOfClick = me.getTagOfClick_DateTime( fieldDef, button );
+
 		tagOfClick.click( function( e ) { e.preventDefault(); });
+
 
 		var options = ( fieldDef.timeOptions ) ? fieldDef.timeOptions : {}
 		options.events = {
@@ -680,12 +699,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		FormUtil.setTagVal( entryTag, fieldDef.defaultValue );
 
-
 		entryTag.click( e => e.preventDefault() );
 
-		var tagOfClick = Util.isMobi() ? button.parent() : button;  // NOTE: TODO: WHY THIS?
-
-		tagOfClick.click( function(e) {
+		
+		me.getTagOfClick_DateTime( fieldDef, button ).click( function(e) {
 			FormUtil.mdTimePicker( e, formDivSecTag.find( '[name=' + fieldDef.id + ']' ), formatDate, fieldDef );
 		});
 
