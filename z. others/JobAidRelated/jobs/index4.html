@@ -444,9 +444,13 @@
       $(".arrow_box_h").hide("slide", { direction: "left" }, 500);
     });
 
-    $(".btn_c").click(function () {
+    $(".btn_box2").click(function () {
       $("#box2").hide();
       $("#box_thanks").show();
+    });
+
+    $(".btn_box_thanks").click(function () {
+      $("#box_thanks").hide();
     });
 
     //$(".btn_o").click(function () { });
@@ -668,7 +672,7 @@
               <input type="text" id="_reg_name" placeholder="Name">
               <input type="text" id="_reg_lastName" placeholder="Last name">
             </div>
-            <div class="btn_c">Continue</div>
+            <div class="btn_c btn_box2">Continue</div>
           </div>
         </div>
 
@@ -676,6 +680,7 @@
           <div class="arrow_head">
             <div class="arrow_head-title">Thanks Rodolfo</div>
             <div class="arrow_head-wra">Please give back the device to the health worke</div>
+            <div class="btn_c btn_box_thanks">Close</div>
           </div>
         </div>
       </div>

@@ -27,7 +27,9 @@ generateSW({
       urlPattern: /\/jobs\//,
       handler: 'CacheOnly',
       options: {
-        cacheName: 'jobTest2'
+        cacheName: 'jobTest2',
+        rangeRequests: true
+        //plugins
       }
     }
   ]
