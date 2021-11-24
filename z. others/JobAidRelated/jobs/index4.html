@@ -469,6 +469,19 @@
       }
     };
 
+    // NEW: Video Selector..
+    $(".selVideoChoice").change(function()
+    {
+      var videoName = $( this ).val();
+
+      var videoTag = `<video width="320" height="240" controls>
+        <source src="${videoName}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>`;
+
+      $( '.divVideoSec' ).html( videoTag );
+    });
+
   });
 </script>
 
@@ -637,6 +650,14 @@
       </div>
 
       <div id="letsGo_3">
+        <div style="margin-top: 20px; margin-left: 60px;">
+          <select class="selVideoChoice">
+            <option value="">Select Video</option>
+            <option value="movie.mp4">bear</option>
+            <option value="mov_bbb.mp4">whiteBear</option>
+          </select>
+          <div class="divVideoSec" style="margin-top: 5px;"></div>
+        </div>
         <div class="_family"><img src="./images/intro1.png"></div>
         <div id="box2" class="arrow_box_exit">
           <div class="arrow_head">

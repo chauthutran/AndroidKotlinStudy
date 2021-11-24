@@ -191,7 +191,9 @@ function cwsRender()
 			// [JOB_AID]
 			else if ( areaId === 'jobAids') 
 			{ 
-				$( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPage );
+				// NEW: add '?v=234234' to avoid the caching of previous html
+				$( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPage + '?v=' + new Date().getTime() );
+
 				$( '#divJobAid' ).show();
 			}
 			else if ( areaId === 'hnqis_rdqaPage' )
