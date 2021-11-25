@@ -135,6 +135,10 @@ SyncManagerNew.syncDown = function( runType, callBack )
                 SyncManagerNew.SyncMsg_InsertSummaryMsg( "downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities." );
 
                 // S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
+
+                // TODO: NEED TO MAKE SURE THE RESPONSE HAD ALL PROPER FORMAT OF NO EROR/FAILURE..
+                // Mongo VS DHIS....                
+
                 AppInfoManager.updateSyncLastDownloadInfo(( new Date() ).toISOString()); 
 
                 if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge, mockCase, mergedActivities );
