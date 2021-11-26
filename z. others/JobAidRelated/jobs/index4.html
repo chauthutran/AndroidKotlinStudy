@@ -478,11 +478,13 @@
     {
       var videoName = $( this ).val();
 
-      var videoTag = `<video width="320" height="240" controls>
-        <source src="${videoName}" type="video/mp4">
+      //var videoTag = `<video src="${videoName}" crossOrigin="anonymous"></video>`;
+
+      var videoTag = `<video width="320" height="240" controls crossOrigin="anonymous">
+        <source src="${videoName}" type="video/mp4" crossOrigin="anonymous">
         Your browser does not support the video tag.
       </video>`;
-
+      
       $( '.divVideoSec' ).html( videoTag );
     });
 

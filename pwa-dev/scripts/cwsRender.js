@@ -191,8 +191,8 @@ function cwsRender()
 			// [JOB_AID]
 			else if ( areaId === 'jobAids') 
 			{ 
-				// NEW: add '?v=234234' to avoid the caching of previous html
-				$( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPage + '?v=' + new Date().getTime() );
+				// NEW: add '?v=234234' new Date().getTime() to avoid the caching of previous html <-- did not work since it is considered not same by service worker..
+				$( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPage );
 
 				$( '#divJobAid' ).show();
 			}
