@@ -5,7 +5,7 @@
 
 function JobAidHelper() {};
 
-JobAidHelper.jobAid_startPage = 'index5.html';
+JobAidHelper.jobAid_startPage = 'index4.html';
 
 JobAidHelper.jobAid_startPagePath = 'jobs/' + JobAidHelper.jobAid_startPage;
 
