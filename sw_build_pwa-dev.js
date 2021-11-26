@@ -8,7 +8,7 @@ generateSW({
   swDest: 'pwa-dev/service-worker.js',
   globDirectory: 'pwa-dev',
   globPatterns: [
-    '**/*.{html,css,js,gif,jpg,png,svg,mp3,mp4,wav,json,pdf}'
+    '**/*.{html,css,js,gif,jpg,png,svg,mp3,wav,json}'
   ],
   skipWaiting: true,
   clientsClaim: true,
@@ -27,9 +27,7 @@ generateSW({
       urlPattern: /\/jobs\//,
       handler: 'CacheOnly',
       options: {
-        cacheName: 'jobTest2',
-        rangeRequests: true
-        //plugins
+        cacheName: 'jobTest2'
       }
     }
   ]

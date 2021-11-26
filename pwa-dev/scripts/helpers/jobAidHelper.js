@@ -5,7 +5,9 @@
 
 function JobAidHelper() {};
 
-JobAidHelper.jobAid_startPage = 'jobs/index4.html';
+JobAidHelper.jobAid_startPage = 'index5.html';
+
+JobAidHelper.jobAid_startPagePath = 'jobs/' + JobAidHelper.jobAid_startPage;
 
 // =========================
 
@@ -57,11 +59,15 @@ JobAidHelper.msgHandle = function( data )
     if ( data.dataJson )
     {
       // open area & block with data populate..
+      // SessionManager.cwsRenderObj.renderNewAreaBlock( 'blk_c-on_pth-FPL-S_PRO_tabsContainer' );
+
       SessionManager.cwsRenderObj.renderFavItemBlock( Constants.jobAides_AreaBlockId );
 
       // Click on 1st/Last-Recorded tab.
         setTimeout( function() 
         {
+            // $( 'div.mainTab' ).find( 'li[rel="btn_c-on_pth-FPL-S_PRO_tabSearchByUser"]' ).click();
+
             $( 'div.mainTab' ).find( 'li[rel="' + Constants.jobAides_tabTargetBlockId + '"]' ).click();
 
             setTimeout( function() 
