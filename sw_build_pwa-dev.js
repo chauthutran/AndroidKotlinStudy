@@ -4,7 +4,7 @@ const {generateSW} = require('workbox-build');
 //const {Workbox} = require('workbox-window');
 
 generateSW({
-  //mode: 'production',
+  mode: 'production',
   swDest: 'pwa-dev/service-worker.js',
   globDirectory: 'pwa-dev',
   globPatterns: [
