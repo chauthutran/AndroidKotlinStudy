@@ -433,7 +433,7 @@ function settingsApp( cwsRender )
 
         me.settingsFormDivTag.find( '.jobAidFiling' ).off( 'click' ).click( function() 
         {
-            var reply = confirm( 'This will reload the app.  Do you want to continue?' );
+            var reply = confirm( 'This will reset/reload JobAid files.  Do you want to continue?' );
 
             if ( reply === true )
             {
