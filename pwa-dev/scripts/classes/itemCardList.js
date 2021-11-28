@@ -70,17 +70,13 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
 
         me.listTableTbodyTag = me.setClassContainerTag( blockTag );
 
-        // Other Initial Render Setups - syncDown setup, FavIcons, etc..
-        //var favIconsObj = new FavIcons( 'ItemCardListFav', blockTag, me.cwsRenderObj.pageDivTag );
-		//favIconsObj.render();
-
-
+        
         // Set class level tags
         me.setClassVariableTags( blockTag );
 
 
         // 2. Data Set - passed data.
-        if ( passedData && passedData.itemJsonList ) me.itemCardList = passedData.itemJsonList;
+        me.itemCardList = ( passedData && passedData.itemJsonList ) ? passedData.itemJsonList: [];
         
 
         // 3. Populate controls - ItemCardLists, viewFilter/sort, related.

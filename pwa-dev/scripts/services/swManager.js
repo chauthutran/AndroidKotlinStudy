@@ -174,7 +174,28 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
                 AppUtil.appReloadWtMsg( 'App Reloading! (After Update)' );
             }   
         }
-    })
+    });
+
+
+    navigator.serviceWorker.addEventListener('message', event => 
+    {
+        console.log( '----- navigator.serviceWorker message called' );
+
+        if ( event.data )
+        {
+            console.log( 'msg from serviceWorker: ' + event.data );
+
+            var msgData = JSON.parse( event.data );
+
+            if ( msgData.msg ) MsgManager.msgAreaShow( msgData.msg );
+
+            if ( msgData.run )
+            {
+                //if ( msgData.run === 'appReload' ) AppUtil.appReloadWtMsg( 'Reloading App in process...' );
+            }
+        }
+    });
+
 };
 
 // -----------------------------------

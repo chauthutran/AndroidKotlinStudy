@@ -5,13 +5,13 @@
 
 function JobAidHelper() {};
 
-JobAidHelper.jobAid_startPage = 'index4.html';
+JobAidHelper.jobAid_startPage = 'index1.html';
 
 JobAidHelper.jobAid_startPagePath = 'jobs/' + JobAidHelper.jobAid_startPage;
 
 // =========================
 
-JobAidHelper.runTimeCache_JobAid = function( returnFunc )
+JobAidHelper.runTimeCache_JobAid = function() // returnFunc )
 {
     if ( ConnManagerNew.isAppMode_Online() )
     {
@@ -29,7 +29,9 @@ JobAidHelper.runTimeCache_JobAid = function( returnFunc )
                 SwManager.swRegObj.active.postMessage( { 'type': 'CACHE_URLS2', 'payload': response.list } );
                 //for( var i in fileNameList ) SwManager.swRegObj.active.postMessage( { 'type': 'CACHE_URLS2', 'payload': [ fileNameList[i] ] } );
                 
-                if ( returnFunc ) returnFunc();
+                //if ( returnFunc ) returnFunc();
+
+                // NOTE: This does not have a call back, but need to use another event to pass..
             },
             error: function( error )
             {

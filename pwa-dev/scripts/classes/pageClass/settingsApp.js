@@ -437,13 +437,11 @@ function settingsApp( cwsRender )
 
             if ( reply === true )
             {
-                JobAidHelper.runTimeCache_JobAid( function() {
-                    MsgManager.msgAreaShow( 'Job Aid Filing Success.  Please reload/logout&In the app to be affective.' );
+                JobAidHelper.runTimeCache_JobAid();
+                //function() { MsgManager.msgAreaShow( 'Job Aid Filing Success.  Please reload or Logout and LogIn the app to be affective.' );
                     // AppUtil.appReloadWtMsg( 'Job Aid Filing Success.  Reloading App in process.' );
-                });    
             }
         });      
-
     };
 
 

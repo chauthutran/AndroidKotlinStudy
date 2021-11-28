@@ -191,11 +191,15 @@ function cwsRender()
 			// [JOB_AID]
 			else if ( areaId === 'jobAids') 
 			{ 
-		        $( '#jobAidIFrame' ).attr( 'src', JobAidHelper.jobAid_startPagePath );
+				var styleStr = ' style="width:100%; height: 100%; overflow:auto; border:none;"';
+  				$( '#divJobAid' ).show().append( '<iframe src="' + JobAidHelper.jobAid_startPagePath + '" ' 
+				  + styleStr + '>iframe not compatible..</iframe>' );
+
+		        //$( '#jobAidIFrame' ).attr( 'src', JobAidHelper.jobAid_startPagePath );
         		// NEW: add '?v=234234' new Date().getTime() to avoid the caching of previous html <-- did not work since it is considered not same by service worker..
 				//$( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPagePath );
 
-				$( '#divJobAid' ).show();
+				//$( '#divJobAid' ).show();
 			}
 			else if ( areaId === 'hnqis_rdqaPage' )
 			{
