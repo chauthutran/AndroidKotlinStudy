@@ -1,22 +1,23 @@
 self.addEventListener('message', (event) => 
 {
-    event.waitUntil(async function() 
+  event.waitUntil(async function() 
+  {
+    if ( event.data && event.data.type === 'CACHE_URLS2') 
     {
-        if ( event.data && event.data.type === 'CACHE_URLS2') 
+      caches.delete( 'jobTest2' ).then( () => 
+      {
+        caches.open('jobTest2').then( (cache) => 
         {
-            caches.delete( 'jobTest2' ).then( () => 
+            console.log( '--- before cache.addAll' );
+            cache.addAll( event.data.payload ).then( () => 
             {
-                caches.open('jobTest2')
-                .then( (cache) => {
-                    console.log( '--- before cache.addAll' );
-                    cache.addAll(event.data.payload);
-
-                    var returnMsgStr = JSON.stringify( { msg: 'Job Aid Filing Success.', run: 'appReload' } );
-                    event.source.postMessage( returnMsgStr );
-                });
-            })
-        }
-    }());
+              var returnMsgStr = JSON.stringify( { msg: 'Job Aid Filing Success.', run: 'appReload' } );
+              event.source.postMessage( returnMsgStr );
+            });
+        });
+      })
+    }
+  }());
 });
 
 /*
