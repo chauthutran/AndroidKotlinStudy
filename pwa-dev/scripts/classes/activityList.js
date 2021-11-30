@@ -370,7 +370,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
     me.createActivityCard = function( activityJson, listTableTbodyTag, viewGroupByData )
     {
-        var divActivityCardTag = $( ActivityCardTemplate.cardDivTag );
+        var divActivityCardTag = $( ActivityCard.cardDivTag );
 
         divActivityCardTag.attr( 'itemId', activityJson.id );
 

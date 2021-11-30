@@ -311,7 +311,7 @@ function ClientCardDetail( clientId, isRestore )
 
     me.createActivityCard = function( activityJson, listTableTbodyTag )
     {
-        var divActivityCardTag = $( ActivityCardTemplate.cardDivTag );
+        var divActivityCardTag = $( ActivityCard.cardDivTag );
 
         divActivityCardTag.attr( 'itemId', activityJson.id );
         //divActivityCardTag.attr( 'group', groupAttrVal );

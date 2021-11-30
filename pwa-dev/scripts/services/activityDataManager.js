@@ -541,6 +541,7 @@ ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr, 
 
     processingInfo.status = statusStr;
     processingInfo.history.push( currInfo );
+    processingInfo.syncUpCount = 0;  // or remove it.
 
     return processingInfo;
 };

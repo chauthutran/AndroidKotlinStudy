@@ -89,20 +89,22 @@ function ActivityCardDetail( activityId, isRestore )
         var clientObj = ClientDataManager.getClientByActivityId( activityId );
         var activityJson = ActivityDataManager.getActivityById( activityId );
     
-        // Render "Client Details"
+        // TAB #1. Client Details
         var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_previewDetails]' );
         me.showClientDetails( clientObj, clientDetailsTabTag );;
 
 
         if ( activityJson )
         {
-          // 2. payload Preview
+          // TAB #2. Payload Preview
           var jv_payload = new JSONViewer();
           sheetFullTag.find( '[tabButtonId=tab_previewPayload]' ).find(".payloadData").append( jv_payload.getContainer() );
           jv_payload.showJSON( activityJson );
-      
+          // Set up "editPaylayLoadBtn"
+          me.setUpEditPayloadLoadBtn( sheetFullTag.find( '#editPaylayLoadBtn' ), activityJson );
 
-          // 3. sync History
+
+          // TAB #3. Sync History
           if ( activityJson.processing && activityJson.processing.history )
           {
             var syncHistoryTag = $( '[tabButtonId=tab_previewSync]' ).html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
@@ -153,6 +155,102 @@ function ActivityCardDetail( activityId, isRestore )
         });
     };
 
+      
+    // =============================================
+    // === Activity 'EDIT' Form - Related Methods ========================
+
+    me.setUpEditPayloadLoadBtn = function( activityEditPaylayLoadBtnTag, activityJson )
+    {
+        try
+        {
+            if( activityJson )
+            {
+                var editable = false;
+
+                if ( activityJson.processing && activityJson.processing.form )
+                {
+                    var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
+
+                    if ( activityEditing ) editable = true;
+                    else 
+                    {
+                        if ( activityJson.processing.status === Constants.status_error ) editable = true;                                    
+                        // if ( DevHelper.devMode && editReadyStatus && activityJson.processing.form )
+                    }
+                }
+                
+                if ( editable )
+                {
+                    activityEditPaylayLoadBtnTag.show();
+                    var editForm = activityJson.processing.form;
+        
+                    activityEditPaylayLoadBtnTag.off( 'click' ).click( function( e ) 
+                    {
+                        var blockJson = FormUtil.getObjFromDefinition( editForm.blockId, ConfigManager.getConfigJson().definitionBlocks );
+        
+                        if( blockJson )
+                        {
+                            var activityCardDivTag = activityEditPaylayLoadBtnTag.parent();
+                            var payloadTag = activityCardDivTag.find(".payloadData");                    
+                            var editFormTag = activityCardDivTag.find(".editForm");                    
+                            
+                            activityEditPaylayLoadBtnTag.hide();
+                            payloadTag.hide();
+                            editFormTag.show();
+
+                            var passedData = { 'showCase': editForm.showCase, 'hideCase': editForm.hideCase };
+
+                            // var newBlockObj = new Block( SessionManager.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
+                            // newBlockObj.render( 'blockList' );
+                            FormUtil.renderBlockByBlockId( editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList' );
+
+                            if ( activityJson )
+                            {
+                                // Populate data in the form
+                                var formTag = $("[blockId='" + editForm.blockId + "']");
+
+                                // TODO: Do we get this on processing?  <-- means, users can only edit the not synced ones!!!
+                                var data = editForm.data;
+
+                                if ( data )
+                                {
+                                    for( var i in data )
+                                    {
+                                        var fieldName = data[i].name;
+                                        var value = data[i].value;
+                                        var displayValue = data[i].displayValue;
+            
+                                        var divFieldTag = formTag.find( "[name='" + fieldName + "']" ).parent();
+                                        FormUtil.setTagVal( divFieldTag.find(".displayValue"), displayValue );
+                                        FormUtil.setTagVal( formTag.find( "[name='displayValue_" + fieldName + "']" ), displayValue );
+            
+                                        FormUtil.setTagVal( divFieldTag.find(".dataValue"), value );
+                                        divFieldTag.find(".dataValue").change();
+                                    }    
+                                }
+                            }
+                            // else
+                            // {
+                            //     FormUtil.block_payloadConfig = ''; // ??
+                            // }
+
+                            formTag.append("<input type='hidden' id='editModeActivityId' value='" + activityJson.id + "'>");
+                        }
+                        else
+                        {
+                            alert("Cannot find block with id '" + editForm.blockId + "'");
+                        }
+                        
+                    });
+                }
+                else activityEditPaylayLoadBtnTag.hide();    
+            }
+        }
+        catch( errMsg )
+        {
+            console.customLog( 'ERROR in ActivityCard.setUpEditPayloadLoadBtn, errMsg: ' + errMsg );
+        }
+    };
 
     // =============================================
     // === Run initialize - when instantiating this class  ========================

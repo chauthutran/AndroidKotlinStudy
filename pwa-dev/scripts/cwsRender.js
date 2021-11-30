@@ -192,7 +192,7 @@ function cwsRender()
 			else if ( areaId === 'jobAids') 
 			{ 
 				var styleStr = ' style="width:100%; height: 100%; overflow:auto; border:none;"';
-  				$( '#divJobAid' ).show().append( '<iframe src="' + JobAidHelper.jobAid_startPagePath + '" ' 
+  				$( '#divJobAid' ).html( '' ).show().append( '<iframe src="' + JobAidHelper.jobAid_startPagePath + '" ' 
 				  + styleStr + '>iframe not compatible..</iframe>' );
 
 		        //$( '#jobAidIFrame' ).attr( 'src', JobAidHelper.jobAid_startPagePath );

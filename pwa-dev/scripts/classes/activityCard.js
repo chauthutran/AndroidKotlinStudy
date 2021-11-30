@@ -15,10 +15,6 @@ function ActivityCard( activityId, options )
 
     me.cardHighlightColor = '#fcffff'; // #fffff9
 
-    // -----------------------------------
-
-    // me.template_ActivityContentTextTag = `<div class="activityContentDisplay card__row"></div>`;
-
 	// =============================================
 	// === Initialize Related ========================
 
@@ -44,9 +40,6 @@ function ActivityCard( activityId, options )
                 var activityRerenderTag = activityCardDivTag.find( '.activityRerender' );
                 var activityPhoneCallTag = activityCardDivTag.find( '.activityPhone' );
 
-                var activityEditPaylayLoadBtnTag = activityCardDivTag.find( '#editPaylayLoadBtn' );
-
-
                 // 1. activityType (Icon) display (LEFT SIDE)
                 me.activityTypeDisplay( activityTypeIconTag, activityJson );
                 me.activityIconClick_displayInfo( activityTypeIconTag, activityJson );
@@ -67,8 +60,6 @@ function ActivityCard( activityId, options )
                 // 5. clickable rerender setup
                 me.setUpReRenderByClick( activityRerenderTag );
 
-                // Set up "editPaylayLoadBtn"
-                me.setUpEditPayloadLoadBtn( activityEditPaylayLoadBtnTag, activityJson );
             }
             catch( errMsg )
             {
@@ -637,91 +628,6 @@ function ActivityCard( activityId, options )
 
     // === Full Detail Popup Related METHODS ========================
 
-    // =============================================
-	// === Activity 'EDIT' Form - Related Methods ========================
-
-    me.setUpEditPayloadLoadBtn = function( activityEditPaylayLoadBtnTag, activityJson )
-    {
-        try
-        {
-            if( activityJson )
-            {
-                var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
-                var editReadyStatus = ( statusVal === Constants.status_error );
-        
-                //if ( DevHelper.devMode && editReadyStatus && activityJson.processing.form )
-                if ( editReadyStatus && activityJson.processing.form )
-                {
-                    activityEditPaylayLoadBtnTag.show();
-                    var editForm = activityJson.processing.form;
-        
-                    activityEditPaylayLoadBtnTag.off( 'click' ).click( function( e ) 
-                    {
-                        var blockJson = FormUtil.getObjFromDefinition( editForm.blockId, ConfigManager.getConfigJson().definitionBlocks );
-        
-                        if( blockJson )
-                        {
-                            var activityCardDivTag = activityEditPaylayLoadBtnTag.parent();
-                            var payloadTag = activityCardDivTag.find(".payloadData");                    
-                            var editFormTag = activityCardDivTag.find(".editForm");                    
-                            
-                            activityEditPaylayLoadBtnTag.hide();
-                            payloadTag.hide();
-                            editFormTag.show();
-
-                            var passedData = { 'showCase': editForm.showCase, 'hideCase': editForm.hideCase };
-
-                            // var newBlockObj = new Block( SessionManager.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
-                            // newBlockObj.render( 'blockList' );
-                            FormUtil.renderBlockByBlockId( editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList' );
-
-                            if ( activityJson )
-                            {
-                                // Populate data in the form
-                                var formTag = $("[blockId='" + editForm.blockId + "']");
-
-                                // TODO: Do we get this on processing?  <-- means, users can only edit the not synced ones!!!
-                                var data = editForm.data;
-
-                                if ( data )
-                                {
-                                    for( var i in data )
-                                    {
-                                        var fieldName = data[i].name;
-                                        var value = data[i].value;
-                                        var displayValue = data[i].displayValue;
-            
-                                        var divFieldTag = formTag.find( "[name='" + fieldName + "']" ).parent();
-                                        FormUtil.setTagVal( divFieldTag.find(".displayValue"), displayValue );
-                                        FormUtil.setTagVal( formTag.find( "[name='displayValue_" + fieldName + "']" ), displayValue );
-            
-                                        FormUtil.setTagVal( divFieldTag.find(".dataValue"), value );
-                                        divFieldTag.find(".dataValue").change();
-                                    }    
-                                }
-                            }
-                            // else
-                            // {
-                            //     FormUtil.block_payloadConfig = ''; // ??
-                            // }
-
-                            formTag.append("<input type='hidden' id='editModeActivityId' value='" + activityJson.id + "'>");
-                        }
-                        else
-                        {
-                            alert("Cannot find block with id '" + editForm.blockId + "'");
-                        }
-                        
-                    });
-                }
-                else activityEditPaylayLoadBtnTag.hide();    
-            }
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'ERROR in ActivityCard.setUpEditPayloadLoadBtn, errMsg: ' + errMsg );
-        }
-    };
           
     // =============================================
 	// === Other Supporting METHODS ========================
@@ -746,11 +652,6 @@ function ActivityCard( activityId, options )
         }        
     };
 
-    // --------------------------
-
-    // =======================================================
-
-
     // =============================================
     // === Run initialize - when instantiating this class  ========================
         
@@ -759,11 +660,7 @@ function ActivityCard( activityId, options )
 };
 
 
-function ActivityCardTemplate() {};
-
-//me.template_divActivityTag = `<div class="activity card">
-
-ActivityCardTemplate.cardDivTag = `<div class="activity card">
+ActivityCard.cardDivTag = `<div class="activity card">
 
     <div class="activityContainer card__container">
 
