@@ -254,7 +254,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 		}
 		catch( errMsg ) 
 		{
-			console.customLog( 'ERROR in BlockForm.checkCondition, ' + errMsg );
+			console.customLog( 'ERROR in favIcons.checkCondition, ' + errMsg );
 		}
 
 		return result;
