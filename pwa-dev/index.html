@@ -18,9 +18,9 @@
 
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2021-12-03';
-    var _ver = '1.3.7d';
-    var _versionNote = '- Detail: JobAids filing process/contents.';
+    var _verDate = '2021-12-05';
+    var _ver = '1.3.7e2';
+    var _versionNote = '- Detail: JobAids filing progress.';
   </script>
 
 
@@ -293,7 +293,7 @@
               <button class="dataShare cbutton">Data Share</button>
               <button class="fixActivities cbutton">Fix Data</button>
               <button class="jobAidFiling cbutton" style="display: none;">JobAid</button>
-              <button class="jobAidFileListing cbutton" style="display: none;">JobAid Files</button>
+              <button class="jobAidFileListing cbutton" style="display: none; background-color: cadetblue;">JobAid Files</button>
             </div>
             <div class="field__right"></div>
           </div>
@@ -430,10 +430,8 @@
   <!-- END > STATISTICS REPORT -->
 
   <!-- LV1.  START > CUSTOM LOG INFO -->
-  <div id="divCustomLogDisplay"
-    style="display:none;  ">
-    <div class="divMainLayout" style="z-index: 2100;position: fixed;top: 10%;left: 10%;right: 10%;height: 70%;padding: 16px;background-color: white;min-height: 300px;bottom: 10%;">
-
+  <div id="divCustomLogDisplay" style="display:none;">
+    <div class="divMainLayout popupAreaCss">
       <div style="margin-bottom: 5px;">Logs:</div>
       <div class="divMainContent" style="overflow: scroll;height: 70%;background-color: #eee;padding: 7px;"></div>
       <div class="divRunCommand" style="width: 100%; margin-top: 3px;">
@@ -469,7 +467,7 @@
   <!--  END > CUSTOM LOG INFO -->
 
   <!-- LV1. SETTINGS DATA SHARE POPUP DIV -->
-  <div id="divDataShare" style="display:none; z-index: 2100; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
+  <div id="divDataShare" class="popupAreaCss" style="display:none;">
     <div class="divMainLayout" style="height:100%;">
 
       <div style="margin-bottom: 5px;">Data Share:</div>
@@ -501,7 +499,7 @@
   <div id="networkSwitch" style="display:none;"></div>
 
   <!-- LV1. Overlay gray layer for clicks -->
-  <div id="divPopupArea" style="display:none; z-index: 2100; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
+  <div id="divPopupArea" class="popupAreaCss" style="display:none;">
     <div class="divMainLayout" style="height:100%;">
 
       <div class="divMainContent" style="overflow: scroll;height: 85%; margin-top: 10px; background-color: #eee;padding: 7px;">

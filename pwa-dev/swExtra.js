@@ -1,51 +1,35 @@
 self.addEventListener('message', (event) => 
 {
-  event.waitUntil(async function() 
+  event.waitUntil( async function() 
   {
-    if ( event.data && event.data.type === 'CACHE_URLS2') 
+    if ( event.data && event.data.type === 'CACHE_URLS2' && event.data.cacheName && event.data.payload ) 
     {
-      caches.delete( 'jobTest2' ).then( () => 
+      var cacheName = event.data.cacheName;
+      var reqList = event.data.payload;
+
+      await caches.delete( cacheName );
+      
+      var cache = await caches.open( cacheName );
+      
+      var totalCount = reqList.length;
+      var doneCount = 0;
+
+      for ( var i = 0; i < reqList.length; i++ )
       {
-        caches.open('jobTest2').then( (cache) => 
-        {
-            cache.addAll( event.data.payload ).then( () => 
-            {
-              var returnMsgStr = JSON.stringify( { msg: 'Job Aid Filing Success.', type: 'jobFiling' } );
-              event.source.postMessage( returnMsgStr );
-            });
-        });
-      })
+        var reqUrl = reqList[i];
+
+        await cache.add( reqUrl );
+        
+        doneCount++;
+        var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount } } );
+        event.source.postMessage( returnMsgStr );
+      }
     }
   }());
 });
 
+
 /*
-
-addEventListener('fetch', event => {
-  event.waitUntil(async function() {
-    // Exit early if we don't have access to the client.
-    // Eg, if it's cross-origin.
-    if (!event.clientId) return;
-
-    // Get the client.
-    const client = await clients.get(event.clientId);
-    // Exit early if we don't get the client.
-    // Eg, if it closed.
-    if (!client) return;
-
-    // Send a message to the client.
-    client.postMessage({
-      msg: "Hey I just got a fetch from you!",
-      url: event.request.url
-    });
-
-  }());
-});
-
-navigator.serviceWorker.addEventListener('message', event => {
-  console.log(event.data.msg, event.data.url);
-});
-
 // ---------------------------
 
 this.addEventListener("fetch", function(event) {
@@ -72,17 +56,28 @@ cache.addAll(requests[]).then(function() {
 })
 
 
-self.addEventListener('message', (event) => {
-  if (event.data.type === 'CACHE_URLS2') {
-      event.waitUntil(
-          caches.open('jobTest2')
-              .then( (cache) => {
-                  return cache.addAll(event.data.payload);
-              })
-      );
-  }
-});
 
+// ===== V3
+self.addEventListener('message', (event) => 
+{
+  event.waitUntil(async function() 
+  {
+    if ( event.data && event.data.type === 'CACHE_URLS2') 
+    {
+      caches.delete( 'jobTest2' ).then( () => 
+      {
+        caches.open('jobTest2').then( (cache) => 
+        {
+            cache.addAll( event.data.payload ).then( () => 
+            {
+              var returnMsgStr = JSON.stringify( { msg: 'Job Aid Filing Success.', type: 'jobFiling' } );
+              event.source.postMessage( returnMsgStr );
+            });
+        });
+      })
+    }
+  }());
+});
 
 
 // ===== V2

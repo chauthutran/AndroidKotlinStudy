@@ -9,16 +9,20 @@ JobAidHelper.jobAid_startPage = 'index1.html';
 
 JobAidHelper.jobAid_startPagePath = 'jobs/' + JobAidHelper.jobAid_startPage;
 
+JobAidHelper.jobAid_CACHE_URLS2 = 'CACHE_URLS2';
+JobAidHelper.jobAid_jobTest2 = 'jobTest2';
+
 // =========================
 
 JobAidHelper.runTimeCache_JobAid = function( btnParentTag ) // returnFunc )
 {
     if ( ConnManagerNew.isAppMode_Online() )
     {
-
         var localCase = WsCallManager.checkLocalDevCase( window.location.origin );
 
         var requestUrl = ( localCase ) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl( '/TTS.jobsFiling' );
+
+        $( '.divJobFileLoading' ).remove();
 
         $.ajax({
             type: "GET",
@@ -27,9 +31,12 @@ JobAidHelper.runTimeCache_JobAid = function( btnParentTag ) // returnFunc )
             success: function( response )
             {
                 if ( btnParentTag ) btnParentTag.append( '<div class="divJobFileLoading" style="display: contents;"><img src="images/loading_big_blue.gif" style="height: 17px;">'
-                    + '<span style="color: gray; font-size: 14px;">Retrieving Files...</span></div>' );
+                + '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
+                + '</div>' );
                                 
-                SwManager.swRegObj.active.postMessage( { 'type': 'CACHE_URLS2', 'payload': response.list } );                
+                SwManager.swRegObj.active.postMessage( { 'type': JobAidHelper.jobAid_CACHE_URLS2
+                    , 'cacheName': JobAidHelper.jobAid_jobTest2
+                    , 'payload': response.list } );
             },
             error: function( error )
             {
@@ -43,12 +50,38 @@ JobAidHelper.runTimeCache_JobAid = function( btnParentTag ) // returnFunc )
     }
 };
 
-
-JobAidHelper.JobFilingFinish = function( msgText )
+JobAidHelper.JobFilingProgress = function( msgData )
 {
-    $( '.divJobFileLoading' ).remove();
-    if ( msgText ) MsgManager.msgAreaShow( msgText );
+    // var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: currCount } } );
+    if ( msgData && msgData.process )
+    {
+        var total = msgData.process.total;
+        var curr = msgData.process.curr;
+
+        var divJobFileLoadingTag = $( '.divJobFileLoading' );
+        var spanJobFilingMsgTag = $( '.spanJobFilingMsg' );
+
+        if ( total && total > 0 && curr && curr < total )
+        {
+            // update the processing msg..
+            var prgMsg = 'Processing ' + curr + ' of ' + total;
+            spanJobFilingMsgTag.text( prgMsg );
+        }
+        else
+        {
+            divJobFileLoadingTag.find( 'img' ).remove();
+            spanJobFilingMsgTag.text( 'Processing all done.' );
+
+            MsgManager.msgAreaShow( 'Job Aid Filing Finished.' );
+        }
+    }
 };
+
+//JobAidHelper.JobFilingFinish = function( msgText )
+//{
+//    $( '.divJobFileLoading' ).remove();
+//    if ( msgText ) MsgManager.msgAreaShow( msgText );
+//};
 
 // =========================
 

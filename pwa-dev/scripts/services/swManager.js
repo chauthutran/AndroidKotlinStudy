@@ -177,21 +177,14 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
     });
 
 
-    navigator.serviceWorker.addEventListener('message', event => 
+    navigator.serviceWorker.addEventListener( 'message', event => 
     {
-        console.log( '----- navigator.serviceWorker message called' );
-
         if ( event.data )
         {
-            console.log( 'msg from serviceWorker: ' + event.data );
-
             var msgData = JSON.parse( event.data );
 
-            if ( msgData.type === 'jobFiling' ) JobAidHelper.JobFilingFinish( msgData.msg );
-            else
-            {
-                if ( msgData.msg ) MsgManager.msgAreaShow( msgData.msg );
-            }
+            if ( msgData.type === 'jobFiling' ) JobAidHelper.JobFilingProgress( msgData ); // JobAidHelper.JobFilingFinish( msgData.msg );
+            else if ( msgData.msg ) MsgManager.msgAreaShow( msgData.msg );
         }
     });
 
