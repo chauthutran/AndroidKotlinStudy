@@ -1387,6 +1387,12 @@ Util.recursiveCalls = function( dataObj, i, runMethod, finishCallBack )
 // ------------------------------------------------------------------------------------------------------
 // For URL
 
+Util.getServerUrl = function()
+{
+	return location.protocol + '//' + location.host;
+};
+
+
 Util.getParameterByName = function( name, url ) 
 {
     if (!url) url = window.location.href;
@@ -1440,7 +1446,13 @@ Util.setUrlParam = function( url, paramKey, paramVal )
 	url += startChar + paramKey + '=' + paramVal;
 
 	return url;
-}
+};
+
+
+Util.getUrlLastName = function( url )
+{
+	return url.substring( url.lastIndexOf('/') + 1 );
+};
 
 // --------------------------------------------
 
@@ -1953,11 +1965,6 @@ Util.generateRandomNumber = function( len )
 
 	return text;
 }
-
-Util.getServerUrl = function()
-{
-	return location.protocol + '//' + location.host;
-};
 
 Util.getIndexes = function( inputStr, keyStr )
 {

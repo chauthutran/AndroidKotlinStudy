@@ -433,15 +433,38 @@ function settingsApp( cwsRender )
 
         me.settingsFormDivTag.find( '.jobAidFiling' ).off( 'click' ).click( function() 
         {
+            var jobAidFilingBtnTag = $( this );
             var reply = confirm( 'This will reset/reload JobAid files.  Do you want to continue?' );
 
             if ( reply === true )
             {
-                JobAidHelper.runTimeCache_JobAid();
+                JobAidHelper.runTimeCache_JobAid( jobAidFilingBtnTag.parent() );
                 //function() { MsgManager.msgAreaShow( 'Job Aid Filing Success.  Please reload or Logout and LogIn the app to be affective.' );
                     // AppUtil.appReloadWtMsg( 'Job Aid Filing Success.  Reloading App in process.' );
             }
         });      
+
+
+        me.settingsFormDivTag.find( '.jobAidFileListing' ).off( 'click' ).click( function() 
+        {
+            FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
+            {
+                //caches.keys().then( function( keyList ) 
+                caches.open( 'jobTest2' ).then( cache => 
+                { 
+                    cache.keys().then( keys => 
+                    { 
+                        // TODO: Call popup with this listing <-- Create a static method for this popup with content!!
+                        keys.forEach( request => 
+                        { 
+                            divMainContentTag.append( '<div class="infoLine">' + Util.getUrlLastName( request.url ) + '</div>' );
+                        });    
+                    }); 
+                });      
+
+            });
+        });      
+
     };
 
 

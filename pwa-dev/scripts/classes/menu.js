@@ -40,6 +40,7 @@ Menu.populateStandardMenuList = function( menuItems )
         if ( ConfigManager.getAreas().options.jobAids ) {
             menuItems.push( Menu.menuJson_JobAids );        
             $( '.jobAidFiling' ).show();
+            $( '.jobAidFileListing' ).show();
         }
         if ( ConfigManager.getAreas().options.hnqisRdqa ) menuItems.push( Menu.menuJson_HNQIS_RDQA );    
     }

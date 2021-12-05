@@ -3622,8 +3622,7 @@ textarea {
 
 .radiobutton .radiobutton__wrapper {
   width: auto;
-  float: right;
-  padding: 0 16px;
+  float: left;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -3688,6 +3687,59 @@ textarea {
 }
 
 .radio-group label {
+  cursor: pointer;
+  position: relative;
+  padding-left: 25px;
+}
+
+.radio-group2 {
+  padding-left: 24px;
+  margin: 12px 2px;
+}
+
+.radio-group2 input[type=radio] {
+  display: none;
+}
+
+.radio-group2 input[type=radio]:not(:checked) + label::before {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  left: 0;
+  top: -1px;
+  border-radius: 50%;
+  border: 2px solid #CCCCCC;
+}
+
+.radio-group2 input[type=radio]:checked + label::before {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  left: 0;
+  top: -1px;
+  border-radius: 50%;
+  border: 2px solid #333;
+}
+
+.radio-group2 input[type=radio]:checked + label::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  left: 0;
+  top: -1px;
+  border-radius: 50%;
+  border: 2px solid #333;
+  background-color: #333;
+  -webkit-transform: scale(0.4);
+  transform: scale(0.4);
+  -webkit-animation: fade-in .5s;
+          animation: fade-in .5s;
+}
+
+.radio-group2 label {
   cursor: pointer;
   position: relative;
   padding-left: 25px;

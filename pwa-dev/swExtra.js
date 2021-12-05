@@ -8,10 +8,9 @@ self.addEventListener('message', (event) =>
       {
         caches.open('jobTest2').then( (cache) => 
         {
-            console.log( '--- before cache.addAll' );
             cache.addAll( event.data.payload ).then( () => 
             {
-              var returnMsgStr = JSON.stringify( { msg: 'Job Aid Filing Success.', run: 'appReload' } );
+              var returnMsgStr = JSON.stringify( { msg: 'Job Aid Filing Success.', type: 'jobFiling' } );
               event.source.postMessage( returnMsgStr );
             });
         });

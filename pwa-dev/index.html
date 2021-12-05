@@ -18,9 +18,9 @@
 
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2021-11-30';
-    var _ver = '1.3.7b';
-    var _versionNote = '- Detail: Client activity fav error.';
+    var _verDate = '2021-12-03';
+    var _ver = '1.3.7d';
+    var _versionNote = '- Detail: JobAids filing process/contents.';
   </script>
 
 
@@ -293,6 +293,7 @@
               <button class="dataShare cbutton">Data Share</button>
               <button class="fixActivities cbutton">Fix Data</button>
               <button class="jobAidFiling cbutton" style="display: none;">JobAid</button>
+              <button class="jobAidFileListing cbutton" style="display: none;">JobAid Files</button>
             </div>
             <div class="field__right"></div>
           </div>
@@ -498,7 +499,23 @@
 
   <!-- LV1. NETWORK SWITCH DIV -->
   <div id="networkSwitch" style="display:none;"></div>
-  
+
+  <!-- LV1. Overlay gray layer for clicks -->
+  <div id="divPopupArea" style="display:none; z-index: 2100; position: fixed; top: 50px; left: 50px; width: 80%; height: 70%; padding: 16px; background-color: white; min-height: 300px; ">
+    <div class="divMainLayout" style="height:100%;">
+
+      <div class="divMainContent" style="overflow: scroll;height: 85%; margin-top: 10px; background-color: #eee;padding: 7px;">
+      </div>
+
+      <div class="button-text warning" style="width: 100%; margin: 20px 0px 0px 0px; height: 25px; cursor: unset;">
+        <div class="button__container">
+          <div class="close button-label" style="line-height: unset;cursor: pointer;">CLOSE</div>
+        </div>
+      </div>      
+      
+    </div>
+  </div>
+
   <!-- LV1. Overlay gray layer for clicks -->
   <div class="scrim" style="display: none;"></div>
   <div class="sheet_bottom" style="display: none;"></div>

@@ -20,8 +20,7 @@
 
     .radiobutton__wrapper {
         width: auto;
-        float: right;
-        padding: 0 16px;
+        float: left;
         //background-color: red;
         @include box-sizing(border-box);
 
@@ -42,6 +41,43 @@
 
     padding-left: 24px;
     margin: 24px 8px;
+
+    input[type=radio] {
+        display: none;
+
+        &:not(:checked)+label::before {
+            @include radio-structure($radio-unchecked-color);
+        }
+
+        &:checked+label {
+            &::before {
+                @include radio-structure($radio-checked-color);
+            }
+
+            &::after {
+                @include radio-structure($radio-checked-color);
+
+                background-color: $radio-checked-color;
+                -webkit-transform: scale(0.4);
+                -ms-transform: scale(0.4);
+                transform: scale(0.4);
+                animation: fade-in .5s;
+            }
+        }
+    }
+
+    label {
+        cursor: pointer;
+        position: relative;
+        padding-left: 25px;
+    }
+}
+
+
+.radio-group2 {
+
+    padding-left: 24px;
+    margin: 12px 2px;
 
     input[type=radio] {
         display: none;

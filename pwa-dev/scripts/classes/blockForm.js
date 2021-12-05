@@ -2480,7 +2480,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 					if ( $( this ).is( ':checked' ) ) {
 						var name = $( this ).val();
-						var text = $( this ).closest(  ".radio-group" ).find("label").html();
+						var text = $( this ).closest( ".radiogrp" ).find("label").html();
 
 						selectedValueList.push( name );
 						selectedTextList.push( text );

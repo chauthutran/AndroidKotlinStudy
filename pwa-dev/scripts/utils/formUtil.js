@@ -2130,3 +2130,48 @@ FormUtil.setUpHideOnBodyClick = function( hideFunc )
 		//if ( FormUtil.prevHideOnBodyFunc ) FormUtil.prevHideOnBodyFunc = undefined; // PREV 3. If event is called, remove prevHide func.
 	});
 };
+
+// ==============================================
+
+// Use this to display a popup with some messages or interactions..
+//FormUtil.openDivPopupArea( $( '#divPopupArea' ), populateProcess, closeProcess )
+FormUtil.openDivPopupArea = function( divPopupAreaTag, populateProcess, closeProcess )
+{
+	FormUtil.blockPage( undefined, function( scrimTag )
+	{
+
+        divPopupAreaTag.show();
+        $('.scrim').show();
+		var divMainContentTag = divPopupAreaTag.find( '.divMainContent' );
+		divMainContentTag.html( '' ); // Reset the content..
+
+		divPopupAreaTag.find( 'div.close' ).off( 'click' ).click( function () 
+		{
+            $('.scrim').hide();
+            divPopupAreaTag.hide();
+
+			if ( closeProcess )
+			{
+				try {
+					closeProcess( divPopupAreaTag );
+				} catch( errMsg ) { console.log( 'ERROR during FormUtil.openDivPopupArea closeProcess, ' + errMsg ); }	
+			}			
+        });
+
+
+		scrimTag.off( 'click' ).click( function() 
+		{
+			FormUtil.unblockPage( scrimTag );
+		});
+
+		
+		if ( populateProcess ) 
+		{
+			try {
+				populateProcess( divMainContentTag, divPopupAreaTag );
+			} catch( errMsg ) { console.log( 'ERROR during FormUtil.openDivPopupArea populateProcess, ' + errMsg ); }
+		}
+
+	});
+
+};

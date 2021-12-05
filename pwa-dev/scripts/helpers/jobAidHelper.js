@@ -11,7 +11,7 @@ JobAidHelper.jobAid_startPagePath = 'jobs/' + JobAidHelper.jobAid_startPage;
 
 // =========================
 
-JobAidHelper.runTimeCache_JobAid = function() // returnFunc )
+JobAidHelper.runTimeCache_JobAid = function( btnParentTag ) // returnFunc )
 {
     if ( ConnManagerNew.isAppMode_Online() )
     {
@@ -26,16 +26,14 @@ JobAidHelper.runTimeCache_JobAid = function() // returnFunc )
             url: requestUrl,
             success: function( response )
             {
-                SwManager.swRegObj.active.postMessage( { 'type': 'CACHE_URLS2', 'payload': response.list } );
-                //for( var i in fileNameList ) SwManager.swRegObj.active.postMessage( { 'type': 'CACHE_URLS2', 'payload': [ fileNameList[i] ] } );
-                
-                //if ( returnFunc ) returnFunc();
-
-                // NOTE: This does not have a call back, but need to use another event to pass..
+                if ( btnParentTag ) btnParentTag.append( '<div class="divJobFileLoading" style="display: contents;"><img src="images/loading_big_blue.gif" style="height: 17px;">'
+                    + '<span style="color: gray; font-size: 14px;">Retrieving Files...</span></div>' );
+                                
+                SwManager.swRegObj.active.postMessage( { 'type': 'CACHE_URLS2', 'payload': response.list } );                
             },
             error: function( error )
             {
-                console.customLog( error );
+                MsgManager.msgAreaShowErr( 'Failed to perform the jobFiling..' );
             }
         });    
     }
@@ -43,6 +41,13 @@ JobAidHelper.runTimeCache_JobAid = function() // returnFunc )
     {        
         MsgManager.msgAreaShowErr( 'JobAid Filing is only available in online mode' );
     }
+};
+
+
+JobAidHelper.JobFilingFinish = function( msgText )
+{
+    $( '.divJobFileLoading' ).remove();
+    if ( msgText ) MsgManager.msgAreaShow( msgText );
 };
 
 // =========================

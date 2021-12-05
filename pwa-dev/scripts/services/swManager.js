@@ -187,11 +187,10 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
             var msgData = JSON.parse( event.data );
 
-            if ( msgData.msg ) MsgManager.msgAreaShow( msgData.msg );
-
-            if ( msgData.run )
+            if ( msgData.type === 'jobFiling' ) JobAidHelper.JobFilingFinish( msgData.msg );
+            else
             {
-                //if ( msgData.run === 'appReload' ) AppUtil.appReloadWtMsg( 'Reloading App in process...' );
+                if ( msgData.msg ) MsgManager.msgAreaShow( msgData.msg );
             }
         }
     });
@@ -350,3 +349,21 @@ SwManager.reGetAppShell = function( callBack )
 };
 
 // -----------------------------------
+
+// SwManager.listFilesInCache( 'jobTest2' );
+SwManager.listFilesInCache = function( cacheKey )
+{
+    //caches.keys().then( function( keyList ) 
+    caches.open( cacheKey ).then( cache => 
+    { 
+        cache.keys().then( keys => 
+        { 
+            keys.forEach( request => 
+            { 
+                console.log( Util.getUrlLastName( request.url ) );
+            }); 
+        }); 
+    });
+};
+    
+    

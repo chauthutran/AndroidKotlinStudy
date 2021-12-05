@@ -55,7 +55,7 @@ Templates.inputFieldRadio = `<div class="radiobutton fieldBlock">
 </div>
 </div>`;
 
-Templates.inputFieldRadio_Item = `<div class="radio-group horizontal">
+Templates.inputFieldRadio_Item = `<div class="radiogrp radio-group2 horizontal">
     <input type="radio" >
     <label></label>
 </div>`;
@@ -279,23 +279,23 @@ Templates.ConnManagerNew_Dialog_Manual_goOffline_Opts = `
   <div class="prompt dialog__text"></div>
 
   <div class="networkSwitchOpts">
-    <div class="networkSwitchOpt radio-group">
+    <div class="networkSwitchOpt radiogrp radio-group">
       <input type="radio" name="switch_waitingTimeOpt" value="10" id="waitingTimeOpt_10s">
       <label for="waitingTimeOpt_10s" term="networkSwitch_tryConnect_10sec">Try to connect in 10sec</label>
     </div>
-    <div class="networkSwitchOpt radio-group">
+    <div class="networkSwitchOpt radiogrp radio-group">
       <input type="radio" name="switch_waitingTimeOpt" value="60" id="waitingTimeOpt_60s">
       <label for="waitingTimeOpt_60s" term="networkSwitch_tryConnect_60sec">Try to connect in 60sec</label>
     </div>
-    <div class="networkSwitchOpt radio-group">
+    <div class="networkSwitchOpt radiogrp radio-group">
       <input type="radio" name="switch_waitingTimeOpt" CHECKED value="180" id="waitingTimeOpt_30m">
       <label for="waitingTimeOpt_30m" term="networkSwitch_tryConnect_30min">Try to connect in 30min</label>
     </div>
-    <div class="networkSwitchOpt radio-group">
+    <div class="networkSwitchOpt radiogrp radio-group">
       <input type="radio" name="switch_waitingTimeOpt" value="360" id="waitingTimeOpt_1h">
       <label for="waitingTimeOpt_1h" term="networkSwitch_tryConnect_1hr">Try to connect in 1hr</label>
     </div>
-    <div class="networkSwitchOpt radio-group">
+    <div class="networkSwitchOpt radiogrp radio-group">
       <input type="radio" name="switch_waitingTimeOpt" value="1440" id="waitingTimeOpt_4h">
       <label for="waitingTimeOpt_4h" term="networkSwitch_tryConnect_4hr">Try to connect in 4hr</label>
     </div>
