@@ -1143,8 +1143,8 @@ ActivityDataManager.getActivitiesByTrans = function( activityList, matchCondiArr
 };
 
 
-// [ { type: 'v_iss', clientDetails: { 'firstName': 'Polly' } }, { dataValues: { 'age': '23' } }  ]
-// Either one of the condition would work.
+// [ { type: 'v_iss', clientDetails: { 'firstName': 'Polly' } } ]
+// [ { dataValues: { 'interventionResult': '[*]' } }  ]  // any 'interventionResult' non-empty value would be accepted..
 ActivityDataManager.isTransMatch = function( tran, matchCondiArr )
 {
     var isMatch = false;
@@ -1186,8 +1186,11 @@ ActivityDataManager.isTransMatch = function( tran, matchCondiArr )
                     for ( var spName in matchProp )
                     {
                         var sMatchVal = matchProp[ spName ];
+                        var sTranProp = tranProp[ spName ];
 
-                        if ( tranProp[ spName ] !== sMatchVal ) 
+                        // '[*]' allows any non-empty value case
+                        if ( sMatchVal === '[*]' && sTranProp ) { }
+                        else if ( sTranProp !== sMatchVal ) 
                         {
                             passAllCondition = false;
                             break;    
