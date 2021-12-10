@@ -421,7 +421,9 @@ SyncManagerNew.checkActivityStatus_SyncUpReady = function( activityJson )
                   
 SyncManagerNew.isSyncReadyStatus = function( status )
 {
-    return ( status === Constants.status_queued || status === Constants.status_failed || status === Constants.status_hold );    
+    return ( status === Constants.status_queued 
+        || status === Constants.status_failed 
+        || status === Constants.status_hold );    
 };
 
 // Another name for 'isSyncReadyStatus'
@@ -430,6 +432,7 @@ SyncManagerNew.statusSyncable = function( status )
     return SyncManagerNew.isSyncReadyStatus( status ); 
 };
 
+// Synced Statuses, opposite to syncable
 SyncManagerNew.statusSynced = function( status ) 
 { 
     return ( status === Constants.status_downloaded 

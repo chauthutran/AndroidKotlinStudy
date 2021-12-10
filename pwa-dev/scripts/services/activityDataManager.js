@@ -352,27 +352,62 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
 ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData )
 {
     var activityJson = {};
-
+    var history = [];
+    
     if ( !formsJsonActivityPayload.payload ) throw 'activityPayloadsJson.payload not exists';
     else
     {
         var createdDT = new Date();
         var payload = formsJsonActivityPayload.payload;
-
+        var searchValues = payload.searchValues;
+        var existingClientId;
 
         // CONVERT 'searchValues'/'captureValues' structure ==> 'captureValues.processing': { 'searchValues' }
         activityJson = payload.captureValues; // Util.cloneJson( payload.captureValues );
         // FAILED TO GENERATE - ERROR MESSAGE..
         if ( !activityJson ) throw 'payload captureValues not exists!';
-        
+
 
         // ===============================================================
-        // TRAN NEW 1: If this is an existing activity, then remove the exiting one and add a new one
+        // Existing activity case - Editing
         var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
+
+        // NOTE/TODO: #2
+        // EDITING WILL BE 2 DIFF DIRECTION:   Pending Editing   vs   Created(Synced) Actiivty Editing
+        //  [Pending - Not Created, yet (In backend) ]
+        //      - Delete entire things?  But, keep the 'history' of attempts..
+        //  [Created Activity Editing ]
+        //      - Let the backend take care of merging with existing data - send marker about this case for special operation.
+        //      - Only use 'date/transactions/formData' for update.
         if ( editModeActivityId )
         {
-            ActivityDataManager.deleteExistingActivity_Indexed( editModeActivityId );
-            activityJson.id = editModeActivityId;
+            var existingActivityJson = ActivityDataManager.getActivityById( editModeActivityId );
+
+            if ( existingActivityJson )
+            {
+                var statusSynced = ActivityDataManager.isActivityStatusSynced( existingActivityJson );
+
+                if ( existingActivityJson.editMode_existsOnServer || statusSynced ) activityJson.editMode_existsOnServer = true;  // Only applicable on mongo version...
+    
+                if ( activityJson.editMode_existsOnServer ) // if editMode_existsOnServer case, use clientId & activityId for search.
+                {
+                    var client = ClientDataManager.getClientByActivityId( existingActivityJson.id );
+
+                    if ( client )
+                    {
+                        searchValues = { '_id': client._id };
+                        existingClientId = client._id;
+                    }
+                }
+    
+                // Update History..
+                history = ActivityDataManager.getProcessingHistory( existingActivityJson );
+                history.push( ActivityDataManager.createProcessingHistory( '', 200, UtilDate.formatDate(), 'Activity Editing' ) );
+        
+                // Delete this Activity from this device (global & client local data..)
+                ActivityDataManager.deleteExistingActivity_Indexed( editModeActivityId );
+                activityJson.id = editModeActivityId;    
+            }
         }
 
 
@@ -381,25 +416,28 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
             activityJson.id = SessionManager.sessionData.login_UserName + '_' + $.format.date( createdDT.toUTCString(), 'yyyyMMdd_HHmmss' ) + createdDT.getMilliseconds();
         }
 
+        // Reset previously set CoolDown Period on sycUp
+        ActivityDataManager.clearActivityLastSyncedUp( activityJson.id );
+
+
+        // TODO: 'history' should be merged if exitsing history exists..
         activityJson.processing = { 
             'created': Util.formatDateTimeStr( createdDT.toString() )
             ,'status': Constants.status_queued
-            ,'history': []
+            ,'history': history  // if prev history exists, use that. 
             ,'url': actionUrl
-            ,'searchValues': payload.searchValues
-            //"payloadType": payloadType
-            // 'actionJson': actionDefJson <-- Do not need this, probably
+            ,'searchValues': searchValues  // if exiting activity case, we should force it to be clientId & activityId..
         };
 
-        if ( actionDefJson ) activityJson.processing.useMockResponse = actionDefJson.useMockResponse;
+        if ( actionDefJson && actionDefJson.useMockResponse ) activityJson.processing.useMockResponse = actionDefJson.useMockResponse;
+        if ( existingClientId ) activityJson.processing.existingClientId = existingClientId;
 
 
-        // ===============================================================
-        // TRAN NEW 2: SHOULD ADD TO processing!!!
         // Form Information
         if ( blockId )
         {
-            activityJson.processing.form = { 
+            // Change to formData
+            activityJson.formData = { 
                 'blockId': blockId
                 ,'activityId': activityJson.id
                 ,'showCase': ( blockPassingData ) ? blockPassingData.showCase : ''
@@ -431,6 +469,10 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
         if ( actionDefJson.underClient && actionDefJson.clientId )
         {
             activityPayloadClient = ClientDataManager.getClientById( actionDefJson.clientId );
+        }
+        else if ( activityJson.processing.existingClientId )
+        {
+            activityPayloadClient = ClientDataManager.getClientById( activityJson.processing.existingClientId );
         }
 
         
@@ -484,7 +526,7 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
         payloadJson.payload = {
             'searchValues': activityJson.processing.searchValues,
             'captureValues': activityJson_Copy,
-            'userFormData': activityJson.processing.form  // New - send 'form' as well.
+            'userFormData': activityJson.formData  // New - send 'form' as well.
         };
     }
 
@@ -520,13 +562,43 @@ ActivityDataManager.getHistoryData = function( history )
 };
 
 
+ActivityDataManager.getActivityForm = function( activityJson )
+{
+    var formData;
+
+    if ( activityJson.processing && activityJson.processing.form ) formData = activityJson.processing.form
+    else if ( activityJson.formData ) formData = activityJson.formData;
+
+    return formData;
+};
+
+
+ActivityDataManager.getProcessingHistory = function( activity )
+{
+    var history = [];
+
+    if ( activity && activity.processing && activity.processing.history )
+    {
+        history = activity.processing.history;
+    }
+
+    return history;
+};
+
 // ----------------------------------------------
 // --- Create Activity Processing Info Related
+
+// NEW
+ActivityDataManager.createProcessingHistory = function( statusStr, responseCode, dateStr, msgStr )
+{
+    return { 'status': statusStr, 'responseCode': responseCode, 'datetime': dateStr, 'msg': msgStr };
+};
+
 
 ActivityDataManager.createProcessingInfo_Success = function( statusStr, msgStr, prev_ProcessingInfo )
 {
     var dateStr = Util.formatDateTimeStr( ( new Date() ).toString() );    
-    var currInfo = { 'status': statusStr, 'responseCode': 200, 'datetime': dateStr, 'msg': msgStr };
+    var currInfo = ActivityDataManager.createProcessingHistory( statusStr, 200, dateStr, msgStr );
     var processingInfo;
 
     if ( prev_ProcessingInfo )
@@ -552,7 +624,7 @@ ActivityDataManager.createProcessingInfo_Other = function( statusStr, responseCo
     var dateStr = Util.formatDateTimeStr( ( new Date() ).toString() );    
     var processingInfo = {
         'status': statusStr,
-        'history': [ { 'status': statusStr, 'responseCode': responseCode, 'datetime': dateStr, 'msg': msgStr } ]
+        'history': [ ActivityDataManager.createProcessingHistory( statusStr, responseCode, dateStr, msgStr ) ]
     };    
 
     return processingInfo;
@@ -945,14 +1017,27 @@ ActivityDataManager.checkActivityCoolDown = function( activityId, optCallBack_co
 };
 
 
-ActivityDataManager.isActivityStatusSyncable = function( activity )
+// ----------------------------------------
+
+ActivityDataManager.getActivityStatus = function( activity )
 {
-    return SyncManagerNew.statusSyncable( activity.processing.status );
+    return ( activity && activity.processing && activity.processing.status ) ? activity.processing.status: '';
 };
 
+ActivityDataManager.hasActivityStatus = function( activity )
+{
+    return ( ActivityDataManager.getActivityStatus( activity ) ) ? true: false;
+};
+
+ActivityDataManager.isActivityStatusSyncable = function( activity )
+{
+    return ( ActivityDataManager.hasActivityStatus( activity ) && SyncManagerNew.statusSyncable( activity.processing.status ) );
+};
+
+// Synced Statuses, opposite to syncable
 ActivityDataManager.isActivityStatusSynced = function( activity )
 {
-    return SyncManagerNew.statusSynced( activity.processing.status );
+    return ( ActivityDataManager.hasActivityStatus( activity ) && SyncManagerNew.statusSynced( activity.processing.status ) );
 };
 
 // ------------------------------------

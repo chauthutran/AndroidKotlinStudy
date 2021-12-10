@@ -99,9 +99,10 @@ UtilDate.getDateTimeStr = function()
 
 // ===============================================
 
-
+// NOTE: 'date' could be string or object since $.format.date takes both in
 UtilDate.formatDate = function( date, formatPattern )
 {
+	if ( !date ) date = new Date();
 	if ( !formatPattern ) formatPattern = UtilDate.dateType1;
 
 	return $.format.date( date, formatPattern );
@@ -109,14 +110,12 @@ UtilDate.formatDate = function( date, formatPattern )
 
 UtilDate.formatDateTime = function( dateObj, dateType )
 {
-	return UtilDate.formatDateTimeStr( dateObj.toString(), dateType );
+	return UtilDate.formatDate( dateObj, dateType );
 };
 
 UtilDate.formatDateTimeStr = function( dateStr, dateType )
 {
-	if ( !dateType ) dateType = UtilDate.dateType1;
-
-	return $.format.date( dateStr, dateType );
+	return UtilDate.formatDate( dateStr, dateType );
 };
 
 UtilDate.timeCalculation = function( dtmNewer, dtmOlder )

@@ -515,6 +515,12 @@ ConfigManager.isSourceTypeDhis2 = function()
     return ( ConfigManager.getConfigJson().sourceType === ConfigManager.KEY_SourceType_Dhis2 );
 };
 
+
+ConfigManager.isSourceTypeMongo = function()
+{
+    return ( ConfigManager.getConfigJson().sourceType === ConfigManager.KEY_SourceType_Mongo );
+};
+
 // ----------------------------------------
 
 

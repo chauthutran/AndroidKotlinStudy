@@ -163,29 +163,45 @@ function ActivityCardDetail( activityId, isRestore )
     {
         try
         {
+            activityEditPaylayLoadBtnTag.hide();
+
             if( activityJson )
             {
                 var editable = false;
+                var formData = ActivityDataManager.getActivityForm( activityJson );
 
-                if ( activityJson.processing && activityJson.processing.form )
+                var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
+
+                if ( formData )
                 {
-                    var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
+                  if ( activityEditing ) editable = true;
+                  else { 
+                    if ( activityJson.processing.status === Constants.status_error ) editable = true; 
+                  }
+                }          
 
-                    if ( activityEditing ) editable = true;
-                    else 
-                    {
-                        if ( activityJson.processing.status === Constants.status_error ) editable = true;                                    
-                        // if ( DevHelper.devMode && editReadyStatus && activityJson.processing.form )
-                    }
-                }
-                
+
                 if ( editable )
                 {
                     activityEditPaylayLoadBtnTag.show();
-                    var editForm = activityJson.processing.form;
+                    var editForm = formData;
         
                     activityEditPaylayLoadBtnTag.off( 'click' ).click( function( e ) 
                     {
+
+
+                        // NOTE/TODO: #1
+
+                        // This should be done on 'payload' creation?
+                        // Or on the form opening?
+
+                        // If 'synced'/'downloaded' status, mark it as 'syncedEdit' for backend.
+                        //    + copy existing transaction in the history...
+
+
+
+
+
                         var blockJson = FormUtil.getObjFromDefinition( editForm.blockId, ConfigManager.getConfigJson().definitionBlocks );
         
                         if( blockJson )
@@ -229,10 +245,7 @@ function ActivityCardDetail( activityId, isRestore )
                                     }    
                                 }
                             }
-                            // else
-                            // {
-                            //     FormUtil.block_payloadConfig = ''; // ??
-                            // }
+
 
                             formTag.append("<input type='hidden' id='editModeActivityId' value='" + activityJson.id + "'>");
                         }
@@ -243,7 +256,6 @@ function ActivityCardDetail( activityId, isRestore )
                         
                     });
                 }
-                else activityEditPaylayLoadBtnTag.hide();    
             }
         }
         catch( errMsg )
@@ -278,14 +290,16 @@ ActivityCardDetail.cardFullScreen = `
         </card__cta>
       </div>
 
-      <div class="tab_fs">
-
+      <div class="divActivityModBtns" style="display:none;">
         <div class="button warning button-full_width removeActivity"
-          style="height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
+        style="height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
           <div class="button__container">
             <div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Remove Pending Activity</div>
           </div>
         </div>
+      </div>
+
+      <div class="tab_fs">
 
         <ul class="tab_fs__head" style="background-color: #fff;">
 

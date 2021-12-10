@@ -9,8 +9,8 @@ Constants.storageName_session = "session";
 // ONGOING STATUS ONES:
 Constants.status_queued = "queued"; // pending
 Constants.status_failed = "failed"; // submit failed case..
-Constants.status_error = "error";
 Constants.status_hold = "paused"; // REMOVE? We don't "PAUSE" or HOLD records (yet)
+Constants.status_error = "error";
 Constants.status_processing = "processing";
 Constants.status_downloaded = "downloaded";
 Constants.status_submit = "submit"; // 'synced' <-- CHANGE!!! WITH CONFIG CHANGE
