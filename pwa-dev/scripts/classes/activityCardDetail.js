@@ -112,10 +112,10 @@ function ActivityCardDetail( activityId, isRestore )
           }
           
           // Set event for "Remove" button for "Pending" client
-          var removeActivityBtn = sheetFullTag.find( '.removeActivity' );
+          var removeActivityBtn = sheetFullTag.find( '.removeActivity' ).hide();
           if ( SyncManagerNew.statusSyncable( activityJson.processing.status ) )
           {
-              removeActivityBtn.click( function()
+              removeActivityBtn.show().click( function()
               {    
                   var result = confirm("Are you sure you want to delete this activity?");
                   if( result )
@@ -123,10 +123,6 @@ function ActivityCardDetail( activityId, isRestore )
                       me.removeActivityNCard( activityId, sheetFullTag.find( 'img.btnBack' ) );
                   }               
               });
-          }
-          else
-          {
-              removeActivityBtn.remove();
           }
         }
     };    
@@ -290,9 +286,9 @@ ActivityCardDetail.cardFullScreen = `
         </card__cta>
       </div>
 
-      <div class="divActivityModBtns" style="display:none;">
+      <div class="divActivityModBtns" style="">
         <div class="button warning button-full_width removeActivity"
-        style="height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
+        style="display:none; height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
           <div class="button__container">
             <div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Remove Pending Activity</div>
           </div>

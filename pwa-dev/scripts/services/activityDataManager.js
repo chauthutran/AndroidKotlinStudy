@@ -371,16 +371,11 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         // ===============================================================
         // Existing activity case - Editing
         var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
-
-        // NOTE/TODO: #2
-        // EDITING WILL BE 2 DIFF DIRECTION:   Pending Editing   vs   Created(Synced) Actiivty Editing
-        //  [Pending - Not Created, yet (In backend) ]
-        //      - Delete entire things?  But, keep the 'history' of attempts..
-        //  [Created Activity Editing ]
-        //      - Let the backend take care of merging with existing data - send marker about this case for special operation.
-        //      - Only use 'date/transactions/formData' for update.
         if ( editModeActivityId )
         {
+            // ACTIVITY EDITING:
+            //  [Pending - Not Created, yet (In backend) ] - Delete entire things?  But, keep the 'history' of attempts..
+            //  [Created Activity Editing ] - Let backend handle editing/backing up - with 'editMode_existsOnServer'
             var existingActivityJson = ActivityDataManager.getActivityById( editModeActivityId );
 
             if ( existingActivityJson )
@@ -397,6 +392,9 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
                     {
                         searchValues = { '_id': client._id };
                         existingClientId = client._id;
+
+                        // 'capturedUTC/Loc' & 'updatedUTC/Loc' would be copied to existing activity on backend.
+                        ActivityDataManager.setActivityDate_Update( activityJson, createdDT );
                     }
                 }
     
@@ -418,6 +416,9 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 
         // Reset previously set CoolDown Period on sycUp
         ActivityDataManager.clearActivityLastSyncedUp( activityJson.id );
+
+        // Make sure activity date are filled
+        ActivityDataManager.setNewActivityDate( activityJson, createdDT );
 
 
         // TODO: 'history' should be merged if exitsing history exists..
@@ -451,13 +452,38 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 };
 
 
+ActivityDataManager.setNewActivityDate = function( activityJson, createdDT )
+{
+    // Activity 'date' fill up - if not properly populated already
+    if ( !activityJson.date ) activityJson.date = {};
+
+    // Not 'capturedLoc'/'capturedUTC' could be set by backend with 'captureDate' overrider.. <-- in Dhis2..
+    if ( !activityJson.createdLoc ) activityJson.createdLoc = Util.formatDate( createdDT );
+    if ( !activityJson.createdUTC ) activityJson.createdUTC = Util.formatDate( createdDT.toUTCString() );
+
+    // .toUTCStirng() format lose milliseconds, but that should be OK.
+    if ( !activityJson.updatedLoc ) activityJson.updatedLoc = activityJson.createdLoc;
+    if ( !activityJson.updatedUTC ) activityJson.updatedUTC = activityJson.createdUTC;
+};
+
+
+ActivityDataManager.setActivityDate_Update = function( activityJson, dateNow )
+{
+    // Activity 'date' fill up - if not properly populated already
+    if ( !activityJson.date ) activityJson.date = {};
+
+    if ( !activityJson.updatedLoc ) activityJson.updatedLoc = Util.formatDate( dateNow );
+    if ( !activityJson.updatedUTC ) activityJson.updatedUTC = Util.formatDate( dateNow.toUTCString() );
+};
+
+
 ActivityDataManager.getEditModeActivityId = function( blockId )
 {
     return ( blockId ) ? $("[blockId='" + blockId + "']").find( "#editModeActivityId" ).val() : undefined;
 };
 
 
-// Add new activity with client generation
+// MAIN - Activity Payload Generation - Add new activity with client assign/generation
 ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData, callBack )
 {
     try
