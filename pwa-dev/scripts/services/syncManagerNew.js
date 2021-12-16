@@ -108,8 +108,13 @@ SyncManagerNew.syncDown = function( runType, callBack )
 
         var changeOccurred = false;        
  
-        if ( !downloadSuccess ) 
+        if ( !downloadSuccess 
+            || !returnJson 
+            || Util.isTypeString( returnJson )
+            || ( returnJson && ( !returnJson.status || returnJson.status === "error" ) ) ) 
         { 
+            console.log( returnJson );
+
             SyncManagerNew.SyncMsg_InsertMsg( "Failed on download, msg: " + Util.getStr( returnJson, 300 ) );
 
             if ( callBack ) callBack( downloadSuccess, changeOccurred ); 
