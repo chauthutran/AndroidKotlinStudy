@@ -107,11 +107,24 @@ SyncManagerNew.syncDown = function( runType, callBack )
         SyncManagerNew.update_UI_FinishSyncAll();
 
         var changeOccurred = false;        
- 
-        if ( !downloadSuccess 
-            || !returnJson 
-            || Util.isTypeString( returnJson )
-            || ( returnJson && ( !returnJson.status || returnJson.status === "error" ) ) ) 
+        var isFailed = false;
+
+        if ( !downloadSuccess || !returnJson || Util.isTypeString( returnJson ) ) isFailed = true;
+        else if ( Util.isTypeObject( returnJson ) )
+        {
+            if ( ConfigManager.isSourceTypeMongo() )
+            {
+                if ( returnJson.response && returnJson.response.dataList ) isFailed = false;
+                else isFailed = true;
+            }
+            else
+            {
+                // Dhis2 source version..
+                if ( !returnJson.status || returnJson.status === "error" ) isFailed = true;
+            }
+        }
+
+        if ( isFailed )
         { 
             console.log( returnJson );
 

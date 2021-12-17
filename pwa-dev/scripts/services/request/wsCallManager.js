@@ -176,7 +176,7 @@ WsCallManager.serverAvailable = function( callBack )
             }
             else if ( WsCallManager.availableCheckType === 'v2' )
             {
-                // If  configManager configJson.souceType is available (after login), use it.  Otherwise (on not login), get localStorage data.
+                // If  configManager configJson.souceType is available (after login), use it.  Otherwise (on not login), get localStorage data.                
                 var configJson = ConfigManager.getConfigJson();
                 var sourceType = ( configJson.sourceType ) ? configJson.sourceType : AppInfoManager.getUserConfigSourceType();
                 if ( sourceType !== 'mongo' ) sourceType = 'dhis2';

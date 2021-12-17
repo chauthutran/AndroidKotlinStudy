@@ -55,6 +55,9 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 
         // 3. Set favList by type
         me.favListByType = me.getFavListByType( me.favType );
+
+        // 4. Initially, hide this tag, and show it on 'render()'
+        me.favIconsTag.hide();
     }
 
     // -----------------------------------------    
@@ -111,10 +114,12 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     {
         var favList = ConfigManager.getConfigJson().favList;
 
-        // 'favType': 'activityListFav', 'clientListFav', 'clientActivityFav', 'clientRelFav'
-        var favListByType = favList[ favType ];
-
-        return ( favListByType ) ? favListByType: favList;
+        if ( favList && favType )
+        {
+            // 'favType': 'activityListFav', 'clientListFav', 'clientActivityFav', 'clientRelFav'
+            return favList[ favType ];
+        }
+        else return favList;
     };
 
     // -----------------------------------------
@@ -125,37 +130,42 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     {        
         try
         {              
-            if ( me.favListByType.mainButtonMode )
+            if ( me.favListByType )
             {
-                // 1. Get favListArr from online status
-                var favMainBtnJson;
-                if ( ConnManagerNew.isAppMode_Online() ) favMainBtnJson = me.favListByType.mainButtonMode.online;
-                else favMainBtnJson = me.favListByType.mainButtonMode.offline;
+                me.favIconsTag.show();
 
-                // 2. Click event
-                me.setFavItemClickEvent( me.favMainButtonTag, favMainBtnJson, me.targetBlockTag, me.targetBlockContainerTag, function( favJson ) {
-                    if ( favJson.mainFavRemove ) me.favMainButtonTag.remove();
-                });
-            }
-            else
-            {
-                // 1. Clear any previous generated item
-                me.clearExistingFavItems( me.favIconsTag );
-                me.closeFavMainButton();
-
-
-                // 2. Get favListArr from online status
-                var favListArr;
-                if ( ConnManagerNew.isAppMode_Online() ) favListArr = me.filterFavListByEvalActions( me.favListByType.online, me.favListByType.evalActions_online );
-                else favListArr = me.filterFavListByEvalActions( me.favListByType.offline, me.favListByType.evalActions_offline );
-
-
-                // 3. favItems populate
-                me.populateFavItems( favListArr, me.favIconsTag, me.targetBlockTag, me.targetBlockContainerTag );
-
-
-                // 4. Translate the favItem terms
-                TranslationManager.translatePage();
+                if ( me.favListByType.mainButtonMode )
+                {
+                    // 1. Get favListArr from online status
+                    var favMainBtnJson;
+                    if ( ConnManagerNew.isAppMode_Online() ) favMainBtnJson = me.favListByType.mainButtonMode.online;
+                    else favMainBtnJson = me.favListByType.mainButtonMode.offline;
+    
+                    // 2. Click event
+                    me.setFavItemClickEvent( me.favMainButtonTag, favMainBtnJson, me.targetBlockTag, me.targetBlockContainerTag, function( favJson ) {
+                        if ( favJson.mainFavRemove ) me.favMainButtonTag.remove();
+                    });
+                }
+                else
+                {
+                    // 1. Clear any previous generated item
+                    me.clearExistingFavItems( me.favIconsTag );
+                    me.closeFavMainButton();
+    
+    
+                    // 2. Get favListArr from online status
+                    var favListArr;
+                    if ( ConnManagerNew.isAppMode_Online() ) favListArr = me.filterFavListByEvalActions( me.favListByType.online, me.favListByType.evalActions_online );
+                    else favListArr = me.filterFavListByEvalActions( me.favListByType.offline, me.favListByType.evalActions_offline );
+    
+    
+                    // 3. favItems populate
+                    me.populateFavItems( favListArr, me.favIconsTag, me.targetBlockTag, me.targetBlockContainerTag );
+    
+    
+                    // 4. Translate the favItem terms
+                    TranslationManager.translatePage();
+                }
             }
         }
         catch( errMsg )

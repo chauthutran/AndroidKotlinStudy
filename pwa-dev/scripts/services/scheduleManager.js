@@ -252,13 +252,9 @@ ScheduleManager.syncDownRun_Online_Login = function()
 				{
 					if ( mergedActivities.length > 0 )
 					{
-						var btnRefreshTag = $( '<a class="notifBtn" term=""> REFRESH </a>');
+						SessionManager.cwsRenderObj.renderArea1st();
 
-						btnRefreshTag.off( 'click' ).click ( () => {
-							SessionManager.cwsRenderObj.renderArea1st();
-						});
-	
-						MsgManager.notificationMessage( 'SyncDown data found', 'notifBlue', btnRefreshTag, '', 'right', 'top', 10000, false );
+						MsgManager.notificationMessage( '<span term="msg_syncDownDataMerged">SyncDown data added/merged</span>: ' + mergedActivities.length, 'notifBlue', btnRefreshTag, '', 'right', 'top', 10000, false );
 					}
 				}
 			} 
