@@ -114,12 +114,15 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     {
         var favList = ConfigManager.getConfigJson().favList;
 
-        if ( favList && favType )
+        // 'favType': 'activityListFav', 'clientListFav', 'clientActivityFav', 'clientRelFav'
+        if ( favList && favType && favList[ favType ] ) return favList[ favType ]
+        else
         {
-            // 'favType': 'activityListFav', 'clientListFav', 'clientActivityFav', 'clientRelFav'
-            return favList[ favType ];
+            // Could be simple type, which we should return entire one..
+            // If the 'favList' is not simple type, return undefined..
+            if ( favList.online || favList.offline ) return favList;
+            else return undefined;
         }
-        else return favList;
     };
 
     // -----------------------------------------

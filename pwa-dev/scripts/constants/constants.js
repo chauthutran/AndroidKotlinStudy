@@ -6,7 +6,7 @@ Constants.storageName_activityList = "activityList";    // Should add with userN
 Constants.storageName_clientList = "clientList";
 Constants.storageName_session = "session";
 
-// ONGOING STATUS ONES:
+// ACTIVITY STATUS:
 Constants.status_queued = "queued"; // pending
 Constants.status_failed = "failed"; // submit failed case..
 Constants.status_hold = "paused"; // REMOVE? We don't "PAUSE" or HOLD records (yet)
@@ -17,6 +17,11 @@ Constants.status_submit = "submit"; // 'synced' <-- CHANGE!!! WITH CONFIG CHANGE
 Constants.status_submit_wMsg = "submit_wMsg"; 
 Constants.status_submit_wMsgRead = "submit_wMsgRead";
 Constants.status_custom = "custom";
+
+// BACKEND RESPONSE STATUS:
+Constants.ws_status_success = "success";
+Constants.ws_status_warning = "warning";
+Constants.ws_status_error = "error";
 
 
 Constants.storage_offline_ItemNetworkAttemptLimit = 3;

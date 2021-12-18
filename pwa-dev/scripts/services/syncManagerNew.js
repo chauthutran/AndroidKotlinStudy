@@ -114,13 +114,16 @@ SyncManagerNew.syncDown = function( runType, callBack )
         {
             if ( ConfigManager.isSourceTypeMongo() )
             {
+                // ?? - NOT SURE: if ( returnJson.status === Constants.ws_status_success || returnJson.status === Constants.ws_status_warning ) isFailed = false;
                 if ( returnJson.response && returnJson.response.dataList ) isFailed = false;
                 else isFailed = true;
             }
             else
             {
                 // Dhis2 source version..
-                if ( !returnJson.status || returnJson.status === "error" ) isFailed = true;
+                if ( returnJson.status === Constants.ws_status_success 
+                    || returnJson.status === Constants.ws_status_warning ) isFailed = false;
+                else isFailed = true;                
             }
         }
 

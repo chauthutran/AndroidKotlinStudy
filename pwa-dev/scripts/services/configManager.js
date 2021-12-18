@@ -398,8 +398,6 @@ ConfigManager.notMatch_UserRole = function( item, loginUserRoles )
 };
 
 
-
-
 // ---------------------------------
 // --- reset / clear configJson
 
