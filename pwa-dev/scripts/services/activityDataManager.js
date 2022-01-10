@@ -458,12 +458,12 @@ ActivityDataManager.setNewActivityDate = function( activityJson, createdDT )
     if ( !activityJson.date ) activityJson.date = {};
 
     // Not 'capturedLoc'/'capturedUTC' could be set by backend with 'captureDate' overrider.. <-- in Dhis2..
-    if ( !activityJson.createdLoc ) activityJson.createdLoc = Util.formatDate( createdDT );
-    if ( !activityJson.createdUTC ) activityJson.createdUTC = Util.formatDate( createdDT.toUTCString() );
+    if ( !activityJson.date.createdLoc ) activityJson.date.createdLoc = Util.formatDate( createdDT );
+    if ( !activityJson.date.createdUTC ) activityJson.date.createdUTC = Util.formatDate( createdDT.toUTCString() );
 
     // .toUTCStirng() format lose milliseconds, but that should be OK.
-    if ( !activityJson.updatedLoc ) activityJson.updatedLoc = activityJson.createdLoc;
-    if ( !activityJson.updatedUTC ) activityJson.updatedUTC = activityJson.createdUTC;
+    if ( !activityJson.date.updatedLoc ) activityJson.date.updatedLoc = activityJson.date.createdLoc;
+    if ( !activityJson.date.updatedUTC ) activityJson.date.updatedUTC = activityJson.date.createdUTC;
 };
 
 
@@ -472,8 +472,8 @@ ActivityDataManager.setActivityDate_Update = function( activityJson, dateNow )
     // Activity 'date' fill up - if not properly populated already
     if ( !activityJson.date ) activityJson.date = {};
 
-    if ( !activityJson.updatedLoc ) activityJson.updatedLoc = Util.formatDate( dateNow );
-    if ( !activityJson.updatedUTC ) activityJson.updatedUTC = Util.formatDate( dateNow.toUTCString() );
+    if ( !activityJson.date.updatedLoc ) activityJson.date.updatedLoc = Util.formatDate( dateNow );
+    if ( !activityJson.date.updatedUTC ) activityJson.date.updatedUTC = Util.formatDate( dateNow.toUTCString() );
 };
 
 

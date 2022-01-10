@@ -487,7 +487,7 @@ function Action( cwsRenderObj, blockObj )
 							
 							if ( dupVoucherActivityPass )
 							{
-								// #2. Use generated 'capture/search' json & place in final activity structure (id, transaction, processing (serachVal under processing) )
+								// #2. Set Final Activity Structure - by creating 'processing' part.  Use above generated activityPayload (from template) json.
 								ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
 								{									
 									AppInfoManager.addToActivityHistory( activityJson );

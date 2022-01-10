@@ -98,6 +98,30 @@ MsgManager.msgAreaClear_Alt = function( speed )
     }
 }
 
+
+MsgManager.notifMsg_WtOption = function( bodyMessage, optionJson )
+{
+    var cssClasses, actionButton, styles, Xpos, Ypos, hideTimeMs, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth;
+
+    //cssClasses, actionButton, styles, Xpos, Ypos, hideTimeMs, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth )
+    if ( optionJson )
+    {
+        cssClasses = optionJson.cssClasses;
+        actionButton = optionJson.actionButton;
+        styles = optionJson.styles;
+        Xpos = optionJson.Xpos;
+        Ypos = optionJson.Ypos;
+        hideTimeMs = optionJson.hideTimeMs;
+        autoClick = optionJson.autoClick;
+        addtoCloseClick = optionJson.addtoCloseClick;
+        ReserveMsgID = optionJson.ReserveMsgID;
+        disableClose = optionJson.disableClose;
+        disableAutoWidth = optionJson.disableAutoWidth;
+    }
+
+    MsgManager.notificationMessage( bodyMessage, cssClasses, actionButton, styles, Xpos, Ypos, hideTimeMs, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth );
+};
+
 MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton, styles, Xpos, Ypos, hideTimeMs, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth )
 {
     var unqID = Util.generateRandomId();
