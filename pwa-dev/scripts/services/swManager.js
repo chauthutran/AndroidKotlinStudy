@@ -127,6 +127,8 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         };
     };
 
+
+    // This gets triggered after the new files are downloaded already...  Anyway to show 'download in progress'?
     navigator.serviceWorker.addEventListener( 'controllerchange', ( e ) => 
     {
         // The oncontrollerchange property of the ServiceWorkerContainer interface is 

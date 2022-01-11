@@ -206,9 +206,12 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
     // NOTE: Need try/catch here?
     if ( syncReadyJson.ready )
     {
+        // Q: We should get existing actiivty?
         var activityCardObj = new ActivityCard( activityId );
         var clientId = ClientDataManager.getClientByActivityId( activityId )._id;
 
+
+        // Q: THIS SHOULD NOT BE OBJECT METHOD...  
         activityCardObj.highlightActivityDiv( true );
 
         activityCardObj.performSyncUp( function( success, responseJson ) 
@@ -229,7 +232,7 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
             activityCardObj.highlightActivityDiv( false );
 
             // Rerender the client card that holds this activity as well. - if new client case, the id is tempClient, yet.
-            ClientCard.reRenderClientCardsById( clientId );
+            ClientCard.reRenderClientCardsById( clientId, { 'activitiesTabClick': true } );
 
 
             if ( returnFunc ) returnFunc( syncReadyJson, success, responseJson );

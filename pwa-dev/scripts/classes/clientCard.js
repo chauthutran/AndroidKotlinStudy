@@ -338,9 +338,21 @@ ClientCard.getAllClientCardDivTags = function( clientId )
 };
 
 
-ClientCard.reRenderClientCardsById = function( clientId )
+ClientCard.reRenderClientCardsById = function( clientId, option )
 {
-    if ( clientId ) ClientCard.getAllClientCardDivTags( clientId ).find( 'div.clientRerender' ).click();
+    if ( clientId ) 
+    {
+        // TODO: this somehow cause the activity list 'sync' to render strangly... But this is about refreshing client, not activities...
+        var clientCardTags = ClientCard.getAllClientCardDivTags( clientId );
+        
+        clientCardTags.find( 'div.clientRerender' ).click();
+
+        // click on the activityTab? with option..
+        if ( option && option.activitiesTabClick )
+        {
+            clientCardTags.find( '.tab_fs li[rel=tab_clientActivities]:visible' ).click();
+        }
+    }
 };
 
 ClientCard.cardDivTag = `<div class="client card">
