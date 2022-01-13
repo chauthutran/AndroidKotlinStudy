@@ -63,12 +63,16 @@ function Login()
 		TranslationManager.translatePage();
 
 		// Perform autoCheckIn Flag (dateTimeStr), and run the auto checkIn..
+		/*
 		me.autoLoginCheck( function() {
 			me.populateSessionPin();
 			me.lastPinTrigger = true;
 			MsgManager.msgAreaShow( 'Auto Login After AppUpdate.' );
 			me.loginBtnTag.click();
 		});
+		*/
+
+
 
 		// If AppUpdate Refresh happened during Login, restore the current key typings
 		me.tempCurrentKeysRestore();
@@ -84,13 +88,13 @@ function Login()
 	{
 		me.resetLoginCurrentKeys();
 
-		var tempCurrentKeys = AppInfoManager.getLoginCurrentKeys();
-		if ( tempCurrentKeys )
+		var tempCurrentKeys = AppInfoLSManager.getLoginCurrentKeys();
+		if ( tempCurrentKeys && tempCurrentKeys.keys )
 		{
 			// load the keys to login page..
-			me.restoreLoginKeys( tempCurrentKeys );
+			me.restoreLoginKeys( tempCurrentKeys.keys );
 
-			AppInfoManager.clearLoginCurrentKeys();
+			AppInfoLSManager.clearLoginCurrentKeys();
 		}
 	};
 
@@ -98,21 +102,22 @@ function Login()
 	// This method is used by 'swManager'
 	me.getLoginCurrentKeys = function()
 	{
-		return { 'userName': me.current_userName, 'password': me.current_password };
+		return { 'userName': me.current_userName }; //, 'password': me.current_password };
 	};
+
 
 	me.resetLoginCurrentKeys = function()
 	{
 		me.current_userName = '';
-		me.current_password = {};		
+		//me.current_password = {};		
 	};
 
-	me.restoreLoginKeys = function( keysJson )
+	me.restoreLoginKeys = function( keys )
 	{
-		if ( keysJson.keys )
+		if ( keys )
 		{
-			if ( keysJson.keys.userName	) me.loginUserNameTag.val( keysJson.keys.userName );
-			if ( keysJson.keys.password	) me.restoreCurrentPassword( keysJson.keys.password );
+			if ( keys.userName	) me.loginUserNameTag.val( keys.userName );
+			//if ( keysJson.keys.password	) me.restoreCurrentPassword( keysJson.keys.password );
 		}
 	};
 	
@@ -404,6 +409,7 @@ function Login()
 	// =============================================
 	// == Auto Login Related
 
+	/*
 	me.autoLoginCheck = function( runFunc )
 	{
 		if ( AppInfoManager.getAutoLogin() )
@@ -413,6 +419,7 @@ function Login()
 			runFunc();
 		}
 	};
+
 
 	me.populateSessionPin = function()
 	{
@@ -437,6 +444,8 @@ function Login()
 		}, 'populateSessionPin' );
 	};
 
+	*/
+	
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
@@ -591,10 +600,16 @@ function Login()
 		GAnalytics.setEvent( "Login Process", "Login Button Clicked", "Successful", 1 );
 		//GAnalytics.setEvent = function(category, action, label, value = null) 
 
+
+		// NEW
+		AppInfoManager.loadData_AfterLogin( SessionManager.sessionData.login_Password );
+
+
 		// Reset this value
 		//AppInfoManager.clearAutoLogin();
-		AppInfoManager.clearLoginCurrentKeys();
+		AppInfoLSManager.clearLoginCurrentKeys();
 		me.resetLoginCurrentKeys();
+
 		
 		// Load config and continue the CWS App process
 		if ( !loginData.dcdConfig || loginData.dcdConfig.ERROR ) MsgManager.msgAreaShow( '<span term="msgNotif_loginSuccess_noConfig">Login Success, but country config not available.</span> <span>Msg: ' + loginData.dcdConfig.ERROR + '</span>', 'ERROR' );
@@ -626,7 +641,7 @@ function Login()
 		SyncManagerNew.SyncMsg_Reset();
 
 		// Save userName to 'appInfo.userInfo'
-		AppInfoManager.createUpdateUserInfo( userName );
+		AppInfoLSManager.markUserName( userName );
 		
 		SessionManager.setLoginStatus( true );		
 		InfoDataManager.setDataAfterLogin(); // sessionData.login_UserName update to 'INFO' object

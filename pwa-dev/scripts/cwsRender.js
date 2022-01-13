@@ -136,20 +136,20 @@ function cwsRender()
 	{
 		// Do 'redeemList' move from localStorage to IndexedDB (localForage version)
 		//  - Since we need password to encrypt the data..
-		DataVerMove.lsRedeemListMove( function() {			
+		//DataVerMove.lsRedeemListMove( function() {			
 
-			ClientDataManager.loadClientsStore_FromStorage( function() {
+		ClientDataManager.loadClientsStore_FromStorage( function() {
 
-				ActivityDataManager.regenActivityList_NIndexes();
+			ActivityDataManager.regenActivityList_NIndexes();
 
-				// Change the activities that did not complete -> 'Pending' to 'Failed', as app time out measure.
-				ActivityDataManager.updateActivitiesStatus_ProcessingToFailed( ActivityDataManager.getActivityList() );
+			// Change the activities that did not complete -> 'Pending' to 'Failed', as app time out measure.
+			ActivityDataManager.updateActivitiesStatus_ProcessingToFailed( ActivityDataManager.getActivityList() );
 
-				ClientDataManager.saveCurrent_ClientsStore( () => {
-					callBack();
-				});
+			ClientDataManager.saveCurrent_ClientsStore( () => {
+				callBack();
 			});
 		});
+		//});
 	};
 
 	me.renderArea1st = function() 
@@ -351,7 +351,7 @@ function cwsRender()
 
 		loginUserNameH4Tag.hide();
 
-		var lastSession = AppInfoManager.getUserInfo();
+		var lastSession = AppInfoLSManager.getUserInfo();
 
 		if ( lastSession && lastSession.user )
 		{

@@ -57,15 +57,91 @@ AppInfoManager.KEY_LAST_LOGIN_TYPE = "logIn_type";  // online, offline
 // ------------------------------------------------------------------------------------  
 // ----------------  User info
 
-AppInfoManager.initialLoad_FromStorage = function()
+// NOTE: Normally, we load in the beginning of app load <-- in 'app.js'
+// But we like to move things everything but last username logged in..
+
+// 2 [DO]
+AppInfoManager.loadData_AfterLogin = function( passwd )
 {
-    // Get appInfo from localStorage if any. If not, use default appInfo
-    // Set new data info in memory
-    AppInfoManager.data = AppInfoManager.loadAppInfo();
+    // IndexedDB data load and merge..  Data move from localStorage appInfo to indexedDB also is performed here.
+    AppInfoManager.data = AppInfoManager.loadAppInfo( AppInfoLSManager.getData(), passwd );
 };
 
+
+AppInfoManager.unloadData_AfterLogOut = function()
+{
+    // only indexedDB data unloading...
+
+
+};
+
+AppInfoManager.saveAppInfoData = function( appInfo )
+{
+    // 2 ways to save 'appInfo'.  1. get appInfo by parameter.  2. get appInfo from memory (AppInfoManager.data).
+
+    // Get appInfo from localStorage if any. If not, use default appInfo
+    if ( !appInfo ) appInfo = AppInfoManager.data;
+
+    // Need session.login user name
+    DataManager2.saveData_AppInfo( appInfo );
+};
+
+// --------------------------------------------
+
+AppInfoManager.getPropertyValue = function( mainKey, subKey )
+{
+    // Get appInfo from localStorage if any. If not, use default appInfo
+    var appInfo = AppInfoManager.data;    
+    var mainInfo = appInfo[mainKey];
+
+    return ( mainInfo == undefined ) ? undefined : appInfo[mainKey][subKey];
+};
+
+AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
+{
+    // Get appInfo from localStorage if any. If not, use default appInfo
+    var appInfo = AppInfoManager.data;
+    
+    // Update sub value by using keyword
+    if( appInfo[mainKey] == undefined )
+    {
+        appInfo[mainKey] = {};
+    }
+    
+    appInfo[mainKey][subKey] = valStr;
+
+    // Update data in memory
+    AppInfoManager.saveAppInfoData( appInfo );
+};
+
+AppInfoManager.removeProperty = function( mainKey, subKey )
+{
+    // Get appInfo from localStorage if any. If not, use default appInfo
+    var appInfo = AppInfoManager.data;
+
+    if ( appInfo[mainKey] )
+    {
+        Util.tryCatchContinue( function() 
+        {
+            delete appInfo[mainKey][subKey];
+
+            // Update the 'appInfo' data
+            AppInfoManager.saveAppInfoData( appInfo );  
+
+        }, 'AppInfoManager.removeProperty' );
+    }
+};
+
+
 // ------------------------------------------------------------------------------------  
-// ----------------  GET / UPDATE/ REMOVE Data
+// ---------------- Wrapper -------
+// DataManager2.getData_AppInfo = function()
+// DataManager2.saveData_AppInfo = function( jsonData )
+
+
+
+// ------------------------------------------------------------------------------------  
+// ----------------  GET / UPDATE/ REMOVE Data by Key
 
 AppInfoManager.getData = function( keyword )
 {
@@ -79,7 +155,8 @@ AppInfoManager.updateData = function( keyword, jsonData )
     
     // Update data of appInfo by using keyword
     appInfo[keyword] = jsonData;
-    LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
+
+    AppInfoManager.saveAppInfoData( appInfo );
 };
 
 AppInfoManager.removeData = function( keyword )
@@ -91,7 +168,7 @@ AppInfoManager.removeData = function( keyword )
      delete appInfo[keyword];
      
      // Update the 'appInfo' data
-     LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
+     AppInfoManager.saveAppInfoData( appInfo );     
 };
     
 // --------------------------------------------------
@@ -104,7 +181,7 @@ AppInfoManager.updateKey_StrValue = function( key, valueStr )
     appInfo[key] = valueStr;
 
     // Update data in memory
-    LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
+    AppInfoManager.saveAppInfoData( appInfo );
 };
 
 AppInfoManager.getKeyValue = function( key )
@@ -142,7 +219,7 @@ AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
     appInfo[mainKey][subKey] = valStr;
 
     // Update data in memory
-    LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
+    AppInfoManager.saveAppInfoData( appInfo );
 };
 
 AppInfoManager.removeProperty = function( mainKey, subKey )
@@ -157,7 +234,7 @@ AppInfoManager.removeProperty = function( mainKey, subKey )
             delete appInfo[mainKey][subKey];
 
             // Update the 'appInfo' data
-            LocalStgMng.saveJsonData( AppInfoManager.KEY_APPINFO, appInfo );
+            AppInfoManager.saveAppInfoData( appInfo );  
 
         }, 'AppInfoManager.removeProperty' );
     }
@@ -166,63 +243,71 @@ AppInfoManager.removeProperty = function( mainKey, subKey )
 // ----------------  load App Info
 
 // Get appInfo from localStorage if any. If not, use default appInfo
-AppInfoManager.loadAppInfo = function()
+AppInfoManager.loadAppInfo = function( appInfo_LS, passwd )
 {
-    var appInfo = LocalStgMng.getJsonData( AppInfoManager.KEY_APPINFO );
+    // 1. load data from indexedDB
 
-    if ( !appInfo )
+    // 2. if not exists, get data from template
+    //      (if new data, save to indexed db..)
+
+    // 3. merge with existing and pass back..?  But we shouldn't save userInfo?
+    //        --> For now, allow it to write to indexedDB storage, but ignore it..
+
+    var appInfo;
+
+    var appInfo_IDB = DataManager2.getData_AppInfo( passwd ); // appInfo_IDB
+
+    if ( !appInfo_IDB )
     {
-        appInfo = Util.cloneJson( AppInfoManager.template );
+        // If data is in 'localStorage', but not in indexedDB, move data...
+        if ( appInfo_LS ) 
+        {
+            // copy from LocalStorage version
+            appInfo = Util.cloneJson( appInfo_LS );
+            
+            // Remove from Storage other parts than userInfo..
+            //AppInfoLSManager.save
+            AppInfoLSManager.removeData( AppInfoManager.KEY_TRANSLATION );
+            AppInfoLSManager.removeData( AppInfoManager.KEY_SYNC );
+            AppInfoLSManager.removeData( AppInfoManager.KEY_DEBUG );
+        }
+        else
+        {
+            appInfo = Util.cloneJson( AppInfoManager.template );
+        }
     }
-    else
+    else 
     {
-        // On Local Storage data, check the missing data.
-        // Set minial structure - 'translation' and 'sync' shell should always exists..
-        if ( !appInfo.translation ) appInfo.translation = Util.cloneJson( AppInfoManager.template.translation );
-        if ( !appInfo.sync ) appInfo.sync = Util.cloneJson( AppInfoManager.template.sync );
-        if ( !appInfo.logInOut ) appInfo.logInOut = Util.cloneJson( AppInfoManager.template.logInOut );
-        if ( !appInfo.userInfo ) appInfo.logInOut = Util.cloneJson( AppInfoManager.template.userInfo );
+        appInfo = appInfo_IDB;
     }
 
+    if ( !appInfo.translation ) appInfo.translation = Util.cloneJson( AppInfoManager.template.translation );
+    if ( !appInfo.sync ) appInfo.sync = Util.cloneJson( AppInfoManager.template.sync );
+    if ( !appInfo.logInOut ) appInfo.logInOut = Util.cloneJson( AppInfoManager.template.logInOut );
+
+
+    AppInfoManager.saveAppInfoData( appInfo );
+    
     return appInfo;
 };
 
 // ------------------------------------------------------------------------------------  
 // ----------------  Auto Login Related..
 
-AppInfoManager.setAutoLogin = function( dateObj )
-{
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET, Util.formatDateTime( dateObj ) );
-};
+//AppInfoManager.setAutoLogin = function( dateObj )
+//{
+//    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET, Util.formatDateTime( dateObj ) );
+//};
 
-AppInfoManager.getAutoLogin = function()
-{
-    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET );
-};
+//AppInfoManager.getAutoLogin = function()
+//{
+//    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET );
+//};
 
-AppInfoManager.clearAutoLogin = function()
-{    
-    AppInfoManager.removeProperty( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET );
-};
-
-// ------------------------------------------------------------------------------------  
-// ----------------  Login Current Keys Related..
-
-AppInfoManager.setLoginCurrentKeys = function( dateObj, currentKeysJson )
-{
-    var dataJson = { 'timestamp': Util.formatDateTime( dateObj ), 'keys': currentKeysJson };
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_CURRENTKEYS, dataJson );
-};
-
-AppInfoManager.getLoginCurrentKeys = function()
-{
-    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_CURRENTKEYS );
-};
-
-AppInfoManager.clearLoginCurrentKeys = function()
-{    
-    AppInfoManager.removeProperty( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_CURRENTKEYS );
-};
+//AppInfoManager.clearAutoLogin = function()
+//{    
+//    AppInfoManager.removeProperty( AppInfoManager.KEY_LOGINOUT, AppInfoManager.KEY_AUTOLOGINSET );
+//};
 
 // ------------------------------------------------------------------------------------  
 // ----------------  New Error ActivityId List Related..
@@ -345,40 +430,7 @@ AppInfoManager.addHistory_CMN = function( data, subKey, historyList, historyMax,
     }
 };
 
-
-// ------------------------------------------------------------------------------------  
-// ----------------  User info
-
-// Called On Login...?  Why?  Maybe on App Start?
-AppInfoManager.createUpdateUserInfo = function( userName )
-{
-    var userInfo = AppInfoManager.getUserInfo();
-    
-    // UNDERSTAND ABOUT 'userName' saving & use, but... what about lastUpdated, etc?
-    // All others should move some place else?
-    if ( !userInfo ) userInfo = Util.cloneJson( AppInfoManager.template.userInfo );
-        
-    userInfo.user = userName;
-    
-    AppInfoManager.updateUserInfo( userInfo );
-};
-
-
-AppInfoManager.updateUserInfo = function( jsonData )
-{
-    AppInfoManager.updateData( AppInfoManager.KEY_USERINFO, jsonData );
-};
-
-
-AppInfoManager.getUserInfo = function()
-{
-    //return AppInfoManager.getData( AppInfoManager.KEY_USERINFO );
-
-    return AppInfoManager.getData( AppInfoManager.KEY_USERINFO );
-};
-
-//AppInfoManager.removeUserInfo = function() { AppInfoManager.removeData( AppInfoManager.KEY_USERINFO ); };
-
+// -------------------------------------
 
 AppInfoManager.getUserConfigSourceType = function()
 {

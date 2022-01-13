@@ -6,6 +6,10 @@ function DataManager2() {}
 
 DataManager2.StorageName_session = "session";
 // DataManager2.StorageName_langTerms = "langTerms";
+DataManager2.StorageName_clientList = "clientList";
+DataManager2.StorageName_appInfo = "appInfo";
+DataManager2.StorageName_loginResp = "loginResp";
+
 
 DataManager2.dbStorageType_localStorage = "localStorage";
 DataManager2.dbStorageType_indexdb = "indexdb";
@@ -67,7 +71,9 @@ DataManager2.encryptData = function( dataJson )
 	return encryptedDataStr;
 };
 
-DataManager2.decriptData = function( data )
+
+// Decript data with 'passwd'(as key) is passed.  Otherwise, use sessionData.login_Password as decripting key.
+DataManager2.decriptData = function( data, passwd )
 {
 	var jsonData = data;
 
@@ -76,7 +82,7 @@ DataManager2.decriptData = function( data )
 		// TODO: For Performance, we can create a simple data (like 'T') - for data decrypt testing.. <-- on top of redeem one..
 		try
 		{
-			var iv = SessionManager.sessionData.login_Password;
+			var iv = ( passwd ) ? passwd : SessionManager.sessionData.login_Password;
 
 			var descriptedVal = CryptoJS.AES.decrypt( data.toString(), iv, {
 				keySize: 128 / 8,
@@ -152,14 +158,59 @@ DataManager2.saveData_ActivityList = function( jsonData, callBack )
 
 DataManager2.getData_ClientsStore = function( callBack )
 {
-	var keyName = Constants.storageName_clientList + '_' + SessionManager.sessionData.login_UserName;
+	var keyName = DataManager2.StorageName_clientList + '_' + SessionManager.sessionData.login_UserName;
 	DataManager2.getData_IDB( keyName, callBack );
+	// TODO: should use 'await' instead of callBack!!!
 };
 
 DataManager2.saveData_ClientsStore = function( jsonData, callBack )
 {
-	var keyName = Constants.storageName_clientList + '_' + SessionManager.sessionData.login_UserName;
+	var keyName = DataManager2.StorageName_clientList + '_' + SessionManager.sessionData.login_UserName;
 	DataManager2.saveData_IDB( keyName, jsonData, callBack );
+	// TODO: should use 'await' instead of callBack!!!
+};
+
+
+// ---------------------------------
+// -- AWAIT VERSION
+
+DataManager2.getData_AppInfo = function( passwd )
+{
+	var keyName = DataManager2.StorageName_appInfo + '_' + SessionManager.sessionData.login_UserName;
+
+	var itemData = StorageMng.getItem_IDB( keyName );
+
+	return DataManager2.decriptData( itemData, passwd );	
+};
+
+DataManager2.saveData_AppInfo = function( jsonData )
+{
+	var keyName = DataManager2.StorageName_appInfo + '_' + SessionManager.sessionData.login_UserName;
+	
+	var strData_Encrypt = DataManager2.encryptData( jsonData );
+
+	StorageMng.setItem_IDB( keyName, strData_Encrypt );
+};
+
+// -----------------------------------------
+
+// Could be called before login.. without session data loaded..
+DataManager2.getData_LoginResp = function( userName, passwd )
+{
+	var keyName = DataManager2.DataManager2.StorageName_loginResp + '_' + userName;
+
+	var itemData = StorageMng.getItem_IDB( keyName );
+
+	return DataManager2.decriptData( itemData, passwd );	
+};
+
+DataManager2.saveData_LoginResp = function( userName, jsonData )
+{
+	var keyName = DataManager2.DataManager2.StorageName_loginResp + '_' + userName;
+	
+	var strData_Encrypt = DataManager2.encryptData( jsonData );
+
+	StorageMng.setItem_IDB( keyName, strData_Encrypt );
 };
 
 

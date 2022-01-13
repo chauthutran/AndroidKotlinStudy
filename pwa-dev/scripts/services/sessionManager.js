@@ -143,51 +143,6 @@ SessionManager.isTestLoginCountry = function()
 
 // --------------------------------------------------
 
-// -- Called after login --> to update the 'User' session data in localStorage.
-SessionManager.saveUserSessionToStorage = function( loginData, userName, password )
-{
-	try
-	{
-		var newSaveObj = Util.cloneJson( loginData );
-
-		var dtmNow = ( new Date() ).toISOString();
-		
-		//var themeStr = loginData.dcdConfig.settings.theme : "default";
-	
-
-		// NOTE: ...
-		newSaveObj.mySession = { 
-			createdDate: dtmNow // Last online login
-			//,lastUpdated: dtmNow // Last offline login? <-- do we need this?
-			,pin: Util.encrypt( password, 4 ) // Used on Offline Login password check
-			,theme: 'blue' 
-			//,language: AppInfoManager.getLangCode() // Not Used - Instead, saved in AppInfo.
-		};
-	
-		LocalStgMng.saveJsonData( userName, newSaveObj );
-	}
-	catch( errMsg )
-	{
-		console.customLog( 'Error in SessionManager.saveUserSessionToStorage, errMsg: ' + errMsg );
-	}
-
-};
-
-
-SessionManager.getMySessionOnLocalStorage = function( userName )
-{
-	var userLoginLocalData = SessionManager.getLoginDataFromStorage( userName );
-
-	return ( userLoginLocalData ) ? userLoginLocalData.mySession: undefined;
-};
-
-SessionManager.getMySessionCreatedDate = function( userName )
-{
-	var mySession = SessionManager.getMySessionOnLocalStorage( userName );
-
-	return ( mySession ) ? mySession.createdDate: undefined;
-};
-
 // -- Called after offline login --> updates just datetime..
 // SessionManager.updateUserSessionToStorage = function( loginData, userName )
 // {
@@ -236,38 +191,6 @@ SessionManager.check_warnLastConfigCheck = function( configUpdate )
 
 // -------------------------------------
 
-SessionManager.getLoginDataFromStorage = function( userName )
-{
-	return LocalStgMng.getJsonData( userName );
-};
-
-
-SessionManager.saveLoginDataToStorage = function( userName, loginData )
-{
-	LocalStgMng.saveJsonData( userName, loginData );
-};
-
-// -------------------------------------
-
-// Same call, diff name of 'getLoginDataFromStorage'
-SessionManager.getOfflineUserData = function( userName )
-{
-	return SessionManager.getLoginDataFromStorage( userName );
-};
-
-SessionManager.getOfflineUserPin = function( offlineUserData )
-{
-	var pin = "";
-	
-	if ( offlineUserData && offlineUserData.mySession && offlineUserData.mySession.pin )
-	{
-		pin = Util.decrypt( offlineUserData.mySession.pin, 4);
-	}
-
-	return pin;
-};
-
-
 // -----------------------------
 
 // In 'newBlock' button onclick action sequence, we can pass this...  <-- with eval Action..
@@ -309,3 +232,93 @@ SessionManager.clearWSBlockFormsJson = function()
 	SessionManager.WSblockFormsJson = {};
 	SessionManager.WSblockFormsJsonArr = [];
 };
+
+
+
+
+
+// ============================================
+// == DATA MANAGING REALTED
+
+// TODO: LoginData <-- 
+
+SessionManager.getLoginDataFromStorage = function( userName, passwd )
+{
+	return DataManager2.getData_LoginResp( userName, passwd );  //LocalStgMng.getJsonData( userName );
+};
+
+
+SessionManager.saveLoginDataToStorage = function( userName, loginData )
+{
+	DataManager2.saveData_LoginResp( userName, loginData );
+	//LocalStgMng.saveJsonData( userName, loginData );
+};
+
+// -------------------------------------
+
+// Same call, diff name of 'getLoginDataFromStorage'
+SessionManager.getOfflineUserData = function( userName )
+{
+	return SessionManager.getLoginDataFromStorage( userName );
+};
+
+SessionManager.getOfflineUserPin = function( offlineUserData )
+{
+	var pin = "";
+	
+	if ( offlineUserData && offlineUserData.mySession && offlineUserData.mySession.pin )
+	{
+		pin = Util.decrypt( offlineUserData.mySession.pin, 4);
+	}
+
+	return pin;
+};
+
+
+// -- Called after login --> to update the 'User' session data in localStorage.
+SessionManager.saveUserSessionToStorage = function( loginData, userName, password )
+{
+	try
+	{
+		var newSaveObj = Util.cloneJson( loginData );
+
+		var dtmNow = ( new Date() ).toISOString();
+		
+		//var themeStr = loginData.dcdConfig.settings.theme : "default";
+	
+
+		// NOTE: ...
+		newSaveObj.mySession = { 
+			createdDate: dtmNow // Last online login
+			//,lastUpdated: dtmNow // Last offline login? <-- do we need this?
+			,pin: Util.encrypt( password, 4 ) // Used on Offline Login password check
+			,theme: 'blue' 
+			//,language: AppInfoManager.getLangCode() // Not Used - Instead, saved in AppInfo.
+		};
+	
+		LocalStgMng.saveJsonData( userName, newSaveObj );
+	}
+	catch( errMsg )
+	{
+		console.customLog( 'Error in SessionManager.saveUserSessionToStorage, errMsg: ' + errMsg );
+	}
+
+};
+
+
+SessionManager.getMySessionOnLocalStorage = function( userName )
+{
+	var userLoginLocalData = SessionManager.getLoginDataFromStorage( userName );
+
+	return ( userLoginLocalData ) ? userLoginLocalData.mySession: undefined;
+};
+
+SessionManager.getMySessionCreatedDate = function( userName )
+{
+	var mySession = SessionManager.getMySessionOnLocalStorage( userName );
+
+	return ( mySession ) ? mySession.createdDate: undefined;
+};
+
+
+

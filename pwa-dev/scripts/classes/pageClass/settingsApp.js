@@ -353,7 +353,7 @@ function settingsApp( cwsRender )
 
         me.settingsFormDivTag.find( '.linkAppUpdateRefresh' ).off( 'click' ).click( function() 
         {
-            AppInfoManager.setAutoLogin( new Date() );
+            // AppInfoManager.setAutoLogin( new Date() );
             AppUtil.appReloadWtMsg();
         });      
 

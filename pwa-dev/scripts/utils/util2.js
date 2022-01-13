@@ -113,7 +113,7 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 
 Util2.getLocalStorageObjectValue = function( objKeyVal )
 {
-	var lastSession = AppInfoManager.getUserInfo();
+	var lastSession = AppInfoLSManager.getUserInfo();
 	var arrKeys;
 
 	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
