@@ -351,19 +351,19 @@ function cwsRender()
 
 		loginUserNameH4Tag.hide();
 
-		var lastSession = AppInfoLSManager.getUserInfo();
+		var userName = AppInfoLSManager.getUserName();
 
-		if ( lastSession && lastSession.user )
+		if ( userName )
 		{
 			// Div (Input) part of Login UserName
 			$( '#loginField' ).hide();
 
 			// input parts..  Below will be hidden, though...
-			$( 'input.loginUserName' ).val( lastSession.user );	
+			$( 'input.loginUserName' ).val( userName );	
 			$( 'input.loginUserName' ).attr( 'readonly',true );
 
 			// Display login name as Big text part - if we already have user..
-			loginUserNameH4Tag.text( lastSession.user ).show();
+			loginUserNameH4Tag.text( userName ).show();
 		}
 		else
 		{
@@ -410,7 +410,8 @@ function cwsRender()
 	{
 		SessionManager.setLoginStatus( false );
 		SessionManager.unloadDataInSession(); // Include config json unload
-
+		AppInfoManager.unloadData_AfterLogOut();
+		
 		// NEW: Remove/Clear all the data <-- index, clientList, etc..
 		ClientDataManager.clearClientDataInMem();
 		ActivityDataManager.clearActivityDataInMem();

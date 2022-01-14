@@ -220,7 +220,7 @@ ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 		clearInterval( ScheduleManager.timerID_scheduleSyncAllRun );
 
 		// get syncAll frequency from storage..
-		var syncScheduleTimeMs = Number( AppInfoManager.getNetworkSync() );  // empty or 0 is no scheduled ones..
+		var syncScheduleTimeMs = Number( AppInfoLSManager.getNetworkSync() );  // empty or 0 is no scheduled ones..
 
 		if ( syncScheduleTimeMs > 0 )
 		{

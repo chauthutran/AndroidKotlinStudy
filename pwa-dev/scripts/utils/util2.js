@@ -113,17 +113,17 @@ Util2.getValueFromPattern = function( tagTarget, pattern, commitSEQIncr )
 
 Util2.getLocalStorageObjectValue = function( objKeyVal )
 {
-	var lastSession = AppInfoLSManager.getUserInfo();
+	var userName = AppInfoLSManager.getUserName();
 	var arrKeys;
 
-	if ( ( !lastSession && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
+	if ( ( !userName && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
 	{
 		console.customLog( ' exiting getLocalStorageObjectValue ');
 		return;
 	}
 	else
 	{
-		if ( lastSession )
+		if ( userName )
 		{
 			var localData = SessionManager.sessionData;
 
@@ -138,7 +138,7 @@ Util2.getLocalStorageObjectValue = function( objKeyVal )
 
 Util2.newLocalSequence = function( pattern, commitSEQIncr )
 {
-	var jsonUserData = SessionManager.getLoginDataFromStorage( SessionManager.sessionData.login_UserName );
+	var jsonUserData = SessionManager.getLoginRespData_IDB( SessionManager.sessionData.login_UserName, SessionManager.sessionData.login_Password );
 
 	var jsonStorageData = jsonUserData.mySession.seqIncr;
 	var ret;
@@ -184,7 +184,7 @@ Util2.newLocalSequence = function( pattern, commitSEQIncr )
 
 				if ( commitSEQIncr != undefined && commitSEQIncr == true )
 				{
-					SessionManager.saveLoginDataToStorage( SessionManager.sessionData.login_UserName, jsonUserData );
+					SessionManager.setLoginRespData_IDB( SessionManager.sessionData.login_UserName, SessionManager.sessionData.login_Password, jsonUserData );
 				}
 
 				return Util2.paddNumeric( ret, arrParm[1] );

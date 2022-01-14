@@ -75,7 +75,7 @@ function Login()
 
 
 		// If AppUpdate Refresh happened during Login, restore the current key typings
-		me.tempCurrentKeysRestore();
+		// me.tempCurrentKeysRestore();
 	};
 
 	// -----------------------------------
@@ -84,6 +84,7 @@ function Login()
 	// =============================================
 	// === TEMP CURRENT KEYS RESTORE RELATED =======
 	
+	/*
 	me.tempCurrentKeysRestore = function()
 	{
 		me.resetLoginCurrentKeys();
@@ -104,7 +105,6 @@ function Login()
 	{
 		return { 'userName': me.current_userName }; //, 'password': me.current_password };
 	};
-
 
 	me.resetLoginCurrentKeys = function()
 	{
@@ -141,6 +141,8 @@ function Login()
 			if ( pwdJson.p4 ) me.splitPasswordTag.find( '.pin4' ).val( pwdJson.p4 );
 		}
 	};
+	*/
+
 
 	// =============================================
 
@@ -426,7 +428,7 @@ function Login()
 		Util.tryCatchContinue( function() 
 		{
 			var userName = me.loginUserNameTag.val();
-			var offlineUserData = SessionManager.getOfflineUserData( userName );
+			var offlineUserData = SessionManager.getLoginRespData_IDB( userName );
 			if ( offlineUserData )
 			{
 				var password = SessionManager.getOfflineUserPin( offlineUserData );
@@ -565,7 +567,7 @@ function Login()
 			{
 				SessionManager.Status_LogIn_InProcess = false;
 
-				if ( isSuccess ) me.loginSuccessProcess( userName, offlineUserData, function() 
+				if ( isSuccess ) me.loginSuccessProcess( userName, password, offlineUserData, function() 
 				{
 					// After StartUp Fun - This should be displayed after loading..
 					SessionManager.check_warnLastConfigCheck( ConfigManager.getConfigUpdateSetting() );
@@ -585,7 +587,7 @@ function Login()
 				if ( isSuccess )
 				{
 					me.retrieveStatisticPage( ( fileName, statPageData ) => { me.saveStatisticPage( fileName, statPageData ); } );
-					me.loginSuccessProcess( userName, loginData );	
+					me.loginSuccessProcess( userName, password, loginData );	
 				}
 
 				if ( callAfterDone ) callAfterDone( isSuccess );
@@ -594,7 +596,7 @@ function Login()
 	};
 
 	
-	me.loginSuccessProcess = function( userName, loginData, runAfterFunc ) 
+	me.loginSuccessProcess = function( userName, password, loginData, runAfterFunc ) 
 	{	
 		// gAnalytics Event
 		GAnalytics.setEvent( "Login Process", "Login Button Clicked", "Successful", 1 );
@@ -602,12 +604,12 @@ function Login()
 
 
 		// NEW
-		AppInfoManager.loadData_AfterLogin( SessionManager.sessionData.login_Password );
+		AppInfoManager.loadData_AfterLogin( userName, password );
 
 
 		// Reset this value
 		//AppInfoManager.clearAutoLogin();
-		AppInfoLSManager.clearLoginCurrentKeys();
+		//AppInfoLSManager.clearLoginCurrentKeys();
 		me.resetLoginCurrentKeys();
 
 		
@@ -641,7 +643,7 @@ function Login()
 		SyncManagerNew.SyncMsg_Reset();
 
 		// Save userName to 'appInfo.userInfo'
-		AppInfoLSManager.markUserName( userName );
+		AppInfoLSManager.setUserName( userName );
 		
 		SessionManager.setLoginStatus( true );		
 		InfoDataManager.setDataAfterLogin(); // sessionData.login_UserName update to 'INFO' object
@@ -677,14 +679,16 @@ function Login()
 	{
 		WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
 		{			
-			me.checkLoginData_wthErrMsg( success, userName, loginData, function( resultSuccess ) 
+			me.checkLoginData_wthErrMsg( success, userName, password, loginData, function( resultSuccess ) 
 			{
 				if ( resultSuccess )
 				{
 					me.setModifiedOUAttrList( loginData );
+					AppInfoLSManager.setLastOnlineLoginDt( ( new Date() ).toISOString() );
+					AppInfoLSManager.saveConfigSourceType( loginData );
 
-					// Save 'loginData' in localStorage and put it on session memory
-					SessionManager.saveUserSessionToStorage( loginData, userName, password );
+					// Save 'loginData' in indexedDB for offline usage and load to session.
+					SessionManager.setLoginRespData_IDB( loginData, userName, password );
 					SessionManager.loadDataInSession( userName, password, loginData );
 				}
 
@@ -698,25 +702,26 @@ function Login()
 	{
 		var isSuccess = false;
 
-		// OFFLINE Login - validate encrypted pwd against already stored+encrypted pwd
-		var offlineUserData = SessionManager.getOfflineUserData( userName );
+		// TODO: WORK ON HERE!!!!
 
-		if ( offlineUserData )
+		if ( SessionManager.checkOfflineDataExists( userName ) )
 		{
-			if ( offlineUserData.blackListing )
+			if ( AppInfoLSManager.getBlackListed() )
 			{			
 				// Translation term need to be added - from config?	
 				MsgManager.msgAreaShow( me.getLoginFailedMsgSpan() + ' ' + me.ERR_MSG_blackListing, 'ERROR' );
 			}
 			else
 			{
-				if ( password === SessionManager.getOfflineUserPin( offlineUserData ) )
+				if ( SessionManager.checkPasswordOffline_IDB( userName, password ) )
 				{					
-					if ( SessionManager.checkLoginData( offlineUserData ) )
+
+					var loginResp = SessionManager.getLoginRespData_IDB( userName, password );
+
+					if ( SessionManager.checkLoginData( loginResp ) )
 					{
-						// Update current user login information ( lastUpdated, stayLoggedIn )
-						//SessionManager.updateUserSessionToStorage( offlineUserData, userName );
-						SessionManager.loadDataInSession( userName, password, offlineUserData );
+						// load to session
+						SessionManager.loadDataInSession( userName, password, loginResp );
 	
 						isSuccess = true;
 	
@@ -743,7 +748,7 @@ function Login()
 	// ----------------------------
 
 
-	me.checkLoginData_wthErrMsg = function ( success, userName, loginData, callBack )
+	me.checkLoginData_wthErrMsg = function ( success, userName, password, loginData, callBack )
 	{
 		var resultSuccess = false;
 
@@ -776,7 +781,7 @@ function Login()
 			// NEW: Save 'blackListing' case to localStorage offline user data..  CREATE CLASS?  OTHER THAN appInfo?
 			if ( loginData && loginData.blackListing ) 
 			{
-				WsCallManager.markBlackListing_Local( loginData, userName );
+				AppInfoLSManager.setBlackListed( true );
 				errDetail =  me.ERR_MSG_blackListing;
 			}
 			else if ( loginData && loginData.returnCode === 502 ) errDetail = ' - Server not available';

@@ -154,7 +154,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             
             // Reset this value
             //AppInfoManager.clearAutoLogin();
-            AppInfoLSManager.clearLoginCurrentKeys();
+            //AppInfoLSManager.clearLoginCurrentKeys();
 
             
             var allowAppReload_AfterLogin = ConfigManager.getAppUpdateSetting().allowAppReload_AfterLogin;
@@ -173,6 +173,10 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
                 //if ( SessionManager.Status_LogIn_InProcess ) AppInfoManager.setAutoLogin( new Date() );
                 //else AppInfoLSManager.setLoginCurrentKeys( new Date(), SessionManager.cwsRenderObj.loginObj.getLoginCurrentKeys() );
  
+
+                // TODO: In Log in page, if fresh app without never logged in case, app get updated, 
+                //      - try to store the userName if typed..
+
                 AppUtil.appReloadWtMsg( 'App Reloading! (After Update)' );
             }   
         }

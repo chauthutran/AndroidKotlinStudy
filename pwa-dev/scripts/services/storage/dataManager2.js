@@ -57,9 +57,9 @@ DataManager2.getDataByStorageType = function( storageTypeStr, secName, callBack 
 
 // ------------------------------------------------
 // -------- Encrypt/Decript Methods --------------
-DataManager2.encryptData = function( dataJson )
+DataManager2.encryptData = function( dataJson, passwd )
 {
-	var iv = SessionManager.sessionData.login_Password;
+	var iv = ( passwd ) ? passwd : SessionManager.sessionData.login_Password;
 
 	var encryptedDataStr = CryptoJS.AES.encrypt( JSON.stringify( dataJson ), iv, {
 		keySize: 128 / 8,
@@ -73,25 +73,18 @@ DataManager2.encryptData = function( dataJson )
 
 
 // Decript data with 'passwd'(as key) is passed.  Otherwise, use sessionData.login_Password as decripting key.
-DataManager2.decriptData = function( data, passwd )
+DataManager2.decriptData = function( dataStr, passwd )
 {
-	var jsonData = data;
+	var jsonData;
 
-	if ( data )
+	if ( dataStr )
 	{
 		// TODO: For Performance, we can create a simple data (like 'T') - for data decrypt testing.. <-- on top of redeem one..
 		try
 		{
 			var iv = ( passwd ) ? passwd : SessionManager.sessionData.login_Password;
 
-			var descriptedVal = CryptoJS.AES.decrypt( data.toString(), iv, {
-				keySize: 128 / 8,
-				iv: iv,
-				mode: CryptoJS.mode.CBC,
-				padding: CryptoJS.pad.Pkcs7
-			});
-
-			var utf8StrVal = CryptoJS.enc.Utf8.stringify( descriptedVal );
+			var utf8StrVal = DataManager2.decriptData_CMN( dataStr, iv );
 
 			jsonData = JSON.parse( utf8StrVal );	
 		}
@@ -103,6 +96,55 @@ DataManager2.decriptData = function( data, passwd )
 
 	return jsonData;
 };
+
+
+DataManager2.checkDecriptionPasswd = function( keyName, passwd )
+{
+	var isSuccess = false;
+
+	try
+	{
+		if ( keyName && passwd )
+		{
+			var itemDataStr = StorageMng.getItem_IDB( keyName );
+
+			if ( itemDataStr )
+			{
+				var utf8StrVal = DataManager2.decriptData_CMN( itemDataStr, passwd );
+
+				if ( utf8StrVal )
+				{
+					var jsonData = JSON.parse( utf8StrVal );
+					if ( jsonData && Util.isTypeObject( jsonData ) )
+					{
+						isSuccess = true;
+					}
+				}	
+			}
+		}
+	}
+	catch ( errMsg )
+	{
+		console.log( 'password failed to decript' );
+	}
+
+	return isSuccess;
+};
+
+
+DataManager2.decriptData_CMN = function( dataStr, iv )
+{
+	var descriptedVal = CryptoJS.AES.decrypt( dataStr.toString(), iv, {
+		keySize: 128 / 8,
+		iv: iv,
+		mode: CryptoJS.mode.CBC,
+		padding: CryptoJS.pad.Pkcs7
+	});
+
+	var utf8StrVal = CryptoJS.enc.Utf8.stringify( descriptedVal );
+
+	return utf8StrVal;
+}
 
 // ------------------------------------------------
 // -------- SAVE Methods --------------
@@ -174,20 +216,29 @@ DataManager2.saveData_ClientsStore = function( jsonData, callBack )
 // ---------------------------------
 // -- AWAIT VERSION
 
-DataManager2.getData_AppInfo = function( passwd )
+DataManager2.checkDataExists_IDB = function( keyName )
 {
-	var keyName = DataManager2.StorageName_appInfo + '_' + SessionManager.sessionData.login_UserName;
+	if ( StorageMng.getItem_IDB( keyName ) ) return true;
+	else return false;
+};
+
+// ------------------- 
+// ---- AppInfo
+
+DataManager2.getData_AppInfo = function( userName, passwd )
+{
+	var keyName = DataManager2.StorageName_appInfo + '_' + userName; //SessionManager.sessionData.login_UserName;
 
 	var itemData = StorageMng.getItem_IDB( keyName );
 
 	return DataManager2.decriptData( itemData, passwd );	
 };
 
-DataManager2.saveData_AppInfo = function( jsonData )
+DataManager2.saveData_AppInfo = function( userName, passwd, jsonData )
 {
-	var keyName = DataManager2.StorageName_appInfo + '_' + SessionManager.sessionData.login_UserName;
+	var keyName = DataManager2.StorageName_appInfo + '_' + userName; //SessionManager.sessionData.login_UserName;
 	
-	var strData_Encrypt = DataManager2.encryptData( jsonData );
+	var strData_Encrypt = DataManager2.encryptData( jsonData, passwd );
 
 	StorageMng.setItem_IDB( keyName, strData_Encrypt );
 };
@@ -204,11 +255,11 @@ DataManager2.getData_LoginResp = function( userName, passwd )
 	return DataManager2.decriptData( itemData, passwd );	
 };
 
-DataManager2.saveData_LoginResp = function( userName, jsonData )
+DataManager2.saveData_LoginResp = function( userName, passwd, jsonData )
 {
 	var keyName = DataManager2.DataManager2.StorageName_loginResp + '_' + userName;
 	
-	var strData_Encrypt = DataManager2.encryptData( jsonData );
+	var strData_Encrypt = DataManager2.encryptData( jsonData, passwd );
 
 	StorageMng.setItem_IDB( keyName, strData_Encrypt );
 };

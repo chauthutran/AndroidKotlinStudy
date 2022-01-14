@@ -36,7 +36,7 @@ TranslationManager.getLangCode = function()
 {
 	if ( !TranslationManager.currentLangcode ) 
 	{
-		TranslationManager.currentLangcode = AppInfoManager.getLangCode();
+		TranslationManager.currentLangcode = AppInfoLSManager.getLangCode();
 	}
 
 	return TranslationManager.currentLangcode;
@@ -50,7 +50,7 @@ TranslationManager.setLangCode = function( langCode )
 	{
 		TranslationManager.currentLangcode = langCode;
 
-		AppInfoManager.setLangCode( langCode );	
+		AppInfoLSManager.setLangCode( langCode );	
 	}
 };
 
@@ -101,7 +101,7 @@ TranslationManager.loadLangTerms_NSetUpData = function( forceDownload, returnFun
 TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 {
 	// If exists in local storage, load it, Otherwise, retrieve it
-	var allLangTerms_stored = AppInfoManager.getLangTerms();
+	var allLangTerms_stored = AppInfoLSManager.getLangTerms();
 	
 	if ( allLangTerms_stored && !forceDownload )
 	{
@@ -114,11 +114,11 @@ TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 		TranslationManager.downloadLangTerms( function( allLangTerms_downloaded )
 		{
 			$( "#imgSettingLangTermRotate" ).removeClass( "rot_l_anim" );
-			AppInfoManager.setLangLastDateTime( new Date() );
+			AppInfoLSManager.setLangLastDateTime( new Date() );
 
-			$( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + AppInfoManager.getLangLastDateTime() );
+			$( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + AppInfoLSManager.getLangLastDateTime() );
 
-			if ( allLangTerms_downloaded ) AppInfoManager.updateLangTerms( allLangTerms_downloaded );
+			if ( allLangTerms_downloaded ) AppInfoLSManager.updateLangTerms( allLangTerms_downloaded );
 
 
 			// CHECK:

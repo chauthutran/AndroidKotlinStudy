@@ -144,7 +144,7 @@ function settingsApp( cwsRender )
         me.settingsInfo_NetworkSync.change ( () => 
         {
             // Save Data in AppInfoManager for later use...
-            AppInfoManager.updateNetworkSync( me.settingsInfo_NetworkSync.val() );
+            AppInfoLSManager.updateNetworkSync( me.settingsInfo_NetworkSync.val() );
 
             ScheduleManager.schedule_syncAll_Background( me.cwsRenderObj );            
         });
@@ -221,7 +221,7 @@ function settingsApp( cwsRender )
 
     me.populateSettingsPageData = function( dcdConfig ) 
     {
-        me.populateNetworkSyncList_Show( me.settingsInfo_NetworkSync, me.syncOptions, AppInfoManager.getNetworkSync() );
+        me.populateNetworkSyncList_Show( me.settingsInfo_NetworkSync, me.syncOptions, AppInfoLSManager.getNetworkSync() );
 
         me.setUpMoreInfoDiv();
     }
@@ -254,7 +254,7 @@ function settingsApp( cwsRender )
 
         //$( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
 
-        $( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + AppInfoManager.getLangLastDateTime() );
+        $( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + AppInfoLSManager.getLangLastDateTime() );
 
         $( '#settingsInfo_DivLangSelect' ).show();
     }
