@@ -248,7 +248,7 @@ DataManager2.saveData_AppInfo = function( userName, passwd, jsonData )
 // Could be called before login.. without session data loaded..
 DataManager2.getData_LoginResp = function( userName, passwd )
 {
-	var keyName = DataManager2.DataManager2.StorageName_loginResp + '_' + userName;
+	var keyName = DataManager2.StorageName_loginResp + '_' + userName;
 
 	var itemData = StorageMng.getItem_IDB( keyName );
 
@@ -257,7 +257,7 @@ DataManager2.getData_LoginResp = function( userName, passwd )
 
 DataManager2.saveData_LoginResp = function( userName, passwd, jsonData )
 {
-	var keyName = DataManager2.DataManager2.StorageName_loginResp + '_' + userName;
+	var keyName = DataManager2.StorageName_loginResp + '_' + userName;
 	
 	var strData_Encrypt = DataManager2.encryptData( jsonData, passwd );
 

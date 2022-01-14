@@ -297,7 +297,7 @@ function Login()
 				}
 			}
 
-			me.current_password = me.getCurrentPassword();
+			//me.current_password = me.getCurrentPassword();
 		});
 
 		// 
@@ -473,7 +473,7 @@ function Login()
 
 			localStageTag.off( 'change' ).change( () => {
 				var stage = localStageTag.val();
-				AppInfoManager.setLocalStageName( stage );
+				AppInfoLSManager.setLocalStageName( stage );
 				WsCallManager.setWsTarget_Stage( stage );
 				alert( 'Changed to [' + stage + ']' );
 			});
@@ -610,7 +610,7 @@ function Login()
 		// Reset this value
 		//AppInfoManager.clearAutoLogin();
 		//AppInfoLSManager.clearLoginCurrentKeys();
-		me.resetLoginCurrentKeys();
+		//me.resetLoginCurrentKeys();
 
 		
 		// Load config and continue the CWS App process

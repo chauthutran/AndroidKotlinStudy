@@ -72,7 +72,7 @@ WsCallManager.setWsTarget = function( overrideOriginUrl, overrideStageName )
         if ( overrideStageName ) stageName = overrideStageName;
         else 
         {
-            var savedLocalStageName = AppInfoManager.getLocalStageName();
+            var savedLocalStageName = AppInfoLSManager.getLocalStageName();
             stageName = ( savedLocalStageName ) ? savedLocalStageName : 'dev';
         }
     }
@@ -178,7 +178,7 @@ WsCallManager.serverAvailable = function( callBack )
             {
                 // If  configManager configJson.souceType is available (after login), use it.  Otherwise (on not login), get localStorage data.                
                 var configJson = ConfigManager.getConfigJson();
-                var sourceType = ( configJson.sourceType ) ? configJson.sourceType : AppInfoManager.getConfigSourceType();
+                var sourceType = ( configJson.sourceType ) ? configJson.sourceType : AppInfoLSManager.getConfigSourceType();
                 if ( sourceType !== 'mongo' ) sourceType = 'dhis2';
                 
                 WsCallManager.dwsAvailabilityCheck( sourceType, callBack );   

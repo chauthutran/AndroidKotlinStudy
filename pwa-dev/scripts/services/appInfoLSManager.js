@@ -14,7 +14,7 @@ AppInfoLSManager.KEY_CONFIGSOURCETYPE = "configSourceType";
 AppInfoLSManager.KEY_BLACKLISTED = "blackListed"; 
 AppInfoLSManager.KEY_LAST_ONLINELOGIN_DT = "lastOnlineLoginDt"; 
 AppInfoLSManager.KEY_NETWORKSYNC = "networkSync";
-
+AppInfoLSManager.KEY_LOCAL_STAGENAME = "localStageName"; 
 
 // Old and obsolete keys
 AppInfoLSManager.KEY_USERINFO = "userInfo";  // It actually is 'lastLoginData'
@@ -29,8 +29,6 @@ AppInfoLSManager.KEY_LANG_CODE = "langCode";
 AppInfoLSManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
 
 // ---------------------------
-
-AppInfoLSManager.KEY_LOCAL_STAGENAME = "localStageName"; 
 
 AppInfoLSManager.KEY_LASTLOGINOUT = "lastLogInOut"; 
 //AppInfoLSManager.KEY_AUTOLOGINSET = "autoLoginSet"; 
@@ -56,31 +54,45 @@ AppInfoLSManager.initialDataLoad_LocalStorage = function()
 
 AppInfoLSManager.migrateData = function( appInfo_LS )
 {
+    // Run EveryTime.
+    // If old data is found, try to copy
+    // If new data already holds data/exists, do not copy
+    // Delete the old data, so that this part migration does not happen next time.
+
+
+    var lastLoginData = appInfo_LS.lastLoginData;
+
     // If 'lastLoginData' is not available, get from old data..
-    if ( !appInfo_LS.lastLoginData ) // [ AppInfoLSManager.KEY_LASTLOGINDATA ] ) 
+    if ( !lastLoginData ) // [ AppInfoLSManager.KEY_LASTLOGINDATA ] ) 
     {
         appInfo_LS.lastLoginData = {};
-        var lastLoginData = appInfo_LS.lastLoginData;
+        lastLoginData = appInfo_LS.lastLoginData;
+    }
 
-        // 1. Get userName from userInfo
-        var userInfo = appInfo_LS.userInfo; //[ AppInfoLSManager.KEY_USERINFO ];
-        if ( userInfo )
+
+    // 1. Look at 'userInfo'
+    var userInfo = appInfo_LS.userInfo; //[ AppInfoLSManager.KEY_USERINFO ];
+    if ( userInfo )
+    {
+        if ( userInfo.user && !lastLoginData.userName ) lastLoginData.userName = userInfo.user;
+        if ( userInfo.networkSync && !lastLoginData.networkSync ) lastLoginData.networkSync = userInfo.networkSync;
+
+        // Delete 'userInfo' from appInfo_LS
+        delete appInfo_LS.userInfo; //[ AppInfoLSManager.KEY_USERINFO ];
+    }
+    
+
+    // 2. Get old 'loginResp' data --> stored as 
+    var userName = lastLoginData.userName;
+    if ( userName )
+    {
+        var loginRespOLD = LocalStgMng.getJsonData( userName );
+
+        if ( loginRespOLD )
         {
-            if ( userInfo.user ) lastLoginData.userName = userInfo.user;
-            if ( userInfo.networkSync ) lastLoginData.networkSync = userInfo.networkSync;
+            var mergeNotContinue = AppInfoLSManager.mergeNotContinueCheck( loginRespOLD );
 
-            // Delete 'userInfo' from appInfo_LS
-            delete appInfo_LS.userInfo; //[ AppInfoLSManager.KEY_USERINFO ];
-        }
-        
-
-        // 2. Get old 'loginResp' data --> stored as 
-        var userName = lastLoginData.userName;
-        if ( userName )
-        {
-            var loginRespOLD = appInfo_LS[ userName ]; // old loginRespOLD data
-
-            if ( loginRespOLD )
+            if ( !mergeNotContinue )
             {
                 // Config SourceType..
                 if ( loginRespOLD.dcdConfig && loginRespOLD.dcdConfig.sourceType )
@@ -103,12 +115,14 @@ AppInfoLSManager.migrateData = function( appInfo_LS )
                     // If 'pin' is available, user userName & pin for creating 'indexedDB'
                     if ( loginRespOLD.mySession.pin )
                     {
-                        var passwd = Util.decrypt( offlineUserData.mySession.pin, 4);
+                        var passwd = Util.decrypt( loginRespOLD.mySession.pin, 4);
+
+
+                        console.log( passwd );
 
 
                         // A1. After moving 'loginResp' data to indexedDB, delete it on old.
                         DataManager2.saveData_LoginResp( userName, passwd, loginRespOLD );    
-                        delete appInfo_LS[ userName ];
 
                                                 
                         // A2. move 'sync', 'logInOut', 'debug' to indexDB and remove old.
@@ -134,17 +148,52 @@ AppInfoLSManager.migrateData = function( appInfo_LS )
                     }
                 }
             }
+
+            // Delete userNamed 'loginResp' 
+            LocalStgMng.deleteData( userName );
         }
     }
 
     // If 'translation' not exists, create it.
     if ( !appInfo_LS[ AppInfoLSManager.KEY_TRANSLATION ] ) appInfo_LS[ AppInfoLSManager.KEY_TRANSLATION ] = {};
 
-
     // Save the data..
     AppInfoLSManager.saveAppInfoData( appInfo_LS );
 };
 
+
+AppInfoLSManager.mergeNotContinueCheck = function( loginRespOLD )
+{
+    var mergeNotContinue = false;
+            
+    // How to tell if this one is a new one or not? - if there is a date element, it will be easier..
+    var newIDB_lastOnlineLoginDT = AppInfoLSManager.getLastOnlineLoginDt();
+    var old_createdDT = AppInfoLSManager.getLoginRespOLD_createdDT( loginRespOLD );
+
+    if ( old_createdDT  )
+    {
+        if ( newIDB_lastOnlineLoginDT )
+        {
+            // We can compare if newIDB is later one..
+            if ( newIDB_lastOnlineLoginDT >= old_createdDT ) mergeNotContinue = true;
+        }
+    }
+
+    return mergeNotContinue;
+};
+
+
+// --------------------------------------------
+
+AppInfoLSManager.saveAppInfoData = function( appInfo_LS )
+{
+    // 2 ways to save 'appInfo_LS'.  1. get appInfo_LS by parameter.  2. get appInfo_LS from memory (AppInfoLSManager.data).
+
+    // Get appInfo_LS from localStorage if any. If not, use default appInfo_LS
+    if ( !appInfo_LS ) appInfo_LS = AppInfoLSManager.appInfo_LS;
+    
+    LocalStgMng.saveJsonData( AppInfoLSManager.KEY_APPINFO, appInfo_LS );
+};
 
 // ------------------------------------------------------------------------------------  
 // ----------------  GET / UPDATE/ REMOVE Data by Key
@@ -178,6 +227,77 @@ AppInfoLSManager.removeData = function( keyword )
      AppInfoLSManager.saveAppInfoData( appInfo_LS );     
 };
     
+    
+// --------------------------------------------------
+// ------ 1st level 'key': 'value' get/update
+
+AppInfoLSManager.updateKey_StrValue = function( key, valueStr )
+{
+    var appInfo_LS = AppInfoLSManager.appInfo_LS;
+        
+    appInfo_LS[key] = valueStr;
+
+    // Update data in memory
+    AppInfoLSManager.saveAppInfoData( appInfo_LS );
+};
+
+AppInfoLSManager.getKeyValue = function( key )
+{
+    var appInfo_LS = AppInfoLSManager.appInfo_LS;
+        
+    var value = appInfo_LS[key];
+    if ( value === undefined ) value = '';
+
+    return value;
+};
+
+// ------------------------------------
+
+AppInfoLSManager.getPropertyValue = function( mainKey, subKey )
+{
+    // Get appInfo_LS from localStorage if any. If not, use default appInfo_LS
+    var appInfo_LS = AppInfoLSManager.appInfo_LS;    
+    var mainInfo = appInfo_LS[mainKey];
+
+    return ( mainInfo == undefined ) ? undefined : appInfo_LS[mainKey][subKey];
+};
+
+AppInfoLSManager.updatePropertyValue = function( mainKey, subKey, valStr )
+{
+    // Get appInfo_LS from localStorage if any. If not, use default appInfo_LS
+    var appInfo_LS = AppInfoLSManager.appInfo_LS;
+    
+    // Update sub value by using keyword
+    if( appInfo_LS[mainKey] == undefined )
+    {
+        appInfo_LS[mainKey] = {};
+    }
+    
+    appInfo_LS[mainKey][subKey] = valStr;
+
+    // Update data in memory
+    AppInfoLSManager.saveAppInfoData( appInfo_LS );
+};
+
+AppInfoLSManager.removeProperty = function( mainKey, subKey )
+{
+    // Get appInfo_LS from localStorage if any. If not, use default appInfo_LS
+    var appInfo_LS = AppInfoLSManager.appInfo_LS;
+
+    if ( appInfo_LS[mainKey] )
+    {
+        Util.tryCatchContinue( function() 
+        {
+            delete appInfo_LS[mainKey][subKey];
+
+            // Update the 'appInfo_LS' data
+            AppInfoLSManager.saveAppInfoData( appInfo_LS );  
+
+        }, 'AppInfoLSManager.removeProperty' );
+    }
+};
+// ------------------
+
 // ------------------------------------------------------------------------------------  
 // ----------------  Local Storage Saving... ----------
 
@@ -229,65 +349,6 @@ AppInfoLSManager.clearLoginCurrentKeys = function()
 };
 */
 
-
-// --------------------------------------------
-
-AppInfoLSManager.saveAppInfoData = function( appInfo_LS )
-{
-    // 2 ways to save 'appInfo_LS'.  1. get appInfo_LS by parameter.  2. get appInfo_LS from memory (AppInfoLSManager.data).
-
-    // Get appInfo_LS from localStorage if any. If not, use default appInfo_LS
-    if ( !appInfo_LS ) appInfo_LS = AppInfoLSManager.appInfo_LS;
-    
-    LocalStgMng.saveJsonData( AppInfoLSManager.KEY_APPINFO, appInfo_LS );
-};
-
-// ------------------------------------
-
-AppInfoLSManager.getPropertyValue = function( mainKey, subKey )
-{
-    // Get appInfo_LS from localStorage if any. If not, use default appInfo_LS
-    var appInfo_LS = AppInfoLSManager.appInfo_LS;    
-    var mainInfo = appInfo_LS[mainKey];
-
-    return ( mainInfo == undefined ) ? undefined : appInfo_LS[mainKey][subKey];
-};
-
-AppInfoLSManager.updatePropertyValue = function( mainKey, subKey, valStr )
-{
-    // Get appInfo_LS from localStorage if any. If not, use default appInfo_LS
-    var appInfo_LS = AppInfoLSManager.appInfo_LS;
-    
-    // Update sub value by using keyword
-    if( appInfo_LS[mainKey] == undefined )
-    {
-        appInfo_LS[mainKey] = {};
-    }
-    
-    appInfo_LS[mainKey][subKey] = valStr;
-
-    // Update data in memory
-    AppInfoLSManager.saveAppInfoData( appInfo_LS );
-};
-
-AppInfoLSManager.removeProperty = function( mainKey, subKey )
-{
-    // Get appInfo_LS from localStorage if any. If not, use default appInfo_LS
-    var appInfo_LS = AppInfoLSManager.appInfo_LS;
-
-    if ( appInfo_LS[mainKey] )
-    {
-        Util.tryCatchContinue( function() 
-        {
-            delete appInfo_LS[mainKey][subKey];
-
-            // Update the 'appInfo_LS' data
-            AppInfoLSManager.saveAppInfoData( appInfo_LS );  
-
-        }, 'AppInfoLSManager.removeProperty' );
-    }
-};
-// ------------------
 
 
 // TODO: NEED TO REPLACE THIS!!!
@@ -414,6 +475,18 @@ AppInfoLSManager.setLangLastDateTime = function( dateObj )
     AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_TRANSLATION, AppInfoLSManager.KEY_LANG_LASTTRYDT, langLastDateTimeStr );
 };
 
+// ---- Localhost Stage related..
+
+AppInfoLSManager.getLocalStageName = function() 
+{
+    return AppInfoLSManager.getKeyValue( AppInfoLSManager.KEY_LOCAL_STAGENAME );
+};
+
+AppInfoLSManager.setLocalStageName = function( stageName ) 
+{
+    AppInfoLSManager.updateKey_StrValue( AppInfoLSManager.KEY_LOCAL_STAGENAME, stageName );
+};
+
 
 // ------------------------------------------------------------------------------------  
 // ----------------  Auto Login Related..
@@ -432,3 +505,21 @@ AppInfoLSManager.setLangLastDateTime = function( dateObj )
 //{    
 //    AppInfoLSManager.removeProperty( AppInfoLSManager.KEY_LOGINOUT, AppInfoLSManager.KEY_AUTOLOGINSET );
 //};
+
+
+
+
+AppInfoLSManager.getLoginRespOLD_createdDT = function( loginRespOLD ) 
+{
+    var createdDate;
+
+    if ( loginRespOLD.mySession )
+    {
+        createdDate = loginRespOLD.mySession.createdDate;
+    }
+
+    return createdDate;
+};
+
+
+

@@ -19,8 +19,6 @@ AppInfoManager.template = { 'sync': {}, 'logInOut': {}, 'debug': {} };
 
 // ---------------------------
 
-AppInfoManager.KEY_LOCAL_STAGENAME = "localStageName"; 
-
 AppInfoManager.KEY_LASTLOGINOUT = "lastLogInOut"; 
 AppInfoManager.KEY_CURRENTKEYS = "currentKeys"; 
 AppInfoManager.KEY_NEW_ERROR_ACT = "newErrActivityIds"; 
@@ -74,17 +72,15 @@ AppInfoManager.loadData_AfterLogin = function( userName, passwd )
 {
     AppInfoManager.setUserName_Passwd( userName, passwd );
 
-    var appInfo = AppInfoManager.getAppInfoData(); // appInfo_IDB
+    // Also save to 
+    AppInfoManager.appInfo = AppInfoManager.getAppInfoData_IDB(); // appInfo_IDB
 
-    if ( !appInfo ) 
-    {
-        // If appInfo is emtpy, create object (with template?)        
-        appInfo = Util.cloneJson( AppInfoManager.template ); 
-        AppInfoManager.saveAppInfoData( appInfo );
-    }
+    var appInfo = AppInfoManager.getAppInfo();  // Get from AppInfoManager.appInfo with initial template usage if undefined;
 
-    AppInfoManager.appInfo = appInfo;    
+    // Try Merging if things are still left?
+    AppInfoManager.mergeOldData( appInfo );
 };
+
 
 AppInfoManager.unloadData_AfterLogOut = function()
 {
@@ -93,17 +89,59 @@ AppInfoManager.unloadData_AfterLogOut = function()
 };
 
 // --------------------------------------
+
+AppInfoManager.mergeOldData = function( appInfo )
+{
+    var appInfo_LS = AppInfoLSManager.appInfo_LS;
+
+    if ( appInfo_LS.sync && !appInfo.sync )
+    {                            
+        AppInfoManager.updateData( AppInfoManager.KEY_SYNC, appInfo_LS.sync );
+        delete appInfo_LS.sync;
+    }
+
+    if ( appInfo_LS.logInOut && !appInfo.logInOut )
+    {                            
+        AppInfoManager.updateData( AppInfoManager.KEY_LOGINOUT, appInfo_LS.logInOut );
+        delete appInfo_LS.logInOut;
+    }
+
+    if ( appInfo_LS.debug && !appInfo.debug )
+    {                            
+        AppInfoManager.updateData( AppInfoManager.KEY_DEBUG, appInfo_LS.debug );
+        delete appInfo_LS.debug;
+    }
+
+    // Save the data..
+    AppInfoLSManager.saveAppInfoData( appInfo_LS );
+};
+
+
+// --------------------------------------
+
+AppInfoManager.getAppInfo = function()
+{
+    if ( !AppInfoManager.appInfo ) AppInfoManager.appInfo = Util.cloneJson( AppInfoManager.template );
+
+    var appInfo = AppInfoManager.appInfo;
+
+    // if ( !appInfo ) AppInfoManager.saveAppInfoData_IDB( appInfo );
+
+    return appInfo;    
+};
+
+// --------------------------------------
 // --- IndexedDB get/save call of 'appInfo'
 
-AppInfoManager.getAppInfoData = function()
+AppInfoManager.getAppInfoData_IDB = function()
 {
     return DataManager2.getData_AppInfo( AppInfoManager.userName, AppInfoManager.passwd ); // appInfo_IDB
 };
 
-AppInfoManager.saveAppInfoData = function( appInfo )
+AppInfoManager.saveAppInfoData_IDB = function( appInfo )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
-    if ( !appInfo ) appInfo = AppInfoManager.appInfo;
+    if ( !appInfo ) appInfo = AppInfoManager.getAppInfo();
 
     // Need session.login user name
     DataManager2.saveData_AppInfo( AppInfoManager.userName, AppInfoManager.passwd, appInfo );
@@ -114,32 +152,30 @@ AppInfoManager.saveAppInfoData = function( appInfo )
 
 AppInfoManager.getData = function( keyword )
 {
-    return AppInfoManager.appInfo[keyword];
+    return AppInfoManager.getAppInfo()[keyword];
 };
 
 AppInfoManager.updateData = function( keyword, jsonData )
 {
-    if ( !AppInfoManager.appInfo ) AppInfoManager.appInfo = Util.cloneJson( AppInfoManager.template ); //{};
-
     // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.appInfo;
+    var appInfo = AppInfoManager.getAppInfo();
     
     // Update data of appInfo by using keyword
     appInfo[keyword] = jsonData;
 
-    AppInfoManager.saveAppInfoData( appInfo );
+    AppInfoManager.saveAppInfoData_IDB( appInfo );
 };
 
 AppInfoManager.removeData = function( keyword )
 {
      // Get appInfo from localStorage if any. If not, use default appInfo
-     var appInfo = AppInfoManager.appInfo;
+     var appInfo = AppInfoManager.getAppInfo();
     
      // Update data of appInfo by using keyword
      delete appInfo[keyword];
      
      // Update the 'appInfo' data
-     AppInfoManager.saveAppInfoData( appInfo );     
+     AppInfoManager.saveAppInfoData_IDB( appInfo );     
 };
     
 // --------------------------------------------------
@@ -147,17 +183,17 @@ AppInfoManager.removeData = function( keyword )
 
 AppInfoManager.updateKey_StrValue = function( key, valueStr )
 {
-    var appInfo = AppInfoManager.appInfo;
+    var appInfo = AppInfoManager.getAppInfo();
         
     appInfo[key] = valueStr;
 
     // Update data in memory
-    AppInfoManager.saveAppInfoData( appInfo );
+    AppInfoManager.saveAppInfoData_IDB( appInfo );
 };
 
 AppInfoManager.getKeyValue = function( key )
 {
-    var appInfo = AppInfoManager.appInfo;
+    var appInfo = AppInfoManager.getAppInfo();
         
     var value = appInfo[key];
     if ( value === undefined ) value = '';
@@ -170,16 +206,21 @@ AppInfoManager.getKeyValue = function( key )
 AppInfoManager.getPropertyValue = function( mainKey, subKey )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.appInfo;    
-    var mainInfo = appInfo[mainKey];
+    var appInfo = AppInfoManager.getAppInfo();
 
-    return ( mainInfo == undefined ) ? undefined : appInfo[mainKey][subKey];
+    if ( !appInfo ) return undefined;
+    else
+    {
+        var mainInfo = appInfo[mainKey];
+
+        return ( mainInfo == undefined ) ? undefined : appInfo[mainKey][subKey];    
+    }
 };
 
 AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.appInfo;
+    var appInfo = AppInfoManager.getAppInfo();
     
     // Update sub value by using keyword
     if( appInfo[mainKey] == undefined )
@@ -190,13 +231,13 @@ AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
     appInfo[mainKey][subKey] = valStr;
 
     // Update data in memory
-    AppInfoManager.saveAppInfoData( appInfo );
+    AppInfoManager.saveAppInfoData_IDB( appInfo );
 };
 
 AppInfoManager.removeProperty = function( mainKey, subKey )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
-    var appInfo = AppInfoManager.appInfo;
+    var appInfo = AppInfoManager.getAppInfo();
 
     if ( appInfo[mainKey] )
     {
@@ -205,7 +246,7 @@ AppInfoManager.removeProperty = function( mainKey, subKey )
             delete appInfo[mainKey][subKey];
 
             // Update the 'appInfo' data
-            AppInfoManager.saveAppInfoData( appInfo );  
+            AppInfoManager.saveAppInfoData_IDB( appInfo );  
 
         }, 'AppInfoManager.removeProperty' );
     }
@@ -387,17 +428,3 @@ AppInfoManager.updateStatisticPages = function( fileName, dataStr )
 
 // ------------------------------------------------------------------------------------  
 // -----------------------------------------------
-
-// ---- Localhost Stage related..
-AppInfoManager.getLocalStageName = function() 
-{
-    return AppInfoManager.getKeyValue( AppInfoManager.KEY_LOCAL_STAGENAME );
-};
-
-AppInfoManager.setLocalStageName = function( stageName ) 
-{
-    AppInfoManager.updateKey_StrValue( AppInfoManager.KEY_LOCAL_STAGENAME, stageName );
-};
-
-// ------------------------------------------------------------------------------------  
-// ------------------------------------------------------------------------------------  
