@@ -73,12 +73,14 @@ AppInfoManager.loadData_AfterLogin = function( userName, passwd )
     AppInfoManager.setUserName_Passwd( userName, passwd );
 
     // Also save to 
-    AppInfoManager.appInfo = AppInfoManager.getAppInfoData_IDB(); // appInfo_IDB
+    AppInfoManager.getAppInfoData_IDB( function( appInfo_IDB ) 
+    {
+        AppInfoManager.appInfo = appInfo_IDB;
+        var appInfo = AppInfoManager.getAppInfo();  // Get from AppInfoManager.appInfo with initial template usage if undefined;
 
-    var appInfo = AppInfoManager.getAppInfo();  // Get from AppInfoManager.appInfo with initial template usage if undefined;
-
-    // Try Merging if things are still left?
-    AppInfoManager.mergeOldData( appInfo );
+        // Try Merging if things are still left?
+        AppInfoManager.mergeOldData( appInfo );
+    });
 };
 
 
@@ -133,18 +135,18 @@ AppInfoManager.getAppInfo = function()
 // --------------------------------------
 // --- IndexedDB get/save call of 'appInfo'
 
-AppInfoManager.getAppInfoData_IDB = function()
+AppInfoManager.getAppInfoData_IDB = function( callBack )
 {
-    return DataManager2.getData_AppInfo( AppInfoManager.userName, AppInfoManager.passwd ); // appInfo_IDB
+    DataManager2.getData_AppInfo( AppInfoManager.userName, AppInfoManager.passwd, callBack );
 };
 
-AppInfoManager.saveAppInfoData_IDB = function( appInfo )
+AppInfoManager.saveAppInfoData_IDB = function( appInfo, callBack )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
     if ( !appInfo ) appInfo = AppInfoManager.getAppInfo();
 
     // Need session.login user name
-    DataManager2.saveData_AppInfo( AppInfoManager.userName, AppInfoManager.passwd, appInfo );
+    DataManager2.saveData_AppInfo( AppInfoManager.userName, AppInfoManager.passwd, appInfo, callBack );
 };
 
 // ------------------------------------------------------------------------------------  

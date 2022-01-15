@@ -116,13 +116,13 @@ AppInfoLSManager.migrateData = function( appInfo_LS )
                     if ( loginRespOLD.mySession.pin )
                     {
                         var passwd = Util.decrypt( loginRespOLD.mySession.pin, 4);
-
-
                         console.log( passwd );
 
-
                         // A1. After moving 'loginResp' data to indexedDB, delete it on old.
-                        DataManager2.saveData_LoginResp( userName, passwd, loginRespOLD );    
+                        DataManager2.saveData_LoginResp( userName, passwd, loginRespOLD, function( ) {
+                            // Delete userNamed 'loginResp' 
+                            LocalStgMng.deleteData( userName );                            
+                        } );    
 
                                                 
                         // A2. move 'sync', 'logInOut', 'debug' to indexDB and remove old.
@@ -148,9 +148,6 @@ AppInfoLSManager.migrateData = function( appInfo_LS )
                     }
                 }
             }
-
-            // Delete userNamed 'loginResp' 
-            LocalStgMng.deleteData( userName );
         }
     }
 

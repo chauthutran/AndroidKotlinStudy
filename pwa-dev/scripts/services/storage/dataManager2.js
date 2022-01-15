@@ -31,29 +31,96 @@ DataManager2.indexedDBopenResponseTime;// response delay times
 // GetData - IndexedDB
 DataManager2.getData_IDB = function( secName, callBack ) 
 {
-	DataManager2.getDataByStorageType( StorageMng.StorageType_IndexedDB, secName, function( data ) {
-
-		var descriptedJson = DataManager2.decriptData( data );
-
-		callBack( descriptedJson );
-	});
+	try
+	{
+		DataManager2.getData_ByType( StorageMng.StorageType_IndexedDB, secName, function( data ) {
+			callBack( data );
+		});	
+	}
+	catch( errMsg )
+	{
+		console.log( 'FAILED in DataManager2' );
+		callBack();
+	}
 };
 
 // GetData - LocalStorage
 DataManager2.getData_LS = function( secName, callBack ) 
 {
-	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, secName, callBack );
+	try
+	{
+		DataManager2.getData_ByType( StorageMng.StorageType_LocalStorage, secName, callBack );
+	}
+	catch( errMsg )
+	{
+		console.log( 'FAILED in DataManager2' );
+		callBack();
+	}
 };
 
-// Base GetData - by storage type
-DataManager2.getDataByStorageType = function( storageTypeStr, secName, callBack ) 
+// ------------------------------------------------
+// -------- SAVE Methods --------------
+
+// saveData - IndexedDB
+DataManager2.saveData_IDB = function( secName, data, retFunc ) 
 {
-	StorageMng.getItem( storageTypeStr, secName, function( err, data )
-	{		
+	try
+	{
+		DataManager2.saveData_ByType( StorageMng.StorageType_IndexedDB, secName, data, retFunc );
+	}
+	catch( errMsg )
+	{
+		console.log( 'FAILED in DataManager2' );
+		if ( retFunc ) retFunc();
+	}
+};
+
+// saveData - LocalStorage
+DataManager2.saveData_LS = function( secName, jsonData, retFunc ) 
+{
+	try
+	{
+		DataManager2.saveData_ByType( StorageMng.StorageType_LocalStorage, secName, jsonData, retFunc );
+	}
+	catch( errMsg )
+	{
+		console.log( 'FAILED in DataManager2' );
+		if ( retFunc ) retFunc();
+	}
+};
+
+// -----------------------------------
+
+DataManager2.getJsonDecripted_IDB = function( keyName, callBack ) 
+{
+	DataManager2.getData_IDB( keyName, function( data ) {
+		callBack( DataManager2.decriptData( data ) );
+	});
+};
+
+DataManager2.saveJsonEncripted_IDB = function( keyName, jsonData, retFunc ) 
+{
+	var encryptedDataStr = DataManager2.encryptData( jsonData );
+	DataManager2.saveData_IDB( keyName, encryptedDataStr, retFunc );
+};
+
+// -----------------------------------------
+
+// Base GetData - by storage type
+DataManager2.getData_ByType = function( storageTypeStr, secName, callBack ) 
+{
+	StorageMng.getItem( storageTypeStr, secName, function( err, data ) {		
 		if ( callBack ) callBack( data );		
 	});
 };
 
+// Base SaveData - by storage type
+DataManager2.saveData_ByType = function( storageTypeStr, secName, data, callBack ) 
+{		
+	StorageMng.setItem( storageTypeStr, secName, data, function() {
+		if ( callBack ) callBack( data );
+	});		
+}
 
 // ------------------------------------------------
 // -------- Encrypt/Decript Methods --------------
@@ -71,6 +138,19 @@ DataManager2.encryptData = function( dataJson, passwd )
 	return encryptedDataStr;
 };
 
+DataManager2.decriptData_CMN = function( dataStr, iv )
+{
+	var descriptedVal = CryptoJS.AES.decrypt( dataStr.toString(), iv, {
+		keySize: 128 / 8,
+		iv: iv,
+		mode: CryptoJS.mode.CBC,
+		padding: CryptoJS.pad.Pkcs7
+	});
+
+	var utf8StrVal = CryptoJS.enc.Utf8.stringify( descriptedVal );
+
+	return utf8StrVal;
+}
 
 // Decript data with 'passwd'(as key) is passed.  Otherwise, use sessionData.login_Password as decripting key.
 DataManager2.decriptData = function( dataStr, passwd )
@@ -97,173 +177,118 @@ DataManager2.decriptData = function( dataStr, passwd )
 	return jsonData;
 };
 
+// ---------------------------------------
 
-DataManager2.checkDecriptionPasswd = function( keyName, passwd )
+DataManager2.checkDecriptionPasswd = function( keyName, passwd, callBack )
 {
-	var isSuccess = false;
-
 	try
 	{
 		if ( keyName && passwd )
 		{
-			var itemDataStr = StorageMng.getItem_IDB( keyName );
-
-			if ( itemDataStr )
+			DataManager2.getData_IDB( keyName, function( itemDataStr ) 
 			{
-				var utf8StrVal = DataManager2.decriptData_CMN( itemDataStr, passwd );
+				var isSuccess = false;
 
-				if ( utf8StrVal )
+				if ( itemDataStr )
 				{
-					var jsonData = JSON.parse( utf8StrVal );
-					if ( jsonData && Util.isTypeObject( jsonData ) )
+					var utf8StrVal = DataManager2.decriptData_CMN( itemDataStr, passwd );
+	
+					if ( utf8StrVal )
 					{
-						isSuccess = true;
-					}
-				}	
-			}
+						var jsonData = JSON.parse( utf8StrVal );
+						if ( jsonData && Util.isTypeObject( jsonData ) )
+						{
+							isSuccess = true;
+						}
+					}	
+				}
+	
+				callBack( isSuccess );
+			});
 		}
+		else callBack( false );
 	}
 	catch ( errMsg )
 	{
 		console.log( 'password failed to decript' );
+		callBack( false );
 	}
-
-	return isSuccess;
 };
-
-
-DataManager2.decriptData_CMN = function( dataStr, iv )
-{
-	var descriptedVal = CryptoJS.AES.decrypt( dataStr.toString(), iv, {
-		keySize: 128 / 8,
-		iv: iv,
-		mode: CryptoJS.mode.CBC,
-		padding: CryptoJS.pad.Pkcs7
-	});
-
-	var utf8StrVal = CryptoJS.enc.Utf8.stringify( descriptedVal );
-
-	return utf8StrVal;
-}
-
-// ------------------------------------------------
-// -------- SAVE Methods --------------
-
-// saveData - IndexedDB
-DataManager2.saveData_IDB = function( secName, jsonData, retFunc ) 
-{
-	var encryptedDataStr = DataManager2.encryptData( jsonData );
-	DataManager2.saveDataByStorageType( StorageMng.StorageType_IndexedDB, secName, encryptedDataStr, retFunc );
-};
-
-// saveData - LocalStorage
-DataManager2.saveData_LS = function( secName, jsonData, retFunc ) 
-{
-	DataManager2.saveDataByStorageType( StorageMng.StorageType_LocalStorage, secName, jsonData, retFunc );
-};
-
-// Base SaveData - by storage type
-DataManager2.saveDataByStorageType = function( storageTypeStr, secName, data, callBack ) 
-{		
-	StorageMng.setItem( storageTypeStr, secName, data, function() {
-		if ( callBack ) callBack( data );
-	});		
-}
-
-// ------------------------------------------------
-// -------- Get/Save Specific Operations Methods --------------
-
-DataManager2.getData_RedeemList = function( callBack ) { };
-
-DataManager2.saveData_RedeemList = function( jsonData, callBack ) { };
 
 // ------------------
 
-
-// NOTE: If we use user name + fixed name, this has to be only done after login..
-//  --> Which makes sense since we also need password to descript data..
-
-// TRAN TODO - This method is not used any place and DataManager2.getData method was removed
-DataManager2.getData_ActivityList = function( callBack )
+DataManager2.checkDataExists_IDB = function( keyName, callBack )
 {
-	// TODO: Need to change 'storageName_redeemList' --> 'storageName_activityList'
-	DataManager2.getData( Constants.storageName_redeemList, callBack );
-};
-
-// TRAN TODO - This method is not used any place and DataManager2.saveData method was removed
-DataManager2.saveData_ActivityList = function( jsonData, callBack )
-{
-	DataManager2.saveData( Constants.storageName_redeemList, jsonData, callBack );
+	try
+	{
+		DataManager2.getData_IDB( keyName, function( data ) {
+			if ( data ) callBack( true );
+			else callBack( false );
+		});	
+	}
+	catch ( errMsg )
+	{
+		console.log( 'FAILED in DataManager2' );
+		callBack( false );
+	}
 };
 
 // ---------------------------------
 
-DataManager2.getData_ClientsStore = function( callBack )
+DataManager2.getData_ClientsStore = function( userName, passwd, callBack )
 {
-	var keyName = DataManager2.StorageName_clientList + '_' + SessionManager.sessionData.login_UserName;
-	DataManager2.getData_IDB( keyName, callBack );
-	// TODO: should use 'await' instead of callBack!!!
+	var keyName = DataManager2.StorageName_clientList + '_' + userName;
+
+	DataManager2.getData_IDB( keyName, function( data ) {
+		callBack( DataManager2.decriptData( data, passwd ) );
+	});
 };
 
-DataManager2.saveData_ClientsStore = function( jsonData, callBack )
+DataManager2.saveData_ClientsStore = function( userName, passwd, jsonData, callBack )
 {
-	var keyName = DataManager2.StorageName_clientList + '_' + SessionManager.sessionData.login_UserName;
-	DataManager2.saveData_IDB( keyName, jsonData, callBack );
-	// TODO: should use 'await' instead of callBack!!!
+	var keyName = DataManager2.StorageName_clientList + '_' + userName;
+
+	var encryptedDataStr = DataManager2.encryptData( jsonData, passwd );
+	DataManager2.saveData_IDB( keyName, encryptedDataStr, callBack );
 };
 
+// ---- AppInfo ---------
 
-// ---------------------------------
-// -- AWAIT VERSION
-
-DataManager2.checkDataExists_IDB = function( keyName )
+DataManager2.getData_AppInfo = function( userName, passwd, callBack )
 {
-	if ( StorageMng.getItem_IDB( keyName ) ) return true;
-	else return false;
+	var keyName = DataManager2.StorageName_appInfo + '_' + userName;
+
+	DataManager2.getData_IDB( keyName, function( data ) {
+		callBack( DataManager2.decriptData( data, passwd ) );
+	});	
 };
 
-// ------------------- 
-// ---- AppInfo
-
-DataManager2.getData_AppInfo = function( userName, passwd )
+DataManager2.saveData_AppInfo = function( userName, passwd, jsonData, callBack )
 {
-	var keyName = DataManager2.StorageName_appInfo + '_' + userName; //SessionManager.sessionData.login_UserName;
-
-	var itemData = StorageMng.getItem_IDB( keyName );
-
-	return DataManager2.decriptData( itemData, passwd );	
-};
-
-DataManager2.saveData_AppInfo = function( userName, passwd, jsonData )
-{
-	var keyName = DataManager2.StorageName_appInfo + '_' + userName; //SessionManager.sessionData.login_UserName;
+	var keyName = DataManager2.StorageName_appInfo + '_' + userName;
 	
-	var strData_Encrypt = DataManager2.encryptData( jsonData, passwd );
-
-	StorageMng.setItem_IDB( keyName, strData_Encrypt );
+	var encryptedDataStr = DataManager2.encryptData( jsonData, passwd );
+	DataManager2.saveData_IDB( keyName, encryptedDataStr, callBack );
 };
 
 // -----------------------------------------
 
-// Could be called before login.. without session data loaded..
-DataManager2.getData_LoginResp = function( userName, passwd )
+DataManager2.getData_LoginResp = function( userName, passwd, callBack )
 {
 	var keyName = DataManager2.StorageName_loginResp + '_' + userName;
 
-	var itemData = StorageMng.getItem_IDB( keyName );
-
-	return DataManager2.decriptData( itemData, passwd );	
+	DataManager2.getData_IDB( keyName, function( data ) {
+		callBack( DataManager2.decriptData( data, passwd ) );
+	});	
 };
 
-DataManager2.saveData_LoginResp = function( userName, passwd, jsonData )
+DataManager2.saveData_LoginResp = function( userName, passwd, jsonData, callBack )
 {
 	var keyName = DataManager2.StorageName_loginResp + '_' + userName;
 	
-	var strData_Encrypt = DataManager2.encryptData( jsonData, passwd );
-
-	StorageMng.setItem_IDB( keyName, strData_Encrypt );
+	var encryptedDataStr = DataManager2.encryptData( jsonData, passwd );
+	DataManager2.saveData_IDB( keyName, encryptedDataStr, callBack );
 };
-
 
 // ------------------------------------------------
 // -------- Get/Save LocalStorage without LocalForage - No CallBack --------------
@@ -327,10 +352,10 @@ DataManager2.deleteDataByStorageType = function( storageTypeStr, secName )
 // TRAN TODO : this method isn't use any place
 DataManager2.getUserConfigData = function( callBack ) 
 {
-	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, function( err, sessionJson ){
+	DataManager2.getData_ByType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, function( err, sessionJson ){
 		if ( sessionJson && sessionJson.user )	
 		{
-			DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, sessionJson.user, function( err, userConfigJson ){
+			DataManager2.getData_ByType( StorageMng.StorageType_LocalStorage, sessionJson.user, function( err, userConfigJson ){
 				if ( callBack ) callBack( userConfigJson );
 			} );
 		}
@@ -346,7 +371,7 @@ DataManager2.getUserConfigData = function( callBack )
 // TRAN TODO : this method isn't use any place
 DataManager2.getSessionData = function( callBack ) 
 {
-	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, callBack );
+	DataManager2.getData_ByType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, callBack );
 
 	// LocalStorageDataManager2.getSessionData( callBack );
 }
@@ -356,12 +381,12 @@ DataManager2.getSessionData = function( callBack )
 DataManager2.setSessionDataValue = function( prop, val ) 
 {
 	var storageTypeStr = StorageMng.StorageType_LocalStorage;
-	DataManager2.getDataByStorageType( storageTypeStr, DataManager2.StorageName_session, function( sessionJson ){
+	DataManager2.getData_ByType( storageTypeStr, DataManager2.StorageName_session, function( sessionJson ){
 		if ( sessionJson )
 		{
 			sessionJson[ prop ] = val;
 
-			DataManager2.saveDataByStorageType( storageTypeStr, DataManager2.StorageName_session, sessionJson );
+			DataManager2.saveData_ByType( storageTypeStr, DataManager2.StorageName_session, sessionJson );
 		}
 	} );
 
@@ -371,7 +396,7 @@ DataManager2.setSessionDataValue = function( prop, val )
 // TRAN TODO : this method isn't use any place
 DataManager2.getSessionDataValue = function( prop, defval, callBack ) 
 {
-	DataManager2.getDataByStorageType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, function( sessionJson ){
+	DataManager2.getData_ByType( StorageMng.StorageType_LocalStorage, DataManager2.StorageName_session, function( sessionJson ){
 		var ret;
 
 		if ( sessionJson )

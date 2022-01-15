@@ -688,7 +688,7 @@ function Login()
 					AppInfoLSManager.saveConfigSourceType( loginData );
 
 					// Save 'loginData' in indexedDB for offline usage and load to session.
-					SessionManager.setLoginRespData_IDB( loginData, userName, password );
+					SessionManager.setLoginRespData_IDB( userName, password, loginData );
 					SessionManager.loadDataInSession( userName, password, loginData );
 				}
 
@@ -700,49 +700,53 @@ function Login()
 	
 	me.loginOffline = function( userName, password, returnFunc )
 	{
-		var isSuccess = false;
-
-		// TODO: WORK ON HERE!!!!
-
-		if ( SessionManager.checkOfflineDataExists( userName ) )
+		SessionManager.checkOfflineDataExists( userName, function( dataExists ) 
 		{
-			if ( AppInfoLSManager.getBlackListed() )
-			{			
-				// Translation term need to be added - from config?	
-				MsgManager.msgAreaShow( me.getLoginFailedMsgSpan() + ' ' + me.ERR_MSG_blackListing, 'ERROR' );
-			}
-			else
+			if ( dataExists )
 			{
-				if ( SessionManager.checkPasswordOffline_IDB( userName, password ) )
-				{					
-
-					var loginResp = SessionManager.getLoginRespData_IDB( userName, password );
-
-					if ( SessionManager.checkLoginData( loginResp ) )
-					{
-						// load to session
-						SessionManager.loadDataInSession( userName, password, loginResp );
-	
-						isSuccess = true;
-	
-						// TEST, DEBUG - TO BE REMOVED AFTERWARDS
-						GAnalytics.setEvent( 'LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1 );
-					}
+				if ( AppInfoLSManager.getBlackListed() )
+				{			
+					// Translation term need to be added - from config?	
+					MsgManager.msgAreaShow( me.getLoginFailedMsgSpan() + ' ' + me.ERR_MSG_blackListing, 'ERROR' );
+					if ( returnFunc ) returnFunc( false );
 				}
 				else
 				{
-					// MISSING TRANSLATION
-					MsgManager.notificationMessage( me.getLoginFailedMsgSpan() + ' > invalid pin', 'notifRed', undefined, '', 'right', 'top' );
+					SessionManager.checkPasswordOffline_IDB( userName, password, function( isPass ) 
+					{
+						if ( isPass )
+						{
+							SessionManager.getLoginRespData_IDB( userName, password, function( loginResp ) 
+							{
+								if ( SessionManager.checkLoginData( loginResp ) )
+								{
+									// load to session
+									SessionManager.loadDataInSession( userName, password, loginResp );
+								
+									// TEST, DEBUG - TO BE REMOVED AFTERWARDS
+									GAnalytics.setEvent( 'LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1 );
+
+									if ( returnFunc ) returnFunc( true, loginResp );
+								}
+								else { if ( returnFunc ) returnFunc( false ); }
+							});	
+						}
+						else
+						{
+							// MISSING TRANSLATION
+							MsgManager.notificationMessage( me.getLoginFailedMsgSpan() + ' > invalid pin', 'notifRed', undefined, '', 'right', 'top' );
+							if ( returnFunc ) returnFunc( false );
+						}
+					});
 				}
 			}
-		}
-		else
-		{
-			// MISSING TRANSLATION
-			MsgManager.notificationMessage( 'No Offline UserData Available', 'notifDark', undefined, '', 'right', 'top' );
-		}
-
-		if ( returnFunc ) returnFunc( isSuccess, offlineUserData );
+			else
+			{
+				// MISSING TRANSLATION
+				MsgManager.notificationMessage( 'No Offline UserData Available', 'notifDark', undefined, '', 'right', 'top' );
+				if ( returnFunc ) returnFunc( false );
+			}				
+		} );
 	};
 
 	// ----------------------------

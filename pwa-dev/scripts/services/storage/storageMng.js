@@ -52,7 +52,7 @@ StorageMng.setItem = async function( storageTypeStr, key, value, callBack )
 {
   return localforage.setDriver( StorageMng.getStorageTypeDriver( storageTypeStr ) ).then( () => {
     //return StorageMng.setItem( key, value, callBack );
-    return localforage.setItem( key, value, callBack );  
+    return localforage.setItem( key, value, callBack );  // this 'callBack' is successCallBack.  If fails, it does not call this 'callBack'
   });
 }
 

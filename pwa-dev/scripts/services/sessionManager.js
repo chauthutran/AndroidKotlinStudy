@@ -80,34 +80,34 @@ SessionManager.unloadDataInSession = function()
 // ----------------------------------------------
 // --- IndexedDB loading operations..
 
+// Use for offline loginResp data get.
+SessionManager.getLoginRespData_IDB = function( userName, passwd, callBack )
+{
+	DataManager2.getData_LoginResp( userName, passwd, callBack );  //LocalStgMng.getJsonData( userName );
+};
+
 // This is not for updating time to time, but only set after online success login - for offline usage..
 SessionManager.setLoginRespData_IDB = function( userName, passwd, loginData )
 {
 	DataManager2.saveData_LoginResp( userName, passwd, loginData );
 };
 
-// Use for offline loginResp data get.
-SessionManager.getLoginRespData_IDB = function( userName, passwd )
-{
-	return DataManager2.getData_LoginResp( userName, passwd );  //LocalStgMng.getJsonData( userName );
-};
-
 // -----------------------------------------------
 
 // password (& userName) check against the IDB encrpyting
-SessionManager.checkPasswordOffline_IDB = function( userName, passwd )
+SessionManager.checkPasswordOffline_IDB = function( userName, passwd, callBack )
 {
 	var IDB_KeyName_appInfo = DataManager2.StorageName_appInfo + '_' + userName;
 	
-	return DataManager2.checkDecriptionPasswd( IDB_KeyName_appInfo, passwd );
+	DataManager2.checkDecriptionPasswd( IDB_KeyName_appInfo, passwd, callBack );
 };
 
 
-SessionManager.checkOfflineDataExists = function( userName )
+SessionManager.checkOfflineDataExists = function( userName, callBack )
 {
 	var keyName_IDB_appInfo = DataManager2.StorageName_appInfo + '_' + userName;
 
-	return DataManager2.checkDataExists_IDB( keyName_IDB_appInfo );	
+	DataManager2.checkDataExists_IDB( keyName_IDB_appInfo, callBack );
 };
 
 
