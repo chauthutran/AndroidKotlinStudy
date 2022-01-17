@@ -310,7 +310,7 @@ DataVerMove.dataCopyToIDBs = function()
 // Save to indexedDB storage with same key..
 DataVerMove.dataCopyToIDB = function( key, value, callBack )
 {
-    //DataManager2.getDataByStorageType( StorageMng.StorageType_IndexedDB, key, function( searched )
+    //DataManager2.getData_ByType( StorageMng.StorageType_IndexedDB, key, function( searched )
     DataManager2.getData_IDB( key, function( searched )
     {
         // If there is already info in IndexedDB, do not save it..

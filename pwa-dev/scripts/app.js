@@ -60,7 +60,7 @@ App.run = function()
   // Instantiate Classes
   SessionManager.cwsRenderObj = new cwsRender();  // Global Reference to cwsRenderObj..
 
-  AppInfoManager.initialLoad_FromStorage();
+  AppInfoLSManager.initialDataLoad_LocalStorage();
 
   App.App_UI_startUp_loading(); // << should we move this into cwsRender?
 

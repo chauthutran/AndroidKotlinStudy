@@ -238,7 +238,10 @@ ClientDataManager.updateClient_wtActivityReload = function( clientId, updateClie
 // Called After Login
 ClientDataManager.loadClientsStore_FromStorage = function( callBack )
 {
-    DataManager2.getData_ClientsStore( function( jsonData_FromStorage ) {
+    var userName = SessionManager.sessionData.login_UserName;
+    var passwd = SessionManager.sessionData.login_Password;
+
+    DataManager2.getData_ClientsStore( userName, passwd, function( jsonData_FromStorage ) {
 
         if ( jsonData_FromStorage && jsonData_FromStorage.list )
         {
@@ -254,7 +257,10 @@ ClientDataManager.loadClientsStore_FromStorage = function( callBack )
 // After making changes to the list/activityStore (directly), call this to save to storage (IndexedDB)
 ClientDataManager.saveCurrent_ClientsStore = function( callBack )
 {
-    DataManager2.saveData_ClientsStore( ClientDataManager._clientsStore, callBack );
+    var userName = SessionManager.sessionData.login_UserName;
+    var passwd = SessionManager.sessionData.login_Password;
+
+    DataManager2.saveData_ClientsStore( userName, passwd, ClientDataManager._clientsStore, callBack );
 };
 
 

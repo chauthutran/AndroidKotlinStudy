@@ -10,6 +10,30 @@ ConsoleCustomLog.divDialogTagId = '#divCustomLogDisplay';
 // -------------------------------------
 // Custom console log method:
 
+
+console.customLog = function ( msg, label ) 
+{
+    if ( msg )
+    {
+        console.log( msg );
+        
+        // TODO: Ways to display / show the location of error?
+        // NOTE: WAYS TO TELL WHICH METHOD CALLED THIS --> console.log(new Error('I was called').stack) OR Use 'this' on caller!!!
+
+        // Add to debug appInfo - only if the msg is string..
+        var log = { 'dateTime': ( new Date() ).toISOString(), 'msg': Util.getStr( msg, 400 ), 'label': label };
+        //AppInfoManager.addToCustomLogHistory( log );
+
+        // NOTE, this could make the app size to get much bigger, 
+        // Thus, we might want to limit the number of storage --> 200?
+        ConsoleCustomLog.customLogData.push( { 'msg': msg, 'label': label } );
+    
+        if ( ConsoleCustomLog.customLogData.length > 200 ) ConsoleCustomLog.customLogData.shift();    
+    }
+};
+
+
+/*
 console.customLog = function ( msg, label ) 
 {
     try
@@ -37,7 +61,7 @@ console.customLog = function ( msg, label )
         console.log( 'ERROR on console.customLog, errMsg'  + errMsg + ', msg: ' + msg + ', label ' + label );
     }
 };
-
+*/
 
 ConsoleCustomLog.clearLogs = function()
 {

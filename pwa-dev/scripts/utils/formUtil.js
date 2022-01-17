@@ -1878,10 +1878,10 @@ FormUtil.getActivityTypes = function()
 {
 	// get different 'Areas' or Activity-Types
 	// var sessData = localStorage.getItem(Constants.storageName_session);
-	var userInfo = AppInfoManager.getUserInfo();
+	var userName = AppInfoLSManager.getUserName();
 	var retArr = [];
 
-	if ( userInfo )
+	if ( userName )
 	{
 		var itms = ConfigManager.getSettingsActivityDef().activityTypes;
 

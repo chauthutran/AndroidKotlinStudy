@@ -21,11 +21,12 @@
 // -------------------------------------------------
 function SessionManager() {}
 
-SessionManager.sessionData = {
+SessionManager.sessionData = {	
 	login_UserName: '',
 	login_Password: '',
 	orgUnitData: undefined,
-	dcdConfig: undefined
+	dcdConfig: undefined,
+	loginResp: undefined	
 };
 
 SessionManager.Status_LoggedIn = false;  // Login Flag is kept in here, sessionManager.
@@ -50,14 +51,67 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 		login_Password: password,
 		orgUnitData: loginData.orgUnitData,
 		dcdConfig: loginData.dcdConfig
-	};	
+	};
 
 	Util.mergeJson( SessionManager.sessionData, newSessionInfo );
-	
+
+	SessionManager.sessionData.loginResp = loginData;  // <-- This will be the matching memory of LoginResp in IndexedDB.
+
+
 	// TODO: Need to set 'configManager'
 	ConfigManager.setConfigJson( loginData.dcdConfig );
 };
 
+
+// On logOut..
+SessionManager.unloadDataInSession = function() 
+{
+	SessionManager.sessionData = {
+		login_UserName: '',
+		login_Password: '',
+		orgUnitData: undefined,
+		dcdConfig: undefined,
+		loginResp: undefined
+	};	
+
+	ConfigManager.clearConfigJson();
+};
+
+// ----------------------------------------------
+// --- IndexedDB loading operations..
+
+// Use for offline loginResp data get.
+SessionManager.getLoginRespData_IDB = function( userName, passwd, callBack )
+{
+	DataManager2.getData_LoginResp( userName, passwd, callBack );  //LocalStgMng.getJsonData( userName );
+};
+
+// This is not for updating time to time, but only set after online success login - for offline usage..
+SessionManager.setLoginRespData_IDB = function( userName, passwd, loginData )
+{
+	DataManager2.saveData_LoginResp( userName, passwd, loginData );
+};
+
+// -----------------------------------------------
+
+// password (& userName) check against the IDB encrpyting
+SessionManager.checkPasswordOffline_IDB = function( userName, passwd, callBack )
+{
+	var IDB_KeyName_appInfo = DataManager2.StorageName_appInfo + '_' + userName;
+	
+	DataManager2.checkDecriptionPasswd( IDB_KeyName_appInfo, passwd, callBack );
+};
+
+
+SessionManager.checkOfflineDataExists = function( userName, callBack )
+{
+	var keyName_IDB_appInfo = DataManager2.StorageName_appInfo + '_' + userName;
+
+	DataManager2.checkDataExists_IDB( keyName_IDB_appInfo, callBack );
+};
+
+
+// ----------------------------------------------
 
 // Used in login.js --> validate offline user data
 SessionManager.checkLoginData = function( loginData ) 
@@ -80,19 +134,6 @@ SessionManager.checkLoginData = function( loginData )
 	}
 
 	return validLoginData;
-};
-
-
-SessionManager.unloadDataInSession = function() 
-{
-	SessionManager.sessionData = {
-		login_UserName: '',
-		login_Password: '',
-		orgUnitData: undefined,
-		dcdConfig: undefined
-	};	
-
-	ConfigManager.clearConfigJson();
 };
 
 // --------------------------------------------------
@@ -143,51 +184,6 @@ SessionManager.isTestLoginCountry = function()
 
 // --------------------------------------------------
 
-// -- Called after login --> to update the 'User' session data in localStorage.
-SessionManager.saveUserSessionToStorage = function( loginData, userName, password )
-{
-	try
-	{
-		var newSaveObj = Util.cloneJson( loginData );
-
-		var dtmNow = ( new Date() ).toISOString();
-		
-		//var themeStr = loginData.dcdConfig.settings.theme : "default";
-	
-
-		// NOTE: ...
-		newSaveObj.mySession = { 
-			createdDate: dtmNow // Last online login
-			//,lastUpdated: dtmNow // Last offline login? <-- do we need this?
-			,pin: Util.encrypt( password, 4 ) // Used on Offline Login password check
-			,theme: 'blue' 
-			//,language: AppInfoManager.getLangCode() // Not Used - Instead, saved in AppInfo.
-		};
-	
-		LocalStgMng.saveJsonData( userName, newSaveObj );
-	}
-	catch( errMsg )
-	{
-		console.customLog( 'Error in SessionManager.saveUserSessionToStorage, errMsg: ' + errMsg );
-	}
-
-};
-
-
-SessionManager.getMySessionOnLocalStorage = function( userName )
-{
-	var userLoginLocalData = SessionManager.getLoginDataFromStorage( userName );
-
-	return ( userLoginLocalData ) ? userLoginLocalData.mySession: undefined;
-};
-
-SessionManager.getMySessionCreatedDate = function( userName )
-{
-	var mySession = SessionManager.getMySessionOnLocalStorage( userName );
-
-	return ( mySession ) ? mySession.createdDate: undefined;
-};
-
 // -- Called after offline login --> updates just datetime..
 // SessionManager.updateUserSessionToStorage = function( loginData, userName )
 // {
@@ -207,14 +203,15 @@ SessionManager.check_warnLastConfigCheck = function( configUpdate )
 {
 	try
 	{
-		var lastSessionCreatedDate = SessionManager.getMySessionCreatedDate( SessionManager.sessionData.login_UserName );
+		// put this info on 'localStorage' as 'lastOnlineLoginDt'
+		var lastOnlineLoginDt = AppInfoLSManager.getLastOnlineLoginDt(); //SessionManager.getMySessionCreatedDate( SessionManager.sessionData.login_UserName );
 
-		if ( lastSessionCreatedDate && configUpdate.lastTimeCheckedWarning_days !== undefined )
+		if ( lastOnlineLoginDt && configUpdate.lastTimeCheckedWarning_days !== undefined )
 		{
 			var warningDays = Number( configUpdate.lastTimeCheckedWarning_days );
 			if ( warningDays > 0 )
 			{				
-				var daysSince = UtilDate.getDaysSince( lastSessionCreatedDate );
+				var daysSince = UtilDate.getDaysSince( lastOnlineLoginDt );
 
 				if ( daysSince >= warningDays )
 				{
@@ -235,38 +232,6 @@ SessionManager.check_warnLastConfigCheck = function( configUpdate )
 };
 
 // -------------------------------------
-
-SessionManager.getLoginDataFromStorage = function( userName )
-{
-	return LocalStgMng.getJsonData( userName );
-};
-
-
-SessionManager.saveLoginDataToStorage = function( userName, loginData )
-{
-	LocalStgMng.saveJsonData( userName, loginData );
-};
-
-// -------------------------------------
-
-// Same call, diff name of 'getLoginDataFromStorage'
-SessionManager.getOfflineUserData = function( userName )
-{
-	return SessionManager.getLoginDataFromStorage( userName );
-};
-
-SessionManager.getOfflineUserPin = function( offlineUserData )
-{
-	var pin = "";
-	
-	if ( offlineUserData && offlineUserData.mySession && offlineUserData.mySession.pin )
-	{
-		pin = Util.decrypt( offlineUserData.mySession.pin, 4);
-	}
-
-	return pin;
-};
-
 
 // -----------------------------
 
@@ -309,3 +274,22 @@ SessionManager.clearWSBlockFormsJson = function()
 	SessionManager.WSblockFormsJson = {};
 	SessionManager.WSblockFormsJsonArr = [];
 };
+
+// ============================================
+// == Session Related DATA MANAGING - IndexedDB
+//		- We can only allow this after login, since we need to access data with proper password..
+//			- decripted data..
+
+// -- Called after login --> to update the 'User' session data in localStorage.
+//SessionManager.saveUserSessionToStorage = function( loginData, userName, password )
+	// NOTE: ...
+//	newSaveObj.mySession = { 
+//		createdDate: dtmNow // Last online login
+		//,lastUpdated: dtmNow // Last offline login? <-- do we need this?
+//		,pin: Util.encrypt( password, 4 ) // Used on Offline Login password check
+//		,theme: 'blue' 
+		//,language: AppInfoLSManager.getLangCode() // Not Used - Instead, saved in AppInfo.
+//	};
+
+//	LocalStgMng.saveJsonData( userName, newSaveObj );
+

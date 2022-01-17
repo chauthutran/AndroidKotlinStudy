@@ -153,8 +153,8 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             var delayReload = ( SwManager.swUpdateOption && SwManager.swUpdateOption.delayReload ); 
             
             // Reset this value
-            AppInfoManager.clearAutoLogin();
-            AppInfoManager.clearLoginCurrentKeys();
+            //AppInfoManager.clearAutoLogin();
+            //AppInfoLSManager.clearLoginCurrentKeys();
 
             
             var allowAppReload_AfterLogin = ConfigManager.getAppUpdateSetting().allowAppReload_AfterLogin;
@@ -170,9 +170,13 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             {
                 // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.                                
                 // If app update happens before login, save the username keys + pins..
-                if ( SessionManager.Status_LogIn_InProcess ) AppInfoManager.setAutoLogin( new Date() );
-                else AppInfoManager.setLoginCurrentKeys( new Date(), SessionManager.cwsRenderObj.loginObj.getLoginCurrentKeys() );
+                //if ( SessionManager.Status_LogIn_InProcess ) AppInfoManager.setAutoLogin( new Date() );
+                //else AppInfoLSManager.setLoginCurrentKeys( new Date(), SessionManager.cwsRenderObj.loginObj.getLoginCurrentKeys() );
  
+
+                // TODO: In Log in page, if fresh app without never logged in case, app get updated, 
+                //      - try to store the userName if typed..
+
                 AppUtil.appReloadWtMsg( 'App Reloading! (After Update)' );
             }   
         }

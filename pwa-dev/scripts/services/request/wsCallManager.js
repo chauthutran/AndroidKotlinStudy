@@ -72,7 +72,7 @@ WsCallManager.setWsTarget = function( overrideOriginUrl, overrideStageName )
         if ( overrideStageName ) stageName = overrideStageName;
         else 
         {
-            var savedLocalStageName = AppInfoManager.getLocalStageName();
+            var savedLocalStageName = AppInfoLSManager.getLocalStageName();
             stageName = ( savedLocalStageName ) ? savedLocalStageName : 'dev';
         }
     }
@@ -178,7 +178,7 @@ WsCallManager.serverAvailable = function( callBack )
             {
                 // If  configManager configJson.souceType is available (after login), use it.  Otherwise (on not login), get localStorage data.                
                 var configJson = ConfigManager.getConfigJson();
-                var sourceType = ( configJson.sourceType ) ? configJson.sourceType : AppInfoManager.getUserConfigSourceType();
+                var sourceType = ( configJson.sourceType ) ? configJson.sourceType : AppInfoLSManager.getConfigSourceType();
                 if ( sourceType !== 'mongo' ) sourceType = 'dhis2';
                 
                 WsCallManager.dwsAvailabilityCheck( sourceType, callBack );   
@@ -336,7 +336,7 @@ WsCallManager.requestPost = function( url, requestOption, loadingTag, returnFunc
         WsCallManager.loadingTagClear( loadingTag );
 
         // NEW: Save 'blackListing' case to localStorage offline user data..  CREATE CLASS?  OTHER THAN appInfo?
-        if ( !success && returnJson && returnJson.blackListing ) WsCallManager.markBlackListing_Local( returnJson, SessionManager.sessionData.login_UserName );
+        if ( !success && returnJson && returnJson.blackListing ) AppInfoLSManager.setBlackListed( true );
 
 		if ( returnFunc ) returnFunc( success, returnJson );
 	});
@@ -534,18 +534,3 @@ WsCallManager.requestDWS_DELETE = function( endPoint, payloadJson, loadingTag, r
 
 
 // -----------------------  Minor Other Methods...
-
-WsCallManager.markBlackListing_Local = function( returnJson, userName )
-{
-    // NEW: Save 'blackListing' case to localStorage offline user data..  CREATE CLASS?  OTHER THAN appInfo?
-    if ( returnJson && returnJson.blackListing )
-    {            
-        // SessionManager.sessionData.login_UserName
-        var userDataStorage = SessionManager.getLoginDataFromStorage( userName );
-        if ( userDataStorage )
-        {
-            userDataStorage.blackListing  = returnJson.blackListing;
-            SessionManager.saveLoginDataFromStorage( userName, userDataStorage );    
-        }
-    }
-};
