@@ -143,7 +143,7 @@ Util2.newLocalSequence = function( pattern, commitSEQIncr )
 
 	SessionManager.getLoginRespData_IDB( userName, passwd, function( jsonUserData )
 	{
-		var jsonStorageData = jsonUserData.mySession.seqIncr;
+		var jsonStorageData = jsonUserData.seqIncr;
 		var ret;
 	
 		if ( jsonStorageData == undefined ) 
@@ -183,7 +183,7 @@ Util2.newLocalSequence = function( pattern, commitSEQIncr )
 					}
 	
 					jsonStorageData[ (arrParm[0]).slice(1) ] = ret;
-					jsonUserData.mySession.seqIncr = jsonStorageData;
+					jsonUserData.seqIncr = jsonStorageData;
 	
 					if ( commitSEQIncr != undefined && commitSEQIncr == true )
 					{

@@ -1265,6 +1265,12 @@ ConfigManager.getRelationOpposite = function( relValue, optionDefId )
 
 // ========================================================
 
+ConfigManager.getHideClientRelationshipTab = function()
+{
+    var clientDef = ConfigManager.getSettingsClientDef();
+
+    return ( clientDef && clientDef.hideClientRelationshipTab );
+};
 
 // -- Default Configs -----
 

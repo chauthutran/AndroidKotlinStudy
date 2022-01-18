@@ -17,8 +17,17 @@ function ClientCardDetail( clientId, isRestore )
     { 
         me.actionObj = new Action( SessionManager.cwsRenderObj, {} );
 
+        // Optional 'clientRelationshipTab' removal - set in config.
+        var preCall = undefined;
+        if ( ConfigManager.getHideClientRelationshipTab() ) {
+            preCall = function( sheetFullTag ) {
+                sheetFullTag.find( 'li[rel=tab_relationships]' ).remove();
+                sheetFullTag.find( 'div[tabButtonId=tab_relationships]' ).remove();
+            };
+        }
+
         // sheetFull Initialize / populate template
-        me.cardSheetFullTag = FormUtil.sheetFullSetup( ClientCardDetail.cardFullScreen, { title: 'Client Detail', term: '', cssClasses: [ 'clientDetail' ] } );
+        me.cardSheetFullTag = FormUtil.sheetFullSetup( ClientCardDetail.cardFullScreen, { title: 'Client Detail', term: '', cssClasses: [ 'clientDetail' ], preCall: preCall } );
 
         // create tab click events
         FormUtil.setUpEntryTabClick( me.cardSheetFullTag.find( '.tab_fs' ) ); 

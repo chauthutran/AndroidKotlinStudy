@@ -218,6 +218,9 @@ FormUtil.sheetFullSetup = function( template, options )
 
 	// 1. create with template & append to body
 	var sheetFullTag = $( template ).css( 'z-index', FormUtil.getNextZIndex_cardFullScreen() );
+
+	if ( options.preCall ) options.preCall( sheetFullTag );
+
 	$( 'body' ).append( sheetFullTag );
 
 
