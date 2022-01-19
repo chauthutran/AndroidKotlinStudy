@@ -57,7 +57,6 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 
 	SessionManager.sessionData.loginResp = loginData;  // <-- This will be the matching memory of LoginResp in IndexedDB.
 
-
 	// TODO: Need to set 'configManager'
 	ConfigManager.setConfigJson( loginData.dcdConfig );
 };
@@ -87,9 +86,9 @@ SessionManager.getLoginRespData_IDB = function( userName, passwd, callBack )
 };
 
 // This is not for updating time to time, but only set after online success login - for offline usage..
-SessionManager.setLoginRespData_IDB = function( userName, passwd, loginData )
+SessionManager.setLoginRespData_IDB = function( userName, passwd, loginData, callBack )
 {
-	DataManager2.saveData_LoginResp( userName, passwd, loginData );
+	DataManager2.saveData_LoginResp( userName, passwd, loginData, callBack );
 };
 
 // -----------------------------------------------

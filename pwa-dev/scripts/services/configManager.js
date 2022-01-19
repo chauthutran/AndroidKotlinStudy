@@ -960,10 +960,19 @@ ConfigManager.getSettingNetworkSync = function()
 
 ConfigManager.getSyncDownSetting = function()
 {
-    var syncDownList = ConfigManager.getConfigJson().settings.sync.syncDown;
+    var syncDownJson = {};
 
-    // get 1st item from the list.  Empty list returns emtpy object.
-    var syncDownJson = ( syncDownList.length > 0 ) ? syncDownList[0] : {};
+    try
+    {    
+        var syncDownList = ConfigManager.getConfigJson().settings.sync.syncDown;
+
+        // get 1st item from the list.  Empty list returns emtpy object.
+        syncDownJson = ( syncDownList.length > 0 ) ? syncDownList[0] : {};
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in ConfigManager.getSyncDownSetting, ' + errMsg );
+    }
 
     return syncDownJson;
 };

@@ -184,7 +184,9 @@ ScheduleManager.schedule_syncDownRunOnce = function()
 {
 	try
 	{
-		if ( ConfigManager.getSyncDownSetting().enable )
+		var syncDownSetting = ConfigManager.getSyncDownSetting();
+
+		if ( syncDownSetting && syncDownSetting.enable )
 		{
 			// Call this.  If does not success, schedule to call
 			clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
