@@ -29,6 +29,11 @@ InfoDataManager.NAME_fixOperationLast_noZ = 'fixOperationLast_noZ';
 
 InfoDataManager.NAME_INFO = 'INFO'; // Used for array list 'INFO' name..
 
+// --------------------------------------
+
+InfoDataManager.INFO.deviceMinSpec = { memory: 1, storage: 4 };
+InfoDataManager.INFO.deviceInfo = {};
+
 // ---------------------------------------
 
 InfoDataManager.setINFOdata = function( name, data )
@@ -169,4 +174,58 @@ InfoDataManager.createObj_ActivityClient = function( activity )
 	var client = ClientDataManager.getClientByActivityId( activity.id );
 
 	return { 'activity': activity, 'client': client };
+};
+
+
+InfoDataManager.setDeviceInfo = function( UaData )
+{
+	var info = {};
+	
+	info.browser = UaData.browser;
+	info.os = UaData.os;
+	info.cpu = UaData.cpu;
+	info.cpu.corCount = navigator.hardwareConcurrency;
+	info.memory = navigator.deviceMemory;
+	info.device = UaData.device;
+	info.battery;
+
+	InfoDataManager.INFO.deviceInfo = info;
+};
+
+
+InfoDataManager.getDeviceInfo_storage = function( callBack )
+{
+	if ( 'storage' in navigator && 'estimate' in navigator.storage ) 
+	{
+		navigator.storage.estimate().then( ( { usage, quota } ) => {
+			callBack( { usage: usage, quota: quota } );
+		}).catch( error => {
+			console.log( 'ERROR caught on InfoDataManager.getDeviceInfo_storage' );
+			callBack();
+		});
+	}
+	else callBack();
+
+	/*	
+
+        //returnData += ' Engine: ' + Util.getStr( UaData.engine.name ) + Util.getStr( UaData.engine.version );
+        returnData += ', OS: ' + Util.getStr( UaData.os.name ) + ' ' + Util.getStr( UaData.os.version );
+        returnData += ', CPU: ' + Util.getStr( UaData.cpu.architecture ) + '(CoreCount ' + Util.getStr( navigator.hardwareConcurrency ) + ')';
+        returnData += ', Memory: at least ' + Util.getStr( navigator.deviceMemory ) + ' GB [Measurement Max 8]';
+        returnData += '</div>'; 
+
+        returnData += '<div class="divAboutInfo2ndRow">Device: ' + Util.getStr( UaData.device.type ) + ' ' 
+            + Util.getStr( UaData.device.vendor ) + ' ' 
+            + Util.getStr( UaData.device.model );
+        returnData += '</div>'; 
+
+        navigator.getBattery().then( function( battery ) 
+        {
+            var batteryChargingYN = ( battery.charging ) ? 'Y': 'N';
+            var chargeLvl = ( battery.level * 100 ).toFixed( 0 ) + '%';
+            var batteryInfo = ', Battery Left: ' + chargeLvl + ', Charging(' + batteryChargingYN + ')';
+
+            $( 'div.divAboutInfo2ndRow' ).append( batteryInfo );
+        });
+	*/
 };

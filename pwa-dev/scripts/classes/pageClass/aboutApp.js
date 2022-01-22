@@ -110,12 +110,23 @@ function aboutApp( cwsRender )
 
         // Populate data
         $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html() );
-        $( '#aboutInfo_info' ).html( me.getNavigatorInfo() );
 
         $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
+
         $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManagerNew.statusInfo.appMode + '</div>' );
+
+        me.displayDeviceInfo( $( '#aboutInfo_info' ) );
+        //$( '#aboutInfo_info' ).html( me.getNavigatorInfo() );
+
         //$( '#aboutInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
+        //<!--div class="field-read_only">
+        //  <div class="field-read_only__label"><label term="about_geoLocation">Location permission</label></div>
+        //  <div class="field-read_only__text" id="aboutInfo_geoLocation">Granted-so-i-say?</div>
+        //</div-->
+
     }
+
+
 
     // -----------------------------------
 
@@ -173,10 +184,18 @@ function aboutApp( cwsRender )
         return M.join(' ');
     };
 
+    me.displayDeviceInfo = function( aboutInfoTag )
+    {
+        var data = me.getDeviceJson();  // Put this on INFO..
+
+    };
 
     me.getNavigatorInfo = function()
     {
         var returnData = '';
+
+
+
 
         returnData += '<div>Browser: ' + Util.getStr( App.UaData.browser.name ) + ' ' + Util.getStr( App.UaData.browser.version ).substr( 0, 2 );
         //returnData += ' Engine: ' + Util.getStr( App.UaData.engine.name ) + Util.getStr( App.UaData.engine.version );

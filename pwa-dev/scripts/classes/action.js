@@ -2,9 +2,9 @@
 // -- Action Class/Methods
 function Action( cwsRenderObj, blockObj )
 {
-    var me = this;
+  var me = this;
 
-    me.cwsRenderObj = cwsRenderObj;
+  me.cwsRenderObj = cwsRenderObj;
 	me.blockObj = blockObj;
 	me.emptyJQueryTag = $( '.emptyJQueryElement' );
 	//me.blockParentAreaTag;  // button rendering div's parent tag..  <-- if tab button, target is tab content
@@ -128,8 +128,8 @@ function Action( cwsRenderObj, blockObj )
 
 
 	// ------------------------------------
-	
-	// me.clickActionPerform 
+	// NOTE: Using callBack for this kind of dynamic action array is not so desirable..
+	//		It does not actually end the method, but linger a bit at the end, thus, persisting the context...
 	me.actionPerform = function( actionDef, blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, dataPass, blockPassingData, afterActionFunc )
 	{
 		try
@@ -161,364 +161,368 @@ function Action( cwsRenderObj, blockObj )
 				}	
 
 				// #2. NEW: If 'actionCondition' exists, evaluate if it can continue..  If not, simply go to next action			
+				var skipThisAction_byRunCnd = false;
 				if ( clickActionJson.actionRunCondition )
 				{
 					var result = false;
 					try { result = eval( Util.getEvalStr( clickActionJson.actionRunCondition ) ); }
 					catch( errMsg ) { console.log( 'Action.actionCondition ERROR, ' + errMsg ); }
 					
-					if ( result === true ) {} // If true, continue with below action run.
-					else afterActionFunc( true ); // If false, skip this action.
+					if ( result !== true ) skipThisAction_byRunCnd = true;
 				}	
 
 
-				// #3. Run by 'actionType'
-				if ( !clickActionJson.actionType ) // If 'actionType' not exist, simply move to next
+				if ( skipThisAction_byRunCnd ) afterActionFunc( true ); // If false, skip this action.
+				else
 				{
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "evaluation" ) // Custom Expression Eval
-				{
-					blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
-	
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "evalAction" ) // New Eval - Javascript plain Eval
-				{
-					if ( clickActionJson.eval )
+					// #3. Run by 'actionType'
+					if ( !clickActionJson.actionType ) // If 'actionType' not exist, simply move to next
 					{
-						try { eval( Util.getEvalStr( clickActionJson.eval ) ); }	// We can even modify 'passData' by this..  or do timeout..
-						catch( errMsg ) { console.log( 'Action.evalAction ERROR, ' + errMsg ); }
-						
-						// If the eval has 'afterActionFunc', let it control the call.						
-						if ( clickActionJson.eval.indexOf( 'afterActionFunc' ) === -1 ) afterActionFunc( true ); 
+						afterActionFunc( true );
 					}
-					else
+					else if ( clickActionJson.actionType === "evaluation" ) // Custom Expression Eval
 					{
-						afterActionFunc( true ); 
-					}	
-					// Examples: - Run block or buttons.. - Also, can use 'dataPass' to exchange data.
-				}
-				else if ( clickActionJson.actionType === "clearOtherBlocks" )
-				{
-					var currBlockId = blockDivTag.attr( 'blockId' );
-	
-					blockParentAreaTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
-	
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "closeBlock" )
-				{
-					if( clickActionJson.closeLevel !== undefined )
+						blockPassingData.displayData = me.actionEvaluateExpression( blockPassingData.displayData, clickActionJson );
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "evalAction" ) // New Eval - Javascript plain Eval
 					{
-						// Probably not used...
-						var closeLevel = Util.getNum( clickActionJson.closeLevel );
-	
-						var divBlockTotal = blockParentAreaTag.find( 'div.block:visible' ).length;
-	
-						var currBlock = blockDivTag;
-	
-						for ( var i = 0; i < divBlockTotal; i++ )
+						if ( clickActionJson.eval )
 						{
-							var tempPrevBlock = currBlock.prev( 'div.block' );
-	
-							if ( closeLevel >= i ) 
-							{
-								currBlock.remove();
-							}
-							else break;
-	
-							currBlock = tempPrevBlock;
-						}
-					}
-					else if( clickActionJson.blockId != undefined )
-					{
-						blockParentAreaTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
-					}
-	
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "hideBlock" )
-				{
-					//blockDivTag.hide();
-					if ( me.blockObj.hideBlock ) me.blockObj.hideBlock();
-	
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "openSheetFull" )
-				{		
-					// NOT USED much..
-					var sheetFullTag = FormUtil.sheetFullSetup( Templates.sheetFullFrame, clickActionJson.openSheetFull );
-					blockParentAreaTag = sheetFullTag.find( '.contentBody' );
-
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "openBlock" )
-				{
-					// if open sheet full (layover) option is selected, open everything in this + backbutton setup..
-					if ( clickActionJson.openSheetFull )
-					{
-						var sheetFullTag = FormUtil.sheetFullSetup( Templates.sheetFullFrame, clickActionJson.openSheetFull );
-						blockParentAreaTag = sheetFullTag.find( '.contentBody' );
-					}
-
-					var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
-
-					if ( blockJson )
-					{
-						// 'blockPassingData' exists is called from 'processWSResult' actions
-						if ( dataPass.formsJson ) blockPassingData = { formsJson: dataPass.formsJson };
-						else if ( dataPass.blockPassingData ) blockPassingData = dataPass.blockPassingData;
-						else if ( blockPassingData === undefined ) blockPassingData = {}; 
-					
-						blockPassingData.showCase = clickActionJson.showCase;
-						blockPassingData.hideCase = clickActionJson.hideCase;
-
-						FormUtil.renderBlockByBlockId( clickActionJson.blockId, me.cwsRenderObj, blockParentAreaTag, blockPassingData, undefined, clickActionJson );
-					}
-	
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "openArea" )
-				{				
-					if ( clickActionJson.areaId )
-					{
-						// If 'back button' is visible (which could a layer over existing), click it to close that.
-						// For being able to see..
-						var backBtnTags = $( '.btnBack:visible' );
-						if ( backBtnTags.length > 0 ) backBtnTags.first().click();
-						
-						//if ( clickActionJson.areaId == 'list_c-on' ) console.customLog( 'x' );
-						me.cwsRenderObj.renderArea( clickActionJson.areaId );
-					}
-	
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "filledData" )
-				{
-					var dataFromDivTag = blockParentAreaTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
-					var dataToDivTag = blockParentAreaTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
-					var dataItems = clickActionJson.dataItems;
-	
-					for ( var i = 0; i < dataItems.length; i++ )
-					{
-						var formCtrlTag = FormUtil.getFormCtrlTag( dataFromDivTag, dataItems[i] );
-						var dataValue = FormUtil.getFormCtrlDataValue( formCtrlTag );
-						var displayValue = FormUtil.getFormCtrlDisplayValue( formCtrlTag );
-						var toCtrlTag = FormUtil.getFormCtrlTag( dataToDivTag, dataItems[i] );
-
-						FormUtil.setFormCtrlDataValue( toCtrlTag, dataValue );
-						FormUtil.setFormCtrlDisplayValue( toCtrlTag, displayValue );
-					}
-	
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "alertMsg" || clickActionJson.actionType === "topNotifyMsg" )
-				{
-					var msgTransl = TranslationManager.translateText( clickActionJson.message, clickActionJson.term );
-					var clsName = ( clickActionJson.messageClass ) ? clickActionJson.messageClass: 'notifDark';
-
-					MsgManager.notificationMessage ( msgTransl, clsName, undefined, '', 'right', 'top' );
-	
-					afterActionFunc( true );
-				}			
-				else if ( clickActionJson.actionType === "reloadClientTag" )
-				{
-					var clientCardTag = blockDivTag.closest( '.client[itemid]' );
-
-					if ( clientCardTag.length > 0 ) 
-					{
-						clientCardTag.find( 'div.clientRerender' ).click();
-					}
-	
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "reloadActivityTag" )
-				{
-					var activityCardTag = blockDivTag.closest( '.activity[itemid]' );
-
-					if ( activityCardTag.length > 0 ) activityCardTag.find( 'div.activityRerender' ).click();	
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "activitySyncBtnClick" )
-				{
-					var clientCardTag = blockDivTag.closest( 'div.card[itemid]' );
-
-					if ( clientCardTag.length > 0 ) clientCardTag.find( 'div.activitySyncRun' ).click();
-
-					afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "syncActivityById" )
-				{
-					var activityId = '';
-					dataPass.relTargetClientId = undefined;
-
-					if ( dataPass.activityJson ) activityId = dataPass.activityJson.id;
-					else if ( dataPass.syncActivityId ) activityId = dataPass.syncActivityId;
-
-					if ( activityId )
-					{						
-						ActivitySyncUtil.syncUpActivity_IfOnline( activityId
-						, function( syncReadyJson, success, responseJson ) 
-						{ 
-							if ( success && responseJson && responseJson.result && responseJson.result.client )
-							{
-								dataPass.relTargetClientId = responseJson.result.client._id;
-							}
-
-							afterActionFunc( true ); 
-						}
-						, function() { afterActionFunc( true ); });
-					}
-					else afterActionFunc( true );
-				}
-				else if ( clickActionJson.actionType === "processWSResult" ) 
-				{
-					var statusActionsCalled = false;
-	
-					// get previous action ws replied data from 'dataPass' - data retrieved from Async Call (WebService Rest Api)
-					var wsReplyData = dataPass.prevWsReplyData;
-	
-					if ( wsReplyData && wsReplyData.resultData && clickActionJson.resultCase )
-					{
-						var statusActions = clickActionJson.resultCase[ wsReplyData.resultData.status ];
-	
-						if ( statusActions && statusActions.length > 0 )
-						{
-							statusActionsCalled = true;
-							var dataPass_Status = {};
-	
-							// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
-							me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
-								afterActionFunc( true );
-							} );
-	
-						}
-					}
-	
-					// If statusActions did not get started for some reason, return as this action finished
-					if ( !statusActionsCalled ) afterActionFunc( true );
-				}
-				// NO NEED FOR THIS... both 'dhis' & 'mongo' version..
-				else if ( clickActionJson.actionType === "WSlocalData" )
-				{
-					var statusActionsCalled = false;
-	
-					if ( clickActionJson.localResource )
-					{
-						var wsExchangeData = FormUtil.wsExchangeDataGet( formDivSecTag, clickActionJson.payloadBody, clickActionJson.localResource );
-						var statusActions = clickActionJson.resultCase[ wsExchangeData.resultData.status ];
-						var dataPass_Status = {};
-	
-						statusActionsCalled = true;
-	
-						// 'wsExchangeData' should have 'resultData' & 'displayData' for form population.
-						// 'displayData' is the one that gets used..
-						wsExchangeData.displayData = blockPassingData;
-
-						me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
-							afterActionFunc( true );
-						} );
-	
-					}
-					else
-					{
-						if ( !statusActionsCalled ) afterActionFunc( true ); 
-					}
-	
-					// If statusActions did not get started for some reason, return as this action finished
-				}
-				else if ( clickActionJson.actionType === "sendToWS" && clickActionJson.redeemListInsert !== "true" )
-				{
-					// NOTE: Most Case - 'Search'
-					dataPass.prevWsReplyData = undefined;  // CLEAR RELATED DATA
-					dataPass.activityJson = undefined;
-
-					var actionUrl = me.getActionUrl_Adjusted( clickActionJson );
-					
-					var payloadJson = ActivityUtil.generateFormsJsonData_ByType( clickActionJson, clickActionJson, formDivSecTag );  
-
-					// TODO: Simply save blockId, payloadJson..
-					SessionManager.saveWSBlockFormsJson( blockId, ActivityUtil.generateFormsJson( formDivSecTag ) );
-
-
-					// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
-					me.submitToWs( actionUrl, payloadJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
-
-						afterActionFunc( bResult, optionJson );
-					} );
-				}
-				else if ( clickActionJson.actionType === "queueActivity" || ( clickActionJson.actionType === "sendToWS" && clickActionJson.redeemListInsert === "true" ) )
-				{
-					dataPass.prevWsReplyData = undefined;  // CLEAR RELATED DATA
-					dataPass.activityJson = undefined;
-
-					var actionUrl = me.getActionUrl_Adjusted( clickActionJson );					
-					//FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
-
-					ActivityUtil.handlePayloadPreview( clickActionJson.previewPrompt, formDivSecTag, btnTag, function( passed ) 
-					{ 
-						//var currBlockId = blockDivTag.attr( 'blockId' );
-						if ( passed )
-						{
-							// NEW - Create Activity under existing Client json rather than new client.
-							if ( clickActionJson.underClient && Util.isTypeObject( clickActionJson.underClient ) && clickActionJson.underClient.clientId )
-							{
-								try { clickActionJson.clientId = eval( Util.getEvalStr( clickActionJson.underClient.clientId ) ); }
-								catch( errMsg ) { console.log( 'Action.underClient.clientId eval, ' + errMsg ); }
-							}
-							else if ( ( clickActionJson.underClient || clickActionJson.useCurrentClientId ) && blockDivTag )
-							{
-								var clientCardTag = blockDivTag.closest( '.client[itemid]' );
-								if ( clientCardTag.length > 0 ) clickActionJson.clientId = clientCardTag.attr( 'itemid' );	
-							}
-
-							// #1. Generete payload with 'capture/search' structure - by Template & form fields values.
-							var formsJsonActivityPayload = ActivityUtil.generateActivityPayload_byFormsJson( clickActionJson, formDivSecTag );
-
-							// TODO: Simply save blockId, payloadJson..
-							SessionManager.saveWSBlockFormsJson( blockId, ActivityUtil.generateFormsJson( formDivSecTag ) );
-
-
-							var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
-
-              				// NOTE: If 'voucherCodeReuse' is true (allowed - TZ case), do not need to check for duplicate voucher activity type.
-							var dupVoucherActivityPass = ( ConfigManager.getVoucherCodeReuse() || me.checkDuplicate_VoucherTransActivity( formsJsonActivityPayload, editModeActivityId ) );
+							try { eval( Util.getEvalStr( clickActionJson.eval ) ); }	// We can even modify 'passData' by this..  or do timeout..
+							catch( errMsg ) { console.log( 'Action.evalAction ERROR, ' + errMsg ); }
 							
-							if ( dupVoucherActivityPass )
-							{
-								// #2. Set Final Activity Structure - by creating 'processing' part.  Use above generated activityPayload (from template) json.
-								ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
-								{									
-									AppInfoManager.addToActivityHistory( activityJson );
-
-									dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
-									dataPass.activityJson = activityJson;
-			
-									if ( editModeActivityId ) MsgManager.msgAreaShow( 'Edit activity done.', '', MsgManager.CLNAME_PersistSwitch );
-
-									afterActionFunc( true );
-								} );									
-							}
-							else
-							{
-								//MsgManager.msgAreaShow( 'ERROR: Existing Activity with same voucherCode & transType exists!', 'ERROR' );
-								// MsgManager.msgAreaShow( 'Same type of voucher activity already exists.', 'ERROR' );
-								afterActionFunc( false, { 'errMsg': 'ERROR: Existing Activity with same voucherCode & transType exists!' } );
-							}	
+							// If the eval has 'afterActionFunc', let it control the call.						
+							if ( clickActionJson.eval.indexOf( 'afterActionFunc' ) === -1 ) afterActionFunc( true ); 
 						}
 						else
 						{
-							//me.clearBtn_ClickedMark( btnTag );
-							afterActionFunc( false, { 'type': 'previewBtn', 'msg': 'preview cancelled' } );
-							// throw 'canceled on preview';
+							afterActionFunc( true ); 
+						}	
+						// Examples: - Run block or buttons.. - Also, can use 'dataPass' to exchange data.
+					}
+					else if ( clickActionJson.actionType === "clearOtherBlocks" )
+					{
+						var currBlockId = blockDivTag.attr( 'blockId' );
+
+						blockParentAreaTag.find( 'div.block' ).not( '[blockId="' + currBlockId + '"]' ).remove();
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "closeBlock" )
+					{
+						if( clickActionJson.closeLevel !== undefined )
+						{
+							// Probably not used...
+							var closeLevel = Util.getNum( clickActionJson.closeLevel );
+
+							var divBlockTotal = blockParentAreaTag.find( 'div.block:visible' ).length;
+
+							var currBlock = blockDivTag;
+
+							for ( var i = 0; i < divBlockTotal; i++ )
+							{
+								var tempPrevBlock = currBlock.prev( 'div.block' );
+
+								if ( closeLevel >= i ) 
+								{
+									currBlock.remove();
+								}
+								else break;
+
+								currBlock = tempPrevBlock;
+							}
 						}
-					});								
-				}
-				else
-				{
-					console.log( clickActionJson );
-					afterActionFunc( false, { 'errMsg': 'Unhandled action, actionType: ' + clickActionJson.actionType } );
+						else if( clickActionJson.blockId != undefined )
+						{
+							blockParentAreaTag.find("[blockid='" + clickActionJson.blockId + "']" ).remove();
+						}
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "hideBlock" )
+					{
+						//blockDivTag.hide();
+						if ( me.blockObj.hideBlock ) me.blockObj.hideBlock();
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "openSheetFull" )
+					{		
+						// NOT USED much..
+						var sheetFullTag = FormUtil.sheetFullSetup( Templates.sheetFullFrame, clickActionJson.openSheetFull );
+						blockParentAreaTag = sheetFullTag.find( '.contentBody' );
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "openBlock" )
+					{
+						// if open sheet full (layover) option is selected, open everything in this + backbutton setup..
+						if ( clickActionJson.openSheetFull )
+						{
+							var sheetFullTag = FormUtil.sheetFullSetup( Templates.sheetFullFrame, clickActionJson.openSheetFull );
+							blockParentAreaTag = sheetFullTag.find( '.contentBody' );
+						}
+
+						var blockJson = FormUtil.getObjFromDefinition( clickActionJson.blockId, ConfigManager.getConfigJson().definitionBlocks );
+
+						if ( blockJson )
+						{
+							// 'blockPassingData' exists is called from 'processWSResult' actions
+							if ( dataPass.formsJson ) blockPassingData = { formsJson: dataPass.formsJson };
+							else if ( dataPass.blockPassingData ) blockPassingData = dataPass.blockPassingData;
+							else if ( blockPassingData === undefined ) blockPassingData = {}; 
+						
+							blockPassingData.showCase = clickActionJson.showCase;
+							blockPassingData.hideCase = clickActionJson.hideCase;
+
+							FormUtil.renderBlockByBlockId( clickActionJson.blockId, me.cwsRenderObj, blockParentAreaTag, blockPassingData, undefined, clickActionJson );
+						}
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "openArea" )
+					{				
+						if ( clickActionJson.areaId )
+						{
+							// If 'back button' is visible (which could a layer over existing), click it to close that.
+							// For being able to see..
+							var backBtnTags = $( '.btnBack:visible' );
+							if ( backBtnTags.length > 0 ) backBtnTags.first().click();
+							
+							//if ( clickActionJson.areaId == 'list_c-on' ) console.customLog( 'x' );
+							me.cwsRenderObj.renderArea( clickActionJson.areaId );
+						}
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "filledData" )
+					{
+						var dataFromDivTag = blockParentAreaTag.find("[blockid='" + clickActionJson.fromBlockId + "']" );
+						var dataToDivTag = blockParentAreaTag.find("[blockid='" + clickActionJson.toBlockId + "']" );
+						var dataItems = clickActionJson.dataItems;
+
+						for ( var i = 0; i < dataItems.length; i++ )
+						{
+							var formCtrlTag = FormUtil.getFormCtrlTag( dataFromDivTag, dataItems[i] );
+							var dataValue = FormUtil.getFormCtrlDataValue( formCtrlTag );
+							var displayValue = FormUtil.getFormCtrlDisplayValue( formCtrlTag );
+							var toCtrlTag = FormUtil.getFormCtrlTag( dataToDivTag, dataItems[i] );
+
+							FormUtil.setFormCtrlDataValue( toCtrlTag, dataValue );
+							FormUtil.setFormCtrlDisplayValue( toCtrlTag, displayValue );
+						}
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "alertMsg" || clickActionJson.actionType === "topNotifyMsg" )
+					{
+						var msgTransl = TranslationManager.translateText( clickActionJson.message, clickActionJson.term );
+						var clsName = ( clickActionJson.messageClass ) ? clickActionJson.messageClass: 'notifDark';
+
+						MsgManager.notificationMessage ( msgTransl, clsName, undefined, '', 'right', 'top' );
+
+						afterActionFunc( true );
+					}			
+					else if ( clickActionJson.actionType === "reloadClientTag" )
+					{
+						var clientCardTag = blockDivTag.closest( '.client[itemid]' );
+
+						if ( clientCardTag.length > 0 ) 
+						{
+							clientCardTag.find( 'div.clientRerender' ).click();
+						}
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "reloadActivityTag" )
+					{
+						var activityCardTag = blockDivTag.closest( '.activity[itemid]' );
+
+						if ( activityCardTag.length > 0 ) activityCardTag.find( 'div.activityRerender' ).click();	
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "activitySyncBtnClick" )
+					{
+						var clientCardTag = blockDivTag.closest( 'div.card[itemid]' );
+
+						if ( clientCardTag.length > 0 ) clientCardTag.find( 'div.activitySyncRun' ).click();
+
+						afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "syncActivityById" )
+					{
+						var activityId = '';
+						dataPass.relTargetClientId = undefined;
+
+						if ( dataPass.activityJson ) activityId = dataPass.activityJson.id;
+						else if ( dataPass.syncActivityId ) activityId = dataPass.syncActivityId;
+
+						if ( activityId )
+						{						
+							ActivitySyncUtil.syncUpActivity_IfOnline( activityId
+							, function( syncReadyJson, success, responseJson ) 
+							{ 
+								if ( success && responseJson && responseJson.result && responseJson.result.client )
+								{
+									dataPass.relTargetClientId = responseJson.result.client._id;
+								}
+
+								afterActionFunc( true ); 
+							}
+							, function() { afterActionFunc( true ); });
+						}
+						else afterActionFunc( true );
+					}
+					else if ( clickActionJson.actionType === "processWSResult" ) 
+					{
+						var statusActionsCalled = false;
+
+						// get previous action ws replied data from 'dataPass' - data retrieved from Async Call (WebService Rest Api)
+						var wsReplyData = dataPass.prevWsReplyData;
+
+						if ( wsReplyData && wsReplyData.resultData && clickActionJson.resultCase )
+						{
+							var statusActions = clickActionJson.resultCase[ wsReplyData.resultData.status ];
+
+							if ( statusActions && statusActions.length > 0 )
+							{
+								statusActionsCalled = true;
+								var dataPass_Status = {};
+
+								// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
+								me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
+									afterActionFunc( true );
+								} );
+
+							}
+						}
+
+						// If statusActions did not get started for some reason, return as this action finished
+						if ( !statusActionsCalled ) afterActionFunc( true );
+					}
+					// NO NEED FOR THIS... both 'dhis' & 'mongo' version..
+					else if ( clickActionJson.actionType === "WSlocalData" )
+					{
+						var statusActionsCalled = false;
+
+						if ( clickActionJson.localResource )
+						{
+							var wsExchangeData = FormUtil.wsExchangeDataGet( formDivSecTag, clickActionJson.payloadBody, clickActionJson.localResource );
+							var statusActions = clickActionJson.resultCase[ wsExchangeData.resultData.status ];
+							var dataPass_Status = {};
+
+							statusActionsCalled = true;
+
+							// 'wsExchangeData' should have 'resultData' & 'displayData' for form population.
+							// 'displayData' is the one that gets used..
+							wsExchangeData.displayData = blockPassingData;
+
+							me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsExchangeData, function( finalPassData ) {
+								afterActionFunc( true );
+							} );
+
+						}
+						else
+						{
+							if ( !statusActionsCalled ) afterActionFunc( true ); 
+						}
+
+						// If statusActions did not get started for some reason, return as this action finished
+					}
+					else if ( clickActionJson.actionType === "sendToWS" && clickActionJson.redeemListInsert !== "true" )
+					{
+						// NOTE: Most Case - 'Search'
+						dataPass.prevWsReplyData = undefined;  // CLEAR RELATED DATA
+						dataPass.activityJson = undefined;
+
+						var actionUrl = me.getActionUrl_Adjusted( clickActionJson );
+						
+						var payloadJson = ActivityUtil.generateFormsJsonData_ByType( clickActionJson, clickActionJson, formDivSecTag );  
+
+						// TODO: Simply save blockId, payloadJson..
+						SessionManager.saveWSBlockFormsJson( blockId, ActivityUtil.generateFormsJson( formDivSecTag ) );
+
+
+						// Immediate Submit to Webservice case - Normally use for 'search' (non-activityPayload gen cases)
+						me.submitToWs( actionUrl, payloadJson, clickActionJson, btnTag, dataPass, function( bResult, optionJson ) {
+
+							afterActionFunc( bResult, optionJson );
+						} );
+					}
+					else if ( clickActionJson.actionType === "queueActivity" || ( clickActionJson.actionType === "sendToWS" && clickActionJson.redeemListInsert === "true" ) )
+					{
+						dataPass.prevWsReplyData = undefined;  // CLEAR RELATED DATA
+						dataPass.activityJson = undefined;
+
+						var actionUrl = me.getActionUrl_Adjusted( clickActionJson );					
+						//FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
+
+						ActivityUtil.handlePayloadPreview( clickActionJson.previewPrompt, formDivSecTag, btnTag, function( passed ) 
+						{ 
+							//var currBlockId = blockDivTag.attr( 'blockId' );
+							if ( passed )
+							{
+								// NEW - Create Activity under existing Client json rather than new client.
+								if ( clickActionJson.underClient && Util.isTypeObject( clickActionJson.underClient ) && clickActionJson.underClient.clientId )
+								{
+									try { clickActionJson.clientId = eval( Util.getEvalStr( clickActionJson.underClient.clientId ) ); }
+									catch( errMsg ) { console.log( 'Action.underClient.clientId eval, ' + errMsg ); }
+								}
+								else if ( ( clickActionJson.underClient || clickActionJson.useCurrentClientId ) && blockDivTag )
+								{
+									var clientCardTag = blockDivTag.closest( '.client[itemid]' );
+									if ( clientCardTag.length > 0 ) clickActionJson.clientId = clientCardTag.attr( 'itemid' );	
+								}
+
+								// #1. Generete payload with 'capture/search' structure - by Template & form fields values.
+								var formsJsonActivityPayload = ActivityUtil.generateActivityPayload_byFormsJson( clickActionJson, formDivSecTag );
+
+								// TODO: Simply save blockId, payloadJson..
+								SessionManager.saveWSBlockFormsJson( blockId, ActivityUtil.generateFormsJson( formDivSecTag ) );
+
+
+								var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
+
+								// NOTE: If 'voucherCodeReuse' is true (allowed - TZ case), do not need to check for duplicate voucher activity type.
+								var dupVoucherActivityPass = ( ConfigManager.getVoucherCodeReuse() || me.checkDuplicate_VoucherTransActivity( formsJsonActivityPayload, editModeActivityId ) );
+								
+								if ( dupVoucherActivityPass )
+								{
+									// #2. Set Final Activity Structure - by creating 'processing' part.  Use above generated activityPayload (from template) json.
+									ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
+									{									
+										AppInfoManager.addToActivityHistory( activityJson );
+
+										dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+										dataPass.activityJson = activityJson;
+
+										if ( editModeActivityId ) MsgManager.msgAreaShow( 'Edit activity done.', '', MsgManager.CLNAME_PersistSwitch );
+
+										afterActionFunc( true );
+									} );									
+								}
+								else
+								{
+									//MsgManager.msgAreaShow( 'ERROR: Existing Activity with same voucherCode & transType exists!', 'ERROR' );
+									// MsgManager.msgAreaShow( 'Same type of voucher activity already exists.', 'ERROR' );
+									afterActionFunc( false, { 'errMsg': 'ERROR: Existing Activity with same voucherCode & transType exists!' } );
+								}	
+							}
+							else
+							{
+								//me.clearBtn_ClickedMark( btnTag );
+								afterActionFunc( false, { 'type': 'previewBtn', 'msg': 'preview cancelled' } );
+								// throw 'canceled on preview';
+							}
+						});								
+					}
+					else
+					{
+						console.log( clickActionJson );
+						afterActionFunc( false, { 'errMsg': 'Unhandled action, actionType: ' + clickActionJson.actionType } );
+					}
 				}
 			}
 		}

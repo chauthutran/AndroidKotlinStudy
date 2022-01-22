@@ -29,8 +29,7 @@ App.displayActivityDetailsMode = 0;
 App.displayActivityDetailsWithDataOnly = false;
 App.clientProfileBlockId = "clientProfileBlock";
 
-
-App.UaData = UAParser();
+// App.UaData = UAParser();
 
 // -------------------------------
 
@@ -53,6 +52,9 @@ App.run = function()
   window.addEventListener( 'error', App.catchErrorInCustomLog );
   window.addEventListener( 'beforeinstallprompt', App.beforeinstallprompt );
   if ( App.isMobileDevice() ) App.mobileUISetup();
+
+
+  InfoDataManager.setDeviceInfo( UAParser() );
 
   // Setup Static Classes
   MsgManager.initialSetup();
