@@ -167,35 +167,29 @@ function aboutApp( cwsRender )
     }
 
 
-    me.getBrowserInfo = function() 
-    {
-        var ua= navigator.userAgent, tem, 
-        M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-        if(/trident/i.test(M[1])){
-            tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
-            return 'IE '+(tem[1] || '');
-        }
-        if(M[1]=== 'Chrome'){
-            tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
-            if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
-        }
-        M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
-        if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
-        return M.join(' ');
-    };
-
     me.displayDeviceInfo = function( aboutInfoTag )
     {
-        var data = me.getDeviceJson();  // Put this on INFO..
+        var info = InfoDataManager.INFO.deviceInfo;
 
+        var infoDivTag1 = `<div class="deviceInfoRow1">Browser: ${Util.getStr( info.browser.name )} ${Util.getStr( info.browser.version ).substr( 0, 2 )} 
+            Engine: ${Util.getStr( info.engine.name )} ${Util.getStr( info.engine.version )}
+            , OS: ${Util.getStr( info.os.name )} ${Util.getStr( info.os.version )}
+            , CPU: ${Util.getStr( info.cpu.architecture )} (CoreCount ${Util.getStr( info.cpu.corCount )}
+            , Memory: at least ${Util.getStr( info.memory )} GB [Measurement Max 8]
+        </div>`;
+
+        var infoDivTag2 = `<div class="deviceInfoRow2">Device: ${Util.getStr( info.device.type )} ${Util.getStr( info.device.vendor )} ${Util.getStr( info.device.model )}
+            , Storage: [Using] ${AppUtil.getDiffSize( info.storage.usage, 1000000, 'MB')} / ${AppUtil.getDiffSize( info.storage.quota, 1000000000, 'GB')} [Browser Usable/DeviceSize]
+        </div>`;
+
+        aboutInfoTag.append( infoDivTag1 );
+        aboutInfoTag.append( infoDivTag2 );
     };
 
+    /*
     me.getNavigatorInfo = function()
     {
         var returnData = '';
-
-
-
 
         returnData += '<div>Browser: ' + Util.getStr( App.UaData.browser.name ) + ' ' + Util.getStr( App.UaData.browser.version ).substr( 0, 2 );
         //returnData += ' Engine: ' + Util.getStr( App.UaData.engine.name ) + Util.getStr( App.UaData.engine.version );
@@ -221,28 +215,15 @@ function aboutApp( cwsRender )
         if ( 'storage' in navigator && 'estimate' in navigator.storage ) 
         {
             navigator.storage.estimate().then(({usage, quota}) => {
-                var spaceStr = ', Storage: [Using] ' + me.getDiffSize( usage, 1000000, 'MB' ) + '/ ' + me.getDiffSize( quota, 1000000000, 'GB' ) + ' [Browser Usable/DeviceFree]';
+                var spaceStr = ', Storage: [Using] ' + AppUtil.getDiffSize( usage, 1000000, 'MB' ) + '/ ' + AppUtil.getDiffSize( quota, 1000000000, 'GB' ) + ' [Browser Usable/DeviceFree]';
 
                 $( 'div.divAboutInfo2ndRow' ).append( spaceStr );
             });
         }
           
-
         return returnData;
     };
-
-
-    me.getDiffSize = function( inputVal, dividNum, endingStr )
-    {
-        var returnVal = '';
-
-        if ( inputVal )
-        {
-            returnVal = Number( inputVal / dividNum ).toFixed(1) + endingStr;
-        }
-
-        return returnVal;
-    };
+    */
 
 	// ------------------------------------
 

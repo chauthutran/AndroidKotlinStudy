@@ -16,11 +16,10 @@
 //    - start other services
 //    and do 'render()'
 
-function App() {};
+function App() { };
 
 App.appInstallBtnTag;
 App.ver14 = false;
-
 
 // 0 : Standard
 // 1 : new style without block
@@ -29,270 +28,279 @@ App.displayActivityDetailsMode = 0;
 App.displayActivityDetailsWithDataOnly = false;
 App.clientProfileBlockId = "clientProfileBlock";
 
-// App.UaData = UAParser();
-
 // -------------------------------
 
-App.run = function()
+App.run = function () 
 {
-  App.appInstallBtnTag = $( '.appInstall' );
+	App.appInstallBtnTag = $('.appInstall');
 
-  // --------------------------
-  // Handle modes by url pattern or parameters
-  // Show footer for DEBUG mode
-  if ( Util.getParameterByName( "mode" ) === "debug" ) DebugLog.start();
-  if ( Util.getParameterByName( "ver" ) === "1.4" ) App.ver14 = true;
+	// --------------------------
+	// Handle modes by url pattern or parameters
+	// Show footer for DEBUG mode
+	if (Util.getParameterByName("mode") === "debug") DebugLog.start();
+	if (Util.getParameterByName("ver") === "1.4") App.ver14 = true;
 
-  // 'pwa-dev' only enabling  //if ( location.href.indexOf( 'pwa-dev' ) >= 0 ) { }
-  // --------------------------
+	// 'pwa-dev' only enabling  //if ( location.href.indexOf( 'pwa-dev' ) >= 0 ) { }
+	// --------------------------
 
-  // Default Behavior Modify
-  //App.detectStandAlone();
-  App.windowEvent_BlockBackBtnAction();
-  window.addEventListener( 'error', App.catchErrorInCustomLog );
-  window.addEventListener( 'beforeinstallprompt', App.beforeinstallprompt );
-  if ( App.isMobileDevice() ) App.mobileUISetup();
-
-
-  InfoDataManager.setDeviceInfo( UAParser() );
-
-  // Setup Static Classes
-  MsgManager.initialSetup();
-
-  // Instantiate Classes
-  SessionManager.cwsRenderObj = new cwsRender();  // Global Reference to cwsRenderObj..
-
-  AppInfoLSManager.initialDataLoad_LocalStorage();
-
-  App.App_UI_startUp_loading(); // << should we move this into cwsRender?
+	// Default Behavior Modify
+	//App.detectStandAlone();
+	App.windowEvent_BlockBackBtnAction();
+	window.addEventListener('error', App.catchErrorInCustomLog);
+	window.addEventListener('beforeinstallprompt', App.beforeinstallprompt);
+	if (App.isMobileDevice()) App.mobileUISetup();
 
 
-  // Service Worker Related Initial Setup
-  SwManager.initialSetup( function() 
-  { 
-    SwManager.checkNewAppFile_OnlyOnline();
+	InfoDataManager.setDeviceInfo_OnStart( App.checkDeviceMinSpec );
 
-    App.App_UI_startUp_Progress( '40%' );
-    App.startAppProcess();
-  });
+
+	// Setup Static Classes
+	MsgManager.initialSetup();
+
+	// Instantiate Classes
+	SessionManager.cwsRenderObj = new cwsRender();  // Global Reference to cwsRenderObj..
+
+	AppInfoLSManager.initialDataLoad_LocalStorage();
+
+	App.App_UI_startUp_loading(); // << should we move this into cwsRender?
+
+
+	// Service Worker Related Initial Setup
+	SwManager.initialSetup(function () {
+		SwManager.checkNewAppFile_OnlyOnline();
+
+		App.App_UI_startUp_Progress('40%');
+		App.startAppProcess();
+	});
 
 };
 
 
 // ----------------------------------------------------
-App.startAppProcess = function() 
+App.startAppProcess = function () 
 {
-  try 
-  {        
-    // --------------------
-    // 1. SET UP PHASE
-    WsCallManager.setWsTarget();
+	try 
+	{
+		// --------------------
+		// 1. SET UP PHASE
+		WsCallManager.setWsTarget();
 
-    ConnManagerNew.createNetworkConnListeners();
+		ConnManagerNew.createNetworkConnListeners();
 
-    App.App_UI_startUp_Progress( '50%' );
-
-
-    // --------------------
-    // 2. START PHASE
-    // EVENT SETUP - TODO: Could be placed in cwsRender <-- Or menu setup area..  Not here..
-    ConnManagerNew.cloudConnStatusClickSetup( $( '#divNetworkStatus' ) );
-
-    // Start Connection..
-    ConnManagerNew.appStartUp_SetStatus();
-
-    // Start the scheduling on app start
-    ScheduleManager.runSchedules_AppStart();
-
-    App.App_UI_startUp_Progress( '70%' );
+		App.App_UI_startUp_Progress('50%');
 
 
-    // --------------------
-    // 3. FINISH APP START PHASE
-    App.App_syncIcon_UI_event();
+		// --------------------
+		// 2. START PHASE
+		// EVENT SETUP - TODO: Could be placed in cwsRender <-- Or menu setup area..  Not here..
+		ConnManagerNew.cloudConnStatusClickSetup($('#divNetworkStatus'));
 
-    App.App_UI_startUp_Progress( '80%' );
+		// Start Connection..
+		ConnManagerNew.appStartUp_SetStatus();
 
-    SessionManager.cwsRenderObj.render();
+		// Start the scheduling on app start
+		ScheduleManager.runSchedules_AppStart();
 
-    App.App_UI_startUp_Progress( '100%' );
+		App.App_UI_startUp_Progress('70%');
 
-    App.App_UI_startUp_ready();
 
-  } 
-  catch (err) 
-  {
-    console.customLog('error starting App > startApp() error: ' + err);
-  }
+		// --------------------
+		// 3. FINISH APP START PHASE
+		App.App_syncIcon_UI_event();
+
+		App.App_UI_startUp_Progress('80%');
+
+		SessionManager.cwsRenderObj.render();
+
+		App.App_UI_startUp_Progress('100%');
+
+		App.App_UI_startUp_ready();
+
+	}
+	catch (err) {
+		console.customLog('error starting App > startApp() error: ' + err);
+	}
 };
 
 
 // ------------------------------
 
-App.App_UI_startUp_loading = function()
-{
-  // show PWA (loading) screen
-  FormMsgManager.appBlockTemplate('appLoad');
+App.App_UI_startUp_loading = function () {
+	// show PWA (loading) screen
+	FormMsgManager.appBlockTemplate('appLoad');
 
-  App.App_UI_startUp_Progress( '10%' );
+	App.App_UI_startUp_Progress('10%');
 };
 
 
-App.App_UI_startUp_ready = function()
-{
-  // hide PWA (loading) screen: timeout used for delay (UI effect)
-  setTimeout(function () {
-    FormMsgManager.appUnblock();
-  }, 300);
+App.App_UI_startUp_ready = function () {
+	// hide PWA (loading) screen: timeout used for delay (UI effect)
+	setTimeout(function () {
+		FormMsgManager.appUnblock();
+	}, 300);
 };
 
 
-App.App_UI_startUp_Progress = function( perc )
-{
-  $( 'div.startUpProgress' ).css( 'width', perc );
+App.App_UI_startUp_Progress = function (perc) {
+	$('div.startUpProgress').css('width', perc);
 };
 
 
-App.App_syncIcon_UI_event = function()
-{
-  SyncManagerNew.setAppTopSyncAllBtnClick();
+App.App_syncIcon_UI_event = function () {
+	SyncManagerNew.setAppTopSyncAllBtnClick();
 };
 
 // ---------------------------------------
 
-App.windowEvent_BlockBackBtnAction = function()
-{
-  // Method 1
-  history.pushState(null, document.title, location.href);
+App.windowEvent_BlockBackBtnAction = function () {
+	// Method 1
+	history.pushState(null, document.title, location.href);
 
-  window.addEventListener('popstate', function (event)
-  {
-    history.pushState(null, document.title, location.href);
-    
-    var backBtnTags = $( '.btnBack:visible' );
+	window.addEventListener('popstate', function (event) {
+		history.pushState(null, document.title, location.href);
 
-    if ( backBtnTags.length > 0 )
-    {
-      //backBtnTags.click();
-      backBtnTags.first().click();
-    }
-    else
-    {
-      MsgManager.msgAreaShow( 'Back Button Click Blocked!!' );
-    }
+		var backBtnTags = $('.btnBack:visible');
 
-  });
-  // NEED TO WORK ON SCROLL DOWN TO REFRESH BLOCKING
-  // https://stackoverflow.com/questions/29008194/disabling-androids-chrome-pull-down-to-refresh-feature
+		if (backBtnTags.length > 0) {
+			//backBtnTags.click();
+			backBtnTags.first().click();
+		}
+		else {
+			MsgManager.msgAreaShow('Back Button Click Blocked!!');
+		}
+
+	});
+	// NEED TO WORK ON SCROLL DOWN TO REFRESH BLOCKING
+	// https://stackoverflow.com/questions/29008194/disabling-androids-chrome-pull-down-to-refresh-feature
 };
 
 
-App.detectStandAlone = function()
-{
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    // console.customLog( "Running as standalone." );
-  }  
+App.detectStandAlone = function () {
+	if (window.matchMedia('(display-mode: standalone)').matches) {
+		// console.customLog( "Running as standalone." );
+	}
 };
 
 
-App.catchErrorInCustomLog = function( e )
-{
-  // const { message, source, lineno, colno, error } = e; 
-  console.customLog( e.message );
+App.catchErrorInCustomLog = function (e) {
+	// const { message, source, lineno, colno, error } = e; 
+	console.customLog(e.message);
 };
 
 
-App.setUpAppInstallNotReadyMsg = function()
-{  
-  App.appInstallBtnTag.off( 'click' ).click( function() 
-  {
-    MsgManager.msgAreaShow( 'App is already installed in this device.' );
-  });  
+App.setUpAppInstallNotReadyMsg = function () {
+	App.appInstallBtnTag.off('click').click(function () {
+		MsgManager.msgAreaShow('App is already installed in this device.');
+	});
 };
 
 
-App.beforeinstallprompt = function( e )
-{
-  // appInstallTag.show();  - not needed since we made it always visible
-  App.appInstallBtnTag.css( 'background-color', 'tomato' );
+App.beforeinstallprompt = function (e) {
+	// appInstallTag.show();  - not needed since we made it always visible
+	App.appInstallBtnTag.css('background-color', 'tomato');
 
-  var deferredPrompt = e;
+	var deferredPrompt = e;
 
-  App.appInstallBtnTag.off( 'click' ).click( function() 
-  {
-    deferredPrompt.prompt();
+	App.appInstallBtnTag.off('click').click(function () {
+		deferredPrompt.prompt();
 
-    App.appInstallBtnTag.hide();
+		App.appInstallBtnTag.hide();
 
-    // Wait for the user to respond to the prompt
-    deferredPrompt.userChoice.then( ( choiceResult ) => 
-    {
-      if ( choiceResult.outcome === 'accepted' ) console.log('User accepted the A2HS prompt');
-      else console.log('User dismissed the A2HS prompt');
+		// Wait for the user to respond to the prompt
+		deferredPrompt.userChoice.then((choiceResult) => {
+			if (choiceResult.outcome === 'accepted') console.log('User accepted the A2HS prompt');
+			else console.log('User dismissed the A2HS prompt');
 
-      deferredPrompt = null;
-    });
+			deferredPrompt = null;
+		});
 
-  });
+	});
 
 };
 
 
-App.isMobileDevice = function()
-{
-  return ( Util.isAndroid() || Util.isIOS() );
+App.isMobileDevice = function () {
+	return (Util.isAndroid() || Util.isIOS());
 }
 
-App.mobileUISetup = function()
-{
-  //App.mobileCssSetup();
-  $( 'html > head' ).append( '<style> #pageDiv { padding: 4px 2px 0px 2px !important; }</style>' );
+App.mobileUISetup = function () {
+	//App.mobileCssSetup();
+	$('html > head').append('<style> #pageDiv { padding: 4px 2px 0px 2px !important; }</style>');
 
-  App.browserResizeHandle();  // For keyboard resizing on mobile, and other resize blinker move..	
+	App.browserResizeHandle();  // For keyboard resizing on mobile, and other resize blinker move..	
 }
 
 // TODO: HOW IS THIS APPLIED TO NEW LOGIN PAGE 4 DIGIT PIN?
-App.browserResizeHandle = function()
+App.browserResizeHandle = function () {
+	// Track width+height sizes for detecting android keyboard popup (which triggers resize)
+	$('body').attr('initialWidth', $('body').css('width'));
+	$('body').attr('initialHeight', $('body').css('height'));
+
+	// Set defaults for Tags to be hidden when keyboard triggers resize
+	$('#ConnectingWithSara').addClass('hideOnKeyboardVisible');
+	$('#advanceOptionLoginBtn').addClass('hideOnKeyboardVisible');
+
+	// Window Resize detection
+	$(window).on('resize', function () {
+
+		// TODO: Could do login page visible further detection!!!
+		if ($('#pass').is(':visible'))   // !SessionManager.getLoginStatus() )
+		{
+			//InitialWidth = $( 'body' ).attr( 'initialWidth' );
+			initialHeight = $('body').attr('initialHeight');
+
+			// height ( change ) only value we're interested in comparing
+			if ($('body').css('height') !== initialHeight)  //|| $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) 
+			{
+				//$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' ); //console.log( 'IS keyboard' );
+				$('.hideOnKeyboardVisible').hide();
+			}
+			else {
+				//$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.log( 'not keyboard' );
+				$('.hideOnKeyboardVisible').show();
+			}
+
+		}
+	});
+};
+
+
+App.checkDeviceMinSpec = function( info )
 {
-  // Track width+height sizes for detecting android keyboard popup (which triggers resize)
-  $( 'body' ).attr( 'initialWidth', $( 'body' ).css( 'width' ) );
-  $( 'body' ).attr( 'initialHeight', $( 'body' ).css( 'height' ) );
+	if ( info.storage )
+	{
+		var notPass = false;
 
-  // Set defaults for Tags to be hidden when keyboard triggers resize
-  $( '#ConnectingWithSara' ).addClass( 'hideOnKeyboardVisible' );
-  $( '#advanceOptionLoginBtn' ).addClass( 'hideOnKeyboardVisible' );
+		var minSpec = InfoDataManager.INFO.deviceMinSpec;  // Only test this once...
+		//var currSpec = { memory: info.memory, storage: App.getStorageGB() };
+		
+		if ( info.memory < minSpec.memory ) 
+		{
+			notPass = true;
+		}
 
-  // Window Resize detection
-  $( window ).on( 'resize', function () {
+		if ( info.storage.quota < ( minSpec.storage * 1000000000 ) )
+		{
+			notPass = true;
+		}
 
-    // TODO: Could do login page visible further detection!!!
-    if ( $( '#pass' ).is( ':visible' ) )   // !SessionManager.getLoginStatus() )
-    {
-      //InitialWidth = $( 'body' ).attr( 'initialWidth' );
-      initialHeight = $( 'body' ).attr( 'initialHeight' );
+		if ( notPass )
+		{
+			// If POTerm exists (in local storage), translate it..
 
-      // height ( change ) only value we're interested in comparing
-      if ( $( 'body' ).css( 'height' ) !== initialHeight )  //|| $( 'body' ).css( 'width' ) !== $( 'body' ).attr( 'initialWidth' ) 
-      {
-        //$( 'div.login_title').find( 'h1' ).html( 'IS keyboard' ); //console.log( 'IS keyboard' );
-        $( '.hideOnKeyboardVisible' ).hide();
-      } 
-      else
-      {
-        //$( 'div.login_title').find( 'h1' ).html( 'not keyboard' ); //console.log( 'not keyboard' );
-        $( '.hideOnKeyboardVisible' ).show();
-      }
+			var msg = 'This device does not meet the minimum spec. [Min: ' + JSON.stringify( minSpec ) 
+			   + ', Curr: { memory: ' + info.memory + ', storage: ' + AppUtil.getStorageGBStr( info.storage.quota ) + ' }]';
 
-    }
-  });
+			alert( msg );
+		}
+	}
 };
 
 
 // ===========================
 // [JOB_AID]    
-window.addEventListener('message', function(event)
-{
-  if ( event.data.from === 'jobAidIFrame') JobAidHelper.msgHandle( event.data );      
+window.addEventListener('message', function (event) {
+	if (event.data.from === 'jobAidIFrame') JobAidHelper.msgHandle(event.data);
 });
 
 // ======================================
