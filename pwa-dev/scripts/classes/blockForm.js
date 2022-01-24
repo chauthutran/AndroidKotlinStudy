@@ -1448,7 +1448,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			});
 		}
 
-		me.addRuleForField( divInputFieldTag, fieldDef );
+		me.addRuleListForField( divInputFieldTag, fieldDef );
 		me.addDataTargets( divInputFieldTag, fieldDef ); // added by Greg (9 Apr 19) > dataTargets > for auto-generation of JSON payloads
 		me.addStylesForField( divInputFieldTag, fieldDef );
 	};
@@ -1549,7 +1549,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 	}
 
-	me.addRuleForField = function( divInputTag, fieldDef )
+	me.addRuleListForField = function( divInputTag, fieldDef )
 	{
 		var entryTag = divInputTag.find( 'select,input' ); // < shouldn't his be .dataValue?
 		var regxRules = [];
@@ -1561,39 +1561,61 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		{
 			var ruleJson = FormUtil.getObjFromDefinition( ruleDef, ConfigManager.getConfigJson().definitionRules );
 
+			if ( Util.isTypeArray( ruleJson ) )
+			{
+				ruleJson.forEach( subRuleDef => 
+				{
+					var subRuleJson = FormUtil.getObjFromDefinition( subRuleDef, ConfigManager.getConfigJson().definitionRules );
+					me.addRuleForField( subRuleJson, regxRules, entryTag, divInputTag, fieldDef );
+				});
+			}
+			else if ( Util.isTypeObject( ruleJson ) )
+			{
+				me.addRuleForField( ruleJson, regxRules, entryTag, divInputTag, fieldDef );
+			}
+		});
+
+		if ( regxRules.length > 0 ) entryTag.attr( 'patterns', encodeURI( JSON.stringify( regxRules ) ) );
+		if ( pickerDateRangeJson ) entryTag.attr( 'pickerDateRange', encodeURI( JSON.stringify( pickerDateRangeJson ) ) );
+	};
+
+
+	me.addRuleForField = function( ruleJson, regxRules, entryTag, divInputTag, fieldDef )
+	{		
+		//if ( me.checkConditionEval( ruleJson ) )
+		if ( FormUtil.checkConditionEval( ruleJson.conditionEval ) )
+		{		
 			if ( ruleJson.name )
 			{
 				// Rule Name is added to attribute of the tag. - By default.
 				entryTag.attr( ruleJson.name, ruleJson.value );
 
-
 				var ruleNameUpper = ruleJson.name.toUpperCase();
 
+				// If Mandatory is true, add '*' span tag.
 				if ( ruleNameUpper === 'MANDATORY' && ruleJson.value === 'true' )  // mandatory
 				{
 					divInputTag.find( 'label' ).first().closest( 'div' ).append( $( '<span class="spanMandatory">*</span>' ) );
 				}
 
-				if ( me.checkConditionEval( ruleJson ) )
+
+				var bFontNotGray = ( ruleJson.value === 'fontNotGray' || ruleJson.value === 'fontNotGrey' );
+				var fieldBlockTag = divInputTag.closest( 'div.fieldBlock' );
+				var inputTags;
+
+				// readonly & disabled css
+				if ( ruleNameUpper === 'DISABLED' ) // disabled
 				{
-					var bFontNotGray = ( ruleJson.value === 'fontNotGray' || ruleJson.value === 'fontNotGrey' );
-					var fieldBlockTag = divInputTag.closest( 'div.fieldBlock' );
-					var inputTags;
+					fieldBlockTag.addClass( 'divInputReadOnly' ); // background-color #eee
+					inputTags = fieldBlockTag.find( 'input,select,button' ); //.attr( 'disabled', 'disabled' );
+				}
+				else if ( ruleNameUpper === 'READONLY' ) inputTags = fieldBlockTag.find( 'input,select,button' );
+				else if ( ruleNameUpper === 'PICKERONLY' ) inputTags = fieldBlockTag.find( 'input,select' ); // allow the button click!!
 
-					// readonly & disabled css
-					if ( ruleNameUpper === 'DISABLED' ) // disabled
-					{
-						fieldBlockTag.addClass( 'divInputReadOnly' ); // background-color #eee
-						inputTags = fieldBlockTag.find( 'input,select,button' ); //.attr( 'disabled', 'disabled' );
-					}
-					else if ( ruleNameUpper === 'READONLY' ) inputTags = fieldBlockTag.find( 'input,select,button' );
-					else if ( ruleNameUpper === 'PICKERONLY' ) inputTags = fieldBlockTag.find( 'input,select' ); // allow the button click!!
-
-					if ( inputTags )
-					{
-						inputTags.attr( 'disabled', 'disabled' );
-						if ( !bFontNotGray ) inputTags.css( 'opacity', '0.6' ); //.css( 'color', '#999' ); // a bit lighter font for all 3 above case?  Disabled ones
-					}
+				if ( inputTags )
+				{
+					inputTags.attr( 'disabled', 'disabled' );
+					if ( !bFontNotGray ) inputTags.css( 'opacity', '0.6' ); //.css( 'color', '#999' ); // a bit lighter font for all 3 above case?  Disabled ones
 				}
 			}	
 			else if ( ruleJson.pattern )
@@ -1621,21 +1643,17 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			{
 				entryTag.attr( 'type', ruleJson.type );
 			}
-
-		});
-
-		if ( regxRules.length > 0 ) entryTag.attr( 'patterns', encodeURI( JSON.stringify( regxRules ) ) );
-		if ( pickerDateRangeJson ) entryTag.attr( 'pickerDateRange', encodeURI( JSON.stringify( pickerDateRangeJson ) ) );
+		}
 	};
 
-
+	/*
 	me.checkConditionEval = function( ruleJson )
 	{
 		var isPass = false;
 		if ( ruleJson.conditionEval === undefined ) isPass = true;
 		else
 		{
-			var conditionEval = FormUtil.getObjFromDefinition( ruleJson.conditionEval, ConfigManager.getConfigJson().definitionRuleConditions );			
+			var conditionEval = FormUtil.getObjFromDefinition( ruleJson.conditionEval, ConfigManager.getConfigJson().definitionRuleConditions );
 
 			conditionEval = Util.getEvalStr( conditionEval );
 
@@ -1645,6 +1663,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		return isPass;
 	};
+	*/
 
 	
 	me.addDataTargets = function( divInputTag, fieldDef )

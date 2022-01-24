@@ -241,13 +241,14 @@ FormUtil.sheetFullSetup = function( template, options )
 
 // -----------------------------------------------
 
-FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
+FormUtil.getObjFromDefinition = function( def, definitions, option ) // limitCount )
 {
 	var defJson; // = def;  // default is the passed in object/name
 
 	try
 	{
-		if ( !limitCount ) limitCount = 0;
+		if ( !option ) option = {};
+		if ( !option.limitCount ) option.limitCount = 0;
 
 		// 1. Get definition object/array
 		if ( Util.isTypeString( def ) )
@@ -264,23 +265,32 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 		}
 
 
-		// 2. More action: Array combining or userRole filter.
+		// 2. Make a copy of it rather than itself.. <-- since we now may make changes
+		if ( defJson ) defJson = Util.cloneJson( defJson );
+
+
+		// 3. More action: Array combining or userRole filter.
 		// If Definition is array, check if any string def exists and replace them with array. - also, recursively call def
 		if ( Util.isTypeArray( defJson ) ) 
 		{
-			FormUtil.arrayDefReplace( defJson, definitions, limitCount );
+			// A. If def is array ( [ ] ), each item could be string def rather than obj.  In that case, replace it with def object.
+			FormUtil.arrayDefReplace( defJson, definitions, option );
+
+			// B. For 'conditionEval' case checking, use new array.  Easier than deleting existing array.
+			var newDefJsonArr = [];
+			defJson.forEach( subDefJson => {
+				if ( FormUtil.checkConditionEval( subDefJson.conditionEval ) ) newDefJsonArr.push( subDefJson );
+			});
+
+			if ( newDefJsonArr.length > 0 ) defJson = newDefJsonArr;
 		}
 		else if ( Util.isTypeObject( defJson ) )
 		{
 			// If object were properly loaded, check the userRole exists.  If so, apply it.
-			if ( defJson.userRoles )
-			{
-				if ( !ConfigManager.matchUserRoles( defJson.userRoles, ConfigManager.login_UserRoles ) )
-				{
-					defJson = undefined;  // If roles does not exists, return undefined.
-				}
-			}
+			//	- If roles does not exists, return undefined.
+			if ( defJson.userRoles && !ConfigManager.matchUserRoles( defJson.userRoles, ConfigManager.login_UserRoles ) ) defJson = undefined;
 
+			/*
 			// If definition obj has 'show
 			if ( defJson && defJson.showConditionEval )
 			{
@@ -290,6 +300,9 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 				}
 				catch( errMsg ) { console.log( 'ERROR in FormUtil.getObjFromDefinition showConditionEval, ' + errMsg ); }
 			}
+			*/
+
+			if ( defJson && !FormUtil.checkConditionEval( defJson.conditionEval ) ) defJson = undefined; 
 		}
 	}
 	catch ( errMsg )
@@ -302,12 +315,12 @@ FormUtil.getObjFromDefinition = function( def, definitions, limitCount )
 
 
 // form fields array = []
-FormUtil.arrayDefReplace = function( defJson, definitions, limitCount )
+FormUtil.arrayDefReplace = function( defJson, definitions, option )
 {
 	if ( defJson && definitions )
 	{
 		// if the limitCount is over 5, do not do this, which is recursive call.
-		if ( limitCount < 5 )
+		if ( option.limitCount < 5 )
 		{
 			for ( var i = defJson.length - 1; i >= 0;  i-- )
 			{
@@ -315,7 +328,7 @@ FormUtil.arrayDefReplace = function( defJson, definitions, limitCount )
 		
 				if ( Util.isTypeString( item ) )
 				{
-					var itemsArr = FormUtil.getObjFromDefinition( item, definitions, limitCount );
+					var itemsArr = FormUtil.getObjFromDefinition( item, definitions, option );
 					if ( itemsArr ) 
 					{
 						defJson.splice( i, 1 ); // remove the string 'item' and insert the item array.
@@ -327,6 +340,31 @@ FormUtil.arrayDefReplace = function( defJson, definitions, limitCount )
 	}
 };
 
+
+FormUtil.checkConditionEval = function( conditionEval )
+{
+	var isPass = false;
+
+	try
+	{
+		if ( conditionEval === undefined ) isPass = true;
+		else
+		{
+			var conditionEval = FormUtil.getObjFromDefinition( conditionEval, ConfigManager.getConfigJson().definitionConditionEvals );
+	
+			conditionEval = Util.getEvalStr( conditionEval );
+	
+			var evalResult = eval( conditionEval );
+			if ( evalResult === true ) isPass = true;
+		}		
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in FormUtil.checkConditionEval, ' + errMsg );
+	}
+
+	return isPass;
+};
 
 FormUtil.getBlockLocalDefObj = function( def )
 {

@@ -358,7 +358,7 @@ Util.getItemsFromList = function( list, value, propertyName )
 
 Util.cloneJson = function( jsonObj )
 {
-	return Util.getJsonDeepCopy( jsonObj );
+	return Util.getJsonDeepCopy( jsonObj );  // Use this instead? {...jsonObj}
 };
 
 // Handles both object and array
@@ -532,6 +532,32 @@ Util.getEvalStr = function( evalObj )
 
 	return evalStr;
 };
+
+
+Util.checkConditionEval = function( evalCondition )
+{
+	var result = false;
+
+	try
+	{
+		if ( evalCondition )
+		{
+			// Handle array into string joining
+			evalCondition = Util.getEvalStr( evalCondition );
+
+			if ( evalCondition )
+			{
+				result = eval( evalCondition );	
+			}
+		}
+	}
+	catch( errMsg ) 
+	{
+		console.log( 'ERROR in Util.checkEvalCondition, ' + errMsg );
+	}
+
+	return result;
+}
 
 
 Util.traverseEval = function( obj, INFO, iDepth, limit )
