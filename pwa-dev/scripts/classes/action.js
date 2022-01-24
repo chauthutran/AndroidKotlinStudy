@@ -470,7 +470,10 @@ function Action( cwsRenderObj, blockObj )
 									try { clickActionJson.clientId = eval( Util.getEvalStr( clickActionJson.underClient.clientId ) ); }
 									catch( errMsg ) { console.log( 'Action.underClient.clientId eval, ' + errMsg ); }
 								}
-								else if ( ( clickActionJson.underClient || clickActionJson.useCurrentClientId ) && blockDivTag )
+								// NEW - AUTO 'underClient' (3rd OR case) <-- For any activity under the client detail, add to the client..
+								// Would this cause issue with relationship or client edit?  Or be above case?
+								else if ( ( clickActionJson.underClient || clickActionJson.useCurrentClientId || btnTag.closest( '.client[itemid]' ).length > 0 ) 
+										&& blockDivTag )
 								{
 									var clientCardTag = blockDivTag.closest( '.client[itemid]' );
 									if ( clientCardTag.length > 0 ) clickActionJson.clientId = clientCardTag.attr( 'itemid' );	

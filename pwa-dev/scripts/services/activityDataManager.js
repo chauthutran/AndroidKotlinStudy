@@ -435,7 +435,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 
 
         // Form Information
-        if ( blockId )
+        if ( blockId && !( actionDefJson && actionDefJson.skipFormData ) )
         {
             // Change to formData
             activityJson.formData = { 
@@ -444,7 +444,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
                 ,'showCase': ( blockPassingData ) ? blockPassingData.showCase : ''
                 ,'hideCase': ( blockPassingData ) ? blockPassingData.hideCase : ''
                 ,'data': ActivityUtil.generateFormsJsonArr( $("[blockId='" + blockId + "']" ) ) 
-            };    
+            };
         }
     }
 

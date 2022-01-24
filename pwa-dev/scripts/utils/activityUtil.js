@@ -97,8 +97,16 @@ ActivityUtil.checkNSet_ActivityDates = function( payload )
 				}
 				else
 				{
-					date.capturedLoc = UtilDate.formatDate( new Date() ); 
-					date.capturedUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.capturedLoc ), 'noZ' );
+					// NEW: Do not create 'capturedLoc' is scheduledLoc/UTC exists. <-- scheduled vs captured activity.
+					if ( date.scheduledLoc )
+					{
+						if ( !date.scheduledUTC ) date.scheduledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduledLoc ), 'noZ' );
+					}
+					else
+					{
+						date.capturedLoc = UtilDate.formatDate( new Date() ); 
+						date.capturedUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.capturedLoc ), 'noZ' );	
+					}
 				}
 			}
 		}	
