@@ -124,7 +124,9 @@ function ActivityCard( activityId, options )
 
         // Override the icon if 'favId' exists..  <-- scheduled..
         var activityJson = ActivityDataManager.getActivityById( activityId );
-        if ( activityJson.formData && activityJson.formData.favId )
+        var activityStatus = ActivityDataManager.getActivityStatus( activityJson );
+
+        if ( activityJson.formData && activityJson.formData.favId && SyncManagerNew.statusSynced( activityStatus ) )
         {
             // display favId instead.. + click event..            
             var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.favId );
