@@ -435,16 +435,23 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 
 
         // Form Information
-        if ( blockId && !( actionDefJson && actionDefJson.skipFormData ) )
+        if ( blockId )
         {
-            // Change to formData
-            activityJson.formData = { 
-                'blockId': blockId
-                ,'activityId': activityJson.id
-                ,'showCase': ( blockPassingData ) ? blockPassingData.showCase : ''
-                ,'hideCase': ( blockPassingData ) ? blockPassingData.hideCase : ''
-                ,'data': ActivityUtil.generateFormsJsonArr( $("[blockId='" + blockId + "']" ) ) 
-            };
+            if ( actionDefJson && actionDefJson.formDataOverride )
+            {
+                activityJson.formData = actionDefJson.formDataOverride;
+            }
+            else
+            {
+                // Change to formData
+                activityJson.formData = { 
+                    'blockId': blockId
+                    ,'activityId': activityJson.id
+                    ,'showCase': ( blockPassingData ) ? blockPassingData.showCase : ''
+                    ,'hideCase': ( blockPassingData ) ? blockPassingData.hideCase : ''
+                    ,'data': ActivityUtil.generateFormsJsonArr( $("[blockId='" + blockId + "']" ) ) 
+                };
+            }
         }
     }
 

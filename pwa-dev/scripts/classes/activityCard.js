@@ -120,31 +120,60 @@ function ActivityCard( activityId, options )
         var clientObj = ClientDataManager.getClientByActivityId( activityId );
 
         divPhoneCallTag.empty();
+        //divPhoneCallTag.off( 'click' );
 
-        if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
+        // Override the icon if 'favId' exists..  <-- scheduled..
+        var activityJson = ActivityDataManager.getActivityById( activityId );
+        if ( activityJson.formData && activityJson.formData.favId )
         {
-            var phoneNumber = Util.trim( clientObj.clientDetails.phoneNumber ); // should we define phoneNumber field in config? might change to something else in the future
+            // display favId instead.. + click event..            
+            var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.favId );
 
-            if ( phoneNumber && phoneNumber !== '+' )
+            if ( favItemJson )
             {
-                var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+                FavIcons.populateFavItemIcon( divPhoneCallTag, favItemJson );
 
-                cellphoneTag.click( function(e) {
-    
-                    e.stopPropagation();
-    
-                    if ( Util.isMobi() )
-                    {
-                        window.location.href = `tel:${phoneNumber}`;
-                    }
-                    else
-                    {
-                        alert( phoneNumber );
-                    }
-                });
-    
-                divPhoneCallTag.append( cellphoneTag );
+                divPhoneCallTag.attr( 'title', favItemJson.name );  // if term is available, make it term..
+                //divPhoneCallTag.append( favItemIconTag );
                 divPhoneCallTag.show();    
+
+
+                var targetBlockTag = divPhoneCallTag.closest( '[tabButtonId=tab_clientActivities]' );
+                if ( targetBlockTag.length >= 1 ) 
+                {
+                    FavIcons.setFavItemClickEvent( divPhoneCallTag, favItemJson, targetBlockTag, targetBlockTag, function() {
+                        targetBlockTag.empty();
+                    } );
+                }
+            }
+        }
+        else       
+        {
+            if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
+            {
+                var phoneNumber = Util.trim( clientObj.clientDetails.phoneNumber ); // should we define phoneNumber field in config? might change to something else in the future
+    
+                if ( phoneNumber && phoneNumber !== '+' )
+                {
+                    var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+    
+                    cellphoneTag.click( function(e) {
+        
+                        e.stopPropagation();
+        
+                        if ( Util.isMobi() )
+                        {
+                            window.location.href = `tel:${phoneNumber}`;
+                        }
+                        else
+                        {
+                            alert( phoneNumber );
+                        }
+                    });
+        
+                    divPhoneCallTag.append( cellphoneTag );
+                    divPhoneCallTag.show();    
+                }
             }
         }
     };

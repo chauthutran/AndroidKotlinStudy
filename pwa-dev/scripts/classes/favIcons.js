@@ -20,7 +20,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     // --------------
     me.favListByType;
 
-    me.favIconSize = '40px';
+    //FavIcons.favIconSize = '40px';
     //me.favMainIconSize = '56px';
 
     // ========================================
@@ -54,7 +54,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
         me.setReRenderClickEvent( me.favReRenderTag );
 
         // 3. Set favList by type
-        me.favListByType = me.getFavListByType( me.favType );
+        me.favListByType = FavIcons.getFavListByType( me.favType );
 
         // 4. Initially, hide this tag, and show it on 'render()'
         me.favIconsTag.hide();
@@ -110,6 +110,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
         });
     };
 
+    /*
     me.getFavListByType = function( favType )
     {
         var favList = ConfigManager.getConfigJson().favList;
@@ -124,6 +125,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
             else return undefined;
         }
     };
+    */
 
     // -----------------------------------------
 
@@ -358,7 +360,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     {
         var svgIconTag = favItemTag.find( 'div.svgIcon' ); // fab__child c_200 
         var contentTag = favItemTag.find( '.fab__child-text' );
-        var activityTypeDef = ( favItem.activityType ) ? me.getActivityTypeByRef( 'name', favItem.activityType ) : undefined;
+        var activityTypeDef = ( favItem.activityType ) ? FavIcons.getActivityTypeByRef( 'name', favItem.activityType ) : undefined;
 
         contentTag.attr( 'term', favItem.term );        
         contentTag.attr( 'displayName', favItem.name );
@@ -371,11 +373,12 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
         contentTag.html( favItem.name );
 
         // svg icon setup - if available (by local file path reference)
-        me.generateSvgIconFromPath( favItem, activityTypeDef, svgIconTag );        
+        FavIcons.generateSvgIconFromPath( favItem, activityTypeDef, svgIconTag );        
         //svgIconTag.css( 'background-color', 'transparent' ); // SHOULD ALWAYS BE TRANSPARENT, RIGHT?
     };
 
 
+    /*
     me.generateSvgIconFromPath = function( favItem, activityTypeDef, svgIconTag )
     {
         var svgPathStr;
@@ -392,7 +395,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 
                     if ( iconDivTag.find( 'img' ).length === 0 )
                     {
-                        iconDivTag.html( '<img src="'+ svgPathStr + '" style="width:' + me.favIconSize + '; height:' + me.favIconSize + ';">' );
+                        iconDivTag.html( '<img src="'+ svgPathStr + '" style="width:' + FavIcons.favIconSize + '; height:' + FavIcons.favIconSize + ';">' );
                     }
                 });
             }
@@ -402,83 +405,17 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
             }
         }
     };
-
-    
-    /*
-    // get 'svg' file from local image path
-    $.get( svgPathStr, function( data ) 
-    {
-        var htmlElement = $( data )[0].documentElement;
-        var svgTagStr = htmlElement.outerHTML;
-
-        // Modify svgTagStr, append to svgIconTag
-        me.createSvgIconAndAppend( favItem, activityTypeDef, svgTagStr, svgIconTag );
-    });
-    me.createSvgIconAndAppend = function( favItem, activityTypeDef, svgTagStr, svgIconTag )
-    {
-        var colorInfo = me.getColorInfo( favItem, activityTypeDef );
-               
-        svgTagStr = svgTagStr.replace( /{icon.bgfill}/g, colorInfo.background );
-        svgTagStr = svgTagStr.replace( /{icon.color}/g, colorInfo.foreground );
-
-        svgIconTag.append( svgTagStr );
-
-        svgIconTag.find( 'svg' ).css( 'width', me.favIconSize ).css( 'height', me.favIconSize );
-    };
-
-
-    me.getColorInfo = function( favItem, activityTypeDef )
-    {
-        var colorInfo = { background: '#CCC', foreground: '#333333' };
-
-        // Overwrite the colors in priority order..
-        me.setColorInfo( favItem.colors, colorInfo );
-
-        if ( favItem.style && favItem.style.icon ) me.setColorInfo( favItem.style.icon.colors, colorInfo ); 
-
-        if ( activityTypeDef && activityTypeDef.icon ) me.setColorInfo( activityTypeDef.icon.colors, colorInfo ); 
-
-        return colorInfo;
-    };
-
-    me.setColorInfo = function( colorsJson, colorInfo )
-    {
-        if ( colorsJson )
-        {
-            if ( colorsJson.background ) colorInfo.background = colorsJson.background;
-            if ( colorsJson.foreground ) colorInfo.foreground = colorsJson.foreground;
-        }
-    };
     */
+    
     //-----------------------------------
-
-    me.getActivityTypeByRef = function( prop, activityType )
-    {
-        var activityTypeStyle;
-
-        try
-        {
-            if ( activityType )
-            {
-                var itemList = ConfigManager.getSettingsActivityDef().activityTypes; 
-                
-                var styleInfo = Util.getFromList( itemList, activityType, prop );
-
-                if ( styleInfo ) activityTypeStyle = Util.cloneJson( styleInfo );
-            }    
-        }
-        catch( errMsg ) {
-            console.log( 'ERROR in FavIcons.getActivityTypeByRef, activityType: ' + activityType + ', ' + errMsg );
-        }
-        
-        return activityTypeStyle;
-    };
 
     // ------------------------------------
 
 	me.initialize();
 }
 
+
+// -------------------------------------------------
 
 FavIcons.favButtonContainer = `<div class="fab-wrapper">
     <div class="fab__section">
@@ -495,3 +432,137 @@ FavIcons.favButtonRowItem = `<div class="fab__child-section">
     <div class="fab__child c_200 svgIcon" style="background-color: transparent;" />
     <div class="fab__child-text" />
 </div>`;
+
+// -------------------------------------------------
+
+FavIcons.favIconSize = '40px';
+
+FavIcons.generateSvgIconFromPath = function( favItem, activityTypeDef, svgIconTag )
+{
+    var svgPathStr;
+    if ( activityTypeDef && activityTypeDef.icon ) svgPathStr = activityTypeDef.icon.path;
+    else if ( favItem.img ) svgPathStr = favItem.img;
+
+    if ( svgPathStr )
+    {
+        try 
+        {
+            svgIconTag.each( function() 
+            {
+                var iconDivTag = $( this );
+
+                if ( iconDivTag.find( 'img' ).length === 0 )
+                {
+                    iconDivTag.html( '<img src="'+ svgPathStr + '" style="width:' + FavIcons.favIconSize + '; height:' + FavIcons.favIconSize + ';">' );
+                }
+            });
+        }
+        catch ( errMsg )
+        {
+            console.customLog( 'Error on FavIcons.generateSvgIconFromPath, errMsg: ' + errMsg );
+        }
+    }
+};
+
+
+FavIcons.getActivityTypeByRef = function( prop, activityType )
+{
+    var activityTypeStyle;
+
+    try
+    {
+        if ( activityType )
+        {
+            var itemList = ConfigManager.getSettingsActivityDef().activityTypes; 
+            
+            var styleInfo = Util.getFromList( itemList, activityType, prop );
+
+            if ( styleInfo ) activityTypeStyle = Util.cloneJson( styleInfo );
+        }    
+    }
+    catch( errMsg ) {
+        console.log( 'ERROR in FavIcons.getActivityTypeByRef, activityType: ' + activityType + ', ' + errMsg );
+    }
+    
+    return activityTypeStyle;
+};
+
+
+FavIcons.populateFavItemIcon = function( svgIconTag, favItem )
+{
+    //var svgIconTag = favItemTag.find( 'div.svgIcon' ); // fab__child c_200 
+    //var contentTag = favItemTag.find( '.fab__child-text' );
+    var activityTypeDef = ( favItem.activityType ) ? FavIcons.getActivityTypeByRef( 'name', favItem.activityType ) : undefined;
+
+    //contentTag.attr( 'term', favItem.term );        
+    //contentTag.attr( 'displayName', favItem.name );
+
+    //if ( favItem.target )
+    //{
+    //    contentTag.attr( 'blockId', favItem.target.blockId );
+    //    contentTag.attr( 'actionType', favItem.target.actionType );    
+    //}
+
+    //contentTag.html( favItem.name );
+
+    // svg icon setup - if available (by local file path reference)
+    FavIcons.generateSvgIconFromPath( favItem, activityTypeDef, svgIconTag );        
+    //svgIconTag.css( 'background-color', 'transparent' ); // SHOULD ALWAYS BE TRANSPARENT, RIGHT?
+};
+
+
+FavIcons.getFavListByType = function( favType )
+{
+    var favList = ConfigManager.getConfigJson().favList;
+
+    // 'favType': 'activityListFav', 'clientListFav', 'clientActivityFav', 'clientRelFav'
+    if ( favList && favType && favList[ favType ] ) return favList[ favType ]
+    else
+    {
+        // Could be simple type, which we should return entire one..
+        // If the 'favList' is not simple type, return undefined..
+        if ( favList.online || favList.offline ) return favList;
+        else return undefined;
+    }
+};
+
+
+FavIcons.getFavItemJson = function( favType, favItemId )
+{
+    var favItemJson;
+
+    var favListByType = FavIcons.getFavListByType( favType ); //'clientActivityFav' );
+
+    var favListArr = ( ConnManagerNew.isAppMode_Online() ) ? favListByType.online: favListByType.offline;
+
+    favItemJson = Util.getFromList( favListArr, favItemId, "id" );
+
+    return favItemJson;
+};
+
+
+
+FavIcons.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, targetBlockContainerTag, runFunc )
+{
+    favItemTag.off( 'click' ).click( function() 
+    {
+        if ( favItem )
+        {
+            //if ( me.mainFavPreClick ) me.mainFavPreClick( targetBlockTag, targetBlockContainerTag );
+        
+            if ( runFunc ) runFunc( favItem );
+
+            if ( favItem.target )
+            {
+                //SessionManager.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
+                SessionManager.cwsRenderObj.renderFavItemBlock( favItem.target.blockId, favItem.target.options
+                    ,targetBlockContainerTag, favItem );
+            }
+            else if ( favItem.onClick )
+            {
+                var actionObj = new Action( SessionManager.cwsRenderObj, {} );
+                actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag );
+            }    
+        }
+    });
+};
