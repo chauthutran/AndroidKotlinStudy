@@ -126,10 +126,10 @@ function ActivityCard( activityId, options )
         var activityJson = ActivityDataManager.getActivityById( activityId );
         var activityStatus = ActivityDataManager.getActivityStatus( activityJson );
 
-        if ( activityJson.formData && activityJson.formData.favId && SyncManagerNew.statusSynced( activityStatus ) )
+        if ( activityJson.formData && activityJson.formData.sch_favId && SyncManagerNew.statusSynced( activityStatus ) )
         {
             // display favId instead.. + click event..            
-            var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.favId );
+            var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.sch_favId );
 
             if ( favItemJson )
             {
@@ -145,6 +145,10 @@ function ActivityCard( activityId, options )
                 {
                     FavIcons.setFavItemClickEvent( divPhoneCallTag, favItemJson, targetBlockTag, targetBlockTag, function() {
                         targetBlockTag.empty();
+
+                        // We can mark 'INFO.---' here - to set this activity id with schedule -> capture ativity
+                        //      - ws_actions: sch_convert
+
                     } );
                 }
             }
