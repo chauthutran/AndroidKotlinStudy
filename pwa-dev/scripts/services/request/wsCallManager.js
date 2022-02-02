@@ -20,6 +20,10 @@ WsCallManager.availableAlways = false;  // Used in ConnManagerNew.serverAvailabl
 WsCallManager.availableCheckType = 'v2'; // 'v1' - old legacy dhis2 available check. 
 WsCallManager.actionErr = ''; // For making intentional failure for tesing.
 
+WsCallManager.actionDetailsStr = ''; //  'action-details=3'; <-- Set this on console.log..
+WsCallManager.actionDetailsCount = 0;  // After 5 times of usage, it will reset 'actionDetailsStr'
+WsCallManager.actionDetailsCountLimit = 5;  // After 5 times of usage, it will reset 'actionDetailsStr'
+
 // -------------------------
 WsCallManager.available_PWAAvailable = '/PWA.available';    // Older operation 
 WsCallManager.available_Availability = '/availability';     // New operation
@@ -429,16 +433,27 @@ WsCallManager.loadingTagClear = function( loadingTag )
 
 WsCallManager.composeDwsWsFullUrl = function( targetUrl )
 {
-    if ( targetUrl.indexOf( 'http' ) === 0 )
+    var fullUrl = '';
+
+    if ( targetUrl.indexOf( 'http' ) === 0 ) fullUrl = targetUrl; // target has full path.
+    else fullUrl =  WsCallManager.wsTargetUrl + targetUrl; // If partial data, add ws origin..
+
+    if ( WsCallManager.actionDetailsStr ) 
     {
-        // target has full path.
-        return targetUrl;
+        fullUrl += ( fullUrl.indexOf( '?' ) >= 0 ) ? '&' + WsCallManager.actionDetailsStr: '?' + WsCallManager.actionDetailsStr; //'?action-details=3';
+
+        WsCallManager.actionDetailsCount++;
+        console.log( 'WsCallManager.actionDetailsStr: ' + WsCallManager.actionDetailsStr + ', WsCallManager.actionDetailsCount: ' + WsCallManager.actionDetailsCount );
+
+        // If the 'actionDetails' count reach max count, reset it - stop using it.
+        if ( WsCallManager.actionDetailsCount >= WsCallManager.actionDetailsCountLimit )
+        {
+            WsCallManager.actionDetailsCount = 0;
+            WsCallManager.actionDetailsStr = '';
+        }
     }
-    else
-    {
-        // If partial data, add ws origin..
-        return WsCallManager.wsTargetUrl + targetUrl;        
-    }
+
+    return fullUrl;
 };
 
 
