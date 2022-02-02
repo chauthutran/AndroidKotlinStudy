@@ -541,8 +541,8 @@ FavIcons.getFavItemJson = function( favType, favItemId )
 };
 
 
-
-FavIcons.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, targetBlockContainerTag, runFunc )
+// A bit simplified version of 'me.setFavItemClickEvent'
+FavIcons.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, targetBlockContainerTag, beforeRunFunc, afterRunFunc )
 {
     favItemTag.off( 'click' ).click( function() 
     {
@@ -550,18 +550,27 @@ FavIcons.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, t
         {
             //if ( me.mainFavPreClick ) me.mainFavPreClick( targetBlockTag, targetBlockContainerTag );
         
-            if ( runFunc ) runFunc( favItem );
+            if ( beforeRunFunc ) beforeRunFunc( favItem );
 
             if ( favItem.target )
             {
                 //SessionManager.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
-                SessionManager.cwsRenderObj.renderFavItemBlock( favItem.target.blockId, favItem.target.options
+                var blockObj = SessionManager.cwsRenderObj.renderFavItemBlock( favItem.target.blockId, favItem.target.options
                     ,targetBlockContainerTag, favItem );
+
+                //var renderedBlockId = ( blockObj && blockObj.blockId ) ? blockObj.blockId : undefined;
+                if ( afterRunFunc ) afterRunFunc( INFO.lastRenderedBlockId );
             }
             else if ( favItem.onClick )
             {
                 var actionObj = new Action( SessionManager.cwsRenderObj, {} );
-                actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag );
+                actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag, function( resultStr ) 
+                {
+                    if ( resultStr === "Success" )                    
+                    {
+                        if ( afterRunFunc ) afterRunFunc( INFO.lastRenderedBlockId );                        
+                    }
+                });
             }    
         }
     });

@@ -145,10 +145,13 @@ function ActivityCard( activityId, options )
                 {
                     FavIcons.setFavItemClickEvent( divPhoneCallTag, favItemJson, targetBlockTag, targetBlockTag, function() {
                         targetBlockTag.empty();
-
-                        // We can mark 'INFO.---' here - to set this activity id with schedule -> capture ativity
-                        //      - ws_actions: sch_convert
-
+                    }, function( renderedBlockId) 
+                    {
+                        if ( renderedBlockId )
+                        {
+                            // Mark the block with activityEdit and scheduleConvert..
+                            ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
+                        }
                     } );
                 }
             }

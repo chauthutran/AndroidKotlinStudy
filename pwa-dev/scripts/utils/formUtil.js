@@ -506,12 +506,15 @@ FormUtil.renderBlockByBlockId = function( blockId, cwsRenderObj, parentTag, pass
 {
 	var blockObj;
 
+	INFO.lastRenderedBlockId = undefined;  // Might have issue if some other minor block were rendered and failed..
+
 	if ( blockId ) 
 	{        
 		var blockDefJson = FormUtil.getObjFromDefinition( blockId, ConfigManager.getConfigJson().definitionBlocks );
 
 		if ( blockDefJson )
 		{            
+			INFO.lastRenderedBlockId = blockId;
 			blockId = FormUtil.getObjDefId( blockId );
 			blockObj = new Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, options, actionJson );
 			blockObj.render( renderType );    

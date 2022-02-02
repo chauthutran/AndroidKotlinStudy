@@ -192,6 +192,26 @@ Util.getNumber = function( n )
 	return Util.getNum( n );
 };
 
+
+// Get array from obj map json
+Util.convertObjMapToArray = function( objMapJson )
+{
+	var array = [];
+
+	for ( var key in objMapJson )
+	{
+		array.push( { key: key, value: objMapJson[key] } );
+	}	
+
+	return array;
+};
+
+Util.getArrayFromObjMap = function( objMapJson )
+{
+	Util.convertObjMapToArray( objMapJson );
+};
+
+
 // Check Variable Related
 // ----------------------------------
 

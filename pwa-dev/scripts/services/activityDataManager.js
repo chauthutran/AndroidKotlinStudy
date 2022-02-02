@@ -368,10 +368,13 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         if ( !activityJson ) throw 'payload captureValues not exists!';
 
 
+        // extraActionCase are used for 'scheduled activity create action'.  Do not look at current block or hidden tags
+        var extraActionCase = ( actionDefJson && actionDefJson.formDataOverride );
+
         // ===============================================================
         // Existing activity case - Editing
         var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
-        if ( editModeActivityId )
+        if ( !extraActionCase && editModeActivityId )
         {
             // ACTIVITY EDITING:
             //  [Pending - Not Created, yet (In backend) ] - Delete entire things?  But, keep the 'history' of attempts..
@@ -395,6 +398,12 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 
                         // 'capturedUTC/Loc' & 'updatedUTC/Loc' would be copied to existing activity on backend.
                         ActivityDataManager.setActivityDate_Update( activityJson, createdDT );
+                    }
+
+                    var scheduleConvertValStr = ActivityDataManager.getEditModeHiddenVal( blockId, 'scheduleConvert' );
+                    if ( scheduleConvertValStr === 'true' )
+                    {
+                        activityJson.ws_action = 'scheduleConvert';
                     }
                 }
     
@@ -483,10 +492,37 @@ ActivityDataManager.setActivityDate_Update = function( activityJson, dateNow )
     if ( !activityJson.date.updatedUTC ) activityJson.date.updatedUTC = Util.formatDate( dateNow.toUTCString() );
 };
 
+// ----------------------------
+
+ActivityDataManager.getEditModeHiddenVal = function( blockId, hiddenValId )
+{
+    return ( blockId ) ? $("[blockId='" + blockId + "']").find( "." + hiddenValId ).val() : undefined;
+};
 
 ActivityDataManager.getEditModeActivityId = function( blockId )
 {
-    return ( blockId ) ? $("[blockId='" + blockId + "']").find( "#editModeActivityId" ).val() : undefined;
+    return ( blockId ) ? $("[blockId='" + blockId + "']").find( ".editModeActivityId" ).val() : undefined;
+};
+
+ActivityDataManager.setEditModeHiddenVal = function( blockId, activityId, moreHiddenVal )
+{
+    return ActivityDataManager.setEditModeActivityId( blockId, activityId, moreHiddenVal );
+};
+
+ActivityDataManager.setEditModeActivityId = function( blockId, activityId, moreHiddenVal )
+{
+    var blockTag = $("[blockId='" + blockId + "']");
+    blockTag.append("<input type='hidden' class='editModeActivityId' value='" + activityId + "'>");
+
+    if ( moreHiddenVal && Util.isTypeObject( moreHiddenVal ) )
+    {
+        Util.convertObjMapToArray( moreHiddenVal ).forEach( json => 
+        {
+            blockTag.append("<input type='hidden' class='" + json.key + "' value='" + json.value + "'>");
+        });
+    }
+
+    return blockTag;
 };
 
 

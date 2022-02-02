@@ -1,269 +1,249 @@
 // -------------------------------------------
 // -- ActivityCardDetail Class/Methods
 
-function ActivityCardDetail( activityId, isRestore )
-{
-	  var me = this;
+function ActivityCardDetail(activityId, isRestore) {
+	var me = this;
 
-    me.activityId = activityId;
-    me.isRestore = isRestore;
-    me.cardSheetFullTag;
+	me.activityId = activityId;
+	me.isRestore = isRestore;
+	me.cardSheetFullTag;
 
-	  // ===============================================
-	  // === Initialize Related ========================
+	// ===============================================
+	// === Initialize Related ========================
 
-    me.initialize = function() 
-    { 
-      me.cardSheetFullTag = FormUtil.sheetFullSetup( ActivityCardDetail.cardFullScreen, { title: 'Activity Detail', term: '', cssClasses: [ 'activityDetail' ] } );
+	me.initialize = function () {
+		me.cardSheetFullTag = FormUtil.sheetFullSetup(ActivityCardDetail.cardFullScreen, { title: 'Activity Detail', term: '', cssClasses: ['activityDetail'] });
 
-      // If devMode, show Dev tab (primary) + li ones (secondary <-- smaller screen hidden li)
-      if ( DevHelper.devMode ) me.setUpActivityDetailTabDev( me.cardSheetFullTag, me.activityId );
+		// If devMode, show Dev tab (primary) + li ones (secondary <-- smaller screen hidden li)
+		if (DevHelper.devMode) me.setUpActivityDetailTabDev(me.cardSheetFullTag, me.activityId);
 
-      // create tab click events
-      FormUtil.setUpEntryTabClick( me.cardSheetFullTag.find( '.tab_fs' ) ); 
-  
-      // ADD TEST/DUMMY VALUE
-      me.cardSheetFullTag.find( '.activity' ).attr( 'itemid', me.activityId )
-      
-      // ReRender
-      me.cardSheetFullTag.find( '.activityDetailRerender' ).off( 'click' ).click( function() {
-          me.showFullPreview( me.activityId );
-      });
-    };
+		// create tab click events
+		FormUtil.setUpEntryTabClick(me.cardSheetFullTag.find('.tab_fs'));
 
-    // ----------------------------------
-    
-    me.render = function()
-    {
-        if ( me.activityId ) 
-        {
-            INFO.activity = ActivityDataManager.getActivityById( me.activityId );
-    
-            // Header content set
-            var actCard = new ActivityCard( me.activityId, {'detailViewCase': true } );
-            actCard.render();
+		// ADD TEST/DUMMY VALUE
+		me.cardSheetFullTag.find('.activity').attr('itemid', me.activityId)
 
-            // set tabs contents
-            me.setFullPreviewTabContent( me.activityId, me.cardSheetFullTag );
+		// ReRender
+		me.cardSheetFullTag.find('.activityDetailRerender').off('click').click(function () {
+			me.showFullPreview(me.activityId);
+		});
+	};
 
-            TranslationManager.translatePage();            
-        }
-    };
+	// ----------------------------------
 
-    // ----------------------------------------------------
+	me.render = function () {
+		if (me.activityId) {
+			INFO.activity = ActivityDataManager.getActivityById(me.activityId);
 
-    me.setUpActivityDetailTabDev = function( sheetFullTag, activityId )
-    {
-        sheetFullTag.find( 'li.primary[rel="tab_optionalDev"]' ).attr( 'style', '' );
-        sheetFullTag.find( 'li.secondary[rel="tab_optionalDev"]' ).removeClass( 'tabHide' );
+			// Header content set
+			var actCard = new ActivityCard(me.activityId, { 'detailViewCase': true });
+			actCard.render();
 
-        var statusSelTag = sheetFullTag.find( '.devActivityStatusSel' );
-        var statusSelResultTag = sheetFullTag.find( '.devActivityStatusResult' );
+			// set tabs contents
+			me.setFullPreviewTabContent(me.activityId, me.cardSheetFullTag);
 
-        statusSelTag.change( function() 
-        {
-            var statusVal = $( this ).val();
+			TranslationManager.translatePage();
+		}
+	};
 
-            ActivityDataManager.activityUpdate_Status( activityId, statusVal, function() 
-            {
-                var msg = "With 'DEV' mode, activity status has been manually changed to '" + statusVal + "'";
+	// ----------------------------------------------------
 
-                statusSelResultTag.text( msg );
-                ActivityDataManager.activityUpdate_History( activityId, statusVal, msg, 0 );                         
-            });
-        });
-    };
+	me.setUpActivityDetailTabDev = function (sheetFullTag, activityId) {
+		sheetFullTag.find('li.primary[rel="tab_optionalDev"]').attr('style', '');
+		sheetFullTag.find('li.secondary[rel="tab_optionalDev"]').removeClass('tabHide');
+
+		var statusSelTag = sheetFullTag.find('.devActivityStatusSel');
+		var statusSelResultTag = sheetFullTag.find('.devActivityStatusResult');
+
+		statusSelTag.change(function () {
+			var statusVal = $(this).val();
+
+			ActivityDataManager.activityUpdate_Status(activityId, statusVal, function () {
+				var msg = "With 'DEV' mode, activity status has been manually changed to '" + statusVal + "'";
+
+				statusSelResultTag.text(msg);
+				ActivityDataManager.activityUpdate_History(activityId, statusVal, msg, 0);
+			});
+		});
+	};
 
 
-    me.showClientDetails = function( clientObj, tabTag )
-    {
-      if ( clientObj && clientObj.clientDetails )
-      {
-        FormUtil.renderPreviewDataForm( clientObj.clientDetails, tabTag );
-      }
+	me.showClientDetails = function (clientObj, tabTag) {
+		if (clientObj && clientObj.clientDetails) {
+			FormUtil.renderPreviewDataForm(clientObj.clientDetails, tabTag);
+		}
 
-    }
+	}
 
-    me.setFullPreviewTabContent = function( activityId, sheetFullTag )
-    {
-        var clientObj = ClientDataManager.getClientByActivityId( activityId );
-        var activityJson = ActivityDataManager.getActivityById( activityId );
-    
-        // TAB #1. Client Details
-        var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_previewDetails]' );
-        me.showClientDetails( clientObj, clientDetailsTabTag );;
+	me.setFullPreviewTabContent = function (activityId, sheetFullTag) {
+		var clientObj = ClientDataManager.getClientByActivityId(activityId);
+		var activityJson = ActivityDataManager.getActivityById(activityId);
+
+		// TAB #1. Client Details
+		var clientDetailsTabTag = sheetFullTag.find('[tabButtonId=tab_previewDetails]');
+		me.showClientDetails(clientObj, clientDetailsTabTag);;
 
 
-        if ( activityJson )
-        {
-          // TAB #2. Payload Preview
-          var jv_payload = new JSONViewer();
-          sheetFullTag.find( '[tabButtonId=tab_previewPayload]' ).find(".payloadData").append( jv_payload.getContainer() );
-          jv_payload.showJSON( activityJson );
-          // Set up "editPaylayLoadBtn"
-          me.setUpEditPayloadLoadBtn( sheetFullTag.find( '#editPaylayLoadBtn' ), activityJson );
+		if (activityJson) {
+			// TAB #2. Payload Preview
+			var jv_payload = new JSONViewer();
+			sheetFullTag.find('[tabButtonId=tab_previewPayload]').find(".payloadData").append(jv_payload.getContainer());
+			jv_payload.showJSON(activityJson);
+			// Set up "editPaylayLoadBtn"
+			me.setUpEditPayloadLoadBtn(sheetFullTag.find('#editPaylayLoadBtn'), activityJson);
 
 
-          // TAB #3. Sync History
-          if ( activityJson.processing && activityJson.processing.history )
-          {
-            var syncHistoryTag = $( '[tabButtonId=tab_previewSync]' ).html( JsonBuiltTable.buildTable( activityJson.processing.history ) );
-            syncHistoryTag.find( '.bt_td_head' ).filter( function( i, tag ) { return ( $( tag ).html() === 'responseCode' ); } ).html( 'response code' );  
-          }
-          
-          // Set event for "Remove" button for "Pending" client
-          var removeActivityBtn = sheetFullTag.find( '.removeActivity' ).hide();
-          if ( SyncManagerNew.statusSyncable( activityJson.processing.status ) )
-          {
-              removeActivityBtn.show().click( function()
-              {    
-                  var result = confirm("Are you sure you want to delete this activity?");
-                  if( result )
-                  {                    
-                      me.removeActivityNCard( activityId, sheetFullTag.find( 'img.btnBack' ) );
-                  }               
-              });
-          }
-        }
-    };    
-    
-    me.removeActivityNCard = function( activityId, btnBackTag )
-    {
-        var client = ActivityDataManager.deleteExistingActivity_Indexed( activityId );
-        if ( client && client.activities.length === 0 ) ClientDataManager.removeClient( client );
+			// TAB #3. Sync History
+			if (activityJson.processing && activityJson.processing.history) {
+				var syncHistoryTag = $('[tabButtonId=tab_previewSync]').html(JsonBuiltTable.buildTable(activityJson.processing.history));
+				syncHistoryTag.find('.bt_td_head').filter(function (i, tag) { return ($(tag).html() === 'responseCode'); }).html('response code');
+			}
 
-        ClientDataManager.saveCurrent_ClientsStore( () => 
-        {
-            btnBackTag.click();
+			// Set event for "Remove" button for "Pending" client
+			var removeActivityBtn = sheetFullTag.find('.removeActivity').hide();
+			if (SyncManagerNew.statusSyncable(activityJson.processing.status)) {
+				removeActivityBtn.show().click(function () {
+					var result = confirm("Are you sure you want to delete this activity?");
+					if (result) {
+						me.removeActivityNCard(activityId, sheetFullTag.find('img.btnBack'));
+					}
+				});
+			}
+		}
+	};
 
-            //var activityCardTags = $( '[itemid="' + activityId + '"]' );  //  $( '#pageDiv' ).   .remove();
+	me.removeActivityNCard = function (activityId, btnBackTag) {
+		var client = ActivityDataManager.deleteExistingActivity_Indexed(activityId);
+		if (client && client.activities.length === 0) ClientDataManager.removeClient(client);
 
-            // We also need to find all clientCard Tag with this.. and reload it..
-            var divSyncIconTags = $( 'div.activityStatusIcon[activityId="' + activityId + '"]' );
-            divSyncIconTags.closest( 'div.card__container' ).find( 'div.clientRerender' ).click();
+		ClientDataManager.saveCurrent_ClientsStore(() => {
+			btnBackTag.click();
 
-            // tab clientActivity reClick - to influence the activity list & favList..
-            var tabClientActivitiesTag = $( '[itemid="' + activityId + '"]' ).closest( 'div[tabbuttonid=tab_clientActivities]' );
-            if ( tabClientActivitiesTag.length > 0 ) tabClientActivitiesTag.find( 'div.favReRender' ).click();
+			//var activityCardTags = $( '[itemid="' + activityId + '"]' );  //  $( '#pageDiv' ).   .remove();
 
-            // Finally, remove all activityCards of this id.
-            $( '[itemid="' + activityId + '"]' ).remove(); // activityCardTags
-        });
-    };
+			// We also need to find all clientCard Tag with this.. and reload it..
+			var divSyncIconTags = $('div.activityStatusIcon[activityId="' + activityId + '"]');
+			divSyncIconTags.closest('div.card__container').find('div.clientRerender').click();
 
-      
-    // =============================================
-    // === Activity 'EDIT' Form - Related Methods ========================
+			// tab clientActivity reClick - to influence the activity list & favList..
+			var tabClientActivitiesTag = $('[itemid="' + activityId + '"]').closest('div[tabbuttonid=tab_clientActivities]');
+			if (tabClientActivitiesTag.length > 0) tabClientActivitiesTag.find('div.favReRender').click();
 
-    me.setUpEditPayloadLoadBtn = function( activityEditPaylayLoadBtnTag, activityJson )
-    {
-        try
-        {
-            activityEditPaylayLoadBtnTag.hide();
-
-            if( activityJson )
-            {
-                var editable = false;
-                var formData = ActivityDataManager.getActivityForm( activityJson );
-
-                var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
-
-                if ( formData )
-                {
-                  if ( activityEditing ) editable = true;
-                  else { 
-                    if ( activityJson.processing.status === Constants.status_error ) editable = true; 
-                  }
-                }          
+			// Finally, remove all activityCards of this id.
+			$('[itemid="' + activityId + '"]').remove(); // activityCardTags
+		});
+	};
 
 
-                if ( editable )
-                {
-                    activityEditPaylayLoadBtnTag.show();
-                    var editForm = formData;
-        
-                    activityEditPaylayLoadBtnTag.off( 'click' ).click( function( e ) 
-                    {
+	// =============================================
+	// === Activity 'EDIT' Form - Related Methods ========================
+
+	me.setUpEditPayloadLoadBtn = function (activityEditPaylayLoadBtnTag, activityJson) 
+	{
+		try 
+		{
+			activityEditPaylayLoadBtnTag.hide();
+
+			if (activityJson) 
+			{
+				var editable = false;
+				var formData = ActivityDataManager.getActivityForm(activityJson);
+
+				var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
+
+				if (formData) 
+				{
+					// TODO: We also use schedule activity with formData..  
 
 
-                        // NOTE/TODO: #1
-
-                        // This should be done on 'payload' creation?
-                        // Or on the form opening?
-
-                        // If 'synced'/'downloaded' status, mark it as 'syncedEdit' for backend.
-                        //    + copy existing transaction in the history...
-
+					if (activityEditing) editable = true;
+					else 
+					{
+						if (activityJson.processing.status === Constants.status_error) editable = true;
+					}
+				}
 
 
+				if (editable) 
+				{
+					activityEditPaylayLoadBtnTag.show();
+					var editForm = formData;
+
+					activityEditPaylayLoadBtnTag.off('click').click(function (e) 
+					{
+						me.loadEditActivityForm( editForm );
+					});
+				}
+			}
+		}
+		catch (errMsg) {
+			console.customLog('ERROR in ActivityCard.setUpEditPayloadLoadBtn, errMsg: ' + errMsg);
+		}
+	};
 
 
-                        var blockJson = FormUtil.getObjFromDefinition( editForm.blockId, ConfigManager.getConfigJson().definitionBlocks );
-        
-                        if( blockJson )
-                        {
-                            var activityCardDivTag = activityEditPaylayLoadBtnTag.parent();
-                            var payloadTag = activityCardDivTag.find(".payloadData");                    
-                            var editFormTag = activityCardDivTag.find(".editForm");                    
-                            
-                            activityEditPaylayLoadBtnTag.hide();
-                            payloadTag.hide();
-                            editFormTag.show();
+	me.loadEditActivityForm = function( editForm ) 
+	{
+		// NOTE/TODO: #1
 
-                            var passedData = { 'showCase': editForm.showCase, 'hideCase': editForm.hideCase };
+		// This should be done on 'payload' creation?
+		// Or on the form opening?
 
-                            // var newBlockObj = new Block( SessionManager.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
-                            // newBlockObj.render( 'blockList' );
-                            FormUtil.renderBlockByBlockId( editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList' );
+		// If 'synced'/'downloaded' status, mark it as 'syncedEdit' for backend.
+		//    + copy existing transaction in the history...
 
-                            if ( activityJson )
-                            {
-                                // Populate data in the form
-                                var formTag = $("[blockId='" + editForm.blockId + "']");
+		var blockJson = FormUtil.getObjFromDefinition(editForm.blockId, ConfigManager.getConfigJson().definitionBlocks);
 
-                                // TODO: Do we get this on processing?  <-- means, users can only edit the not synced ones!!!
-                                var data = editForm.data;
+		if (blockJson) 
+		{
+			var activityCardDivTag = activityEditPaylayLoadBtnTag.parent();
+			var payloadTag = activityCardDivTag.find(".payloadData");
+			var editFormTag = activityCardDivTag.find(".editForm");
 
-                                if ( data )
-                                {
-                                    for( var i in data )
-                                    {
-                                        var fieldName = data[i].name;
-                                        var value = data[i].value;
-                                        var displayValue = data[i].displayValue;
-            
-                                        var divFieldTag = formTag.find( "[name='" + fieldName + "']" ).parent();
-                                        FormUtil.setTagVal( divFieldTag.find(".displayValue"), displayValue );
-                                        FormUtil.setTagVal( formTag.find( "[name='displayValue_" + fieldName + "']" ), displayValue );
-            
-                                        FormUtil.setTagVal( divFieldTag.find(".dataValue"), value );
-                                        divFieldTag.find(".dataValue").change();
-                                    }    
-                                }
-                            }
+			activityEditPaylayLoadBtnTag.hide();
+			payloadTag.hide();
+			editFormTag.show();
 
+			var passedData = { 'showCase': editForm.showCase, 'hideCase': editForm.hideCase };
 
-                            formTag.append("<input type='hidden' id='editModeActivityId' value='" + activityJson.id + "'>");
-                        }
-                        else
-                        {
-                            alert("Cannot find block with id '" + editForm.blockId + "'");
-                        }
-                        
-                    });
-                }
-            }
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'ERROR in ActivityCard.setUpEditPayloadLoadBtn, errMsg: ' + errMsg );
-        }
-    };
+			// var newBlockObj = new Block( SessionManager.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
+			// newBlockObj.render( 'blockList' );
+			FormUtil.renderBlockByBlockId(editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList');
 
-    // =============================================
-    // === Run initialize - when instantiating this class  ========================
-        
-    me.initialize();
+			if (activityJson) 
+			{
+				var blockTag = ActivityDataManager.setEditModeActivityId( editForm.blockId, activityJson.id );
+
+				// Populate data in the form
+				// TODO: Do we get this on processing?  <-- means, users can only edit the not synced ones!!!
+				var data = editForm.data;
+
+				if (data) 
+				{
+					for (var i in data) {
+						var fieldName = data[i].name;
+						var value = data[i].value;
+						var displayValue = data[i].displayValue;
+
+						var divFieldTag = blockTag.find("[name='" + fieldName + "']").parent();
+						FormUtil.setTagVal(divFieldTag.find(".displayValue"), displayValue);
+						FormUtil.setTagVal(blockTag.find("[name='displayValue_" + fieldName + "']"), displayValue);
+
+						FormUtil.setTagVal(divFieldTag.find(".dataValue"), value);
+						divFieldTag.find(".dataValue").change();
+					}
+				}
+			}
+		}
+		else {
+			alert("Cannot find block with id '" + editForm.blockId + "'");
+		}
+	};
+
+	// =============================================
+	// === Run initialize - when instantiating this class  ========================
+
+	me.initialize();
 
 }
 
@@ -426,7 +406,7 @@ ActivityCardDetail.cardFullScreen = `
 </div>`;
 
 
-ActivityCardDetail.clientInfoTag =`
+ActivityCardDetail.clientInfoTag = `
   <div class="fieldBlock field">
     <div class="field__label">
       <label class="fieldName"></label>
