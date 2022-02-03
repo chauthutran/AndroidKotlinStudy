@@ -286,8 +286,7 @@ WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, retur
     if ( SessionManager.getLoginStatus() ) WsCallManager.addExtraPayload_BySourceType( ConfigManager.getConfigJson(), payloadJson );
     WsCallManager.addExtraPayload_Version( payloadJson );
 
-
-    var url = WsCallManager.composeDwsWsFullUrl( apiPath );
+    var url = WsCallManager.composeDwsWsFullUrl( apiPath, true );
 
     var requestOption = {
         headers: {
@@ -302,7 +301,7 @@ WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, retur
 
 WsCallManager.requestGetDws = function( apiPath, optionJson, loadingTag, returnFunc )
 {	
-    var url = WsCallManager.composeDwsWsFullUrl( apiPath );
+    var url = WsCallManager.composeDwsWsFullUrl( apiPath, false );
     url = WsCallManager.addUrlParam_Version( url );
 
     var requestOption = {
@@ -431,19 +430,19 @@ WsCallManager.loadingTagClear = function( loadingTag )
 
 // -----------------------------------------
 
-WsCallManager.composeDwsWsFullUrl = function( targetUrl )
+WsCallManager.composeDwsWsFullUrl = function( targetUrl, debug )
 {
     var fullUrl = '';
 
     if ( targetUrl.indexOf( 'http' ) === 0 ) fullUrl = targetUrl; // target has full path.
     else fullUrl =  WsCallManager.wsTargetUrl + targetUrl; // If partial data, add ws origin..
 
-    if ( WsCallManager.actionDetailsStr ) 
+    if ( debug && WsCallManager.actionDetailsStr ) 
     {
         fullUrl += ( fullUrl.indexOf( '?' ) >= 0 ) ? '&' + WsCallManager.actionDetailsStr: '?' + WsCallManager.actionDetailsStr; //'?action-details=3';
 
         WsCallManager.actionDetailsCount++;
-        console.log( 'WsCallManager.actionDetailsStr: ' + WsCallManager.actionDetailsStr + ', WsCallManager.actionDetailsCount: ' + WsCallManager.actionDetailsCount );
+        console.log( 'url: ' + fullUrl + ' , count: ' + WsCallManager.actionDetailsCount + ', addedStr: ' + WsCallManager.actionDetailsStr );
 
         // If the 'actionDetails' count reach max count, reset it - stop using it.
         if ( WsCallManager.actionDetailsCount >= WsCallManager.actionDetailsCountLimit )

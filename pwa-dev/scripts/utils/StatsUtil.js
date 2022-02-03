@@ -215,7 +215,7 @@ StatsUtil.dataGroupBy = function( dataArr, levelStr, arrFields )
                     }
                 }
             }
-            catch ( errMsg ) { console.customLog( 'ERROR in StatsUtil.groupBy_Obj, item: ' + JSON.stringify( item ) ); }
+            catch ( errMsg ) { console.log( 'ERROR in StatsUtil.groupBy_Obj, item: ' + JSON.stringify( item ) ); }
         });
     }
 
@@ -257,7 +257,7 @@ StatsUtil.isInDate = function( startDate, endDate, item, datePropertyName )
                 && ( !endDate || itemDate < endDate ) ) inDate = true;
         }
     }
-    catch ( errMsg ) { console.customLog( 'ERROR in isInDate item date comparison.' ); }
+    catch ( errMsg ) { console.log( 'ERROR in isInDate item date comparison.' ); }
 
     return inDate;
 };
@@ -282,6 +282,35 @@ StatsUtil.getTranGroupByType = function( tranList )
 
 
 /* ---------------------------- */
+/* Translation stats terms */
+StatsUtil.runStatsTranslation = function( termsObj ) 
+{
+  if ( termsObj )
+  {
+    var langCode = '';
+
+    if ( typeof TranslationManager !== 'undefined' && TranslationManager.currentLangcode ) langCode = TranslationManager.currentLangcode;
+    else if ( termsObj.localLangCode ) langCode = termsObj.localLangCode;
+
+    if ( langCode && termsObj[ langCode ] )
+    {
+      var terms = termsObj[ langCode ];
+
+      $( '[termstats]' ).each( function() 
+      {
+        var tag = $( this );
+        var termStatsName = tag.attr( 'termstats' );
+
+        if ( termStatsName ) 
+        {
+          var termVal = terms[ termStatsName ];        
+          if ( termVal ) tag.html( termVal );
+        }
+
+      });
+    }
+  }
+};
 
 /* ====================================== */
 /* === HTML UI Related ================== */
@@ -298,13 +327,33 @@ StatsUtil.createTableHtml = function( tableDivTag, titleArr, dataArr, tableClass
 
     table.attr( 'class', tableClassName );
 
+
+    /* If 'titleArr' array item is string, make it object version - according to new 'span' tag appending capability */
+    titleArr = titleArr.map( function (item) {        
+        if ( Util.isTypeObject( item ) ) return item;
+        else return { name: item, term: '' }; // if ( Util.isTypeString( item ) )
+    });
+
+
+    dataArr.forEach( data => 
+    {
+        titleArr.forEach( item => 
+        {
+            var colData = data[ item.name ];
+            if ( !Util.isTypeObject( colData ) ) data[ item.name ] = { value: colData, term: '' };    
+        });
+    });
+    
+
     var headers = table
         .append('thead')
         .append('tr')
         .selectAll('th')
-        .data( titleArr ).enter()
+        .data( titleArr ).enter()  // 
         .append('th')
-        .text( function (d) { return d; })
+        .attr( 'term', d => d.term )
+        .attr( 'termStats', d => d.termStats )
+        .text( d => d.name )
         .on('click', function (d) {
             headers.attr('class', 'header');
 
@@ -327,15 +376,15 @@ StatsUtil.createTableHtml = function( tableDivTag, titleArr, dataArr, tableClass
         
     rows.selectAll('td')
         .data( function (d) {
-        return titleArr.map( function (k) {
-            return { 'name': k, 'value': d[k] };
-        });
+            return titleArr.map( function (item) {
+                var colData = ( d[item.name] ) ? d[item.name]: {};
+                return { 'name': item.name, 'value': colData.value, 'term': colData.term, 'termStats': colData.termStats };
+            });
         }).enter()
         .append('td')
-        .attr('data-th', function (d) {
-            return d.name;
-        })
-        .text(function (d) {
-            return d.value;
-        });
+        .attr('data-th', d => d.name )
+        .attr('term', d => d.term )
+        .attr('termStats', d => d.termStats )
+        .text( d => d.value );
 };
+
