@@ -171,7 +171,7 @@ function ActivityCardDetail(activityId, isRestore) {
 
 					activityEditPaylayLoadBtnTag.off('click').click(function (e) 
 					{
-						me.loadEditActivityForm( editForm );
+						me.loadEditActivityForm( editForm, activityJson, activityEditPaylayLoadBtnTag );
 					});
 				}
 			}
@@ -182,7 +182,7 @@ function ActivityCardDetail(activityId, isRestore) {
 	};
 
 
-	me.loadEditActivityForm = function( editForm ) 
+	me.loadEditActivityForm = function( editForm, activityJson, activityEditPaylayLoadBtnTag ) 
 	{
 		// NOTE/TODO: #1
 
