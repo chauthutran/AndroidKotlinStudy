@@ -24,6 +24,10 @@ WsCallManager.actionDetailsStr = ''; //  'action-details=3'; <-- Set this on con
 WsCallManager.actionDetailsCount = 0;  // After 5 times of usage, it will reset 'actionDetailsStr'
 WsCallManager.actionDetailsCountLimit = 5;  // After 5 times of usage, it will reset 'actionDetailsStr'
 
+WsCallManager.remove_payloadTrans = [];
+WsCallManager.payloadTrans_dhis2Programs = [ 's_dhis2Program', 's_dhis2Program_event', 's_dhis2Program_trackEntity' ];
+WsCallManager.payloadTrans_s_sch = [ 's_sch', 's_sch_enable', 's_sch_cancel' ];
+
 // -------------------------
 WsCallManager.available_PWAAvailable = '/PWA.available';    // Older operation 
 WsCallManager.available_Availability = '/availability';     // New operation
@@ -271,6 +275,8 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
     // OLD: For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 
     payloadJson.userName = SessionManager.sessionData.login_UserName;
     payloadJson.password = SessionManager.sessionData.login_Password;    
+
+    WsCallManager.removePayloadTrans_byType( payloadJson );
 
     WsCallManager.requestPostDws( apiPath, payloadJson, loadingTag, returnFunc );
 };
@@ -548,3 +554,39 @@ WsCallManager.requestDWS_DELETE = function( endPoint, payloadJson, loadingTag, r
 
 
 // -----------------------  Minor Other Methods...
+
+// -----------------------------
+// ---- remove payload trans - for dev..
+
+WsCallManager.removePayloadTrans_byType = function( payloadJson )
+{
+    if ( WsCallManager.remove_payloadTrans.length > 0 )
+    {
+        if ( payloadJson && payloadJson.payload && payloadJson.payload.captureValues )
+        {
+            var transList = payloadJson.payload.captureValues.transactions;
+
+            if ( transList && transList.length )
+            {
+                WsCallManager.remove_payloadTrans.forEach( type => {
+                    Util.RemoveFromArrayAll( transList, 'type', type );
+                });
+            }
+        }
+    }
+};
+
+WsCallManager.setRemoveTransType_dhis2Programs = function()
+{
+    WsCallManager.setRemoveTransType_input( WsCallManager.payloadTrans_dhis2Programs );
+};
+
+WsCallManager.setRemoveTransType_s_sch = function()
+{
+    WsCallManager.setRemoveTransType_input( WsCallManager.payloadTrans_s_sch );
+};
+
+WsCallManager.setRemoveTransType_input = function( typeList )
+{
+  WsCallManager.remove_payloadTrans = WsCallManager.remove_payloadTrans.concat( typeList );  
+};
