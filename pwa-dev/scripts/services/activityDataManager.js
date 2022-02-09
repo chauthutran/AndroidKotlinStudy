@@ -512,6 +512,14 @@ ActivityDataManager.setEditModeHiddenVal = function( blockId, activityId, moreHi
 ActivityDataManager.setEditModeActivityId = function( blockId, activityId, moreHiddenVal )
 {
     var blockTag = $("[blockId='" + blockId + "']");
+
+    ActivityDataManager.setEditModeActivityId_blockTag( blockTag, activityId, moreHiddenVal );
+
+    return blockTag;
+};
+
+ActivityDataManager.setEditModeActivityId_blockTag = function( blockTag, activityId, moreHiddenVal )
+{
     blockTag.append("<input type='hidden' class='editModeActivityId' value='" + activityId + "'>");
 
     if ( moreHiddenVal && Util.isTypeObject( moreHiddenVal ) )
@@ -521,8 +529,6 @@ ActivityDataManager.setEditModeActivityId = function( blockId, activityId, moreH
             blockTag.append("<input type='hidden' class='" + json.key + "' value='" + json.value + "'>");
         });
     }
-
-    return blockTag;
 };
 
 

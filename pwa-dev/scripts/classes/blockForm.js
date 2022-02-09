@@ -133,11 +133,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			if ( blockDefOption.formDisplay === 'viewMode' )
 			{
 				var fieldTags = blockTag.find( 'div.fieldBlock' );
-				fieldTags.css( 'border', 'none' );
-				fieldTags.find( 'input' ).attr( 'readonly', 'readonly' );
-				fieldTags.find( 'select' ).attr( 'disabled', 'true' ).css( 'background-image', 'none' );
-				fieldTags.find( 'button.dateButton' ).remove();
-				fieldTags.find( 'span.spanMandatory' ).remove();
+
+				FormUtil.disableFieldTags( fieldTags );
 
 				fieldTags.filter( '[display=none]' ).show();
 			}
@@ -1553,6 +1550,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var entryTag = divInputTag.find( 'select,input' ); // < shouldn't his be .dataValue?
 		var regxRules = [];
+		var otherRules = {};
 		var pickerDateRangeJson;
 
 		var rulesList = me.getFormControlRules( fieldDef );	
@@ -1566,21 +1564,21 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				ruleJson.forEach( subRuleDef => 
 				{
 					var subRuleJson = FormUtil.getObjFromDefinition( subRuleDef, ConfigManager.getConfigJson().definitionRules );
-					me.addRuleForField( subRuleJson, regxRules, entryTag, divInputTag, fieldDef );
+					me.addRuleForField( subRuleJson, regxRules, otherRules, entryTag, divInputTag, fieldDef );
 				});
 			}
 			else if ( Util.isTypeObject( ruleJson ) )
 			{
-				me.addRuleForField( ruleJson, regxRules, entryTag, divInputTag, fieldDef );
+				me.addRuleForField( ruleJson, regxRules, otherRules, entryTag, divInputTag, fieldDef );
 			}
 		});
 
 		if ( regxRules.length > 0 ) entryTag.attr( 'patterns', encodeURI( JSON.stringify( regxRules ) ) );
-		if ( pickerDateRangeJson ) entryTag.attr( 'pickerDateRange', encodeURI( JSON.stringify( pickerDateRangeJson ) ) );
+		if ( otherRules.pickerDateRangeJson ) entryTag.attr( 'pickerDateRange', encodeURI( JSON.stringify( otherRules.pickerDateRangeJson ) ) );
 	};
 
 
-	me.addRuleForField = function( ruleJson, regxRules, entryTag, divInputTag, fieldDef )
+	me.addRuleForField = function( ruleJson, regxRules, otherRules, entryTag, divInputTag, fieldDef )
 	{		
 		//if ( me.checkConditionEval( ruleJson ) )
 		if ( FormUtil.checkConditionEval( ruleJson.conditionEval ) )
@@ -1614,6 +1612,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				if ( inputTags )
 				{
+					// TODO: Could use FormUtil.disableInputTag() for universal usage..
 					inputTags.attr( 'disabled', 'disabled' );
 					if ( !bFontNotGray ) inputTags.css( 'opacity', '0.6' ); //.css( 'color', '#999' ); // a bit lighter font for all 3 above case?  Disabled ones
 				}
@@ -1636,6 +1635,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				pickerDateRangeJson.msg = ruleJson.msg;
 				pickerDateRangeJson.term = ruleJson.term;
+
+				otherRules.pickerDateRangeJson = pickerDateRangeJson;
 			}
 
 			// all other custom attributes

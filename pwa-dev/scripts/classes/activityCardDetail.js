@@ -73,9 +73,10 @@ function ActivityCardDetail(activityId, isRestore) {
 			FormUtil.renderPreviewDataForm(clientObj.clientDetails, tabTag);
 		}
 
-	}
+	};
 
-	me.setFullPreviewTabContent = function (activityId, sheetFullTag) {
+	me.setFullPreviewTabContent = function( activityId, sheetFullTag ) 
+	{
 		var clientObj = ClientDataManager.getClientByActivityId(activityId);
 		var activityJson = ActivityDataManager.getActivityById(activityId);
 
@@ -89,8 +90,9 @@ function ActivityCardDetail(activityId, isRestore) {
 			var jv_payload = new JSONViewer();
 			sheetFullTag.find('[tabButtonId=tab_previewPayload]').find(".payloadData").append(jv_payload.getContainer());
 			jv_payload.showJSON(activityJson);
+
 			// Set up "editPaylayLoadBtn"
-			me.setUpEditPayloadLoadBtn(sheetFullTag.find('#editPaylayLoadBtn'), activityJson);
+			me.setUpEditPayloadLoadBtn( sheetFullTag, activityJson );
 
 
 			// TAB #3. Sync History
@@ -138,24 +140,24 @@ function ActivityCardDetail(activityId, isRestore) {
 	// =============================================
 	// === Activity 'EDIT' Form - Related Methods ========================
 
-	me.setUpEditPayloadLoadBtn = function (activityEditPaylayLoadBtnTag, activityJson) 
+	me.setUpEditPayloadLoadBtn = function( sheetFullTag, activityJson )
 	{
 		try 
 		{
+			var activityEditPaylayLoadBtnTag = sheetFullTag.find('#editPaylayLoadBtn');
+
 			activityEditPaylayLoadBtnTag.hide();
 
-			if (activityJson) 
+			if( activityJson ) 
 			{
 				var editable = false;
 				var formData = ActivityDataManager.getActivityForm(activityJson);
 
 				var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
 
-				if (formData) 
+				if ( formData ) 
 				{
 					// TODO: We also use schedule activity with formData..  
-
-
 					if (activityEditing) editable = true;
 					else 
 					{
@@ -164,15 +166,17 @@ function ActivityCardDetail(activityId, isRestore) {
 				}
 
 
-				if (editable) 
+				if( editable ) 
 				{
-					activityEditPaylayLoadBtnTag.show();
-					var editForm = formData;
-
-					activityEditPaylayLoadBtnTag.off('click').click(function (e) 
+					if ( me.checkBlockActivityEdit_Limit( formData, activityJson, sheetFullTag ) )
 					{
-						me.loadEditActivityForm( editForm, activityJson, activityEditPaylayLoadBtnTag );
-					});
+						activityEditPaylayLoadBtnTag.show();
+
+						activityEditPaylayLoadBtnTag.off('click').click(function (e) 
+						{
+							me.loadEditActivityForm( formData, activityJson, activityEditPaylayLoadBtnTag );
+						});	
+					}	
 				}
 			}
 		}
@@ -182,19 +186,81 @@ function ActivityCardDetail(activityId, isRestore) {
 	};
 
 
+	me.checkBlockActivityEdit_Limit = function( formData, activityJson, sheetFullTag )
+	{
+		var isPass = true;
+		var showFailMsg = '';
+
+		try
+		{
+			var blockJson = FormUtil.getObjFromDefinition( formData.blockId, ConfigManager.getConfigJson().definitionBlocks );
+
+			if ( blockJson.activityEdit_Limit )
+			{
+				editLimitJson = blockJson.activityEdit_Limit;
+				// 1. 'userRoles' should be check/used on above 'editable' button show/hide..
+	
+				// If userRoles exists, check if any of the userRoles exists in current login userRoles
+				if ( editLimitJson.userRoles && !ConfigManager.matchUserRoles( editLimitJson.userRoles, ConfigManager.login_UserRoles ) )
+				{
+					showFailMsg += ' [userRoles not meet]';
+					return false;
+				}
+					
+				// 2. If 'conditionEval' exists, return false if the condition if not true. ('editableEval' also checks on above condition...
+				if ( editLimitJson.conditionEval )
+				{
+					INFO.activity = activityJson;
+
+					if ( !FormUtil.checkConditionEval( editLimitJson.conditionEval ) ) 
+					{
+						showFailMsg += ' [conditionEval not true]';
+						return false;
+					}
+				}
+			}
+		}
+		catch( errMsg )
+		{
+			showFailMsg += ' [error catched]';
+			console.log( 'ERROR in activityCardDetail.checkBlockActivityEdit_Limit, ' + errMsg );
+			return false;
+		}
+
+		if ( !isPass ) console.log( showFailMsg );
+
+		// Show with icon for the false reason? for edit information show?
+		return isPass;
+	};
+
+	"INFO.client.clientDetails.firstName + ' ' + INFO.client.clientDetails.lastName + ' ' + getAge( INFO.client.clientDetails )  + ' [' + getHealthPromoted( INFO.activity ) + ']'"
+
+	function getAge( clientDetails )
+	{
+		if ( clientDetails.age_comodín ) return clientDetails.age_comodín;
+		else return clientDetails.age;
+	};
+
+
+	function getHealthPromoted( activity )
+	{
+		var trans_sInfo = activity.transactions.filter( function(t) { return t.type === 's_info'; } );
+
+		var healthPromotedVal = '';
+	
+		if ( trans_sInfo.dataValues.healthyBehaviorPromoted_J30 ) healthPromotedVal = trans_sInfo.dataValues.healthyBehaviorPromoted_J30;
+		else if ( trans_sInfo.dataValues.wpTH9YlcMdG ) healthPromotedVal = trans_sInfo.dataValues.wpTH9YlcMdG;
+
+		return healthPromotedVal;
+	};
+
+
+
 	me.loadEditActivityForm = function( editForm, activityJson, activityEditPaylayLoadBtnTag ) 
 	{
-		// NOTE/TODO: #1
+		var blockJson = FormUtil.getObjFromDefinition( editForm.blockId, ConfigManager.getConfigJson().definitionBlocks );
 
-		// This should be done on 'payload' creation?
-		// Or on the form opening?
-
-		// If 'synced'/'downloaded' status, mark it as 'syncedEdit' for backend.
-		//    + copy existing transaction in the history...
-
-		var blockJson = FormUtil.getObjFromDefinition(editForm.blockId, ConfigManager.getConfigJson().definitionBlocks);
-
-		if (blockJson) 
+		if ( blockJson ) 
 		{
 			var activityCardDivTag = activityEditPaylayLoadBtnTag.parent();
 			var payloadTag = activityCardDivTag.find(".payloadData");
@@ -208,19 +274,20 @@ function ActivityCardDetail(activityId, isRestore) {
 
 			// var newBlockObj = new Block( SessionManager.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
 			// newBlockObj.render( 'blockList' );
-			FormUtil.renderBlockByBlockId(editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList');
+			var blockObj = FormUtil.renderBlockByBlockId(editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList');
+			var blockTag = blockObj.blockTag;
 
-			if (activityJson) 
+			if ( activityJson ) 
 			{
-				var blockTag = ActivityDataManager.setEditModeActivityId( editForm.blockId, activityJson.id );
-
-				// Populate data in the form
-				// TODO: Do we get this on processing?  <-- means, users can only edit the not synced ones!!!
+				ActivityDataManager.setEditModeActivityId_blockTag( blockTag, activityJson.id );
+				
+				// 1. Populate data in the form
 				var data = editForm.data;
-
-				if (data) 
+				if ( data ) 
 				{
-					for (var i in data) {
+					// TODO: Maybe below sets the radio button true/false issue..
+					for (var i in data) 
+					{
 						var fieldName = data[i].name;
 						var value = data[i].value;
 						var displayValue = data[i].displayValue;
@@ -233,6 +300,17 @@ function ActivityCardDetail(activityId, isRestore) {
 						divFieldTag.find(".dataValue").change();
 					}
 				}
+
+
+				// 2. nonEditable fields disable/readOnly
+				if ( blockJson.activityEdit_Limit && blockJson.activityEdit_Limit.nonEditableFields )
+				{		
+					blockJson.activityEdit_Limit.nonEditableFields.forEach( fieldName => 
+					{
+						var fieldTags = FormUtil.getFieldTagsByName( fieldName, blockTag );
+						FormUtil.disableFieldTags( fieldTags );
+					});
+				}				
 			}
 		}
 		else {
@@ -383,6 +461,7 @@ ActivityCardDetail.cardFullScreen = `
           blockid="tab_previewDetails" />
         <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;">
           <button id="editPaylayLoadBtn" term="activityDetail_tab_payload_btn_Edit">Edit</button>
+			 
           <div class="payloadData"></div>
           <div class="editForm" style="display: none;"></div>
         </div>

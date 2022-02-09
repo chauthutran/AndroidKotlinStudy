@@ -100,7 +100,6 @@ FormUtil.getFormCtrlTag = function( formTag, ctrlTagName )
 	return formTag.find("[name='" + ctrlTagName + "']");
 };
 
-
 FormUtil.getFormCtrlDataValue = function( inputDataValueTag )
 {
 	return inputDataValueTag.val();
@@ -521,68 +520,35 @@ FormUtil.renderBlockByBlockId = function( blockId, cwsRenderObj, parentTag, pass
 		}
 	}
 
-	//FormUtil.renderExtraBlockByBlockIdIfAny( passedData, blockDefJson, parentTag );
-
 	return blockObj;
 };
 
 
-FormUtil.renderExtraBlockByBlockIdIfAny = function( passedData, blockJson, formTag )
+FormUtil.getFieldTagsByName = function( fieldName, blockTag )
 {
-	if( passedData!= undefined )
-	{
-		var displayData = passedData.displayData;
-		var jsonData = [];
-		for( var  i in displayData )
-		{
-			var data = displayData[i];
-			jsonData[data.id] = data.value;
-		}
+	var tags;
+	
+	if ( blockTag ) tags = blockTag.find( "[name='" + fieldName + "']" ).closest( 'div.fieldBlock' );
+	else tags = $( "[name='" + fieldName + "']" ).closest( 'div.fieldBlock' );
 
-		// For Extra fields - In case there are some data in jsonData missing in the block, Render fields with key + value
-		var extraSectionTag = $("<div class='formGroupSection' name='Extra:'></div>");
-		var hasExtraFields = false;
-		for ( var key in jsonData ) 
-		{
-			var fieldTagInBlock = formTag.find("[name='" + key + "']");
-			if( fieldTagInBlock.length == 0 ) // The field with name "key" doesn't exit
-			{
-				// Populate "Other" header for "Client details" section
-				if( !hasExtraFields )
-				{
-					var headerTag = $("<div class='section'><label term=''>Extra</label>:</div>");
-					extraSectionTag.append( headerTag );
-					hasExtraFields = true;
-				}
+	return tags;
+};
 
-				// Render field
-				var value = Util.getJsonStr( FormUtil.getFieldOption_LookupValue( key, jsonData[ key ] ) );
-				var inforTag = $( ActivityCardDetail.clientInfoTag );
-				inforTag.find(".fieldName").html( key );
-				inforTag.find(".fieldValue").append( "<input name='" + key + "' value='" + value + "'>" );
 
-				extraSectionTag.append( inforTag );
-			}
-		}
+	//var fieldTags = blockTag.find( 'div.fieldBlock' );
 
-		if( hasExtraFields )
-		{
-			formTag.find("form").append( extraSectionTag );
 
-			var blockDefOption = blockJson.option;
-			if ( blockDefOption && blockDefOption.formDisplay === 'viewMode')
-			{
-				var fieldTags = extraSectionTag.find( 'div.fieldBlock' );
-				fieldTags.css( 'border', 'none' );
-				fieldTags.find( 'input' ).attr( 'readonly', 'readonly' );
-				fieldTags.find( 'select' ).attr( 'disabled', 'true' ).css( 'background-image', 'none' );
-				fieldTags.find( 'button.dateButton' ).remove();
-				fieldTags.find( 'span.spanMandatory' ).remove();
-			}
-		}
-	}
-}
 
+// ViewOnly, Diable Tags..
+FormUtil.disableFieldTags = function( fieldTags )
+{
+	//var fieldTags = blockTag.find( 'div.fieldBlock' );
+	fieldTags.css( 'border', 'none' );
+	fieldTags.find( 'input' ).attr( 'readonly', 'readonly' );
+	fieldTags.find( 'select' ).attr( 'disabled', 'true' ).css( 'background-image', 'none' );
+	fieldTags.find( 'button.dateButton' ).remove();
+	fieldTags.find( 'span.spanMandatory' ).remove();
+};
 
 // -----------------------------
 // ---- REST (Retrieval/Submit(POST)) Related ----------
