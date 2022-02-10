@@ -72,7 +72,6 @@ function ActivityCardDetail(activityId, isRestore) {
 		if (clientObj && clientObj.clientDetails) {
 			FormUtil.renderPreviewDataForm(clientObj.clientDetails, tabTag);
 		}
-
 	};
 
 	me.setFullPreviewTabContent = function( activityId, sheetFullTag ) 
@@ -82,28 +81,37 @@ function ActivityCardDetail(activityId, isRestore) {
 
 		// TAB #1. Client Details
 		var clientDetailsTabTag = sheetFullTag.find('[tabButtonId=tab_previewDetails]');
-		me.showClientDetails(clientObj, clientDetailsTabTag);;
+		me.showClientDetails(clientObj, clientDetailsTabTag);
 
 
-		if (activityJson) {
+		if (activityJson) 
+		{			
 			// TAB #2. Payload Preview
-			var jv_payload = new JSONViewer();
-			sheetFullTag.find('[tabButtonId=tab_previewPayload]').find(".payloadData").append(jv_payload.getContainer());
-			jv_payload.showJSON(activityJson);
+			var payloadTabTag = sheetFullTag.find( '[tabButtonId=tab_previewPayload]' );
+			sheetFullTag.find( '.tab_fs li[rel=tab_previewPayload]' ).click( function() 
+			{
+				payloadTabTag.html( '' );
 
-			// Set up "editPayloadBtn"
-			me.setUpEditPayloadLoadBtn( sheetFullTag, activityJson );
+				// depending on the click, render it?
+				var payloadDataDivTag = me.populatePayloadDataDiv( payloadTabTag, activityJson );
 
+				// Set up "activityEditBtn"
+				me.setUpActivityEditBtn( payloadTabTag, activityJson );
+				// SetUp Edit Button + info tags Div
+			});
 
+			
 			// TAB #3. Sync History
-			if (activityJson.processing && activityJson.processing.history) {
+			if ( activityJson.processing && activityJson.processing.history ) 
+			{
 				var syncHistoryTag = $('[tabButtonId=tab_previewSync]').html(JsonBuiltTable.buildTable(activityJson.processing.history));
 				syncHistoryTag.find('.bt_td_head').filter(function (i, tag) { return ($(tag).html() === 'responseCode'); }).html('response code');
 			}
 
 			// Set event for "Remove" button for "Pending" client
 			var removeActivityBtn = sheetFullTag.find('.removeActivity').hide();
-			if (SyncManagerNew.statusSyncable(activityJson.processing.status)) {
+			if ( SyncManagerNew.statusSyncable( activityJson.processing.status ) ) 
+			{
 				removeActivityBtn.show().click(function () {
 					var result = confirm("Are you sure you want to delete this activity?");
 					if (result) {
@@ -114,7 +122,25 @@ function ActivityCardDetail(activityId, isRestore) {
 		}
 	};
 
-	me.removeActivityNCard = function (activityId, btnBackTag) {
+
+	me.populatePayloadDataDiv = function( payloadTabTag, activityJson )
+	{
+		payloadTabTag.html( '' );
+		payloadTabTag.append( ActivityCardDetail.divPayloadDataTag );
+
+		var payloadDataDivTag = payloadTabTag.find( 'div.divPayloadData' );
+		var payloadDataTag = payloadDataDivTag.find( 'div.payloadData' );
+
+		var jv_payload = new JSONViewer();
+		payloadDataTag.append( jv_payload.getContainer() );
+		jv_payload.showJSON( activityJson );
+
+		return payloadDataDivTag;
+	};
+
+
+	me.removeActivityNCard = function( activityId, btnBackTag ) 
+	{
 		var client = ActivityDataManager.deleteExistingActivity_Indexed(activityId);
 		if (client && client.activities.length === 0) ClientDataManager.removeClient(client);
 
@@ -140,18 +166,16 @@ function ActivityCardDetail(activityId, isRestore) {
 	// =============================================
 	// === Activity 'EDIT' Form - Related Methods ========================
 
-	me.setUpEditPayloadLoadBtn = function( sheetFullTag, activityJson )
+	me.setUpActivityEditBtn = function( payloadTabTag, activityJson )
 	{
 		try 
 		{
-			var activityEditPayloadBtnTag = sheetFullTag.find('#editPayloadBtn');
-
-			activityEditPayloadBtnTag.hide();
+			var activityEditBtnTag = payloadTabTag.find( '.activityEditBtn' ).hide();
 
 			if( activityJson ) 
 			{
 				var editable = false;
-				var formData = ActivityDataManager.getActivityForm(activityJson);
+				var formData = ActivityDataManager.getActivityForm( activityJson );
 
 				var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
 
@@ -168,25 +192,27 @@ function ActivityCardDetail(activityId, isRestore) {
 
 				if( editable ) 
 				{
-					if ( me.checkBlockActivityEdit_Limit( formData, activityJson, sheetFullTag ) )
+					if ( me.checkBlockActivityEdit_Limit( formData, activityJson, payloadTabTag ) )
 					{
-						activityEditPayloadBtnTag.show();
+						activityEditBtnTag.show();
 
-						activityEditPayloadBtnTag.off('click').click(function (e) 
+						activityEditBtnTag.off('click').click(function (e) 
 						{
-							me.loadEditActivityForm( formData, activityJson, activityEditPayloadBtnTag );
+							payloadTabTag.html( '' );
+
+							me.loadEditActivityForm( formData, activityJson, payloadTabTag );
 						});	
 					}
 				}
 			}
 		}
 		catch (errMsg) {
-			console.customLog('ERROR in ActivityCard.setUpEditPayloadLoadBtn, errMsg: ' + errMsg);
+			console.customLog('ERROR in ActivityCard.setUpActivityEditBtn, errMsg: ' + errMsg);
 		}
 	};
 
 
-	me.checkBlockActivityEdit_Limit = function( formData, activityJson, sheetFullTag )
+	me.checkBlockActivityEdit_Limit = function( formData, activityJson, payloadTabTag )
 	{
 		//var isPass = true;
 		//var showFailMsg = '';
@@ -195,7 +221,7 @@ function ActivityCardDetail(activityId, isRestore) {
 		try
 		{
 			var blockJson = FormUtil.getObjFromDefinition( formData.blockId, ConfigManager.getConfigJson().definitionBlocks );
-			var infoTag = sheetFullTag.find( '.editPayloadBtnInfo' ).hide();
+			var infoTag = payloadTabTag.find( '.activityEditInfo' ).hide();
 
 			if ( blockJson.activityEdit_Limit )
 			{
@@ -237,20 +263,12 @@ function ActivityCardDetail(activityId, isRestore) {
 	};
 
 
-	me.loadEditActivityForm = function( editForm, activityJson, activityEditPayloadBtnTag ) 
+	me.loadEditActivityForm = function( editForm, activityJson, payloadTabTag ) 
 	{
 		var blockJson = FormUtil.getObjFromDefinition( editForm.blockId, ConfigManager.getConfigJson().definitionBlocks );
 
 		if ( blockJson ) 
 		{
-			var activityCardDivTag = activityEditPayloadBtnTag.parent();
-			var payloadTag = activityCardDivTag.find(".payloadData");
-			var editFormTag = activityCardDivTag.find(".editForm");
-
-			activityEditPayloadBtnTag.hide();
-			payloadTag.hide();
-			editFormTag.show();
-		
 			var fieldDataArr = editForm.data;
 
 			// copy 'name' field to 'id
@@ -261,8 +279,10 @@ function ActivityCardDetail(activityId, isRestore) {
 
 			var passedData = { showCase: editForm.showCase, hideCase: editForm.hideCase, formDataArr: fieldDataArr };
 
-			var blockObj = FormUtil.renderBlockByBlockId( editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList');
+			var blockObj = FormUtil.renderBlockByBlockId( editForm.blockId, SessionManager.cwsRenderObj, payloadTabTag, passedData, undefined, undefined, 'blockList');
 			var blockTag = blockObj.blockTag;
+
+			// NOTE: Bottom Padding is done by display: flex , which is defined by class 'sheet_preview'
 
 			if ( activityJson ) 
 			{
@@ -423,14 +443,8 @@ ActivityCardDetail.cardFullScreen = `
       </div>
 
       <div class="tab_fs__container">
-        <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_previewDetails"
-          blockid="tab_previewDetails" />
-        <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;">
-          <button id="editPayloadBtn" term="activityDetail_tab_payload_btn_Edit">Edit</button>
-			 <img src="images/about.svg" class="editPayloadBtnInfo" style="display:none; margin-bottom: -10px; width: 20px; opacity: 0.6;" />
-          <div class="payloadData"></div>
-          <div class="editForm" style="display: none;"></div>
-        </div>
+        <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_previewDetails" blockid="tab_previewDetails" />
+        <div class="tab_fs__container-content sheet_preview" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;" />
         <div class="tab_fs__container-content" tabButtonId="tab_previewSync" blockid="tab_previewSync" style="display:none;" />
         <div class="tab_fs__container-content" tabButtonId="tab_optionalDev" blockid="tab_optionalDev" style="display:none;">
           <div>Status Change: 
@@ -450,6 +464,15 @@ ActivityCardDetail.cardFullScreen = `
   </div>
 </div>`;
 
+ActivityCardDetail.divPayloadDataTag = `
+	<div class="divPayloadData">
+		<div class="divActivityEdit">
+			<button class="activityEditBtn" term="activityDetail_tab_payload_btn_Edit" style="display:none;">Edit</button>
+			<img src="images/about.svg" class="activityEditInfo" style="display:none; margin-bottom: -10px; width: 20px; opacity: 0.6;" />		
+		</div>
+		<div class="payloadData"></div>
+	</div>
+`;
 
 ActivityCardDetail.clientInfoTag = `
   <div class="fieldBlock field">
