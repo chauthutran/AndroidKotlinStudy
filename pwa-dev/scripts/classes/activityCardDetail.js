@@ -91,7 +91,7 @@ function ActivityCardDetail(activityId, isRestore) {
 			sheetFullTag.find('[tabButtonId=tab_previewPayload]').find(".payloadData").append(jv_payload.getContainer());
 			jv_payload.showJSON(activityJson);
 
-			// Set up "editPaylayLoadBtn"
+			// Set up "editPayloadBtn"
 			me.setUpEditPayloadLoadBtn( sheetFullTag, activityJson );
 
 
@@ -144,9 +144,9 @@ function ActivityCardDetail(activityId, isRestore) {
 	{
 		try 
 		{
-			var activityEditPaylayLoadBtnTag = sheetFullTag.find('#editPaylayLoadBtn');
+			var activityEditPayloadBtnTag = sheetFullTag.find('#editPayloadBtn');
 
-			activityEditPaylayLoadBtnTag.hide();
+			activityEditPayloadBtnTag.hide();
 
 			if( activityJson ) 
 			{
@@ -170,13 +170,13 @@ function ActivityCardDetail(activityId, isRestore) {
 				{
 					if ( me.checkBlockActivityEdit_Limit( formData, activityJson, sheetFullTag ) )
 					{
-						activityEditPaylayLoadBtnTag.show();
+						activityEditPayloadBtnTag.show();
 
-						activityEditPaylayLoadBtnTag.off('click').click(function (e) 
+						activityEditPayloadBtnTag.off('click').click(function (e) 
 						{
-							me.loadEditActivityForm( formData, activityJson, activityEditPaylayLoadBtnTag );
+							me.loadEditActivityForm( formData, activityJson, activityEditPayloadBtnTag );
 						});	
-					}	
+					}
 				}
 			}
 		}
@@ -188,12 +188,14 @@ function ActivityCardDetail(activityId, isRestore) {
 
 	me.checkBlockActivityEdit_Limit = function( formData, activityJson, sheetFullTag )
 	{
-		var isPass = true;
-		var showFailMsg = '';
+		//var isPass = true;
+		//var showFailMsg = '';
+		var info_pre = 'activityEdit not available: ';
 
 		try
 		{
 			var blockJson = FormUtil.getObjFromDefinition( formData.blockId, ConfigManager.getConfigJson().definitionBlocks );
+			var infoTag = sheetFullTag.find( '.editPayloadBtnInfo' ).hide();
 
 			if ( blockJson.activityEdit_Limit )
 			{
@@ -203,7 +205,8 @@ function ActivityCardDetail(activityId, isRestore) {
 				// If userRoles exists, check if any of the userRoles exists in current login userRoles
 				if ( editLimitJson.userRoles && !ConfigManager.matchUserRoles( editLimitJson.userRoles, ConfigManager.login_UserRoles ) )
 				{
-					showFailMsg += ' [userRoles not meet]';
+					infoTag.attr( 'title', info_pre + 'userRoles not meet' ).show();
+					console.log( '[userRoles not meet]' );
 					return false;
 				}
 					
@@ -214,7 +217,8 @@ function ActivityCardDetail(activityId, isRestore) {
 
 					if ( !FormUtil.checkConditionEval( editLimitJson.conditionEval ) ) 
 					{
-						showFailMsg += ' [conditionEval not true]';
+						infoTag.attr( 'title', info_pre + 'conditionEval not true' ).show();
+						console.log( '[conditionEval not true]' );
 						return false;
 					}
 				}
@@ -222,87 +226,49 @@ function ActivityCardDetail(activityId, isRestore) {
 		}
 		catch( errMsg )
 		{
-			showFailMsg += ' [error catched]';
+			//showFailMsg += ' [error catched]';
+			infoTag.attr( 'title', info_pre + 'Error on code' ).show();
 			console.log( 'ERROR in activityCardDetail.checkBlockActivityEdit_Limit, ' + errMsg );
 			return false;
 		}
 
-		if ( !isPass ) console.log( showFailMsg );
-
 		// Show with icon for the false reason? for edit information show?
-		return isPass;
-	};
-
-	"INFO.client.clientDetails.firstName + ' ' + INFO.client.clientDetails.lastName + ' ' + getAge( INFO.client.clientDetails )  + ' [' + getHealthPromoted( INFO.activity ) + ']'"
-
-	function getAge( clientDetails )
-	{
-		if ( clientDetails.age_comodín ) return clientDetails.age_comodín;
-		else return clientDetails.age;
+		return true;
 	};
 
 
-	function getHealthPromoted( activity )
-	{
-		var trans_sInfo = activity.transactions.filter( function(t) { return t.type === 's_info'; } );
-
-		var healthPromotedVal = '';
-	
-		if ( trans_sInfo.dataValues.healthyBehaviorPromoted_J30 ) healthPromotedVal = trans_sInfo.dataValues.healthyBehaviorPromoted_J30;
-		else if ( trans_sInfo.dataValues.wpTH9YlcMdG ) healthPromotedVal = trans_sInfo.dataValues.wpTH9YlcMdG;
-
-		return healthPromotedVal;
-	};
-
-
-
-	me.loadEditActivityForm = function( editForm, activityJson, activityEditPaylayLoadBtnTag ) 
+	me.loadEditActivityForm = function( editForm, activityJson, activityEditPayloadBtnTag ) 
 	{
 		var blockJson = FormUtil.getObjFromDefinition( editForm.blockId, ConfigManager.getConfigJson().definitionBlocks );
 
 		if ( blockJson ) 
 		{
-			var activityCardDivTag = activityEditPaylayLoadBtnTag.parent();
+			var activityCardDivTag = activityEditPayloadBtnTag.parent();
 			var payloadTag = activityCardDivTag.find(".payloadData");
 			var editFormTag = activityCardDivTag.find(".editForm");
 
-			activityEditPaylayLoadBtnTag.hide();
+			activityEditPayloadBtnTag.hide();
 			payloadTag.hide();
 			editFormTag.show();
+		
+			var fieldDataArr = editForm.data;
 
-			var passedData = { 'showCase': editForm.showCase, 'hideCase': editForm.hideCase };
+			// copy 'name' field to 'id
+			if ( fieldDataArr )
+			{
+				fieldDataArr.forEach( fieldJson => { fieldJson.id = fieldJson.name; });
+			}
 
-			// var newBlockObj = new Block( SessionManager.cwsRenderObj, blockJson, editForm.blockId, editFormTag, passedData, undefined, undefined );
-			// newBlockObj.render( 'blockList' );
-			var blockObj = FormUtil.renderBlockByBlockId(editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList');
+			var passedData = { showCase: editForm.showCase, hideCase: editForm.hideCase, formDataArr: fieldDataArr };
+
+			var blockObj = FormUtil.renderBlockByBlockId( editForm.blockId, SessionManager.cwsRenderObj, editFormTag, passedData, undefined, undefined, 'blockList');
 			var blockTag = blockObj.blockTag;
 
 			if ( activityJson ) 
 			{
 				ActivityDataManager.setEditModeActivityId_blockTag( blockTag, activityJson.id );
 				
-				// 1. Populate data in the form
-				var data = editForm.data;
-				if ( data ) 
-				{
-					// TODO: Maybe below sets the radio button true/false issue..
-					for (var i in data) 
-					{
-						var fieldName = data[i].name;
-						var value = data[i].value;
-						var displayValue = data[i].displayValue;
-
-						var divFieldTag = blockTag.find("[name='" + fieldName + "']").parent();
-						FormUtil.setTagVal(divFieldTag.find(".displayValue"), displayValue);
-						FormUtil.setTagVal(blockTag.find("[name='displayValue_" + fieldName + "']"), displayValue);
-
-						FormUtil.setTagVal(divFieldTag.find(".dataValue"), value);
-						divFieldTag.find(".dataValue").change();
-					}
-				}
-
-
-				// 2. nonEditable fields disable/readOnly
+				// nonEditable fields disable/readOnly
 				if ( blockJson.activityEdit_Limit && blockJson.activityEdit_Limit.nonEditableFields )
 				{		
 					blockJson.activityEdit_Limit.nonEditableFields.forEach( fieldName => 
@@ -460,8 +426,8 @@ ActivityCardDetail.cardFullScreen = `
         <div class="tab_fs__container-content active sheet_preview" tabButtonId="tab_previewDetails"
           blockid="tab_previewDetails" />
         <div class="tab_fs__container-content" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;">
-          <button id="editPaylayLoadBtn" term="activityDetail_tab_payload_btn_Edit">Edit</button>
-			 
+          <button id="editPayloadBtn" term="activityDetail_tab_payload_btn_Edit">Edit</button>
+			 <img src="images/about.svg" class="editPayloadBtnInfo" style="display:none; margin-bottom: -10px; width: 20px; opacity: 0.6;" />
           <div class="payloadData"></div>
           <div class="editForm" style="display: none;"></div>
         </div>

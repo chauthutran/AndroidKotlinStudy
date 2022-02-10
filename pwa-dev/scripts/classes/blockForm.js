@@ -134,7 +134,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			{
 				var fieldTags = blockTag.find( 'div.fieldBlock' );
 
-				FormUtil.disableFieldTags( fieldTags );
+				FormUtil.disableFieldTags( fieldTags, { clientViewMode: true } );
 
 				fieldTags.filter( '[display=none]' ).show();
 			}
@@ -2095,16 +2095,9 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				// Dhis2 Search result styel data - 'displayData' - we are assuming this is single list... (could be 2 dimensional array)
 				if ( passedData.displayData ) me.populateFormData_ArrayDataByUid( formDivSecTag, passedData.displayData );
 			}
-			else if ( passedData.formsJson )  // NEW - easy way to pass value to form --> formsJson.clientId = '----';
-			{
-				// We can even to 'passData.formsJson = INFO.payload.formsJson;' in 'evalAction' to pass everything.
-				me.populateFieldsData( formDivSecTag, passedData.formsJson );
-				//me.populateFormData_ObjByName( formDivSecTag, passedData.formsJson );
-			}
-			else if ( Util.isTypeArray( passedData ) )
-			{
-				me.populateFormData_ArrayDataByUid( formDivSecTag, passedData );
-			}
+			else if ( passedData.formsJson ) me.populateFieldsData( formDivSecTag, passedData.formsJson );
+			else if ( passedData.formDataArr ) me.populateFormData_ArrayDataByUid( formDivSecTag, passedData.formDataArr );
+			else if ( Util.isTypeArray( passedData ) ) me.populateFormData_ArrayDataByUid( formDivSecTag, passedData );
 		}
 	};
 

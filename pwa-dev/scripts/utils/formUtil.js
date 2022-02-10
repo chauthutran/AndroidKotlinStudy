@@ -540,15 +540,30 @@ FormUtil.getFieldTagsByName = function( fieldName, blockTag )
 
 
 // ViewOnly, Diable Tags..
-FormUtil.disableFieldTags = function( fieldTags )
+FormUtil.disableFieldTags = function( fieldTags, option )
 {
 	//var fieldTags = blockTag.find( 'div.fieldBlock' );
-	fieldTags.css( 'border', 'none' );
-	fieldTags.find( 'input' ).attr( 'readonly', 'readonly' );
+
+	if ( option && option.clientViewMode === true )
+	{
+		fieldTags.css( 'border', 'none' );
+		fieldTags.find( 'input' ).attr( 'readonly', 'readonly' );
+	}
+	else
+	{
+		// each field disable on a form/block
+		fieldTags.find( 'input' ).attr( 'disabled', 'disabled' ).css( 'opacity', '0.6' );
+		fieldTags.find( 'input[type=radio],input[type=checkbox]' ).siblings( 'label[for]' ).css( 'opacity', '0.6' );
+		fieldTags.addClass( 'divInputReadOnly' );
+
+		// emulate like --> if ( ruleNameUpper === 'DISABLED' ) // disabled
+	}
+
 	fieldTags.find( 'select' ).attr( 'disabled', 'true' ).css( 'background-image', 'none' );
 	fieldTags.find( 'button.dateButton' ).remove();
 	fieldTags.find( 'span.spanMandatory' ).remove();
 };
+
 
 // -----------------------------
 // ---- REST (Retrieval/Submit(POST)) Related ----------

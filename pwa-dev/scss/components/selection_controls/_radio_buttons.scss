@@ -1,6 +1,9 @@
 .radiobutton {
     @include comp-tf-sc;
 
+    margin-left: 4px;
+    width: calc(100% - 8px);
+
     .radiobutton__label {
         padding: 2px 8px 0 8px;
 

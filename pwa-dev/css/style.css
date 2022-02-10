@@ -3601,6 +3601,8 @@ textarea {
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  margin-left: 4px;
+  width: calc( 100% - 8px);
 }
 
 .radiobutton .radiobutton__label {

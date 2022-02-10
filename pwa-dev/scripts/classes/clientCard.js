@@ -45,7 +45,7 @@ function ClientCard( clientId, options )
                 var clientRerenderTag = clientCardDivTag.find( '.clientRerender' );
                 var clientPhoneCallTag = clientCardDivTag.find( '.clientPhone' );
 
-                //var clientEditPaylayLoadBtnTag = clientCardDivTag.find( '#editPaylayLoadBtn' );
+                //var clientEditPayloadBtnTag = clientCardDivTag.find( '#editPayloadBtn' );
 
                 var lastActivityJson = me.getLastActivity( clientJson );
 
