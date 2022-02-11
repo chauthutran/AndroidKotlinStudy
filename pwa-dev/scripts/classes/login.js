@@ -669,6 +669,8 @@ function Login()
 		// #2
 		ConfigManager.runAppRunEvals( 'login' );
 
+		ConfigManager.activityStatusSwitchOps( 'onLogin', ActivityDataManager.getActivityList() );
+
 		// Config > 'settings' > 'loginTimeRuns'
 		ConfigManager.runLoginTimeRuns();
 	};

@@ -100,7 +100,7 @@ ActivitySyncUtil.displayActivitySyncStatus = function( activityId )
             
             var statusVal = ( activityJson && activityJson.processing ) ? activityJson.processing.status: '';
         
-			ActivitySyncUtil.displayStatusLabelIcon( divSyncIconTag, divSyncStatusTextTag, statusVal );
+				ActivitySyncUtil.displayStatusLabelIcon( divSyncIconTag, divSyncStatusTextTag, statusVal );
 
             // If the SyncUp is in Cooldown time range, display the FadeIn UI with left time
             if ( SyncManagerNew.isSyncReadyStatus( statusVal ) ) ActivitySyncUtil.syncUpCoolDownTime_CheckNProgressSet( activityId, divSyncIconTag );

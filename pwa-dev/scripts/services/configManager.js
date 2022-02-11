@@ -888,6 +888,9 @@ ConfigManager.runAppRunEvals = function( runIdName )  // , optionalObjId )
     }
 };
 
+
+
+// Use this to deleteLocalClients?
 ConfigManager.runLoginTimeRuns = function()
 {
     var loginTimeRuns = ConfigManager.getConfigJson().settings.loginTimeRuns;
@@ -934,6 +937,56 @@ ConfigManager.runLoginTimeRuns = function()
                 ClientDataManager.removeClientsByIdArr( clientIdsArr );
             }
         }
+    }
+};
+
+// New type of eval - for activity status Switch
+ConfigManager.activityStatusSwitchOps = function( runCase, activities )
+{
+    var statusSwitchOps = ConfigManager.getSettingsActivityDef().statusSwitchOps;
+
+    try
+    {
+        if ( runCase && statusSwitchOps && statusSwitchOps.length > 0 && activities && activities.length > 0 )
+        {
+            console.log( 'ConfigManager.activityStatusSwitchOps - ' + runCase );
+
+            // Get switchOps that matches with 'runCase'  - NOTE 'arrow function' with 'return' if no '{'
+            var matchingOpList = statusSwitchOps.filter( op => op.runCases && op.runCases.indexOf( runCase ) >= 0 );
+    
+            if ( matchingOpList.length > 0 )
+            {
+                var runCount = 0;
+    
+                activities.forEach( act => 
+                {
+                    INFO.activity = act;
+                    
+                    matchingOpList.forEach( op => 
+                    {                
+                        if ( FormUtil.checkConditionEval( op.conditionEval ) )
+                        {
+                            try 
+                            {
+                                var evalStr = Util.getEvalStr( op.runEval );
+    
+                                if ( evalStr ) 
+                                {
+                                    eval( evalStr );				
+                                    runCount++;
+                                }
+                            } catch( errMsg ) { console.log( 'ERROR in ConfigManager.activityStatusSwitchOps, ' + errMsg ); }        
+                        }    
+                    });
+                });
+                
+                if ( runCount > 0 ) ClientDataManager.saveCurrent_ClientsStore();
+            }
+        }
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in ConfigManager.activityStatusSwitchOps, ' + errMsg );
     }
 };
 

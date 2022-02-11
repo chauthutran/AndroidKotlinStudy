@@ -227,6 +227,11 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
             // Cool Down Related Last synced time Set ...
             if ( SyncManagerNew.coolDownEnabled ) ActivityDataManager.setActivityLastSyncedUp( activityId );
 
+
+            // NEW - Added.
+            ConfigManager.activityStatusSwitchOps( 'afterSync', [ activityJson ] );
+
+
             // Activity Card
             activityCardObj.reRenderActivityDiv();
             activityCardObj.highlightActivityDiv( false );

@@ -238,26 +238,52 @@ ActivityDataManager.getTempClientActivityLastIndexCase = function( client )
 // ====================================================
 // === Processing Activity timeOut to 'Failed' related
 
-ActivityDataManager.updateActivitiesStatus_ProcessingToFailed = function( activityList ) 
+ActivityDataManager.updateActivitiesStatus_ProcessingToFailed = function( activityList, option ) 
 {
     if ( activityList )
     {
         activityList.forEach( activity => {
-            ActivityDataManager.updateStatus_ProcessingToFailed( activity );
+            ActivityDataManager.updateStatus_ProcessingToFailed( activity, option );
         });
     }
 };
 
 
-ActivityDataManager.updateStatus_ProcessingToFailed = function( activity ) 
+ActivityDataManager.updateStatus_ProcessingToFailed = function( activity, option ) 
 {
     if ( activity && activity.processing && activity.processing.status === Constants.status_processing )
     {
         var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, 408, 'Processing activity timed out case changed to failed status.' );
         ActivityDataManager.insertToProcessing( activity, processingInfo );
 
-        // To prevent too fast updates, make the storage update outside..
-        // ClientDataManager.saveCurrent_ClientsStore();    
+        // On this case, we call this during loop, thus, do not save data here, but after all the operation is done..
+        if ( option && option.saveData === true )
+        {
+            ClientDataManager.saveCurrent_ClientsStore();
+            // NOTE: If we also want to change status on UI, need to call - ActivitySyncUtil.displayActivitySyncStatus( activityId );
+        }
+    }
+};
+
+
+// Used to update activity status..
+ActivityDataManager.updateStatus = function( activityJson, in_status, in_responseCode, in_msg, option ) 
+{
+    if ( activityJson && in_status )
+    {
+        if ( !in_responseCode ) in_responseCode = 0;
+        if ( !in_msg ) in_msg = '';
+
+        // Set the status as 'Error' with detail.  Save to storage.  And then, display the changes on visible.
+        var processingInfo = ActivityDataManager.createProcessingInfo_Other( in_status, in_responseCode, in_msg );
+        ActivityDataManager.insertToProcessing( activityJson, processingInfo );
+        
+        ActivitySyncUtil.displayActivitySyncStatus( activityJson.id );
+
+        if ( option && option.saveData === true )
+        {
+            ClientDataManager.saveCurrent_ClientsStore();
+        }
     }
 };
 
