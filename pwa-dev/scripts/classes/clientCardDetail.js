@@ -102,8 +102,12 @@ function ClientCardDetail( clientId, isRestore )
                 // Get proper client into INFO.client - since other client could been loaded by clicks.
                 INFO.client = ClientDataManager.getClientById( me.clientId );
             }});
-            favIconsObj.render();
-    
+
+            var favListArr = favIconsObj.render();
+
+            
+            // Disable fav icon if not in favList <-- but, better to place this logic within the activityCard render?
+            me.disableFavItems( activityListDivTag, favListArr );
         });
 
 
@@ -155,6 +159,22 @@ function ClientCardDetail( clientId, isRestore )
         setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );
     };
 
+
+    me.disableFavItems = function( activityListDivTag, favListArr )
+    {
+        activityListDivTag.find( 'div.activityPhone[favId]' ).each( function() {
+            var favItemTag = $( this );
+            var favId = favItemTag.attr( 'favId' );
+
+            var matchFav = Util.getFromList( favListArr, favId, 'id' );
+
+            if ( !matchFav )
+            {
+                var newTitle = favItemTag.attr( 'favName' ) + ' - This fav item is not available at this flow stage.';
+                favItemTag.off( 'click' ).css( 'opacity', '0.6' ).attr( 'title', newTitle );
+            }
+        });
+    };
 
     me.getPassedData_FromClientDetail = function( clientId )
     {

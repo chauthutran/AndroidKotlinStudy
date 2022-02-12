@@ -131,14 +131,12 @@ function ActivityCard( activityId, options )
             // display favId instead.. + click event..            
             var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.sch_favId );
 
+            // <-- get eval of fav Item as well
+
             if ( favItemJson )
             {
                 FavIcons.populateFavItemIcon( divPhoneCallTag, favItemJson );
-
-                divPhoneCallTag.attr( 'title', favItemJson.name );  // if term is available, make it term..
-                //divPhoneCallTag.append( favItemIconTag );
-                divPhoneCallTag.show();    
-
+                divPhoneCallTag.show();
 
                 var targetBlockTag = divPhoneCallTag.closest( '[tabButtonId=tab_clientActivities]' );
                 if ( targetBlockTag.length >= 1 ) 

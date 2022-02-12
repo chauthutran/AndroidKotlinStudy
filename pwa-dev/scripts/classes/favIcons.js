@@ -20,9 +20,6 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     // --------------
     me.favListByType;
 
-    //FavIcons.favIconSize = '40px';
-    //me.favMainIconSize = '56px';
-
     // ========================================
 
     // TODO: ORGANIZE THE METHODS..
@@ -110,29 +107,14 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
         });
     };
 
-    /*
-    me.getFavListByType = function( favType )
-    {
-        var favList = ConfigManager.getConfigJson().favList;
-
-        // 'favType': 'activityListFav', 'clientListFav', 'clientActivityFav', 'clientRelFav'
-        if ( favList && favType && favList[ favType ] ) return favList[ favType ]
-        else
-        {
-            // Could be simple type, which we should return entire one..
-            // If the 'favList' is not simple type, return undefined..
-            if ( favList.online || favList.offline ) return favList;
-            else return undefined;
-        }
-    };
-    */
-
     // -----------------------------------------
 
     // NEW 2: Clear /Reset existing list
     // NEW 3: Depending on online/offline, relist the 'favList' selections.
     me.render = function() 
     {        
+        var favListArr = []; // 'render' return the final favList (after eval filtering + on/offline consideration)
+
         try
         {              
             if ( me.favListByType )
@@ -159,7 +141,6 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     
     
                     // 2. Get favListArr from online status
-                    var favListArr;
                     if ( ConnManagerNew.isAppMode_Online() ) favListArr = me.filterFavListByEvalActions( me.favListByType.online, me.favListByType.evalActions_online );
                     else favListArr = me.filterFavListByEvalActions( me.favListByType.offline, me.favListByType.evalActions_offline );
     
@@ -178,6 +159,8 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
             console.log( 'ERROR in FavIcons.render, ' + errMsg );
             MsgManager.msgAreaShowErr( 'ERROR in FavIcons.render, ' + errMsg );
         }
+
+        return favListArr;
     };
 
     // ---------------------------------------
@@ -362,8 +345,12 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
         var contentTag = favItemTag.find( '.fab__child-text' );
         var activityTypeDef = ( favItem.activityType ) ? FavIcons.getActivityTypeByRef( 'name', favItem.activityType ) : undefined;
 
+        favItemTag.attr( 'favId', favItem.id ); 
+        favItemTag.attr( 'favName', favItem.name ); 
+
         contentTag.attr( 'term', favItem.term );        
         contentTag.attr( 'displayName', favItem.name );
+
         if ( favItem.target )
         {
             contentTag.attr( 'blockId', favItem.target.blockId );
@@ -376,39 +363,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
         FavIcons.generateSvgIconFromPath( favItem, activityTypeDef, svgIconTag );        
         //svgIconTag.css( 'background-color', 'transparent' ); // SHOULD ALWAYS BE TRANSPARENT, RIGHT?
     };
-
-
-    /*
-    me.generateSvgIconFromPath = function( favItem, activityTypeDef, svgIconTag )
-    {
-        var svgPathStr;
-        if ( activityTypeDef && activityTypeDef.icon ) svgPathStr = activityTypeDef.icon.path;
-        else if ( favItem.img ) svgPathStr = favItem.img;
-
-        if ( svgPathStr )
-        {
-            try 
-            {
-                svgIconTag.each( function() 
-                {
-                    var iconDivTag = $( this );
-
-                    if ( iconDivTag.find( 'img' ).length === 0 )
-                    {
-                        iconDivTag.html( '<img src="'+ svgPathStr + '" style="width:' + FavIcons.favIconSize + '; height:' + FavIcons.favIconSize + ';">' );
-                    }
-                });
-            }
-            catch ( errMsg )
-            {
-                console.customLog( 'Error on FavIcons.generateSvgIconFromPath, errMsg: ' + errMsg );
-            }
-        }
-    };
-    */
     
-    //-----------------------------------
-
     // ------------------------------------
 
 	me.initialize();
@@ -488,26 +443,16 @@ FavIcons.getActivityTypeByRef = function( prop, activityType )
 };
 
 
-FavIcons.populateFavItemIcon = function( svgIconTag, favItem )
+FavIcons.populateFavItemIcon = function( favItemTag, favItemJson )
 {
-    //var svgIconTag = favItemTag.find( 'div.svgIcon' ); // fab__child c_200 
-    //var contentTag = favItemTag.find( '.fab__child-text' );
-    var activityTypeDef = ( favItem.activityType ) ? FavIcons.getActivityTypeByRef( 'name', favItem.activityType ) : undefined;
+    var activityTypeDef = ( favItemJson.activityType ) ? FavIcons.getActivityTypeByRef( 'name', favItemJson.activityType ) : undefined;
 
-    //contentTag.attr( 'term', favItem.term );        
-    //contentTag.attr( 'displayName', favItem.name );
-
-    //if ( favItem.target )
-    //{
-    //    contentTag.attr( 'blockId', favItem.target.blockId );
-    //    contentTag.attr( 'actionType', favItem.target.actionType );    
-    //}
-
-    //contentTag.html( favItem.name );
+    favItemTag.attr( 'title', favItemJson.name );  // if term is available, make it term..
+    favItemTag.attr( 'favId', favItemJson.id ); 
+    favItemTag.attr( 'favName', favItemJson.name ); 
 
     // svg icon setup - if available (by local file path reference)
-    FavIcons.generateSvgIconFromPath( favItem, activityTypeDef, svgIconTag );        
-    //svgIconTag.css( 'background-color', 'transparent' ); // SHOULD ALWAYS BE TRANSPARENT, RIGHT?
+    FavIcons.generateSvgIconFromPath( favItemJson, activityTypeDef, favItemTag );        
 };
 
 

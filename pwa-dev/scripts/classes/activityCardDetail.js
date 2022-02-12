@@ -223,6 +223,13 @@ function ActivityCardDetail(activityId, isRestore) {
 			var blockJson = FormUtil.getObjFromDefinition( formData.blockId, ConfigManager.getConfigJson().definitionBlocks );
 			var infoTag = payloadTabTag.find( '.activityEditInfo' ).hide();
 
+			if ( !blockJson )
+			{
+				infoTag.attr( 'title', info_pre + 'blockId, ' + formData.blockId + ', does not exist' ).show();
+				console.log( '[userRoles not meet]' );
+				return false;
+			}
+
 			if ( blockJson.activityEdit_Limit )
 			{
 				editLimitJson = blockJson.activityEdit_Limit;
