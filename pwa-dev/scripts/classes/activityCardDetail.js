@@ -182,7 +182,7 @@ function ActivityCardDetail(activityId, isRestore) {
 				var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
 
 				// We provide 2 ActivityEditing Case: 1. On Error Status.  2. On Synced status & 'activityEditing': true
-				if ( activityEditing && SyncManagerNew.statusSynced( status ) ) editable = true;
+				if ( activityEditing && ConfigManager.isSourceTypeMongo() && SyncManagerNew.statusSynced( status ) ) editable = true;
 				if ( status === Constants.status_error) editable = true;
 
 				if( editable ) 
