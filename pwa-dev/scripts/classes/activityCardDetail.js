@@ -171,28 +171,23 @@ function ActivityCardDetail(activityId, isRestore) {
 		try 
 		{
 			var activityEditBtnTag = payloadTabTag.find( '.activityEditBtn' ).hide();
+			var infoTag = payloadTabTag.find( '.activityEditInfo' ).hide();
 
 			if( activityJson ) 
 			{
 				var editable = false;
 				var formData = ActivityDataManager.getActivityForm( activityJson );
+				var status = activityJson.processing.status;
 
 				var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
 
-				if ( formData ) 
-				{
-					// TODO: We also use schedule activity with formData..  
-					if (activityEditing) editable = true;
-					else 
-					{
-						if (activityJson.processing.status === Constants.status_error) editable = true;
-					}
-				}
-
+				// We provide 2 ActivityEditing Case: 1. On Error Status.  2. On Synced status & 'activityEditing': true
+				if ( activityEditing && SyncManagerNew.statusSynced( status ) ) editable = true;
+				if ( status === Constants.status_error) editable = true;
 
 				if( editable ) 
 				{
-					if ( me.checkBlockActivityEdit_Limit( formData, activityJson, payloadTabTag ) )
+					if ( me.checkBlockActivityEdit_Limit( formData, activityJson, infoTag ) )
 					{
 						activityEditBtnTag.show();
 
@@ -212,16 +207,21 @@ function ActivityCardDetail(activityId, isRestore) {
 	};
 
 
-	me.checkBlockActivityEdit_Limit = function( formData, activityJson, payloadTabTag )
+	me.checkBlockActivityEdit_Limit = function( formData, activityJson, infoTag )
 	{
-		//var isPass = true;
-		//var showFailMsg = '';
 		var info_pre = 'activityEdit not available: ';
 
 		try
 		{
+			if ( !formData ) 
+			{
+				infoTag.attr( 'title', info_pre + 'formData does not exist.' ).show();
+				console.log( '[formData does not exist.]' );
+				return false;
+			}
+
+
 			var blockJson = FormUtil.getObjFromDefinition( formData.blockId, ConfigManager.getConfigJson().definitionBlocks );
-			var infoTag = payloadTabTag.find( '.activityEditInfo' ).hide();
 
 			if ( !blockJson )
 			{

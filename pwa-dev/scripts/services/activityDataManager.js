@@ -605,9 +605,10 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
     var payloadJson = {
         "appVersion": _version,  //ActivityDataManager.wsSubmit_AppVersionStr,
         "payload": undefined,
-        "historyData": ActivityDataManager.getHistoryData( activityJson.processing.history )
+        "historyData": activityJson.processing.historyData //ActivityDataManager.getHistoryData( activityJson.processing.history )
     };
     
+
     if ( activityJson.processing.fixActivityCase ) 
     {
         //payloadJson.skipLogDataCheck = true;
@@ -636,6 +637,11 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
     return payloadJson;
 };
 
+// NOTE: CHANGE this 'getHistoryData' to be more of placed/stored data under 'processing'.
+//      NEW CONdition:
+//          - After each sync performed, we can evaludate this..
+//          - If status is 'failed', walk back to count the value..
+//          - If status is non failed, reset the value?  or make the historyData unavailable..
 ActivityDataManager.getHistoryData = function( history )
 {
     var historyData = { 'failedCount': 0, 'failed1stDate': '' };
@@ -644,14 +650,24 @@ ActivityDataManager.getHistoryData = function( history )
     {
         try
         {
-            var foundList = Util.getItemsFromList( history, Constants.status_failed, "status" );
+            var foundList = [];
+
+            for( var i = history.length - 1; i >= 0; i-- )
+            {
+                var item = history[i];
+
+                if ( item.status === Constants.status_failed ) foundList.push( item );
+                else break;
+            }
+            //var foundList = Util.getItemsFromList( history, Constants.status_failed, "status" );
+
             historyData.failedCount = foundList.length;
     
             if ( foundList.length > 0 ) 
             {
-                var item1st = foundList[0];    
-                if ( item1st.datetime ) historyData.failed1stDate = Util.getUTCDateTimeStr( UtilDate.getDateObj( item1st.datetime ), 'noZ' );
-            }    
+                var item1st = foundList[ foundList.length - 1 ];
+                if ( item1st.datetime ) historyData.failed1stDate = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( item1st.datetime ), 'noZ' );
+            }
         }
         catch ( errMsg )
         {
@@ -752,6 +768,10 @@ ActivityDataManager.insertToProcessing = function( activity, newProcessingInfo )
         }
 
         if ( activity.processing.status === Constants.status_error ) AppInfoManager.addNewErrorActivityId( activity.id );
+
+        // NEW - add logic of 'historyData' here <-- Which stores the updated failed count..
+        if ( activity.processing.status === Constants.status_failed ) activity.processing.historyData = ActivityDataManager.getHistoryData( activity.processing.history );
+        else activity.processing.historyData = {};
     }
 };
 

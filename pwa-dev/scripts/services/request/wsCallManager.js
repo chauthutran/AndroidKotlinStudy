@@ -18,7 +18,8 @@ WsCallManager.noServerUrl = 'https://pwa-noSrv.psi-connect.org';
 // Temp Setting - available check override
 WsCallManager.availableAlways = false;  // Used in ConnManagerNew.serverAvailable();
 WsCallManager.availableCheckType = 'v2'; // 'v1' - old legacy dhis2 available check. 
-WsCallManager.actionErr = ''; // For making intentional failure for tesing.
+WsCallManager.actionErr = ''; // OBSOLETE?  - previously used by setting WS actionSet actionName, but needs to add code on each action for this to work.
+WsCallManager.throwWsError = false; // For making intentional failure for tesing.
 
 WsCallManager.actionDetailsStr = ''; //  'action-details=3'; <-- Set this on console.log..
 WsCallManager.actionDetailsCount = 0;  // After 5 times of usage, it will reset 'actionDetailsStr'
@@ -270,6 +271,7 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
     if ( sourceType === "mongo" && mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
 
     if ( WsCallManager.actionErr ) payloadJson.actionErr = WsCallManager.actionErr;
+    if ( WsCallManager.throwWsError ) payloadJson.throwWsError = WsCallManager.throwWsError;
 
     // OLD: For 'mongo' sourceType, do not need to send userName & password in payload.
     // OLD: For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 
@@ -589,4 +591,11 @@ WsCallManager.setRemoveTransType_s_sch = function()
 WsCallManager.setRemoveTransType_input = function( typeList )
 {
   WsCallManager.remove_payloadTrans = WsCallManager.remove_payloadTrans.concat( typeList );  
+};
+
+// ------------------------------------
+
+WsCallManager.setWsError = function( isError )
+{
+    WsCallManager.throwWsError = isError;
 };
