@@ -37,6 +37,7 @@ AppInfoManager.KEY_STATISTIC_PAGES = "statisticPages";
 // NOTE: Add statisticPages: { '@LA@stat_IPC.html': '' }
 // <-- do not keep it on memory?  but get it from localStorage everytime..
 
+AppInfoManager.KEY_VOUCHER_CODES = "voucherCodes"; 
 
 // OBSOLETE ONES -----------------
 AppInfoManager.KEY_TRANSLATION = "translation"; 
@@ -68,7 +69,7 @@ AppInfoManager.unsetUserName_Passwd = function()
 // ---------------------------------
 
 // 2 [DO]
-AppInfoManager.loadData_AfterLogin = function( userName, passwd )
+AppInfoManager.loadData_AfterLogin = function( userName, passwd, callBack )
 {
     AppInfoManager.setUserName_Passwd( userName, passwd );
 
@@ -80,6 +81,8 @@ AppInfoManager.loadData_AfterLogin = function( userName, passwd )
 
         // Try Merging if things are still left?
         AppInfoManager.mergeOldData( appInfo );
+
+        if ( callBack ) callBack( appInfo );
     });
 };
 
@@ -415,8 +418,6 @@ AppInfoManager.getFixOperationLast = function()
 // ------------------------------------------------------------------------------------  
 // ----------------  Update properties in lastLogin?
 
-// setLastLoginMark
-
 AppInfoManager.getStatisticPages = function( fileName ) 
 {
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName );
@@ -427,6 +428,60 @@ AppInfoManager.updateStatisticPages = function( fileName, dataStr )
     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName, dataStr );
 };
 
-
 // ------------------------------------------------------------------------------------  
-// -----------------------------------------------
+// ----------------  New VoucherCodes Related ..
+
+AppInfoManager.getVoucherCodes = function() 
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'queue' );
+};
+
+AppInfoManager.updateVoucherCodes = function( propName, propData ) 
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'queue', propData );
+};
+
+// Make each case below..
+// -----------------
+
+AppInfoManager.getVoucherCodes_queue = function() 
+{
+    // After getting the list, use the top one?  and add to bottom 
+    var queue = AppInfoManager.getPropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'queue' );
+    if ( !queue ) queue = [];
+
+    return queue;
+};
+
+AppInfoManager.updateVoucherCodes_queue = function( queueData ) 
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'queue', queueData );
+};
+
+// -----------------
+
+AppInfoManager.getVoucherCodes_usedQueue = function() 
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'usedQueue' );
+};
+
+AppInfoManager.updateVoucherCodes_usedQueue = function( usedQueueData ) 
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'usedQueue', usedQueueData );
+};
+
+// -----------------
+
+AppInfoManager.getVoucherCodes_info = function() 
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'info' );
+};
+
+AppInfoManager.updateVoucherCodes_info = function( infoData ) 
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'info', infoData );
+};
+
+
+// ALSO, CREATE A CLASS THAT USE THIS <--- push / pop / info update / alert with some issue case / login time run
+// ---------------------------------------

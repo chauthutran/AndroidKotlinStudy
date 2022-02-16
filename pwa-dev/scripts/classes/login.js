@@ -567,11 +567,16 @@ function Login()
 			{
 				SessionManager.Status_LogIn_InProcess = false;
 
-				if ( isSuccess ) me.loginSuccessProcess( userName, password, offlineUserData, function() 
+				if ( isSuccess ) 
 				{
-					// After StartUp Fun - This should be displayed after loading..
-					SessionManager.check_warnLastConfigCheck( ConfigManager.getConfigUpdateSetting() );
-				});
+					// NEW
+					//AppInfoManager.loadData_AfterLogin( userName, password, function() <-- happened within the 'loginOffline'
+					me.loginSuccessProcess( userName, password, offlineUserData, function() 
+					{
+						// After StartUp Fun - This should be displayed after loading..
+						SessionManager.check_warnLastConfigCheck( ConfigManager.getConfigUpdateSetting() );
+					});
+				}
 
 				if ( callAfterDone ) callAfterDone( isSuccess );
 			});
@@ -586,8 +591,11 @@ function Login()
 
 				if ( isSuccess )
 				{
-					me.retrieveStatisticPage( ( fileName, statPageData ) => { me.saveStatisticPage( fileName, statPageData ); } );
-					me.loginSuccessProcess( userName, password, loginData );	
+					// NEW
+					// AppInfoManager.loadData_AfterLogin( userName, password, function() <-- Callled within the 'loginOnline'
+					VoucherCodeManager.refillQueue();
+
+					me.loginSuccessProcess( userName, password, loginData );		
 				}
 
 				if ( callAfterDone ) callAfterDone( isSuccess );
@@ -601,17 +609,6 @@ function Login()
 		// gAnalytics Event
 		GAnalytics.setEvent( "Login Process", "Login Button Clicked", "Successful", 1 );
 		//GAnalytics.setEvent = function(category, action, label, value = null) 
-
-
-		// NEW
-		AppInfoManager.loadData_AfterLogin( userName, password );
-
-
-		// Reset this value
-		//AppInfoManager.clearAutoLogin();
-		//AppInfoLSManager.clearLoginCurrentKeys();
-		//me.resetLoginCurrentKeys();
-
 		
 		// Load config and continue the CWS App process
 		if ( !loginData.dcdConfig || loginData.dcdConfig.ERROR ) MsgManager.msgAreaShow( '<span term="msgNotif_loginSuccess_noConfig">Login Success, but country config not available.</span> <span>Msg: ' + loginData.dcdConfig.ERROR + '</span>', 'ERROR' );
@@ -691,13 +688,23 @@ function Login()
 
 					// Save 'loginData' in indexedDB for offline usage and load to session.
 					SessionManager.setLoginRespData_IDB( userName, password, loginData );
-					SessionManager.loadDataInSession( userName, password, loginData );
-				}
+					SessionManager.loadDataInSession( userName, password, loginData );  // This sets config data in ConfigManager
 
-				if( returnFunc ) returnFunc( resultSuccess, loginData );
+					me.retrieveStatisticPage( ( fileName, statPageData ) => { me.saveStatisticPage( fileName, statPageData ); } );
+
+					AppInfoManager.loadData_AfterLogin( userName, password, function() 
+					{
+						if( returnFunc ) returnFunc( resultSuccess, loginData );
+					});
+				}
+				else 
+				{
+					if( returnFunc ) returnFunc( resultSuccess, loginData );
+				}
 			});								
 		});
 	};
+
 
 	
 	me.loginOffline = function( userName, password, returnFunc )
@@ -728,9 +735,16 @@ function Login()
 									// TEST, DEBUG - TO BE REMOVED AFTERWARDS
 									GAnalytics.setEvent( 'LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1 );
 
-									if ( returnFunc ) returnFunc( true, loginResp );
+
+									AppInfoManager.loadData_AfterLogin( userName, password, function() 
+									{
+										if( returnFunc ) returnFunc( true, loginResp );
+									});
 								}
-								else { if ( returnFunc ) returnFunc( false ); }
+								else 
+								{
+									if( returnFunc ) returnFunc( false );
+								}								
 							});	
 						}
 						else
