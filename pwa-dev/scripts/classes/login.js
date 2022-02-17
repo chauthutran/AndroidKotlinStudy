@@ -593,7 +593,7 @@ function Login()
 				{
 					// NEW
 					// AppInfoManager.loadData_AfterLogin( userName, password, function() <-- Callled within the 'loginOnline'
-					VoucherCodeManager.refillQueue();
+					VoucherCodeManager.refillQueue( userName );
 
 					me.loginSuccessProcess( userName, password, loginData );		
 				}

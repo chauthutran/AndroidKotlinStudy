@@ -222,7 +222,7 @@ AppInfoManager.getPropertyValue = function( mainKey, subKey )
     }
 };
 
-AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
+AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr, callBack )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
     var appInfo = AppInfoManager.getAppInfo();
@@ -236,10 +236,10 @@ AppInfoManager.updatePropertyValue = function( mainKey, subKey, valStr )
     appInfo[mainKey][subKey] = valStr;
 
     // Update data in memory
-    AppInfoManager.saveAppInfoData_IDB( appInfo );
+    AppInfoManager.saveAppInfoData_IDB( appInfo, callBack );
 };
 
-AppInfoManager.removeProperty = function( mainKey, subKey )
+AppInfoManager.removeProperty = function( mainKey, subKey, callBack )
 {
     // Get appInfo from localStorage if any. If not, use default appInfo
     var appInfo = AppInfoManager.getAppInfo();
@@ -251,7 +251,7 @@ AppInfoManager.removeProperty = function( mainKey, subKey )
             delete appInfo[mainKey][subKey];
 
             // Update the 'appInfo' data
-            AppInfoManager.saveAppInfoData_IDB( appInfo );  
+            AppInfoManager.saveAppInfoData_IDB( appInfo, callBack );  
 
         }, 'AppInfoManager.removeProperty' );
     }
@@ -431,15 +431,17 @@ AppInfoManager.updateStatisticPages = function( fileName, dataStr )
 // ------------------------------------------------------------------------------------  
 // ----------------  New VoucherCodes Related ..
 
+/*
 AppInfoManager.getVoucherCodes = function() 
 {
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'queue' );
 };
 
-AppInfoManager.updateVoucherCodes = function( propName, propData ) 
+AppInfoManager.updateVoucherCodes = function( propName, propData, callBack ) 
 {
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'queue', propData );
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'queue', propData, callBack );
 };
+*/
 
 // Make each case below..
 // -----------------
@@ -453,9 +455,9 @@ AppInfoManager.getVoucherCodes_queue = function()
     return queue;
 };
 
-AppInfoManager.updateVoucherCodes_queue = function( queueData ) 
+AppInfoManager.updateVoucherCodes_queue = function( queueData, callBack ) 
 {
-    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'queue', queueData );
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_VOUCHER_CODES, 'queue', queueData, callBack );
 };
 
 // -----------------

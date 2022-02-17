@@ -963,6 +963,15 @@ Util.disableTag = function( tag, isDisable )
 
 // ---------------------------------------
 
+Util.array_TakeOutOne = function( arr )
+{
+	var returnArr = [];
+	
+	if ( arr ) arr.splice( 0, 1 );
+
+	return ( returnArr.length > 0 ) ? returnArr[0]: undefined;
+};
+
 // NOTE: Should be named 'append'?
 Util.mergeArrays = function( mainArr, newArr )
 {
@@ -1846,6 +1855,8 @@ Util.formatDate = function( date, formatPattern )
 		if ( date )
 		{
 			if ( !formatPattern ) formatPattern = Util.dateType1;
+
+			if ( Util.isTypeString( date ) && date.length === 10 ) date = date + 'T00:00:00.000';
 
 			// '$.format.date' allows Javascript date object or string in various format.
 			outDateStr = $.format.date( date, formatPattern );		
