@@ -495,15 +495,24 @@ function Action( cwsRenderObj, blockObj )
 								{
 									// #2. Set Final Activity Structure - by creating 'processing' part.  Use above generated activityPayload (from template) json.
 									ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
-									{									
-										AppInfoManager.addToActivityHistory( activityJson );
+									{	
+										if ( activityJson )
+										{
+											// NEW - voucherCode usage - mark it as 'InUse' status
+											var vcItem = VoucherCodeManager.markVoucherCode_InQueue( activityJson, 'v_iss', 'InUse' );
+											if ( vcitem ) console.log( vcItem );  // TEMP NOTE
 
-										dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
-										dataPass.activityJson = activityJson;
+											// TODO: BELOW MIGHT NOT BE NEEDED ANYMORE...
+											AppInfoManager.addToActivityHistory( activityJson );
 
-										if ( editModeActivityId ) MsgManager.msgAreaShow( 'Edit activity done.', '', MsgManager.CLNAME_PersistSwitch );
+											dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
+											dataPass.activityJson = activityJson;
 
-										afterActionFunc( true );
+											if ( editModeActivityId ) MsgManager.msgAreaShow( 'Edit activity done.', '', MsgManager.CLNAME_PersistSwitch );
+
+											afterActionFunc( true );
+										}
+										else afterActionFunc( false, { 'errMsg': 'ERROR: New Payload Activity Creation Failed!' } );
 									} );									
 								}
 								else

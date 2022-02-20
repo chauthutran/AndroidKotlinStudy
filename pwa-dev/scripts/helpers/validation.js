@@ -62,18 +62,11 @@ Validation.checkValidations = function( tag )
 
             if ( divFieldBlockTag.is( ':visible' ) ) 
             {
-                Validation.performValidationCheck( tag, 'mandatory', divErrorMsgTargetTag );
-                Validation.performValidationCheck( tag, 'minlength', divErrorMsgTargetTag );
-                Validation.performValidationCheck( tag, 'maxlength', divErrorMsgTargetTag );
-                Validation.performValidationCheck( tag, 'maxvalue', divErrorMsgTargetTag );
-                Validation.performValidationCheck( tag, 'isNumber', divErrorMsgTargetTag );
-                Validation.performValidationCheck( tag, 'isDate', divErrorMsgTargetTag );
-                Validation.performValidationCheck( tag, 'isTime', divErrorMsgTargetTag );
-                Validation.performValidationCheck( tag, 'phoneNumber', divErrorMsgTargetTag );
+                var ruleTypeList = [ 'mandatory', 'minlength', 'maxlength', 'maxvalue', 'isNumber', 'isDate', 'isTime', 'phoneNumber', 'dateRange', 'pickerDateRange', 'patterns', 'customEvalRuleIds' ];
 
-                Validation.performValidationCheck( tag, 'dateRange', divErrorMsgTargetTag );
-                Validation.performValidationCheck( tag, 'pickerDateRange', divErrorMsgTargetTag );
-                Validation.performValidationCheck( tag, 'patterns', divErrorMsgTargetTag );
+                ruleTypeList.forEach( ruleType => {
+                    Validation.performValidationCheck( tag, ruleType, divErrorMsgTargetTag );
+                });
 
                 // Default Universal checks..
                 Validation.performValidationCheck( tag, 'doubleQuote', divErrorMsgTargetTag, true );
@@ -142,6 +135,7 @@ Validation.performValidationCheck = function( tag, type, divTag, alwaysRun )
         else if ( type == 'dateRange' ) valid = Validation.checkDateRange( tag, divTag, type, validationAttr, prev_valid );
         else if ( type == 'pickerDateRange' ) valid = Validation.checkValue_pickerDateRange( tag, divTag, type, prev_valid );
         else if ( type == 'patterns' ) valid = Validation.checkValue_RegxRules( tag, divTag, type );
+        else if ( type == 'customEvalRuleIds' ) valid = Validation.checkValue_customEvalRuleIds( tag, divTag, type );
 
         else if ( type == 'doubleQuote' ) valid = Validation.checkValue_DoubleQuote( tag, divTag, type );
 
@@ -471,8 +465,98 @@ Validation.checkValue_RegxRules = function( inputTag, divTag, type )
     }
 
     return valid;
-}
+};
 
+
+Validation.checkValue_customEvalRuleIds = function( inputTag, divTag )
+{
+    var valid = true;
+
+    var customEvalRuleIdsStr = decodeURI( inputTag.attr( "customEvalRuleIds" ) );  // customEvalRuleIds array holds RuleId string list..
+
+    INFO.tagVal = FormUtil.getTagVal( inputTag ); // undefined/null are converted to ''
+
+    try
+    {
+        if ( customEvalRuleIdsStr ) 
+        {
+            var customEvalRuleIdsArr = [];			
+            customEvalRuleIdsArr = JSON.parse( customEvalRuleIdsStr );
+            var notFirstErr = false;
+    
+            customEvalRuleIdsArr.forEach( customEvalRuleId => 
+            {
+                try
+                {                    
+                    var ruleIdJson = FormUtil.getObjFromDefinition( customEvalRuleId, ConfigManager.getConfigJson().definitionCustomEvalRuleIds );		
+
+                    if ( Util.isTypeArray( ruleIdJson ) )
+                    {
+                        ruleIdJson.forEach( subRuleIdJson => 
+                        {
+                            if ( FormUtil.checkConditionEval( subRuleIdJson.conditionEval ) )
+                            {
+                                if ( Validation.runEvalValid( subRuleIdJson.runEvalValid ) === false )
+                                {
+                                    valid = false;
+                                    var startCommaStr = ( notFirstErr ) ? ", ": "";
+                                    divTag.append( Validation.getErrorSpanTag( startCommaStr + subRuleIdJson.msg, subRuleIdJson.term ) );
+                                    notFirstErr = true;            
+                                }
+                            }
+                        });
+                    }
+                    else if ( Util.isTypeObject( ruleIdJson ) )
+                    {
+                        if ( Validation.runEvalValid( ruleIdJson.runEvalValid ) === false )
+                        {
+                            valid = false;
+                            var startCommaStr = ( notFirstErr ) ? ", ": "";
+                            divTag.append( Validation.getErrorSpanTag( startCommaStr + ruleIdJson.msg, ruleIdJson.term ) );
+                            notFirstErr = true;            
+                        }
+                    }
+                }
+                catch( ex )
+                {
+                    console.customLog( 'customEvalRule check failed, ' + ex );
+                }
+            });
+        }
+    }
+    catch( ex )
+    {
+        console.customLog( 'Error in Validation.checkValue_customEvalRuleIds, ' + ex );
+    }
+
+    return valid;
+};
+
+
+Validation.runEvalValid = function( runEvalValid )
+{
+	var valid = false;
+
+	try
+	{
+		if ( runEvalValid === undefined ) valid = true;
+		else
+		{
+			// var conditionEval = FormUtil.getObjFromDefinition( conditionEval, ConfigManager.getConfigJson().definitionConditionEvals );
+	
+			runEvalValid = Util.getEvalStr( runEvalValid );
+	
+			var evalResult = eval( runEvalValid );
+			if ( evalResult === true ) valid = true;
+		}		
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in Validation.runEvalValid, ' + errMsg );
+	}
+
+	return valid;
+};
 
 Validation.checkValue_DoubleQuote = function( inputTag, divTag, type )
 {

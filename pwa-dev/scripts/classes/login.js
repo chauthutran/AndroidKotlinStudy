@@ -591,9 +591,11 @@ function Login()
 
 				if ( isSuccess )
 				{
-					// NEW
-					// AppInfoManager.loadData_AfterLogin( userName, password, function() <-- Callled within the 'loginOnline'
-					VoucherCodeManager.refillQueue( userName );
+					if ( ConfigManager.getSettings().voucherCodeServiceUse )
+					{
+						// NEW
+						VoucherCodeManager.refillQueue( userName );
+					}
 
 					me.loginSuccessProcess( userName, password, loginData );		
 				}

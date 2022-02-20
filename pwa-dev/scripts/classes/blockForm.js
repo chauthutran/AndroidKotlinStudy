@@ -1575,6 +1575,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		if ( regxRules.length > 0 ) entryTag.attr( 'patterns', encodeURI( JSON.stringify( regxRules ) ) );
 		if ( otherRules.pickerDateRangeJson ) entryTag.attr( 'pickerDateRange', encodeURI( JSON.stringify( otherRules.pickerDateRangeJson ) ) );
+		if ( otherRules.customEvalRuleIds ) entryTag.attr( 'customEvalRuleIds', encodeURI( JSON.stringify( otherRules.customEvalRuleIds ) ) );
+
 	};
 
 
@@ -1638,6 +1640,12 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 				otherRules.pickerDateRangeJson = pickerDateRangeJson;
 			}
+			else if ( ruleJson.customEvalRuleId )
+			{
+				if ( !otherRules.customEvalRuleIds ) otherRules.customEvalRuleIds = [];
+				otherRules.customEvalRuleIds.push( ruleJson.customEvalRuleId );
+			}
+			// else if ( )
 
 			// all other custom attributes
 			if ( ruleJson.type )

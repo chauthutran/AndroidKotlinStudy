@@ -42,6 +42,9 @@ VoucherCodeManager.queueLowSize = 100;
 
 VoucherCodeManager.refillQueue = function( userName )
 { 
+   // Must be voucher Code Enabled version for this!! one!!!
+
+
    // Call after login.. <-- online only
    VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) {
 
@@ -163,9 +166,65 @@ VoucherCodeManager.getNotUsed_1stOne = function( queue )
    return foundItem;
 };
 
-// -----------------------
-/*
-VoucherCodeManager.clearAll = function()
+
+// VC USE STEP #1. Use the Voucher Code
+VoucherCodeManager.getNextVoucherCode = function()
 {
+   if ( ConfigManager.getSettings().voucherCodeServiceUse ) // ONLY USE THIS IF voucherCodeService is in use.
+   {
+      var queue = AppInfoManager.getVoucherCodes_queue();
+      var item = VoucherCodeManager.getNotUsed_1stOne( queue );
+    
+      if ( item )
+      {
+         item.displayed = true;
+         return item.voucherCode;
+      }   
+   }
+   
+   return '';
 };
-*/
+
+
+// VC USE STEP #2. Mark the Voucher Code with 'InUse' status --> in pending activity with 'v_iss' type
+//    - Called in action.js in 'queueActivity'
+VoucherCodeManager.markVoucherCode_InQueue = function( activityJson, transType, markStatus )
+{
+   var voucherCode = '';
+   var matchVcItem;
+
+   if ( activityJson && transType && markStatus )
+   {
+      // 1. Get voucherCode from activity <-- in trans 'v_iss'
+      activityJson.transactions.forEach( trans => 
+      {
+         if ( trans.type === transType ) // 'v_iss' )
+         {
+            if ( trans.clientDetails && trans.clientDetails.voucherCode ) 
+            {
+               voucherCode = trans.clientDetails.voucherCode;
+            }
+         }
+      });
+   
+   
+      // 2. Find the voucherCode from queue and mark it as 'InUse' status.
+      var queue = AppInfoManager.getVoucherCodes_queue();
+      for( var i = 0; i < queue.length; i++ )
+      {
+         var vcItem = queue[i];
+   
+         if ( vcItem.voucherCode === voucherCode )
+         {
+            matchVcItem = vcItem;
+            vcItem.status = markStatus; //'InUse';
+            break;
+         }
+      }
+   }
+
+   return matchVcItem;
+};
+// -----------------------
+
+// VoucherCodeManager.clearAll = function() { };
