@@ -312,29 +312,23 @@ function ClientCardDetail( clientId, isRestore )
 
     me.populateActivityCardList = function( activityList, listTableTbodyTag )
     {
-        if ( activityList.length === 0 ) 
-        {
-            
-        }
+        if ( activityList.length === 0 ) { }
         else
         {
-            for( var i = activityList.length - 1; i >= 0; i-- )
+            // Order the activityList by 'capturedLoc' <-- if exists..
+            var actList_desc = Util.cloneJson( activityList );
+            Util.evalSort( 'date.capturedLoc', actList_desc, 'desc' );
+
+            actList_desc.forEach( activityJson => 
             {
-                var activityJson = activityList[i];
-
-                try
-                {
+                try {
                     var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
-
                     activityCardObj.render();    
                 }
                 catch( errMsg ) { console.log( 'ERROR in ClientCardDetail.populateActivityCardList, ' + errMsg ); }
-            }    
-
-            //listBottomDivTag.show().css( 'color', '#4753A3' ).text( ( currPosJson.endReached ) ? '[END]' : 'MORE' );
+            });
 
             TranslationManager.translatePage();
-            //if ( scrollEndFunc ) scrollEndFunc();
         }
     };
 
