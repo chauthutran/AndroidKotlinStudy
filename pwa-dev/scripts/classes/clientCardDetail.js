@@ -315,18 +315,21 @@ function ClientCardDetail( clientId, isRestore )
         if ( activityList.length === 0 ) { }
         else
         {
-            // Order the activityList by 'capturedLoc' <-- if exists..
-            var actList_desc = Util.cloneJson( activityList );
-            Util.evalSort( 'date.capturedLoc', actList_desc, 'desc' );
+            // Order DESC the activityList by 'capturedLoc', but also already done on 'ActivityDataManager.insertActivitiesToClient()'
+            var actList_sort = Util.cloneJson( activityList );
+            Util.evalSort( 'date.capturedLoc', actList_sort, 'desc' );
+            Util.evalSort( 'date.capturedLoc', actList_sort, 'asc' );
 
-            actList_desc.forEach( activityJson => 
+            for( var i = actList_sort.length - 1; i >= 0; i-- )
             {
+                var activityJson = actList_sort[i];
+
                 try {
                     var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
                     activityCardObj.render();    
                 }
                 catch( errMsg ) { console.log( 'ERROR in ClientCardDetail.populateActivityCardList, ' + errMsg ); }
-            });
+            }
 
             TranslationManager.translatePage();
         }

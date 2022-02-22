@@ -144,8 +144,10 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
         client.activities.push( activity );
 
         ActivityDataManager.updateActivityIdx( activity.id, activity, client, option );
-
     });
+
+    // Client Activity Reorder - #1
+    Util.evalSort( 'date.capturedLoc', client.activities, 'asc' );  // undefined ones will always placed last, but will be handled on display time.
 };
 
 
@@ -1216,7 +1218,7 @@ ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode
             }
         });
 
-        // Sort by 'captureUTC' date
+        // Sort by 'captureLoc' date
         if ( voucherData.activities.length > 1 )
         {
             try
