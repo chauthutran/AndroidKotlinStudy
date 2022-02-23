@@ -500,7 +500,7 @@ function Action( cwsRenderObj, blockObj )
 										{
 											// NEW - voucherCode usage - mark it as 'InUse' status
 											var vcItem = VoucherCodeManager.markVoucherCode_InQueue( activityJson, 'v_iss', 'InUse' );
-											if ( vcitem ) console.log( vcItem );  // TEMP NOTE
+											if ( vcItem ) console.log( vcItem );  // TEMP NOTE
 
 											// TODO: BELOW MIGHT NOT BE NEEDED ANYMORE...
 											AppInfoManager.addToActivityHistory( activityJson );

@@ -1747,27 +1747,32 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			var tagVal = FormUtil.getTagVal( tag ); // undefined/null are converted to ''
 
 			// Allow tagVal for false/0, etc..  
-			if ( tagVal !== '' && fieldDef && fieldDef.evalActions )
+			if ( fieldDef && fieldDef.evalActions )
 			{
-				// Proper INFO variable references
-				InfoDataManager.setINFOdata( 'form', tag.closest( 'form' ) );
-				InfoDataManager.setINFOdata( 'tag', tag );
-				InfoDataManager.setINFOdata( 'tagVisible', tag.parent().is( ':visible' ) );  // should use .closest( 'div.fieldBlock' ) ?
-				InfoDataManager.setINFOdata( 'tagVal', tagVal );
-
-				// Old ones - to be obsolete later?
-				InfoDataManager.setINFOdata( 'thisTag', tag ); // Obsolete?  use 'tag' instead?
-				InfoDataManager.setINFOdata( 'formTag', tag.closest( 'form' ) );
-				InfoDataManager.setINFOdata( 'formDivSecTag', tag.closest( '.formDivSec' ) );
-				InfoDataManager.setINFOdata( 'blockTag', tag.closest( 'div.block' ) );
-
-				
-				fieldDef.evalActions.forEach( evalAction => 
+				// If 'tagVal' is not empty, or empty, but has flag to allow this..
+				if ( tagVal !== '' 
+					|| ( tagVal === '' && fieldDef.evalActions_wtEmptyVal ) )
 				{
-					var evalActionJson = FormUtil.getObjFromDefinition( evalAction, ConfigManager.getConfigJson().definitionEvalActions );
-	
-					me.performEvalAction( evalActionJson, tag, tagVal, formDivSecTag, formFull_IdList );
-				});
+					// Proper INFO variable references
+					InfoDataManager.setINFOdata( 'form', tag.closest( 'form' ) );
+					InfoDataManager.setINFOdata( 'tag', tag );
+					InfoDataManager.setINFOdata( 'tagVisible', tag.parent().is( ':visible' ) );  // should use .closest( 'div.fieldBlock' ) ?
+					InfoDataManager.setINFOdata( 'tagVal', tagVal );
+
+					// Old ones - to be obsolete later?
+					InfoDataManager.setINFOdata( 'thisTag', tag ); // Obsolete?  use 'tag' instead?
+					InfoDataManager.setINFOdata( 'formTag', tag.closest( 'form' ) );
+					InfoDataManager.setINFOdata( 'formDivSecTag', tag.closest( '.formDivSec' ) );
+					InfoDataManager.setINFOdata( 'blockTag', tag.closest( 'div.block' ) );
+
+					
+					fieldDef.evalActions.forEach( evalAction => 
+					{
+						var evalActionJson = FormUtil.getObjFromDefinition( evalAction, ConfigManager.getConfigJson().definitionEvalActions );
+
+						me.performEvalAction( evalActionJson, tag, tagVal, formDivSecTag, formFull_IdList );
+					});
+				}
 			}	
 			//}
 		}
