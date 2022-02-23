@@ -682,7 +682,10 @@ ClientDataManager.setActivityDateLocal_clientsAll = function()
 
 // ----------------------------------------
 
+// 'LastVoucher' - Getting last dated (issued date) voucher is not what we want anymore..
+//      - Due to backdated new voucher need to be considered 'latestActiveVoucher' - What we want. 
 
+// Get last voucher data by issued activity captured date.
 ClientDataManager.getLastVoucherData = function( client )
 {
     var lastVoucherData;
@@ -697,8 +700,61 @@ ClientDataManager.getLastVoucherData = function( client )
     return lastVoucherData;
 };
 
+// Get last voucher data by issued activity created date.
+ClientDataManager.getLastCreatedVoucherData = function( client )
+{
+    var lastVoucherData;
+    
+    var voucherDataList = ClientDataManager.getVoucherDataList( client );
 
-ClientDataManager.getVoucherDataList = function( client )
+    if ( voucherDataList.length > 0 )
+    {
+        voucherDataList.sort( function(a, b) { 
+                return ( a.v_issCreatedDateStr >= b.v_issCreatedDateStr ) ? 1: -1; 
+            } 
+        );
+        
+        lastVoucherData = voucherDataList[ voucherDataList.length - 1 ];
+    }
+
+    return lastVoucherData;
+};
+
+
+// Get last active voucher data that has been issued, but not redeemed (ever)
+ClientDataManager.getLastActiveVoucherData = function( client )
+{
+    var lastActiveVoucherData;
+    
+    var voucherDataList = ClientDataManager.getVoucherDataList( client );
+
+    if ( voucherDataList.length > 0 )
+    {
+        voucherDataList.sort( function(a, b) { 
+                return ( a.v_issCreatedDateStr >= b.v_issCreatedDateStr ) ? 1: -1; 
+            } 
+        );
+        
+        // loop the other way..
+        for ( var i = voucherDataList.length - 1; i >= 0; i-- )
+        {
+            var vItem = voucherDataList[i];
+
+            if ( vItem.v_issDate && vItem.rdxActList.length === 0 ) 
+            {
+                lastActiveVoucherData = vItem;
+                break;
+            }
+        }
+    }
+
+    return lastActiveVoucherData;
+};
+
+
+// ----------------------------
+
+ClientDataManager.getVoucherDataList = function( client, overrideDateName )
 {
     var voucherDataList = [];
     
@@ -719,7 +775,7 @@ ClientDataManager.getVoucherDataList = function( client )
                 voucherDataList.push( ActivityDataManager.getVoucherActivitiesData( client.activities, voucherCode ) );
             });
 
-            // 2. Sort by 'createdDateStr/v_issDateStr' in ascending order
+            // 2. Sort by 'v_issDateStr' in ascending order <-- But should be changed to 'v_issCreatedDateStr'?
             voucherDataList.sort( function(a, b) { 
                     return ( a.v_issDateStr >= b.v_issDateStr ) ? 1: -1; 
                 } 

@@ -1186,7 +1186,7 @@ ActivityDataManager.processResponseCaseAction = function( reportJson, activityId
 
 ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode )
 {
-    var voucherData = { voucherCode: voucherCode, issuedUser: '', createdDateStr: '', v_issDateStr: '', activities: [], transList: [] };  // voucher Activties
+    var voucherData = { voucherCode: voucherCode, issuedUser: '', v_issDate: undefined, createdDateStr: '', v_issCreatedDateStr: '', v_issDateStr: '', activities: [], transList: [], rdxActList: [] };  // voucher Activties
 
     if ( voucherCode && activities && Util.isTypeArray( activities ) )
     {
@@ -1202,13 +1202,21 @@ ActivityDataManager.getVoucherActivitiesData = function( activities, voucherCode
                         if ( ( trans.clientDetails && trans.clientDetails.voucherCode === voucherCode )
                             || ( trans.dataValues && trans.dataValues.voucherCode === voucherCode ) )
                         {
-                            if ( trans.type === 'v_iss' ) {
+                            if ( trans.type === 'v_iss' ) 
+                            {
                                 voucherData.issuedUser = activity.activeUser;
-                                if ( activity.date ) {
-                                    voucherData.createdDateStr = activity.date.capturedLoc;
+
+                                if ( activity.date ) 
+                                {
+                                    voucherData.v_issDate = activity.date;
+                                
+                                    voucherData.createdDateStr = activity.date.createdLoc;  // Changed..
+                                    voucherData.v_issCreatedDateStr = activity.date.createdLoc;
                                     voucherData.v_issDateStr = activity.date.capturedLoc;
                                 }
                             }
+
+                            if ( trans.type.indexOf( 'v_rdx' ) === 0 ) voucherData.rdxActList.push( activity );
 
                             voucherData.activities.push( activity );
                         }    
