@@ -1443,6 +1443,24 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					me.performEvalActions( thisTag, fieldDef, formDivSecTag, formFull_IdList );		
 				}
 			});
+
+
+			// Other custom events..
+			if ( fieldDef.events )
+			{
+				for ( var prop in fieldDef.events )
+				{
+					//var evalStr = fieldDef.events[ prop ];
+					entryTag.on( prop, function( e ) 
+					{
+						try {
+							var evalStr = Util.getEvalStr( fieldDef.events[ prop ] );
+							if ( evalStr ) eval( evalStr );
+						}
+						catch( errMsg ) { console.log( 'ERROR in fieldTag customEvent, ' + prop + ', ' + errMsg ); }
+					});
+				}
+			}
 		}
 
 		me.addRuleListForField( divInputFieldTag, fieldDef );

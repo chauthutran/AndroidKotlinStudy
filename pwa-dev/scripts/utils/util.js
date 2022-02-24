@@ -1225,6 +1225,53 @@ Util.evalSort = function( fieldName, list, orderStr )
 
 // -------------------------------------------
 
+Util.performChekcSum34 = function( tagVal, valLength )
+{
+	var valid = false;
+
+	try
+	{
+		if ( tagVal.length === valLength )
+		{
+			var realValStr = tagVal.substr( 0, valLength - 1 );
+			var checkSumStr = tagVal.substr( valLength - 1, 1 );
+	
+			valid = Util.checkSumCheck( realValStr, checkSumStr, 34 );
+		}	
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in Util.performChekcSum34, ' + errMsg );
+	}
+
+	return valid;
+};
+
+
+Util.checkSumCheck = function( realValStr, checkSumStr, baseDigit )
+{
+   var sum = 0;
+	var checkSumNum = parseInt( checkSumStr, baseDigit );
+
+	// Change back blocked char: Y -> I, Z -> O  (It was converted when realVal were being created.) 
+	realValStr = realValStr.replace( /Y/g, 'I' ).replace( /Z/g, 'O' );
+
+	// Convert each digit (base34) to base10
+	for ( var i = 0; i < realValStr.length; i++ ) 
+	{
+		var char = realValStr.charAt(i);
+		var num = parseInt( char, baseDigit );
+		sum += num;
+	}
+
+	// Get last remaiming to get checkSum number
+	var remainder = sum % baseDigit;
+
+	// Check if the checkSum value is same as the calculated remainer 
+	return ( checkSumNum === remainder );
+};
+
+
 Util.searchByName = function( array, propertyName, value )
 {
 	for( var i in array ){
