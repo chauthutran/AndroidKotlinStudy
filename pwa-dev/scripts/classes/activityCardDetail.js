@@ -1,7 +1,8 @@
 // -------------------------------------------
 // -- ActivityCardDetail Class/Methods
 
-function ActivityCardDetail(activityId, isRestore) {
+function ActivityCardDetail( activityId, isRestore )
+{
 	var me = this;
 
 	me.activityId = activityId;
@@ -31,12 +32,16 @@ function ActivityCardDetail(activityId, isRestore) {
 
 	// ----------------------------------
 
-	me.render = function () {
-		if (me.activityId) {
+	me.render = function () 
+	{
+		if ( me.activityId ) 
+		{
 			INFO.activity = ActivityDataManager.getActivityById(me.activityId);
 
 			// Header content set
-			var actCard = new ActivityCard(me.activityId, { 'detailViewCase': true });
+			var activityDivTag = me.cardSheetFullTag.find( 'div.card[itemid="' + me.activityId + '"]' );
+
+			var actCard = new ActivityCard(me.activityId, activityDivTag, { 'detailViewCase': true });
 			actCard.render();
 
 			// set tabs contents

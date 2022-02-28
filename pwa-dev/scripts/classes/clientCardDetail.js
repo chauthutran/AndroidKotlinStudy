@@ -344,7 +344,7 @@ function ClientCardDetail( clientId, isRestore )
 
         listTableTbodyTag.append( divActivityCardTag );
 
-        return new ActivityCard( activityJson.id, { 'displaySetting': 'clientActivity' } );
+        return new ActivityCard( activityJson.id, divActivityCardTag, { 'displaySetting': 'clientActivity' } );
     };
 
 
