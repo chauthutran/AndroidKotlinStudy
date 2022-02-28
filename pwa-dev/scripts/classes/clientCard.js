@@ -1,4 +1,3 @@
-
 // -------------------------------------------
 // -- ClientCard Class/Methods
 //      - Mainly used for syncManager run one client item sync
@@ -240,7 +239,7 @@ function ClientCard( clientId, options )
 
     me.setupPhoneCallBtn = function( divPhoneCallTag, clientJson )
     {        
-        divPhoneCallTag.empty();
+        divPhoneCallTag.empty().hide();
 
         if ( clientJson.clientDetails && clientJson.clientDetails.phoneNumber )
         {
@@ -365,7 +364,8 @@ ClientCard.cardDivTag = `<div class="client card">
 
         <card__cta class="activityStatus card__cta">
             <div class="activityStatusText card__cta_status"></div>
-            <div class="clientPhone card__cta_one" style="cursor: pointer;"></div>
+            <div class="favIcon card__cta_one" style="cursor: pointer; display:none;"></div>
+            <div class="clientPhone card__cta_one" style="cursor: pointer; display:none;"></div>
             <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
         </card__cta>
 

@@ -42,6 +42,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
                 var activityTypeIconTag = activityCardDivTag.find( '.activityIcon' );
                 var activityContentTag = activityCardDivTag.find( '.activityContent' );
                 var activityRerenderTag = activityCardDivTag.find( '.activityRerender' );
+                var favIconTag = activityCardDivTag.find( '.favIcon' );
                 var activityPhoneCallTag = activityCardDivTag.find( '.activityPhone' );
 
                 // 1. activityType (Icon) display (LEFT SIDE)
@@ -57,6 +58,9 @@ function ActivityCard( activityId, activityCardDivTag, options )
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
                 me.setupSyncBtn( activityCardDivTag, me.activityId, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
+
+                // 4. 'phoneNumber' action  button setup
+                me.setupFavIconBtn( favIconTag, me.activityId );
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
@@ -119,12 +123,9 @@ function ActivityCard( activityId, activityCardDivTag, options )
     };
 
 
-    me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
-    {        
-        var clientObj = ClientDataManager.getClientByActivityId( activityId );
-
-        divPhoneCallTag.empty();
-        //divPhoneCallTag.off( 'click' );
+    me.setupFavIconBtn = function( favIconTag, activityId )
+    {
+        favIconTag.empty().hide();
 
         // Override the icon if 'favId' exists..  <-- scheduled..
         var activityJson = ActivityDataManager.getActivityById( activityId );
@@ -135,17 +136,15 @@ function ActivityCard( activityId, activityCardDivTag, options )
             // display favId instead.. + click event..            
             var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.sch_favId );
 
-            // <-- get eval of fav Item as well
-
             if ( favItemJson )
             {
-                FavIcons.populateFavItemIcon( divPhoneCallTag, favItemJson );
-                divPhoneCallTag.show();
+                FavIcons.populateFavItemIcon( favIconTag, favItemJson );
+                favIconTag.show();
 
-                var targetBlockTag = divPhoneCallTag.closest( '[tabButtonId=tab_clientActivities]' );
+                var targetBlockTag = favIconTag.closest( '[tabButtonId=tab_clientActivities]' );
                 if ( targetBlockTag.length >= 1 ) 
                 {
-                    FavIcons.setFavItemClickEvent( divPhoneCallTag, favItemJson, targetBlockTag, targetBlockTag, function() {
+                    FavIcons.setFavItemClickEvent( favIconTag, favItemJson, targetBlockTag, targetBlockTag, function() {
                         targetBlockTag.empty();
                     }, function( renderedBlockId) 
                     {
@@ -158,33 +157,39 @@ function ActivityCard( activityId, activityCardDivTag, options )
                 }
             }
         }
-        else       
+    };
+
+
+    me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
+    {        
+        var clientObj = ClientDataManager.getClientByActivityId( activityId );
+
+        divPhoneCallTag.empty().hide();
+
+        if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
         {
-            if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
+            var phoneNumber = Util.trim( clientObj.clientDetails.phoneNumber ); // should we define phoneNumber field in config? might change to something else in the future
+
+            if ( phoneNumber && phoneNumber !== '+' )
             {
-                var phoneNumber = Util.trim( clientObj.clientDetails.phoneNumber ); // should we define phoneNumber field in config? might change to something else in the future
+                var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+
+                cellphoneTag.click( function(e) {
     
-                if ( phoneNumber && phoneNumber !== '+' )
-                {
-                    var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
+                    e.stopPropagation();
     
-                    cellphoneTag.click( function(e) {
-        
-                        e.stopPropagation();
-        
-                        if ( Util.isMobi() )
-                        {
-                            window.location.href = `tel:${phoneNumber}`;
-                        }
-                        else
-                        {
-                            alert( phoneNumber );
-                        }
-                    });
-        
-                    divPhoneCallTag.append( cellphoneTag );
-                    divPhoneCallTag.show();    
-                }
+                    if ( Util.isMobi() )
+                    {
+                        window.location.href = `tel:${phoneNumber}`;
+                    }
+                    else
+                    {
+                        alert( phoneNumber );
+                    }
+                });
+    
+                divPhoneCallTag.append( cellphoneTag );
+                divPhoneCallTag.show();
             }
         }
     };
@@ -421,7 +426,8 @@ ActivityCard.cardDivTag = `<div class="activity card">
 
         <card__cta class="activityStatus card__cta">
             <div class="activityStatusText card__cta_status"></div>
-            <div class="activityPhone card__cta_one" style="cursor: pointer;"></div>
+            <div class="favIcon card__cta_one" style="cursor: pointer; display:none;"></div>
+            <div class="activityPhone card__cta_one" style="cursor: pointer; display:none;"></div>
             <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
         </card__cta>
 
