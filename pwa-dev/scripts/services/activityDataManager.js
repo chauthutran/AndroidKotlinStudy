@@ -1462,6 +1462,16 @@ ActivityDataManager.getActivitiesSince = function( activityList, dateStr, datePr
 };
 
 // -----------------------------
+// 3 diff ways to get the latest/last activity.   
+//      1. last array item
+//      2. by createdDate
+//      3. by updatedDate
+
+ActivityDataManager.getLastActivity = function( activityList )
+{
+    if ( !activityList || activityList.length === 0 ) return undefined;
+    else return activityList[ activityList.length - 1 ];
+};
 
 ActivityDataManager.getLatestCreatedActivity = function( activityList )
 {

@@ -47,7 +47,8 @@ function ClientCard( clientId, options )
 
                 //var clientEditPayloadBtnTag = clientCardDivTag.find( '#editPayloadBtn' );
 
-                var lastActivityJson = me.getLastActivity( clientJson );
+                // displaySettings should also use below 'ClientCard.getLastActivity()' rather than getting index manually..
+                var lastActivityJson = ClientCard.getLastActivity( clientJson );
 
 
                 // 1. clientType (Icon) display (LEFT SIDE)
@@ -67,7 +68,7 @@ function ClientCard( clientId, options )
                     me.setupSyncBtn( clientCardDivTag, lastActivityJson.id, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
 
                     // 4. favIcon of the last activity - if scheduled activity case.
-                    ActivityCard.setupFavIconBtn( favIconTag, lastActivityJson.id );
+                    ActivityCard.setupFavIconBtn( favIconTag, lastActivityJson.id, { fromClientId: me.clientId } );
                 }
 
                 // 4. 'phoneNumber' action  button setup
@@ -120,28 +121,6 @@ function ClientCard( clientId, options )
     };
 
     
-    me.getLastActivity = function( clientJson )
-    {
-        var lastActivityJson;
-
-        try
-        {
-            if ( clientJson.activities.length > 0 )
-            {
-                // TODO: Need to sort by activity date?
-                // lastActivityJson = clientJson.activities[ clientJson.activities.length - 1 ];
-                lastActivityJson = ActivityDataManager.getLatestUpdatedActivity( clientJson.activities );
-            }
-        }
-        catch( errMsg )
-        {
-            console.log( 'ERROR in ClientCard.getLastActivity(), errMsg: ' + errMsg );
-        }
-
-        return lastActivityJson;
-    };
-
-
     // ---------------------------------------
 
     me.createClientCardTag = function( groupAttrVal )
@@ -361,6 +340,30 @@ ClientCard.reRenderClientCardsById = function( clientId, option )
         }
     }
 };
+
+
+ClientCard.getLastActivity = function( clientJson )
+{
+    var lastActivityJson;
+
+    try
+    {
+        if ( clientJson.activities.length > 0 )
+        {
+            // TODO: Need to sort by activity date?
+            // lastActivityJson = clientJson.activities[ clientJson.activities.length - 1 ];
+            // lastActivityJson = ActivityDataManager.getLatestUpdatedActivity( clientJson.activities );
+            lastActivityJson = ActivityDataManager.getLastActivity( clientJson.activities );
+        }
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in ClientCard.getLastActivity(), errMsg: ' + errMsg );
+    }
+
+    return lastActivityJson;
+};
+
 
 ClientCard.cardDivTag = `<div class="client card">
 

@@ -716,7 +716,7 @@ ActivityCard.cleanUpErrJson = function( responseJson )
 
 // ---------------------------------------
 
-ActivityCard.setupFavIconBtn = function( favIconTag, activityId )
+ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
 {
     favIconTag.empty().hide();
 
@@ -735,20 +735,29 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId )
             favIconTag.show();
 
             // NOTE: This below is diff from activity to client
-
-            var targetBlockTag = favIconTag.closest( '[tabButtonId=tab_clientActivities]' );
-            if ( targetBlockTag.length >= 1 ) 
+            if ( option && option.fromClientId )
             {
-                FavIcons.setFavItemClickEvent( favIconTag, favItemJson, targetBlockTag, targetBlockTag, function() {
-                    targetBlockTag.empty();
-                }, function( renderedBlockId) 
+                // 1. Open up client Detail..
+                var clientCardDetail = new ClientCardDetail( option.fromClientId );
+                clientCardDetail.render( { openTabNo: 2 } );                
+            }
+            else 
+            {
+                // From ActivityCard List from Client
+                var targetBlockTag = favIconTag.closest( '[tabButtonId=tab_clientActivities]' );
+                if ( targetBlockTag.length >= 1 ) 
                 {
-                    if ( renderedBlockId )
+                    FavIcons.setFavItemClickEvent( favIconTag, favItemJson, targetBlockTag, targetBlockTag, function() {
+                        targetBlockTag.empty();
+                    }, function( renderedBlockId) 
                     {
-                        // Mark the block with activityEdit and scheduleConvert..
-                        ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
-                    }
-                } );
+                        if ( renderedBlockId )
+                        {
+                            // Mark the block with activityEdit and scheduleConvert..
+                            ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
+                        }
+                    } );
+                }
             }
         }
     }

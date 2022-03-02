@@ -45,7 +45,7 @@ function ClientCardDetail( clientId, isRestore )
 
     // ----------------------------------
 
-    me.render = function()
+    me.render = function( option )
     {
         INFO.client = ClientDataManager.getClientById( me.clientId ); // to be used as 'eval' reference in other places.. // Or INFO.getINFOJson();
 
@@ -57,14 +57,14 @@ function ClientCardDetail( clientId, isRestore )
         clientCard.render();
 
         // set tabs contents
-        me.setFullPreviewTabContent( me.clientId, me.cardSheetFullTag );
+        me.setFullPreviewTabContent( me.clientId, me.cardSheetFullTag, option );
                 
         TranslationManager.translatePage();    
     };
 
     // ----------------------------------------------------
 
-    me.setFullPreviewTabContent = function( clientId, sheetFullTag )
+    me.setFullPreviewTabContent = function( clientId, sheetFullTag, option )
     {
 
         // #1. Client Details 
@@ -151,8 +151,11 @@ function ClientCardDetail( clientId, isRestore )
 
 
         // -----------------------------------------
+        var tabIndex = ( option && option.openTabNo ) ? option.openTabNo - 1: 0;
+
         // Default click 'Client'
-        var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
+        var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).eq( tabIndex );
+        // var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
         // But wants to not display the selection dropdown when size is mobile..        
         defaultTab.attr( 'openingClick', 'Y' );
         defaultTab.click();
