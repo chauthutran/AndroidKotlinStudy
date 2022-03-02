@@ -147,7 +147,9 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
     });
 
     // Client Activity Reorder - #1
-    Util.evalSort( 'date.capturedLoc', client.activities, 'asc' );  // undefined ones will always placed last, but will be handled on display time.
+    if ( !ConfigManager.activitySorting_EvalRun( "insertActivity" ) ) Util.evalSort( 'date.createdLoc', client.activities, 'asc' );  
+    // undefined ones will always placed last, but will be handled on display time.
+    // Util.evalSort( 'date.capturedLoc', client.activities, 'asc' );  // undefined ones will always placed last, but will be handled on display time.
 };
 
 
@@ -1457,4 +1459,36 @@ ActivityDataManager.getActivitiesSince = function( activityList, dateStr, datePr
     }
 
     return outActList;
+};
+
+// -----------------------------
+
+ActivityDataManager.getLatestCreatedActivity = function( activityList )
+{
+    return ActivityDataManager.getLatestDateActivity( activityList, 'createdLoc' );
+};
+
+ActivityDataManager.getLatestUpdatedActivity = function( activityList )
+{
+    return ActivityDataManager.getLatestDateActivity( activityList, 'updatedLoc' );
+};
+
+ActivityDataManager.getLatestDateActivity = function( activityList, dateProp )
+{
+    var latestActivity;
+    if ( !dateProp ) dateProp = 'createdLoc';
+
+    if ( activityList && activityList.length )
+    {
+        var actList = Util.cloneJson( activityList );
+        actList.sort( function(a, b) { 
+            return ( a.date && b.date && a.date[dateProp] <= b.date[dateProp] ) ? 1: -1; 
+        });
+        // Puts newest/latest/highest value (createdDate) on beginning of list
+        // For date with no 'createdDate', it will be listed at the bottom/end of the list.
+
+        latestActivity = actList[0];
+    }
+    
+    return latestActivity;
 };

@@ -666,6 +666,26 @@ ConfigManager.getActivityDisplayBase = function()
 };
 
 
+ConfigManager.activitySorting_EvalRun = function( sortingProp )
+{
+    var evalRunSuccess = false;
+
+    var activitySorting = ConfigManager.getSettingsActivityDef().activitySorting;
+
+    if ( activitySorting && sortingProp && activitySorting[ sortingProp ] )
+    {
+        try {
+            var evalStr = Util.getEvalStr( activitySorting[ sortingProp ] );
+            if ( evalStr ) {
+                eval( evalStr );
+                evalRunSuccess = true;
+            }
+        } catch ( errMsg ) { console.log( 'ERROR in ConfigManager.activitySorting_EvalRun, ' + errMsg ); }
+    }
+
+    return evalRunSuccess;
+};
+
 // ---------------------------------------------
 
 ConfigManager.getSettingsClientDef = function()

@@ -43,6 +43,7 @@ function ClientCard( clientId, options )
                 var clientContentTag = clientCardDivTag.find( '.clientContent' );
                 var clientRerenderTag = clientCardDivTag.find( '.clientRerender' );
                 var clientPhoneCallTag = clientCardDivTag.find( '.clientPhone' );
+                var favIconTag = clientCardDivTag.find( '.favIcon' );
 
                 //var clientEditPayloadBtnTag = clientCardDivTag.find( '#editPayloadBtn' );
 
@@ -61,7 +62,13 @@ function ClientCard( clientId, options )
 
                 // 3. 'SyncUp' Button Related
                 // click event - for clientSubmit.., icon/text populate..
-                if ( lastActivityJson ) me.setupSyncBtn( clientCardDivTag, lastActivityJson.id, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
+                if ( lastActivityJson ) 
+                {
+                    me.setupSyncBtn( clientCardDivTag, lastActivityJson.id, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
+
+                    // 4. favIcon of the last activity - if scheduled activity case.
+                    ActivityCard.setupFavIconBtn( favIconTag, lastActivityJson.id );
+                }
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( clientPhoneCallTag, clientJson );
@@ -122,7 +129,8 @@ function ClientCard( clientId, options )
             if ( clientJson.activities.length > 0 )
             {
                 // TODO: Need to sort by activity date?
-                lastActivityJson = clientJson.activities[ clientJson.activities.length - 1 ];
+                // lastActivityJson = clientJson.activities[ clientJson.activities.length - 1 ];
+                lastActivityJson = ActivityDataManager.getLatestUpdatedActivity( clientJson.activities );
             }
         }
         catch( errMsg )

@@ -60,7 +60,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
                 me.setupSyncBtn( activityCardDivTag, me.activityId, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
 
                 // 4. 'phoneNumber' action  button setup
-                me.setupFavIconBtn( favIconTag, me.activityId );
+                ActivityCard.setupFavIconBtn( favIconTag, me.activityId );
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
@@ -122,42 +122,6 @@ function ActivityCard( activityId, activityCardDivTag, options )
         ActivitySyncUtil.setSyncIconClickEvent( divSyncIconTag, activityCardDivTag, activityId );
     };
 
-
-    me.setupFavIconBtn = function( favIconTag, activityId )
-    {
-        favIconTag.empty().hide();
-
-        // Override the icon if 'favId' exists..  <-- scheduled..
-        var activityJson = ActivityDataManager.getActivityById( activityId );
-        var activityStatus = ActivityDataManager.getActivityStatus( activityJson );
-
-        if ( activityJson.formData && activityJson.formData.sch_favId && SyncManagerNew.statusSynced( activityStatus ) )
-        {
-            // display favId instead.. + click event..            
-            var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.sch_favId );
-
-            if ( favItemJson )
-            {
-                FavIcons.populateFavItemIcon( favIconTag, favItemJson );
-                favIconTag.show();
-
-                var targetBlockTag = favIconTag.closest( '[tabButtonId=tab_clientActivities]' );
-                if ( targetBlockTag.length >= 1 ) 
-                {
-                    FavIcons.setFavItemClickEvent( favIconTag, favItemJson, targetBlockTag, targetBlockTag, function() {
-                        targetBlockTag.empty();
-                    }, function( renderedBlockId) 
-                    {
-                        if ( renderedBlockId )
-                        {
-                            // Mark the block with activityEdit and scheduleConvert..
-                            ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
-                        }
-                    } );
-                }
-            }
-        }
-    };
 
 
     me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
@@ -747,4 +711,45 @@ ActivityCard.cleanUpErrJson = function( responseJson )
     {
         console.customLog( 'ERROR during ActivityCard.cleanUpErrJson, errMsg: ' + errMsg );
     }        
+};
+
+
+// ---------------------------------------
+
+ActivityCard.setupFavIconBtn = function( favIconTag, activityId )
+{
+    favIconTag.empty().hide();
+
+    // Override the icon if 'favId' exists..  <-- scheduled..
+    var activityJson = ActivityDataManager.getActivityById( activityId );
+    var activityStatus = ActivityDataManager.getActivityStatus( activityJson );
+
+    if ( activityJson.formData && activityJson.formData.sch_favId && SyncManagerNew.statusSynced( activityStatus ) )
+    {
+        // display favId instead.. + click event..            
+        var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.sch_favId );
+
+        if ( favItemJson )
+        {
+            FavIcons.populateFavItemIcon( favIconTag, favItemJson );
+            favIconTag.show();
+
+            // NOTE: This below is diff from activity to client
+
+            var targetBlockTag = favIconTag.closest( '[tabButtonId=tab_clientActivities]' );
+            if ( targetBlockTag.length >= 1 ) 
+            {
+                FavIcons.setFavItemClickEvent( favIconTag, favItemJson, targetBlockTag, targetBlockTag, function() {
+                    targetBlockTag.empty();
+                }, function( renderedBlockId) 
+                {
+                    if ( renderedBlockId )
+                    {
+                        // Mark the block with activityEdit and scheduleConvert..
+                        ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
+                    }
+                } );
+            }
+        }
+    }
 };

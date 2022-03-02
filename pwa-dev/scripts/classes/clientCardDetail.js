@@ -315,10 +315,14 @@ function ClientCardDetail( clientId, isRestore )
         if ( activityList.length === 0 ) { }
         else
         {
-            // Order DESC the activityList by 'capturedLoc', but also already done on 'ActivityDataManager.insertActivitiesToClient()'
             var actList_sort = Util.cloneJson( activityList );
-            Util.evalSort( 'date.capturedLoc', actList_sort, 'desc' );
-            Util.evalSort( 'date.capturedLoc', actList_sort, 'asc' );
+
+            // Client Activity Reorder - #2
+            if ( !ConfigManager.activitySorting_EvalRun( "populateActivityCardList" ) )
+            {
+                Util.evalSort( 'date.capturedLoc', actList_sort, 'desc' );
+                Util.evalSort( 'date.capturedLoc', actList_sort, 'asc' );
+            }
 
             for( var i = actList_sort.length - 1; i >= 0; i-- )
             {

@@ -320,4 +320,4 @@ UtilDate.getDaysSince = function( fromDtStr )
 	}
 
 	return days;
-}
+};
