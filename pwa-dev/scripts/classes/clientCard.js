@@ -68,7 +68,7 @@ function ClientCard( clientId, options )
                     me.setupSyncBtn( clientCardDivTag, lastActivityJson.id, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
 
                     // 4. favIcon of the last activity - if scheduled activity case.
-                    ActivityCard.setupFavIconBtn( favIconTag, lastActivityJson.id, { fromClientId: me.clientId } );
+                    ActivityCard.setupFavIconBtn( favIconTag, lastActivityJson.id, { clientCardId: me.clientId, activityId: lastActivityJson.id } );
                 }
 
                 // 4. 'phoneNumber' action  button setup

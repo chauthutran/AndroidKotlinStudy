@@ -60,7 +60,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
                 me.setupSyncBtn( activityCardDivTag, me.activityId, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
 
                 // 4. 'phoneNumber' action  button setup
-                ActivityCard.setupFavIconBtn( favIconTag, me.activityId );
+                ActivityCard.setupFavIconBtn( favIconTag, me.activityId, me.options );
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
@@ -718,6 +718,8 @@ ActivityCard.cleanUpErrJson = function( responseJson )
 
 ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
 {
+    var option = ( option ) ? option : {};
+
     favIconTag.empty().hide();
 
     // Override the icon if 'favId' exists..  <-- scheduled..
@@ -735,11 +737,13 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
             favIconTag.show();
 
             // NOTE: This below is diff from activity to client
-            if ( option && option.fromClientId )
+            if ( option.clientCardId )
             {
                 // 1. Open up client Detail..
-                var clientCardDetail = new ClientCardDetail( option.fromClientId );
-                clientCardDetail.render( { openTabNo: 2 } );                
+                var clientCardDetail = new ClientCardDetail( option.clientCardId );
+                clientCardDetail.render( { openTabNo: 2, autoClick_FavIconActId: option.activityId } );   
+                
+                // Pass activityId in 'autoClick_FavIconActId', so that we click on favIcon as we list/render activityCard 
             }
             else 
             {
@@ -757,6 +761,11 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
                             ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
                         }
                     } );
+
+                    if ( option.autoClick_FavIconActId === activityId ) {
+                        console.log( 'activity favIcon click performed, ' + activityId );
+                        favIconTag.click();
+                    }
                 }
             }
         }

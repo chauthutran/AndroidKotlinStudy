@@ -1,12 +1,11 @@
 // -------------------------------------------
 // -- ClientCardDetail Class/Methods
 
-function ClientCardDetail( clientId, isRestore )
+function ClientCardDetail( clientId )
 {
 	var me = this;
 
     me.clientId = clientId;
-    me.isRestore = isRestore;
     me.actionObj;
     me.cardSheetFullTag;
 
@@ -108,6 +107,23 @@ function ClientCardDetail( clientId, isRestore )
             
             // Disable fav icon if not in favList <-- but, better to place this logic within the activityCard render?
             me.disableFavItems( activityListDivTag, favListArr );
+
+
+            // NEW: If autoClick_FavIconActId is on, (not disabled..  <-- do not care.. since we got here?)
+            //  Try to click on the favIcon..
+            // clientCardDetail.render( { openTabNo: 2, autoClick_FavIconActId: option.activityId } );   
+            if ( option && option.autoClick_FavIconActId )
+            {
+                var activityCardTag = activityListDivTag.find( 'div.activity[itemid="' + option.autoClick_FavIconActId + '"]' )
+                
+                var actFavIconTag = activityCardTag.find( 'div.favIcon[favId]' ).first();
+                
+                actFavIconTag.click();
+
+                console.log( 'ClientCardDetails, autoClick_FavIconActId attempted, ' + actFavIconTag.length );
+                // On 1st click attempt, remove the option..
+                option.autoClick_FavIconActId = undefined;
+            }
         });
 
 
@@ -165,7 +181,7 @@ function ClientCardDetail( clientId, isRestore )
 
     me.disableFavItems = function( activityListDivTag, favListArr )
     {
-        activityListDivTag.find( 'div.activityPhone[favId]' ).each( function() {
+        activityListDivTag.find( 'div.favIcon[favId]' ).each( function() {
             var favItemTag = $( this );
             var favId = favItemTag.attr( 'favId' );
 
@@ -333,7 +349,7 @@ function ClientCardDetail( clientId, isRestore )
 
                 try {
                     var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
-                    activityCardObj.render();    
+                    activityCardObj.render();
                 }
                 catch( errMsg ) { console.log( 'ERROR in ClientCardDetail.populateActivityCardList, ' + errMsg ); }
             }
