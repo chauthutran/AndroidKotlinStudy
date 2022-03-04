@@ -88,20 +88,17 @@ function ClientCardDetail( clientId )
             var activityListDivTag = activityTabBodyDivTag.find( '.activityList' );
 
             var clientJson = ClientDataManager.getClientById( clientId ); // for changed client data?
-
             if ( clientJson ) me.populateActivityCardList( clientJson.activities, activityListDivTag );
 
-
+            // Activity Fav icon s Setup for each activity cards..
             var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag
             , { 'mainFavPreClick': function( blockTag, blockContianerTag ) 
             {
-                // Clear the list?
-                blockTag.html( '' ); //activityListBlockTag.html( '' );
-
+                // On fav icon click, perform these below 1st as pre-step.                
+                blockTag.html( '' );
                 // Get proper client into INFO.client - since other client could been loaded by clicks.
                 INFO.client = ClientDataManager.getClientById( me.clientId );
             }});
-
             var favListArr = favIconsObj.render();
 
             
@@ -109,20 +106,18 @@ function ClientCardDetail( clientId )
             me.disableFavItems( activityListDivTag, favListArr );
 
 
-            // NEW: If autoClick_FavIconActId is on, (not disabled..  <-- do not care.. since we got here?)
-            //  Try to click on the favIcon..
-            // clientCardDetail.render( { openTabNo: 2, autoClick_FavIconActId: option.activityId } );   
-            if ( option && option.autoClick_FavIconActId )
+            // NEW: Activity favIcon auto click on start..
+            if ( option && option.openFav_ActId )
             {
-                var activityCardTag = activityListDivTag.find( 'div.activity[itemid="' + option.autoClick_FavIconActId + '"]' )
-                
-                var actFavIconTag = activityCardTag.find( 'div.favIcon[favId]' ).first();
-                
-                actFavIconTag.click();
+                var activityCardTag = activityListDivTag.find( 'div.activity[itemid="' + option.openFav_ActId + '"]' );
+                var actFavIconTag = activityCardTag.find( 'div.favIcon[favId]' );
 
-                console.log( 'ClientCardDetails, autoClick_FavIconActId attempted, ' + actFavIconTag.length );
-                // On 1st click attempt, remove the option..
-                option.autoClick_FavIconActId = undefined;
+                if ( actFavIconTag.length > 0 )
+                {
+                    actFavIconTag.click();
+                    console.log( 'ClientCardDetails, openFav_ActId attempted, ' + actFavIconTag.length );
+                    //option.openFav_ActId = undefined; // On 1st click attempt, remove the option..  Had issue, thus, disabled
+                }
             }
         });
 
@@ -167,15 +162,19 @@ function ClientCardDetail( clientId )
 
 
         // -----------------------------------------
-        var tabIndex = ( option && option.openTabNo ) ? option.openTabNo - 1: 0;
+        // Click on one of the tab on start        
+        var openUp_tabRel = ( option && option.openTabRel ) ? option.openTabRel: 'tab_clientDetails';
 
-        // Default click 'Client'
-        var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).eq( tabIndex );
-        // var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
-        // But wants to not display the selection dropdown when size is mobile..        
-        defaultTab.attr( 'openingClick', 'Y' );
-        defaultTab.click();
-        setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );
+        if ( openUp_tabRel )
+        {
+            // Default click 'Client'
+            var defaultTab = sheetFullTag.find( '.tab_fs li[rel=' + openUp_tabRel + ']' );
+            // var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
+            // But wants to not display the selection dropdown when size is mobile..        
+            defaultTab.attr( 'openingClick', 'Y' );
+            defaultTab.click();
+            setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );
+        }
     };
 
 

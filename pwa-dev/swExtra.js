@@ -16,9 +16,11 @@ self.addEventListener('message', (event) =>
 
       for ( var i = 0; i < reqList.length; i++ )
       {
-        var reqUrl = reqList[i];
+        var reqUrl = reqList[i];// + '?tmark=' + (new Date()).getTime();
 
         await cache.add( reqUrl );
+
+        //console.log( 'testing - ' + reqUrl );
         
         doneCount++;
         var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount } } );

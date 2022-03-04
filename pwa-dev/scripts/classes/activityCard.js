@@ -189,8 +189,23 @@ function ActivityCard( activityId, activityCardDivTag, options )
             {
                 displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
                 displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
-            }
 
+                var view = me.options.viewDef_Selected;
+                if ( view )
+                {
+                    var hasViewDisplayData = false;
+
+                    if ( view.displayBase ) {
+                        hasViewDisplayData = true;
+                        displayBase = view.displayBase;
+                    } 
+    
+                    if ( view.displaySettings ) {
+                        hasViewDisplayData = true;
+                        displaySettings = view.displaySettings;
+                    }
+                }
+            }
 
             InfoDataManager.setINFOdata( 'activity', activity );
             InfoDataManager.setINFOclientByActivity( activity );
@@ -739,11 +754,12 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
             // NOTE: This below is diff from activity to client
             if ( option.clientCardId )
             {
-                // 1. Open up client Detail..
-                var clientCardDetail = new ClientCardDetail( option.clientCardId );
-                clientCardDetail.render( { openTabNo: 2, autoClick_FavIconActId: option.activityId } );   
-                
-                // Pass activityId in 'autoClick_FavIconActId', so that we click on favIcon as we list/render activityCard 
+                favIconTag.off( 'click' ).click( function() {
+                    // 1. Open up client Detail..
+                    var clientCardDetail = new ClientCardDetail( option.clientCardId );
+                    clientCardDetail.render( { openTabRel: 'tab_clientActivities', openFav_ActId: option.activityId } );   
+                });                
+                // Pass activityId in 'openFav_ActId', so that we click on favIcon as we list/render activityCard 
             }
             else 
             {
@@ -762,10 +778,12 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
                         }
                     } );
 
-                    if ( option.autoClick_FavIconActId === activityId ) {
+                    /*
+                    if ( option.openFav_ActId === activityId ) {
                         console.log( 'activity favIcon click performed, ' + activityId );
                         favIconTag.click();
                     }
+                    */
                 }
             }
         }
