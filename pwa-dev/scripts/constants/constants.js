@@ -23,6 +23,10 @@ Constants.ws_status_success = "success";
 Constants.ws_status_warning = "warning";
 Constants.ws_status_error = "error";
 
+// ACTIVITY TYPE:
+Constants.actType_schedule = "schedule";
+Constants.actType_scheduleCancel = "scheduleCancel";
+
 
 Constants.storage_offline_ItemNetworkAttemptLimit = 3;
 Constants.storage_offline_ItemAgeLimit = ( 92 * 24 ); //92 days

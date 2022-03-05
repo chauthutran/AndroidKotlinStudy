@@ -397,7 +397,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         // FAILED TO GENERATE - ERROR MESSAGE..
         if ( !activityJson ) throw 'payload captureValues not exists!';
 
-
+        
         // extraActionCase are used for 'scheduled activity create action'.  Do not look at current block or hidden tags
         var extraActionCase = ( actionDefJson && actionDefJson.formDataOverride );
 
@@ -570,23 +570,23 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
         var activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData );
 
         // NEW, TEMP
-        var activityPayloadClient;
+        var client;
         if ( actionDefJson.underClient && actionDefJson.clientId )
         {
-            activityPayloadClient = ClientDataManager.getClientById( actionDefJson.clientId );
+            client = ClientDataManager.getClientById( actionDefJson.clientId );
         }
         else if ( activityJson.processing.existingClientId )
         {
-            activityPayloadClient = ClientDataManager.getClientById( activityJson.processing.existingClientId );
+            client = ClientDataManager.getClientById( activityJson.processing.existingClientId );
         }
 
         
-        if ( !activityPayloadClient ) activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
+        if ( !client ) client = ClientDataManager.createClient_forActivityPayload( activityJson );
 
 
         // TODO: When adding, check for 'c_reg' activity not yet synced case.  If so, add new activity on bottom..
         // Better, yet, always add new activity to after unsynced activity postion on main activity List.
-        ActivityDataManager.insertActivitiesToClient( [ activityJson ], activityPayloadClient, { 'addToTop': true, 'newPayloadCase': true } );
+        ActivityDataManager.insertActivitiesToClient( [ activityJson ], client, { 'addToTop': true, 'newPayloadCase': true } );
     
         ClientDataManager.saveCurrent_ClientsStore( () => {
             if ( callBack ) callBack( activityJson );    

@@ -123,7 +123,6 @@ function ActivityCard( activityId, activityCardDivTag, options )
     };
 
 
-
     me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
     {        
         var clientObj = ClientDataManager.getClientByActivityId( activityId );
@@ -427,7 +426,7 @@ ActivityCard.getActivityTagAll_ById = function( activityId )
 // #1. For 'syncManagerNew' call, call ActivityCard.renderAll( activityId );
 ActivityCard.reRenderAllById = function( activityId )
 {
-    ActivityCard.getActivityTagAll_ById( activityId ).find( '.activityRerender' ).click();
+    if ( activityId ) ActivityCard.getActivityTagAll_ById( activityId ).find( '.activityRerender' ).click();
 };
 
 
