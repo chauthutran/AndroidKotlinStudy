@@ -15,6 +15,7 @@ AppInfoLSManager.KEY_BLACKLISTED = "blackListed";
 AppInfoLSManager.KEY_LAST_ONLINELOGIN_DT = "lastOnlineLoginDt"; 
 AppInfoLSManager.KEY_NETWORKSYNC = "networkSync";
 AppInfoLSManager.KEY_LOCAL_STAGENAME = "localStageName"; 
+AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES = "jobAidFolderNames";
 
 // Old and obsolete keys
 AppInfoLSManager.KEY_USERINFO = "userInfo";  // It actually is 'lastLoginData'
@@ -321,6 +322,18 @@ AppInfoLSManager.setBlackListed = function( blackListed )
     AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BLACKLISTED, blackListed );
 };
 
+// ----------------------------------------------------
+
+// After success login, mark the userName in localStorage as last used username
+AppInfoLSManager.setJobAidFolderNames = function( namesJsonStr )
+{
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES, namesJsonStr );
+};
+
+AppInfoLSManager.getJobAidFolderNames = function()
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES );
+};
 
 // ------------------------------------------------------------------------------------  
 // ----------------  Login Current Keys Related..

@@ -449,6 +449,37 @@ function settingsApp( cwsRender )
         {
             FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
             {
+                divMainContentTag.css( 'height', '70%' );
+                var divProjFolderJsonTag = $( '<div class="divProjFolderJson"></div>' );
+
+                var pfJsonInputTag = $( '<input class="pfJsonInput" style="width:50%; border: solid 1px #ccc; font-size: 0.75rem;">' );
+                var pfJsonBtnTag = $( '<button class="pfJsonBtn">Save</button>' );
+
+                divProjFolderJsonTag.append( pfJsonInputTag );
+                divProjFolderJsonTag.append( pfJsonBtnTag );
+
+                divProjFolderJsonTag.insertAfter( divMainContentTag );
+
+
+                pfJsonBtnTag.click( function() {
+                    try {
+                        var inputStr = pfJsonInputTag.val();
+                        var inputJson = JSON.parse( inputStr ); // use this for checking proper json format.
+
+                        AppInfoLSManager.setJobAidFolderNames( inputStr );                        
+
+                        alert( 'Set jobAid folder names.' );
+                    } 
+                    catch ( errMsg ) 
+                    {
+                        alert( 'Failed to parse or save the json' ); 
+                        console.log( 'ERROR in JobFile ProjFolderJson, ' + errMsg ); 
+                    }
+
+                    // Store the json (if proper json) in local storage..                    
+                });
+
+
                 //caches.keys().then( function( keyList ) 
                 caches.open( 'jobTest2' ).then( cache => 
                 { 

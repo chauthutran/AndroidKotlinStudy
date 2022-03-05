@@ -95,7 +95,30 @@ JobAidHelper.msgHandle = function( data )
     {
       MsgManager.msgAreaShow( data.msg );        
     }
+    else if ( data.action === 'getJobFolderNames' )
+    {
+        try
+        {
+            var folderNames = AppInfoLSManager.getJobAidFolderNames();
+
+            // should set some 'action' as well as data..
+           var msgJson = { action: 'returnJobFolderNames', data: JSON.parse( folderNames ) };
     
+          // initiate the msg to jobAid.. iframe..
+          $( 'iframe.jobAidIFrame' )[0].contentWindow.postMessage( msgJson, '*' );
+    
+        }
+        catch ( errMsg )
+        {
+            console.log( 'ERROR in JobAidHelper.msgHandle, ' + errMsg );
+        }
+    }   
+    
+
+
+    // If 'dataJson' exists (which is meant to be formField data), use this to populate form fields with jobAid Area/Block..
+    if ( data.formFieldData ) data.dataJson = formFieldData;
+
     if ( data.dataJson )
     {
       // open area & block with data populate..
