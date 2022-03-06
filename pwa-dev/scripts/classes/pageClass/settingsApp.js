@@ -450,16 +450,18 @@ function settingsApp( cwsRender )
             FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
             {
                 divMainContentTag.css( 'height', '70%' );
-                var divProjFolderJsonTag = $( '<div class="divProjFolderJson"></div>' );
+                var divProjFolderJsonTag = $( '<div class="divProjFolderJson" style="margin-top: 5px;"></div>' );
 
                 var pfJsonInputTag = $( '<input class="pfJsonInput" style="width:50%; border: solid 1px #ccc; font-size: 0.75rem;">' );
-                var pfJsonBtnTag = $( '<button class="pfJsonBtn">Save</button>' );
+                var pfJsonBtnTag = $( '<button class="pfJsonBtn" style="margin-left: 5px;">Save</button>' );
+
+                var folderNames = AppInfoLSManager.getJobAidFolderNames();
+                if ( folderNames ) pfJsonInputTag.val( folderNames );
 
                 divProjFolderJsonTag.append( pfJsonInputTag );
                 divProjFolderJsonTag.append( pfJsonBtnTag );
 
                 divProjFolderJsonTag.insertAfter( divMainContentTag );
-
 
                 pfJsonBtnTag.click( function() {
                     try {

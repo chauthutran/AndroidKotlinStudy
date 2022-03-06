@@ -299,8 +299,8 @@ App.checkDeviceMinSpec = function( info )
 
 // ===========================
 // [JOB_AID]    
-window.addEventListener('message', function (event) {
-	if (event.data.from === 'jobAidIFrame') JobAidHelper.msgHandle(event.data);
+window.addEventListener('message', function ( event ) {
+	if ( event.data.from === 'jobAidIFrame' ) JobAidHelper.msgHandle( event.data );
 });
 
 // ======================================
