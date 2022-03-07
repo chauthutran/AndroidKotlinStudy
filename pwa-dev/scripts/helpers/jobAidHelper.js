@@ -71,21 +71,15 @@ JobAidHelper.JobFilingProgress = function (msgData) {
 	}
 };
 
-//JobAidHelper.JobFilingFinish = function( msgText )
-//{
-//    $( '.divJobFileLoading' ).remove();
-//    if ( msgText ) MsgManager.msgAreaShow( msgText );
-//};
-
 // =========================
 
 JobAidHelper.msgHandle = function (data) 
 {
-	/* window.parent.postMessage( { 'from': 'jobAidIFrame', 'actions': [ 
-		 { name: 'getJobFolderNames', callBackEval: ' mainData.folderData = action.data; alert( mainData ); ' }, 
-		 { name: 'getCountryCode', callBackEval: ' mainData.countryCode = action.data; alert( mainData ); ' } 
-	  ] }, '*');
-	*/
+	// window.parent.postMessage( { 'from': 'jobAidIFrame', 'actions': [ 
+	//	 { name: 'getJobFolderNames', callBackEval: ' mainData.folderData = action.data; alert( mainData ); ' }, 
+	//	 { name: 'getCountryCode', callBackEval: ' mainData.countryCode = action.data; alert( mainData ); ' } 
+	//  ] }, '*');
+
 	if ( data )
 	{
 		if ( data.actions ) 
@@ -133,16 +127,18 @@ JobAidHelper.handleMsgAction = function( action )
 				console.log('ERROR in JobAidHelper.msgHandle object action, ' + errMsg);
 			}
 		}
-		else if ( action.name === 'getCountryCode' ) 
+		else if ( action.name === 'getCountryCode_NoT' ) 
 		{
-			
+			actionJson = { callBackEval: callBackEval, data: SessionManager.getLoginCountryOuCode_NoT() };
 		}
 		else if ( action.name === 'clientSearch' ) 
 		{
 			// { name: 'clientSearch', searchType: 'offline', callBackEval: 'clientsFound( action.data );', 
 			//  data: { firstName: 'james', lastName: 'chang' } } 
-		}
 
+			var clientList = ClientDataManager.getClientListByFields( action.data );
+			actionJson = { callBackEval: callBackEval, data: clientList };
+		}
 	}
 
 	return actionJson;
@@ -171,4 +167,4 @@ JobAidHelper.formFieldDataHandle = function( data )
 
 		}, 200);
 	}
-}
+};
