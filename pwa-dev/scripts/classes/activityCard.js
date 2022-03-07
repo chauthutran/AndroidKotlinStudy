@@ -760,6 +760,38 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
                 });                
                 // Pass activityId in 'openFav_ActId', so that we click on favIcon as we list/render activityCard 
             }
+            else if ( option.fromActivityList )
+            {
+                favIconTag.off( 'click' ).click( function() 
+                {                    
+                    // With some INFO.sch_activityList_openAsActivity flag, we can open as sheetFull..
+                    if ( INFO.sch_actList )
+                    {
+                        InfoDataManager.setINFOclientByActivity( activityJson );
+
+                        var onClickActions = Util.cloneJson( favItemJson.onClick );
+                        onClickActions.forEach( action => 
+                        {
+                            if ( action.actionType === 'openBlock' )
+                            {
+                                action.openSheetFull = { term: "", title: "Schedule Use", cssClasses: ["scheduleUse"] };
+                            }
+                        });
+
+                        var actionObj = new Action( SessionManager.cwsRenderObj, {} );
+                        actionObj.handleClickActionsAlt( onClickActions ); //, targetBlockTag, targetBlockContainerTag );    
+                    }
+                    else
+                    {
+                        var clientJson = ClientDataManager.getClientByActivityId( activityId );
+                        if ( clientJson )
+                        {
+                            var clientCardDetail = new ClientCardDetail( clientJson._id );
+                            clientCardDetail.render( { openTabRel: 'tab_clientActivities', openFav_ActId: activityId } );    
+                        }    
+                    }
+                });
+            }
             else 
             {
                 // From ActivityCard List from Client

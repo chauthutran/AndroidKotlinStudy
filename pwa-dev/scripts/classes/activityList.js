@@ -382,7 +382,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
         listTableTbodyTag.append( divActivityCardTag );     
 
-        return new ActivityCard( activityJson.id, divActivityCardTag, { viewDef_Selected: viewDef_Selected } );
+        return new ActivityCard( activityJson.id, divActivityCardTag, { viewDef_Selected: viewDef_Selected, fromActivityList: true } );
     };
 
 

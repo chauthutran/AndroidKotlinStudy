@@ -438,9 +438,16 @@ function settingsApp( cwsRender )
 
             if ( reply === true )
             {
+                // If jobAidFolder is empty, populate default data.
+                try
+                {
+                    var folderNames = AppInfoLSManager.getJobAidFolderNames();
+                    if ( !folderNames ) AppInfoLSManager.setJobAidFolderNames( '{ "react1": "j1_v01" }' );    
+                }
+                catch ( errMsg ) { console.log( 'ERROR in jobAidFolderDefault populate, ' + errMsg ); }
+                
+                // Run the retrieval of files and put it in runTimeCache
                 JobAidHelper.runTimeCache_JobAid( jobAidFilingBtnTag.parent() );
-                //function() { MsgManager.msgAreaShow( 'Job Aid Filing Success.  Please reload or Logout and LogIn the app to be affective.' );
-                    // AppUtil.appReloadWtMsg( 'Job Aid Filing Success.  Reloading App in process.' );
             }
         });      
 

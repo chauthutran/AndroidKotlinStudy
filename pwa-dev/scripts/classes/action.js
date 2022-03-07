@@ -624,10 +624,14 @@ function Action( cwsRenderObj, blockObj )
 		activity.activeUser = capVal.activeUser;
 		activity.creditedUsers = capVal.creditedUsers;		
 
+		if ( activity.formData && activity.formData.sch_favId ) {
+			// delete activity.formData.sch_favId;
+			delete activity.formData;
+		}
+
 		// Status & History
 		var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_queued, 200, actionNote );
 		ActivityDataManager.insertToProcessing( activity, processingInfo );
-
 	};
 
 	// ----------------------------------------------
