@@ -450,6 +450,11 @@ function settingsApp( cwsRender )
             FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
             {
                 divMainContentTag.css( 'height', '70%' );
+
+                // Clear previous div folders <-- Later, make this permament?
+                divMainContentTag.parent().find( 'div.divProjFolderJson' ).remove();
+
+
                 var divProjFolderJsonTag = $( '<div class="divProjFolderJson" style="margin-top: 5px;"></div>' );
 
                 var pfJsonInputTag = $( '<input class="pfJsonInput" style="width:50%; border: solid 1px #ccc; font-size: 0.75rem;">' );
@@ -466,7 +471,7 @@ function settingsApp( cwsRender )
                 pfJsonBtnTag.click( function() {
                     try {
                         var inputStr = pfJsonInputTag.val();
-                        var inputJson = JSON.parse( inputStr ); // use this for checking proper json format.
+                        var inputJson = JSON.parse( inputStr ); // Just use this for checking proper json format.
 
                         AppInfoLSManager.setJobAidFolderNames( inputStr );                        
 

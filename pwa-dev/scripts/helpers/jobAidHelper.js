@@ -82,16 +82,24 @@ JobAidHelper.msgHandle = function (data)
 
 	if ( data )
 	{
+		var returnActions = [];
+
 		if ( data.actions ) 
 		{
-			var returnActions = [];
-
-			data.actions.forEach( act => returnActions.push( JobAidHelper.handleMsgAction( act ) ) );
-			
-			$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { actions: returnActions }, '*');
+			data.actions.forEach( act => returnActions.push( JobAidHelper.handleMsgAction( act ) ) );			
 		}
 
-		if ( data.action ) JobAidHelper.handleMsgAction( data.action );
+		if ( data.action ) 
+		{
+			if ( Util.isTypeObject( data.action ) ) returnActions.push( JobAidHelper.handleMsgAction( data.action ) );
+			else if ( Util.isTypeString( action ) ) JobAidHelper.handleMsgActionOld( data );
+		}
+
+		// If there is any action result to return, send as msg to jobAid iFrame
+		if ( returnActions.length > 0 )
+		{
+			$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { actions: returnActions }, '*');
+		}
 	}
 };
 
@@ -99,51 +107,48 @@ JobAidHelper.handleMsgAction = function( action )
 {
 	var actionJson;
 
-	// Old 'action' string type version support
-	if ( Util.isTypeString( action ) )
+	if ( action.name === 'getJobFolderNames' )
 	{
-		if (data.action === 'hideIFrame') $('#divJobAid').hide();
-		else if (data.action === 'sendMsg') MsgManager.msgAreaShow(data.msg);
-	
-		// form field data populate & open the block form
-		if ( data.formFieldData ) data.dataJson = formFieldData;
-		JobAidHelper.formFieldDataHandle( data.dataJson );
+		try {	
+			// should set some 'action' as well as data..
+			actionJson = { callBackEval: action.callBackEval, data: JSON.parse( AppInfoLSManager.getJobAidFolderNames() ) };
+
+			// initiate the msg to jobAid.. iframe..
+			// $('iframe.jobAidIFrame')[0].contentWindow.postMessage( msgData, '*');
+		}
+		catch (errMsg) {
+			console.log('ERROR in JobAidHelper.msgHandle object action, ' + errMsg);
+		}
 	}
-
-
-	// New 'action' object version
-	if ( Util.isTypeObject( action ) )
+	else if ( action.name === 'getCountryCode_NoT' ) 
 	{
-		if ( action.name === 'getJobFolderNames' )
-		{
-			try {	
-				// should set some 'action' as well as data..
-				actionJson = { callBackEval: callBackEval, data: JSON.parse( AppInfoLSManager.getJobAidFolderNames() ) };
-	
-				// initiate the msg to jobAid.. iframe..
-				// $('iframe.jobAidIFrame')[0].contentWindow.postMessage( msgData, '*');
-			}
-			catch (errMsg) {
-				console.log('ERROR in JobAidHelper.msgHandle object action, ' + errMsg);
-			}
-		}
-		else if ( action.name === 'getCountryCode_NoT' ) 
-		{
-			actionJson = { callBackEval: callBackEval, data: SessionManager.getLoginCountryOuCode_NoT() };
-		}
-		else if ( action.name === 'clientSearch' ) 
-		{
-			// { name: 'clientSearch', searchType: 'offline', callBackEval: 'clientsFound( action.data );', 
-			//  data: { firstName: 'james', lastName: 'chang' } } 
+		actionJson = { callBackEval: action.callBackEval, data: SessionManager.getLoginCountryOuCode_NoT() };
+	}
+	else if ( action.name === 'clientSearch' ) 
+	{
+		// { name: 'clientSearch', searchType: 'offline', callBackEval: 'clientsFound( action.data );', 
+		//  data: { firstName: 'james', lastName: 'chang' } } 
 
-			var clientList = ClientDataManager.getClientListByFields( action.data );
-			actionJson = { callBackEval: callBackEval, data: clientList };
-		}
+		var clientList = ClientDataManager.getClientListByFields( action.data );
+		actionJson = { callBackEval: action.callBackEval, data: clientList };
 	}
 
 	return actionJson;
 };
 
+// -------------------------------------
+// -- Old msg action structure support
+
+JobAidHelper.handleMsgActionOld = function( data )
+{
+	// Old 'action' string type version support
+	if ( data.action === 'hideIFrame' ) $('#divJobAid').hide();
+	else if ( data.action === 'sendMsg' ) MsgManager.msgAreaShow( data.msg );
+
+	// form field data populate & open the block form
+	if ( data.formFieldData ) data.dataJson = formFieldData;
+	JobAidHelper.formFieldDataHandle( data.dataJson );
+};
 
 JobAidHelper.formFieldDataHandle = function( data )
 {
