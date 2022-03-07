@@ -132,6 +132,21 @@ JobAidHelper.handleMsgAction = function( action )
 		var clientList = ClientDataManager.getClientListByFields( action.data );
 		actionJson = { callBackEval: action.callBackEval, data: clientList };
 	}
+	else if ( action.name === 'WFARunEval' )
+	{
+		// { name: 'WFARunEval', WFARunEval: [ 
+		//		' var clientList = ClientDataManager.getClientListByFields( action.data ); ', 
+		//		' { callBackEval: action.callBackEval, data: clientList }; ' 
+		//	 ], callBackEval: 'clientsFound( action.data );', 
+		//  data: { firstName: 'james', lastName: 'chang' } } 
+		try {
+			if ( action.WFARunEval ) 
+			{
+				actionJson = eval( Util.getEvalStr( action.WFARunEval ) );
+			}
+		}
+		catch ( errMsg ) { console.log( 'ERROR in JobAidHelper.handleMsgAction WFARunEval action, ' + errMsg ); }
+	}
 
 	return actionJson;
 };
