@@ -92,7 +92,7 @@ JobAidHelper.msgHandle = function (data)
 		if ( data.action ) 
 		{
 			if ( Util.isTypeObject( data.action ) ) returnActions.push( JobAidHelper.handleMsgAction( data.action ) );
-			else if ( Util.isTypeString( action ) ) JobAidHelper.handleMsgActionOld( data );
+			else if ( Util.isTypeString( data.action ) ) JobAidHelper.handleMsgActionOld( data );
 		}
 
 		// If there is any action result to return, send as msg to jobAid iFrame
