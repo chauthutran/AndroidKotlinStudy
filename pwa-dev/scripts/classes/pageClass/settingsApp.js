@@ -254,7 +254,7 @@ function settingsApp( cwsRender )
 
         //$( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
 
-        $( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + AppInfoLSManager.getLangLastDateTime() );
+        $( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + PersisDataLSManager.getLangLastDateTime() );
 
         $( '#settingsInfo_DivLangSelect' ).show();
     }

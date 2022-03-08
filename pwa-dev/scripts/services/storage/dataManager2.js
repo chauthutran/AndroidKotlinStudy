@@ -5,10 +5,11 @@
 function DataManager2() {}
 
 DataManager2.StorageName_session = "session";
-// DataManager2.StorageName_langTerms = "langTerms";
-DataManager2.StorageName_clientList = "clientList";
 DataManager2.StorageName_appInfo = "appInfo";
+DataManager2.StorageName_persisData = "persisData";
+
 DataManager2.StorageName_loginResp = "loginResp";
+DataManager2.StorageName_clientList = "clientList";
 
 
 DataManager2.dbStorageType_localStorage = "localStorage";
@@ -335,7 +336,8 @@ DataManager2.saveData_LS_Str = function( key, strData )
 
 DataManager2.deleteAllStorageData = function( callBack ) 
 {
-	LocalStgMng.clear();
+	//LocalStgMng.clear();
+	LocalStgMng.deleteData( DataManager2.StorageName_appInfo );
 	
 	StorageMng.clear( StorageMng.StorageType_IndexedDB, callBack );
 };
@@ -487,23 +489,3 @@ DataManager2.initialiseStorageEstimates = function()
 		})
 	}
 }
-
-/*
-DataManager2.getStorageSizes = function( callBack )
-{
-	var arrItems = [];
-
-	arrItems.push( { name: 'indexedDB', data: DataManager2.indexedDBStorage } );
-	arrItems.push( { name: 'localStorage', data: Util2.getLocalStorageSizes() } );
-	arrItems.push( { name: 'cacheStorage', data: cacheManager.cacheStorage } );
-
-	if ( callBack )
-	{
-		callBack( arrItems )
-	}
-	else
-	{
-		return arrItems;
-	}
-
-}*/

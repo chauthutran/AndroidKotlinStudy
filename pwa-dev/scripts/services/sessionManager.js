@@ -289,7 +289,7 @@ SessionManager.clearWSBlockFormsJson = function()
 		//,lastUpdated: dtmNow // Last offline login? <-- do we need this?
 //		,pin: Util.encrypt( password, 4 ) // Used on Offline Login password check
 //		,theme: 'blue' 
-		//,language: AppInfoLSManager.getLangCode() // Not Used - Instead, saved in AppInfo.
+		//,language: PersisDataLSManager.getLangCode() // Not Used - Instead, saved in AppInfo.
 //	};
 
 //	LocalStgMng.saveJsonData( userName, newSaveObj );

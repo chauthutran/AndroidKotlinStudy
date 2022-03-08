@@ -36,7 +36,7 @@ TranslationManager.getLangCode = function()
 {
 	if ( !TranslationManager.currentLangcode ) 
 	{
-		TranslationManager.currentLangcode = AppInfoLSManager.getLangCode();
+		TranslationManager.currentLangcode = PersisDataLSManager.getLangCode();
 	}
 
 	return TranslationManager.currentLangcode;
@@ -50,7 +50,7 @@ TranslationManager.setLangCode = function( langCode )
 	{
 		TranslationManager.currentLangcode = langCode;
 
-		AppInfoLSManager.setLangCode( langCode );	
+		PersisDataLSManager.setLangCode( langCode );	
 	}
 };
 
@@ -101,7 +101,7 @@ TranslationManager.loadLangTerms_NSetUpData = function( forceDownload, returnFun
 TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 {
 	// If exists in local storage, load it, Otherwise, retrieve it
-	var allLangTerms_stored = AppInfoLSManager.getLangTerms();
+	var allLangTerms_stored = PersisDataLSManager.getLangTerms();
 	
 	if ( allLangTerms_stored && !forceDownload )
 	{
@@ -114,11 +114,11 @@ TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 		TranslationManager.downloadLangTerms( function( allLangTerms_downloaded )
 		{
 			$( "#imgSettingLangTermRotate" ).removeClass( "rot_l_anim" );
-			AppInfoLSManager.setLangLastDateTime( new Date() );
+			PersisDataLSManager.setLangLastDateTime( new Date() );
 
-			$( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + AppInfoLSManager.getLangLastDateTime() );
+			$( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + PersisDataLSManager.getLangLastDateTime() );
 
-			if ( allLangTerms_downloaded ) AppInfoLSManager.updateLangTerms( allLangTerms_downloaded );
+			if ( allLangTerms_downloaded ) PersisDataLSManager.updateLangTerms( allLangTerms_downloaded );
 
 
 			// CHECK:
