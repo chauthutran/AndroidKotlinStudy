@@ -254,7 +254,7 @@ function settingsApp( cwsRender )
 
         //$( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
 
-        $( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + AppInfoLSManager.getLangLastDateTime() );
+        $( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + PersisDataLSManager.getLangLastDateTime() );
 
         $( '#settingsInfo_DivLangSelect' ).show();
     }
@@ -438,9 +438,16 @@ function settingsApp( cwsRender )
 
             if ( reply === true )
             {
+                // If jobAidFolder is empty, populate default data.
+                try
+                {
+                    var folderNames = AppInfoLSManager.getJobAidFolderNames();
+                    if ( !folderNames ) AppInfoLSManager.setJobAidFolderNames( '{ "react1": "j1_v01" }' );    
+                }
+                catch ( errMsg ) { console.log( 'ERROR in jobAidFolderDefault populate, ' + errMsg ); }
+                
+                // Run the retrieval of files and put it in runTimeCache
                 JobAidHelper.runTimeCache_JobAid( jobAidFilingBtnTag.parent() );
-                //function() { MsgManager.msgAreaShow( 'Job Aid Filing Success.  Please reload or Logout and LogIn the app to be affective.' );
-                    // AppUtil.appReloadWtMsg( 'Job Aid Filing Success.  Reloading App in process.' );
             }
         });      
 
@@ -449,6 +456,44 @@ function settingsApp( cwsRender )
         {
             FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
             {
+                divMainContentTag.css( 'height', '70%' );
+
+                // Clear previous div folders <-- Later, make this permament?
+                divMainContentTag.parent().find( 'div.divProjFolderJson' ).remove();
+
+
+                var divProjFolderJsonTag = $( '<div class="divProjFolderJson" style="margin-top: 5px;"></div>' );
+
+                var pfJsonInputTag = $( '<input class="pfJsonInput" style="width:50%; border: solid 1px #ccc; font-size: 0.75rem;">' );
+                var pfJsonBtnTag = $( '<button class="pfJsonBtn" style="margin-left: 5px;">Save</button>' );
+
+                var folderNames = AppInfoLSManager.getJobAidFolderNames();
+                if ( folderNames ) pfJsonInputTag.val( folderNames );
+
+                divProjFolderJsonTag.append( pfJsonInputTag );
+                divProjFolderJsonTag.append( pfJsonBtnTag );
+
+                divProjFolderJsonTag.insertAfter( divMainContentTag );
+
+                pfJsonBtnTag.click( function() {
+                    try {
+                        var inputStr = pfJsonInputTag.val();
+                        var inputJson = JSON.parse( inputStr ); // Just use this for checking proper json format.
+
+                        AppInfoLSManager.setJobAidFolderNames( inputStr );                        
+
+                        alert( 'Set jobAid folder names.' );
+                    } 
+                    catch ( errMsg ) 
+                    {
+                        alert( 'Failed to parse or save the json' ); 
+                        console.log( 'ERROR in JobFile ProjFolderJson, ' + errMsg ); 
+                    }
+
+                    // Store the json (if proper json) in local storage..                    
+                });
+
+
                 //caches.keys().then( function( keyList ) 
                 caches.open( 'jobTest2' ).then( cache => 
                 { 

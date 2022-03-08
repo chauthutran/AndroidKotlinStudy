@@ -60,6 +60,7 @@ App.run = function ()
 	// Instantiate Classes
 	SessionManager.cwsRenderObj = new cwsRender();  // Global Reference to cwsRenderObj..
 
+	PersisDataLSManager.initialDataLoad_LocalStorage();
 	AppInfoLSManager.initialDataLoad_LocalStorage();
 
 	App.App_UI_startUp_loading(); // << should we move this into cwsRender?
@@ -299,8 +300,8 @@ App.checkDeviceMinSpec = function( info )
 
 // ===========================
 // [JOB_AID]    
-window.addEventListener('message', function (event) {
-	if (event.data.from === 'jobAidIFrame') JobAidHelper.msgHandle(event.data);
+window.addEventListener('message', function ( event ) {
+	if ( event.data.from === 'jobAidIFrame' ) JobAidHelper.msgHandle( event.data );
 });
 
 // ======================================

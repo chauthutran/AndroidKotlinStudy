@@ -86,27 +86,22 @@ ActivityUtil.checkNSet_ActivityDates = function( payload )
 				// If 'captureLoc' exists, set 'captureUTC' from it.
 				// If 'captureLoc' not exists, but 'captureUTC' exists, create captureLoc from it.
 				// If above 2 does not exists, create both new with current dateTime. 
-				if ( date.capturedLoc ) 
-				{
-					date.capturedUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.capturedLoc ), 'noZ' );
-				}
-				else if ( date.capturedUTC ) 
+				if ( date.capturedLoc && !date.capturedUTC ) date.capturedUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.capturedLoc ), 'noZ' );
+				else if ( date.capturedUTC && !date.capturedLoc ) 
 				{
 					var localDateTime = UtilDate.dateUTCToLocal( date.capturedUTC );
 					if ( localDateTime ) date.capturedLoc = UtilDate.formatDateTime( localDateTime );
 				}
-				else
+
+				// NEW: Do not create 'capturedLoc' is scheduledLoc/UTC exists. <-- scheduled vs captured activity.
+				if ( date.scheduledLoc && !date.scheduledUTC ) date.scheduledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduledLoc ), 'noZ' );
+				if ( date.scheduleCancelledLoc && !date.scheduleCancelledUTC ) date.scheduleCancelledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduleCancelledLoc ), 'noZ' );
+
+				// If none of above date exists, create 'capturedLoc' - just in case..
+				if ( !date.capturedLoc && !date.scheduledLoc && !date.scheduleCancelledLoc )
 				{
-					// NEW: Do not create 'capturedLoc' is scheduledLoc/UTC exists. <-- scheduled vs captured activity.
-					if ( date.scheduledLoc )
-					{
-						if ( !date.scheduledUTC ) date.scheduledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduledLoc ), 'noZ' );
-					}
-					else
-					{
-						date.capturedLoc = UtilDate.formatDate( new Date() ); 
-						date.capturedUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.capturedLoc ), 'noZ' );	
-					}
+					date.capturedLoc = UtilDate.formatDate( new Date() ); 
+					date.capturedUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.capturedLoc ), 'noZ' );
 				}
 			}
 		}	

@@ -2333,8 +2333,9 @@ textarea {
   display: grid;
   width: 100%;
       grid-template-areas: "card__support_visuals card__content card__cta";
-  -ms-grid-columns: 56px auto 90px;
-      grid-template-columns: 56px auto 90px;
+  -ms-grid-columns: 56px auto fit-content(130px);
+/*  grid-template-columns: 56px auto 90px; */
+  grid-template-columns: 56px auto fit-content(130px);
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -2380,6 +2381,7 @@ textarea {
   -ms-grid-row: 1;
   -ms-grid-column: 3;
   grid-area: card__cta;
+  text-align: right;
 }
 
 @media (max-width: 380px) {
@@ -2395,7 +2397,8 @@ textarea {
 }
 
 .list .card .card__container .card__cta .card__cta_one {
-  float: left;
+  /*float: left;*/
+  display: inline-block;
   width: 40px;
 }
 
@@ -2406,10 +2409,14 @@ textarea {
 }
 
 .list .card .card__container .card__cta .card__cta_two {
-  float: right;
+  /*float: right;*/
   width: 36px;
   height: 36px;
   margin-right: 4px;
+
+  display: inline-block;
+  vertical-align: text-bottom;
+  text-align: center;
 }
 
 .snackbar {
@@ -3313,8 +3320,8 @@ textarea {
   display: grid;
   width: 100%;
       grid-template-areas: "card__support_visuals card__content card__cta";
-  -ms-grid-columns: 56px auto 90px;
-      grid-template-columns: 56px auto 90px;
+  -ms-grid-columns: 56px auto fit-content(130px);
+      grid-template-columns: 56px auto fit-content(130px);
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -3354,6 +3361,7 @@ textarea {
   -ms-grid-row: 1;
   -ms-grid-column: 3;
   grid-area: card__cta;
+  text-align: right;
 }
 
 @media (max-width: 380px) {
@@ -3369,8 +3377,9 @@ textarea {
 }
 
 .wapper_card .card .card__container .card__cta .card__cta_one {
-  float: left;
+  /*float: left;*/
   width: 40px;
+  display: inline-block;
 }
 
 @media (max-width: 380px) {
@@ -3380,10 +3389,14 @@ textarea {
 }
 
 .wapper_card .card .card__container .card__cta .card__cta_two {
-  float: right;
+  /*float: right;*/
   width: 36px;
   height: 36px;
   margin-right: 4px;
+
+  display: inline-block;
+  vertical-align: text-bottom;
+  text-align: center;
 }
 
 .wapper_card .tab_fs {

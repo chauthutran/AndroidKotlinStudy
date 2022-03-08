@@ -236,7 +236,7 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
 
     
         // Once the viewFiltered List is decided and sorted, reRender it 
-        me.activityListObj.reRenderWithList( me.viewFilteredList, me.groupByData );  // there is 'callBack' param..  
+        me.activityListObj.reRenderWithList( me.viewFilteredList, me.groupByData, me.viewDef_Selected );  // there is 'callBack' param..  
 
         
         TranslationManager.translatePage();
@@ -262,8 +262,8 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
                 
                 try {		
                     var returnVal = false;
-                    inputVal = Util.getEvalStr( dataFilterEval );  // Handle array into string joining
-                    if ( inputVal ) returnVal = eval( inputVal );
+                    // inputVal = Util.getEvalStr( dataFilterEval );  // Handle array into string joining
+                    if ( dataFilterEval ) returnVal = eval( dataFilterEval );
                     if ( returnVal === true ) filteredData.push( activity );
                 } catch( errMsg ) { console.log( 'ActivityListView.viewFilterData, ' + errMsg ); }
             });                

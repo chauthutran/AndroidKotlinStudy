@@ -10,7 +10,7 @@
 //          4. saveCurrent_ClientsStore - Save client data to IDB
 //          5. Client Index Add/Remove Related Methods
 //          6. Merge Related Methods - After SyncUp/Down client/activities data merge
-//          7. Othe Methods - Activity Add ProcessingInfo, createActivityPayloadClient 
+//          7. Othe Methods - Activity Add ProcessingInfo, createClient_forActivityPayload 
 //
 // -------------------------------------------------
 
@@ -98,6 +98,9 @@ ClientDataManager.insertClients = function( clientList ) //, bRemoveActivityTemp
 // Insert client to app clientList with Index
 ClientDataManager.insertClient = function( client )
 {
+    // Client Activity Reorder - #3 - whenever client is added (from download, etc), make sure activities are sorted properly.
+    if ( !ConfigManager.activitySorting_EvalRun( "insertClient" ) ) Util.evalSort( 'date.createdLoc', client.activities, 'asc' ); 
+
     ClientDataManager.getClientList().unshift( client ); // Add to top of list...
 
     ClientDataManager.addClientIndex( client );
@@ -408,7 +411,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
 }; 
 
 
-// ----- Othe Methods - Activity Add ProcessingInfo, createActivityPayloadClient ----------------
+// ----- Othe Methods - Activity Add ProcessingInfo, createClient_forActivityPayload ----------------
 
 // Add processing info if does not exists - with 'downloaded detail'
 ClientDataManager.clientsActivities_AddProcessingInfo = function( newClients, processingInfo )
@@ -427,7 +430,7 @@ ClientDataManager.clientsActivities_AddProcessingInfo = function( newClients, pr
 };
 
 
-ClientDataManager.createActivityPayloadClient = function( activity )
+ClientDataManager.createClient_forActivityPayload = function( activity )
 {
     // Call it from template?
     var acitivityPayloadClient = Util.cloneJson( ClientDataManager.template_Client );

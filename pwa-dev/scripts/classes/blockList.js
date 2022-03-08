@@ -452,7 +452,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
         listTableTbodyTag.append( divActivityCardTag );     
 
-        return new ActivityCard( activityJson.id );
+        return new ActivityCard( activityJson.id, divActivityCardTag );
     };
 
 

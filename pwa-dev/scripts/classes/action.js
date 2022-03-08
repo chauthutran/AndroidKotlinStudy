@@ -468,7 +468,7 @@ function Action( cwsRenderObj, blockObj )
 								if ( clickActionJson.underClient && Util.isTypeObject( clickActionJson.underClient ) && clickActionJson.underClient.clientId )
 								{
 									try { clickActionJson.clientId = eval( Util.getEvalStr( clickActionJson.underClient.clientId ) ); }
-									catch( errMsg ) { console.log( 'Action.underClient.clientId eval, ' + errMsg ); }
+									catch( errMsg ) { console.log( 'ERROR in Action.underClient.clientId eval, ' + errMsg ); }
 								}
 								// NEW - AUTO 'underClient' (3rd OR case) <-- For any activity under the client detail, add to the client..
 								// Would this cause issue with relationship or client edit?  Or be above case?
@@ -530,6 +530,43 @@ function Action( cwsRenderObj, blockObj )
 							}
 						});								
 					}
+					else if ( clickActionJson.actionType === "editActivitiesInClient" )
+					{
+						// INFO.client is assumed to be populated.
+						if ( !INFO.client ) MsgManager.msgAreaShow( 'editActivitiesInClient needs INFO.client!', 'ERROR' );
+						else
+						{
+							var actionUrl = me.getActionUrl_Adjusted( clickActionJson );		
+
+							// #1. Generete payload with 'capture/search' structure - by Template & form fields values.
+							var formsJsonActivityPayload = ActivityUtil.generateActivityPayload_byFormsJson( clickActionJson, formDivSecTag );
+							// Above sets INFO.payload.formsJson in 'PayloadTemplateHelper.generatePayload/.getINFO_wtPayloadSet
+	
+							var activityList = [];
+	
+							if ( clickActionJson.editActivityListEval )
+							{
+								try { activityList = eval( Util.getEvalStr( clickActionJson.editActivityListEval ) ); }
+								catch( errMsg ) { console.log( 'ERROR in Action editActivityListEval, ' + errMsg ); }
+							}
+	
+							if ( Util.isTypeArray( activityList ) && activityList.length > 0 )
+							{
+								activityList.forEach( act => {
+									me.makeEditMode_Activity( act, formsJsonActivityPayload, actionUrl, clickActionJson );
+									// Refresh the activity Card here?
+									ActivityCard.reRenderAllById( act.id );
+								});
+								
+								ClientCard.reRenderClientCardsById( INFO.client._id );
+	
+								// Save the activity..  & do we need to refresh the card?
+								ClientDataManager.saveCurrent_ClientsStore();  
+							}
+						}
+
+						afterActionFunc( true );
+					}
 					else
 					{
 						console.log( clickActionJson );
@@ -545,6 +582,57 @@ function Action( cwsRenderObj, blockObj )
 		}
 	};
 
+	// ----------------------------------------------
+	// ---- Make Activities as Edit Mode -----
+
+	me.makeEditMode_Activity = function( activity, formsJsonActivityPayload, actionUrl, clickActionJson )
+	{
+		var actionNote = 'Schedule Cancelled.';
+		var dtNow = new Date();
+
+		var client = ClientDataManager.getClientByActivityId( activity.id );
+		var payload = formsJsonActivityPayload.payload;
+		var capVal = payload.captureValues;
+
+
+		var statusSynced = ActivityDataManager.isActivityStatusSynced( activity );
+		if ( activity.editMode_existsOnServer || statusSynced ) activity.editMode_existsOnServer = true;  // Only applicable on mongo version...
+
+		if ( activity.editMode_existsOnServer )
+		{
+			activity.processing.url = actionUrl;
+			activity.processing.searchValues = { '_id': client._id }
+		
+			activity.ws_action = 'scheduleConvert'; //'scheduleCancel';  <-- no diff between these 2.  
+		}
+		// The locally created, not synced one (schedule activity) - Simply change the values??
+		// Moved at the bottom..
+
+
+		// Common Data Set
+
+		// Date
+		Util.copyProperties( capVal.date, activity.date );
+		activity.date.updatedLoc = Util.formatDate( dtNow ); // Or put this on config?
+		activity.date.updatedUTC = Util.formatDate( dtNow.toUTCString() );
+		// 'createdLoc/UTC' should use old one?  new one?
+
+		
+		// Other data
+		activity.transactions = capVal.transactions;
+		activity.type = capVal.type;
+		activity.activeUser = capVal.activeUser;
+		activity.creditedUsers = capVal.creditedUsers;		
+
+		if ( activity.formData && activity.formData.sch_favId ) {
+			// delete activity.formData.sch_favId;
+			delete activity.formData;
+		}
+
+		// Status & History
+		var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_queued, 200, actionNote );
+		ActivityDataManager.insertToProcessing( activity, processingInfo );
+	};
 
 	// ----------------------------------------------
 	// ---- Duplicate Voucher Check -----

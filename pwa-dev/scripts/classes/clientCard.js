@@ -1,4 +1,3 @@
-
 // -------------------------------------------
 // -- ClientCard Class/Methods
 //      - Mainly used for syncManager run one client item sync
@@ -44,10 +43,12 @@ function ClientCard( clientId, options )
                 var clientContentTag = clientCardDivTag.find( '.clientContent' );
                 var clientRerenderTag = clientCardDivTag.find( '.clientRerender' );
                 var clientPhoneCallTag = clientCardDivTag.find( '.clientPhone' );
+                var favIconTag = clientCardDivTag.find( '.favIcon' );
 
                 //var clientEditPayloadBtnTag = clientCardDivTag.find( '#editPayloadBtn' );
 
-                var lastActivityJson = me.getLastActivity( clientJson );
+                // displaySettings should also use below 'ClientCard.getLastActivity()' rather than getting index manually..
+                var lastActivityJson = ClientCard.getLastActivity( clientJson );
 
 
                 // 1. clientType (Icon) display (LEFT SIDE)
@@ -62,7 +63,13 @@ function ClientCard( clientId, options )
 
                 // 3. 'SyncUp' Button Related
                 // click event - for clientSubmit.., icon/text populate..
-                if ( lastActivityJson ) me.setupSyncBtn( clientCardDivTag, lastActivityJson.id, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
+                if ( lastActivityJson ) 
+                {
+                    me.setupSyncBtn( clientCardDivTag, lastActivityJson.id, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
+
+                    // 4. favIcon of the last activity - if scheduled activity case.
+                    ActivityCard.setupFavIconBtn( favIconTag, lastActivityJson.id, { clientCardId: me.clientId, activityId: lastActivityJson.id } );
+                }
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( clientPhoneCallTag, clientJson );
@@ -114,27 +121,6 @@ function ClientCard( clientId, options )
     };
 
     
-    me.getLastActivity = function( clientJson )
-    {
-        var lastActivityJson;
-
-        try
-        {
-            if ( clientJson.activities.length > 0 )
-            {
-                // TODO: Need to sort by activity date?
-                lastActivityJson = clientJson.activities[ clientJson.activities.length - 1 ];
-            }
-        }
-        catch( errMsg )
-        {
-            console.log( 'ERROR in ClientCard.getLastActivity(), errMsg: ' + errMsg );
-        }
-
-        return lastActivityJson;
-    };
-
-
     // ---------------------------------------
 
     me.createClientCardTag = function( groupAttrVal )
@@ -240,7 +226,7 @@ function ClientCard( clientId, options )
 
     me.setupPhoneCallBtn = function( divPhoneCallTag, clientJson )
     {        
-        divPhoneCallTag.empty();
+        divPhoneCallTag.empty().hide();
 
         if ( clientJson.clientDetails && clientJson.clientDetails.phoneNumber )
         {
@@ -355,6 +341,30 @@ ClientCard.reRenderClientCardsById = function( clientId, option )
     }
 };
 
+
+ClientCard.getLastActivity = function( clientJson )
+{
+    var lastActivityJson;
+
+    try
+    {
+        if ( clientJson.activities.length > 0 )
+        {
+            // TODO: Need to sort by activity date?
+            // lastActivityJson = clientJson.activities[ clientJson.activities.length - 1 ];
+            // lastActivityJson = ActivityDataManager.getLatestUpdatedActivity( clientJson.activities );
+            lastActivityJson = ActivityDataManager.getLastActivity( clientJson.activities );
+        }
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in ClientCard.getLastActivity(), errMsg: ' + errMsg );
+    }
+
+    return lastActivityJson;
+};
+
+
 ClientCard.cardDivTag = `<div class="client card">
 
     <div class="clientContainer card__container">
@@ -365,7 +375,8 @@ ClientCard.cardDivTag = `<div class="client card">
 
         <card__cta class="activityStatus card__cta">
             <div class="activityStatusText card__cta_status"></div>
-            <div class="clientPhone card__cta_one" style="cursor: pointer;"></div>
+            <div class="favIcon card__cta_one" style="cursor: pointer; display:none;"></div>
+            <div class="clientPhone card__cta_one" style="cursor: pointer; display:none;"></div>
             <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
         </card__cta>
 

@@ -164,14 +164,16 @@ SessionManager.getLoginCountryOuCode = function()
 	return ouCode;
 };
 
+SessionManager.getLoginCountryOuCode_NoT = function()
+{
+	return SessionManager.getLoginCountryOuCode().replace( 'T_', '' );
+};
+
 SessionManager.checkLoginCountryOuCode = function( ouCode )
 {
-	// CountryOuCode <-- 'TZ', 'T_TZ'  <-- Create method for country ou comparison..
-	var loginCountryOuCode = SessionManager.getLoginCountryOuCode();
-
 	// Disregard 'T_' in comparison
 	ouCode = ouCode.replace( 'T_', '' );
-	loginCountryOuCode = loginCountryOuCode.replace( 'T_', '' );
+	loginCountryOuCode = SessionManager.getLoginCountryOuCode_NoT();
 
 	return ( ouCode === loginCountryOuCode );
 };
@@ -287,7 +289,7 @@ SessionManager.clearWSBlockFormsJson = function()
 		//,lastUpdated: dtmNow // Last offline login? <-- do we need this?
 //		,pin: Util.encrypt( password, 4 ) // Used on Offline Login password check
 //		,theme: 'blue' 
-		//,language: AppInfoLSManager.getLangCode() // Not Used - Instead, saved in AppInfo.
+		//,language: PersisDataLSManager.getLangCode() // Not Used - Instead, saved in AppInfo.
 //	};
 
 //	LocalStgMng.saveJsonData( userName, newSaveObj );

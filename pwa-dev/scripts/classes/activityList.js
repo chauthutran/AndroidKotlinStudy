@@ -13,6 +13,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
     me.activityList = [];
     me.viewGroupByData; // set from 'activityListView'
+    me.viewDef_Selected;
 
     me.hasView = false;  
     me.activityListViewObj;
@@ -88,7 +89,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
 
     // Used by viewFilter.. - 
-    me.reRenderWithList = function( newActivityList, groupByData, callBack )
+    me.reRenderWithList = function( newActivityList, groupByData, viewDef_Selected )
     {
         if ( me.listTableTbodyTag )
         {
@@ -97,6 +98,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
             me.activityList = newActivityList;  // NOTE: We expect this list already 'cloned'...
             me.viewGroupByData = groupByData;
+            me.viewDef_Selected = viewDef_Selected;
 
             me.clearExistingList( me.listTableTbodyTag ); // remove li.activityItemCard..
             me.pagingDataReset( me.pagingData );
@@ -106,7 +108,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
             //me.cwsRenderObj.pulsatingProgress.show();
 
             // This removes the top view - if view exists..
-            me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
+            me.populateActivityCardList( me.activityList, me.viewGroupByData, me.viewDef_Selected, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
 
         }
         else
@@ -116,7 +118,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
     };
 
 
-    me.reRender = function( callBack )
+    me.reRender = function()
     {
         // When reRendering, if view exists, select 1st view to render the 1st view list.
         // If no view, list full data as they are.
@@ -125,7 +127,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
         {
             var newActivityList = Util.cloneJson( ActivityDataManager.getActivityList() );
 
-            me.reRenderWithList( newActivityList, me.viewGroupByData, callBack );    
+            me.reRenderWithList( newActivityList, me.viewGroupByData, me.viewDef_Selected );    
         }
     };
 
@@ -194,7 +196,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
         {
             me.pagingDataReset( me.pagingData );
 
-            me.populateActivityCardList( activityList, me.viewGroupByData, listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
+            me.populateActivityCardList( activityList, me.viewGroupByData, me.viewDef_Selected, listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
         }
     };
 
@@ -212,7 +214,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
     // Previously ==> me.renderBlockList_Content( blockTag, me.cwsRenderObj, me.blockObj );
     // Add paging here as well..
-    me.populateActivityCardList = function( activityList, viewGroupByData, listTableTbodyTag, scrollStartFunc, scrollEndFunc )
+    me.populateActivityCardList = function( activityList, viewGroupByData, viewDef_Selected, listTableTbodyTag, scrollStartFunc, scrollEndFunc )
     {
         if ( activityList.length === 0 ) 
         {
@@ -244,7 +246,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
                 {
                     var activityJson = activityList[i];
 
-                    var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag, viewGroupByData );
+                    var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag, viewGroupByData, viewDef_Selected );
 
                     activityCardObj.render();
                 }    
@@ -339,7 +341,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
         // me.cwsRenderObj.pulsatingProgress.show();
 
         // 2. check current paging, get next paging record data.. - populateActivityList has this in it.
-        me.populateActivityCardList( me.activityList, me.viewGroupByData, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
+        me.populateActivityCardList( me.activityList, me.viewGroupByData, me.viewDef_Selected, me.listTableTbodyTag, me.scrollStartFunc ); //, me.scrollEndFunc );
 
     };
 
@@ -368,7 +370,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
     // ------------------------------------
     // --- Create Activity Card Related -------------
 
-    me.createActivityCard = function( activityJson, listTableTbodyTag, viewGroupByData )
+    me.createActivityCard = function( activityJson, listTableTbodyTag, viewGroupByData, viewDef_Selected )
     {
         var divActivityCardTag = $( ActivityCard.cardDivTag );
 
@@ -380,7 +382,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
 
         listTableTbodyTag.append( divActivityCardTag );     
 
-        return new ActivityCard( activityJson.id );
+        return new ActivityCard( activityJson.id, divActivityCardTag, { viewDef_Selected: viewDef_Selected, fromActivityList: true } );
     };
 
 

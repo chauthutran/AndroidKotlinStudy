@@ -1,12 +1,11 @@
 // -------------------------------------------
 // -- ClientCardDetail Class/Methods
 
-function ClientCardDetail( clientId, isRestore )
+function ClientCardDetail( clientId )
 {
 	var me = this;
 
     me.clientId = clientId;
-    me.isRestore = isRestore;
     me.actionObj;
     me.cardSheetFullTag;
 
@@ -45,7 +44,7 @@ function ClientCardDetail( clientId, isRestore )
 
     // ----------------------------------
 
-    me.render = function()
+    me.render = function( option )
     {
         INFO.client = ClientDataManager.getClientById( me.clientId ); // to be used as 'eval' reference in other places.. // Or INFO.getINFOJson();
 
@@ -57,14 +56,14 @@ function ClientCardDetail( clientId, isRestore )
         clientCard.render();
 
         // set tabs contents
-        me.setFullPreviewTabContent( me.clientId, me.cardSheetFullTag );
+        me.setFullPreviewTabContent( me.clientId, me.cardSheetFullTag, option );
                 
         TranslationManager.translatePage();    
     };
 
     // ----------------------------------------------------
 
-    me.setFullPreviewTabContent = function( clientId, sheetFullTag )
+    me.setFullPreviewTabContent = function( clientId, sheetFullTag, option )
     {
 
         // #1. Client Details 
@@ -89,25 +88,37 @@ function ClientCardDetail( clientId, isRestore )
             var activityListDivTag = activityTabBodyDivTag.find( '.activityList' );
 
             var clientJson = ClientDataManager.getClientById( clientId ); // for changed client data?
-
             if ( clientJson ) me.populateActivityCardList( clientJson.activities, activityListDivTag );
 
-
+            // Activity Fav icon s Setup for each activity cards..
             var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag
             , { 'mainFavPreClick': function( blockTag, blockContianerTag ) 
             {
-                // Clear the list?
-                blockTag.html( '' ); //activityListBlockTag.html( '' );
-
+                // On fav icon click, perform these below 1st as pre-step.                
+                blockTag.html( '' );
                 // Get proper client into INFO.client - since other client could been loaded by clicks.
                 INFO.client = ClientDataManager.getClientById( me.clientId );
             }});
-
             var favListArr = favIconsObj.render();
 
             
             // Disable fav icon if not in favList <-- but, better to place this logic within the activityCard render?
             me.disableFavItems( activityListDivTag, favListArr );
+
+
+            // NEW: Activity favIcon auto click on start..
+            if ( option && option.openFav_ActId )
+            {
+                var activityCardTag = activityListDivTag.find( 'div.activity[itemid="' + option.openFav_ActId + '"]' );
+                var actFavIconTag = activityCardTag.find( 'div.favIcon[favId]' );
+
+                if ( actFavIconTag.length > 0 )
+                {
+                    actFavIconTag.click();
+                    console.log( 'ClientCardDetails, openFav_ActId attempted, ' + actFavIconTag.length );
+                    //option.openFav_ActId = undefined; // On 1st click attempt, remove the option..  Had issue, thus, disabled
+                }
+            }
         });
 
 
@@ -151,18 +162,25 @@ function ClientCardDetail( clientId, isRestore )
 
 
         // -----------------------------------------
-        // Default click 'Client'
-        var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
-        // But wants to not display the selection dropdown when size is mobile..        
-        defaultTab.attr( 'openingClick', 'Y' );
-        defaultTab.click();
-        setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );
+        // Click on one of the tab on start        
+        var openUp_tabRel = ( option && option.openTabRel ) ? option.openTabRel: 'tab_clientDetails';
+
+        if ( openUp_tabRel )
+        {
+            // Default click 'Client'
+            var defaultTab = sheetFullTag.find( '.tab_fs li[rel=' + openUp_tabRel + ']' );
+            // var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
+            // But wants to not display the selection dropdown when size is mobile..        
+            defaultTab.attr( 'openingClick', 'Y' );
+            defaultTab.click();
+            setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );
+        }
     };
 
 
     me.disableFavItems = function( activityListDivTag, favListArr )
     {
-        activityListDivTag.find( 'div.activityPhone[favId]' ).each( function() {
+        activityListDivTag.find( 'div.favIcon[favId]' ).each( function() {
             var favItemTag = $( this );
             var favId = favItemTag.attr( 'favId' );
 
@@ -315,10 +333,14 @@ function ClientCardDetail( clientId, isRestore )
         if ( activityList.length === 0 ) { }
         else
         {
-            // Order DESC the activityList by 'capturedLoc', but also already done on 'ActivityDataManager.insertActivitiesToClient()'
             var actList_sort = Util.cloneJson( activityList );
-            Util.evalSort( 'date.capturedLoc', actList_sort, 'desc' );
-            Util.evalSort( 'date.capturedLoc', actList_sort, 'asc' );
+
+            // Client Activity Reorder - #2
+            if ( !ConfigManager.activitySorting_EvalRun( "populateActivityCardList" ) )
+            {
+                Util.evalSort( 'date.capturedLoc', actList_sort, 'desc' );
+                Util.evalSort( 'date.capturedLoc', actList_sort, 'asc' );
+            }
 
             for( var i = actList_sort.length - 1; i >= 0; i-- )
             {
@@ -326,7 +348,7 @@ function ClientCardDetail( clientId, isRestore )
 
                 try {
                     var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
-                    activityCardObj.render();    
+                    activityCardObj.render();
                 }
                 catch( errMsg ) { console.log( 'ERROR in ClientCardDetail.populateActivityCardList, ' + errMsg ); }
             }
@@ -344,7 +366,7 @@ function ClientCardDetail( clientId, isRestore )
 
         listTableTbodyTag.append( divActivityCardTag );
 
-        return new ActivityCard( activityJson.id, { 'displaySetting': 'clientActivity' } );
+        return new ActivityCard( activityJson.id, divActivityCardTag, { 'displaySetting': 'clientActivity' } );
     };
 
 

@@ -298,7 +298,8 @@ ItemCardTemplate.cardDivTag = `<div class="item card">
 
         <card__cta class="itemStatus card__cta">
             <div class="itemStatusText card__cta_status"></div>
-            <div class="itemPhone card__cta_one" style="cursor: pointer;"></div>
+            <div class="favIcon card__cta_one" style="cursor: pointer; display:none;"></div>
+            <div class="itemPhone card__cta_one" style="cursor: pointer; display:none;"></div>
             <div class="itemStatusIcon card__cta_two" style="cursor:pointer;"></div>
         </card__cta>
 

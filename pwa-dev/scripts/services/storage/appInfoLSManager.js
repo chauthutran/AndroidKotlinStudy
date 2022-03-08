@@ -15,18 +15,13 @@ AppInfoLSManager.KEY_BLACKLISTED = "blackListed";
 AppInfoLSManager.KEY_LAST_ONLINELOGIN_DT = "lastOnlineLoginDt"; 
 AppInfoLSManager.KEY_NETWORKSYNC = "networkSync";
 AppInfoLSManager.KEY_LOCAL_STAGENAME = "localStageName"; 
+AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES = "jobAidFolderNames";
 
 // Old and obsolete keys
 AppInfoLSManager.KEY_USERINFO = "userInfo";  // It actually is 'lastLoginData'
 AppInfoLSManager.KEY_LOGINOUT = "logInOut"; 
 AppInfoLSManager.KEY_SYNC = "sync"; 
 AppInfoLSManager.KEY_DEBUG = "debug"; 
-
-
-AppInfoLSManager.KEY_TRANSLATION = "translation"; 
-AppInfoLSManager.KEY_LANG_TERMS = "langTerms"; 
-AppInfoLSManager.KEY_LANG_CODE = "langCode"; 
-AppInfoLSManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
 
 // ---------------------------
 
@@ -149,9 +144,6 @@ AppInfoLSManager.migrateData = function( appInfo_LS )
             }
         }
     }
-
-    // If 'translation' not exists, create it.
-    if ( !appInfo_LS[ AppInfoLSManager.KEY_TRANSLATION ] ) appInfo_LS[ AppInfoLSManager.KEY_TRANSLATION ] = {};
 
     // Save the data..
     AppInfoLSManager.saveAppInfoData( appInfo_LS );
@@ -321,6 +313,18 @@ AppInfoLSManager.setBlackListed = function( blackListed )
     AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BLACKLISTED, blackListed );
 };
 
+// ----------------------------------------------------
+
+// After success login, mark the userName in localStorage as last used username
+AppInfoLSManager.setJobAidFolderNames = function( namesJsonStr )
+{
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES, namesJsonStr );
+};
+
+AppInfoLSManager.getJobAidFolderNames = function()
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES );
+};
 
 // ------------------------------------------------------------------------------------  
 // ----------------  Login Current Keys Related..
@@ -408,67 +412,6 @@ AppInfoLSManager.getNetworkSync = function()
     }
 
     return networkSync;
-};
-
-// ------------------------------------------------------------------------------------  
-// ----------------  langTerms
-
-AppInfoLSManager.updateLangTerms = function( jsonData )
-{
-    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_TRANSLATION, AppInfoLSManager.KEY_LANG_TERMS, jsonData );
-};
-
-AppInfoLSManager.getLangTerms = function()
-{
-    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_TRANSLATION, AppInfoLSManager.KEY_LANG_TERMS );
-};	
-
-// ------------------
-
-// GETS USED WHEN UserInfo gets 1st created..
-AppInfoLSManager.getLangCode = function()
-{
-	var langCode = '';
-
-	try
-	{        
-        var langCode = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_TRANSLATION, AppInfoLSManager.KEY_LANG_CODE );
-             	        
-        if ( !langCode )
-        {
-            langCode = ( navigator.language ).toString().substring(0,2);
-
-            if ( langCode ) AppInfoLSManager.setLangCode( langCode );
-        }        
-	}
-	catch ( err )
-	{
-		console.customLog( 'Error in AppInfoLSManager.getLangCode: ' + err );
-	}
-
-	return langCode;
-};
-
-AppInfoLSManager.setLangCode = function( langCode )
-{
-    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_TRANSLATION, AppInfoLSManager.KEY_LANG_CODE, langCode );
-};
-
-// ------------------
-
-// TRAN TODO : the result is a string date, but "getSyncLastDownloadInfo" return a Date object.
-//             Should we result the same value for two methods, String date OR Date object ???
-AppInfoLSManager.getLangLastDateTime = function()
-{
-    var langLastDateTime = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_TRANSLATION, AppInfoLSManager.KEY_LANG_LASTTRYDT );
-    return ( langLastDateTime ) ? langLastDateTime : "";
-};
-
-
-AppInfoLSManager.setLangLastDateTime = function( dateObj )
-{
-    var langLastDateTimeStr = Util.formatDate( dateObj );
-    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_TRANSLATION, AppInfoLSManager.KEY_LANG_LASTTRYDT, langLastDateTimeStr );
 };
 
 // ---- Localhost Stage related..

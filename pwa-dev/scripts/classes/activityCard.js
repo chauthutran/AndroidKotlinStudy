@@ -6,14 +6,13 @@
 //          - There will be cases where activity items are processed (in sync)
 //              without being displayed on the app list.  
 //
-function ActivityCard( activityId, options )
+function ActivityCard( activityId, activityCardDivTag, options )
 {
 	var me = this;
 
     me.activityId = activityId;
     me.options = ( options ) ? options : {};
-
-    me.cardHighlightColor = '#fcffff'; // #fffff9
+    me.activityCardDivTag = activityCardDivTag;
 
 	// =============================================
 	// === Initialize Related ========================
@@ -24,7 +23,12 @@ function ActivityCard( activityId, options )
 
     me.render = function()
     {        
-        var activityCardDivTag = me.getActivityCardDivTag();
+        // #2. replace all me.getActivityCardDivTag()?  At least, check them out!!
+
+
+        // var activityCardDivTag = me.getActivityCardDivTag();
+
+        var activityCardDivTag = me.activityCardDivTag;
 
         // If tag has been created), perform render
         if ( activityCardDivTag.length > 0 )
@@ -38,6 +42,7 @@ function ActivityCard( activityId, options )
                 var activityTypeIconTag = activityCardDivTag.find( '.activityIcon' );
                 var activityContentTag = activityCardDivTag.find( '.activityContent' );
                 var activityRerenderTag = activityCardDivTag.find( '.activityRerender' );
+                var favIconTag = activityCardDivTag.find( '.favIcon' );
                 var activityPhoneCallTag = activityCardDivTag.find( '.activityPhone' );
 
                 // 1. activityType (Icon) display (LEFT SIDE)
@@ -53,6 +58,9 @@ function ActivityCard( activityId, options )
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
                 me.setupSyncBtn( activityCardDivTag, me.activityId, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
+
+                // 4. 'phoneNumber' action  button setup
+                ActivityCard.setupFavIconBtn( favIconTag, me.activityId, me.options );
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
@@ -119,68 +127,32 @@ function ActivityCard( activityId, options )
     {        
         var clientObj = ClientDataManager.getClientByActivityId( activityId );
 
-        divPhoneCallTag.empty();
-        //divPhoneCallTag.off( 'click' );
+        divPhoneCallTag.empty().hide();
 
-        // Override the icon if 'favId' exists..  <-- scheduled..
-        var activityJson = ActivityDataManager.getActivityById( activityId );
-        var activityStatus = ActivityDataManager.getActivityStatus( activityJson );
-
-        if ( activityJson.formData && activityJson.formData.sch_favId && SyncManagerNew.statusSynced( activityStatus ) )
+        if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
         {
-            // display favId instead.. + click event..            
-            var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.sch_favId );
+            var phoneNumber = Util.trim( clientObj.clientDetails.phoneNumber ); // should we define phoneNumber field in config? might change to something else in the future
 
-            // <-- get eval of fav Item as well
-
-            if ( favItemJson )
+            if ( phoneNumber && phoneNumber !== '+' )
             {
-                FavIcons.populateFavItemIcon( divPhoneCallTag, favItemJson );
-                divPhoneCallTag.show();
+                var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
 
-                var targetBlockTag = divPhoneCallTag.closest( '[tabButtonId=tab_clientActivities]' );
-                if ( targetBlockTag.length >= 1 ) 
-                {
-                    FavIcons.setFavItemClickEvent( divPhoneCallTag, favItemJson, targetBlockTag, targetBlockTag, function() {
-                        targetBlockTag.empty();
-                    }, function( renderedBlockId) 
+                cellphoneTag.click( function(e) {
+    
+                    e.stopPropagation();
+    
+                    if ( Util.isMobi() )
                     {
-                        if ( renderedBlockId )
-                        {
-                            // Mark the block with activityEdit and scheduleConvert..
-                            ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
-                        }
-                    } );
-                }
-            }
-        }
-        else       
-        {
-            if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
-            {
-                var phoneNumber = Util.trim( clientObj.clientDetails.phoneNumber ); // should we define phoneNumber field in config? might change to something else in the future
+                        window.location.href = `tel:${phoneNumber}`;
+                    }
+                    else
+                    {
+                        alert( phoneNumber );
+                    }
+                });
     
-                if ( phoneNumber && phoneNumber !== '+' )
-                {
-                    var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
-    
-                    cellphoneTag.click( function(e) {
-        
-                        e.stopPropagation();
-        
-                        if ( Util.isMobi() )
-                        {
-                            window.location.href = `tel:${phoneNumber}`;
-                        }
-                        else
-                        {
-                            alert( phoneNumber );
-                        }
-                    });
-        
-                    divPhoneCallTag.append( cellphoneTag );
-                    divPhoneCallTag.show();    
-                }
+                divPhoneCallTag.append( cellphoneTag );
+                divPhoneCallTag.show();
             }
         }
     };
@@ -216,8 +188,23 @@ function ActivityCard( activityId, options )
             {
                 displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
                 displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
-            }
 
+                var view = me.options.viewDef_Selected;
+                if ( view )
+                {
+                    var hasViewDisplayData = false;
+
+                    if ( view.displayBase ) {
+                        hasViewDisplayData = true;
+                        displayBase = view.displayBase;
+                    } 
+    
+                    if ( view.displaySettings ) {
+                        hasViewDisplayData = true;
+                        displaySettings = view.displaySettings;
+                    }
+                }
+            }
 
             InfoDataManager.setINFOdata( 'activity', activity );
             InfoDataManager.setINFOclientByActivity( activity );
@@ -230,7 +217,7 @@ function ActivityCard( activityId, options )
         }
     };
 
-    
+    /* - Replaced by Static Methods..
     me.reRenderActivityDiv = function()
     {
         // There are multiple places presenting same activityId info.
@@ -240,7 +227,9 @@ function ActivityCard( activityId, options )
         
         reRenderClickDivTags.click();
     }
-    
+    */
+
+
     // -------------------------------
     // --- Display Icon/Content related..
     
@@ -364,300 +353,6 @@ function ActivityCard( activityId, options )
     };
 
 
-    me.highlightActivityDiv = function( bHighlight )
-    {
-        // If the activityTag is found on the list, highlight it during SyncAll processing.
-        var activityDivTag = $( 'div.card[itemid="' + me.activityId + '"]' );
-
-        if ( activityDivTag.length > 0 )
-        {
-            if ( bHighlight ) activityDivTag.css( 'background-color', me.cardHighlightColor );
-            else activityDivTag.css( 'background-color', '' );
-        }
-    }
-
-    // -------------------------------
-
-
-    // Perform Submit Operation..
-    me.performSyncUp = function( afterDoneCall )
-    {
-        var activityJson_Orig;
-        var activityId = me.activityId;
-        var syncIconTag = ActivitySyncUtil.getSyncButtonDivTag( activityId );
-
-        try
-        {
-
-            // gAnalytics Event
-            GAnalytics.setEvent( 'SyncRun', activityId, 'activity', 1 );
-            //GAnalytics.setEvent = function(category, action, label, value = null) 
-
-            activityJson_Orig = ActivityDataManager.getActivityById( activityId );
-
-            if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
-            if ( !activityJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
-
-            var mockResponseJson = ConfigManager.getMockResponseJson( activityJson_Orig.processing.useMockResponse );
-
-
-            // NOTE: On 'afterDoneCall', 'reRenderActivityDiv()' gets used to reRender of activity.  
-            //  'displayActivitySyncStatus()' also has 'FormUtil.rotateTag()' in it.
-            //  Probably do not need to save data here.  All the error / success case probably are covered and saves data afterwards.
-            activityJson_Orig.processing.status = Constants.status_processing;
-            activityJson_Orig.processing.syncUpCount = Util.getNumber( activityJson_Orig.processing.syncUpCount ) + 1;
-
-            ActivitySyncUtil.displayActivitySyncStatus( activityId );
-
-            try
-            {
-                // Fake Test Response Json
-                if ( mockResponseJson )
-                {
-                    WsCallManager.mockRequestCall( mockResponseJson, undefined, function( success, responseJson )
-                    {
-                        me.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall );
-                    });
-                }
-                else
-                {
-                    var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
-
-                    // NOTE: We need to add app timeout, from 'request'... and throw error...
-                    WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, undefined, function( success, responseJson )
-                    {
-                        me.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall );
-                    });       
-                }
-            }
-            catch ( errMsg )
-            {
-                throw ' Error on wsActionCall - ' + errMsg;  // Go to next 'catch'
-            }
-        }
-        catch( errMsg )
-        {
-            // Stop the Sync Icon rotation
-            FormUtil.rotateTag( syncIconTag, false );
-
-            // Set the status as 'Error' with detail.  Save to storage.  And then, display the changes on visible.
-            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_error, 404, 'Error.  Can not be synced.  msg - ' + errMsg );
-            ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
-            
-            ClientDataManager.saveCurrent_ClientsStore( () => {
-                ActivitySyncUtil.displayActivitySyncStatus( activityId );
-                afterDoneCall( false, errMsg );
-            });
-        }
-    };
-
-    // ----------------------------------------------
-
-    me.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Orig, success, responseJson, afterDoneCall )
-    {        
-        var activityId = me.activityId;
-        // Stop the Sync Icon rotation
-        FormUtil.rotateTag( syncIconTag, false );
-
-        // NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
-
-        // Based on response(success/fail), perform app/activity/client data change
-        me.syncUpResponseHandle( activityJson_Orig, success, responseJson, function( success, errMsg ) 
-        {
-            // Updates UI & perform any followUp actions - 'responseCaseAction'
-
-            // On failure, if the syncUpCount has rearched the limit, set the appropriate status.
-            var newActivityJson = ActivityDataManager.getActivityById( activityId );
-            // If 'syncUpResponse' changed status, make the UI applicable..
-            //var newActivityJson = ActivityDataManager.getActivityById( activityId );
-
-            if ( newActivityJson )
-            {
-                ActivitySyncUtil.displayActivitySyncStatus( activityId );
-
-                // [*NEW] Process 'ResponseCaseAction' - responseJson.report - This changes activity status again if applicable
-                if ( responseJson && responseJson.report ) 
-                {
-                    ActivityDataManager.processResponseCaseAction( responseJson.report, activityId );
-                }    
-            }
-            else
-            {
-                throw 'FAILED to handle syncUp response, activityId lost: ' + activityId;
-            }
-
-            afterDoneCall( success, responseJson );
-        });   
-    };
-
-    // =============================================
-
-    me.syncUpResponseHandle = function( activityJson_Orig, success, responseJson, callBack )
-    {
-        var operationSuccess = false;
-        var activityId = me.activityId;
-
-        // 1. Check success
-        if ( success && responseJson && responseJson.result && responseJson.result.client )
-        {
-            var clientJson = ConfigManager.downloadedData_UidMapping( responseJson.result.client );
-
-            // #1. Check if current activity Id exists in 'result.client' activities..
-            if ( clientJson.activities && Util.getFromList( clientJson.activities, activityId, "id" ) )
-            {
-                operationSuccess = true;
-
-                // 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
-                var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing );
-
-                // [NOTE: STILL USED?]
-                // If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
-                if ( processingInfo.fixActivityCase )
-                {
-                    delete processingInfo.fixActivityCase;
-                    me.deleteFixActivityRecord( activityId );
-                }
-
-                
-                ClientDataManager.setActivityDateLocal_client( clientJson );
-
-                // TODO: NOTE!!  COMPLECATED MERGING AND SYNC UP CASES!!
-                // We usually have to delete App version activity at this point!!!! - since the merge only takes in the new activity.
-                // But have the merge take care of this!!
-
-                //else throw "ERROR, Downloaded activity does not contain 'id'.";
-
-                // Removal of existing activity/client happends within 'mergeDownloadClients()'
-                ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 
-                {
-                    // relationship target clients update sync..
-                    /*
-                    var otherClients = responseJson.result.otherClients;
-                    if ( otherClients )
-                    {
-                        ClientDataManager.setActivityDateLocal_clientList( otherClients );
-
-                        ClientDataManager.mergeDownloadedClients( { 'clients': otherClients, 'case': 'syncUpActivity' }, undefined, function() 
-                        {
-                            console.log( 'merged sync otherClients' );
-                        });
-                    }
-                    */
-                   
-                    // 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
-                    ClientDataManager.saveCurrent_ClientsStore( () => {
-                        if ( callBack ) callBack( operationSuccess );
-                    });
-                });
-            }
-            else
-            {
-                var errMsg = 'No matching activity with id, ' + activityId + ', found on result.client.';
-                var errStatusCode = 400;
-    
-                // 'syncedUp' processing data                
-                var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg );
-                ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
-
-                ClientDataManager.saveCurrent_ClientsStore( () => {
-                    if ( callBack ) callBack( operationSuccess, errMsg );
-                });                                      
-            }            
-        }
-        else
-        {
-            var errMsg = 'Error: ';
-            var errStatusCode = 400;
-            var newStatus = Constants.status_failed;
-
-            if ( responseJson )
-            {
-                try
-                {
-                    if ( responseJson.errStatus ) errStatusCode = responseJson.errStatus;
-    
-                    if ( responseJson.result )
-                    {
-                        if ( responseJson.result.operation ) errMsg += ' [result.operation]: ' + responseJson.result.operation;
-                        if ( responseJson.result.errData ) errMsg += ' [result.errData]: ' + Util.getJsonStr( responseJson.result.errData ); 
-                    }
-                    else if ( responseJson.errMsg ) 
-                    {
-                        errMsg += ' [errMsg]: ' + responseJson.errMsg;
-                    }
-                    else if ( responseJson.errorMsg ) 
-                    {
-                        errMsg += ' [errorMsg]: ' + responseJson.errorMsg;
-                    }
-                    else if ( responseJson.report )
-                    {
-                        errMsg += ' [report.msg]: ' + responseJson.report.msg;
-                    }
-                    else
-                    {
-                        // TODO: Need to simplify this...
-                        me.cleanUpErrJson( responseJson );
-                        errMsg += ' [else]: ' + Util.getJsonStr( responseJson );
-                    }
-    
-                    // TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
-                    if ( responseJson.subStatus === 'errorStop' || responseJson.subStatus === 'errorRepeatFail' ) newStatus = Constants.status_error;
-                } 
-                catch ( errMsgCatched )
-                {
-                    errMsg += ' [errMsgCatched]: ' + Util.getJsonStr( responseJson ) + 'errMsgCatched: ' + errMsgCatched;
-                }
-            }
-
-            // 'syncedUp' processing data                
-            var processingInfo = ActivityDataManager.createProcessingInfo_Other( newStatus, errStatusCode, errMsg );
-            ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
-
-            ClientDataManager.saveCurrent_ClientsStore( () => {
-                // Add activityJson processing
-                if ( callBack ) callBack( operationSuccess, errMsg );
-            });                                      
-        } 
-    };
-
-
-    me.deleteFixActivityRecord = function( activityId )
-	{
-        try
-        {
-            //if ( fixedActivityList && fixedActivityList.length > 0 )
-            var payloadJson = { 'find': { 'activityId': activityId } }; //{ '$in': fixedActivityList } } };
-
-            WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, undefined, function() 
-            {
-                console.customLog( 'Deleted fixActivityRecord, activityId ' + activityId );
-            });
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'ERROR during ActivityCard.deleteFixActivityRecord(), activityId: ' + activityId + ', errMsg: ' + errMsg );
-        }
-	};
-
-
-    me.cleanUpErrJson = function( responseJson )
-    {
-        try
-        {
-            if ( responseJson.report )
-            {
-                var report = responseJson.report;
-                if ( report.process ) delete report.process;
-                if ( report.log ) delete report.log;
-                if ( report.req ) delete report.req;
-            }
-        }
-        catch( errMsg )
-        {
-            console.customLog( 'ERROR during ActivityCard.cleanUpErrJson, errMsg: ' + errMsg );
-        }        
-    };
-
     // remove this activity from list  (me.activityJson.id ) <-- from common client 
 
     // =============================================
@@ -696,6 +391,9 @@ function ActivityCard( activityId, options )
 };
 
 
+// =====================================
+// #0. GO THROUGH ALL AND CHANGE ALL BELOW METHOD'S PARAM!!!!
+
 ActivityCard.cardDivTag = `<div class="activity card">
 
     <div class="activityContainer card__container">
@@ -706,7 +404,8 @@ ActivityCard.cardDivTag = `<div class="activity card">
 
         <card__cta class="activityStatus card__cta">
             <div class="activityStatusText card__cta_status"></div>
-            <div class="activityPhone card__cta_one" style="cursor: pointer;"></div>
+            <div class="favIcon card__cta_one" style="cursor: pointer; display:none;"></div>
+            <div class="activityPhone card__cta_one" style="cursor: pointer; display:none;"></div>
             <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
         </card__cta>
 
@@ -715,3 +414,409 @@ ActivityCard.cardDivTag = `<div class="activity card">
     </div>
 
 </div>`;
+
+ActivityCard.cardHighlightColor = '#fcffff'; // #fffff9
+
+
+ActivityCard.getActivityTagAll_ById = function( activityId )
+{
+    return $( 'div.card[itemid="' + activityId + '"]' );
+};
+
+// #1. For 'syncManagerNew' call, call ActivityCard.renderAll( activityId );
+ActivityCard.reRenderAllById = function( activityId )
+{
+    if ( activityId ) ActivityCard.getActivityTagAll_ById( activityId ).find( '.activityRerender' ).click();
+};
+
+
+// --------------------------------------------------
+// #3. Perform Sync Process Related
+//      <-- Could be moved to 'syncManagerNew' class?
+
+ActivityCard.highlightActivityDiv = function( activityId, bHighlight )
+{
+    // If the activityTag is found on the list, highlight it during SyncAll processing.
+    var activityDivTag = ActivityCard.getActivityTagAll_ById( activityId );
+
+    if ( activityDivTag.length > 0 )
+    {
+        if ( bHighlight ) activityDivTag.css( 'background-color', ActivityCard.cardHighlightColor );
+        else activityDivTag.css( 'background-color', '' );
+    }
+};
+
+// -------------------------------
+
+
+// Perform Submit Operation..
+ActivityCard.performSyncUp = function( activityId, afterDoneCall )
+{
+    var activityJson_Orig;
+    var syncIconTag = ActivitySyncUtil.getSyncButtonDivTag( activityId );
+
+    try
+    {
+
+        // gAnalytics Event
+        GAnalytics.setEvent( 'SyncRun', activityId, 'activity', 1 );
+        //GAnalytics.setEvent = function(category, action, label, value = null) 
+
+        activityJson_Orig = ActivityDataManager.getActivityById( activityId );
+
+        if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
+        if ( !activityJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
+
+        var mockResponseJson = ConfigManager.getMockResponseJson( activityJson_Orig.processing.useMockResponse );
+
+
+        // NOTE: On 'afterDoneCall', 'reRenderActivityDiv()' gets used to reRender of activity.  
+        //  'displayActivitySyncStatus()' also has 'FormUtil.rotateTag()' in it.
+        //  Probably do not need to save data here.  All the error / success case probably are covered and saves data afterwards.
+        activityJson_Orig.processing.status = Constants.status_processing;
+        activityJson_Orig.processing.syncUpCount = Util.getNumber( activityJson_Orig.processing.syncUpCount ) + 1;
+
+        ActivitySyncUtil.displayActivitySyncStatus( activityId );
+
+        try
+        {
+            // Fake Test Response Json
+            if ( mockResponseJson )
+            {
+                WsCallManager.mockRequestCall( mockResponseJson, undefined, function( success, responseJson )
+                {
+                    ActivityCard.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall );
+                });
+            }
+            else
+            {
+                var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
+
+                // NOTE: We need to add app timeout, from 'request'... and throw error...
+                WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, undefined, function( success, responseJson )
+                {
+                    ActivityCard.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall );
+                });       
+            }
+        }
+        catch ( errMsg )
+        {
+            throw ' Error on wsActionCall - ' + errMsg;  // Go to next 'catch'
+        }
+    }
+    catch( errMsg )
+    {
+        // Stop the Sync Icon rotation
+        FormUtil.rotateTag( syncIconTag, false );
+
+        // Set the status as 'Error' with detail.  Save to storage.  And then, display the changes on visible.
+        var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_error, 404, 'Error.  Can not be synced.  msg - ' + errMsg );
+        ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+        
+        ClientDataManager.saveCurrent_ClientsStore( () => {
+            ActivitySyncUtil.displayActivitySyncStatus( activityId );
+            afterDoneCall( false, errMsg );
+        });
+    }
+};
+
+// ----------------------------------------------
+
+ActivityCard.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall )
+{        
+    //var activityId = me.activityId;
+    // Stop the Sync Icon rotation
+    FormUtil.rotateTag( syncIconTag, false );
+
+    // NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
+
+    // Based on response(success/fail), perform app/activity/client data change
+    ActivityCard.syncUpResponseHandle( activityJson_Orig, activityId, success, responseJson, function( success, errMsg ) 
+    {
+        // Updates UI & perform any followUp actions - 'responseCaseAction'
+
+        // On failure, if the syncUpCount has rearched the limit, set the appropriate status.
+        var newActivityJson = ActivityDataManager.getActivityById( activityId );
+        // If 'syncUpResponse' changed status, make the UI applicable..
+        //var newActivityJson = ActivityDataManager.getActivityById( activityId );
+
+        if ( newActivityJson )
+        {
+            ActivitySyncUtil.displayActivitySyncStatus( activityId );
+
+            // [*NEW] Process 'ResponseCaseAction' - responseJson.report - This changes activity status again if applicable
+            if ( responseJson && responseJson.report ) 
+            {
+                ActivityDataManager.processResponseCaseAction( responseJson.report, activityId );
+            }    
+        }
+        else
+        {
+            throw 'FAILED to handle syncUp response, activityId lost: ' + activityId;
+        }
+
+        afterDoneCall( success, responseJson );
+    });   
+};
+
+// =============================================
+
+ActivityCard.syncUpResponseHandle = function( activityJson_Orig, activityId, success, responseJson, callBack )
+{
+    var operationSuccess = false;
+    //var activityId = me.activityId;
+
+    // 1. Check success
+    if ( success && responseJson && responseJson.result && responseJson.result.client )
+    {
+        var clientJson = ConfigManager.downloadedData_UidMapping( responseJson.result.client );
+
+        // #1. Check if current activity Id exists in 'result.client' activities..
+        if ( clientJson.activities && Util.getFromList( clientJson.activities, activityId, "id" ) )
+        {
+            operationSuccess = true;
+
+            // 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
+            var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing );
+
+            // [NOTE: STILL USED?]
+            // If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
+            if ( processingInfo.fixActivityCase )
+            {
+                delete processingInfo.fixActivityCase;
+                ActivityCard.deleteFixActivityRecord( activityId );
+            }
+
+            
+            ClientDataManager.setActivityDateLocal_client( clientJson );
+
+            // TODO: NOTE!!  COMPLECATED MERGING AND SYNC UP CASES!!
+            // We usually have to delete App version activity at this point!!!! - since the merge only takes in the new activity.
+            // But have the merge take care of this!!
+
+            //else throw "ERROR, Downloaded activity does not contain 'id'.";
+
+            // Removal of existing activity/client happends within 'mergeDownloadClients()'
+            ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 
+            {
+                // relationship target clients update sync..
+                /*
+                var otherClients = responseJson.result.otherClients;
+                if ( otherClients )
+                {
+                    ClientDataManager.setActivityDateLocal_clientList( otherClients );
+
+                    ClientDataManager.mergeDownloadedClients( { 'clients': otherClients, 'case': 'syncUpActivity' }, undefined, function() 
+                    {
+                        console.log( 'merged sync otherClients' );
+                    });
+                }
+                */
+               
+                // 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
+                ClientDataManager.saveCurrent_ClientsStore( () => {
+                    if ( callBack ) callBack( operationSuccess );
+                });
+            });
+        }
+        else
+        {
+            var errMsg = 'No matching activity with id, ' + activityId + ', found on result.client.';
+            var errStatusCode = 400;
+
+            // 'syncedUp' processing data                
+            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg );
+            ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+
+            ClientDataManager.saveCurrent_ClientsStore( () => {
+                if ( callBack ) callBack( operationSuccess, errMsg );
+            });                                      
+        }            
+    }
+    else
+    {
+        var errMsg = 'Error: ';
+        var errStatusCode = 400;
+        var newStatus = Constants.status_failed;
+
+        if ( responseJson )
+        {
+            try
+            {
+                if ( responseJson.errStatus ) errStatusCode = responseJson.errStatus;
+
+                if ( responseJson.result )
+                {
+                    if ( responseJson.result.operation ) errMsg += ' [result.operation]: ' + responseJson.result.operation;
+                    if ( responseJson.result.errData ) errMsg += ' [result.errData]: ' + Util.getJsonStr( responseJson.result.errData ); 
+                }
+                else if ( responseJson.errMsg ) 
+                {
+                    errMsg += ' [errMsg]: ' + responseJson.errMsg;
+                }
+                else if ( responseJson.errorMsg ) 
+                {
+                    errMsg += ' [errorMsg]: ' + responseJson.errorMsg;
+                }
+                else if ( responseJson.report )
+                {
+                    errMsg += ' [report.msg]: ' + responseJson.report.msg;
+                }
+                else
+                {
+                    // TODO: Need to simplify this...
+                    ActivityCard.cleanUpErrJson( responseJson );
+                    errMsg += ' [else]: ' + Util.getJsonStr( responseJson );
+                }
+
+                // TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
+                if ( responseJson.subStatus === 'errorStop' || responseJson.subStatus === 'errorRepeatFail' ) newStatus = Constants.status_error;
+            } 
+            catch ( errMsgCatched )
+            {
+                errMsg += ' [errMsgCatched]: ' + Util.getJsonStr( responseJson ) + 'errMsgCatched: ' + errMsgCatched;
+            }
+        }
+
+        // 'syncedUp' processing data                
+        var processingInfo = ActivityDataManager.createProcessingInfo_Other( newStatus, errStatusCode, errMsg );
+        ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+
+        ClientDataManager.saveCurrent_ClientsStore( () => {
+            // Add activityJson processing
+            if ( callBack ) callBack( operationSuccess, errMsg );
+        });                                      
+    } 
+};
+
+
+ActivityCard.deleteFixActivityRecord = function( activityId )
+{
+    try
+    {
+        //if ( fixedActivityList && fixedActivityList.length > 0 )
+        var payloadJson = { 'find': { 'activityId': activityId } }; //{ '$in': fixedActivityList } } };
+
+        WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, undefined, function() 
+        {
+            console.customLog( 'Deleted fixActivityRecord, activityId ' + activityId );
+        });
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR during ActivityCard.deleteFixActivityRecord(), activityId: ' + activityId + ', errMsg: ' + errMsg );
+    }
+};
+
+
+ActivityCard.cleanUpErrJson = function( responseJson )
+{
+    try
+    {
+        if ( responseJson.report )
+        {
+            var report = responseJson.report;
+            if ( report.process ) delete report.process;
+            if ( report.log ) delete report.log;
+            if ( report.req ) delete report.req;
+        }
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR during ActivityCard.cleanUpErrJson, errMsg: ' + errMsg );
+    }        
+};
+
+
+// ---------------------------------------
+
+ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
+{
+    var option = ( option ) ? option : {};
+
+    favIconTag.empty().hide();
+
+    // Override the icon if 'favId' exists..  <-- scheduled..
+    var activityJson = ActivityDataManager.getActivityById( activityId );
+    var activityStatus = ActivityDataManager.getActivityStatus( activityJson );
+
+    if ( activityJson.formData && activityJson.formData.sch_favId && SyncManagerNew.statusSynced( activityStatus ) )
+    {
+        // display favId instead.. + click event..            
+        var favItemJson = FavIcons.getFavItemJson( 'clientActivityFav', activityJson.formData.sch_favId );
+
+        if ( favItemJson )
+        {
+            FavIcons.populateFavItemIcon( favIconTag, favItemJson );
+            favIconTag.show();
+
+            // NOTE: This below is diff from activity to client
+            if ( option.clientCardId )
+            {
+                favIconTag.off( 'click' ).click( function() {
+                    // 1. Open up client Detail..
+                    var clientCardDetail = new ClientCardDetail( option.clientCardId );
+                    clientCardDetail.render( { openTabRel: 'tab_clientActivities', openFav_ActId: option.activityId } );   
+                });                
+                // Pass activityId in 'openFav_ActId', so that we click on favIcon as we list/render activityCard 
+            }
+            else if ( option.fromActivityList )
+            {
+                favIconTag.off( 'click' ).click( function() 
+                {                    
+                    // With some INFO.sch_activityList_openAsActivity flag, we can open as sheetFull..
+                    if ( INFO.sch_actList )
+                    {
+                        InfoDataManager.setINFOclientByActivity( activityJson );
+
+                        var onClickActions = Util.cloneJson( favItemJson.onClick );
+                        onClickActions.forEach( action => 
+                        {
+                            if ( action.actionType === 'openBlock' )
+                            {
+                                action.openSheetFull = { term: "", title: "Schedule Use", cssClasses: ["scheduleUse"] };
+                            }
+                        });
+
+                        var actionObj = new Action( SessionManager.cwsRenderObj, {} );
+                        actionObj.handleClickActionsAlt( onClickActions ); //, targetBlockTag, targetBlockContainerTag );    
+                    }
+                    else
+                    {
+                        var clientJson = ClientDataManager.getClientByActivityId( activityId );
+                        if ( clientJson )
+                        {
+                            var clientCardDetail = new ClientCardDetail( clientJson._id );
+                            clientCardDetail.render( { openTabRel: 'tab_clientActivities', openFav_ActId: activityId } );    
+                        }    
+                    }
+                });
+            }
+            else 
+            {
+                // From ActivityCard List from Client
+                var targetBlockTag = favIconTag.closest( '[tabButtonId=tab_clientActivities]' );
+                if ( targetBlockTag.length >= 1 ) 
+                {
+                    FavIcons.setFavItemClickEvent( favIconTag, favItemJson, targetBlockTag, targetBlockTag, function() {
+                        targetBlockTag.empty();
+                    }, function( renderedBlockId) 
+                    {
+                        if ( renderedBlockId )
+                        {
+                            // Mark the block with activityEdit and scheduleConvert..
+                            ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
+                        }
+                    } );
+
+                    /*
+                    if ( option.openFav_ActId === activityId ) {
+                        console.log( 'activity favIcon click performed, ' + activityId );
+                        favIconTag.click();
+                    }
+                    */
+                }
+            }
+        }
+    }
+};

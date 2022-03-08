@@ -52,7 +52,7 @@ VoucherCodeManager.refillQueue = function( userName )
       VoucherCodeManager.fillQueue( userName, fillCount, function( success, vcList ) {
          console.log( 'Filled op: ' + success + ', filledListCount: ' + vcList.length );
 
-         console.log( 'currentCount: ' + AppInfoManager.getVoucherCodes_queue().length );
+         console.log( 'currentCount: ' + PersisDataLSManager.getVoucherCodes_queue().length );
       } );
    });
 };
@@ -61,7 +61,7 @@ VoucherCodeManager.refillQueue = function( userName )
 //VoucherCodeManager.queueLow = function( callBack )
 VoucherCodeManager.queueStatus = function( callBack )
 { 
-   var queue = AppInfoManager.getVoucherCodes_queue();
+   var queue = PersisDataLSManager.getVoucherCodes_queue();
    queue = queue.filter( item => !item.status );  // 'Used' / 'InUse' / 'Displayed'
 
    var isLow = ( queue.length <= VoucherCodeManager.queueLowSize );
@@ -84,16 +84,15 @@ VoucherCodeManager.fillQueue = function( userName, fillCount, callBack )
       {
          if ( success && returnJson && returnJson.data )
          {
-            var queue = AppInfoManager.getVoucherCodes_queue();
+            var queue = PersisDataLSManager.getVoucherCodes_queue();
 
             var newListObj = VoucherCodeManager.getQueueObj_fromVcList( returnJson.data );
 
             Util.mergeArrays( queue, newListObj );
 
-            AppInfoManager.updateVoucherCodes_queue( queue, function() 
-            {
-               if ( callBack ) callBack( true, newListObj );
-            });
+            PersisDataLSManager.updateVoucherCodes_queue( queue );
+            
+            if ( callBack ) callBack( true, newListObj );
          }
          else
          {
@@ -128,7 +127,7 @@ VoucherCodeManager.getQueueObj_fromVcList = function( vcList )
 
 VoucherCodeManager.takeOut_OneVoucherCode = function( callBack )
 { 
-   var queue = AppInfoManager.getVoucherCodes_queue();
+   var queue = PersisDataLSManager.getVoucherCodes_queue();
    var item = VoucherCodeManager.getNotUsed_1stOne( queue );
 
    // DO NOT TAKE IT OUT!!!
@@ -138,12 +137,11 @@ VoucherCodeManager.takeOut_OneVoucherCode = function( callBack )
    {
       item.status = 'inUse'; // '' -> 'inUse' -> 'used'
       // CHANGE THIS...
-      AppInfoManager.updateVoucherCodes_queue( queue, function() {
-         callBack( item );
-      });   
+      PersisDataLSManager.updateVoucherCodes_queue( queue );
+      
+      callBack( item );
    }
    else {} // callBack with empty value??
-
 };
 
 VoucherCodeManager.getNotUsed_1stOne = function( queue )
@@ -172,7 +170,7 @@ VoucherCodeManager.getNextVoucherCode = function()
 {
    if ( ConfigManager.getSettings().voucherCodeServiceUse ) // ONLY USE THIS IF voucherCodeService is in use.
    {
-      var queue = AppInfoManager.getVoucherCodes_queue();
+      var queue = PersisDataLSManager.getVoucherCodes_queue();
       var item = VoucherCodeManager.getNotUsed_1stOne( queue );
     
       if ( item )
@@ -209,7 +207,7 @@ VoucherCodeManager.markVoucherCode_InQueue = function( activityJson, transType, 
    
    
       // 2. Find the voucherCode from queue and mark it as 'InUse' status.
-      var queue = AppInfoManager.getVoucherCodes_queue();
+      var queue = PersisDataLSManager.getVoucherCodes_queue();
       for( var i = 0; i < queue.length; i++ )
       {
          var vcItem = queue[i];

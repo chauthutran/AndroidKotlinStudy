@@ -147,7 +147,9 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
     });
 
     // Client Activity Reorder - #1
-    Util.evalSort( 'date.capturedLoc', client.activities, 'asc' );  // undefined ones will always placed last, but will be handled on display time.
+    if ( !ConfigManager.activitySorting_EvalRun( "insertActivity" ) ) Util.evalSort( 'date.createdLoc', client.activities, 'asc' );  
+    // undefined ones will always placed last, but will be handled on display time.
+    // Util.evalSort( 'date.capturedLoc', client.activities, 'asc' );  // undefined ones will always placed last, but will be handled on display time.
 };
 
 
@@ -395,7 +397,7 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         // FAILED TO GENERATE - ERROR MESSAGE..
         if ( !activityJson ) throw 'payload captureValues not exists!';
 
-
+        
         // extraActionCase are used for 'scheduled activity create action'.  Do not look at current block or hidden tags
         var extraActionCase = ( actionDefJson && actionDefJson.formDataOverride );
 
@@ -568,23 +570,23 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
         var activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData );
 
         // NEW, TEMP
-        var activityPayloadClient;
+        var client;
         if ( actionDefJson.underClient && actionDefJson.clientId )
         {
-            activityPayloadClient = ClientDataManager.getClientById( actionDefJson.clientId );
+            client = ClientDataManager.getClientById( actionDefJson.clientId );
         }
         else if ( activityJson.processing.existingClientId )
         {
-            activityPayloadClient = ClientDataManager.getClientById( activityJson.processing.existingClientId );
+            client = ClientDataManager.getClientById( activityJson.processing.existingClientId );
         }
 
         
-        if ( !activityPayloadClient ) activityPayloadClient = ClientDataManager.createActivityPayloadClient( activityJson );
+        if ( !client ) client = ClientDataManager.createClient_forActivityPayload( activityJson );
 
 
         // TODO: When adding, check for 'c_reg' activity not yet synced case.  If so, add new activity on bottom..
         // Better, yet, always add new activity to after unsynced activity postion on main activity List.
-        ActivityDataManager.insertActivitiesToClient( [ activityJson ], activityPayloadClient, { 'addToTop': true, 'newPayloadCase': true } );
+        ActivityDataManager.insertActivitiesToClient( [ activityJson ], client, { 'addToTop': true, 'newPayloadCase': true } );
     
         ClientDataManager.saveCurrent_ClientsStore( () => {
             if ( callBack ) callBack( activityJson );    
@@ -1457,4 +1459,46 @@ ActivityDataManager.getActivitiesSince = function( activityList, dateStr, datePr
     }
 
     return outActList;
+};
+
+// -----------------------------
+// 3 diff ways to get the latest/last activity.   
+//      1. last array item
+//      2. by createdDate
+//      3. by updatedDate
+
+ActivityDataManager.getLastActivity = function( activityList )
+{
+    if ( !activityList || activityList.length === 0 ) return undefined;
+    else return activityList[ activityList.length - 1 ];
+};
+
+ActivityDataManager.getLatestCreatedActivity = function( activityList )
+{
+    return ActivityDataManager.getLatestDateActivity( activityList, 'createdLoc' );
+};
+
+ActivityDataManager.getLatestUpdatedActivity = function( activityList )
+{
+    return ActivityDataManager.getLatestDateActivity( activityList, 'updatedLoc' );
+};
+
+ActivityDataManager.getLatestDateActivity = function( activityList, dateProp )
+{
+    var latestActivity;
+    if ( !dateProp ) dateProp = 'createdLoc';
+
+    if ( activityList && activityList.length )
+    {
+        var actList = Util.cloneJson( activityList );
+        actList.sort( function(a, b) { 
+            return ( a.date && b.date && a.date[dateProp] <= b.date[dateProp] ) ? 1: -1; 
+        });
+        // Puts newest/latest/highest value (createdDate) on beginning of list
+        // For date with no 'createdDate', it will be listed at the bottom/end of the list.
+
+        latestActivity = actList[0];
+    }
+    
+    return latestActivity;
 };
