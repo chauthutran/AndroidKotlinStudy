@@ -764,8 +764,17 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
             {
                 favIconTag.off( 'click' ).click( function() 
                 {                    
-                    // With some INFO.sch_activityList_openAsActivity flag, we can open as sheetFull..
-                    if ( INFO.sch_actList )
+                    // With some INFO.sch_activityList_openAsActivity flag, we can open as sheetFull..                    
+                    if ( ConfigManager.getActivitySch_favClickOpen() === 'clientDetail' )
+                    {
+                        var clientJson = ClientDataManager.getClientByActivityId( activityId );
+                        if ( clientJson )
+                        {
+                            var clientCardDetail = new ClientCardDetail( clientJson._id );
+                            clientCardDetail.render( { openTabRel: 'tab_clientActivities', openFav_ActId: activityId } );    
+                        }    
+                    }
+                    else 
                     {
                         InfoDataManager.setINFOclientByActivity( activityJson );
 
@@ -780,15 +789,6 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
 
                         var actionObj = new Action( SessionManager.cwsRenderObj, {} );
                         actionObj.handleClickActionsAlt( onClickActions ); //, targetBlockTag, targetBlockContainerTag );    
-                    }
-                    else
-                    {
-                        var clientJson = ClientDataManager.getClientByActivityId( activityId );
-                        if ( clientJson )
-                        {
-                            var clientCardDetail = new ClientCardDetail( clientJson._id );
-                            clientCardDetail.render( { openTabRel: 'tab_clientActivities', openFav_ActId: activityId } );    
-                        }    
                     }
                 });
             }

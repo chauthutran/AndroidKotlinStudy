@@ -3,13 +3,14 @@
 //          - Display List like 'activityList' - within BlockObject (Parent)
 // -------------------------------------------------
 
-function ActivityList( cwsRenderObj, blockObj, blockJson ) 
+function ActivityList( cwsRenderObj, blockObj, blockJson, options ) 
 {
     var me = this;
 
     me.cwsRenderObj = cwsRenderObj;
     me.blockObj = blockObj;     
     me.blockJson = blockJson;   
+    me.options = ( options ) ? options : {};
 
     me.activityList = [];
     me.viewGroupByData; // set from 'activityListView'
@@ -61,7 +62,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
     // --------------------------------------- --------
 
     //  Render BlockList
-    me.render = function( blockTag, passedData, options )
+    me.render = function( blockTag, passedData ) //, options )
     {        
         // Clear previous UI & Set containerTag with templates
         me.clearClassTag( blockTag );        
@@ -81,7 +82,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
         me.setClassVariableTags( blockTag );
 
         // Populate controls - ActivityLists, viewFilter/sort, related.
-        me.populateControls( me.blockJson, me.hasView, me.activityList, me.listTableTbodyTag );
+        me.populateControls( me.blockJson, me.hasView, me.activityList, me.listTableTbodyTag, me.options );
 
         // Events handling
         //me.setRenderEvents();
@@ -181,7 +182,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
     };
 
 
-    me.populateControls = function ( blockJson, hasView, activityList, listTableTbodyTag )
+    me.populateControls = function ( blockJson, hasView, activityList, listTableTbodyTag, options )
     {
 
         if ( hasView )
@@ -189,8 +190,16 @@ function ActivityList( cwsRenderObj, blockObj, blockJson )
             me.activityListViewObj = new ActivityListView( me.cwsRenderObj, me, blockJson.activityListViews );
             me.activityListViewObj.render();
 
-            // After setting up 'view', select 1st one will fire (eventually) 'reRender' of this class ( 'populateActivityCardList' with some clean up )?
-            me.activityListViewObj.viewSelect_1st();    
+            if ( options.viewSelect ) //options && options.viewSelect )
+            {                
+                me.activityListViewObj.viewSelect( options.viewSelect );
+                options.viewSelect = undefined;  // After 1st time of using this, remove the 'viewSelect'
+            }
+            else
+            {
+                // After setting up 'view', select 1st one will fire (eventually) 'reRender' of this class ( 'populateActivityCardList' with some clean up )?
+                me.activityListViewObj.viewSelect_1st();    
+            }
         }
         else
         {

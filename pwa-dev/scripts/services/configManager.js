@@ -686,6 +686,18 @@ ConfigManager.activitySorting_EvalRun = function( sortingProp )
     return evalRunSuccess;
 };
 
+
+ConfigManager.getActivitySch_favClickOpen = function()
+{
+    var actionName = 'activityDetail';  // 'clientDetail' vs 'activityDetail'
+
+    var sch_favClickOpen = ConfigManager.getSettingsActivityDef().sch_favClickOpen;
+
+    if ( sch_favClickOpen ) actionName = sch_favClickOpen;
+
+    return actionName;
+};
+
 // ---------------------------------------------
 
 ConfigManager.getSettingsClientDef = function()

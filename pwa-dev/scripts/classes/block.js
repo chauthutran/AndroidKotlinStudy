@@ -15,7 +15,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	me.parentTag = parentTag;
 
 	me.passedData = passedData;
-	me.options = options;  // Not used much for now anymore..
+	me.options = ( options ) ? options: {};  // Not used much for now anymore..
 	me.actionJson = actionJson; // if block were created from 'action', the clickActionJson data(config) passed.  Use it when rendering
 
 	me.blockTag;
@@ -68,7 +68,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			// Render List ( 'redeemList' is block with listing items.  'dataList' is web service returned data rendering )
 			if ( me.blockDefJson.list === 'redeemList' || me.blockDefJson.list === 'activityList' )
 			{
-				me.activityListObj = new ActivityList( me.cwsRenderObj, me, me.blockDefJson );
+				me.activityListObj = new ActivityList( me.cwsRenderObj, me, me.blockDefJson, me.options );
 				me.activityListObj.render( me.blockTag, me.passedData );				
 			}
 			else if ( me.blockDefJson.list === 'clientList' )

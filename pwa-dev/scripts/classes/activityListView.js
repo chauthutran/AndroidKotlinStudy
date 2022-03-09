@@ -109,6 +109,12 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
         me.viewSelectTag.val( firstOptionVal ).change();        
     };
 
+        
+    me.viewSelect = function( viewName )
+    {        
+        me.viewSelectTag.val( viewName ).change();        
+    };
+
     // ====================================================
     // ----------------------------
 

@@ -218,10 +218,8 @@ function cwsRender()
 				// if menu is clicked, reload the block refresh?
 				if ( selectedArea && selectedArea.startBlockName )
 				{
-					// var startBlockObj = new Block( me, ConfigManager.getConfigJson().definitionBlocks[ selectedArea.startBlockName ], selectedArea.startBlockName, me.pageDivTag );
-					// startBlockObj.render();  // should been done/rendered automatically?
-
-					FormUtil.renderBlockByBlockId( selectedArea.startBlockName, me, me.pageDivTag );
+					var options = ( selectedArea.viewSelect ) ? { viewSelect: selectedArea.viewSelect }: {};
+					FormUtil.renderBlockByBlockId( selectedArea.startBlockName, me, me.pageDivTag, undefined, options );
 				}
 			}
 		}
