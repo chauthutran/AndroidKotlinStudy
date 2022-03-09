@@ -18,6 +18,7 @@ function ConfigManager() {}
 
 ConfigManager.configJson = {};     // In memory stored configJson
 ConfigManager.configJson_Original = {};  // Downloaded country PWA config original
+ConfigManager.loginData_Original = {}; // Downloaded loginData.  Includes countryConfig & orgUnit
 
 //ConfigManager.configSetting = {}; // Not Yet coded for it.
 ConfigManager.login_UserRoles = []; // Populated when session & config is loaded
@@ -51,18 +52,21 @@ ConfigManager.default_SettingPaging = {
 ConfigManager.KEY_SourceType_Mongo = 'mongo';
 ConfigManager.KEY_SourceType_Dhis2 = 'dhis2';
 
+//ConfigManager.getOuChildCase_countries = [ 'MZ' ];
+
 // ==== Methods ======================
 
 // ---------------------------------
 // --- Initial Set (called from session?)
 
-ConfigManager.setConfigJson = function ( configJson, userRolesOverrides ) 
+ConfigManager.setConfigJson = function ( loginData, userRolesOverrides ) 
 {
     try
     {
-        if ( configJson )
+        if ( loginData && loginData.dcdConfig )
         {
-            ConfigManager.configJson_Original = configJson; 
+            ConfigManager.loginData_Original = loginData; 
+            ConfigManager.configJson_Original = loginData.dcdConfig; 
     
             ConfigManager.configJson = Util.cloneJson( ConfigManager.configJson_Original );
         
@@ -84,8 +88,11 @@ ConfigManager.setConfigJson = function ( configJson, userRolesOverrides )
             // For more spratically placed ones (outside of def section), 
             //  We would need to use in real time..
 
-
             ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
+
+            // Populate options 'options_ouChildren' is applicable
+            ConfigManager.populateOptions_ouChildren( ConfigManager.configJson, loginData );
+
         }
     }
     catch ( errMsg )
@@ -403,7 +410,7 @@ ConfigManager.notMatch_UserRole = function( item, loginUserRoles )
 
 ConfigManager.resetConfigJson = function( userRolesOverrides ) 
 {
-    ConfigManager.setConfigJson( ConfigManager.configJson_Original, userRolesOverrides );
+    ConfigManager.setConfigJson( ConfigManager.loginData_Original, userRolesOverrides );
 };
 
 ConfigManager.clearConfigJson = function() 
@@ -1110,6 +1117,33 @@ ConfigManager.getSyncUpCoolDownTime = function()
     }
 
     return ( coolDownTime ) ? coolDownTime : ConfigManager.coolDownTime;
+};
+
+
+ConfigManager.populateOptions_ouChildren = function( configJson, loginData )
+{
+    if ( loginData.orgUnitData && loginData.orgUnitData.orgUnit )
+    {
+        var children = loginData.orgUnitData.orgUnit.children;
+
+        if ( children && children.length > 0 )
+        {
+            try
+            {
+                if ( configJson.definitionOptions && configJson.definitionOptions.options_ouChildren )
+                {
+                    var op_children = configJson.definitionOptions.options_ouChildren;
+                    op_children.splice(0, op_children.length);
+                    children.forEach( ou => {
+                        op_children.push( { defaultName: ou.name, value: ou.id, ouCode: ou.code, term: '' } );
+                    });
+                }
+            }
+            catch( errMsg ) {
+                console.log( 'ERROR in ConfigManager.populateOptions_ouChildren, ' + errMsg );
+            }
+        }
+    }
 };
 
 

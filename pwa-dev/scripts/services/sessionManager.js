@@ -57,8 +57,8 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 
 	SessionManager.sessionData.loginResp = loginData;  // <-- This will be the matching memory of LoginResp in IndexedDB.
 
-	// TODO: Need to set 'configManager'
-	ConfigManager.setConfigJson( loginData.dcdConfig );
+	// Setup/populate data on ConfigManager
+	ConfigManager.setConfigJson( loginData );
 };
 
 

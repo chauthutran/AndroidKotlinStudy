@@ -145,6 +145,9 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
 {        
     var requestOption = { 'userName': userName, 'password': password };
 
+    // if ( ConfigManager.getSettings.login_GetOuChildren ) // <-- This does not work since we can not tell the countryInfo or config Data until we login..
+    requestOption.getOuChildren = 'Y';  // NEW
+
 	WsCallManager.requestPostDws( '/PWA.loginCheck', requestOption, loadingTag, function( success, returnJson )
 	{
 		if ( success )
