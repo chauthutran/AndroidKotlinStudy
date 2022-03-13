@@ -80,7 +80,7 @@ VoucherCodeManager.fillQueue = function( userName, fillCount, callBack )
    {
       // create a fake service?  just DWS service..
       var loadingTag = undefined;
-      WsCallManager.requestPostDws( '/PWA.voucherCodeGet', { used_by: userName, counts: fillCount }, loadingTag, function( success, returnJson ) 
+      WsCallManager.requestPostDws( '/PWA.voucherCodeGet', { taken_by: userName, counts: fillCount }, loadingTag, function( success, returnJson ) 
       {
          if ( success && returnJson && returnJson.data )
          {
