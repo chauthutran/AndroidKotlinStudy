@@ -112,7 +112,7 @@ VoucherCodeManager.getQueueObj_fromVcList = function( vcList )
    var newListObj = [];
 
    vcList.forEach( vcItem => {
-      newListObj.push( { voucherCode: vcItem.code, status: '' } );
+      newListObj.push( { voucherCode: vcItem.code, status: '', ver_no: vcItem.ver_no } );
    });
 
    return newListObj;
