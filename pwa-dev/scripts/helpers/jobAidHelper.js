@@ -38,10 +38,13 @@ JobAidHelper.runTimeCache_JobAid = function (btnParentTag) // returnFunc )
 					+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
 					+ '</div>');
 
+				// Sort the file --> place video types at the end..
+				//JobAidHelper.sortVideoAtTheEnd( response.list ); 
+
 				SwManager.swRegObj.active.postMessage({
 					'type': JobAidHelper.jobAid_CACHE_URLS2
 					, 'cacheName': JobAidHelper.jobAid_jobTest2
-					, 'payload': response.list
+					, 'payload': JobAidHelper.sortVideoAtTheEnd( response.list )
 				});
 			},
 			error: function (error) {
@@ -54,18 +57,46 @@ JobAidHelper.runTimeCache_JobAid = function (btnParentTag) // returnFunc )
 	}
 };
 
+JobAidHelper.sortVideoAtTheEnd = function( list ) 
+{
+	var newList = [];
+	
+	try
+	{
+		var videoList = list.filter( item => item.endsWith( '.mp4' ) );
+		var audioList = list.filter( item => item.endsWith( '.mp3' ) );
+		var newList = Util.cloneJson( list.filter( item => ( !item.endsWith( '.mp4' ) && !item.endsWith( '.mp3' ) )  ) );
+		Util.mergeArrays( newList, audioList );
+		Util.mergeArrays( newList, videoList );
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in JobAidHelper.sortVideoAtTheEnd, ' + errMsg );
+		newList = list;
+	}
+
+	return newList;
+};
+
+
 JobAidHelper.JobFilingProgress = function (msgData) {
 	// var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: currCount } } );
 	if (msgData && msgData.process) {
 		var total = msgData.process.total;
 		var curr = msgData.process.curr;
+		var name = msgData.process.name;
 
+		if ( name && name.length > 10 )
+		{
+			name = '--' + name.substr( name.length - 10 );  // Get only last 10 char..
+		}
+	
 		var divJobFileLoadingTag = $('.divJobFileLoading');
 		var spanJobFilingMsgTag = $('.spanJobFilingMsg');
 
 		if (total && total > 0 && curr && curr < total) {
 			// update the processing msg..
-			var prgMsg = 'Processing ' + curr + ' of ' + total;
+			var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + name + ']';
 			spanJobFilingMsgTag.text(prgMsg);
 		}
 		else {

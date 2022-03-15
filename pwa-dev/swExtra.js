@@ -24,7 +24,7 @@ self.addEventListener('message', (event) =>
         //console.log( 'testing - ' + reqUrl );
         
         doneCount++;
-        var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount } } );
+        var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl } } );
         event.source.postMessage( returnMsgStr );
       }
     }

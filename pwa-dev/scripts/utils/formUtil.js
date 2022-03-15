@@ -2164,16 +2164,19 @@ FormUtil.openDivPopupArea = function( divPopupAreaTag, populateProcess, closePro
 {
 	FormUtil.blockPage( undefined, function( scrimTag )
 	{
+      divPopupAreaTag.show();
+      $('.scrim').show();
 
-        divPopupAreaTag.show();
-        $('.scrim').show();
 		var divMainContentTag = divPopupAreaTag.find( '.divMainContent' );
 		divMainContentTag.html( '' ); // Reset the content..
 
-		divPopupAreaTag.find( 'div.close' ).off( 'click' ).click( function () 
+		var closeBtn = divPopupAreaTag.find( 'div.close' );
+
+		closeBtn.off( 'click' ).click( function () 
 		{
-            $('.scrim').hide();
-            divPopupAreaTag.hide();
+         $('.scrim').hide();
+         divPopupAreaTag.hide();
+			FormUtil.unblockPage( scrimTag );
 
 			if ( closeProcess )
 			{
@@ -2181,12 +2184,12 @@ FormUtil.openDivPopupArea = function( divPopupAreaTag, populateProcess, closePro
 					closeProcess( divPopupAreaTag );
 				} catch( errMsg ) { console.log( 'ERROR during FormUtil.openDivPopupArea closeProcess, ' + errMsg ); }	
 			}			
-        });
+      });
 
 
 		scrimTag.off( 'click' ).click( function() 
 		{
-			FormUtil.unblockPage( scrimTag );
+			closeBtn.click();
 		});
 
 		

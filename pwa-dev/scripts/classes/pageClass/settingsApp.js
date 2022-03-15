@@ -508,10 +508,57 @@ function settingsApp( cwsRender )
                 });      
 
             });
-        });      
+        });  
+        
 
+        // if settings has this enabled..
+        if ( ConfigManager.getSettings().voucherCodeServiceUse )
+        {
+            var vcQueueTag = me.settingsFormDivTag.find( '.vcQueue' ).show();
+
+            vcQueueTag.off( 'click' ).click( function() 
+            {
+                var btnTag = $( this );
+    
+                FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
+                {
+                    // Total Queue Size
+                    var queue = PersisDataLSManager.getVoucherCodes_queue();
+                    var availableInQueue = queue.filter( item => !item.status );
+                    var usedInQueue = queue.filter( item => item.status );
+                    var sampleSize = 2;
+
+                    divMainContentTag.append( '<div class="infoLine">------------------------</div>' );
+                    divMainContentTag.append( '<div class="infoLine">Available Codes in Queue: ' + availableInQueue.length + '</div>' );
+                    
+                    me.displayVCSamples( availableInQueue, sampleSize, divMainContentTag );
+
+
+                    divMainContentTag.append( '<div class="infoLine">------------------------</div>' );
+                    divMainContentTag.append( '<div class="infoLine">' + 'Used Codes in Queue: ' + usedInQueue.length + '</div>' );    
+
+                    me.displayVCSamples( usedInQueue, sampleSize, divMainContentTag );
+
+                });
+    
+            });
+        }
     };
 
+    me.displayVCSamples = function( list, sampleSize, divMainContentTag )
+    {
+        if ( list.length > 0 )
+        {
+            divMainContentTag.append( '<div class="infoLine">Samples: </div>' );
+            for ( var i = 0; i < list.length; i++ )
+            {
+                if ( i >= sampleSize ) break;
+                var queue = Util.cloneJson( list[i] );
+                if ( queue.voucherCode ) queue.voucherCode.substr( 0, 2 ) + '----';
+                divMainContentTag.append( '<div class="infoLine">' + JSON.stringify( queue ) + '</div>' );
+            }
+        }
+    };
 
     me.showDataShareDiv = function( divDataShareTag )
     {
