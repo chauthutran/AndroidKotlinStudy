@@ -1,5 +1,6 @@
 self.addEventListener('message', (event) => 
 {
+  // NOTE: More explain about 'event.waitUntil': https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil
   event.waitUntil( async function() 
   {
     if ( event.data && event.data.type === 'CACHE_URLS2' && event.data.cacheName && event.data.payload ) 
@@ -7,7 +8,7 @@ self.addEventListener('message', (event) =>
       var cacheName = event.data.cacheName;
       var reqList = event.data.payload;
 
-      await caches.delete( cacheName );
+      await caches.delete( cacheName );  // TOOD: Should delete only if 'delete' command it passed in.
       
       var cache = await caches.open( cacheName );
       
@@ -27,7 +28,7 @@ self.addEventListener('message', (event) =>
         event.source.postMessage( returnMsgStr );
       }
     }
-  }());
+  }()); // async IIFE --> added () will immediately invoke the async function, hence the name async IIFE
 });
 
 
