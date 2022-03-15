@@ -45,6 +45,7 @@ WsCallManager.EndPoint_ShareDataSave = '/PWA.shareData';
 // -------------------------
 
 WsCallManager.stageName = '';
+WsCallManager.appFolderName = '';
 WsCallManager.wsUrlList = {
     'prod': 'https://pwa.psi-connect.org/ws/dws',
     'wfaProd': 'https://wfa[country].psi-connect.org/ws/dws',
@@ -99,7 +100,22 @@ WsCallManager.setWsTarget = function( overrideOriginUrl, overrideStageName )
 
     // Set final data into the 'WsCallManager' global value..
     WsCallManager.stageName = stageName;
+    //WsCallManager.appFolderName = WsCallManager.getAppFolderName( WsCallManager.stageName );
     WsCallManager.wsTargetUrl = ( isWfaProd ) ? WsCallManager.getWfaProdWsUrl( originUrl ) : WsCallManager.wsUrlList[ stageName ];
+};
+
+
+// TODO: FINISH THIS..
+WsCallManager.getAppFolderName = function ( stageName )
+{
+    var appFolderName;
+
+    if ( stageName === 'dev' ) appFolderName = 'pwa-dev';
+    else if ( stageName === 'test' ) appFolderName = 'pwa-test';
+    else if ( stageName === 'prod' ) appFolderName = 'wfa';
+    else appFolderName = 'pwa-dev';
+    
+    return appFolderName;
 };
 
 // ----------------------------------------------------

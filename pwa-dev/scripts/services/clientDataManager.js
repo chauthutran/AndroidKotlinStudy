@@ -815,3 +815,23 @@ ClientDataManager.getClientListByFields = function( inputJson )
 
     return matchedList;
 };
+
+ClientDataManager.getClientLikeCUIC = function( CUIC )
+{
+    const stringMatch = (a, b) => {
+        let longer = a.length >= b.length ? a : b;
+        let shorter = longer === a ? b : a;
+        return longer.indexOf(shorter) >= 0
+    }
+
+    var matchedList = [];
+
+	if ( CUIC )
+	{
+        var clientList = ClientDataManager.getClientList();
+
+        matchedList = [...clientList.filter( client => stringMatch(CUIC.toLowerCase(),client.clientDetails.CUIC.toLowerCase() ))];
+	}
+
+    return matchedList;
+};

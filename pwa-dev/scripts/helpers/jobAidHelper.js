@@ -16,10 +16,16 @@ JobAidHelper.jobAid_jobTest2 = 'jobTest2';
 
 JobAidHelper.runTimeCache_JobAid = function (btnParentTag) // returnFunc )
 {
-	if (ConnManagerNew.isAppMode_Online()) {
+	if (ConnManagerNew.isAppMode_Online()) 
+	{
 		var localCase = WsCallManager.checkLocalDevCase(window.location.origin);
 
-		var requestUrl = (localCase) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
+		var requestUrl;
+		
+		//if ( WsCallManager.stageName === 'dev' ) 
+		if ( WsCallManager.stageName === 'test' ) requestUrl = (localCase) ? 'http://localhost:8384/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFilingTest');
+		else requestUrl = (localCase) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
+
 
 		$('.divJobFileLoading').remove();
 
@@ -95,6 +101,8 @@ JobAidHelper.msgHandle = function (data)
 			else if ( Util.isTypeString( data.action ) ) JobAidHelper.handleMsgActionOld( data );
 		}
 
+		returnActions = returnActions.filter(action => action)
+
 		// If there is any action result to return, send as msg to jobAid iFrame
 		if ( returnActions.length > 0 )
 		{
@@ -131,6 +139,12 @@ JobAidHelper.handleMsgAction = function( action )
 
 		var clientList = ClientDataManager.getClientListByFields( action.data );
 		actionJson = { callBackEval: action.callBackEval, data: clientList };
+	}
+	else if ( action.name === 'clientSearchCUIC' ) 
+	{
+		// { name: 'clientSearchCUIC', searchType: 'offline', CUIC:'XX' } 
+		var clientList = ClientDataManager.getClientLikeCUIC( action.CUIC );
+		$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { clientList }, '*');
 	}
 	else if ( action.name === 'WFARunEval' )
 	{
