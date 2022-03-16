@@ -12,21 +12,40 @@ self.addEventListener('message', (event) =>
       
       var cache = await caches.open( cacheName );
       
+      // await cache.allAll( reqList );  // <-- No progress msg
+
       var totalCount = reqList.length;
       var doneCount = 0;
 
+      reqList.forEach( reqUrl => 
+      {
+        cache.add( reqUrl ).then( () => {
+          doneCount++;
+          var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl } } );
+          event.source.postMessage( returnMsgStr );  
+        });
+      });
+
+
+      /*
       for ( var i = 0; i < reqList.length; i++ )
       {
         var reqUrl = reqList[i];// + '?tmark=' + (new Date()).getTime();
 
-        await cache.add( reqUrl );
+        cache.add( reqUrl ).then( function() {
+          doneCount++;
+          var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl } } );
+          event.source.postMessage( returnMsgStr );  
+        });
 
-        //console.log( 'testing - ' + reqUrl );
+        await cache.add( reqUrl );
         
         doneCount++;
         var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl } } );
         event.source.postMessage( returnMsgStr );
       }
+      */
+
     }
   }()); // async IIFE --> added () will immediately invoke the async function, hence the name async IIFE
 });
