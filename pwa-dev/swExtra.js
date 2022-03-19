@@ -8,7 +8,7 @@ self.addEventListener('message', (event) =>
       var cacheName = event.data.cacheName;
       var reqList = event.data.payload;
 
-      await caches.delete( cacheName );  // TOOD: Should delete only if 'delete' command it passed in.
+      // await caches.delete( cacheName );  // TOOD: Should delete only if 'delete' command it passed in.
       
       var cache = await caches.open( cacheName );
       

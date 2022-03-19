@@ -14,43 +14,61 @@ JobAidHelper.jobAid_jobTest2 = 'jobTest2';
 
 // =========================
 
-JobAidHelper.runTimeCache_JobAid = function (btnParentTag) // returnFunc )
+JobAidHelper.runTimeCache_JobAid = function( btnParentTag, isListingApp ) // returnFunc )
 {
 	if (ConnManagerNew.isAppMode_Online()) 
 	{
-		var localCase = WsCallManager.checkLocalDevCase(window.location.origin);
-
-		var requestUrl;
-		
-		//if ( WsCallManager.stageName === 'dev' ) 
-		if ( WsCallManager.stageName === 'test' ) requestUrl = (localCase) ? 'http://localhost:8384/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFilingTest');
-		else requestUrl = (localCase) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
-
-
 		$('.divJobFileLoading').remove();
 
+		var localCase = WsCallManager.checkLocalDevCase(window.location.origin);
+		var requestUrl;
+		var app = ( WsCallManager.stageName === 'test' ) ? 'pwa-test': 'pwa-dev';
+
+		var payload = { 'isLocal': localCase, 'app': app, 'isListingApp': true };
+		var payloadStr = JSON.stringify( payload );
+
+		//if ( WsCallManager.stageName === 'test' ) requestUrl = (localCase) ? 'http://localhost:8384/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFilingTest');
+		requestUrl = (localCase) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
+
+		/*
+		$.post( requestUrl, payload, function( response ) 
+		{
+			if ( btnParentTag ) btnParentTag.append('<div class="divJobFileLoading" style="display: contents;"><img src="images/loading_big_blue.gif" style="height: 17px;">'
+				+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
+				+ '</div>');
+
+			SwManager.swRegObj.active.postMessage({
+				'type': JobAidHelper.jobAid_CACHE_URLS2
+				, 'cacheName': JobAidHelper.jobAid_jobTest2
+				, 'payload': JobAidHelper.sortVideoAtTheEnd( response.list )
+			});
+
+		}, "json").fail( function (error) {
+			MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
+		});
+		*/
+
 		$.ajax({
+			url: requestUrl + '?payloadStr=' + payloadStr,
 			type: "GET",
 			dataType: "json",
-			url: requestUrl,
-			success: function (response) {
-				if (btnParentTag) btnParentTag.append('<div class="divJobFileLoading" style="display: contents;"><img src="images/loading_big_blue.gif" style="height: 17px;">'
-					+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
-					+ '</div>');
-
-				// Sort the file --> place video types at the end..
-				//JobAidHelper.sortVideoAtTheEnd( response.list ); 
+			success: function (response) 
+			{
+				if ( btnParentTag ) btnParentTag.append('<div class="divJobFileLoading" style="display: contents;"><img src="images/loading_big_blue.gif" style="height: 17px;">'
+				+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
+				+ '</div>');
 
 				SwManager.swRegObj.active.postMessage({
 					'type': JobAidHelper.jobAid_CACHE_URLS2
 					, 'cacheName': JobAidHelper.jobAid_jobTest2
 					, 'payload': JobAidHelper.sortVideoAtTheEnd( response.list )
-				});
+				});				
 			},
 			error: function (error) {
 				MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
 			}
 		});
+
 	}
 	else {
 		MsgManager.msgAreaShowErr('JobAid Filing is only available in online mode');

@@ -135,9 +135,9 @@ ConsoleCustomLog.addEvents = function( divMainContentTag, divDialogTag )
 
         else if ( caseStr === 'overrideSyncLastDwDate' )
         {
-            var lastDwDateStr = AppInfoManager.getSyncLastDownloadInfo();
+            var lastDwDateStr = AppInfoLSManager.getSyncLastDownloadInfo();
 
-            inputCommandTag.val( 'AppInfoManager.updateSyncLastDownloadInfo( "' + lastDwDateStr + '" );' );
+            inputCommandTag.val( 'AppInfoLSManager.updateSyncLastDownloadInfo( "' + lastDwDateStr + '" );' );
         }
         else if ( caseStr === 'showOtherUsefulCommands' )
         {

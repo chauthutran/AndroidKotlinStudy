@@ -23,6 +23,9 @@ AppInfoLSManager.KEY_LOGINOUT = "logInOut";
 AppInfoLSManager.KEY_SYNC = "sync"; 
 AppInfoLSManager.KEY_DEBUG = "debug"; 
 
+AppInfoLSManager.KEY_SYNC_LAST_DOWNLOADINFO = "syncLastDownloaded"; 
+AppInfoLSManager.KEY_FIX_OPERATION_LAST = "fixOperationLast"; 
+
 // ---------------------------
 
 AppInfoLSManager.KEY_LASTLOGINOUT = "lastLogInOut"; 
@@ -122,11 +125,11 @@ AppInfoLSManager.migrateData = function( appInfo_LS )
                         // A2. move 'sync', 'logInOut', 'debug' to indexDB and remove old.
                         AppInfoManager.setUserName_Passwd( userName, passwd );  // Use this to get 'userName/passwd' for indexedDB encript save
 
-                        if ( appInfo_LS.sync )
-                        {                            
-                            AppInfoManager.updateData( AppInfoManager.KEY_SYNC, appInfo_LS.sync );
-                            delete appInfo_LS.sync;
-                        }
+                        //if ( appInfo_LS.sync )
+                        //{                            
+                        //    AppInfoManager.updateData( AppInfoManager.KEY_SYNC, appInfo_LS.sync );
+                        //    delete appInfo_LS.sync;
+                        //}
 
                         if ( appInfo_LS.logInOut )
                         {                            
@@ -462,3 +465,36 @@ AppInfoLSManager.getLoginRespOLD_createdDT = function( loginRespOLD )
 
 
 
+
+// ------------------------------------------------------------------------------------  
+// ----------------  sync Last Downloaded
+
+AppInfoLSManager.updateSyncLastDownloadInfo = function( dateStr )
+{
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_SYNC, AppInfoLSManager.KEY_SYNC_LAST_DOWNLOADINFO, dateStr );
+
+    // Update the 'INFO' when updated - since we use this through 'INFO' object.
+    InfoDataManager.setINFO_lastDownloaded( dateStr );
+};	
+
+AppInfoLSManager.getSyncLastDownloadInfo = function()
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_SYNC, AppInfoLSManager.KEY_SYNC_LAST_DOWNLOADINFO );
+};	
+
+
+// ------------------------------------------------------------------------------------  
+// ----------------  fix Operation Last Performed
+
+AppInfoLSManager.updateFixOperationLast = function( dateStr )
+{
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_SYNC, AppInfoLSManager.KEY_FIX_OPERATION_LAST, dateStr );
+
+    // Update the 'INFO' when updated - since we use this through 'INFO' object.
+    InfoDataManager.setINFO_fixOperationLast( dateStr );
+};	
+
+AppInfoLSManager.getFixOperationLast = function()
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_SYNC, AppInfoLSManager.KEY_FIX_OPERATION_LAST );
+};
