@@ -447,7 +447,7 @@ function settingsApp( cwsRender )
                 catch ( errMsg ) { console.log( 'ERROR in jobAidFolderDefault populate, ' + errMsg ); }
                 
                 // Run the retrieval of files and put it in runTimeCache
-                JobAidHelper.runTimeCache_JobAid( jobAidFilingBtnTag.parent(), true );
+                JobAidHelper.runTimeCache_JobAid( { isListingApp: true }, jobAidFilingBtnTag.parent() );
             }
         });      
 

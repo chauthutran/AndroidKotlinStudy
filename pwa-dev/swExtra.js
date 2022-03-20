@@ -7,6 +7,7 @@ self.addEventListener('message', (event) =>
     {
       var cacheName = event.data.cacheName;
       var reqList = event.data.payload;
+      var options = ( event.data.options ) ? event.data.options: {};
 
       // await caches.delete( cacheName );  // TOOD: Should delete only if 'delete' command it passed in.
       
@@ -19,9 +20,13 @@ self.addEventListener('message', (event) =>
 
       reqList.forEach( reqUrl => 
       {
-        cache.add( reqUrl ).then( () => {
+        cache.add( reqUrl ).then( () => 
+        {
           doneCount++;
-          var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl } } );
+          var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options } );
+
+          console.log( 'returnMsgStr: ' + returnMsgStr );
+
           event.source.postMessage( returnMsgStr );  
         });
       });

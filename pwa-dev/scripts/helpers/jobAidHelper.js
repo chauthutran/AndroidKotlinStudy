@@ -14,21 +14,52 @@ JobAidHelper.jobAid_jobTest2 = 'jobTest2';
 
 // =========================
 
-JobAidHelper.runTimeCache_JobAid = function( btnParentTag, isListingApp ) // returnFunc )
+JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // returnFunc )
 {
-	if (ConnManagerNew.isAppMode_Online()) 
+	if ( ConnManagerNew.isAppMode_Online() ) 
 	{
+		if ( !options ) options = {};
 		$('.divJobFileLoading').remove();
 
-		var localCase = WsCallManager.checkLocalDevCase(window.location.origin);
 		var requestUrl;
-		var app = ( WsCallManager.stageName === 'test' ) ? 'pwa-test': 'pwa-dev';
 
-		var payload = { 'isLocal': localCase, 'app': app, 'isListingApp': true };
-		var payloadStr = JSON.stringify( payload );
+		options.isLocal = WsCallManager.checkLocalDevCase(window.location.origin);
+		options.appName = ( WsCallManager.stageName === 'test' ) ? 'pwa-test': 'pwa-dev';;
+
+		//var payload = { 'isLocal': localCase, 'appName': appName, 'isListingApp': options.isListingApp, 'btnParentTag': btnParentTag, 'projDir': options.projDir };
+		var optionsStr = JSON.stringify( options );
 
 		//if ( WsCallManager.stageName === 'test' ) requestUrl = (localCase) ? 'http://localhost:8384/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFilingTest');
-		requestUrl = (localCase) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
+		requestUrl = (options.isLocal) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
+
+		$.ajax({
+			url: requestUrl + '?optionsStr=' + optionsStr,
+			type: "GET",
+			dataType: "json",
+			success: function (response) 
+			{
+				if ( jobAidBtnParentTag ) jobAidBtnParentTag.append('<div class="divJobFileLoading" style="display: contents;"><img src="images/loading_big_blue.gif" style="height: 17px;">'
+				+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
+				+ '</div>');
+
+				SwManager.swRegObj.active.postMessage({
+					'type': JobAidHelper.jobAid_CACHE_URLS2
+					, 'cacheName': JobAidHelper.jobAid_jobTest2
+					, 'options': options
+					, 'payload': JobAidHelper.sortVideoAtTheEnd( response.list )
+				});				
+			},
+			error: function (error) {
+				MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
+			}
+		});
+
+	}
+	else {
+		MsgManager.msgAreaShowErr('JobAid Filing is only available in online mode');
+	}
+};
+
 
 		/*
 		$.post( requestUrl, payload, function( response ) 
@@ -48,32 +79,6 @@ JobAidHelper.runTimeCache_JobAid = function( btnParentTag, isListingApp ) // ret
 		});
 		*/
 
-		$.ajax({
-			url: requestUrl + '?payloadStr=' + payloadStr,
-			type: "GET",
-			dataType: "json",
-			success: function (response) 
-			{
-				if ( btnParentTag ) btnParentTag.append('<div class="divJobFileLoading" style="display: contents;"><img src="images/loading_big_blue.gif" style="height: 17px;">'
-				+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
-				+ '</div>');
-
-				SwManager.swRegObj.active.postMessage({
-					'type': JobAidHelper.jobAid_CACHE_URLS2
-					, 'cacheName': JobAidHelper.jobAid_jobTest2
-					, 'payload': JobAidHelper.sortVideoAtTheEnd( response.list )
-				});				
-			},
-			error: function (error) {
-				MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
-			}
-		});
-
-	}
-	else {
-		MsgManager.msgAreaShowErr('JobAid Filing is only available in online mode');
-	}
-};
 
 JobAidHelper.sortVideoAtTheEnd = function( list ) 
 {
@@ -99,36 +104,51 @@ JobAidHelper.sortVideoAtTheEnd = function( list )
 
 JobAidHelper.JobFilingProgress = function (msgData) {
 	// var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: currCount } } );
-	if (msgData && msgData.process) {
-		var total = msgData.process.total;
-		var curr = msgData.process.curr;
-		var name = msgData.process.name;
+	if ( msgData && msgData.process ) 
+	{
 
-		if ( name && name.length > 10 )
+		if ( msgData.options && msgData.options.target === 'jobAidIFrame' )
 		{
-			name = '--' + name.substr( name.length - 10 );  // Get only last 10 char..
+			var data = { action: { name: 'simpleMsg', msgData: msgData } };
+			// var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options } );
+
+			console.log( )
+
+			JobAidHelper.msgHandle( data );
 		}
+		else
+		{
+			var total = msgData.process.total;
+			var curr = msgData.process.curr;
+			var name = msgData.process.name;
 	
-		var divJobFileLoadingTag = $('.divJobFileLoading');
-		var spanJobFilingMsgTag = $('.spanJobFilingMsg');
-
-		if (total && total > 0 && curr && curr < total) {
-			// update the processing msg..
-			var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + name + ']';
-			spanJobFilingMsgTag.text(prgMsg);
-		}
-		else {
-			divJobFileLoadingTag.find('img').remove();
-			spanJobFilingMsgTag.text('Processing all done.');
-
-			MsgManager.msgAreaShow('Job Aid Filing Finished.');
+	
+			if ( name && name.length > 10 )
+			{
+				name = '--' + name.substr( name.length - 10 );  // Get only last 10 char..
+			}
+		
+			var divJobFileLoadingTag = $('.divJobFileLoading');
+			var spanJobFilingMsgTag = $('.spanJobFilingMsg');
+	
+			if (total && total > 0 && curr && curr < total) {
+				// update the processing msg..
+				var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + name + ']';
+				spanJobFilingMsgTag.text(prgMsg);
+			}
+			else {
+				divJobFileLoadingTag.find('img').remove();
+				spanJobFilingMsgTag.text('Processing all done.');
+	
+				MsgManager.msgAreaShow('Job Aid Filing Finished.');
+			}
 		}
 	}
 };
 
 // =========================
 
-JobAidHelper.msgHandle = function (data) 
+JobAidHelper.msgHandle = function ( data ) 
 {
 	// window.parent.postMessage( { 'from': 'jobAidIFrame', 'actions': [ 
 	//	 { name: 'getJobFolderNames', callBackEval: ' mainData.folderData = action.data; alert( mainData ); ' }, 
@@ -150,7 +170,7 @@ JobAidHelper.msgHandle = function (data)
 			else if ( Util.isTypeString( data.action ) ) JobAidHelper.handleMsgActionOld( data );
 		}
 
-		returnActions = returnActions.filter(action => action)
+		returnActions = returnActions.filter(action => action);
 
 		// If there is any action result to return, send as msg to jobAid iFrame
 		if ( returnActions.length > 0 )
@@ -210,6 +230,8 @@ JobAidHelper.handleMsgAction = function( action )
 		}
 		catch ( errMsg ) { console.log( 'ERROR in JobAidHelper.handleMsgAction WFARunEval action, ' + errMsg ); }
 	}
+	else if ( action.name === 'simpleMsg' ) actionJson = action;
+
 
 	return actionJson;
 };
