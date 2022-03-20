@@ -28,6 +28,9 @@ AppInfoManager.KEY_ACTIVITY_HISTORY = "activityHistory";
 AppInfoManager.KEY_CUSTOM_LOG_HISTORY = "customLogHistory"; 
 AppInfoManager.KEY_FIX_OPERATION_HISTORY = "fixOperationHistory"; 
 
+AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO = "syncLastDownloaded"; 
+AppInfoManager.KEY_FIX_OPERATION_LAST = "fixOperationLast"; 
+
 
 AppInfoManager.KEY_STATISTIC_PAGES = "statisticPages"; 
 
@@ -96,7 +99,6 @@ AppInfoManager.mergeOldData = function( appInfo )
 {
     var appInfo_LS = AppInfoLSManager.appInfo_LS;
 
-    // Opsolete?
     if ( appInfo_LS.sync && !appInfo.sync )
     {                            
         AppInfoManager.updateData( AppInfoManager.KEY_SYNC, appInfo_LS.sync );
@@ -375,6 +377,43 @@ AppInfoManager.addHistory_CMN = function( data, subKey, historyList, historyMax,
         console.customLog( 'ERROR in AppInfoManager.' + optTitle + '(addHistory_CMN), errMsg: ' + errMsg );
     }
 };
+
+// -------------------------------------
+
+// ------------------------------------------------------------------------------------  
+// ----------------  sync Last Downloaded
+
+AppInfoManager.updateSyncLastDownloadInfo = function( dateStr )
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO, dateStr );
+
+    // Update the 'INFO' when updated - since we use this through 'INFO' object.
+    InfoDataManager.setINFO_lastDownloaded( dateStr );
+};	
+
+AppInfoManager.getSyncLastDownloadInfo = function()
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO );
+};	
+
+
+// ------------------------------------------------------------------------------------  
+// ----------------  fix Operation Last Performed
+
+AppInfoManager.updateFixOperationLast = function( dateStr )
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_FIX_OPERATION_LAST, dateStr );
+
+    // Update the 'INFO' when updated - since we use this through 'INFO' object.
+    InfoDataManager.setINFO_fixOperationLast( dateStr );
+};	
+
+AppInfoManager.getFixOperationLast = function()
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_FIX_OPERATION_LAST );
+};
+
+// -----------------------------------------------
 
 // ------------------------------------------------------------------------------------  
 // ----------------  Update properties in lastLogin?

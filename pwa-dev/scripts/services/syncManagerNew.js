@@ -160,7 +160,7 @@ SyncManagerNew.syncDown = function( runType, callBack )
                 // TODO: NEED TO MAKE SURE THE RESPONSE HAD ALL PROPER FORMAT OF NO EROR/FAILURE..
                 // Mongo VS DHIS....                
 
-                AppInfoLSManager.updateSyncLastDownloadInfo(( new Date() ).toISOString()); 
+                AppInfoManager.updateSyncLastDownloadInfo(( new Date() ).toISOString()); 
 
                 if ( callBack ) callBack( downloadSuccess, changeOccurred_atMerge, mockCase, mergedActivities );
             });            

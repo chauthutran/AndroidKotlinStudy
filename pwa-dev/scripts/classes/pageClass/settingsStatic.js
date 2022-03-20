@@ -21,7 +21,7 @@ SettingsStatic.fixOperationRun = function( returnFunc )
         if ( success && fixOperationList )
         {
             var isoDateStr = ( new Date() ).toISOString();                
-            AppInfoLSManager.updateFixOperationLast( isoDateStr );
+            AppInfoManager.updateFixOperationLast( isoDateStr );
 
             if ( fixOperationList.length > 0 )
             {                

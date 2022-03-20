@@ -68,8 +68,8 @@ InfoDataManager.setDataAfterLogin = function()
 		//INFO.clientList = ActivityDataManager.getClientList();
 
 		// Any other info?	
-		InfoDataManager.setINFO_lastDownloaded( AppInfoLSManager.getSyncLastDownloadInfo() );
-		InfoDataManager.setINFO_fixOperationLast( AppInfoLSManager.getFixOperationLast() );
+		InfoDataManager.setINFO_lastDownloaded( AppInfoManager.getSyncLastDownloadInfo() );
+		InfoDataManager.setINFO_fixOperationLast( AppInfoManager.getFixOperationLast() );
 
 		// NOTE: But we can access by '_ver' in anywhere.
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_app_version, Util.getStr( _ver ) );

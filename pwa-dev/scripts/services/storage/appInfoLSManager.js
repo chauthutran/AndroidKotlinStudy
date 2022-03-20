@@ -23,8 +23,8 @@ AppInfoLSManager.KEY_LOGINOUT = "logInOut";
 AppInfoLSManager.KEY_SYNC = "sync"; 
 AppInfoLSManager.KEY_DEBUG = "debug"; 
 
-AppInfoLSManager.KEY_SYNC_LAST_DOWNLOADINFO = "syncLastDownloaded"; 
-AppInfoLSManager.KEY_FIX_OPERATION_LAST = "fixOperationLast"; 
+//AppInfoLSManager.KEY_SYNC_LAST_DOWNLOADINFO = "syncLastDownloaded"; 
+//AppInfoLSManager.KEY_FIX_OPERATION_LAST = "fixOperationLast"; 
 
 // ---------------------------
 
@@ -125,11 +125,12 @@ AppInfoLSManager.migrateData = function( appInfo_LS )
                         // A2. move 'sync', 'logInOut', 'debug' to indexDB and remove old.
                         AppInfoManager.setUserName_Passwd( userName, passwd );  // Use this to get 'userName/passwd' for indexedDB encript save
 
-                        //if ( appInfo_LS.sync )
-                        //{                            
-                        //    AppInfoManager.updateData( AppInfoManager.KEY_SYNC, appInfo_LS.sync );
-                        //    delete appInfo_LS.sync;
-                        //}
+                        // TODO: If 'sync' is changed to be stored in localStorage, remove below.
+                        if ( appInfo_LS.sync )
+                        {                            
+                            AppInfoManager.updateData( AppInfoManager.KEY_SYNC, appInfo_LS.sync );
+                            delete appInfo_LS.sync;
+                        }
 
                         if ( appInfo_LS.logInOut )
                         {                            
@@ -464,8 +465,7 @@ AppInfoLSManager.getLoginRespOLD_createdDT = function( loginRespOLD )
 };
 
 
-
-
+/*
 // ------------------------------------------------------------------------------------  
 // ----------------  sync Last Downloaded
 
@@ -498,3 +498,4 @@ AppInfoLSManager.getFixOperationLast = function()
 {
     return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_SYNC, AppInfoLSManager.KEY_FIX_OPERATION_LAST );
 };
+*/
