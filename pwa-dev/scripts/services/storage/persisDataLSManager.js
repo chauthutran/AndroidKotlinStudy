@@ -4,15 +4,16 @@ function PersisDataLSManager() {}
 // ---------------------------
 PersisDataLSManager.persisData_LS;
 
+// --- top level keys (all object?)
 PersisDataLSManager.KEY_PERSISDATA = "persisData";
+PersisDataLSManager.KEY_VOUCHER_CODES = "voucherCodes";
+PersisDataLSManager.KEY_JOB_FILING_STATUS = "jobFilingStatus";
 
-PersisDataLSManager.KEY_VOUCHER_CODES = "voucherCodes"; 
-
+// --- keys of object prop
 PersisDataLSManager.KEY_TRANSLATION = "translation"; 
 PersisDataLSManager.KEY_LANG_TERMS = "langTerms"; 
 PersisDataLSManager.KEY_LANG_CODE = "langCode"; 
 PersisDataLSManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
-
 
 // ----------------------------------------------------
 
@@ -44,7 +45,7 @@ PersisDataLSManager.savePersisData = function( persisData_LS )
 PersisDataLSManager.getData = function( keyword )
 {
     if ( keyword ) return PersisDataLSManager.persisData_LS[keyword];
-    else PersisDataLSManager.persisData_LS;
+    else return PersisDataLSManager.persisData_LS;
 };
 
 PersisDataLSManager.updateData = function( keyword, jsonData )
@@ -140,6 +141,7 @@ PersisDataLSManager.removeProperty = function( mainKey, subKey )
     }
 };
 
+
 // ----------------------------------------------
 // ------ Translatoin langTerms
 
@@ -199,6 +201,7 @@ PersisDataLSManager.setLangLastDateTime = function( dateObj )
 
 // ----------------------------------------------------
 // ---- VoucherCodes Queue Related
+
 PersisDataLSManager.getVoucherCodes_queue = function() 
 {
     // After getting the list, use the top one?  and add to bottom 
@@ -237,3 +240,18 @@ PersisDataLSManager.updateVoucherCodes_info = function( infoData )
     PersisDataLSManager.updatePropertyValue( PersisDataLSManager.KEY_VOUCHER_CODES, 'info', infoData );
 };
 
+// ----------------------------------------------
+// ------ Job Aid Filiing Status info
+
+PersisDataLSManager.getJobFilingStatus = function() 
+{ 
+    return PersisDataLSManager.getData( PersisDataLSManager.KEY_JOB_FILING_STATUS ); 
+};
+
+// Not get used
+// PersisDataLSManager.updateJobFilingStatus = function( json ) { return PersisDataLSManager.updateData( PersisDataLSManager.KEY_JOB_FILING_STATUS, json ); };
+
+PersisDataLSManager.updateJobFilingProjDirStatus = function( projDir, jsonData )
+{
+    PersisDataLSManager.updatePropertyValue( PersisDataLSManager.KEY_JOB_FILING_STATUS, projDir, jsonData );
+};

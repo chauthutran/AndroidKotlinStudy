@@ -102,49 +102,66 @@ JobAidHelper.sortVideoAtTheEnd = function( list )
 };
 
 
-JobAidHelper.JobFilingProgress = function (msgData) {
-	// var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: currCount } } );
+JobAidHelper.JobFilingProgress = function( msgData ) 
+{
 	if ( msgData && msgData.process ) 
 	{
-
 		if ( msgData.options && msgData.options.target === 'jobAidIFrame' )
 		{
 			var data = { action: { name: 'simpleMsg', msgData: msgData } };
 			// var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options } );
 
-			console.log( )
-
 			JobAidHelper.msgHandle( data );
+
+			JobAidHelper.storeFilingStatus( msgData.options.projDir, msgData.process ); 
 		}
 		else
 		{
 			var total = msgData.process.total;
 			var curr = msgData.process.curr;
 			var name = msgData.process.name;
-	
-	
-			if ( name && name.length > 10 )
-			{
-				name = '--' + name.substr( name.length - 10 );  // Get only last 10 char..
-			}
 		
+			if ( name && name.length > 10 ) name = '--' + name.substr( name.length - 10 );  // Get only last 10 char..
+		
+	
 			var divJobFileLoadingTag = $('.divJobFileLoading');
 			var spanJobFilingMsgTag = $('.spanJobFilingMsg');
 	
-			if (total && total > 0 && curr && curr < total) {
-				// update the processing msg..
-				var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + name + ']';
-				spanJobFilingMsgTag.text(prgMsg);
-			}
-			else {
-				divJobFileLoadingTag.find('img').remove();
-				spanJobFilingMsgTag.text('Processing all done.');
-	
-				MsgManager.msgAreaShow('Job Aid Filing Finished.');
+
+			if ( total && total > 0 && curr )
+			{
+			  	if ( curr < total ) 
+				{
+					// update the processing msg..
+					var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + name + ']';
+					spanJobFilingMsgTag.text(prgMsg);
+				}
+				else 
+				{
+					divJobFileLoadingTag.find('img').remove();
+					spanJobFilingMsgTag.text('Processing all done.');
+		
+					MsgManager.msgAreaShow('Job Aid Filing Finished.');	
+				}
+
+				
+				// TODO: Create delay action (for 1 sec overrite?)
+				JobAidHelper.storeFilingStatus( 'jobListingApp', msgData.process );
 			}
 		}
 	}
 };
+
+JobAidHelper.storeFilingStatus = function ( projDir, process ) 
+{
+	// Structure: { projDir: { -- process -- } }
+	//   			{ listingApp: { -- process -- } } // listingApp case..
+	// 			process: { total: totalCount, curr: doneCount, name: reqUrl }
+
+	var process = { total: process.total, curr: process.curr };
+
+	PersisDataLSManager.updateJobFilingProjDirStatus( projDir, process );
+}
 
 // =========================
 

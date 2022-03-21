@@ -193,7 +193,7 @@ AppInfoLSManager.saveAppInfoData = function( appInfo_LS )
 AppInfoLSManager.getData = function( keyword )
 {
     if ( keyword ) return AppInfoLSManager.appInfo_LS[keyword];
-    else AppInfoLSManager.appInfo_LS;
+    else return AppInfoLSManager.appInfo_LS;
 };
 
 AppInfoLSManager.updateData = function( keyword, jsonData )
