@@ -51,6 +51,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 		//if ( WsCallManager.stageName === 'test' ) requestUrl = (localCase) ? 'http://localhost:8384/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFilingTest');
 		requestUrl = (options.isLocal) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
 
+		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending
+
+
 		$.ajax({
 			url: requestUrl + '?optionsStr=' + optionsStr,
 			type: "GET",
