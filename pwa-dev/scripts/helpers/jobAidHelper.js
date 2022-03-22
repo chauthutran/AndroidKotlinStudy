@@ -10,9 +10,28 @@ JobAidHelper.jobAid_startPage = 'index1.html';
 JobAidHelper.jobAid_startPagePath = 'jobs/' + JobAidHelper.jobAid_startPage;
 
 JobAidHelper.jobAid_CACHE_URLS2 = 'CACHE_URLS2';
+JobAidHelper.jobAid_CACHE_DELETE = 'CACHE_DELETE';
 JobAidHelper.jobAid_jobTest2 = 'jobTest2';
 
 // =========================
+
+JobAidHelper.getCacheKeys = function( callBack )
+{
+	caches.open( JobAidHelper.jobAid_jobTest2 ).then( cache => 
+	{ 
+		cache.keys().then( keys => 
+		{ 
+			callBack( keys );				
+		}); 
+	});   
+};
+
+
+JobAidHelper.deleteCacheStorage = async function()
+{
+	return caches.delete( JobAidHelper.jobAid_jobTest2 );
+};
+
 
 JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // returnFunc )
 {
@@ -42,12 +61,18 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 				+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
 				+ '</div>');
 
+				// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
+				//    However, since we do not want anyone to access jobs folder directly, but only through cache
+				//		We need to have service worker Read & Cache it.
+				//		And once it is on cache (only allowed ones), we can read however we want afterwards (without going through service worker)
 				SwManager.swRegObj.active.postMessage({
 					'type': JobAidHelper.jobAid_CACHE_URLS2
 					, 'cacheName': JobAidHelper.jobAid_jobTest2
 					, 'options': options
 					, 'payload': JobAidHelper.sortVideoAtTheEnd( response.list )
 				});				
+				// caches.open( JobAidHelper.jobAid_jobTest2 ).then( cache => { cache.add( reqUrl ).then(
+				
 			},
 			error: function (error) {
 				MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
@@ -59,25 +84,6 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 		MsgManager.msgAreaShowErr('JobAid Filing is only available in online mode');
 	}
 };
-
-
-		/*
-		$.post( requestUrl, payload, function( response ) 
-		{
-			if ( btnParentTag ) btnParentTag.append('<div class="divJobFileLoading" style="display: contents;"><img src="images/loading_big_blue.gif" style="height: 17px;">'
-				+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
-				+ '</div>');
-
-			SwManager.swRegObj.active.postMessage({
-				'type': JobAidHelper.jobAid_CACHE_URLS2
-				, 'cacheName': JobAidHelper.jobAid_jobTest2
-				, 'payload': JobAidHelper.sortVideoAtTheEnd( response.list )
-			});
-
-		}, "json").fail( function (error) {
-			MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
-		});
-		*/
 
 
 JobAidHelper.sortVideoAtTheEnd = function( list ) 
@@ -113,7 +119,11 @@ JobAidHelper.JobFilingProgress = function( msgData )
 
 			JobAidHelper.msgHandle( data );
 
-			JobAidHelper.storeFilingStatus( msgData.options.projDir, msgData.process ); 
+			// Create delayed action (for 1 sec overwrite)
+			Util.setDelays_timeout( 'jobFiling', 1, function() {
+				JobAidHelper.storeFilingStatus( msgData.options.projDir, msgData.process ); 
+			});
+			
 		}
 		else
 		{
@@ -142,11 +152,16 @@ JobAidHelper.JobFilingProgress = function( msgData )
 					spanJobFilingMsgTag.text('Processing all done.');
 		
 					MsgManager.msgAreaShow('Job Aid Filing Finished.');	
+
+					// If option has 'runEval_AfterFinish' prop, execute it here.            
+					settingsApp.jobAidFilesPopulate( $( '.divMainContent' ) );
 				}
 
 				
-				// TODO: Create delay action (for 1 sec overrite?)
-				JobAidHelper.storeFilingStatus( 'jobListingApp', msgData.process );
+				// Save Status on WFA LocalStorage, but do it with delayed action (for 1 sec overwrite) - so fast calls do not perform store, but slow or last one does.
+				Util.setDelays_timeout( 'jobFiling', 1, function() {
+					JobAidHelper.storeFilingStatus( 'jobListingApp', msgData.process );
+				});
 			}
 		}
 	}
@@ -252,6 +267,17 @@ JobAidHelper.handleMsgAction = function( action )
 
 	return actionJson;
 };
+
+
+JobAidHelper.clearFiles = function( runAfterEval )
+{
+	SwManager.swRegObj.active.postMessage({
+		'type': JobAidHelper.jobAid_CACHE_DELETE
+		, 'cacheName': JobAidHelper.jobAid_jobTest2
+		, 'options': { runAfterEval: runAfterEval }
+	});		
+};
+
 
 // -------------------------------------
 // -- Old msg action structure support

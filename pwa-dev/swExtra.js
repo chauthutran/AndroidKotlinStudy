@@ -3,56 +3,33 @@ self.addEventListener('message', (event) =>
   // NOTE: More explain about 'event.waitUntil': https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil
   event.waitUntil( async function() 
   {
-    if ( event.data && event.data.type === 'CACHE_URLS2' && event.data.cacheName && event.data.payload ) 
+    if ( event.data && event.data.cacheName )
     {
-      var cacheName = event.data.cacheName;
-      var reqList = event.data.payload;
-      var options = ( event.data.options ) ? event.data.options: {};
-
-      // await caches.delete( cacheName );  // TOOD: Should delete only if 'delete' command it passed in.
-      
-      var cache = await caches.open( cacheName );
-      
-      // await cache.allAll( reqList );  // <-- No progress msg
-
-      var totalCount = reqList.length;
-      var doneCount = 0;
-
-      reqList.forEach( reqUrl => 
+      if ( event.data.type === 'CACHE_URLS2' && event.data.payload ) 
       {
-        cache.add( reqUrl ).then( () => 
-        {
-          doneCount++;
-          var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options } );
-
-          console.log( 'returnMsgStr: ' + returnMsgStr );
-
-          event.source.postMessage( returnMsgStr );  
-        });
-      });
-
-
-      /*
-      for ( var i = 0; i < reqList.length; i++ )
-      {
-        var reqUrl = reqList[i];// + '?tmark=' + (new Date()).getTime();
-
-        cache.add( reqUrl ).then( function() {
-          doneCount++;
-          var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl } } );
-          event.source.postMessage( returnMsgStr );  
-        });
-
-        await cache.add( reqUrl );
+        var cacheName = event.data.cacheName;
+        var reqList = event.data.payload;
+        var options = ( event.data.options ) ? event.data.options: {};
+          
+        var cache = await caches.open( cacheName );
         
-        doneCount++;
-        var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl } } );
-        event.source.postMessage( returnMsgStr );
-      }
-      */
-
+        var totalCount = reqList.length;
+        var doneCount = 0;
+  
+        reqList.forEach( reqUrl => 
+        {
+          cache.add( reqUrl ).then( () => 
+          {
+            doneCount++;
+            var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options } );
+            //console.log( 'returnMsgStr: ' + returnMsgStr );
+            event.source.postMessage( returnMsgStr );  
+          });
+        });
+      }  
     }
-  }()); // async IIFE --> added () will immediately invoke the async function, hence the name async IIFE
+
+  }()); // async IIFE
 });
 
 
@@ -81,7 +58,6 @@ cache.addAll(requests[]).then(function() {
     const cache = await caches.open('jobTest2');
     return cache.addAll(event.data.payload);
 })
-
 
 
 // ===== V3

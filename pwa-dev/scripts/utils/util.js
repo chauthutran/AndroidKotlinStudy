@@ -2210,3 +2210,16 @@ Util.getAsArray = function( inputData )
 
 	return dataArray;
 };
+
+// -----------------------------------------------------------------
+
+Util.g_TimeOutIds = {};
+
+Util.setDelays_timeout = function( globalTO_ID, timeoutSec, actionFunc )
+{
+	var theTimeOutId = Util.g_TimeOutIds[ globalTO_ID ];
+
+	if ( theTimeOutId ) clearTimeout( theTimeOutId );
+
+	Util.g_TimeOutIds[ globalTO_ID ] = setTimeout( actionFunc, timeoutSec * 1000 );
+};

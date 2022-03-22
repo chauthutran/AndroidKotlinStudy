@@ -2164,11 +2164,14 @@ FormUtil.openDivPopupArea = function( divPopupAreaTag, populateProcess, closePro
 {
 	FormUtil.blockPage( undefined, function( scrimTag )
 	{
-      divPopupAreaTag.show();
+      divPopupAreaTag.show();  // Always clear out 'mainContent' and reCreate it.
       $('.scrim').show();
 
+		divPopupAreaTag.find( 'div.divExtraSec' ).remove();
+		
+
 		var divMainContentTag = divPopupAreaTag.find( '.divMainContent' );
-		divMainContentTag.html( '' ); // Reset the content..
+		divMainContentTag.html( '' ).attr( 'style', '' ); // Reset the content & style.  // style="overflow: scroll;height: 85%; margin-top: 10px; background-color: #eee;padding: 7px;"
 
 		var closeBtn = divPopupAreaTag.find( 'div.close' );
 

@@ -171,9 +171,8 @@ function settingsApp( cwsRender )
                     if ( $( obj ).is(':visible') ) $( obj ).hide();
                     else $( obj ).show();
                 }
-
             });
-        }
+        };
 
 
         $( '#settingsInfo_newLangTermsDownload' ).click( function() 
@@ -431,6 +430,7 @@ function settingsApp( cwsRender )
             }
         });     
 
+        /*
         me.settingsFormDivTag.find( '.jobAidFiling' ).off( 'click' ).click( function() 
         {
             var jobAidFilingBtnTag = $( this );
@@ -450,63 +450,52 @@ function settingsApp( cwsRender )
                 JobAidHelper.runTimeCache_JobAid( { isListingApp: true }, jobAidFilingBtnTag.parent() );
             }
         });      
-
+        */
 
         me.settingsFormDivTag.find( '.jobAidFileListing' ).off( 'click' ).click( function() 
         {
             FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
             {
-                divMainContentTag.css( 'height', '70%' );
+                // Commonly used - Set 'divMainContent' tag to be scrollable..
+                divMainContentTag.attr( 'style', 'overflow: scroll;height: 70%; margin-top: 10px; background-color: #eee;padding: 7px;' );
 
-                // Clear previous div folders <-- Later, make this permament?
-                divMainContentTag.parent().find( 'div.divProjFolderJson' ).remove();
+                // Populate content..
+                settingsApp.jobAidFilesPopulate( divMainContentTag );
+                
+                // Create 'clear files' button
+                var btnJA_ClearFilesTag = $( '<button class="jaClearFiles cbutton">Clear All JobAid Files</button>' );
+                // Create 'Listing App Download' button
+                var btnJA_ListingAppDownloadTag = $( '<button class="jaListingAppDownload cbutton" style="background-color: cadetblue;">Download ListingApp Files</button>' );
 
 
-                var divProjFolderJsonTag = $( '<div class="divProjFolderJson" style="margin-top: 5px;"></div>' );
+                // Add the buttons div - also, will be removed each call of 'FormUtil.openDivPopupArea'
+                var divExtraSecTag = $( '<div class="divExtraSec" style="margin-bottom: 5px;"></div>' );
+                divExtraSecTag.append( btnJA_ClearFilesTag );
+                divExtraSecTag.append( btnJA_ListingAppDownloadTag );
 
-                var pfJsonInputTag = $( '<input class="pfJsonInput" style="width:50%; border: solid 1px #ccc; font-size: 0.75rem;">' );
-                var pfJsonBtnTag = $( '<button class="pfJsonBtn" style="margin-left: 5px;">Save</button>' );
+                divExtraSecTag.insertBefore( divMainContentTag );
 
-                var folderNames = AppInfoLSManager.getJobAidFolderNames();
-                if ( folderNames ) pfJsonInputTag.val( folderNames );
+                // --------------
 
-                divProjFolderJsonTag.append( pfJsonInputTag );
-                divProjFolderJsonTag.append( pfJsonBtnTag );
-
-                divProjFolderJsonTag.insertAfter( divMainContentTag );
-
-                pfJsonBtnTag.click( function() {
-                    try {
-                        var inputStr = pfJsonInputTag.val();
-                        var inputJson = JSON.parse( inputStr ); // Just use this for checking proper json format.
-
-                        AppInfoLSManager.setJobAidFolderNames( inputStr );                        
-
-                        alert( 'Set jobAid folder names.' );
-                    } 
-                    catch ( errMsg ) 
-                    {
-                        alert( 'Failed to parse or save the json' ); 
-                        console.log( 'ERROR in JobFile ProjFolderJson, ' + errMsg ); 
+                btnJA_ClearFilesTag.click( function() 
+                {
+                    var reply = confirm( 'This will clear all files including listing app files.  Do you want to continue?' );
+        
+                    if ( reply === true )
+                    {                            
+                        JobAidHelper.deleteCacheStorage().then( () => 
+                        {
+                            MsgManager.msgAreaShow( "clearing files success" );
+                            settingsApp.jobAidFilesPopulate( divMainContentTag );
+                        });                            
                     }
-
-                    // Store the json (if proper json) in local storage..                    
                 });
 
 
-                //caches.keys().then( function( keyList ) 
-                caches.open( 'jobTest2' ).then( cache => 
-                { 
-                    cache.keys().then( keys => 
-                    { 
-                        // TODO: Call popup with this listing <-- Create a static method for this popup with content!!
-                        keys.forEach( request => 
-                        { 
-                            divMainContentTag.append( '<div class="infoLine">' + Util.getUrlLastName( request.url ) + '</div>' );
-                        });    
-                    }); 
-                });      
-
+                btnJA_ListingAppDownloadTag.click( function() 
+                {
+                    JobAidHelper.runTimeCache_JobAid( { isListingApp: true }, btnJA_ListingAppDownloadTag.parent() );
+                });
             });
         });  
         
@@ -522,6 +511,8 @@ function settingsApp( cwsRender )
     
                 FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
                 {
+                    divMainContentTag.attr( 'style', 'overflow: scroll;height: 85%; margin-top: 10px; background-color: #eee;padding: 7px;' );
+
                     // Total Queue Size
                     var queue = PersisDataLSManager.getVoucherCodes_queue();
                     var availableInQueue = queue.filter( item => !item.status );
@@ -544,6 +535,7 @@ function settingsApp( cwsRender )
             });
         }
     };
+
 
     me.displayVCSamples = function( list, sampleSize, divMainContentTag )
     {
@@ -766,4 +758,20 @@ function settingsApp( cwsRender )
 	// ------------------------------------
 
 	me.initialize();
-}
+};
+
+settingsApp.jobAidFilesPopulate = function( divTag )
+{
+    divTag.html( '' );
+
+    JobAidHelper.getCacheKeys( ( keys ) => 
+    {
+        if ( keys && keys.length > 0 )
+        {
+            keys.forEach( request => 
+            { 
+                divTag.append( '<div class="infoLine">' + Util.getUrlLastName( request.url ) + '</div>' );
+            });                
+        }
+    });
+};
