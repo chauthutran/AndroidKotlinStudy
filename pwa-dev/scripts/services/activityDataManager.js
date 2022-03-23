@@ -147,6 +147,7 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
     });
 
     // Client Activity Reorder - #1
+    InfoDataManager.setINFOdata( 'client_sort', client );
     if ( !ConfigManager.activitySorting_EvalRun( "insertActivity" ) ) Util.evalSort( 'date.createdLoc', client.activities, 'asc' );  
     // undefined ones will always placed last, but will be handled on display time.
     // Util.evalSort( 'date.capturedLoc', client.activities, 'asc' );  // undefined ones will always placed last, but will be handled on display time.

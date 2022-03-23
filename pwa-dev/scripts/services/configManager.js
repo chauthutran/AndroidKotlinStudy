@@ -684,7 +684,7 @@ ConfigManager.activitySorting_EvalRun = function( sortingProp )
         try {
             var evalStr = Util.getEvalStr( activitySorting[ sortingProp ] );
             if ( evalStr ) {
-                eval( evalStr );
+                eval( evalStr );  // Alternative way:  contextExposeFunc( evalStr );
                 evalRunSuccess = true;
             }
         } catch ( errMsg ) { console.log( 'ERROR in ConfigManager.activitySorting_EvalRun, ' + errMsg ); }

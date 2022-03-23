@@ -336,6 +336,7 @@ function ClientCardDetail( clientId )
             var actList_sort = Util.cloneJson( activityList );
 
             // Client Activity Reorder - #2
+            InfoDataManager.setINFOdata( 'actList_sort', actList_sort );
             if ( !ConfigManager.activitySorting_EvalRun( "populateActivityCardList" ) )
             {
                 Util.evalSort( 'date.capturedLoc', actList_sort, 'desc' );

@@ -99,6 +99,7 @@ ClientDataManager.insertClients = function( clientList ) //, bRemoveActivityTemp
 ClientDataManager.insertClient = function( client )
 {
     // Client Activity Reorder - #3 - whenever client is added (from download, etc), make sure activities are sorted properly.
+    InfoDataManager.setINFOdata( 'client_sort', client );
     if ( !ConfigManager.activitySorting_EvalRun( "insertClient" ) ) Util.evalSort( 'date.createdLoc', client.activities, 'asc' ); 
 
     ClientDataManager.getClientList().unshift( client ); // Add to top of list...
