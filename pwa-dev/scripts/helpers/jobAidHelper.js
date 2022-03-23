@@ -55,7 +55,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 
 
 		$.ajax({
-			url: requestUrl + '?optionsStr=' + optionsStr,
+			url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
 			type: "GET",
 			dataType: "json",
 			success: function (response) 
