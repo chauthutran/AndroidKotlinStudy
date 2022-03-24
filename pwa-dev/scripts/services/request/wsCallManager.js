@@ -112,6 +112,7 @@ WsCallManager.getAppFolderName = function ( stageName )
 
     if ( stageName === 'dev' ) appFolderName = 'pwa-dev';
     else if ( stageName === 'test' ) appFolderName = 'pwa-test';
+    else if ( stageName === 'stage' ) appFolderName = 'pwa-stage';
     else if ( stageName === 'prod' ) appFolderName = 'wfa';
     else appFolderName = 'pwa-dev';
     

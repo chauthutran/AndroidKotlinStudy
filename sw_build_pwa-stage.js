@@ -5,8 +5,8 @@ const {generateSW} = require('workbox-build');
 
 generateSW({
   mode: 'production',
-  swDest: 'pwa-test/service-worker.js',
-  globDirectory: 'pwa-test',
+  swDest: 'pwa-stage/service-worker.js',
+  globDirectory: 'pwa-stage',
   globPatterns: [
     '**/*.{html,css,js,gif,jpg,png,svg,mp3,wav,json}'
   ],

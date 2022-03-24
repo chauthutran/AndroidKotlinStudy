@@ -8,7 +8,7 @@ generateSW({
   swDest: 'wfa/service-worker.js',
   globDirectory: 'wfa',
   globPatterns: [
-    '**/*.{html,css,js,gif,jpg,png,svg,mp3,wav,json,pdf}'
+    '**/*.{html,css,js,gif,jpg,png,svg,mp3,wav,json}'
   ],
   skipWaiting: true,
   clientsClaim: true,
@@ -23,20 +23,6 @@ generateSW({
         cacheName: 'googleFonts'
       }
     }
-    //,{
-    // urlPattern: /^(?!http.*).*\.(?:js|html|css|svg|jpg|png|gif|mp3|wav)$/,      
-    //  handler: 'CacheFirst',
-    //  options: {
-    //    cacheName: 'appShell'
-    //  }
-    //}
-    //,{
-    //  urlPattern: /^http:\/\/localhost.*/,
-    //  handler: 'CacheFirst',
-    //  options: {
-    //    cacheName: 'jobTest'
-    //  }
-    //}    
     ,{
       urlPattern: /\/jobs\//,
       handler: 'CacheOnly',

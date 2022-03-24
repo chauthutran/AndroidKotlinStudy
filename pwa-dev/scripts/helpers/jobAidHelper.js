@@ -43,7 +43,11 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 		var requestUrl;
 
 		options.isLocal = WsCallManager.checkLocalDevCase(window.location.origin);
-		options.appName = ( WsCallManager.stageName === 'test' ) ? 'pwa-test': 'pwa-dev';;
+		options.appName = 'pwa-dev';
+	
+		if ( WsCallManager.stageName === 'test' ) options.appName = 'pwa-test';
+		else if ( WsCallManager.stageName === 'stage' ) options.appName = 'pwa-stage';
+		
 
 		//var payload = { 'isLocal': localCase, 'appName': appName, 'isListingApp': options.isListingApp, 'btnParentTag': btnParentTag, 'projDir': options.projDir };
 		var optionsStr = JSON.stringify( options );
