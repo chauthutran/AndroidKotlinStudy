@@ -69,7 +69,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 				var groupDivTag = me.getGroupTag( fieldData, groupsCreated, formTag );  // create group tag if not exists..
 				var fieldDef = fieldData.item;
 
-				me.fieldDefsJson[ fieldDef.id ] = fieldDef;  // Question: Why do this?
+				// NOT GOOD: - Save the field definition by fieldId for using it in 'me.populateFieldsData()'
+				me.fieldDefsJson[ fieldDef.id ] = fieldDef;
 
 				var inputFieldTag = me.createInputFieldTag( fieldDef, me.payloadConfigSelection, formTag, passedData, formDef_fieldsArr, autoComplete );
 				if ( inputFieldTag ) groupDivTag.append( inputFieldTag );
@@ -117,9 +118,10 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		{
 			var tag = $( this );
 			var tagVal = FormUtil.getTagVal( tag );
+			var fieldDef = me.getFieldDef_ByFieldTag( tag );
 
 			// For fields input/select tags that has value (.dataValue), run changes
-			if ( tagVal !== '' ) tag.change();
+			if ( tagVal !== '' || fieldDef.evalActions_wtEmptyVal ) tag.change();
 		});
 	};
 
@@ -1821,8 +1823,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 						var form = formDivSecTag; // Added by Greg (1 Feb 2021): to use 'form' variable in the eval expression - used in ZW/ZW2 configuration
 						var tagVisible = tag.parent().is( ':visible' );  // TODO: Should be more specific with class name  <-- should be .closest( 'div.fieldBlock') rather than 'parent()'
 		
-						inputVal = Util.getEvalStr( evalAction.runEval );  // Handle array into string joining
-						if ( inputVal ) returnVal = eval( inputVal );				
+						var runEvalStr = Util.getEvalStr( evalAction.runEval );  // Handle array into string joining
+						if ( runEvalStr ) returnVal = eval( runEvalStr );				
 					} catch( errMsg ) { console.log( 'BlockForm.performEvalAction, runEval err: ' + errMsg ); }
 				}
 			}
@@ -2205,6 +2207,17 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return formDivSecTag.find( 'input.dataValue, select.dataValue' ).filter( '[uid="' + idStr + '"], [name="' + idStr + '"]' );
 	};
 
+	me.getFieldDef_ByFieldTag = function( inputTag )
+	{
+		var fieldId = inputTag.attr( 'name' );
+		return me.getFieldDef_ByFieldId( fieldId );
+	}
+
+	me.getFieldDef_ByFieldId = function( fieldId ) // Could make it Static Method
+	{
+		return me.fieldDefsJson[ fieldId ];  // fieldDef does not have value..	
+	}
+
 
 	// Set both 'dataValue' & 'displayValue' on field? - basic type, checkbox/radio, modal popup
 	//	Triggers .change() to make sure the fields display value are changed?
@@ -2224,9 +2237,8 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					{
 						// 2. Do follow up operation after successful set.
 						//var fieldDef = me.fieldDefsJson[ inputTag.attr("name") ];
-						var fieldId = inputTag.attr( 'name' );
-						var fieldDef = me.fieldDefsJson[ fieldId ];  // fieldDef does not have value..
-						
+						me.getFieldDefByTag( inputTag );
+
 						// The value to be set(passed) is in 'dataValue' tag under 'fieldBlock'
 						me.populateFieldDisplayValue( inputTag.closest( 'div.fieldBlock' ), fieldDef );
 
