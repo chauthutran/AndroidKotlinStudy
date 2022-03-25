@@ -2237,7 +2237,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					{
 						// 2. Do follow up operation after successful set.
 						//var fieldDef = me.fieldDefsJson[ inputTag.attr("name") ];
-						me.getFieldDefByTag( inputTag );
+						var fieldDef = me.getFieldDef_ByFieldTag( inputTag );
 
 						// The value to be set(passed) is in 'dataValue' tag under 'fieldBlock'
 						me.populateFieldDisplayValue( inputTag.closest( 'div.fieldBlock' ), fieldDef );

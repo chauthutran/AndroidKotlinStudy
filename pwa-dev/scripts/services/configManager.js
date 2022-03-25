@@ -705,6 +705,7 @@ ConfigManager.getActivitySch_favClickOpen = function()
     return actionName;
 };
 
+
 // ---------------------------------------------
 
 ConfigManager.getSettingsClientDef = function()
@@ -1133,9 +1134,11 @@ ConfigManager.populateOptions_ouChildren = function( configJson, loginData )
                 if ( configJson.definitionOptions && configJson.definitionOptions.options_ouChildren )
                 {
                     var op_children = configJson.definitionOptions.options_ouChildren;
+
                     op_children.splice(0, op_children.length);
+
                     children.forEach( ou => {
-                        op_children.push( { defaultName: ou.name, value: ou.id, ouCode: ou.code, term: '' } );
+                        op_children.push( { defaultName: ou.name, value: ou.code, term: '' } );
                     });
                 }
             }

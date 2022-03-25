@@ -90,7 +90,7 @@ function ClientCardDetail( clientId )
             var clientJson = ClientDataManager.getClientById( clientId ); // for changed client data?
             if ( clientJson ) me.populateActivityCardList( clientJson.activities, activityListDivTag );
 
-            // Activity Fav icon s Setup for each activity cards..
+            // Activity Fav icons Setup for each activity cards..
             var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag
             , { 'mainFavPreClick': function( blockTag, blockContianerTag ) 
             {
@@ -115,8 +115,8 @@ function ClientCardDetail( clientId )
                 if ( actFavIconTag.length > 0 )
                 {
                     actFavIconTag.click();
-                    console.log( 'ClientCardDetails, openFav_ActId attempted, ' + actFavIconTag.length );
-                    //option.openFav_ActId = undefined; // On 1st click attempt, remove the option..  Had issue, thus, disabled
+                    // After 1st use, remove the option..  Had issue, thus, disabled
+                    setTimeout( () => { option.openFav_ActId = false; }, 1000 );
                 }
             }
         });

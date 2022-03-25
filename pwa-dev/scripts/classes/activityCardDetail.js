@@ -117,6 +117,10 @@ function ActivityCardDetail( activityId, isRestore )
 			var removeActivityBtn = sheetFullTag.find('.removeActivity').hide();
 			if ( SyncManagerNew.statusSyncable( activityJson.processing.status ) ) 
 			{
+				// TODO: If schedule converted activity, show option to convert backt to schedule
+				//		<-- Is it possible?  <-- 
+
+
 				removeActivityBtn.show().click(function () {
 					var result = confirm("Are you sure you want to delete this activity?");
 					if (result) {

@@ -94,7 +94,56 @@ ActivityUtil.checkNSet_ActivityDates = function( payload )
 				}
 
 				// NEW: Do not create 'capturedLoc' is scheduledLoc/UTC exists. <-- scheduled vs captured activity.
-				if ( date.scheduledLoc && !date.scheduledUTC ) date.scheduledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduledLoc ), 'noZ' );
+				if ( date.scheduledLoc )
+				{
+					// NEW: Chceck weekends/holidays and move to next business days.
+					// TODO: ConfigManager.isSchedule_WeekendAdjust
+
+					var scheduleDateAdjust = ConfigManager.getSettingsActivityDef().scheduleDateAdjust;
+					if ( scheduleDateAdjust && scheduleDateAdjust.enable )
+					{
+						try
+						{
+							var sDate = moment( date.scheduledLoc );
+						
+							// WEEKEND HANDLE
+							// "weekends": [ "sat", "sun" ]
+							var dayNum = sDate.isoWeekday();
+							if ( dayNum > 5 )
+							{
+								var addDays = 0;
+								if ( dayNum === 6 ) addDays = 2;
+								else if ( dayNum === 7 ) addDays = 1;
+								
+								if ( addDays > 0 ) {
+									sDate.add( addDays, 'days' );
+									date.scheduledLoc = Util.formatDate( sDate.toDate() );
+								}
+							}
+
+							// HOLIDAYS
+							var holidays = scheduleDateAdjust.holidays;
+							if ( holidays )
+							{
+								var currYear = moment().year();
+
+								if ( holidays[ currYear.toString() ] )
+								{
+									
+								}
+							}
+
+
+						}
+						catch( errMsg ) {
+							console.log( 'ERROR during ActivityUtil.checkNSet_ActivityDates, scheduledLoc change to next business day: ' + errMsg );
+						}	
+					}
+
+
+					if ( !date.scheduledUTC ) date.scheduledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduledLoc ), 'noZ' );
+				}
+
 				if ( date.scheduleCancelledLoc && !date.scheduleCancelledUTC ) date.scheduleCancelledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduleCancelledLoc ), 'noZ' );
 
 				// If none of above date exists, create 'capturedLoc' - just in case..

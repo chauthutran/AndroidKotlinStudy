@@ -218,10 +218,13 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 				if ( evalAction.optionsChange ) me.evalActions_optionsChange( evalAction.optionsChange, formDivSecTag );
 				if ( evalAction.runEval ) 
 				{
+                    var runEvalStr;
 					try {		
-						inputVal = Util.getEvalStr( evalAction.runEval );  // Handle array into string joining
-						if ( inputVal ) returnVal = eval( inputVal );				
-					} catch( errMsg ) { console.log( 'FavIcons.performEvalAction, runEval err: ' + errMsg ); }
+						runEvalStr = Util.getEvalStr( evalAction.runEval );  // Handle array into string joining
+						if ( runEvalStr ) returnVal = eval( runEvalStr );				
+					} catch( errMsg ) { 
+                        console.log( 'FavIcons.performEvalAction, runEval err: ' + errMsg + ', runEvalStr: ' + runEvalStr ); 
+                    }
 				}
 			}
 			else
