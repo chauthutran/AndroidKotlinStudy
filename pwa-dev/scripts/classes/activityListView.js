@@ -557,7 +557,7 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
             {
                 me.sortViewList_ByGroup( me.groupByData );
 
-                me.activityListObj.reRenderWithList( me.viewFilteredList, me.groupByData );
+                me.activityListObj.reRenderWithList( me.viewFilteredList, me.groupByData, me.viewDef_Selected );
             }
             else
             {
@@ -601,28 +601,11 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
             {
                 me.sortViewList( sortDef, me.viewFilteredList );                        
 
-                me.activityListObj.reRenderWithList( me.viewFilteredList, me.groupByData );  // there is 'callBack' param..            
+                // NOTE: displaySetting need to be used with view one..
+                me.activityListObj.reRenderWithList( me.viewFilteredList, me.groupByData, me.viewDef_Selected );  // there is 'callBack' param..            
             }
         });
     };
-
-
-    // NOTE: Not used anymore?
-    me.updateSortLiTag = function( sortTag )
-    {
-        for ( var i = 0; i < me.viewDef_Selected.sort.length; i++ )
-        {
-            if ( $( sortTag ).attr( 'sortid' ) === me.viewDef_Selected.sort[ i ].id )
-            {
-                $( me.sortListDivTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","bolder");
-            }
-            else
-            {
-                $( me.sortListDivTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","normal");
-            }
-        }
-    };
-
 
 
     me.usedGroupBy = function( groupByData )

@@ -97,50 +97,10 @@ ActivityUtil.checkNSet_ActivityDates = function( payload )
 				if ( date.scheduledLoc )
 				{
 					// NEW: Chceck weekends/holidays and move to next business days.
-					// TODO: ConfigManager.isSchedule_WeekendAdjust
-
 					var scheduleDateAdjust = ConfigManager.getSettingsActivityDef().scheduleDateAdjust;
-					if ( scheduleDateAdjust && scheduleDateAdjust.enable )
-					{
-						try
-						{
-							var sDate = moment( date.scheduledLoc );
-						
-							// WEEKEND HANDLE
-							// "weekends": [ "sat", "sun" ]
-							var dayNum = sDate.isoWeekday();
-							if ( dayNum > 5 )
-							{
-								var addDays = 0;
-								if ( dayNum === 6 ) addDays = 2;
-								else if ( dayNum === 7 ) addDays = 1;
-								
-								if ( addDays > 0 ) {
-									sDate.add( addDays, 'days' );
-									date.scheduledLoc = Util.formatDate( sDate.toDate() );
-								}
-							}
+					if ( scheduleDateAdjust && scheduleDateAdjust.enable ) ActivityUtil.adjustScheduleDate_businessDay( date, scheduleDateAdjust );
 
-							// HOLIDAYS
-							var holidays = scheduleDateAdjust.holidays;
-							if ( holidays )
-							{
-								var currYear = moment().year();
-
-								if ( holidays[ currYear.toString() ] )
-								{
-									
-								}
-							}
-
-
-						}
-						catch( errMsg ) {
-							console.log( 'ERROR during ActivityUtil.checkNSet_ActivityDates, scheduledLoc change to next business day: ' + errMsg );
-						}	
-					}
-
-
+					// UTC dateTime generate from scheduledLoc
 					if ( !date.scheduledUTC ) date.scheduledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduledLoc ), 'noZ' );
 				}
 
@@ -159,6 +119,80 @@ ActivityUtil.checkNSet_ActivityDates = function( payload )
 	{
 		console.log( 'ERROR in ActivityUtil.checkNSet_ActivityDates, ' + errMsg );
 	}
+};
+
+
+ActivityUtil.adjustScheduleDate_businessDay = function( date, scheduleDateAdjust )
+{
+	try
+	{
+		var sDate = moment( date.scheduledLoc );
+		var bChanged = false;
+
+		// Walk through the days and go until it is not weekend & holidays.
+		while ( ActivityUtil.isWeekends( sDate, scheduleDateAdjust ) || ActivityUtil.isHoliday( sDate, scheduleDateAdjust ) ) {
+			sDate.add( 1, 'days' );
+			bChanged = true;
+		};
+
+		if ( bChanged )
+		{
+			date.scheduledLoc = Util.formatDate( sDate.toDate() );
+		}
+	}
+	catch( errMsg ) {
+		console.log( 'ERROR during ActivityUtil.checkNSet_ActivityDates, scheduledLoc change to next business day: ' + errMsg );
+	}	
+};
+
+ActivityUtil.isWeekends = function( sDate, scheduleDateAdjust )
+{
+	var isCase = false;
+
+	try
+	{
+		var weekends = scheduleDateAdjust.weekends;
+		if ( weekends && weekends.length > 0 )
+		{		
+			var dayOfWeek_3Str = sDate.format( 'ddd' );
+
+			if ( weekends.indexOf( dayOfWeek_3Str ) >= 0 ) isCase = true;
+		}
+	}
+	catch( errMsg ) {
+		console.log( 'ERROR during ActivityUtil.isWeekends, ' + errMsg );
+	}	
+
+	return isCase;
+};
+
+
+ActivityUtil.isHoliday = function( sDate, scheduleDateAdjust )
+{
+	var isCase = false;
+
+	try
+	{
+		var holidays = scheduleDateAdjust.holidays;
+		if ( holidays )
+		{
+			var year = sDate.year();
+
+			var yearHolidays = holidays[ year.toString() ];
+
+			if ( yearHolidays && yearHolidays.length > 0 )
+			{
+				var dateStr = sDate.format( 'MM-DD' );
+
+				if ( yearHolidays.indexOf( dateStr ) >= 0 ) isCase = true;
+			}
+		}
+	}
+	catch( errMsg ) {
+		console.log( 'ERROR during ActivityUtil.isHoliday, ' + errMsg );
+	}	
+
+	return isCase;
 };
 
 

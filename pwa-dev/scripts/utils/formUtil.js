@@ -161,23 +161,15 @@ FormUtil.setCardContentDisplay = function( divContentTag, displayBase, displaySe
 		// Display 2nd lines and more
 		if ( displaySettings )
 		{            
-			// var INFO = InfoDataManager.getINFO();  // Globally set, thus, do not need to define it.
-
-			// If custom config display, remove 
-			for( var i = 0; i < displaySettings.length; i++ )
+			displaySettings.forEach( item => 
 			{
-				var dispSettingEvalStr = displaySettings[ i ].trim();
-
-				if ( dispSettingEvalStr )
+				try
 				{
-					try
-					{
-						var displayEvalResult = eval( Util.getEvalStr( dispSettingEvalStr ) );
-						if ( displayEvalResult ) divContentTag.append( $( cardContentTemplate ).html( displayEvalResult ) );
-					}
-					catch( errMsg ) { console.log( 'FormUtil.setCardContentDisplay, failed on displayContent, ' + errMsg ); }
+					var displayEvalResult = eval( Util.getEvalStr( item ) );
+					if ( displayEvalResult ) divContentTag.append( $( cardContentTemplate ).html( displayEvalResult ) );
 				}
-			}
+				catch( errMsg ) { console.log( 'FormUtil.setCardContentDisplay, failed on displayContent, ' + errMsg ); }
+			});
 		}
 	}
 	catch ( errMsg )

@@ -645,24 +645,6 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
     };
 
 
-    // NOTE: Not used anymore?
-    me.updateSortLiTag = function( sortTag )
-    {
-        for ( var i = 0; i < me.viewDef_Selected.sort.length; i++ )
-        {
-            if ( $( sortTag ).attr( 'sortid' ) === me.viewDef_Selected.sort[ i ].id )
-            {
-                $( me.sortListDivTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","bolder");
-            }
-            else
-            {
-                $( me.sortListDivTag ).find( 'li[sortid="' + me.viewDef_Selected.sort[ i ].id + '"]' ).css("font-weight","normal");
-            }
-        }
-    };
-
-
-
     me.usedGroupBy = function( groupByData )
     {
         return groupByData.groupByUsed;
