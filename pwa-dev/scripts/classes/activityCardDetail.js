@@ -115,18 +115,30 @@ function ActivityCardDetail( activityId, isRestore )
 
 			// Set event for "Remove" button for "Pending" client
 			var removeActivityBtn = sheetFullTag.find('.removeActivity').hide();
+			var rollBackEditActivityBtn = sheetFullTag.find('.rollBackEditActivity').hide();
+			
 			if ( SyncManagerNew.statusSyncable( activityJson.processing.status ) ) 
 			{
 				// TODO: If schedule converted activity, show option to convert backt to schedule
 				//		<-- Is it possible?  <-- 
-
-
-				removeActivityBtn.show().click(function () {
-					var result = confirm("Are you sure you want to delete this activity?");
-					if (result) {
-						me.removeActivityNCard(activityId, sheetFullTag.find('img.btnBack'));
-					}
-				});
+				if ( activityJson.processing.editRollBackData )
+				{
+					rollBackEditActivityBtn.show().click(function () {
+						var result = confirm("Are you sure you want to rollback to previous data?");
+						if (result) {
+							me.rollBackEditActivityNCard( activityId, activityJson.processing.editRollBackData, sheetFullTag.find('img.btnBack'));
+						}
+					});
+				}
+				else
+				{
+					removeActivityBtn.show().click(function () {
+						var result = confirm("Are you sure you want to delete this activity?");
+						if (result) {
+							me.removeActivityNCard(activityId, sheetFullTag.find('img.btnBack'));
+						}
+					});
+				}
 			}
 		}
 	};
@@ -153,10 +165,9 @@ function ActivityCardDetail( activityId, isRestore )
 		var client = ActivityDataManager.deleteExistingActivity_Indexed(activityId);
 		if (client && client.activities.length === 0) ClientDataManager.removeClient(client);
 
-		ClientDataManager.saveCurrent_ClientsStore(() => {
+		ClientDataManager.saveCurrent_ClientsStore(() => 
+		{
 			btnBackTag.click();
-
-			//var activityCardTags = $( '[itemid="' + activityId + '"]' );  //  $( '#pageDiv' ).   .remove();
 
 			// We also need to find all clientCard Tag with this.. and reload it..
 			var divSyncIconTags = $('div.activityStatusIcon[activityId="' + activityId + '"]');
@@ -169,6 +180,39 @@ function ActivityCardDetail( activityId, isRestore )
 			// Finally, remove all activityCards of this id.
 			$('[itemid="' + activityId + '"]').remove(); // activityCardTags
 		});
+	};
+
+
+	me.rollBackEditActivityNCard = function( activityId, editRollBackData, btnBackTag )
+	{
+		try
+		{
+			var rollBackData = Util.cloneJson( editRollBackData );
+			var activityJson = ActivityDataManager.getActivityById( activityId );
+			
+			Util.overwriteJsonContent( activityJson, rollBackData );
+			
+			ClientDataManager.saveCurrent_ClientsStore(() => 
+			{
+				btnBackTag.click();
+	
+				// We also need to find all clientCard Tag with this.. and reload it..
+				var divSyncIconTags = $('div.activityStatusIcon[activityId="' + activityId + '"]');
+				divSyncIconTags.closest('div.card__container').find('div.clientRerender').click();
+	
+				// tab clientActivity reClick - to influence the activity list & favList..
+				var tabClientActivitiesTag = $('[itemid="' + activityId + '"]').closest('div[tabbuttonid=tab_clientActivities]');
+				if (tabClientActivitiesTag.length > 0) tabClientActivitiesTag.find('div.favReRender').click();
+	
+				// Finally, remove all activityCards of this id.
+				//$('[itemid="' + activityId + '"]').remove(); // activityCardTags
+				ActivityCard.reRenderAllById( activityId );
+			});	
+		}
+		catch( errMsg )
+		{
+			console.log( 'ERROR in ActivityCardDetail.rollBackEditActivityNCard, ' + errMsg );
+		}
 	};
 
 
@@ -351,6 +395,12 @@ ActivityCardDetail.cardFullScreen = `
         style="display:none; height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
           <div class="button__container">
             <div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Remove Pending Activity</div>
+          </div>
+        </div>
+        <div class="button warning button-full_width rollBackEditActivity"
+        style="display:none; height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
+          <div class="button__container">
+            <div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Rollback To Original Activity</div>
           </div>
         </div>
       </div>

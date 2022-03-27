@@ -453,6 +453,16 @@ Util.clearEmptyProp = function( inputJson )
 	return inputJson;
 };
 
+Util.emptyJson = function( inputJson )
+{
+	return Util.clearEmptyProp( inputJson );
+};
+
+Util.clearJson = function( inputJson )
+{
+	return Util.clearEmptyProp( inputJson );
+};
+
 Util.compareJsonPropVal = function( sourceJson, targetJson )
 {
 	var isMatch = true;

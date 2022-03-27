@@ -528,7 +528,7 @@ function Action( cwsRenderObj, blockObj )
 								afterActionFunc( false, { 'type': 'previewBtn', 'msg': 'preview cancelled' } );
 								// throw 'canceled on preview';
 							}
-						});								
+						});
 					}
 					else if ( clickActionJson.actionType === "editActivitiesInClient" )
 					{
