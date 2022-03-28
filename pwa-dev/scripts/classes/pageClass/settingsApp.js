@@ -364,39 +364,92 @@ function settingsApp( cwsRender )
                 ConsoleCustomLog.showDialog();
             });
         });
-        
-        me.settingsFormDivTag.find( '.syncDown' ).off( 'click' ).click( function() 
-        {
-            if ( !ConfigManager.getSyncDownSetting().enable ) MsgManager.msgAreaShow( 'SyncDown not enabled in config settings.' );
-            else
-            {
-                if ( !ConnManagerNew.isAppMode_Online() ) MsgManager.msgAreaShow( 'SyncDown not available on offline.' );
-                else
-                {
-                    SyncManagerNew.syncDown( 'manualClick', function( success, changeOccurred, mockCase, mergedActivities ) {
 
-                        if ( success ) 
-                        {  
-                            // NOTE: If there was a new merge, for now, alert the user to reload the list?
-                            if ( changeOccurred && !mockCase )
+
+
+        var scheduleDateAdjust = ConfigManager.getSettingsActivityDef().scheduleDateAdjust;
+		if ( scheduleDateAdjust && scheduleDateAdjust.enable ) 
+        {
+        
+            me.settingsFormDivTag.find( '.holidaysWeekends' ).show().off( 'click' ).click( function() 
+            {
+                // On popup, display these data..
+                // optional entry of date to check?
+                FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
+                {
+                    // Commonly used - Set 'divMainContent' tag to be scrollable..
+                    divMainContentTag.attr( 'style', 'overflow: scroll;height: 70%; margin-top: 10px; background-color: #eee;padding: 7px;' );
+    
+                    // Populate content..
+                    // settingsApp.jobAidFilesPopulate( divMainContentTag );
+                    me.popoulateHolidaysWeekends( divMainContentTag, scheduleDateAdjust );
+
+                    // ------------------------------
+
+                    var datePickerColl = $( `<span style="font-size: 0.71rem;">Check Date: </span>
+                        <input class="inputCustDate statsCusDate" placeholder="YYYY-MM-DD" readonly style="width: 90px;" />
+                        <button class="btnSchDate dateButton2">
+                            <img src="images/i_date.svg" class="imgCalendarInput">
+                        </button>` );
+
+                    var btnHw_DateCheckTag = $( '<button class="hwCheck cbtn c_cb">Check</button>' );
+                    var spanDateCheckResultTag = $( '<span class="hwCheckResult" style="font-size: small;"></span>' );
+    
+                    // Add the buttons div - also, will be removed each call of 'FormUtil.openDivPopupArea'
+                    var divExtraSecTag = $( '<div class="divExtraSec" style="margin-bottom: 5px;"></div>' );
+    
+                    divExtraSecTag.append( datePickerColl );
+                    divExtraSecTag.append( btnHw_DateCheckTag );
+                    divExtraSecTag.append( spanDateCheckResultTag );
+    
+                    divExtraSecTag.insertBefore( divMainContentTag );
+
+                    
+                    // -------------------------------------
+
+                    var inputCustDateTag = divExtraSecTag.find( '.inputCustDate' );
+
+                    divExtraSecTag.find( '.btnSchDate,.inputCustDate' ).off( 'click' ).click( function( e ) {
+                        FormUtil.mdDatePicker2( e, inputCustDateTag, 'YYYY-MM-DD' );
+                    });
+
+                    // --------------
+
+                    btnHw_DateCheckTag.click( function() 
+                    {
+                        var resultStr = '';    
+                        var inputCustDate = inputCustDateTag.val();
+
+                        try 
+                        {
+                            if ( inputCustDate )
                             {
-                                if ( mergedActivities.length > 0 )
-                                {
-                                    var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
-            
-                                    $( btnRefresh ).click ( () => {
-                                        SessionManager.cwsRenderObj.renderArea1st();
-                                    });
-                
-                                    MsgManager.notificationMessage ( 'SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false );    
-                                }                                
+                                resultStr = ' - ';
+                                var sDate = moment( inputCustDate );            
+                                var isWeekend = ActivityUtil.isWeekends( sDate, scheduleDateAdjust );
+                                var isHoliday = ActivityUtil.isHoliday( sDate, scheduleDateAdjust );
+        
+                                resultStr += ( isHoliday ) ? '[IS Holiday]': '[NOT Holiday]';
+                                resultStr += ' / ';
+                                resultStr += ( isWeekend ) ? '[IS Weekend]': '[NOT Weekend]';    
                             }
+                            else
+                            {
+                                resultStr = ' - The input date is not valid';
+                            }    
                         }
-                        else MsgManager.msgAreaShow( 'SyncDown not successful.' );
-                    });   
-                }
-            }
-        });
+                        catch ( errMsg ) {
+                            resultStr = ' - ERROR during the date checking.';
+                            console.log( 'ERROR in holidaysWeekends datePicker, ' + errMsg );
+                        }
+    
+                        spanDateCheckResultTag.text( resultStr );
+                    });
+    
+                });
+            });
+        }
+
 
         me.settingsFormDivTag.find( '.dataShare' ).off( 'click' ).click( function() 
         {
@@ -430,27 +483,6 @@ function settingsApp( cwsRender )
             }
         });     
 
-        /*
-        me.settingsFormDivTag.find( '.jobAidFiling' ).off( 'click' ).click( function() 
-        {
-            var jobAidFilingBtnTag = $( this );
-            var reply = confirm( 'This will reset/reload JobAid files.  Do you want to continue?' );
-
-            if ( reply === true )
-            {
-                // If jobAidFolder is empty, populate default data.
-                try
-                {
-                    var folderNames = AppInfoLSManager.getJobAidFolderNames();
-                    if ( !folderNames ) AppInfoLSManager.setJobAidFolderNames( '{ "react1": "j1_v01" }' );    
-                }
-                catch ( errMsg ) { console.log( 'ERROR in jobAidFolderDefault populate, ' + errMsg ); }
-                
-                // Run the retrieval of files and put it in runTimeCache
-                JobAidHelper.runTimeCache_JobAid( { isListingApp: true }, jobAidFilingBtnTag.parent() );
-            }
-        });      
-        */
 
         me.settingsFormDivTag.find( '.jobAidFileListing' ).off( 'click' ).click( function() 
         {
@@ -463,9 +495,9 @@ function settingsApp( cwsRender )
                 settingsApp.jobAidFilesPopulate( divMainContentTag );
                 
                 // Create 'clear files' button
-                var btnJA_ClearFilesTag = $( '<button class="jaClearFiles cbutton">Clear All JobAid Files</button>' );
+                var btnJA_ClearFilesTag = $( '<button class="jaClearFiles cbtn">Clear All JobAid Files</button>' );
                 // Create 'Listing App Download' button
-                var btnJA_ListingAppDownloadTag = $( '<button class="jaListingAppDownload cbutton" style="background-color: cadetblue;">Download ListingApp Files</button>' );
+                var btnJA_ListingAppDownloadTag = $( '<button class="jaListingAppDownload cbtn c_cb">Download ListingApp Files</button>' );
 
 
                 // Add the buttons div - also, will be removed each call of 'FormUtil.openDivPopupArea'
@@ -533,6 +565,50 @@ function settingsApp( cwsRender )
                 });
     
             });
+        }
+    };
+
+
+    me.popoulateHolidaysWeekends = function( divMainContentTag, scheduleDateAdjust )
+    {
+        try
+        {
+            if ( scheduleDateAdjust.weekends )
+            {
+                divMainContentTag.append( '<div class="infoLine" style="opacity: 0;">- </div>' );
+                divMainContentTag.append( '<div class="infoLine">-- Weekends Settings ------------</div>' );
+                divMainContentTag.append( '<div class="infoLine">' + JSON.stringify( scheduleDateAdjust.weekends ) + '</div>' );
+            }
+    
+            var holidays = scheduleDateAdjust.holidays;
+            if ( holidays )
+            {
+                divMainContentTag.append( '<div class="infoLine" style="opacity: 0;">- </div>' );
+                divMainContentTag.append( '<div class="infoLine">-- Holidays Settings ------------</div>' );
+                divMainContentTag.append( '<div class="infoLine">' + JSON.stringify( holidays ) + '</div>' );
+
+                divMainContentTag.append( '<div class="infoLine" style="opacity: 0;">- </div>' );
+                divMainContentTag.append( '<div class="infoLine">-- Holidays List ------------</div>' );
+
+                for( var prop in holidays )
+                {
+                    var holidayYearData = holidays[ prop ];
+
+                    if ( Util.isTypeArray( holidayYearData ) )
+                    {
+                        holidayYearData.forEach( dateStr => {
+                            var fullDateStr = prop + '-' + dateStr;
+                            var formattedStr = moment( fullDateStr ).format( 'YYYY, MMM DD' );
+                            divMainContentTag.append( '<div class="infoLine">' + formattedStr + '</div>' );
+                        });
+                    }
+                }
+            }
+    
+        }
+        catch( errMsg )
+        {
+            console.log( 'ERROR in SettingsApp.popoulateHolidaysWeekends, ' + errMsg );
         }
     };
 

@@ -53,7 +53,7 @@
   cursor: pointer;
 }
 
-.cbutton {
+.cbtn {
   background-color: tomato;
   border: none;
   color: white;
@@ -68,6 +68,15 @@
   opacity: 0.8;
 }
 
+.c_cb {
+  background-color: cadetblue !important;
+}
+
+.c_cfb {
+  background-color: cornflowerblue !important;
+}
+
+
 .statsCusDate {
   width: 80px; 
   border: solid 1px #888; 
@@ -81,6 +90,9 @@
   background-color: #eee;
 }
 
+.infoLine {
+  font-size: small;
+}
 /* ----style overwrite/additional setting----------------- */
 
 @media (orientation: portrait) and (min-width: 240px) {

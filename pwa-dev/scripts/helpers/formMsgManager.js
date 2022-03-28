@@ -97,7 +97,7 @@ FormMsgManager.showFormMsg = function( msgSpanTag, optionJson, btnClickFunc )
 {
     var divMainTag = $( '<div></div>' );
     var msgDivTag = $( '<div></div>' ).append( msgSpanTag );
-    var btnDivTag = $( '<div style="margin-top: 10px;"><button class="cbutton">OK</button></div>' );
+    var btnDivTag = $( '<div style="margin-top: 10px;"><button class="cbtn">OK</button></div>' );
 
     btnDivTag.click( function() 
     {				
