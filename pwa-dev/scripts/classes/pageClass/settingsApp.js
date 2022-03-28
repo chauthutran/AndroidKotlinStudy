@@ -526,6 +526,10 @@ function settingsApp( cwsRender )
 
                 btnJA_ListingAppDownloadTag.click( function() 
                 {
+                    // Clean up old progress info..
+                    btnJA_ListingAppDownloadTag.parent().find( '.divJobFileLoading' ).remove();                    
+
+                    // Call job aid caching
                     JobAidHelper.runTimeCache_JobAid( { isListingApp: true }, btnJA_ListingAppDownloadTag.parent() );
                 });
             });
