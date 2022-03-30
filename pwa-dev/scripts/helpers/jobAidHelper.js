@@ -47,16 +47,22 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 	
 		if ( WsCallManager.stageName === 'test' ) options.appName = 'pwa-test';
 		else if ( WsCallManager.stageName === 'stage' ) options.appName = 'pwa-stage';
-		
+		else if ( WsCallManager.stageName === 'prod' ) {
+			// if ( WsCallManager.urlStartWith === 'wfa' )
+			// else if ( WsCallManager.urlStartWith === 'wfa-lac' )  // Users can not interchange 'wfa' url..
+			
+			//options.appName = 'wfa'; // only 'wfa' should hold jobAid file.  Not all 'wfa-lac', etc..
+			//		However, that would not work either <-- since the apps needs to access jobAid files..
+			//		<-- but each diff country has diff job files, so we should handle for all cases?	
+		} 
 
 		//var payload = { 'isLocal': localCase, 'appName': appName, 'isListingApp': options.isListingApp, 'btnParentTag': btnParentTag, 'projDir': options.projDir };
 		var optionsStr = JSON.stringify( options );
 
 		// TODO: FOR NOW, LET 'test' have old JobAid download all at once version..
-		if ( WsCallManager.stageName === 'test' ) requestUrl = (options.isLocal) ? 'http://localhost:8384/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFilingTest');
-		else requestUrl = (options.isLocal) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
-
-		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending
+		//if ( WsCallManager.stageName === 'test' ) requestUrl = (options.isLocal) ? 'http://localhost:8384/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFilingTest');
+		requestUrl = (options.isLocal) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
+		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
 
 
 		$.ajax({
