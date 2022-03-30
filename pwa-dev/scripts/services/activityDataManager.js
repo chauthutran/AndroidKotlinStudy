@@ -83,10 +83,13 @@ ActivityDataManager.getActivityIdCopyList = function()
 
 ActivityDataManager.removeActivities = function( activities )
 {
-    for ( var i = activities.length - 1; i >= 0; i-- )
+    if ( activities && activities.length > 0 )
     {
-        var activity = activities[ i ];
-        ActivityDataManager.deleteExistingActivity_Indexed( activity.id );
+        for ( var i = activities.length - 1; i >= 0; i-- )
+        {
+            var activity = activities[ i ];
+            ActivityDataManager.deleteExistingActivity_Indexed( activity.id );
+        }    
     }
 };
 
@@ -125,7 +128,6 @@ ActivityDataManager.deleteExistingActivity_Indexed = function( activityId )
 
     return client;
 };
-
 
 // ---------------------------------------
 // --- Insert Activity to client

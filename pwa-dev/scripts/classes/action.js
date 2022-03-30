@@ -497,7 +497,9 @@ function Action( cwsRenderObj, blockObj )
 									ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, clickActionJson, blockPassingData, function( activityJson )
 									{	
 										if ( activityJson )
-										{
+										{											
+											InfoDataManager.setINFOdata( 'createdActivityId', activityJson.id );
+
 											// NEW - voucherCode usage - mark it as 'InUse' status
 											var vcItem = VoucherCodeManager.markVoucherCode_InQueue( activityJson, 'v_iss', 'InUse' );
 											if ( vcItem ) console.log( vcItem );  // TEMP NOTE

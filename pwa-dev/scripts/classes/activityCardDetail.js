@@ -163,11 +163,13 @@ function ActivityCardDetail( activityId, isRestore )
 	me.removeActivityNCard = function( activityId, btnBackTag ) 
 	{
 		var client = ActivityDataManager.deleteExistingActivity_Indexed(activityId);
-		if (client && client.activities.length === 0) ClientDataManager.removeClient(client);
+		if (client && client.activities.length === 0) ClientDataManager.removeClient(client);  // NOTE: We assume 'reg' activity does not get removed..
+
+		// NOTE: POTENTIALLY delete child activities here.  For now, only applied this deletion on 'rollBack'
 
 		ClientDataManager.saveCurrent_ClientsStore(() => 
 		{
-			btnBackTag.click();
+			if ( btnBackTag ) btnBackTag.click();
 
 			// We also need to find all clientCard Tag with this.. and reload it..
 			var divSyncIconTags = $('div.activityStatusIcon[activityId="' + activityId + '"]');
@@ -192,9 +194,10 @@ function ActivityCardDetail( activityId, isRestore )
 			
 			Util.overwriteJsonContent( activityJson, rollBackData );
 			
+
 			ClientDataManager.saveCurrent_ClientsStore(() => 
 			{
-				btnBackTag.click();
+				if ( btnBackTag ) btnBackTag.click();
 	
 				// We also need to find all clientCard Tag with this.. and reload it..
 				var divSyncIconTags = $('div.activityStatusIcon[activityId="' + activityId + '"]');
@@ -207,6 +210,16 @@ function ActivityCardDetail( activityId, isRestore )
 				// Finally, remove all activityCards of this id.
 				//$('[itemid="' + activityId + '"]').remove(); // activityCardTags
 				ActivityCard.reRenderAllById( activityId );
+
+
+				// NEW: Remove if other activities has 'rollBackDelete' activities if exists.
+				var childActs = ActivityDataManager.getActivityList().filter( act => act.rollBackDelete_activityId === activityId );
+
+				childActs.forEach( childAct => 
+				{ 
+					if ( SyncManagerNew.statusSyncable( childAct.processing.status ) ) me.removeActivityNCard( childAct.id ); 
+				});
+
 			});	
 		}
 		catch( errMsg )
