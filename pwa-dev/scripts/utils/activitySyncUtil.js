@@ -260,6 +260,7 @@ ActivitySyncUtil.syncUpCoolDownTime_disableUI2 = function( activityId, syncIconD
 			}
 			else 
 			{
+				// if ( ConfigManager.coolDownTimeOverride ) // NOT IMPLEMENTED, YET
 				myBarTag.width( ActivitySyncUtil.getPercentageWidth( timeRemainMs, coolDownTime, fullWidthSize ) );
 			}
 		}

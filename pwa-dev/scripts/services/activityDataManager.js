@@ -926,6 +926,23 @@ ActivityDataManager.setActivityDateLocal = function( activityJson )
     }
 };
 
+
+// NOTE: This does not work on edit case or curr payload is already added to activity..  Due to self activity is found with this match.
+//      - Used on voucherCode 'Get' from Queue.
+ActivityDataManager.isVoucherCodeUsed = function( voucherCode )
+{
+    var isUsed = false;
+
+    try {
+        var matchActivities = ActivityDataManager.getActivitiesByVoucherCode( voucherCode, undefined, true );
+        if ( matchActivities.length > 0 ) isUsed = true;
+    }
+    catch ( errMsg ) { console.log( 'ERROR in ActivityDataManager.isVoucherCodeUsed, ' + errMsg ); }
+
+    return isUsed;
+};
+
+
 ActivityDataManager.getActivitiesByVoucherCode = function( voucherCode, opt_TransType, opt_bGetOnlyOnce )
 {
     var matchActivities = [];

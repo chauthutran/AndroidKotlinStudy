@@ -501,7 +501,7 @@ function Action( cwsRenderObj, blockObj )
 											InfoDataManager.setINFOdata( 'createdActivityId', activityJson.id );
 
 											// NEW - voucherCode usage - mark it as 'InUse' status
-											var vcItem = VoucherCodeManager.markVoucherCode_InQueue( activityJson, 'v_iss', 'InUse' );
+											var vcItem = VoucherCodeManager.markVoucherCode_InQueue( activityJson, 'v_iss', VoucherCodeManager.STATUS_InUse );
 											if ( vcItem ) console.log( vcItem );  // TEMP NOTE
 
 											// TODO: BELOW MIGHT NOT BE NEEDED ANYMORE...

@@ -160,8 +160,37 @@ function ActivityCardDetail( activityId, isRestore )
 	};
 
 
+	me.unload_issuedVoucherCode = function( activityId )
+	{
+		try
+		{
+			var activityJson = ActivityDataManager.getActivityById( activityId );
+			var issued_vc = '';
+
+			if ( activityJson )
+			{
+				activityJson.transactions.forEach( trans => {
+					if ( trans.type === 'v_iss' && trans.clientDetails )
+					{
+						issued_vc = trans.clientDetails.voucherCode;
+					}
+				});	
+			}	
+
+			if ( issued_vc ) VoucherCodeManager.unMarkStaus( issued_vc );
+		}
+		catch( errMsg )
+		{
+			console.log( 'ERROR in ActivityCardDetail.unload_issuedVoucherCode, ' + errMsg );
+		}
+	};
+
+
 	me.removeActivityNCard = function( activityId, btnBackTag ) 
 	{
+		// Unmark voucherCode if has v_iss trans
+		me.unload_issuedVoucherCode( activityId );
+
 		var client = ActivityDataManager.deleteExistingActivity_Indexed(activityId);
 		if (client && client.activities.length === 0) ClientDataManager.removeClient(client);  // NOTE: We assume 'reg' activity does not get removed..
 
@@ -189,9 +218,11 @@ function ActivityCardDetail( activityId, isRestore )
 	{
 		try
 		{
+			// Unmark voucherCode if has v_iss trans
+			me.unload_issuedVoucherCode( activityId );
+
 			var rollBackData = Util.cloneJson( editRollBackData );
-			var activityJson = ActivityDataManager.getActivityById( activityId );
-			
+			var activityJson = ActivityDataManager.getActivityById( activityId );			
 			Util.overwriteJsonContent( activityJson, rollBackData );
 			
 

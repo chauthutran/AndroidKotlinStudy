@@ -37,23 +37,21 @@ function VoucherCodeManager()  {};
 VoucherCodeManager.queueSize = 300; // Service has 300 fixed.. for some reason..
 VoucherCodeManager.queueLowSize = 100;
 
+VoucherCodeManager.STATUS_InUse = 'InUse';
+VoucherCodeManager.STATUS_Used = 'Used';
+
 // ===================================================
 // === MAIN FEATURES =============
 
 VoucherCodeManager.refillQueue = function( userName )
 { 
-   // Must be voucher Code Enabled version for this!! one!!!
-
-
    // Call after login.. <-- online only
    VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) {
 
       // Fill the count
       VoucherCodeManager.fillQueue( userName, fillCount, function( success, vcList ) {
-         console.log( 'Filled op: ' + success + ', filledListCount: ' + vcList.length );
-
-         console.log( 'currentCount: ' + PersisDataLSManager.getVoucherCodes_queue().length );
-      } );
+         if ( success ) console.log( 'VoucherCodes Downloaded. Filled Count: ' + vcList.length );
+      });
    });
 };
 
@@ -120,59 +118,14 @@ VoucherCodeManager.getQueueObj_fromVcList = function( vcList )
 
 // ----------------
 
-// NOTE: BUT, we should seperate mark it as use, and take it out..
-//    - When visible, we populate it and mark it as using..
-//    - When Created with activity?  Or after sync, we remove it from queue?
-//    - For now, make it used when activity is created with voucherCode & 'v_rdx'...
-
-VoucherCodeManager.takeOut_OneVoucherCode = function( callBack )
-{ 
-   var queue = PersisDataLSManager.getVoucherCodes_queue();
-   var item = VoucherCodeManager.getNotUsed_1stOne( queue );
-
-   // DO NOT TAKE IT OUT!!!
-   // var item = Util.array_TakeOutOne( queue );
-
-   if ( item !== undefined )
-   {
-      item.status = 'inUse'; // '' -> 'inUse' -> 'used'
-      // CHANGE THIS...
-      PersisDataLSManager.updateVoucherCodes_queue( queue );
-      
-      callBack( item );
-   }
-   else {} // callBack with empty value??
-};
-
-VoucherCodeManager.getNotUsed_1stOne = function( queue )
-{
-   var foundItem;
-
-   if ( queue && queue.length > 0 )
-   {
-      for( var i = 0; i < queue.length; i++ )
-      {
-         var item = queue[i];
-
-         if ( item.voucherCode && !item.status )
-         {
-            foundItem = item;
-            break;
-         }
-      }
-   }
-   return foundItem;
-};
-
-
 // VC USE STEP #1. Use the Voucher Code
 VoucherCodeManager.getNextVoucherCode = function()
 {
    if ( ConfigManager.getSettings().voucherCodeServiceUse ) // ONLY USE THIS IF voucherCodeService is in use.
    {
       var queue = PersisDataLSManager.getVoucherCodes_queue();
-      var item = VoucherCodeManager.getNotUsed_1stOne( queue );
-    
+      var item = VoucherCodeManager.getNotUsed_1stOne( queue );  // This method has extra logic to check if free one is already in use somehow.
+
       if ( item )
       {
          item.displayed = true;
@@ -215,7 +168,7 @@ VoucherCodeManager.markVoucherCode_InQueue = function( activityJson, transType, 
          if ( vcItem.voucherCode === voucherCode )
          {
             matchVcItem = vcItem;
-            vcItem.status = markStatus; //'InUse';
+            VoucherCodeManager.markStaus( vcItem, markStatus );  //'InUse';
             break;
          }
       }
@@ -223,6 +176,80 @@ VoucherCodeManager.markVoucherCode_InQueue = function( activityJson, transType, 
 
    return matchVcItem;
 };
+
+VoucherCodeManager.getNotUsed_1stOne = function( queue )
+{
+   var foundItem;
+
+   if ( queue && queue.length > 0 )
+   {
+      for( var i = 0; i < queue.length; i++ )
+      {
+         var item = queue[i];
+
+         if ( item.voucherCode && !item.status )
+         {
+            // But if there is voucher in use, mark the status...  <-- 'InUse' vs 'Used? AlreadyUsed?'
+            if ( ActivityDataManager.isVoucherCodeUsed( item.voucherCode ) )
+            {
+               VoucherCodeManager.markStaus( item, VoucherCodeManager.STATUS_Used );
+            }
+            else
+            {
+               foundItem = item;
+               break;   
+            }
+         }
+      }
+   }
+   return foundItem;
+};
+
+
+VoucherCodeManager.markStaus = function( vcItem, status )
+{
+   if ( vcItem )
+   {
+      vcItem.status = status;
+      vcItem.markDate = new Date().toISOString();
+   }
+};
+
+// When unsynced activity is removed/rolled back, unMark the voucherCode..
+VoucherCodeManager.unMarkStaus = function( vcItem )
+{
+   if ( vcItem )
+   {
+      if ( vcItem.status ) delete vcItem.status;
+      if ( vcItem.markDate ) delete vcItem.markDate;
+   }
+};
+
+// NOTE: BUT, we should seperate mark it as use, and take it out..
+//    - When visible, we populate it and mark it as using..
+//    - When Created with activity?  Or after sync, we remove it from queue?
+//    - For now, make it used when activity is created with voucherCode & 'v_rdx'...
+/*
+VoucherCodeManager.takeOut_OneVoucherCode = function( callBack )
+{ 
+   var queue = PersisDataLSManager.getVoucherCodes_queue();
+   var item = VoucherCodeManager.getNotUsed_1stOne( queue );
+
+   // DO NOT TAKE IT OUT!!!
+   // var item = Util.array_TakeOutOne( queue );
+
+   if ( item !== undefined )
+   {
+      item.status = 'inUse'; // '' -> 'inUse' -> 'used'
+      // CHANGE THIS...
+      PersisDataLSManager.updateVoucherCodes_queue( queue );
+      
+      callBack( item );
+   }
+   else {} // callBack with empty value??
+};
+*/
+
 // -----------------------
 
 // VoucherCodeManager.clearAll = function() { };

@@ -558,13 +558,14 @@ function settingsApp( cwsRender )
                     divMainContentTag.append( '<div class="infoLine">------------------------</div>' );
                     divMainContentTag.append( '<div class="infoLine">Available Codes in Queue: ' + availableInQueue.length + '</div>' );
                     
-                    me.displayVCSamples( availableInQueue, sampleSize, divMainContentTag );
+                    
+                    me.displayVCSamples( availableInQueue, sampleSize, divMainContentTag, DevHelper.devMode );
 
 
                     divMainContentTag.append( '<div class="infoLine">------------------------</div>' );
                     divMainContentTag.append( '<div class="infoLine">' + 'Used Codes in Queue: ' + usedInQueue.length + '</div>' );    
 
-                    me.displayVCSamples( usedInQueue, sampleSize, divMainContentTag );
+                    me.displayVCSamples( usedInQueue, sampleSize, divMainContentTag, DevHelper.devMode );
 
                 });
     
@@ -617,17 +618,26 @@ function settingsApp( cwsRender )
     };
 
 
-    me.displayVCSamples = function( list, sampleSize, divMainContentTag )
+    me.displayVCSamples = function( list, sampleSize, divMainContentTag, isDevMode )
     {
         if ( list.length > 0 )
         {
-            divMainContentTag.append( '<div class="infoLine">Samples: </div>' );
-            for ( var i = 0; i < list.length; i++ )
+            if ( isDevMode )
             {
-                if ( i >= sampleSize ) break;
-                var queue = Util.cloneJson( list[i] );
-                if ( queue.voucherCode ) queue.voucherCode.substr( 0, 2 ) + '----';
-                divMainContentTag.append( '<div class="infoLine">' + JSON.stringify( queue ) + '</div>' );
+                list.forEach( item => {
+                    divMainContentTag.append( '<div class="infoLine">' + JSON.stringify( item ) + '</div>' );
+                });
+            }
+            else
+            {
+                divMainContentTag.append( '<div class="infoLine">Samples: </div>' );
+                for ( var i = 0; i < list.length; i++ )
+                {
+                    if ( i >= sampleSize ) break;
+                    var queue = Util.cloneJson( list[i] );
+                    if ( queue.voucherCode ) queue.voucherCode = queue.voucherCode.substr( 0, 2 ) + '----';
+                    divMainContentTag.append( '<div class="infoLine">' + JSON.stringify( queue ) + '</div>' );
+                }
             }
         }
     };

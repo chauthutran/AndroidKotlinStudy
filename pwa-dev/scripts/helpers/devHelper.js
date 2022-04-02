@@ -101,6 +101,7 @@ DevHelper.setDevMode = function( bDev )
                  
             DevHelper.devMode = true;
             SyncManagerNew.coolDownEnabled = false;
+            ConfigManager.coolDownTimeOverride = 2000;  // set this as 2 seconds - Not implemented
         }
         else
         {
