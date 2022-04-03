@@ -705,6 +705,11 @@ ConfigManager.getActivitySch_favClickOpen = function()
     return actionName;
 };
 
+ConfigManager.getVoucherCodeService = function()
+{
+    var settings = ConfigManager.getSettings();
+    return ( settings.voucherCodeService ) ? settings.voucherCodeService: {};
+};
 
 // ---------------------------------------------
 

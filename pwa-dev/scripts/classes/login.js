@@ -569,6 +569,8 @@ function Login()
 
 				if ( isSuccess ) 
 				{
+					VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService() );
+
 					// NEW
 					//AppInfoManager.loadData_AfterLogin( userName, password, function() <-- happened within the 'loginOffline'
 					me.loginSuccessProcess( userName, password, offlineUserData, function() 
@@ -591,11 +593,10 @@ function Login()
 
 				if ( isSuccess )
 				{
-					if ( ConfigManager.getSettings().voucherCodeServiceUse )
-					{
-						// NEW
-						VoucherCodeManager.refillQueue( userName );
-					}
+					VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService() );
+
+					if ( VoucherCodeManager.settingData.enable ) VoucherCodeManager.refillQueue( userName );
+
 
 					me.loginSuccessProcess( userName, password, loginData );		
 				}

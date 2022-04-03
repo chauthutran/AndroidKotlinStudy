@@ -34,8 +34,10 @@
 
 function VoucherCodeManager()  {};
 
-VoucherCodeManager.queueSize = 300; // Service has 300 fixed.. for some reason..
-VoucherCodeManager.queueLowSize = 100;
+VoucherCodeManager.settingData = {};  // queueSize / queueLowSize / enable
+
+VoucherCodeManager.queueSize_Default = 300; // Service has 300 fixed.. for some reason..
+VoucherCodeManager.queueLowSize_Default = 100; 
 
 VoucherCodeManager.STATUS_InUse = 'InUse';
 VoucherCodeManager.STATUS_Used = 'Used';
@@ -43,9 +45,22 @@ VoucherCodeManager.STATUS_Used = 'Used';
 // ===================================================
 // === MAIN FEATURES =============
 
+// MAIN #0. Called after Login (online/offline)
+VoucherCodeManager.setSettingData = function( vcSrv )
+{
+   VoucherCodeManager.settingData = vcSrv;
+
+   if ( !vcSrv.queueSize || vcSrv.queueSize < 0 ) vcSrv.queueSize = VoucherCodeManager.queueSize_Default;
+   if ( !vcSrv.queueLowSize || vcSrv.queueLowSize < 0 ) vcSrv.queueLowSize = VoucherCodeManager.queueLowSize_Default;
+};
+
+// If Offline login, and it is a refresh, we still need to load the settings..
+// 
+
+
+// MAIN #1. Called after online Login
 VoucherCodeManager.refillQueue = function( userName )
 { 
-   // Call after login.. <-- online only
    VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) {
 
       // Fill the count
@@ -62,8 +77,8 @@ VoucherCodeManager.queueStatus = function( callBack )
    var queue = PersisDataLSManager.getVoucherCodes_queue();
    queue = queue.filter( item => !item.status );  // 'Used' / 'InUse' / 'Displayed'
 
-   var isLow = ( queue.length <= VoucherCodeManager.queueLowSize );
-   var fillCount = VoucherCodeManager.queueSize - queue.length;
+   var isLow = ( queue.length <= VoucherCodeManager.settingData.queueLowSize );
+   var fillCount = VoucherCodeManager.settingData.queueSize - queue.length;
    var currCount = queue.length;
 
    // if the fill max is 100
@@ -121,7 +136,9 @@ VoucherCodeManager.getQueueObj_fromVcList = function( vcList )
 // VC USE STEP #1. Use the Voucher Code
 VoucherCodeManager.getNextVoucherCode = function()
 {
-   if ( ConfigManager.getSettings().voucherCodeServiceUse ) // ONLY USE THIS IF voucherCodeService is in use.
+   var vcCode = '';
+
+   if ( VoucherCodeManager.settingData.enable ) // ONLY USE THIS IF voucherCodeService is in use.
    {
       var queue = PersisDataLSManager.getVoucherCodes_queue();
       var item = VoucherCodeManager.getNotUsed_1stOne( queue );  // This method has extra logic to check if free one is already in use somehow.
@@ -129,11 +146,11 @@ VoucherCodeManager.getNextVoucherCode = function()
       if ( item )
       {
          item.displayed = true;
-         return item.voucherCode;
+         vcCode = item.voucherCode;
       }   
    }
    
-   return '';
+   return vcCode;
 };
 
 

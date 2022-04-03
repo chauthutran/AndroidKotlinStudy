@@ -537,36 +537,63 @@ function settingsApp( cwsRender )
         
 
         // if settings has this enabled..
-        if ( ConfigManager.getSettings().voucherCodeServiceUse )
+        if ( VoucherCodeManager.settingData.enable )
         {
             var vcQueueTag = me.settingsFormDivTag.find( '.vcQueue' ).show();
 
             vcQueueTag.off( 'click' ).click( function() 
-            {
-                var btnTag = $( this );
-    
+            {    
                 FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
                 {
-                    divMainContentTag.attr( 'style', 'overflow: scroll;height: 85%; margin-top: 10px; background-color: #eee;padding: 7px;' );
+                    divMainContentTag.attr( 'style', 'overflow: scroll;height: 70%; margin-top: 10px; background-color: #eee;padding: 7px;' );
+
+                    // Delete 'Queue' button
+                    var btn_vcQueueClearTag = $( '<button class="vcQueueClear cbtn">Clear All JobAid Files</button>' );
+
+                    // Add the buttons div - also, will be removed each call of 'FormUtil.openDivPopupArea'
+                    var divExtraSecTag = $( '<div class="divExtraSec" style="margin-bottom: 5px;"></div>' );
+                    divExtraSecTag.append( btn_vcQueueClearTag );
+                    divExtraSecTag.insertBefore( divMainContentTag );
+
+                    
+                    btn_vcQueueClearTag.click( function() 
+                    {
+                        var reply = confirm( 'This will clear all voucherCode in queue.  Do you want to continue?' );
+            
+                        if ( reply === true )
+                        {                            
+                            /*
+                            JobAidHelper.deleteCacheStorage().then( () => 
+                            {
+                                MsgManager.msgAreaShow( "clearing files success" );
+                                settingsApp.jobAidFilesPopulate( divMainContentTag );
+                            });
+                            */                            
+                        }
+                    });
+
+
+                    // ---------------
+                    divMainContentTag.append( '<div class="infoLine" style="opacity: 0;">- </div>' );
+                    divMainContentTag.append( '<div class="infoLine">------------------------</div>' );
+                    divMainContentTag.append( '<div class="infoLine">SettingData: ' + JSON.stringify( VoucherCodeManager.settingData ) + '</div>' );
 
                     // Total Queue Size
                     var queue = PersisDataLSManager.getVoucherCodes_queue();
                     var availableInQueue = queue.filter( item => !item.status );
                     var usedInQueue = queue.filter( item => item.status );
-                    var sampleSize = 2;
+                    var sampleSize = 3;
 
+                    divMainContentTag.append( '<div class="infoLine" style="opacity: 0;">- </div>' );
                     divMainContentTag.append( '<div class="infoLine">------------------------</div>' );
                     divMainContentTag.append( '<div class="infoLine">Available Codes in Queue: ' + availableInQueue.length + '</div>' );
-                    
-                    
                     me.displayVCSamples( availableInQueue, sampleSize, divMainContentTag, DevHelper.devMode );
 
 
+                    divMainContentTag.append( '<div class="infoLine" style="opacity: 0;">- </div>' );
                     divMainContentTag.append( '<div class="infoLine">------------------------</div>' );
-                    divMainContentTag.append( '<div class="infoLine">' + 'Used Codes in Queue: ' + usedInQueue.length + '</div>' );    
-
+                    divMainContentTag.append( '<div class="infoLine">' + 'Used Codes in Queue: ' + usedInQueue.length + '</div>' );
                     me.displayVCSamples( usedInQueue, sampleSize, divMainContentTag, DevHelper.devMode );
-
                 });
     
             });
