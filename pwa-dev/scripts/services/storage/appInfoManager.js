@@ -1,4 +1,3 @@
-//	TODO: ?: Rename to 'LSAppInfoManager'?
 function AppInfoManager() {}
 
 AppInfoManager.ActivityHistoryMaxLength = 100;
@@ -11,11 +10,13 @@ AppInfoManager.KEY_APPINFO = "appInfo";
 
 AppInfoManager.appInfo;
 
-AppInfoManager.KEY_SYNC = "sync"; 
-AppInfoManager.KEY_LOGINOUT = "logInOut"; 
 AppInfoManager.KEY_DEBUG = "debug"; 
+AppInfoManager.KEY_LOGINOUT = "logInOut"; 
+AppInfoManager.KEY_SYNC = "sync"; 
+AppInfoManager.KEY_STATISTIC_PAGES = "statisticPages"; 
+AppInfoManager.KEY_CUSTOM_DATA = "customData";  // 1. if called and does not exists, add the part when creating..
 
-AppInfoManager.template = { 'sync': {}, 'logInOut': {}, 'debug': {} };
+AppInfoManager.template = { 'debug': {}, 'logInOut': {}, 'sync': {} };
 
 // ---------------------------
 
@@ -32,12 +33,8 @@ AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO = "syncLastDownloaded";
 AppInfoManager.KEY_FIX_OPERATION_LAST = "fixOperationLast"; 
 
 
-AppInfoManager.KEY_STATISTIC_PAGES = "statisticPages"; 
-
 // NOTE: Add statisticPages: { '@LA@stat_IPC.html': '' }
 // <-- do not keep it on memory?  but get it from localStorage everytime..
-
-AppInfoManager.KEY_VOUCHER_CODES = "voucherCodes"; 
 
 // OBSOLETE ONES -----------------
 AppInfoManager.KEY_TRANSLATION = "translation"; 
@@ -258,7 +255,7 @@ AppInfoManager.removeProperty = function( mainKey, subKey, callBack )
 };
 
 // ------------------------------------------------------------------------------------  
-// ----------------  New Error ActivityId List Related..
+// ---------------- New Error ActivityId List Related..
 
 AppInfoManager.getNewErrorActivities = function()
 {    
@@ -282,7 +279,7 @@ AppInfoManager.clearNewErrorActivities = function()
 };
 
 // ------------------------------------------------------------------------------------  
-// ----------------  DEBUG activityHistory List Related..
+// ---------------- DEBUG activityHistory List Related..
 
 AppInfoManager.getActivityHistory = function()
 {    
@@ -306,9 +303,8 @@ AppInfoManager.addToActivityHistory = function( activityJson )
     }
 };
 
-
 // ------------------------------------------------------------------------------------  
-// ----------------  DEBUG customLog List Related..
+// ---------------- DEBUG customLog List Related..
 
 AppInfoManager.getCustomLogHistory = function()
 {    
@@ -325,7 +321,7 @@ AppInfoManager.addToCustomLogHistory = function( msg )
 };
 
 // ------------------------------------------------------------------------------------  
-// ----------------  DEBUG fix operation List Related..
+// ---------------- DEBUG fix operation List Related..
 
 AppInfoManager.getFixOperationHistory = function()
 {    
@@ -342,7 +338,7 @@ AppInfoManager.addToFixOperationHistory = function( msg )
 };
 
 // ------------------------------------------------------------------------------------  
-// ----------------  DEBUG history List Common Related..
+// ---------------- DEBUG history List Common Related..
 
 AppInfoManager.getHistory_CMN = function( subKey )
 {    
@@ -378,10 +374,8 @@ AppInfoManager.addHistory_CMN = function( data, subKey, historyList, historyMax,
     }
 };
 
-// -------------------------------------
-
 // ------------------------------------------------------------------------------------  
-// ----------------  sync Last Downloaded
+// ---------------- Sync Last Downloaded
 
 AppInfoManager.updateSyncLastDownloadInfo = function( dateStr )
 {
@@ -396,9 +390,8 @@ AppInfoManager.getSyncLastDownloadInfo = function()
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO );
 };	
 
-
 // ------------------------------------------------------------------------------------  
-// ----------------  fix Operation Last Performed
+// ---------------- Fix Operation Last Performed
 
 AppInfoManager.updateFixOperationLast = function( dateStr )
 {
@@ -413,10 +406,8 @@ AppInfoManager.getFixOperationLast = function()
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_FIX_OPERATION_LAST );
 };
 
-// -----------------------------------------------
-
 // ------------------------------------------------------------------------------------  
-// ----------------  Update properties in lastLogin?
+// ---------------- StatisticPages Related
 
 AppInfoManager.getStatisticPages = function( fileName ) 
 {
@@ -426,4 +417,19 @@ AppInfoManager.getStatisticPages = function( fileName )
 AppInfoManager.updateStatisticPages = function( fileName, dataStr ) 
 {
     AppInfoManager.updatePropertyValue( AppInfoManager.KEY_STATISTIC_PAGES, fileName, dataStr );
+};
+
+// ------------------------------------------------------------------------------------  
+// ---------------- Custom Data Related
+//     NOTE: Used for JobAid temporary data.  However, if this last forever, it will get larger..
+//          - Should we have expiration date?  Checked when logging in or logging out?
+
+AppInfoManager.getCustomDataPart = function( partName ) 
+{
+    return AppInfoManager.getPropertyValue( AppInfoManager.KEY_CUSTOM_DATA, partName );
+};
+
+AppInfoManager.updateCustomDataPart = function( partName, dataJson ) 
+{
+    AppInfoManager.updatePropertyValue( AppInfoManager.KEY_CUSTOM_DATA, partName, dataJson );
 };
