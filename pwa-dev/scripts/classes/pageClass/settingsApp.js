@@ -545,8 +545,9 @@ function settingsApp( cwsRender )
             {    
                 FormUtil.openDivPopupArea( $( '#divPopupArea' ), function( divMainContentTag ) 
                 {
-                    divMainContentTag.attr( 'style', 'overflow: scroll;height: 70%; margin-top: 10px; background-color: #eee;padding: 7px;' );
+                    divMainContentTag.attr( 'style', 'overflow: scroll;height: 85%; margin-top: 10px; background-color: #eee;padding: 7px;' );
 
+                    /*
                     // Delete 'Queue' button
                     var btn_vcQueueClearTag = $( '<button class="vcQueueClear cbtn">Clear All JobAid Files</button>' );
 
@@ -562,16 +563,9 @@ function settingsApp( cwsRender )
             
                         if ( reply === true )
                         {                            
-                            /*
-                            JobAidHelper.deleteCacheStorage().then( () => 
-                            {
-                                MsgManager.msgAreaShow( "clearing files success" );
-                                settingsApp.jobAidFilesPopulate( divMainContentTag );
-                            });
-                            */                            
                         }
                     });
-
+                    */
 
                     // ---------------
                     divMainContentTag.append( '<div class="infoLine" style="opacity: 0;">- </div>' );

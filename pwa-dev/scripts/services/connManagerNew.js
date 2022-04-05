@@ -228,6 +228,38 @@ ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo )
 	return ( statusInfo.networkConn.online_Stable && statusInfo.serverAvailable ) ? ConnManagerNew.ONLINE: ConnManagerNew.OFFLINE;
 };
 
+
+
+ConnManagerNew.runWhenSwitchedToOnline = function()
+{
+	// 1. Run schedule specific tasks - that was added for this case.
+	ScheduleManager.runWhenSwitchedToOnline();
+
+
+	// 2. Mark last time it was stable online (not startUp one) (or this triggered?)
+	//		And if more than 6 hrs, perform sync...
+	//			--> or if last syncAll (online) was performed more than 6 hrs
+	//		perform syncAll.  (And any other tasks?  Maybe new app file check?)
+	//		TODO: Definitely, this should be placed on config <-- 
+
+	
+	// TODO: REPLACE THIS WITH login/logout update trigger <-- if offline..
+	// 2. 'backgroundUpdateWhenOnline' enabled, perform app Update.
+	if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) 
+	{	
+		SwManager.checkNewAppFile_OnlyOnline( function() 
+		{ 
+			MsgManager.msgAreaShow( 'appUpdate detected!  Update will be performed on logout.', undefined, undefined, 3000 ); 
+		}
+		, { 'delayReload': true } 
+		); 	
+	}
+
+	// 3. Send Google Anlytics Offline cached ones.
+	GAnalytics.offlineCacheSend();
+};
+
+
 // ===============================================
 // ---- Status Check Related ----------
 

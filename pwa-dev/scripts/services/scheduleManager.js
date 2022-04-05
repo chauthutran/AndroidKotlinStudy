@@ -131,19 +131,7 @@ ScheduleManager.schedule_networkCurrentRecheck = function( NotRunRightAway )
 
 ScheduleManager.runWhenSwitchedToOnline = function()
 {
-	// NEW: if 'backgroundUpdateWhenOnline', perform app Update.	
-	if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) 
-	{	
-		SwManager.checkNewAppFile_OnlyOnline( function() 
-		{ 
-			MsgManager.msgAreaShow( 'appUpdate detected!  Update will be performed on logout.', undefined, undefined, 3000 ); 
-		}
-		, { 'delayReload': true } 
-		); 	
-	}
-
-
-	// Other custom scheduling tasks
+	// Custom scheduling tasks
 	Object.keys( ScheduleManager.runSwitchToOnlineList ).forEach( requestId => 
 	{
 		try {
@@ -153,15 +141,7 @@ ScheduleManager.runWhenSwitchedToOnline = function()
 		catch( errMsg ) {
 			console.customLog( 'ERROR on ScheduleManager.runWhenSwitchedToOnline, requesteId: ' + requestId + ', errMsg: ' + errMsg );
 		}
-	});    
-	
-	
-	// Rather than using 'addToRunSwitchToOnlineList' <-- Which is dynamically added to schedule
-	// Add manual/Set/Fixed ones below for calling when coming online
-
-	// Send Google Anlytics Offline cached ones.
-	GAnalytics.offlineCacheSend();
-	
+	});
 };
 
 

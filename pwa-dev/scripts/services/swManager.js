@@ -218,7 +218,7 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
     }
 }
 
-
+/*
 SwManager.checkNewAppFile_OnlyOnline2 = function( runFunction )
 {
     console.log( 'SwManager.checkNewAppFile_OnlyOnline2 called' );
@@ -266,7 +266,7 @@ SwManager.checkNewAppFile_OnlyOnline2 = function( runFunction )
         }
     }
 };
-
+*/
 
 /*
 SwManager.checkNewAppFile_OnlyOnline_Back = function( runFunction )
