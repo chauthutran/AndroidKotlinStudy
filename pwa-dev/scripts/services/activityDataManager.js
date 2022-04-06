@@ -576,19 +576,18 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
 {
     try
     {
-        var activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData );
+        var activityJson;
+     
+        if ( actionDefJson.activityJson ) activityJson = actionDefJson.activityJson; // NEW: override of already set activityJson - on JobAid.
+        else activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData );
 
-        // NEW, TEMP
         var client;
-        if ( actionDefJson.underClient && actionDefJson.clientId )
-        {
+        if ( actionDefJson.underClient && actionDefJson.clientId ) {
             client = ClientDataManager.getClientById( actionDefJson.clientId );
         }
-        else if ( activityJson.processing.existingClientId )
-        {
+        else if ( activityJson.processing.existingClientId ) {
             client = ClientDataManager.getClientById( activityJson.processing.existingClientId );
         }
-
         
         if ( !client ) client = ClientDataManager.createClient_forActivityPayload( activityJson );
 
@@ -598,7 +597,7 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
         ActivityDataManager.insertActivitiesToClient( [ activityJson ], client, { 'addToTop': true, 'newPayloadCase': true } );
     
         ClientDataManager.saveCurrent_ClientsStore( () => {
-            if ( callBack ) callBack( activityJson );    
+            if ( callBack ) callBack( activityJson, client );    
         });    
     }
     catch( errMsg )

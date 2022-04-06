@@ -261,6 +261,15 @@ JobAidHelper.handleMsgAction = function( action )
 		var clientList = ClientDataManager.getClientLikeCUIC( action.CUIC );
 		$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { clientList }, '*');
 	}
+	else if ( action.name === 'submitActivity' ) 
+	{
+		// { name: 'submitActivity', data: { } } 
+		// Due to callBack, call iframe directly..
+		JobAidHelper.submitActivity( action.data, function( client, activity ) {
+			var thisAction = { callBackEval: action.callBackEval, data: { client: client, activity: activity } };
+			$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { action: thisAction }, '*');  // pass single action rather than 'actions'
+		});
+	}
 	else if ( action.name === 'WFARunEval' )
 	{
 		// { name: 'WFARunEval', WFARunEval: [ 
@@ -330,3 +339,64 @@ JobAidHelper.formFieldDataHandle = function( data )
 		}, 200);
 	}
 };
+
+// -------------------------------------
+// -- Client/Activity Create payload
+
+JobAidHelper.submitActivity = function( data, callBack )
+{
+	// NOTE: If 'clientId' is provided, it is existing client case.  If not, new client case.
+	var actionUrl = '/PWA.mongo_capture';
+	var blockId = undefined;
+	var activityPayload = undefined;
+	var actionJson = ( data.clientId ) ? { underClient: true, clientId: data.clientId } : {};  // Existing vs New Client
+	var blockPassingData = undefined;
+
+	if ( data.activityPayload )
+	{
+		activityPayload = data.activityPayload;
+		console.log( 'JobAidHelper.submitActivity, activityPayload: ' );
+	}
+	else if ( data.activityJson )
+	{
+		actionJson.activityJson = data.activityJson;
+		console.log( 'JobAidHelper.submitActivity, activityJson: ' );
+	}
+
+	ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, data.activityPayload, actionJson, blockPassingData, function( activity, client ) {
+		console.log( activity );
+		if ( callBack ) callBack( client, activity );
+	});	
+};
+
+/*
+var payload = {
+	searchValues: {
+		newClientCase: true
+	},
+	captureValues: {
+	  date: { capturedLoc: "2022-04-06T23:01:45.832" },
+	  type: "JobAidActType",
+	  activeUser: "ET_TEST_JOBS",
+	  creditedUsers: [ "ET_TEST_JOBS" ],
+	  location: {},
+	  dc: { app: "WF-App", "network": "Online", "control": "wfa v~1.3.0, c:Online" },
+	  transactions: [
+			{ 
+			  type: "c_reg", 
+			  clientDetails: {
+				 firstName: "Mark1",
+				 lastName: "Tester",
+				 age: "12"
+			  }
+			},
+			{
+				type: "s_info",
+				dataValues: {
+					info1: 'test1'
+				}
+			}
+	  ]
+	}
+};
+*/
