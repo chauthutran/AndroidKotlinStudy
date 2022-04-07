@@ -266,6 +266,7 @@ JobAidHelper.handleMsgAction = function( action )
 		// { name: 'submitActivity', data: { } } 
 		// Due to callBack, call iframe directly..
 		JobAidHelper.submitActivity( action.data, function( client, activity ) {
+			$( 'div.clientListRerender' ).click(); // refresh the clientList..
 			var thisAction = { callBackEval: action.callBackEval, data: { client: client, activity: activity } };
 			$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { action: thisAction }, '*');  // pass single action rather than 'actions'
 		});
@@ -354,7 +355,7 @@ JobAidHelper.submitActivity = function( data, callBack )
 
 	if ( data.activityPayload )
 	{
-		activityPayload = data.activityPayload;
+		activityPayload = { payload: data.activityPayload };
 		console.log( 'JobAidHelper.submitActivity, activityPayload: ' );
 	}
 	else if ( data.activityJson )
@@ -363,40 +364,80 @@ JobAidHelper.submitActivity = function( data, callBack )
 		console.log( 'JobAidHelper.submitActivity, activityJson: ' );
 	}
 
-	ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, data.activityPayload, actionJson, blockPassingData, function( activity, client ) {
+	ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, activityPayload, actionJson, blockPassingData, function( activity, client ) {
 		console.log( activity );
 		if ( callBack ) callBack( client, activity );
 	});	
 };
 
+
 /*
-var payload = {
-	searchValues: {
-		newClientCase: true
-	},
-	captureValues: {
-	  date: { capturedLoc: "2022-04-06T23:01:45.832" },
-	  type: "JobAidActType",
-	  activeUser: "ET_TEST_JOBS",
-	  creditedUsers: [ "ET_TEST_JOBS" ],
-	  location: {},
-	  dc: { app: "WF-App", "network": "Online", "control": "wfa v~1.3.0, c:Online" },
-	  transactions: [
-			{ 
-			  type: "c_reg", 
-			  clientDetails: {
-				 firstName: "Mark1",
-				 lastName: "Tester",
-				 age: "12"
-			  }
-			},
-			{
-				type: "s_info",
-				dataValues: {
-					info1: 'test1'
+JobAidHelper.submitActivityTest_New = function()
+{
+	var payload = {
+		searchValues: {
+			newClientCase: true
+		},
+		captureValues: {
+			date: { capturedLoc: "2022-04-06T23:01:45.832" },
+			type: "JobAidActType",
+			activeUser: "GT2_TEST_IPC",
+			creditedUsers: [ "GT2_TEST_IPC" ],
+			location: {},
+			dc: { app: "WF-App", "network": "Online", "control": "wfa v~1.3.0, c:Online" },
+			transactions: [
+				{ 
+				type: "c_reg", 
+				clientDetails: {
+					firstName: "Mark1a",
+					lastName: "Tester1",
+					age: "21"
 				}
-			}
-	  ]
-	}
+				},
+				{
+					type: "s_info",
+					dataValues: {
+						info1: 'test1'
+					}
+				}
+			]
+		}
+	};
+
+	JobAidHelper.submitActivity( { activityPayload: payload }, function( client, activity ) {
+		console.log( client );
+		console.log( activity );
+	});
+};
+
+JobAidHelper.submitActivityTest_Exist = function()
+{
+	var payload = {
+		searchValues: {
+			_id: "624ee3bd997e596bde59e1dd"
+		},
+		captureValues: {
+			date: { capturedLoc: "2022-04-07T23:01:45.832" },
+			type: "JobAidActType",
+			activeUser: "GT2_TEST_IPC",
+			creditedUsers: [ "GT2_TEST_IPC" ],
+			location: {},
+			dc: { app: "WF-App", "network": "Online", "control": "wfa v~1.3.0, c:Online" },
+			transactions: [
+				{
+					type: "s_info",
+					dataValues: {
+						info1: 'test2'
+					}
+				}
+			]
+		}
+	};
+
+
+	JobAidHelper.submitActivity( { clientId: '624ee3bd997e596bde59e1dd', activityPayload: payload }, function( client, activity ) {
+		console.log( client );
+		console.log( activity );
+	});
 };
 */
