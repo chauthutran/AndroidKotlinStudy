@@ -95,11 +95,11 @@ VoucherCodeManager.fillQueue = function( userName, fillCount, callBack )
       var loadingTag = undefined;
       WsCallManager.requestPostDws( '/PWA.voucherCodeGet', { taken_by: userName, counts: fillCount }, loadingTag, function( success, returnJson ) 
       {
-         if ( success && returnJson && returnJson.data )
+         if ( success && returnJson && returnJson.vouchersTaken )
          {
             var queue = PersisDataLSManager.getVoucherCodes_queue();
 
-            var newListObj = VoucherCodeManager.getQueueObj_fromVcList( returnJson.data );
+            var newListObj = VoucherCodeManager.getQueueObj_fromVcList( returnJson.vouchersTaken );
 
             Util.mergeArrays( queue, newListObj );
 
