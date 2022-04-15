@@ -81,7 +81,7 @@ ConfigManager.setConfigJson = function ( loginData, userRolesOverrides )
             ConfigManager.applyFilter_SourceType( ConfigManager.configJson );
             ConfigManager.applyFilter_UserRole( ConfigManager.configJson, ConfigManager.login_UserRoles
                 ,[ 'favList', 'areas', 'definitionActivityListViews', 'definitionClientListViews'
-                    , 'definitionOptions', 'settings.sync.syncDown' ] );
+                    , 'definitionOptions', 'settings.sync.syncDown', 'settings.voucherCodeService' ] );
 
             // NOTE: Above userRole filtering is done in load time (rather than run time)
             //  due to roles being placed in some special parts..
@@ -157,11 +157,14 @@ ConfigManager.applyFilter_UserRole = function( configJson, loginUserRoles, itemL
                 { 
                     try
                     {
-                        var itemJson;
-                        if ( itemName === 'settings.sync.syncDown' ) itemJson = configJson.settings.sync.syncDown;
-                        else itemJson = configJson[ itemName ];
-                        
-                        ConfigManager.traverseFind_Filter( itemJson, loginUserRoles, 0, 10 );
+                        if ( itemName === 'settings.voucherCodeService' ) ConfigManager.filterObjByUserRoles( configJson.settings, 'voucherCodeService', loginUserRoles );
+                        else {
+                            var itemJson;
+                            if ( itemName === 'settings.sync.syncDown' ) itemJson = configJson.settings.sync.syncDown;
+                            else itemJson = configJson[ itemName ];
+                            
+                            ConfigManager.traverseFilterByUserRoles( itemJson, loginUserRoles, 0, 10 );    
+                        }
                     }
                     catch( errMsg )
                     {
@@ -173,7 +176,7 @@ ConfigManager.applyFilter_UserRole = function( configJson, loginUserRoles, itemL
             {
                 // Traverse for all elements on config and look for 'userRoles' on them.
                 console.log( 'ConfigManager.applyFilter_UserRole checking for all leaf' );
-                ConfigManager.traverseFind_Filter( configJson, loginUserRoles, 0, 20 );
+                ConfigManager.traverseFilterByUserRoles( configJson, loginUserRoles, 0, 20 );
             }
         }
     }
@@ -183,12 +186,23 @@ ConfigManager.applyFilter_UserRole = function( configJson, loginUserRoles, itemL
     }   
 };
 
+ConfigManager.filterObjByUserRoles = function( parentObj, objName, inputUserRoles )
+{
+    var obj = parentObj[ objName ];
 
-ConfigManager.traverseFind_Filter = function( obj, inputUserRoles, iDepth, limit )
+    if ( Util.isTypeObject( obj ) && obj.userRoles )
+    {
+        if ( !ConfigManager.matchUserRoles( obj.userRoles, inputUserRoles ) ) {
+            delete parentObj[ objName ];
+        }
+    }
+};
+
+ConfigManager.traverseFilterByUserRoles = function( obj, inputUserRoles, iDepth, limit )
 {
 	if ( iDepth === limit )
 	{
-		throw 'Error in ConfigManager.traverseFind_Filter, Traverse depth limit has reached: ' + iDepth;
+		throw 'Error in ConfigManager.traverseFilterByUserRoles, Traverse depth limit has reached: ' + iDepth;
 	}
 	else if ( obj )
 	{
@@ -213,11 +227,11 @@ ConfigManager.traverseFind_Filter = function( obj, inputUserRoles, iDepth, limit
                                 //console.log( 'REMOVED - ' + JSON.stringify( arrItem ) );
                                 prop.splice( i, 1 );
                             }
-                            else ConfigManager.traverseFind_Filter( arrItem, inputUserRoles, iDepthArr, limit );
+                            else ConfigManager.traverseFilterByUserRoles( arrItem, inputUserRoles, iDepthArr, limit );
                         }
-                        else ConfigManager.traverseFind_Filter( arrItem, inputUserRoles, iDepthArr, limit );
+                        else ConfigManager.traverseFilterByUserRoles( arrItem, inputUserRoles, iDepthArr, limit );
                     }
-                    else if ( Util.isTypeArray( arrItem ) ) ConfigManager.traverseFind_Filter( arrItem, inputUserRoles, iDepthArr, limit );
+                    else if ( Util.isTypeArray( arrItem ) ) ConfigManager.traverseFilterByUserRoles( arrItem, inputUserRoles, iDepthArr, limit );
                 }
 			}
 			else if ( Util.isTypeObject( prop ) )
@@ -229,9 +243,9 @@ ConfigManager.traverseFind_Filter = function( obj, inputUserRoles, iDepth, limit
                         //console.log( 'REMOVED - ' + JSON.stringify( prop ) );
                         delete obj[key];
                     }
-                    else ConfigManager.traverseFind_Filter( prop, inputUserRoles, iDepth + 1, limit );
+                    else ConfigManager.traverseFilterByUserRoles( prop, inputUserRoles, iDepth + 1, limit );
                 }
-                else ConfigManager.traverseFind_Filter( prop, inputUserRoles, iDepth + 1, limit );
+                else ConfigManager.traverseFilterByUserRoles( prop, inputUserRoles, iDepth + 1, limit );
 			}
 			// else if ( Util.isTypeString( prop ) ) {	}  // end of the search node
 		});

@@ -611,7 +611,7 @@ Util2.getLocalStorageSizes = function()
 };
 
 
-
+// pwaEpoch.epoch/epochByStr( param  ) <-- Use this instead...
 Util2.epoch = function( pattern, callBack )
 {
 	//use examples: Util2.epoch( '1000', console.customLog ); Util2.epoch( '1000,36', console.customLog ); 
@@ -625,15 +625,13 @@ Util2.epoch = function( pattern, callBack )
 
 	  if ( pattern.split( ',' ).length > 1 ) base = pattern.split( ',' )[ 1 ];
 	  if ( pattern.split( ',' ).length > 2 ) offSetDate = pattern.split( ',' )[ 2 ];
-
 	}
 
 	var prec = ( precision ) ? precision : 100;
 
-	new pwaEpoch( prec, base, offSetDate ).issue( function( newEpoch ){
+	var newEpochVal = new pwaEpoch( prec, base, offSetDate ).issue();
 
-		if ( callBack ) callBack( newEpoch.value );
-	});
+	if ( callBack ) callBack( newEpochVal );
 };
 
 

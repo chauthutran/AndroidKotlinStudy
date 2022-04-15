@@ -1303,12 +1303,9 @@ FormUtil.evalReservedField = function( form, tagTarget, val, dispatchChangeEvent
 		}
 		else if ( val.indexOf( 'epoch' ) >= 0 )
 		{
-			var pattern = Util.getParameterInside( val, '()' );
 			if ( tagTarget.val().length == 0 ) 
 			{
-				Util2.epoch( pattern, function( epochVal ){
-					tagTarget.val( epochVal );
-				} );
+				tagTarget.val( pwaEpoch.epochByStr( Util.getParameterInside( val, '()' ) ) );
 			}
 		}
 		else if ( val.indexOf( 'dataURI' ) >= 0 )
