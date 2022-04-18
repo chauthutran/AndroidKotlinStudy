@@ -51,13 +51,13 @@ function ActivityCard( activityId, activityCardDivTag, options )
 
 
                 // 2. previewText/main body display (MIDDLE)
-                me.setActivityContentDisplay( activityContentTag, activityJson );
+                me.setActivityContentDisplay( activityContentTag, activityJson, me.options );
                 if ( !detailViewCase ) me.activityContentClick_FullView( activityContentTag, activityJson.id );
 
 
                 // 3. 'SyncUp' Button Related
                 // click event - for activitySubmit.., icon/text populate..
-                me.setupSyncBtn( activityCardDivTag, me.activityId, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
+                me.setupSyncBtn( activityCardDivTag, me.activityId, detailViewCase, me.options );  // clickEnable - not checked for SyncBtn/Icon
 
                 // 4. 'phoneNumber' action  button setup
                 ActivityCard.setupFavIconBtn( favIconTag, me.activityId, me.options );
@@ -107,7 +107,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
     };
 
     
-    me.setupSyncBtn = function( activityCardDivTag, activityId, detailViewCase )
+    me.setupSyncBtn = function( activityCardDivTag, activityId, detailViewCase, options )
     {
         var divSyncIconTag = activityCardDivTag.find( '.activityStatusIcon' ).attr( 'activityId', activityId );
         var divSyncStatusTextTag = activityCardDivTag.find( '.activityStatusText' ).attr( 'activityId', activityId );
@@ -118,8 +118,15 @@ function ActivityCard( activityId, activityCardDivTag, options )
 
         // NOTE: This is setting for this tag only, so might not need to set for others??
         ActivitySyncUtil.displayActivitySyncStatus( activityId );
- 
-        ActivitySyncUtil.setSyncIconClickEvent( divSyncIconTag, activityCardDivTag, activityId );
+        
+        var syncOptions =  {};
+        if ( options.displaySetting === 'clientActivity' && ConfigManager.getClientSyncBtnSetting().activityCardSyncDisable ) 
+        {
+            syncOptions.syncDisabled = true;
+            syncOptions.syncDisabledMsg = 'clientDetail Activity Sync Disabled';
+        }
+
+        ActivitySyncUtil.setSyncIconClickEvent( divSyncIconTag, activityCardDivTag, activityId, syncOptions );
     };
 
 
@@ -169,7 +176,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
     };
 
 
-    me.setActivityContentDisplay = function( divActivityContentTag, activity )
+    me.setActivityContentDisplay = function( divActivityContentTag, activity, options )
     {
         try
         {
@@ -179,7 +186,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
             var displayBase = '';
             var displaySettings = [];
                     
-            if ( me.options.displaySetting === 'clientActivity' )
+            if ( options.displaySetting === 'clientActivity' )
             {
                 displayBase = ConfigManager.getClientActivityCardDefDisplayBase();
                 displaySettings = ConfigManager.getClientActivityCardDefDisplaySettings();
@@ -189,7 +196,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
                 displayBase = ( activitySettings && activitySettings.displayBase ) ? activitySettings.displayBase : ConfigManager.getActivityDisplayBase();
                 displaySettings = ( activitySettings && activitySettings.displaySettings ) ? activitySettings.displaySettings : ConfigManager.getActivityDisplaySettings();
 
-                var view = me.options.viewDef_Selected;
+                var view = options.viewDef_Selected;
                 if ( view )
                 {
                     var hasViewDisplayData = false;
@@ -507,7 +514,7 @@ ActivityCard.performSyncUp = function( activityId, afterDoneCall )
     catch( errMsg )
     {
         // Stop the Sync Icon rotation
-        FormUtil.rotateTag( syncIconTag, false );
+        // FormUtil.rotateTag( syncIconTag, false );
 
         // Set the status as 'Error' with detail.  Save to storage.  And then, display the changes on visible.
         var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_error, 404, 'Error.  Can not be synced.  msg - ' + errMsg );
