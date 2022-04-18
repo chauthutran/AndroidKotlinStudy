@@ -101,7 +101,7 @@ function ClientCardDetail( clientId )
             }});
             var favListArr = favIconsObj.render();
 
-            
+
             // Disable fav icon if not in favList <-- but, better to place this logic within the activityCard render?
             me.disableFavItems( activityListDivTag, favListArr );
 

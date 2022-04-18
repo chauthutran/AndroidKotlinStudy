@@ -38,18 +38,12 @@ function ClientCard( clientId, options )
 
             try
             {
-                var clientContainerTag = clientCardDivTag.find( '.clientContainer' );
+                //var clientContainerTag = clientCardDivTag.find( '.clientContainer' );
                 var clientIconTag = clientCardDivTag.find( '.clientIcon' );
                 var clientContentTag = clientCardDivTag.find( '.clientContent' );
                 var clientRerenderTag = clientCardDivTag.find( '.clientRerender' );
                 var clientPhoneCallTag = clientCardDivTag.find( '.clientPhone' );
-                var favIconTag = clientCardDivTag.find( '.favIcon' );
-
-                //var clientEditPayloadBtnTag = clientCardDivTag.find( '#editPayloadBtn' );
-
-                // displaySettings should also use below 'ClientCard.getLastActivity()' rather than getting index manually..
-                var lastActivityJson = ClientCard.getLastActivity( clientJson );
-
+                //var favIconTag = clientCardDivTag.find( '.favIcon' );
 
                 // 1. clientType (Icon) display (LEFT SIDE)
                 me.clientIconDisplay( clientIconTag, clientJson );
@@ -61,15 +55,12 @@ function ClientCard( clientId, options )
                 if ( !detailViewCase ) me.clientContentClick_FullView( clientContentTag, me.clientId );
 
 
-                // 3. 'SyncUp' Button Related
-                // click event - for clientSubmit.., icon/text populate..
-                if ( lastActivityJson ) 
-                {
-                    me.setupSyncBtn( clientCardDivTag, lastActivityJson.id, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
+                // 3. 'SyncUp' Button Related - click event - for clientSubmit.., icon/text populate..
+                me.setupSyncBtn( clientCardDivTag, clientJson, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
 
-                    // 4. favIcon of the last activity - if scheduled activity case.
-                    // ActivityCard.setupFavIconBtn( favIconTag, lastActivityJson.id, { clientCardId: me.clientId, activityId: lastActivityJson.id } );
-                }
+                // 4. favIcon of the last activity - if scheduled activity case.
+                // ActivityCard.setupFavIconBtn( favIconTag, lastActivityJson.id, { clientCardId: me.clientId, activityId: lastActivityJson.id } );
+
 
                 // 4. 'phoneNumber' action  button setup
                 me.setupPhoneCallBtn( clientPhoneCallTag, clientJson );
@@ -100,19 +91,43 @@ function ClientCard( clientId, options )
     };
 
 
-    me.setupSyncBtn = function( clientCardDivTag, activityId, detailViewCase )
+    me.setupSyncBtn = function( clientCardDivTag, clientJson, detailViewCase )
     {
         try
         {
-            var divSyncIconTag = clientCardDivTag.find( '.activityStatusIcon' ).attr( 'activityId', activityId );
-            var divSyncStatusTextTag = clientCardDivTag.find( '.activityStatusText' ).attr( 'activityId', activityId );
-    
-            // if 'detailView' mode, the bottom message should not show..
+            var clientId = clientJson._id;
+            var divSyncIconTag;
+            var divSyncStatusTextTag;
+            
+            
+            // Config - version/type check here..
+            if ( ConfigManager.isClientSync_ClientLevel() )
+            {
+                // add sync button icon..
+                divSyncIconTag = clientCardDivTag.find( '.activityStatusIcon' ).attr( 'clientId', clientId );
+                divSyncStatusTextTag = clientCardDivTag.find( '.activityStatusText' ).attr( 'clientId', clientId );
+
+                ActivitySyncUtil.displayStatusLabelIcon_ClientCard( clientJson );
+
+                // get unsynced list..
+                activityIdArr = ClientCard.getUnsyncedActivities( clientJson ).map( act => act.id );
+                ActivitySyncUtil.setSyncIconClickEvent_ClientCard( divSyncIconTag, clientCardDivTag, activityIdArr );
+            }
+            else 
+            {
+                var lastActivity = ClientCard.getLastActivity( clientJson );
+                var lastActivityId = ( lastActivity ) ? lastActivity.id: '';    
+
+                divSyncIconTag = clientCardDivTag.find( '.activityStatusIcon' ).attr( 'activityId', lastActivityId );
+                divSyncStatusTextTag = clientCardDivTag.find( '.activityStatusText' ).attr( 'activityId', lastActivityId );
+                
+                ActivitySyncUtil.displayActivitySyncStatus( lastActivityId );
+        
+                ActivitySyncUtil.setSyncIconClickEvent( divSyncIconTag, clientCardDivTag, lastActivityId );
+            }
+
+            // If 'detailView' mode, the bottom message should not show..
             if ( detailViewCase ) divSyncIconTag.addClass( 'detailViewCase' );
-    
-            ActivitySyncUtil.displayActivitySyncStatus( activityId );
-    
-            ActivitySyncUtil.setSyncIconClickEvent( divSyncIconTag, clientCardDivTag, activityId );
         }
         catch ( errMsg )
         {
@@ -344,24 +359,26 @@ ClientCard.reRenderClientCardsById = function( clientId, option )
 
 ClientCard.getLastActivity = function( clientJson )
 {
-    var lastActivityJson;
+    return ActivityDataManager.getLastActivity( clientJson.activities );
+};
+
+
+ClientCard.getUnsyncedActivities = function( clientJson )
+{
+    var activities = [];
 
     try
     {
-        if ( clientJson.activities.length > 0 )
-        {
-            // TODO: Need to sort by activity date?
-            // lastActivityJson = clientJson.activities[ clientJson.activities.length - 1 ];
-            // lastActivityJson = ActivityDataManager.getLatestUpdatedActivity( clientJson.activities );
-            lastActivityJson = ActivityDataManager.getLastActivity( clientJson.activities );
-        }
+        clientJson.activities.forEach( act => {
+            if ( ActivityDataManager.isActivityStatusSyncable( act ) ) activities.push( act );
+        });
     }
     catch( errMsg )
     {
-        console.log( 'ERROR in ClientCard.getLastActivity(), errMsg: ' + errMsg );
+        console.log( 'ERROR in ClientCard.getUnsyncedActivities(), errMsg: ' + errMsg );
     }
 
-    return lastActivityJson;
+    return activities;
 };
 
 

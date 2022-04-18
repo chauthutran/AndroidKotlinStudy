@@ -2,6 +2,20 @@
 // -------------------------------------------
 // -- Utility Class/Methods
 
+// ---------------------------
+// GET & CHECK Variable Types Check
+// ----------------------------------
+// Array Operation Related
+// ----------------------------------
+// Recurrsive/iterative - synced call
+// ----------------------------------
+// JSON Copy Related
+// ----------------------------------
+// ---- Try Cache / Eval related methods
+// ----------------------------------
+// .............
+
+
 function Util() {}
 
 Util.MS_DAY = 86400000;
@@ -28,7 +42,7 @@ Util.evalTryCatch_ERR = 'ERROR, evalTryCatch, ';
 Util.ERR_FIX_OP = 'ERR_FixOp';
 
 // ---------------------------
-// --- Types Check ----
+// GET & CHECK Variable Types Check
 
 Util.isTypeObject = function( obj )
 {
@@ -46,10 +60,8 @@ Util.isTypeString = function( obj )
 {
 	return ( obj !== undefined && typeof( obj ) === 'string' );
 };
-// ------------------------------------
 
-// ----------------------------------
-// Check Variable Related
+// ------------------------------------
 
 Util.getStr = function( input, limit )
 {
@@ -211,10 +223,6 @@ Util.getArrayFromObjMap = function( objMapJson )
 	Util.convertObjMapToArray( objMapJson );
 };
 
-
-// Check Variable Related
-// ----------------------------------
-
 // ----------------------------------
 // Array Operation Related
 
@@ -370,6 +378,36 @@ Util.getItemsFromList = function( list, value, propertyName )
 	}
 
 	return items;
+};
+
+
+// ----------------------------------
+// Recurrsive/iterative - synced call
+
+// CALL BACK WITH ARRAY..  <-- we pass with array and each item calls this?
+Util.callAfterEach = function( idx, list, eachItemCallBack, finishCallBack )
+{
+	if ( idx > ( list.length - 1 ) )
+	{
+		if ( finishCallBack ) finishCallBack( idx );
+	}
+	else
+	{
+		var item = list[ idx ];
+
+		try
+		{
+			eachItemCallBack( item, idx, function() {
+				Util.callAfterEach( idx + 1, list, eachItemCallBack, finishCallBack );		
+			});
+		}
+		catch( errMsg )
+		{
+			console.log( 'ERROR in Util.callAfterEach, ' + errMsg );
+			Util.callAfterEach( idx + 1, list, eachItemCallBack, finishCallBack );  // If failed, continue to next one.
+			//if ( finishCallBack ) finishCallBack( idx );
+		}
+	}
 };
 
 

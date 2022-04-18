@@ -52,6 +52,7 @@ ConfigManager.default_SettingPaging = {
 ConfigManager.KEY_SourceType_Mongo = 'mongo';
 ConfigManager.KEY_SourceType_Dhis2 = 'dhis2';
 
+ConfigManager.KEY_ClientSyncType_ClientLevel = 'ClientLevel';
 //ConfigManager.getOuChildCase_countries = [ 'MZ' ];
 
 // ==== Methods ======================
@@ -839,8 +840,6 @@ ConfigManager.getClientActivityCardDefDisplaySettings = function()
     return displaySettings;
 };
 
-
-
 ConfigManager.getActionQueueActivity = function()
 {
     var actionJson;
@@ -854,6 +853,25 @@ ConfigManager.getActionQueueActivity = function()
 
     return actionJson;
 };
+
+
+ConfigManager.getClientSyncBtnSetting = function()
+{
+    var clientDef = ConfigManager.getSettingsClientDef();
+
+    return ( clientDef.syncBtnSetting ) ? clientDef.syncBtnSetting: {};
+};
+
+ConfigManager.getClientSyncType = function()
+{
+    return ConfigManager.getClientSyncBtnSetting().syncType;
+};
+
+ConfigManager.isClientSync_ClientLevel = function()
+{
+    return ( ConfigManager.getClientSyncType() === ConfigManager.KEY_ClientSyncType_ClientLevel );
+};
+
 
 // ---------------------------------------------
 
