@@ -221,7 +221,7 @@ SessionManager.check_warnLastConfigCheck = function( configUpdate )
 					msgSpanTag.text( warningMsg );
 
 					//MsgManager.msgAreaShow( msgSpanTag, 'ERROR' );
-					FormMsgManager.showFormMsg( msgSpanTag );  // Shoud display in center!!!
+					MsgFormManager.showFormMsg( 'oldConfigMsg', msgSpanTag );  // Shoud display in center!!!
 				}
 			}
 		}	

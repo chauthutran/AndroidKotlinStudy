@@ -177,7 +177,9 @@ function ActivityCardDetail( activityId, isRestore )
 				});	
 			}	
 
-			if ( issued_vc ) VoucherCodeManager.unMarkStaus( issued_vc );
+			if ( issued_vc ) {
+				VoucherCodeManager.unMarkStaus( issued_vc );
+			}
 		}
 		catch( errMsg )
 		{

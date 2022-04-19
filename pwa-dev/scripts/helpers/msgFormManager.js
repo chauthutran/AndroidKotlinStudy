@@ -1,9 +1,11 @@
 // =========================================
 // === Message with entire screen blocking
-function FormMsgManager() {}
+function MsgFormManager() {}
+
+MsgFormManager.queue = [];  // could be array or object.  Go with array for now.
 
 // --- App block/unblock ---
-FormMsgManager.cssBlock_Body = { 
+MsgFormManager.cssBlock_Body = { 
     border: '1px solid rgba(0,0,0,0.25)'
     ,padding: '15px 12px'
     ,'-webkit-border-radius': '4px'
@@ -24,76 +26,111 @@ FormMsgManager.cssBlock_Body = {
 };
 //,border: '2px solid rgb(255, 255, 255)'
 // basic 'block' with library '.blockUI'
-FormMsgManager.block = function( block, msg, cssSetting, tag )
+
+MsgFormManager.blockTag = function( bShow, msg, cssSetting, tag )
 {
 	var msgAndStyle = { message: msg, css: cssSetting };
 
-	if ( tag === undefined )
-	{
-		if ( block ) return $.blockUI( msgAndStyle );
-		else return $.unblockUI();
-	}
-	else
-	{
-		if ( block ) return tag.block( msgAndStyle );
-		else return tag.unblock();
-	}
-}
+    if ( bShow ) return tag.block( msgAndStyle );
+    else return tag.unblock();
+};
 
-FormMsgManager.appBlockTemplate = function( template, cssInput )
+/*
+MsgFormManager.block = function( bShow, msg, cssSetting, itemDef )
+{
+	var msgAndStyle = { message: msg, css: cssSetting };
+
+    if ( bShow ) return $.blockUI( msgAndStyle );
+    else return $.unblockUI();
+};
+*/
+
+// 'itemId' not used for now.
+MsgFormManager.showBlock = function( itemId, msgAndStyle, afterRun )
+{
+    // If blockMsg is already shown currently (for other msg), add to queue instead.
+    if ( $( 'div.blockMsg:visible' ).length > 0 )
+    {
+        var item = { id: itemId, msgAndStyle: msgAndStyle, afterRun: afterRun };
+        MsgFormManager.queue.push( item );
+    }
+    else
+    {
+        $.blockUI( msgAndStyle );  // var msgAndStyle = { message: msg, css: cssSetting };
+    }
+};
+
+// 'itemId' not used for now.
+MsgFormManager.hideBlock = function( itemId )
+{
+    $.unblockUI();
+
+    // If there is any queue, show this - with setTimeout?
+    if ( MsgFormManager.queue.length > 0 )
+    {
+        var item = MsgFormManager.queue.shift();
+
+        setTimeout( function() 
+        {
+            $.blockUI( item.msgAndStyle ); 
+            if ( item.afterRun ) item.afterRun();    
+        }, 500 );
+    }
+};
+
+
+MsgFormManager.appBlockTemplate = function( templateId, customTemplate, afterRun )
 {
     var block;
-    var css = cssInput;
+    //var css = cssInput;
 
-    if ( template == 'appLoad' )
+    if ( templateId == 'appLoad' )
     {
         block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px;height:44px;'><div class='startUpProgress'></div>";
         css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important', 'margin-top': '-50px', 'margin-left': '-50px' };
     }
-    else if ( template == 'loginAfterLoad' )
+    else if ( templateId == 'loginAfterLoad' )
     {
         block = "<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:38px; height:38px;'><span>Loading Data...</span>";
         css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#ccc !important', 'margin-top': '-40px', 'margin-left': '-40px' };
     }
-    else if ( template == 'appLoadProgress' )
+    else if ( templateId == 'appLoadProgress' )
     {
         block = "<img src='images/Connect.svg' class='formBlockProgressIcon rotating' style='width:44px;height:44px;'>" +
                 "<div term='' style='font-size:7pt;position:relative;top:-4px;'>processing</div></div>";
         //css = 'border: none !important;background-color:rbga(0,0,0,0.5);'
         css = { 'border': 'none !important', 'background-color': 'rbga(0,0,0,0.5) !important', 'margin-top': '-50px', 'margin-left': '-50px' };
     }
-    else if ( template == 'appDiagnostic' )
+    else if ( templateId == 'appDiagnostic' )
     {
         block = "<img src='images/care.svg' class='formBlockProgressIcon rotating' style='width:44px;height:44px;'>";
         css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important', 'margin-top': '-50px', 'margin-left': '-50px' };
     }
-    else
-    {
-        block = template;
-    }
 
-    return FormMsgManager.appBlock( block, css );
+    if ( customTemplate ) block = customTemplate;
+
+
+    MsgFormManager.appBlock( templateId, block, css, afterRun );
 }
 
 // Actual calling method (to be used) 'appBlock/appUnblock'
-FormMsgManager.appBlock = function( msg, customCss )
+MsgFormManager.appBlock = function( itemId, msg, customCss, afterRun )
 {
     if ( !msg ) msg = "Processing..";
 
-    var css = ( customCss ?  $.extend(FormMsgManager.cssBlock_Body, customCss) : FormMsgManager.cssBlock_Body );
+    var css = ( customCss ) ? $.extend( MsgFormManager.cssBlock_Body, customCss ) : MsgFormManager.cssBlock_Body;
 
-    return FormMsgManager.block( true, msg, css  );
+    MsgFormManager.showBlock( itemId, { message: msg, css: css }, afterRun );
 };
 
-FormMsgManager.appUnblock = function()
+MsgFormManager.appUnblock = function( itemId )
 {
-    FormMsgManager.block( false );
+    MsgFormManager.hideBlock( itemId );
 };
-
 
 // -------------------------------------------
 
-FormMsgManager.showFormMsg = function( msgSpanTag, optionJson, btnClickFunc )
+MsgFormManager.showFormMsg = function( itemId, msgSpanTag, optionJson, btnClickFunc )
 {
     var divMainTag = $( '<div></div>' );
     var msgDivTag = $( '<div></div>' ).append( msgSpanTag );
@@ -101,7 +138,7 @@ FormMsgManager.showFormMsg = function( msgSpanTag, optionJson, btnClickFunc )
 
     btnDivTag.click( function() 
     {				
-        FormMsgManager.appUnblock();        
+        MsgFormManager.appUnblock( itemId );        
 		if ( btnClickFunc ) btnClickFunc( optionJson );
     });
 
@@ -110,26 +147,26 @@ FormMsgManager.showFormMsg = function( msgSpanTag, optionJson, btnClickFunc )
 
 
     // Main FormMsg Setup/Show
-    FormMsgManager.appBlockTemplate( divMainTag );
-
-
-    // Modify FormMsg width
-    var blockMsgTag = $( '.blockMsg' );
-    if ( blockMsgTag.length > 0 )
+    MsgFormManager.appBlockTemplate( itemId, divMainTag, function() 
     {
-        blockMsgTag.css( 'margin', '-50px 0px 0px -50px' );
-        blockMsgTag.css( 'width', '100px' );    
-    }
+        // Modify FormMsg width
+        var blockMsgTag = $( '.blockMsg' );
+        if ( blockMsgTag.length > 0 )
+        {
+            blockMsgTag.css( 'margin', '-50px 0px 0px -50px' );
+            blockMsgTag.css( 'width', '100px' );    
+        }
+    });
 };
 
 // NOTE: NOT THAT TABLE --> Rely on assumption that activity list is 1st page & nav2 is activity nav2 & populated..
-FormMsgManager.showErrActivityMsg = function( Nav2Tag, errActList )
+MsgFormManager.showErrActivityMsg = function( Nav2Tag, errActList )
 {
     try
     {
         var msgSpanTag = $( '<span style="font-weight: bold;">' + errActList.length + ' New Errored Activities Found.</span>' );
 
-        FormMsgManager.showFormMsg( msgSpanTag, { 'errActList': errActList }, function( optionJson ) 
+        MsgFormManager.showFormMsg( 'showErrActivityMsg', msgSpanTag, { 'errActList': errActList }, function( optionJson ) 
         {	
             var viewListTag = Nav2Tag.find( 'select.selViewsListSelector' );
 
@@ -151,7 +188,7 @@ FormMsgManager.showErrActivityMsg = function( Nav2Tag, errActList )
     }
     catch( errMsg ) 
     {
-        console.log( 'ERROR in FormMsgManager.showErrActivityMsg, ' + errMsg );
+        console.log( 'ERROR in MsgFormManager.showErrActivityMsg, ' + errMsg );
     }
 };
 

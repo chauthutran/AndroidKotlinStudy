@@ -241,82 +241,6 @@ MsgManager.notificationMessage = function( bodyMessage, cssClasses, actionButton
 };
 
 
-    /*
-    if ( actionButton && autoClick )
-    {
-        var stepCount = 100;
-        var notifProgressOpacInitial = 0.5;
-        var thresholdFlash = 0.85;
-        var dvTmr = $( '<div id="notifClickProgress_' + unqID + '" step=0 steps='+stepCount+' class="notifProgress" >&nbsp;</div>' );
-
-        $( dvTmr ).css( 'background-color', $( actionButton ).css( 'color' ) );
-        $( dvTmr ).css( 'top', ( screenWidth < 480 ? '1px' : '0' ) ); //GREG: Pay more attention to this styling, looks terrible at times
-        $( dvTmr ).css( 'left', ( screenWidth < 480 ? '-2px' : '0' ) ); //GREG: Pay more attention to this styling, looks terrible at times
-        $( dvTmr ).css( 'opacity', notifProgressOpacInitial );
-        $( dvTmr ).css( 'border-radius', screenWidth < 480 ? '4px 0px 0px 4px' : '' );
-        
-        $( dvTmr ).attr( 'hot', 0 );
-
-        // calculate+set smooth transition for progress expansion
-        $( dvTmr ).css( '-webkit-transition', 'width ' + (delayTimer / (stepCount) * 2) + 'ms' );
-        $( dvTmr ).css( 'transition', 'width ' + (delayTimer / (stepCount) * 2) + 'ms' );
-
-        notifDiv.append ( dvTmr );
-
-        $( actionButton ).css( 'text-decoration', 'underline' );
-        $( actionButton ).css( 'text-decoration-style', 'dotted' );
-
-        MsgManager.clicktimer = setInterval( function() {
-
-            if ( step > stepCount )
-            {
-                //do nothing, do not increment width, do not change this line of code
-            }
-            else
-            {
-                var step = parseFloat( $( '#notifClickProgress_' + unqID ).attr( 'step') );
-                var steps = parseFloat( $( '#notifClickProgress_' + unqID ).attr( 'steps') );
-
-                step += 1;
-
-                $( '#notifClickProgress_' + unqID ).css( 'width', ( ( step / steps ).toFixed(2) * 100) + '%' );
-                $( '#notifClickProgress_' + unqID ).attr( 'step', step );
-
-                if ( ( step / steps ).toFixed(2) > notifProgressOpacInitial )
-                {
-                    if ( ( step / steps ).toFixed(2) > thresholdFlash )
-                    {
-                        if ( $( '#notifClickProgress_' + unqID ).attr( 'hot' ) > 0 )
-                        {
-                            $( '#notifClickProgress_' + unqID ).attr( 'hot', 0)
-                            $( '#notifClickProgress_' + unqID ).css( 'opacity', notifProgressOpacInitial );
-                        }
-                        else
-                        {
-                            $( '#notifClickProgress_' + unqID ).attr( 'hot', 1)
-                            $( '#notifClickProgress_' + unqID ).css( 'opacity', ( step / steps ).toFixed(2) );
-                        }
-                    }
-                    else
-                    {
-                        $( '#notifClickProgress_' + unqID ).css( 'opacity', ( step / steps ).toFixed(2) );
-                    }
-                }
-
-                if ( step >= stepCount )
-                {
-                    $( '#notif_' + unqID ).find( 'a.notifBtn' ).click();
-                    clearInterval( MsgManager.clicktimer );
-                    MsgManager.clicktimer = 0;
-                }
-
-            }
-
-        }, (delayTimer / stepCount) );
-    }
-    */
-
-
 MsgManager.clearReservedMessage = function( reservedID )
 {
     if ( reservedID != undefined )
@@ -339,7 +263,6 @@ MsgManager.clearReservedMessage = function( reservedID )
     }
 
     // TRAN TODO : SHOULD WE RETURN SOMETHING HERE ????
-
 }
 
 

@@ -279,7 +279,7 @@ function cwsRender()
 					// SHOW Error activity list msg ( New errored list count )
 					me.checkErrActivityList( function( errActList ) 
 					{						
-						FormMsgManager.showErrActivityMsg( me.Nav2Tag, errActList );
+						MsgFormManager.showErrActivityMsg( me.Nav2Tag, errActList );
 					});
 
 					// If there is a function to run after 'startBlockExecute', run it here.

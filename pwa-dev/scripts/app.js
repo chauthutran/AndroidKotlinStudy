@@ -119,7 +119,7 @@ App.startAppProcess = function ()
 
 	}
 	catch (err) {
-		console.customLog('error starting App > startApp() error: ' + err);
+		console.log('error starting App > startApp() error: ' + err);
 	}
 };
 
@@ -128,7 +128,7 @@ App.startAppProcess = function ()
 
 App.App_UI_startUp_loading = function () {
 	// show PWA (loading) screen
-	FormMsgManager.appBlockTemplate('appLoad');
+	MsgFormManager.appBlockTemplate('appLoad');
 
 	App.App_UI_startUp_Progress('10%');
 };
@@ -137,7 +137,7 @@ App.App_UI_startUp_loading = function () {
 App.App_UI_startUp_ready = function () {
 	// hide PWA (loading) screen: timeout used for delay (UI effect)
 	setTimeout(function () {
-		FormMsgManager.appUnblock();
+		MsgFormManager.appUnblock();
 	}, 300);
 };
 

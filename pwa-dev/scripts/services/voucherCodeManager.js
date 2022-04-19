@@ -16,7 +16,6 @@
 //       - item.status = 'inUse'; // '' -> 'inUse' -> 'used'
 //
 
-
 //    TODO MORE:
 //       - Make use of the control.. <-- on field type, we make it type 'voucherCode'?
 //             IPC: 'type': 'voucherCode_Gen'
@@ -38,6 +37,7 @@ VoucherCodeManager.settingData = {};  // queueSize / queueLowSize / enable
 
 VoucherCodeManager.queueSize_Default = 300; // Service has 300 fixed.. for some reason..
 VoucherCodeManager.queueLowSize_Default = 100; 
+VoucherCodeManager.queueLowMsg_Default = '<span>VoucherCode queue under low limit!!  Login the app in online mode to refill the queue automatically!!</span>';
 
 VoucherCodeManager.STATUS_InUse = 'InUse';
 VoucherCodeManager.STATUS_Used = 'Used';
@@ -46,16 +46,26 @@ VoucherCodeManager.STATUS_Used = 'Used';
 // === MAIN FEATURES =============
 
 // MAIN #0. Called after Login (online/offline)
-VoucherCodeManager.setSettingData = function( vcSrv )
+VoucherCodeManager.setSettingData = function( vcSrv, runFunc )
 {
    VoucherCodeManager.settingData = vcSrv;
 
    if ( !vcSrv.queueSize || vcSrv.queueSize < 0 ) vcSrv.queueSize = VoucherCodeManager.queueSize_Default;
    if ( !vcSrv.queueLowSize || vcSrv.queueLowSize < 0 ) vcSrv.queueLowSize = VoucherCodeManager.queueLowSize_Default;
+   if ( !vcSrv.queueLowMsg ) vcSrv.queueLowMsg = VoucherCodeManager.queueLowMsg_Default;
+
+   // Run function for enabled voucherCodeService - like 'refill' or 'queueLowMsg'
+   if ( VoucherCodeManager.settingData.enable && runFunc ) runFunc();
 };
 
-// If Offline login, and it is a refresh, we still need to load the settings..
-// 
+
+VoucherCodeManager.checkLowQueue_Msg = function()
+{
+   VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) { 
+      if ( isLow ) MsgFormManager.showFormMsg( 'queueLowMsg', VoucherCodeManager.settingData.queueLowMsg );
+      //alert( msg ); //'queue under low limit!!' );
+   });
+};
 
 
 // MAIN #1. Called after online Login
@@ -71,7 +81,6 @@ VoucherCodeManager.refillQueue = function( userName )
 };
 
 // Can be used on Offline/Online loggin
-//VoucherCodeManager.queueLow = function( callBack )
 VoucherCodeManager.queueStatus = function( callBack )
 { 
    var queue = PersisDataLSManager.getVoucherCodes_queue();
@@ -147,7 +156,9 @@ VoucherCodeManager.getNextVoucherCode = function()
       {
          item.displayed = true;
          vcCode = item.voucherCode;
-      }   
+      } 
+      
+      VoucherCodeManager.checkLowQueue_Msg();      
    }
    
    return vcCode;
@@ -185,7 +196,7 @@ VoucherCodeManager.markVoucherCode_InQueue = function( activityJson, transType, 
          if ( vcItem.voucherCode === voucherCode )
          {
             matchVcItem = vcItem;
-            VoucherCodeManager.markStaus( vcItem, markStatus );  //'InUse';
+            VoucherCodeManager.markStaus( vcItem.voucherCode, markStatus );  //'InUse';
             break;
          }
       }
@@ -209,7 +220,7 @@ VoucherCodeManager.getNotUsed_1stOne = function( queue )
             // But if there is voucher in use, mark the status...  <-- 'InUse' vs 'Used? AlreadyUsed?'
             if ( ActivityDataManager.isVoucherCodeUsed( item.voucherCode ) )
             {
-               VoucherCodeManager.markStaus( item, VoucherCodeManager.STATUS_Used );
+               VoucherCodeManager.markStaus( item.voucherCode, VoucherCodeManager.STATUS_Used );
             }
             else
             {
@@ -219,27 +230,36 @@ VoucherCodeManager.getNotUsed_1stOne = function( queue )
          }
       }
    }
+
    return foundItem;
 };
 
 
-VoucherCodeManager.markStaus = function( vcItem, status )
+VoucherCodeManager.markStaus = function( voucherCode, status )
 {
-   if ( vcItem )
-   {
+   VoucherCodeManager.updateQueue( voucherCode, function( vcItem ) {
       vcItem.status = status;
       vcItem.markDate = new Date().toISOString();
-   }
+   });
 };
 
 // When unsynced activity is removed/rolled back, unMark the voucherCode..
-VoucherCodeManager.unMarkStaus = function( vcItem )
+VoucherCodeManager.unMarkStaus = function( voucherCode )
 {
-   if ( vcItem )
-   {
-      if ( vcItem.status ) delete vcItem.status;
+   VoucherCodeManager.updateQueue( voucherCode, function( vcItem ) {
+      if ( vcItem.status ) vcItem.status = "";
       if ( vcItem.markDate ) delete vcItem.markDate;
-   }
+   });
+};
+
+
+VoucherCodeManager.updateQueue = function( voucherCode, updateFunc )
+{
+   var queue = PersisDataLSManager.getVoucherCodes_queue();
+
+   queue.filter( item => ( item.voucherCode === voucherCode ) ).forEach( vcItem => updateFunc( vcItem ) );
+
+   PersisDataLSManager.updateVoucherCodes_queue( queue );
 };
 
 // NOTE: BUT, we should seperate mark it as use, and take it out..

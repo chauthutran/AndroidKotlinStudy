@@ -96,7 +96,7 @@ function settingsApp( cwsRender )
                         DataManager2.deleteAllStorageData( function() {					
                             FormUtil.emptySheetBottomTag();
                             
-                            FormMsgManager.appBlockTemplate('appLoad');
+                            MsgFormManager.appBlockTemplate('appLoad');
             
                             SwManager.reGetAppShell();
                         });

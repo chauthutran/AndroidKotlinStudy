@@ -367,7 +367,7 @@ function Login()
 				DataManager2.deleteAllStorageData( function() {					
 					FormUtil.emptySheetBottomTag();
 					
-					FormMsgManager.appBlockTemplate('appLoad');
+					MsgFormManager.appBlockTemplate('appLoad');
 	
 					AppUtil.appReloadWtMsg( "User Change - Deleteting Existing Data.." );
 				});
@@ -569,12 +569,14 @@ function Login()
 
 				if ( isSuccess ) 
 				{
-					VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService() );
-
-					// NEW
-					//AppInfoManager.loadData_AfterLogin( userName, password, function() <-- happened within the 'loginOffline'
 					me.loginSuccessProcess( userName, password, offlineUserData, function() 
 					{
+						VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService(), function() {
+							VoucherCodeManager.checkLowQueue_Msg();
+							// How to show this msg after login?? because the login page will swtich...
+							// This alert is not attaching to current pageDiv..	
+						});
+	
 						// After StartUp Fun - This should be displayed after loading..
 						SessionManager.check_warnLastConfigCheck( ConfigManager.getConfigUpdateSetting() );
 					});
@@ -593,12 +595,12 @@ function Login()
 
 				if ( isSuccess )
 				{
-					VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService() );
-
-					if ( VoucherCodeManager.settingData.enable ) VoucherCodeManager.refillQueue( userName );
-
-
-					me.loginSuccessProcess( userName, password, loginData );		
+					me.loginSuccessProcess( userName, password, loginData, function() 
+					{
+						VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService(), function() {
+							VoucherCodeManager.refillQueue( userName );
+						});						
+					});		
 				}
 
 				if ( callAfterDone ) callAfterDone( isSuccess );
@@ -617,14 +619,14 @@ function Login()
 		if ( !loginData.dcdConfig || loginData.dcdConfig.ERROR ) MsgManager.msgAreaShow( '<span term="msgNotif_loginSuccess_noConfig">Login Success, but country config not available.</span> <span>Msg: ' + loginData.dcdConfig.ERROR + '</span>', 'ERROR' );
 		else 
 		{
-			FormMsgManager.appBlockTemplate( 'loginAfterLoad' );
+			MsgFormManager.appBlockTemplate( 'loginAfterLoad' );
 
 			// Load Activities
 			SessionManager.cwsRenderObj.loadActivityListData_AfterLogin( function() 
 			{
 				me.loginAfterProcess( userName );
 				
-				FormMsgManager.appUnblock();
+				MsgFormManager.appUnblock();
 
 				// call CWS start with this config data..
 				SessionManager.cwsRenderObj.startWithConfigLoad( runAfterFunc );
