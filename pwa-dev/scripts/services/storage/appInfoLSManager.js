@@ -14,6 +14,7 @@ AppInfoLSManager.KEY_CONFIGSOURCETYPE = "configSourceType";
 AppInfoLSManager.KEY_BLACKLISTED = "blackListed"; 
 AppInfoLSManager.KEY_LAST_ONLINELOGIN_DT = "lastOnlineLoginDt"; 
 AppInfoLSManager.KEY_NETWORKSYNC = "networkSync";
+AppInfoLSManager.KEY_LAST_SYNCALL_DT = "lastSyncAllDt";
 AppInfoLSManager.KEY_LOCAL_STAGENAME = "localStageName"; 
 AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES = "jobAidFolderNames";
 
@@ -416,6 +417,17 @@ AppInfoLSManager.getNetworkSync = function()
     }
 
     return networkSync;
+};
+
+// lastSyncAllDt
+AppInfoLSManager.updateLastSyncAllDt = function( dataStr ) 
+{
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_LAST_SYNCALL_DT, dataStr );
+};
+
+AppInfoLSManager.getLastSyncAllDt = function() 
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_LAST_SYNCALL_DT );
 };
 
 // ---- Localhost Stage related..

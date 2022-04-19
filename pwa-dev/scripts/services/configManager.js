@@ -1069,21 +1069,21 @@ ConfigManager.activityStatusSwitchOps = function( runCase, activities )
 
 // -----------  Sync Related ------------
 
+ConfigManager.getSync = function()
+{
+    var settings = ConfigManager.getSettings();
+    return ( settings.sync ) ? settings.sync : {};
+};
+
+
 ConfigManager.getSettingNetworkSync = function()
 {
-    var networkSync = '' + Util.MS_HR;  // 1 hour
+    var networkSync = '' + Util.MS_HR;  // 3600000  - 1hr  Default.
+    // There are 2 types of sync timer --> 1. sync.networkSync,  2. sync.syncUp.schedulerTime.
+    // 'schedulerTime' support has been discontinued since having 2 types is confusing
 
-    try
-    {
-        var schedulerTime = ConfigManager.getConfigJson().settings.sync.syncUp.schedulerTime;
-		networkSync = UtilDate.getTimeMs( schedulerTime, networkSync );
-    }
-    catch ( errMsg )
-    {
-        console.customLog( 'ERROR in ConfigManager.getSettingNetworkSync, errMsg: ' + errMsg );
-    }
+    if ( ConfigManager.getSync().networkSync ) networkSync = ConfigManager.getSync().networkSync;
 
-    //return ConfigManager.getConfigJson().settings.sync.networkSync;
     return networkSync;
 };
 
@@ -1094,7 +1094,7 @@ ConfigManager.getSyncDownSetting = function()
 
     try
     {    
-        var syncDownList = ConfigManager.getConfigJson().settings.sync.syncDown;
+        var syncDownList = ConfigManager.getSync().syncDown;
 
         // get 1st item from the list.  Empty list returns emtpy object.
         syncDownJson = ( syncDownList.length > 0 ) ? syncDownList[0] : {};
@@ -1146,7 +1146,7 @@ ConfigManager.getSyncUpCoolDownTime = function()
     
     try
     {
-        var coolDownTimeStr = ConfigManager.getConfigJson().settings.sync.syncUp.coolDownTime;
+        var coolDownTimeStr = ConfigManager.getSync().syncUp.coolDownTime;
 		coolDownTime = UtilDate.getTimeMs( coolDownTimeStr, coolDownTime );
     }
     catch ( errMsg )
@@ -1365,12 +1365,10 @@ ConfigManager.applyDefault_syncRelated = function( configJson, defaultSync )
 
         configJson.settings.sync = Util.cloneJson( mergeDest_Sync );
 
-        /*
-        if ( defaultSync.networkSync && !configJson.settings.sync.networkSync ) configJson.settings.sync.networkSync = defaultSync.networkSync;
-        if ( defaultSync.syncUp && !configJson.settings.sync.syncUp ) configJson.settings.sync.syncUp = Util.cloneJson( defaultSync.syncUp );
-        if ( defaultSync.syncDown && !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.cloneJson( defaultSync.syncDown );
-        if ( defaultSync.syncAll && !configJson.settings.sync.syncAll ) configJson.settings.sync.syncAll = Util.cloneJson( defaultSync.syncAll );    
-        */
+        //if ( defaultSync.networkSync && !configJson.settings.sync.networkSync ) configJson.settings.sync.networkSync = defaultSync.networkSync;
+        //if ( defaultSync.syncUp && !configJson.settings.sync.syncUp ) configJson.settings.sync.syncUp = Util.cloneJson( defaultSync.syncUp );
+        //if ( defaultSync.syncDown && !configJson.settings.sync.syncDown ) configJson.settings.sync.syncDown = Util.cloneJson( defaultSync.syncDown );
+        //if ( defaultSync.syncAll && !configJson.settings.sync.syncAll ) configJson.settings.sync.syncAll = Util.cloneJson( defaultSync.syncAll );    
     }
 };
 
@@ -1468,6 +1466,7 @@ ConfigManager.defaultActivityType = {
 
 ///"mergeCompare": { "dateCompareField": [ "updated" ] },
 
+// syncUp > "schedulerTime": "01:00:00"  <-- disabled..
 // ----- If not on download config, place below default to 'config' json.
 ConfigManager.defaultJsonList = 
 {
@@ -1477,12 +1476,11 @@ ConfigManager.defaultJsonList =
 
     "sync": {
       "networkSync": "3600000",
+      "autoSyncOnline_lastSyncHour": 6,      
       "syncUp": {
         "syncUpAttemptLimit": {"maxAttempts": 10, "maxAction": {"status": "error", "msg": "Reached the max sync attempt."}},
         "coolDownTime": "00:01:30",
-        "schedulerTime": "01:00:00"
       },
-
       "syncDown": [
         {
           "userRoles": [],

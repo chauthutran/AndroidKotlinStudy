@@ -211,6 +211,7 @@ UtilDate.addTimeStr_IfEmpty = function( dateStr )
 
 // -----------------------------------------------------------------
 
+// '00:00:00' time string format or object { time, unit }
 UtilDate.getTimeMs = function( input, defaultMs ) 
 {
 	var outputMs = defaultMs;
@@ -307,17 +308,23 @@ UtilDate.getSecFromMiliSec = function( miliSec )
 
 UtilDate.getDaysSince = function( fromDtStr )
 {
-	var days = 0;
+	return UtilDate.getTimeSince( fromDtStr, Util.MS_DAY );
+};
+
+// UtilDate.getTimeSince( fromDtStr, Util.MS_HR );  <-- for hours since..  takes in Z (ISO) hours as well.
+UtilDate.getTimeSince = function( fromDtStr, timeType )
+{
+	var timeSince = 0;
 
 	if ( fromDtStr )
 	{
 		try {
 			var timeMs = UtilDate.getTimePassedMs( fromDtStr );
 
-			days = Math.floor( timeMs / Util.MS_DAY );	
+			timeSince = Math.floor( timeMs / timeType );	
 		}
-		catch ( errMsg ) { console.log( 'ERROR in UtilDate.getDaysSince, intput: ' + fromDtStr + ', ' + errMsg ); }
+		catch ( errMsg ) { console.log( 'ERROR in UtilDate.getTimeSince, intput: ' + fromDtStr + ', ' + errMsg ); }
 	}
 
-	return days;
+	return timeSince;
 };

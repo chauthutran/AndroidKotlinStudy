@@ -204,6 +204,12 @@ ConnManagerNew.appModeSwitchRequest = function( statusInfo )
 };
 
 
+ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo ) 
+{
+	return ( statusInfo.networkConn.online_Stable && statusInfo.serverAvailable ) ? ConnManagerNew.ONLINE: ConnManagerNew.OFFLINE;
+};
+
+
 ConnManagerNew.setAppMode = function( appModeNew, statusInfo )
 {
 	var existingAppMode = statusInfo.appMode;
@@ -215,19 +221,17 @@ ConnManagerNew.setAppMode = function( appModeNew, statusInfo )
 	if ( statusInfo.appMode !== existingAppMode )
 	{
 		ConnManagerNew.update_UI( statusInfo );	
-		if ( SessionManager.getLoginStatus() ) SessionManager.cwsRenderObj.appModeSwitch_UIChanges();	
+
+		if ( SessionManager.getLoginStatus() ) 
+		{
+			SessionManager.cwsRenderObj.appModeSwitch_UIChanges();	
 		
-		// **When Switching From Offline -> Online, perform the runOnceOnline things..
-		if ( ConnManagerNew.isAppMode_Online() ) ScheduleManager.runWhenSwitchedToOnline();
+			// When Switching From Offline -> Online, perform the runOnceOnline things..
+			// However, when WFA App start, 'online' set (forced) could call this.  To block that case, call this only if 'loggedIn'
+			if ( ConnManagerNew.isAppMode_Online() ) ConnManagerNew.runWhenSwitchedToOnline(); //ScheduleManager.runWhenSwitchedToOnline();
+		}
 	}
 };
-
-
-ConnManagerNew.produceAppMode_FromStatusInfo = function( statusInfo ) 
-{
-	return ( statusInfo.networkConn.online_Stable && statusInfo.serverAvailable ) ? ConnManagerNew.ONLINE: ConnManagerNew.OFFLINE;
-};
-
 
 
 ConnManagerNew.runWhenSwitchedToOnline = function()
@@ -235,16 +239,14 @@ ConnManagerNew.runWhenSwitchedToOnline = function()
 	// 1. Run schedule specific tasks - that was added for this case.
 	ScheduleManager.runWhenSwitchedToOnline();
 
+	// 2. If lastSyncAllTime is quite old (6 hr or from config setting), perform syncAll...
+	ConnManagerNew.runSyncAll_ifOldLastSyncAll();
 
-	// 2. Mark last time it was stable online (not startUp one) (or this triggered?)
-	//		And if more than 6 hrs, perform sync...
-	//			--> or if last syncAll (online) was performed more than 6 hrs
-	//		perform syncAll.  (And any other tasks?  Maybe new app file check?)
-	//		TODO: Definitely, this should be placed on config <-- 
+	// 3. Send Google Anlytics Offline cached ones.
+	GAnalytics.offlineCacheSend();
 
-	
-	// TODO: REPLACE THIS WITH login/logout update trigger <-- if offline..
-	// 2. 'backgroundUpdateWhenOnline' enabled, perform app Update.
+	// 4. 'backgroundUpdateWhenOnline' enabled, perform app Update in background.
+	// TODO(?): REPLACE THIS WITH login/logout update trigger
 	if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) 
 	{	
 		SwManager.checkNewAppFile_OnlyOnline( function() 
@@ -254,11 +256,33 @@ ConnManagerNew.runWhenSwitchedToOnline = function()
 		, { 'delayReload': true } 
 		); 	
 	}
-
-	// 3. Send Google Anlytics Offline cached ones.
-	GAnalytics.offlineCacheSend();
 };
 
+
+ConnManagerNew.runSyncAll_ifOldLastSyncAll = function()
+{
+	try
+	{
+		if ( ConfigManager.getSync().autoSyncOnline_lastSyncHour )
+		{
+			var lastSyncAllDt = AppInfoLSManager.getLastSyncAllDt();
+	
+			if ( lastSyncAllDt )
+			{
+				var hrSince = UtilDate.getTimeSince( lastSyncAllDt, Util.MS_HR );
+	
+				if ( hrSince && hrSince >= ConfigManager.getSync().autoSyncOnline_lastSyncHour )
+				{
+					SyncManagerNew.syncAll_FromSchedule( SessionManager.cwsRenderObj );
+				}
+			}
+		}	
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in ConnManagerNew.runSyncAll_ifOldLastSyncAll, ' + errMsg );
+	}
+};
 
 // ===============================================
 // ---- Status Check Related ----------

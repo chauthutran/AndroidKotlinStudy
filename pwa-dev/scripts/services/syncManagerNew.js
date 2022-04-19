@@ -44,9 +44,10 @@ SyncManagerNew.template_SyncMsgJson = {
 
 SyncManagerNew.syncMsgJson;  // will get loaded on 1st use or on app startup
 
+SyncManagerNew.syncAllStartTime;  // Use this for tracking how long the 'syncAll' took, and run UI a bit more if less than 1 sec.
+
 // ===================================================
 // === MAIN 2 FEATURES =============
-
 
 // 2. Run 'sync' on All activityItems - NOTE: 'SyncAll_Running' checking/blocking happenes before this method.
 //      - In this method, we simply mark them... by 'runType'
@@ -56,6 +57,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
     {
         SyncManagerNew.SyncMsg_InsertMsg( 'syncAll ' + runType + ' Started..' );
         SyncManagerNew.setSyncAll_Running( runType, true );
+        SyncManagerNew.syncAllStartTime = new Date().toISOString();
 
         // initialise UI + animation
         SyncManagerNew.update_UI_StartSyncAll();
@@ -69,12 +71,18 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
         // NOTE: CHECK ONLINE is done within syncUpItem_RecursiveProcess
         SyncManagerNew.syncUpItem_RecursiveProcess( activityIdCopyList, 0, cwsRenderObj, resultData, function() 
         {
+            // Mark the last syncAll success time on storage <-- where?
+            var finishedDtStr = ( new Date() ).toISOString();
+            AppInfoLSManager.updateLastSyncAllDt( finishedDtStr );
+
             SyncManagerNew.setSyncAll_Running( runType, false );
-            SyncManagerNew.update_UI_FinishSyncAll();
+            
+            // If sync is less than 1 sec, run the sync rotation 1 second more.
+            var timeTook_SEC = UtilDate.getTimeSince( SyncManagerNew.syncAllStartTime, Util.MS_SEC );
+            if ( timeTook_SEC < 1 ) setTimeout( function() {  SyncManagerNew.update_UI_FinishSyncAll();  }, 1000 );
+            else SyncManagerNew.update_UI_FinishSyncAll();                
 
-            var successMsg = 'syncAll ' + runType + ' completed..';
-            SyncManagerNew.SyncMsg_InsertMsg( successMsg );
-
+            SyncManagerNew.SyncMsg_InsertMsg( 'syncAll ' + runType + ' completed..' );
             SyncManagerNew.SyncMsg_InsertSummaryMsg( 'Processed with success ' + resultData.success + ', failure ' + resultData.failure + '..' );
 
             if ( callBack ) callBack( true );
@@ -85,11 +93,11 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
         SyncManagerNew.setSyncAll_Running( runType, false );
         SyncManagerNew.update_UI_FinishSyncAll();
 
-        var errMsgDetail = 'syncAll ' + runType + ' failed - msg: ' + errMsg;        
+        var errMsgDetail = 'syncAll ' + runType + ' FAILED - msg: ' + errMsg;        
         SyncManagerNew.SyncMsg_InsertSummaryMsg( errMsgDetail );
         MsgManager.msgAreaShow( 'ERR: ' + errMsgDetail, 'ERROR' );
 
-        console.customLog( errMsgDetail );
+        console.log( errMsgDetail );
 
         if( callBack ) callBack( false );
     }
