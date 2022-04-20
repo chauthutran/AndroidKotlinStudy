@@ -61,88 +61,7 @@ function Login()
 
 		// Translate the page..
 		TranslationManager.translatePage();
-
-		// Perform autoCheckIn Flag (dateTimeStr), and run the auto checkIn..
-		/*
-		me.autoLoginCheck( function() {
-			me.populateSessionPin();
-			me.lastPinTrigger = true;
-			MsgManager.msgAreaShow( 'Auto Login After AppUpdate.' );
-			me.loginBtnTag.click();
-		});
-		*/
-
-
-
-		// If AppUpdate Refresh happened during Login, restore the current key typings
-		// me.tempCurrentKeysRestore();
 	};
-
-	// -----------------------------------
-
-	
-	// =============================================
-	// === TEMP CURRENT KEYS RESTORE RELATED =======
-	
-	/*
-	me.tempCurrentKeysRestore = function()
-	{
-		me.resetLoginCurrentKeys();
-
-		var tempCurrentKeys = AppInfoLSManager.getLoginCurrentKeys();
-		if ( tempCurrentKeys && tempCurrentKeys.keys )
-		{
-			// load the keys to login page..
-			me.restoreLoginKeys( tempCurrentKeys.keys );
-
-			AppInfoLSManager.clearLoginCurrentKeys();
-		}
-	};
-
-
-	// This method is used by 'swManager'
-	me.getLoginCurrentKeys = function()
-	{
-		return { 'userName': me.current_userName }; //, 'password': me.current_password };
-	};
-
-	me.resetLoginCurrentKeys = function()
-	{
-		me.current_userName = '';
-		//me.current_password = {};		
-	};
-
-	me.restoreLoginKeys = function( keys )
-	{
-		if ( keys )
-		{
-			if ( keys.userName	) me.loginUserNameTag.val( keys.userName );
-			//if ( keysJson.keys.password	) me.restoreCurrentPassword( keysJson.keys.password );
-		}
-	};
-	
-	me.getCurrentPassword = function()
-	{
-		return { 
-			'p1': me.splitPasswordTag.find( '.pin1' ).val()
-			,'p2': me.splitPasswordTag.find( '.pin2' ).val()
-			,'p3': me.splitPasswordTag.find( '.pin3' ).val()
-			,'p4': me.splitPasswordTag.find( '.pin4' ).val()
-		};
-	};
-
-	me.restoreCurrentPassword = function( pwdJson )
-	{
-		if ( pwdJson )
-		{
-			if ( pwdJson.p1 ) me.splitPasswordTag.find( '.pin1' ).val( pwdJson.p1 );
-			if ( pwdJson.p2 ) me.splitPasswordTag.find( '.pin2' ).val( pwdJson.p2 );
-			if ( pwdJson.p3 ) me.splitPasswordTag.find( '.pin3' ).val( pwdJson.p3 );
-			if ( pwdJson.p4 ) me.splitPasswordTag.find( '.pin4' ).val( pwdJson.p4 );
-		}
-	};
-	*/
-
 
 	// =============================================
 
@@ -407,46 +326,6 @@ function Login()
 			else buttonsDivTag.hide();
 		}
 	};
-
-	// =============================================
-	// == Auto Login Related
-
-	/*
-	me.autoLoginCheck = function( runFunc )
-	{
-		if ( AppInfoManager.getAutoLogin() )
-		{
-			AppInfoManager.clearAutoLogin();
-
-			runFunc();
-		}
-	};
-
-
-	me.populateSessionPin = function()
-	{
-		Util.tryCatchContinue( function() 
-		{
-			var userName = me.loginUserNameTag.val();
-			var offlineUserData = SessionManager.getLoginRespData_IDB( userName );
-			if ( offlineUserData )
-			{
-				var password = SessionManager.getOfflineUserPin( offlineUserData );
-				if ( password )
-				{
-					for ( var i = 0; i < password.length; i++ ) 
-					{
-						var charVal = password.charAt(i);
-						var pinClassName = '.pin' + ( i + 1 );
-	
-						me.splitPasswordTag.find( pinClassName ).val( charVal );
-					}	
-				}
-			}	
-		}, 'populateSessionPin' );
-	};
-
-	*/
 	
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
@@ -498,14 +377,7 @@ function Login()
 		// Reset vals and set focus
 		me.clearResetPasswords();
 
-		if ( !me.loginUserNameTag.val() ) 
-		{
-			me.loginUserNameTag.focus();
-		}
-		else 
-		{
-			//setTimeout( function() { $( '.pin1' ).focus(); }, 100 );			
-		}
+		if ( !me.loginUserNameTag.val() ) me.loginUserNameTag.focus();
 
 		me.loginBottomButtonsVisible( true );
 	};
@@ -571,10 +443,9 @@ function Login()
 				{
 					me.loginSuccessProcess( userName, password, offlineUserData, function() 
 					{
-						VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService(), function() {
+						VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService(), function() 
+						{
 							VoucherCodeManager.checkLowQueue_Msg();
-							// How to show this msg after login?? because the login page will swtich...
-							// This alert is not attaching to current pageDiv..	
 						});
 	
 						// After StartUp Fun - This should be displayed after loading..
@@ -597,8 +468,12 @@ function Login()
 				{
 					me.loginSuccessProcess( userName, password, loginData, function() 
 					{
-						VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService(), function() {
-							VoucherCodeManager.refillQueue( userName );
+						VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService(), function() 
+						{
+							VoucherCodeManager.refillQueue( userName, function() 
+							{
+								VoucherCodeManager.checkLowQueue_Msg();
+							});
 						});						
 					});		
 				}
@@ -923,19 +798,6 @@ function Login()
 			inputTags.val( changedVal );
 		});	
 	};
-
-	/*
-	me.setUpEnterKeyExecute = function( inputTag, btnTag ) {
-		inputTag.keypress( function(e) {
-			if ((e.which && e.which == FormUtil.keyCode_Enter) || (e.keyCode && e.keyCode == FormUtil.keyCode_Enter)) {
-				btnTag.click();
-				return false;
-			} else {
-				return true;
-			}			
-		});		
-	};
-	*/
 
 	// ================================
 

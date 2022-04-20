@@ -4,6 +4,8 @@ function MsgFormManager() {}
 
 MsgFormManager.queue = [];  // could be array or object.  Go with array for now.
 
+MsgFormManager.blockShown = false;
+
 // --- App block/unblock ---
 MsgFormManager.cssBlock_Body = { 
     border: '1px solid rgba(0,0,0,0.25)'
@@ -49,14 +51,19 @@ MsgFormManager.block = function( bShow, msg, cssSetting, itemDef )
 MsgFormManager.showBlock = function( itemId, msgAndStyle, afterRun )
 {
     // If blockMsg is already shown currently (for other msg), add to queue instead.
-    if ( $( 'div.blockMsg:visible' ).length > 0 )
+    // if ( $( 'div.blockMsg:visible' ).length > 0 )
+    if ( MsgFormManager.blockShown )
     {
         var item = { id: itemId, msgAndStyle: msgAndStyle, afterRun: afterRun };
         MsgFormManager.queue.push( item );
+        console.log( 'blockUI item Queued' );
     }
     else
     {
+        console.log( 'blockUI called' );
         $.blockUI( msgAndStyle );  // var msgAndStyle = { message: msg, css: cssSetting };
+        MsgFormManager.blockShown = true;
+        if ( afterRun ) afterRun();
     }
 };
 
@@ -64,18 +71,27 @@ MsgFormManager.showBlock = function( itemId, msgAndStyle, afterRun )
 MsgFormManager.hideBlock = function( itemId )
 {
     $.unblockUI();
+    MsgFormManager.blockShown = false;
 
     // If there is any queue, show this - with setTimeout?
     if ( MsgFormManager.queue.length > 0 )
     {
         var item = MsgFormManager.queue.shift();
+        console.log( 'queued msgForm popped' );
+        console.log( item );
+        console.log( MsgFormManager.queue );
 
-        setTimeout( function() 
-        {
+        setTimeout( function() {
+            console.log( 'popped msgForm .4 sec later called' );
             $.blockUI( item.msgAndStyle ); 
-            if ( item.afterRun ) item.afterRun();    
-        }, 500 );
+            MsgFormManager.blockShown = true;
+            if ( item.afterRun ) item.afterRun();        
+            console.log( item );
+        }, 400);
     }
+
+
+    // Trigger 'queue' removing 'interval'?  <-- until all is removed?
 };
 
 

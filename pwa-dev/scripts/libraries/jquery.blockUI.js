@@ -200,7 +200,7 @@
 			fadeIn:  0,
 
 			// fadeOut time in millis; set to 0 to disable fadeOut on unblock
-			fadeOut: 200,
+			fadeOut: 0,
 
 			// time in millis to wait before auto-unblocking; set to 0 to disable auto-unblock
 			timeout: 0,
@@ -212,8 +212,8 @@
 			// page blocking
 			focusInput: true,
 
-            // elements that can receive focus
-            focusableElements: ':input:enabled:visible',
+         // elements that can receive focus
+         focusableElements: ':input:enabled:visible',
 
 			// suppresses the use of overlay styles on FF/Linux (due to performance issues with opacity)
 			// no longer needed in 2012

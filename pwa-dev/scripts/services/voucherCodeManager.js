@@ -63,19 +63,19 @@ VoucherCodeManager.checkLowQueue_Msg = function()
 {
    VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) { 
       if ( isLow ) MsgFormManager.showFormMsg( 'queueLowMsg', VoucherCodeManager.settingData.queueLowMsg );
-      //alert( msg ); //'queue under low limit!!' );
    });
 };
 
 
 // MAIN #1. Called after online Login
-VoucherCodeManager.refillQueue = function( userName )
+VoucherCodeManager.refillQueue = function( userName, callBack )
 { 
    VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) {
 
       // Fill the count
       VoucherCodeManager.fillQueue( userName, fillCount, function( success, vcList ) {
          if ( success ) console.log( 'VoucherCodes Downloaded. Filled Count: ' + vcList.length );
+         if ( callBack ) callBack();
       });
    });
 };
