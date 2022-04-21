@@ -66,17 +66,26 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			
 			fieldDataNew_wtGrp.forEach( fieldData => 
 			{
-				var groupDivTag = me.getGroupTag( fieldData, groupsCreated, formTag );  // create group tag if not exists..
-				var fieldDef = fieldData.item;
-
-				// NOT GOOD: - Save the field definition by fieldId for using it in 'me.populateFieldsData()'
-				me.fieldDefsJson[ fieldDef.id ] = fieldDef;
-
-				var inputFieldTag = me.createInputFieldTag( fieldDef, me.payloadConfigSelection, formTag, passedData, formDef_fieldsArr, autoComplete );
-				if ( inputFieldTag ) groupDivTag.append( inputFieldTag );
-
-				// TODO: Why do we append it again?  Does not make sense...  Change the code..
-				formTag.append( groupDivTag );
+				try
+				{
+					var groupDivTag = me.getGroupTag( fieldData, groupsCreated, formTag );  // create group tag if not exists..
+					var fieldDef = fieldData.item;
+	
+					// NOT GOOD: - Save the field definition by fieldId for using it in 'me.populateFieldsData()'
+					me.fieldDefsJson[ fieldDef.id ] = fieldDef;
+	
+					var inputFieldTag = me.createInputFieldTag( fieldDef, me.payloadConfigSelection, formTag, passedData, formDef_fieldsArr, autoComplete );
+					if ( inputFieldTag ) groupDivTag.append( inputFieldTag );
+	
+					// TODO: Why do we append it again?  Does not make sense...  Change the code..
+					formTag.append( groupDivTag );	
+				}
+				catch( errMsg )
+				{
+					var tempErrMsg = 'FAILED to render field, ' + JSON.stringify( fieldData ) + ', errMsg: ' + errMsg;
+					console.log( errMsg );
+					MsgManager.msgAreaShow( tempErrMsg, 'ERROR' );
+				}
 			});
 			
 			
@@ -1068,7 +1077,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		return idList;
 	}
 
-	me.setNewFormData_wtGroupInfo = function( formDef_fieldsArr, frmGroupJson )
+	me.setNewFormData_wtGroupInfo = function( formDef_fieldsArr, definitionFormGroups )
 	{
 		// There are some hidden data which are put in hidden INPUT tag without any group. 
 		// This one need to genrerate first so that data in these fields can be used after that
@@ -1077,27 +1086,28 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		var arrNoGroup = [];
 
 		// 1. copy the array..
-		var newArr = Util.cloneJson( formDef_fieldsArr );
+		//var fieldArr = Util.cloneJson( formDef_fieldsArr );
 
 		// 2. loop each form control and create formGroup...  even none ones...
-		newArr.forEach( frmCtrl => 
+		formDef_fieldsArr.forEach( field => 
 		{
 			// NOTE: ISSUES - Currently, definition name is used as id..  but we should have id in it...
-			var frmCtrlGroup = FormUtil.getObjFromDefinition( frmCtrl.formGroup, frmGroupJson );
-			var formCtrlGroupId = frmCtrl.formGroup;
+			var groupId = field.formGroup;
+			var fieldGroup = definitionFormGroups[ groupId ]; // Can not use 'FormUtil.getObj--' since we do not want string name returned if not exists.
+			// FormUtil.getObjFromDefinition( groupId, definitionFormGroups );
 
-			if ( frmCtrlGroup )
+			if ( fieldGroup )
 			{
 				// Data with group info
 				var dataJson = { 
-					'id': frmCtrl.id
-					,'group': frmCtrlGroup.defaultName
-					,'groupTerm': Util.getStr( frmCtrlGroup.term )
-					,'groupId': formCtrlGroupId
-					,'item': frmCtrl
+					'id': field.id
+					,'group': fieldGroup.defaultName
+					,'groupTerm': Util.getStr( fieldGroup.term )
+					,'groupId': groupId
+					,'item': field
 					,created: 0
-					,display: ( frmCtrl.display == 'hiddenVal' || frmCtrl.display == 'none' ) ? 0 : 1
-					,order: frmCtrlGroup.order 
+					,display: ( field.display == 'hiddenVal' || field.display == 'none' ) ? 0 : 1
+					,order: fieldGroup.order 
 				};
 
 				arrWtGroup.push( dataJson );
@@ -1106,13 +1116,13 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			{
 				// Data with no group info
 				var dataJson = { 
-					'id': frmCtrl.id
+					'id': field.id
 					,'group': groupNone
 					,'groupTerm': ''
 					,'groupId': groupNone
-					,'item': frmCtrl
+					,'item': field
 					,created: 0
-					, display: ( frmCtrl.display == 'hiddenVal' || frmCtrl.display == 'none' ) ? 0 : 1
+					, display: ( field.display == 'hiddenVal' || field.display == 'none' ) ? 0 : 1
 					, order: 999 
 				}; 
 				
@@ -1134,7 +1144,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 
 		return combinedArr;
 	};
-
 
 
 	me.getFormUniqueGroups = function( JsonArr )
