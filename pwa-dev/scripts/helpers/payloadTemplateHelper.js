@@ -30,9 +30,9 @@ PayloadTemplateHelper.generatePayload = function( dateTimeObj, formsJson, formsJ
     }
     catch( errMsg )
     {
-        var errMsgStr = 'Error on PayloadTemplateHelper.generatePayload, errMsg: ' + errMsg;
-        console.customLog( errMsgStr );
-        alert( errMsgStr );
+        var errMsgStr = 'Error: ' + errMsg;
+        MsgManager.msgAreaShow( errMsgStr, 'ERROR' );
+        throw errMsg;
     }
 
     return finalPayload;
@@ -108,8 +108,10 @@ PayloadTemplateHelper.evalPayloads = function( payloadList, INFO, defPayloadTemp
     {
         var payloadJson = payloadList[ i ];
 
+        if ( Util.isTypeString( payloadJson ) && !defPayloadTemplates[ payloadJson ] ) throw '"' + payloadJson + '" does not exist in definitionPayloadTemplate';
+
         INFO.payloadJson = payloadJson; 
-        
+                
         //Util.traverseEval( payloadJson, INFO, 0, 50 );
         Util.trvEval_payload = payloadJson;
         Util.trvEval_INSERT_SUBTEMPLATES( payloadJson, INFO, defPayloadTemplates, 0, 50 );

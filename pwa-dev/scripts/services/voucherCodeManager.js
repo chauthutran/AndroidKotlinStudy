@@ -37,7 +37,9 @@ VoucherCodeManager.settingData = {};  // queueSize / queueLowSize / enable
 
 VoucherCodeManager.queueSize_Default = 300; // Service has 300 fixed.. for some reason..
 VoucherCodeManager.queueLowSize_Default = 100; 
-VoucherCodeManager.queueLowMsg_Default = '<span>VoucherCode queue under low limit!!  Login the app in online mode to refill the queue automatically!!</span>';
+VoucherCodeManager.queueLowMsg_Default = "<span term='msg_vcQueueLowWarning'>Low voucherCodes count, $$length, in queue!!  Login online mode to refill the queue automatically!!</span>";
+VoucherCodeManager.queueEmptyMsg_Default = "<span term='msg_vcQueueEmpty'>VoucherCode queue is empty!!  Login online mode to refill the queue automatically!!</span>";
+
 
 VoucherCodeManager.STATUS_InUse = 'InUse';
 VoucherCodeManager.STATUS_Used = 'Used';
@@ -53,6 +55,7 @@ VoucherCodeManager.setSettingData = function( vcSrv, runFunc )
    if ( !vcSrv.queueSize || vcSrv.queueSize < 0 ) vcSrv.queueSize = VoucherCodeManager.queueSize_Default;
    if ( !vcSrv.queueLowSize || vcSrv.queueLowSize < 0 ) vcSrv.queueLowSize = VoucherCodeManager.queueLowSize_Default;
    if ( !vcSrv.queueLowMsg ) vcSrv.queueLowMsg = VoucherCodeManager.queueLowMsg_Default;
+   if ( !vcSrv.queueEmptyMsg ) vcSrv.queueEmptyMsg = VoucherCodeManager.queueEmptyMsg_Default;
 
    // Run function for enabled voucherCodeService - like 'refill' or 'queueLowMsg'
    if ( VoucherCodeManager.settingData.enable && runFunc ) runFunc();
@@ -61,8 +64,24 @@ VoucherCodeManager.setSettingData = function( vcSrv, runFunc )
 
 VoucherCodeManager.checkLowQueue_Msg = function()
 {
-   VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) { 
-      if ( isLow ) MsgFormManager.showFormMsg( 'queueLowMsg', VoucherCodeManager.settingData.queueLowMsg );
+   VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) 
+   {
+      if ( currCount <= 0 )
+      {
+         var msgDivTag = $( '<div></div>' );
+         msgDivTag.append( VoucherCodeManager.settingData.queueEmptyMsg );
+         TranslationManager.translatePage( msgDivTag );
+         MsgFormManager.showFormMsg( 'queueEmptyMsg', msgDivTag );
+      }
+      else if ( isLow )
+      {
+         var msgDivTag = $( '<div></div>' );
+         msgDivTag.append( VoucherCodeManager.settingData.queueLowMsg );
+         TranslationManager.translatePage( msgDivTag );
+         var spanTag = msgDivTag.find( 'span' );
+         spanTag.text( spanTag.text().replace( "$$length", currCount ) );
+         MsgFormManager.showFormMsg( 'queueLowMsg', msgDivTag );
+      }
    });
 };
 
