@@ -1566,10 +1566,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			{
 				var styleDef = fieldDef.styles[i];
 				entryTag.css( styleDef.name, styleDef.value );
-
-				/*entryTag.each( function( index, element ){
-					$( element ).attr( styleDef.name, styleDef.value );
-				});*/
 			}
 		}
 
@@ -1683,26 +1679,6 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 			}
 		}
 	};
-
-	/*
-	me.checkConditionEval = function( ruleJson )
-	{
-		var isPass = false;
-		if ( ruleJson.conditionEval === undefined ) isPass = true;
-		else
-		{
-			var conditionEval = FormUtil.getObjFromDefinition( ruleJson.conditionEval, ConfigManager.getConfigJson().definitionRuleConditions );
-
-			conditionEval = Util.getEvalStr( conditionEval );
-
-			var evalResult = eval( conditionEval );
-			if ( evalResult === true ) isPass = true;
-		}	
-
-		return isPass;
-	};
-	*/
-
 	
 	me.addDataTargets = function( divInputTag, fieldDef )
 	{

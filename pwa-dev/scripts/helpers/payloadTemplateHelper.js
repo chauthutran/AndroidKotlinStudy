@@ -110,10 +110,11 @@ PayloadTemplateHelper.evalPayloads = function( payloadList, INFO, defPayloadTemp
 
         if ( Util.isTypeString( payloadJson ) && !defPayloadTemplates[ payloadJson ] ) throw '"' + payloadJson + '" does not exist in definitionPayloadTemplate';
 
-        INFO.payloadJson = payloadJson; 
-                
-        //Util.traverseEval( payloadJson, INFO, 0, 50 );
+        INFO.payloadJson = payloadJson;                 
         Util.trvEval_payload = payloadJson;
+        
+        // NOTE: 'payloadJson' should have payload in json version (from template).
+        // 'defPayloadTemplates' is also passed/used for referencing other templates while evaluating / traversing json..
         Util.trvEval_INSERT_SUBTEMPLATES( payloadJson, INFO, defPayloadTemplates, 0, 50 );
         Util.trvEval_TEMPLATE( payloadJson, INFO, defPayloadTemplates, 0, 50 );
     }
@@ -135,3 +136,33 @@ PayloadTemplateHelper.combinePayloads = function( payloadList )
 };
 
 // ================================================
+
+
+PayloadTemplateHelper.evalPayloadTemplate_fieldOverride = function( formsJson, INFO, payloadTemplate, field )
+{
+    // Evaluate 'payloadTemplate' and from result, get field under 'searchFields'
+    if ( payloadTemplate && field )
+    {
+        try
+        {
+            var payloadDefs = ConfigManager.getConfigJson().definitionPayloadTemplates;
+            var payloadJson = Util.cloneJson( payloadDefs[ payloadTemplate ] );
+    
+            // Emulate the 'INFO.payload.formsJson' by formsJson / inputJson.
+            INFO.payload = { formsJson: formsJson };
+    
+            PayloadTemplateHelper.evalPayloads( [ payloadJson ], INFO, payloadDefs );
+    
+            // Final Override the 'field' <-- evalulated.. { "searchFields": { "birthDate": { "$gte":.. "$lte":.. }  } 
+            if ( payloadJson.searchFields && payloadJson.searchFields[ field ] )
+            {
+                formsJson[ field ] = payloadJson.searchFields[ field ];    
+            }
+        }
+        catch( errMsg )
+        {
+            console.log( 'ERROR in PayloadTemplateHelper.evalPayloadTemplate, ' + errMsg );
+        }
+    }
+};
+

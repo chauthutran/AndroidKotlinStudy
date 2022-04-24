@@ -2195,3 +2195,80 @@ FormUtil.openDivPopupArea = function( divPopupAreaTag, populateProcess, closePro
 	});
 
 };
+
+
+// ==============================================
+// ---- Client Offline search helper methods.
+
+// For each property '$gte', '$lte', perform check.  if any of them fails, it fails..
+FormUtil.mongoRangeCheck = function( condJson, sourceVal )
+{
+    //{ "$gte": "1999-08-01",  "$lte": "2000-08-01" }
+	var isMatch = true;
+
+    try
+    {
+        for ( var condKey in condJson )
+        {
+            var condVal = condJson[ condKey ];
+
+            if ( condKey === '$gte' )
+            {
+                if ( sourceVal >= condVal ) { }
+                else { isMatch = false; break; }
+            }
+            else if ( condKey === '$gt' )
+            {
+                if ( sourceVal > condVal ) { }
+                else { isMatch = false; break; }
+            }
+            else if ( condKey === '$lte' )
+            {
+                if ( sourceVal <= condVal ) { }
+                else { isMatch = false; break; }
+            }
+            else if ( condKey === '$lt' )
+            {
+                if ( sourceVal < condVal ) { }
+                else { isMatch = false; break; }
+            }
+            else { isMatch = false; break; }
+        }
+    }   
+    catch ( errMsg )
+    {
+        isMatch = false;
+        console.log( 'ERROR in FormUtil.mongoRangeCheck, ' + errMsg );
+    }
+
+	return isMatch;
+};
+
+
+FormUtil.matchValueLVL1 = function( inputVal, dataVal )
+{
+    var bMatch = false;
+
+    try
+    {
+        if ( dataVal )
+        {
+            // 1. Remove Dialact
+            inputVal = inputVal.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+            dataVal = dataVal.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    
+            // 2. Remove Case
+            inputVal = inputVal.toUpperCase();
+            dataVal = dataVal.toUpperCase();
+    
+            // 3. Start with match.
+            if ( dataVal.indexOf( inputVal ) === 0 ) bMatch = true;
+        }    
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in FormUtil.matchValueLVL1, ' + errMsg );
+    }
+
+    return bMatch;
+};

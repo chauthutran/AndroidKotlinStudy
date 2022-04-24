@@ -797,25 +797,92 @@ ClientDataManager.isVoucherNotUsed = function( voucherData )
     return ( usedTrans.length === 0 );
 };
 
-ClientDataManager.getClientListByFields = function( inputJson )
+ClientDataManager.getClientListByFields = function( inputJson, option )
 {
     var matchedList = [];
+    if ( !option ) option = {};
 
 	if ( inputJson )
 	{
+        // 
+        if ( option.payloadTemplate && option.field ) PayloadTemplateHelper.evalPayloadTemplate_fieldOverride( inputJson, INFO, option.payloadTemplate, option.field );
+
         var clientList = ClientDataManager.getClientList();
 
         clientList.forEach( client => 
         {
-            if ( Util.compareJsonPropVal( inputJson, client.clientDetails ) )
-            {
-                matchedList.push( client );
-            }
+            //if ( Util.compareJsonPropVal( inputJson, client.clientDetails ) )
+            if ( ClientDataManager.matchClientDetailsVal( inputJson, client.clientDetails ) ) matchedList.push( client );
         });
 	}
 
     return matchedList;
 };
+
+
+ClientDataManager.matchClientDetailsVal = function( inputJson, clientDetails )
+{
+    var bAllMatch = true;
+    var lvl1Fields = [ 'firstName', 'lastName' ];
+
+    try
+    {
+        for ( var key in inputJson )
+        {
+            var inputVal = inputJson[ key ];
+            var targetVal = clientDetails[ key ];
+    
+            // If 'inputVal' is empty string or undefined, continue with other property/key matching
+            if ( inputVal === undefined ) { }  // || inputVal === ''
+            else if ( inputVal === false ) // If 'inputVal' is false, only if targetVal is false, allow it.
+            {
+                if ( targetVal !== false ) { bAllMatch = false; break; }
+            }
+            else // If 'inputVal' is valid
+            {
+                // Special comparison Check:
+                // VoucherCode: voucherCodes or voucherCode comparison...
+                if ( key === 'voucherCode' )
+                {
+                    if ( clientDetails.voucherCodes && clientDetails.voucherCodes.indexOf( inputVal ) >= 0 ) { }
+                    else if ( clientDetails.voucherCode === inputVal ) { }
+                    else { bAllMatch = false; break; }
+                }
+                else 
+                {
+                    // If 'targetVal', matching key 'clientDetails' value, does not exist, return false?
+                    if ( targetVal === undefined ) { bAllMatch = false; break; }
+                    else
+                    {                    
+                        if ( lvl1Fields.indexOf( key ) >= 0 ) 
+                        {
+                            var lvl1Match = FormUtil.matchValueLVL1( inputVal, targetVal );
+                            if ( !lvl1Match ) { bAllMatch = false; break; }
+                        }
+                        else if ( Util.isTypeString( inputVal ) )
+                        {
+                            if ( inputVal !== targetVal ) { bAllMatch = false; break; }
+                        }
+                        else if ( Util.isTypeObject( inputVal ) )
+                        {
+                            // Check '$gte', '$gt', '$lt', '$lte' - { "$gte": "1999-08-01",  "$lte": "2000-08-01" }
+                            var rangeCheck = FormUtil.mongoRangeCheck( inputVal, targetVal );
+                            if ( !rangeCheck ) { bAllMatch = false; break; }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    catch ( errMsg )
+    {
+        bAllMatch = false;
+        console.log( 'ERROR in ClientDataManager.matchClientDetailsVal, ' + errMsg );
+    }
+
+    return bAllMatch;
+};
+
 
 ClientDataManager.getClientLikeCUIC = function( CUIC )
 {

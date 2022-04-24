@@ -743,7 +743,7 @@ Util.trvEval_INSERT_SUBTEMPLATES = function( obj, INFO, defPTemplates, iDepth, l
 	}	
 };
 
-
+// NOTE: 'defPTemplates' is passed & used for referencing other templates while evaluating / traversing json..
 Util.trvEval_TEMPLATE = function( obj, INFO, defPTemplates, iDepth, limit )
 {
 	if ( iDepth === limit )
