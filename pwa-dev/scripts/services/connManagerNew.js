@@ -249,12 +249,8 @@ ConnManagerNew.runWhenSwitchedToOnline = function()
 	// TODO(?): REPLACE THIS WITH login/logout update trigger
 	if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) 
 	{	
-		SwManager.checkNewAppFile_OnlyOnline( function() 
-		{ 
-			MsgManager.msgAreaShow( 'appUpdate detected!  Update will be performed on logout.', undefined, undefined, 3000 ); 
-		}
-		, { 'delayReload': true } 
-		); 	
+		SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
+		// function() { MsgManager.msgAreaShow( 'appUpdate detected!  Update will be performed on logout.', undefined, undefined, 3000 ); }	
 	}
 };
 

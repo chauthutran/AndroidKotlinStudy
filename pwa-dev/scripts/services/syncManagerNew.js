@@ -85,6 +85,11 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
             SyncManagerNew.SyncMsg_InsertMsg( 'syncAll ' + runType + ' completed..' );
             SyncManagerNew.SyncMsg_InsertSummaryMsg( 'Processed with success ' + resultData.success + ', failure ' + resultData.failure + '..' );
 
+
+            // NEW: Perform other updates after syncAll online: voucherCodeQueue & appUpdate
+            SyncManagerNew.afterOps_syncAll_Online();
+
+
             if ( callBack ) callBack( true );
         });
     }
@@ -100,6 +105,29 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
         console.log( errMsgDetail );
 
         if( callBack ) callBack( false );
+    }
+};
+
+
+SyncManagerNew.afterOps_syncAll_Online = function()
+{
+    try
+    {
+        if ( ConnManagerNew.isAppMode_Online() )
+        {
+            // 1. Check & download AppFile updates.  Without reload afterward ('delayReload')
+            SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
+    
+            // 2. VoucherCode Queue Fill
+            VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService(), function() 
+            {
+                VoucherCodeManager.refillQueue( userName );
+            });
+        }    
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in SyncManagerNew.afterOps_syncAll_Online, ', errMsg );
     }
 };
 
