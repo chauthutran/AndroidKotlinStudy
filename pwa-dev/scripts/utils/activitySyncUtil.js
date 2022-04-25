@@ -5,6 +5,7 @@ function ActivitySyncUtil() {}
 
 ActivitySyncUtil.coolDownMoveRate = 300; // 100 would move 10 times per sec..
 
+ActivitySyncUtil.clientSyncStatus = {};  // Add clientId if in process - of client level sync
 
 // ==== Methods ======================
 
@@ -15,22 +16,51 @@ ActivitySyncUtil.setSyncIconClickEvent = function( divSyncIconTag, cardDivTag, a
 		// This could be called again after activityJson/status is changed, thus, get everything again from activityId
 		e.stopPropagation();  // Stops calling parent tags event calls..
 
-		ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, activityId, options );
+		if ( options && options.clientSync ) cardDivTag.closest( 'div.card.client' ).find( 'div.clientContainer.card__container' ).find( 'div.activityStatusIcon[clientid]' ).click();
+		else ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, activityId, options );
 	});
 };
 
 
-ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, cardDivTag, activityIdArr )
+ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, cardDivTag ) //, activityIdArr )
 {
 	divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
 	{
 		e.stopPropagation();
 
+		var thisSyncIconTag = $( this );
 
-		Util.callAfterEach( 0, activityIdArr, function( item, idx, continueCallBack ) {
-			// each item calling..
-			ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, item, { clientCard: true, continueCallBack: continueCallBack } );
-		}); //, function( idx ) {  // finihsed - with all or last one  });
+		// Block the client level double clicking/Processing...
+		//		- Since we do not want diff parallel client activities 
+		var clientId = thisSyncIconTag.attr( 'clientid' );
+		var clientStatusStr = thisSyncIconTag.attr( 'status' );
+
+		// Only if the clientId exists (proper clientCard), and in syncable status (not in processing or not in synced)
+		if ( clientId && clientStatusStr === Constants.status_queued )
+		{
+			// NOTE: This could be Duplicate - on top of checking UI status Above			
+			if ( ActivitySyncUtil.clientSyncStatus[ clientId ] )
+			{
+				MsgManager.msgAreaShow( 'Client is already in sync processing.' );
+			}
+			else
+			{
+				ActivitySyncUtil.clientSyncStatus[ clientId ] = true;
+
+				// Get unsynced list..
+				var clientJson = ClientDataManager.getClientById( clientId );
+				var activityIdArr_unsynced = ClientCard.getUnsyncedActivities( clientJson ).map( act => act.id );
+
+				Util.callAfterEach( 0, activityIdArr_unsynced, function( item, idx, continueCallBack ) {
+					// each item calling..
+					ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, item, { clientCard: true, continueCallBack: continueCallBack } );
+				}, function() {
+					// Finish the client call..
+					delete ActivitySyncUtil.clientSyncStatus[ clientId ];
+				});		
+			}
+		}
+		// else MsgManager.msgAreaShow( 'ClientCard is not marked with clientId.', 'ERROR' );
 	});
 };
 
@@ -47,41 +77,36 @@ ActivitySyncUtil.clickSyncActivity = function( divSyncIconTag, cardDivTag, activ
 	//  - If offline, display the message about it.
 	if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
 	{
-		if ( options.syncDisabled )
-		{
-			if ( options.syncDisabledMsg ) MsgManager.msgAreaShow( options.syncDisabledMsg );
+		//if ( options.continueCallBack ) options.continueCallBack();  // END POINT
+		//if ( options.syncDisabled )  // OBSOLETE: NOT USED ANYMORE
+		//{ if ( options.syncDisabledMsg ) MsgManager.msgAreaShow( options.syncDisabledMsg ); }
 
-			if ( options.continueCallBack ) options.continueCallBack();  // END POINT
-		}
-		else
-		{
-			// If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
-			ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
-			{      
-				if ( !options.clientCard )
-				{
-					// Display Left Msg <-- Do not need if?                          
-					var leftSec = UtilDate.getSecFromMiliSec( timeRemainMs );
-					var coolTime = UtilDate.getSecFromMiliSec( ConfigManager.coolDownTime );
-					MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
-				}
-			}, 
-			function() 
+		// If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
+		ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
+		{      
+			if ( !options.clientCard )
 			{
-				// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
-				ActivitySyncUtil.syncUpActivity_IfOnline( activityId, function() 
-				{
-					if ( options.continueCallBack ) options.continueCallBack();  // END POINT
+				// Display Left Msg <-- Do not need if?                          
+				var leftSec = UtilDate.getSecFromMiliSec( timeRemainMs );
+				var coolTime = UtilDate.getSecFromMiliSec( ConfigManager.coolDownTime );
+				MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
+			}
+		}, 
+		function() 
+		{
+			// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
+			ActivitySyncUtil.syncUpActivity_IfOnline( activityId, function() 
+			{
+				if ( options.continueCallBack ) options.continueCallBack();  // END POINT
 
-					ActivitySyncUtil.clientActivityList_FavListReload( cardDivTag );
-				}, 
-				function() { 
-					if ( options.continueCallBack ) options.continueCallBack();  // END POINT					
+				ActivitySyncUtil.clientActivityList_FavListReload( cardDivTag );
+			}, 
+			function() { 
+				if ( options.continueCallBack ) options.continueCallBack();  // END POINT					
 
-					MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' ); // TODO: should be called only once?  or discontinue the process..
-				});
+				MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' ); // TODO: should be called only once?  or discontinue the process..
 			});
-		}
+		});
 	}  
 	else if ( statusVal === Constants.status_processing ) 
 	{ 
@@ -242,43 +267,39 @@ ActivitySyncUtil.displayStatusLabelIcon = function( divSyncIconTag, divSyncStatu
 ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 {	
 	var bRotating = false;
-	var isAllSynced = true;
+	var clientStatusStr = Constants.status_submit;
 	var clientId = client._id;
 
 	var divSyncIconTag = $( 'div.activityStatusIcon[clientId="' + clientId + '"]' );
 	var divSyncStatusTextTag = $( 'div.activityStatusText[clientId="' + clientId + '"]' );
 
-	divSyncIconTag.empty();
-	divSyncStatusTextTag.empty();
+	divSyncIconTag.empty().attr( 'status', '' );
+	divSyncStatusTextTag.empty().attr( 'status', '' );
 
 	var imgIcon = $( '<img>' );
 
-	for ( var i = 0; i < client.activities.length; i++ )
-	{
-		var act = client.activities[i];
-		var status = ActivityDataManager.getActivityStatus( act );
 
-		if ( status === Constants.status_processing )
-		{
-			divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Processing' ).attr( 'term', 'activitycard_status_processing' );
-			imgIcon.attr( 'src', 'images/sync-pending_36.svg' );		
-			bRotating = true;	
-			isAllSynced = false;
-			break;
-		}
-		else if ( SyncManagerNew.statusSyncable( status ) )
-		{
-			divSyncStatusTextTag.css( 'color', '#B1B1B1' ).html( 'Pending' ).attr( 'term', 'activitycard_status_pending' );
-			imgIcon.attr( 'src', 'images/sync-pending_36.svg' );
-			isAllSynced = false;
-			break;
-		}
+	// LOGIC: If any of activity is on processing, it is processing..
+	// After that, if any of the activity is syncable, it is syncable..
+	// Otherwise, it is synced..
+	if ( client.activities.filter( act => ActivityDataManager.getActivityStatus( act ) === Constants.status_processing ).length > 0 ) 
+	{
+		divSyncStatusTextTag.attr( 'status', Constants.status_processing ).css( 'color', '#B1B1B1' ).html( 'Processing' ).attr( 'term', 'activitycard_status_processing' );
+		imgIcon.attr( 'src', 'images/sync-pending_36.svg' );		
+		divSyncIconTag.attr( 'status', Constants.status_processing );
+		bRotating = true;	
 	}
-
-	if ( isAllSynced ) // 'Error' one is also considered Nothing to Sync
+	else if ( client.activities.filter( act => SyncManagerNew.statusSyncable( ActivityDataManager.getActivityStatus( act ) ) ).length > 0 ) 
 	{
-		divSyncStatusTextTag.css( 'color', '#2aad5c' ).html( 'Sync' ).attr( 'term', 'activitycard_status_sync' );
-		imgIcon.attr( 'src', 'images/sync.svg' );		
+		divSyncStatusTextTag.attr( 'status', Constants.status_queued ).css( 'color', '#B1B1B1' ).html( 'Pending' ).attr( 'term', 'activitycard_status_pending' );
+		imgIcon.attr( 'src', 'images/sync-pending_36.svg' );
+		divSyncIconTag.attr( 'status', Constants.status_queued );
+	}
+	else
+	{
+		divSyncStatusTextTag.attr( 'status', Constants.status_submit ).css( 'color', '#2aad5c' ).html( 'Sync' ).attr( 'term', 'activitycard_status_sync' );
+		imgIcon.attr( 'src', 'images/sync.svg' );
+		divSyncIconTag.attr( 'status', Constants.status_submit );
 	}
 
 	divSyncIconTag.append( imgIcon );

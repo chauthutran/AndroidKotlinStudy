@@ -120,11 +120,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
         ActivitySyncUtil.displayActivitySyncStatus( activityId );
         
         var syncOptions =  {};
-        if ( options.displaySetting === 'clientActivity' && ConfigManager.getClientSyncBtnSetting().activityCardSyncDisable ) 
-        {
-            syncOptions.syncDisabled = true;
-            syncOptions.syncDisabledMsg = 'clientDetail Activity Sync Disabled';
-        }
+        if ( options.displaySetting === 'clientActivity' && ConfigManager.isClientSync_ClientLevel() )  syncOptions.clientSync = true;
 
         ActivitySyncUtil.setSyncIconClickEvent( divSyncIconTag, activityCardDivTag, activityId, syncOptions );
     };

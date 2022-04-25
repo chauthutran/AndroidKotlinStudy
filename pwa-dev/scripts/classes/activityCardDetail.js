@@ -426,7 +426,7 @@ ActivityCardDetail.cardFullScreen = `
     </div>
     <div class="card _tab activity">
       <div class="activityDetailRerender" style="float: left; width: 1px; height: 1px;"></div>
-      <div class="card__container">
+      <div class="activityContainer card__container">
         <card__support_visuals class="activityIcon card__support_visuals" />
         <card__content class="activityContent card__content" />
         <card__cta class="activityStatus card__cta">

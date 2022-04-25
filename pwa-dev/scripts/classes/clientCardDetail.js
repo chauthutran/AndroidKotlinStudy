@@ -406,7 +406,7 @@ ClientCardDetail.cardFullScreen = `
 
         <div class="card _tab client">
             <div class="clientDetailRerender" style="float: left; width: 1px; height: 1px;"></div>
-            <div class="card__container">
+            <div class="clientContainer card__container">
                 <card__support_visuals class="clientIcon card__support_visuals" />
                 <card__content class="clientContent card__content" />
                 <card__cta class="activityStatus card__cta">

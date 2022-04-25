@@ -110,8 +110,8 @@ function ClientCard( clientId, options )
                 ActivitySyncUtil.displayStatusLabelIcon_ClientCard( clientJson );
 
                 // get unsynced list..
-                activityIdArr = ClientCard.getUnsyncedActivities( clientJson ).map( act => act.id );
-                ActivitySyncUtil.setSyncIconClickEvent_ClientCard( divSyncIconTag, clientCardDivTag, activityIdArr );
+                // activityIdArr = ClientCard.getUnsyncedActivities( clientJson ).map( act => act.id );
+                ActivitySyncUtil.setSyncIconClickEvent_ClientCard( divSyncIconTag, clientCardDivTag ); //, activityIdArr );
             }
             else 
             {
