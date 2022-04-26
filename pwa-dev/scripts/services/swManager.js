@@ -163,7 +163,8 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             if ( delayReload || ( SessionManager.getLoginStatus() && !allowAppReload_AfterLogin ) )
             {
                 console.log( 'App Reload Delayed (After Update).' );
-                e.preventDefault();
+
+                e.preventDefault();  // WHY USE THIS?
                 return false;
             }
             else
