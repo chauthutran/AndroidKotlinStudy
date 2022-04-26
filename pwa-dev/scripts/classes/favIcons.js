@@ -299,21 +299,26 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 
             favItems.forEach( favItem => 
             {
-                // NEW: If 'hideInFavList': true ( displayType': 'notInFav' ) in def, do not render here.. 
-                
+                // NEW: If 'hideInFavList': true ( displayType': 'notInFav' ) in def, do not render here..
+                //      - For displaying the fav in 'schedule' convert only. 
+                if ( favItem.hideInFavList ) {
+                    console.log( 'hide in favList detected' );
+                }
+                else
+                {
+                    // 1. FavItem Tag from template
+                    var favItemTag = $( FavIcons.favButtonRowItem );
+                    favItemTag.insertBefore( favButtonSectionTag );
+                    
+                    // 2. Click event
+                    me.setFavItemClickEvent( favItemTag, favItem, targetBlockTag, targetBlockContainerTag, function() {
+                        me.closeFavMainButton();
+                    });
+                    //{ 'closeFavMainBtn': true } );
 
-                // 1. FavItem Tag from template
-                var favItemTag = $( FavIcons.favButtonRowItem );
-                favItemTag.insertBefore( favButtonSectionTag );
-                
-                // 2. Click event
-                me.setFavItemClickEvent( favItemTag, favItem, targetBlockTag, targetBlockContainerTag, function() {
-                    me.closeFavMainButton();
-                });
-                //{ 'closeFavMainBtn': true } );
-
-                // 3. populate the favItem content
-                me.populateFavItemDetail( favItemTag, favItem );
+                    // 3. populate the favItem content
+                    me.populateFavItemDetail( favItemTag, favItem );
+                }
             });
         }
     };
@@ -453,9 +458,9 @@ FavIcons.populateFavItemIcon = function( favItemTag, favItemJson )
 {
     var activityTypeDef = ( favItemJson.activityType ) ? FavIcons.getActivityTypeByRef( 'name', favItemJson.activityType ) : undefined;
 
-    favItemTag.attr( 'title', favItemJson.name );  // if term is available, make it term..
+    favItemTag.attr( 'title', TranslationManager.translateText( favItemJson.name, favItemJson.term ) );
     favItemTag.attr( 'favId', favItemJson.id ); 
-    favItemTag.attr( 'favName', favItemJson.name ); 
+    favItemTag.attr( 'favName', favItemJson.name );
 
     // svg icon setup - if available (by local file path reference)
     FavIcons.generateSvgIconFromPath( favItemJson, activityTypeDef, favItemTag );        
