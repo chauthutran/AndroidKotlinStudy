@@ -299,6 +299,9 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 
             favItems.forEach( favItem => 
             {
+                // NEW: If 'hideInFavList': true ( displayType': 'notInFav' ) in def, do not render here.. 
+                
+
                 // 1. FavItem Tag from template
                 var favItemTag = $( FavIcons.favButtonRowItem );
                 favItemTag.insertBefore( favButtonSectionTag );

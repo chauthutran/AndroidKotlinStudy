@@ -753,7 +753,7 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
             FavIcons.populateFavItemIcon( favIconTag, favItemJson );
             favIconTag.show();
 
-            // NOTE: This below is diff from activity to client
+            // OPEN FavId As New Activity Entry: Different btw Activity vs ClientDetail opening.
             if ( option.clientCardId )
             {
                 favIconTag.off( 'click' ).click( function() {
@@ -811,13 +811,6 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
                             ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
                         }
                     } );
-
-                    /*
-                    if ( option.openFav_ActId === activityId ) {
-                        console.log( 'activity favIcon click performed, ' + activityId );
-                        favIconTag.click();
-                    }
-                    */
                 }
             }
         }
