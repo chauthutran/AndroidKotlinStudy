@@ -68,7 +68,7 @@ function ClientCardDetail( clientId )
 
         // #1. Client Details 
         var clientDetailsTabTag = sheetFullTag.find( '[tabButtonId=tab_clientDetails]' );
-        var clientProfileBlockId = ConfigManager.getSettingsClientDef()[ App.clientProfileBlockId ]; // Get client Profile Block defition from config.
+        var clientProfileBlockId = ConfigManager.getClientDef().clientProfileBlock;  // Get client Profile Block defition from config.
         sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click( function() 
         {
             clientDetailsTabTag.html( '' );

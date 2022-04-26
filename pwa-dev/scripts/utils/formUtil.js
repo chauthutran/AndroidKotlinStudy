@@ -1897,7 +1897,7 @@ FormUtil.getActivityTypes = function()
 
 	if ( userName )
 	{
-		var itms = ConfigManager.getSettingsActivityDef().activityTypes;
+		var itms = ConfigManager.getActivityDef().activityTypes;
 
 		if ( itms && itms.length )
 		{
@@ -1918,7 +1918,7 @@ FormUtil.getActivityTypeByRef = function( field, val )
 	// get different 'Areas' or Activity-Types
 	// var sessData = localStorage.getItem(Constants.storageName_session);
 
-	var itms = ConfigManager.getSettingsActivityDef().activityTypes;
+	var itms = ConfigManager.getActivityDef().activityTypes;
 
 	if ( itms && itms.length )
 	{
@@ -1934,32 +1934,65 @@ FormUtil.getActivityTypeByRef = function( field, val )
 // --------------------------------------------------------------------------------------
 /// For preview details data
 
+FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
+{
+	var detailTabContent = ConfigManager.getActivityDetailTabContent();
+
+	if( detailTabContent.displayMode == 1 ) // New style without block
+	{
+	  var detailsTag = FormUtil.previewData_Standard( clientDetails, ActivityCardDetail.clientInfoTag, $("<div style='width:100%; display:flex; flex-wrap:wrap;'/>") );
+	  detailsTag.prepend( '<div class="section"><label term="activityDetail_details_title">clientDetails:</label></div>' );
+	  tabTag.append( detailsTag );
+	}
+	else if( detailTabContent.displayMode == 2 ) // With block defined
+	{ 
+		var detailsTag = FormUtil.renderPreviewDataForm_WithBlockDefination( clientDetails );
+		tabTag.append( detailsTag );
+	}
+	else //if( detailTabContent.displayMode == 0 ) // Old style
+	{
+		var content = detailTabContent.content;
+		var bShowClient = false;
+		var bShowActivity = false;
+		
+		if ( !content ) bShowClient = true;
+		else if ( content === 'both' ) { bShowClient = true; bShowActivity = true; }
+		else if ( content === 'client' ) { bShowClient = true; }
+		else if ( content === 'activity' ) { bShowActivity = true; }
+
+
+		if ( bShowActivity )
+		{
+			var tempJson = {};
+			tempJson.date = activityJson.date;
+			tempJson.transactions = activityJson.transactions;
+
+			var detailsTag = FormUtil.previewData_Standard( tempJson );
+			detailsTag.prepend( '<div class="section"><label term="">Activity:</label></div>' );
+			tabTag.append( detailsTag );	
+		}
+
+		if ( bShowClient )
+		{
+			var detailsTag = FormUtil.previewData_Standard( clientDetails );
+			detailsTag.prepend( '<div class="section"><label term="activityDetail_details_title">clientDetails:</label></div>' );
+			tabTag.append( detailsTag );	
+		}
+	}	
+};
+
 FormUtil.DISPLAY_DATA_DETAILS_AS_TABLE = `<div style="display: table-row;" >
 		<div style="display: table-cell;" class='fieldName name'></div>
 		<div style="display: table-cell;" class='fieldValue value'></div>
 	</div>`;
 
+
 FormUtil.renderPreviewDataForm = function( jsonData, tabTag )
 {
-	if( App.displayActivityDetailsMode == 0 ) // Old style
-	{
-	  var detailsTag = FormUtil.previewData_Standard( jsonData );
-	  detailsTag.prepend( '<div class="section"><label term="activityDetail_details_title">clientDetails:</label></div>' );
-	  tabTag.append( detailsTag );
-	}
-	else if( App.displayActivityDetailsMode == 1 ) // New style without block
-	{
-	  var detailsTag = FormUtil.previewData_Standard( jsonData, ActivityCardDetail.clientInfoTag, $("<div style='width:100%; display:flex; flex-wrap:wrap;'/>") );
-	  detailsTag.prepend( '<div class="section"><label term="activityDetail_details_title">clientDetails:</label></div>' );
-	  tabTag.append( detailsTag );
-	}
-	else if( App.displayActivityDetailsMode == 2 ) // With block defined
-	{ 
-		var detailsTag = FormUtil.renderPreviewDataForm_WithBlockDefination( jsonData );
-		tabTag.append( detailsTag );
-	}
+	var detailsTag = FormUtil.previewData_Standard( jsonData );
+	tabTag.append( detailsTag );
+};
 
-}
 
 FormUtil.previewData_Standard = function( jsonData, templateFieldTag, formTag )
 {
@@ -1968,6 +2001,8 @@ FormUtil.previewData_Standard = function( jsonData, templateFieldTag, formTag )
 		formTag = $( '<div style="display: table;" />');
 		templateFieldTag = FormUtil.DISPLAY_DATA_DETAILS_AS_TABLE;
 	}
+
+	var dataOnly = ConfigManager.getActivityDetailTabContent().dataOnly;
 
 	if ( jsonData )
 	{
@@ -1982,7 +2017,7 @@ FormUtil.previewData_Standard = function( jsonData, templateFieldTag, formTag )
 			else
 			{
 				value = FormUtil.getFieldOption_LookupValue( fieldName, value ); 
-				if( !App.displayActivityDetailsWithDataOnly || ( App.displayActivityDetailsWithDataOnly && value != "" ) )
+				if( !dataOnly || ( dataOnly && value != "" ) )
 				{
 					var valueTag = FormUtil.createValueTag( fieldName, value, templateFieldTag );
 					if( valueTag != undefined )
@@ -2013,14 +2048,14 @@ FormUtil.renderPreviewDataForm_WithBlockDefination = function( jsonData )
 	}
 	
 	// Render data by using Block defination
-	var clientProfileBlockId = ConfigManager.getSettingsClientDef()[App.clientProfileBlockId];
+	var clientProfileBlockId = ConfigManager.getClientDef().clientProfileBlockId;
 	FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, formTag, passedData );
 	
 	// Remove Edit button or any buttons if any
 	formTag.find("[btnid]").remove();
 
   	// Remove empty fields if needed
-  	if( App.displayActivityDetailsWithDataOnly )
+  	if( ConfigManager.getActivityDetailTabContent().dataOnly )
   	{
 		for ( var key in jsonData ) 
 		{

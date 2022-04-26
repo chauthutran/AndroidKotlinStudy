@@ -439,7 +439,7 @@ FavIcons.getActivityTypeByRef = function( prop, activityType )
     {
         if ( activityType )
         {
-            var itemList = ConfigManager.getSettingsActivityDef().activityTypes; 
+            var itemList = ConfigManager.getActivityDef().activityTypes; 
             
             var styleInfo = Util.getFromList( itemList, activityType, prop );
 
