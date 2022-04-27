@@ -90,7 +90,7 @@ function ClientCardDetail( clientId )
             var clientJson = ClientDataManager.getClientById( clientId ); // for changed client data?
             if ( clientJson ) me.populateActivityCardList( clientJson.activities, activityListDivTag );
 
-            // Activity Fav icons Setup for each activity cards..
+            // ClientActivity FavList render
             var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag
             , { 'mainFavPreClick': function( blockTag, blockContianerTag ) 
             {
@@ -102,7 +102,7 @@ function ClientCardDetail( clientId )
             var favListArr = favIconsObj.render();
 
 
-            // Disable fav icon if not in favList <-- but, better to place this logic within the activityCard render?
+            // Disable fav icon if not in favListArr <-- but, better to place this logic within the activityCard render?
             me.disableFavItems( activityListDivTag, favListArr );
 
 
