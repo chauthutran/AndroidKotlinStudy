@@ -638,7 +638,7 @@ ConfigManager.getSettingsTermId = function( termName )
 };
 
 
-ConfigManager.getSettingsActivityDef = function()
+ConfigManager.getActivityDef = function()
 {
     var configJson = ConfigManager.getConfigJson();
 
@@ -655,6 +655,13 @@ ConfigManager.getSettingsActivityDef = function()
 };
 
 
+ConfigManager.getActivityDetailTabContent = function() 
+{
+    var activityDef = ConfigManager.getActivityDef();
+
+    return ( activityDef.detailTabContent ) ? activityDef.detailTabContent: {};
+};
+
 
 ConfigManager.getActivityDisplaySettings = function()
 {
@@ -662,7 +669,7 @@ ConfigManager.getActivityDisplaySettings = function()
       ConfigManager.defaultActivity_DisplaySettings 
     ];
 
-    var activityDef = ConfigManager.getSettingsActivityDef();
+    var activityDef = ConfigManager.getActivityDef();
 
     if ( activityDef.displaySettings )
     {
@@ -677,7 +684,7 @@ ConfigManager.getActivityDisplayBase = function()
 {
     var displayBase = ConfigManager.defaultActivity_DisplayBase;
 
-    var activityDef = ConfigManager.getSettingsActivityDef();
+    var activityDef = ConfigManager.getActivityDef();
 
     if ( activityDef.displayBase )
     {
@@ -692,7 +699,7 @@ ConfigManager.activitySorting_EvalRun = function( sortingProp )
 {
     var evalRunSuccess = false;
 
-    var activitySorting = ConfigManager.getSettingsActivityDef().activitySorting;
+    var activitySorting = ConfigManager.getActivityDef().activitySorting;
 
     if ( activitySorting && sortingProp && activitySorting[ sortingProp ] )
     {
@@ -713,7 +720,7 @@ ConfigManager.getActivitySch_favClickOpen = function()
 {
     var actionName = 'activityDetail';  // 'clientDetail' vs 'activityDetail'
 
-    var sch_favClickOpen = ConfigManager.getSettingsActivityDef().sch_favClickOpen;
+    var sch_favClickOpen = ConfigManager.getActivityDef().sch_favClickOpen;
 
     if ( sch_favClickOpen ) actionName = sch_favClickOpen;
 
@@ -728,7 +735,7 @@ ConfigManager.getVoucherCodeService = function()
 
 // ---------------------------------------------
 
-ConfigManager.getSettingsClientDef = function()
+ConfigManager.getClientDef = function()
 {
     var configJson = ConfigManager.getConfigJson();
 
@@ -749,7 +756,7 @@ ConfigManager.getClientDisplayBase = function()
 {
     var displayBase = ConfigManager.defaultClient_DisplayBase;
 
-    var clientDef = ConfigManager.getSettingsClientDef();
+    var clientDef = ConfigManager.getClientDef();
 
     if ( clientDef.clientCardDef && clientDef.clientCardDef.displayBase )
     {
@@ -766,7 +773,7 @@ ConfigManager.getClientDisplaySettings = function()
       ConfigManager.defaultClient_DisplaySettings 
     ];
 
-    var clientDef = ConfigManager.getSettingsClientDef();
+    var clientDef = ConfigManager.getClientDef();
 
     if ( clientDef.clientCardDef && clientDef.clientCardDef.displaySettings )
     {
@@ -781,7 +788,7 @@ ConfigManager.getClientRelDisplayBase = function()
 {
     var displayBase = ConfigManager.defaultClientRel_DisplayBase;
 
-    var clientDef = ConfigManager.getSettingsClientDef();
+    var clientDef = ConfigManager.getClientDef();
 
     if ( clientDef.clientRelCardDef && clientDef.clientRelCardDef.displayBase )
     {
@@ -798,7 +805,7 @@ ConfigManager.getClientRelDisplaySettings = function()
       ConfigManager.defaultClientRel_DisplaySettings 
     ];
 
-    var clientDef = ConfigManager.getSettingsClientDef();
+    var clientDef = ConfigManager.getClientDef();
 
     if ( clientDef.clientRelCardDef && clientDef.clientRelCardDef.displaySettings )
     {
@@ -813,7 +820,7 @@ ConfigManager.getClientActivityCardDefDisplayBase = function()
 {
     var displayBase = ConfigManager.defaultClientActivityCardDef_DisplayBase;
 
-    var clientDef = ConfigManager.getSettingsClientDef();
+    var clientDef = ConfigManager.getClientDef();
 
     if ( clientDef.clientActivityCardDef && clientDef.clientActivityCardDef.displayBase )
     {
@@ -830,7 +837,7 @@ ConfigManager.getClientActivityCardDefDisplaySettings = function()
       ConfigManager.defaultClientActivityCardDef_DisplaySettings 
     ];
 
-    var clientDef = ConfigManager.getSettingsClientDef();
+    var clientDef = ConfigManager.getClientDef();
 
     if ( clientDef.clientActivityCardDef && clientDef.clientActivityCardDef.displaySettings )
     {
@@ -844,7 +851,7 @@ ConfigManager.getActionQueueActivity = function()
 {
     var actionJson;
 
-    var clientDef = ConfigManager.getSettingsClientDef();
+    var clientDef = ConfigManager.getClientDef();
 
     if ( clientDef.action_queueActivity_Template )
     {
@@ -857,7 +864,7 @@ ConfigManager.getActionQueueActivity = function()
 
 ConfigManager.getClientSyncBtnSetting = function()
 {
-    var clientDef = ConfigManager.getSettingsClientDef();
+    var clientDef = ConfigManager.getClientDef();
 
     return ( clientDef.syncBtnSetting ) ? clientDef.syncBtnSetting: {};
 };
@@ -883,7 +890,7 @@ ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 	{        
         if ( activityJson.processing )
         {
-            activityStatusConfig = Util.getFromList( ConfigManager.getSettingsActivityDef().statusOptions, activityJson.processing.status, 'name' );
+            activityStatusConfig = Util.getFromList( ConfigManager.getActivityDef().statusOptions, activityJson.processing.status, 'name' );
         }
 	}
 	catch ( errMsg )
@@ -901,7 +908,7 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
 
     try
 	{
-        activityTypeConfig = Util.getFromList( ConfigManager.getSettingsActivityDef().activityTypes, activityJson.type, 'name' );
+        activityTypeConfig = Util.getFromList( ConfigManager.getActivityDef().activityTypes, activityJson.type, 'name' );
 	}
 	catch ( errMsg )
 	{
@@ -1020,7 +1027,7 @@ ConfigManager.runLoginTimeRuns = function()
 // New type of eval - for activity status Switch
 ConfigManager.activityStatusSwitchOps = function( runCase, activities )
 {
-    var statusSwitchOps = ConfigManager.getSettingsActivityDef().statusSwitchOps;
+    var statusSwitchOps = ConfigManager.getActivityDef().statusSwitchOps;
 
     try
     {
@@ -1380,12 +1387,13 @@ ConfigManager.applyDefault_favList = function( configJson, favListJson )
    }
 };
 
+// NOT USED 'clientDetailTab'
 ConfigManager.applyDefault_clientDetailTab = function( configJson, activityDefJson )
 {
     if ( activityDefJson && activityDefJson.clientDetailTab )
     {
         // if 'formDef'
-        var activityDef = ConfigManager.getSettingsActivityDef();
+        var activityDef = ConfigManager.getActivityDef();
 
         if ( activityDef && !activityDef.clientDetailTab ) activityDef.clientDetailTab = Util.cloneJson( activityDefJson.clientDetailTab );
     }
@@ -1395,7 +1403,7 @@ ConfigManager.applyDefault_actionQueueActivity = function( configJson, action_qu
 {
     if ( action_queueActivity_Template )
     {
-        var clientDef = ConfigManager.getSettingsClientDef();
+        var clientDef = ConfigManager.getClientDef();
 
         if ( clientDef && !clientDef.action_queueActivity_Template ) clientDef.action_queueActivity_Template = Util.cloneJson( action_queueActivity_Template );
     }
@@ -1436,7 +1444,7 @@ ConfigManager.getRelationOpposite = function( relValue, optionDefId )
 
 ConfigManager.getHideClientRelationshipTab = function()
 {
-    var clientDef = ConfigManager.getSettingsClientDef();
+    var clientDef = ConfigManager.getClientDef();
 
     return ( clientDef && clientDef.hideClientRelationshipTab );
 };
@@ -1517,18 +1525,11 @@ ConfigManager.defaultJsonList =
     },
 
     "activityDef": {
-      "clientDetailTab": { 
-        "formDef": [
-            { "defaultName": "First Name", "id": "firstName", "term": "form_std_firstName_label" },
-            { "defaultName": "Last Name", "id": "lastName", "term": "form_std_lastName_label" },
-            { "defaultName": "Age", "id": "age", "term": "form_std_age_label" },
-            { "defaultName": "Gender", "id": "gender", "term": "form_std_gender_label" },
-            { "defaultName": "Phone Ownership", "id": "ownershipOfPhone", "term": "form_std_ownershipOfPhone_label" },
-            { "defaultName": "Phone Number", "id": "phoneNumber", "term": "form_std_phoneNumberSMSVoice_label" }
-        ]
-      }
+      "detailTabContent": { "displayMode": 0, "content": "client", "hideEmptyVal": false }
     }
 };
+
+// // NOT USED 'clientDetailTab'
 
 // ==================================================
 

@@ -185,7 +185,7 @@ DevHelper.loadSampleData = function( icount )
 
 DevHelper.showActivityCardConfigs = function()
 {
-    console.log( ConfigManager.getSettingsActivityDef() );
+    console.log( ConfigManager.getActivityDef() );
 };
 
 DevHelper.showINFO = function()

@@ -3295,7 +3295,18 @@ textarea {
 .sheet_preview .name, .sheet_preview .value {
   padding: 8px 8px 8px 12px;
   margin: 2px;
-  font-size: calc(12px + 0.4vw);
+  font-size: 14px;
+  /* white-space: nowrap; */
+  text-align: left;
+  /* max-width: 47vw; */
+  overflow: overlay;
+  line-height: 1.9em;
+}
+
+.sheet_preview .name_sub, .sheet_preview .value_sub {
+  padding: 3px 3px 3px 8px;
+  margin: 2px;
+  font-size: 14px;
   /* white-space: nowrap; */
   text-align: left;
   /* max-width: 47vw; */

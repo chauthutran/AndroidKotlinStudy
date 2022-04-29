@@ -73,20 +73,24 @@ function ActivityCardDetail( activityId, isRestore )
 	};
 
 
-	me.showClientDetails = function (clientObj, tabTag) {
-		if (clientObj && clientObj.clientDetails) {
-			FormUtil.renderPreviewDataForm(clientObj.clientDetails, tabTag);
+	me.showClientDetails = function( clientJson, activityJson, tabTag ) 
+	{
+		if ( clientJson )
+		{			
+			FormUtil.displayActivityDetail( clientJson.clientDetails, activityJson, tabTag );
 		}
 	};
 
 	me.setFullPreviewTabContent = function( activityId, sheetFullTag ) 
 	{
-		var clientObj = ClientDataManager.getClientByActivityId(activityId);
+		var clientJson = ClientDataManager.getClientByActivityId(activityId);
 		var activityJson = ActivityDataManager.getActivityById(activityId);
 
 		// TAB #1. Client Details
 		var clientDetailsTabTag = sheetFullTag.find('[tabButtonId=tab_previewDetails]');
-		me.showClientDetails(clientObj, clientDetailsTabTag);
+		me.showClientDetails(clientJson, activityJson, clientDetailsTabTag);
+
+		// NEW: TODO: use this check and populate the activity content instead..
 
 
 		if (activityJson) 
@@ -278,7 +282,7 @@ function ActivityCardDetail( activityId, isRestore )
 				var formData = ActivityDataManager.getActivityForm( activityJson );
 				var status = activityJson.processing.status;
 
-				var activityEditing = ConfigManager.getSettingsActivityDef().activityEditing;
+				var activityEditing = ConfigManager.getActivityDef().activityEditing;
 
 				// We provide 2 ActivityEditing Case: 1. On Error Status.  2. On Synced status & 'activityEditing': true
 				if ( activityEditing && ConfigManager.isSourceTypeMongo() && SyncManagerNew.statusSynced( status ) ) editable = true;

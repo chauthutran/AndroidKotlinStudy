@@ -1897,7 +1897,7 @@ FormUtil.getActivityTypes = function()
 
 	if ( userName )
 	{
-		var itms = ConfigManager.getSettingsActivityDef().activityTypes;
+		var itms = ConfigManager.getActivityDef().activityTypes;
 
 		if ( itms && itms.length )
 		{
@@ -1918,7 +1918,7 @@ FormUtil.getActivityTypeByRef = function( field, val )
 	// get different 'Areas' or Activity-Types
 	// var sessData = localStorage.getItem(Constants.storageName_session);
 
-	var itms = ConfigManager.getSettingsActivityDef().activityTypes;
+	var itms = ConfigManager.getActivityDef().activityTypes;
 
 	if ( itms && itms.length )
 	{
@@ -1939,38 +1939,117 @@ FormUtil.DISPLAY_DATA_DETAILS_AS_TABLE = `<div style="display: table-row;" >
 		<div style="display: table-cell;" class='fieldValue value'></div>
 	</div>`;
 
+
+// 1. Used by activity form data preview before payload generation.
 FormUtil.renderPreviewDataForm = function( jsonData, tabTag )
 {
-	if( App.displayActivityDetailsMode == 0 ) // Old style
+	var detailsTag = FormUtil.previewData_Standard( jsonData );
+	tabTag.append( detailsTag );
+};
+
+// 2. Used by activity detail tab data display.
+FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
+{
+	var detailTabContent = ConfigManager.getActivityDetailTabContent();
+
+	if( detailTabContent.displayMode == 1 ) // New style without block
 	{
-	  var detailsTag = FormUtil.previewData_Standard( jsonData );
+	  var detailsTag = FormUtil.previewData_Standard( clientDetails, $( ActivityCardDetail.clientInfoTag ), $("<div style='width:100%; display:flex; flex-wrap:wrap;'/>") );
 	  detailsTag.prepend( '<div class="section"><label term="activityDetail_details_title">clientDetails:</label></div>' );
 	  tabTag.append( detailsTag );
 	}
-	else if( App.displayActivityDetailsMode == 1 ) // New style without block
-	{
-	  var detailsTag = FormUtil.previewData_Standard( jsonData, ActivityCardDetail.clientInfoTag, $("<div style='width:100%; display:flex; flex-wrap:wrap;'/>") );
-	  detailsTag.prepend( '<div class="section"><label term="activityDetail_details_title">clientDetails:</label></div>' );
-	  tabTag.append( detailsTag );
-	}
-	else if( App.displayActivityDetailsMode == 2 ) // With block defined
+	else if( detailTabContent.displayMode == 2 ) // With block defined
 	{ 
-		var detailsTag = FormUtil.renderPreviewDataForm_WithBlockDefination( jsonData );
+		var detailsTag = FormUtil.renderPreviewDataForm_WithBlockDefination( clientDetails );
 		tabTag.append( detailsTag );
 	}
+	else //if( detailTabContent.displayMode == 0 ) // Old style
+	{
+		var content = detailTabContent.content;
+		var bShowClient = false;
+		var bShowActivity = false;
+		var bJson = detailTabContent.bJson;
 
-}
+		if ( !content ) bShowClient = true;
+		else if ( content === 'both' ) { bShowClient = true; bShowActivity = true; }
+		else if ( content === 'client' ) { bShowClient = true; }
+		else if ( content === 'activity' ) { bShowActivity = true; }
+
+
+		// Create table..
+		if ( bShowActivity )
+		{
+			var actJson = {};
+			actJson.date = activityJson.date;
+			actJson.transactions = activityJson.transactions;
+
+			tabTag.append( '<div class="section" style="margin-left: 0px !important;"><label term="">ACTIVITY DETAIL:</label></div>' );	
+			tabTag.append( '<div class="section" style="padding: 2px;"><label term="">Date:</label></div>' );
+			tabTag.append( FormUtil.jsonDataInTable_Wrap( actJson.date ) );
+
+			actJson.transactions.forEach( trans => 
+			{
+				if ( trans.type )
+				{
+					if ( trans.type.indexOf( 's_dhis2Program' ) === 0 ) { }
+					else
+					{
+						tabTag.append( '<div style="width:100%;"><hr style="border: 1px solid darkgrey;opacity: 0.3;"></div>' );
+						tabTag.append( '<div class="section" style="padding: 2px;"><label term="">TransType [' + trans.type + ']:</label></div>' );
+		
+						// for each object, display subsection..
+						// 
+						for( var prop in trans )
+						{
+							if ( prop !== 'type' )
+							{
+								var dataJson = trans[prop];
+		
+								tabTag.append( '<div class="section" style="padding: 2px; color: #333;"><label term="">' + prop + ':</label></div>' );
+								tabTag.append( FormUtil.jsonDataInTable_Wrap( dataJson ) );			
+							}
+						}		
+					}
+				}
+			});
+		}
+
+		if ( bShowClient )
+		{
+			if ( bShowActivity ) tabTag.append( '<div style="width:100%;"><hr style="border: 1px solid darkgrey;opacity: 0.3;"></div>' );
+
+			tabTag.append( '<div class="section" style="margin-left: 0px !important;"><label term="activityDetail_details_title">Client DETAIL:</label></div>' );	
+			tabTag.append( FormUtil.jsonDataInTable_Wrap( clientDetails ) );
+		}
+
+
+		// Set same width..
+		var widthMax;
+		var nameFields = tabTag.find( '.fieldName.name_sub' );
+		nameFields.each( function() {
+			var itemWidth = $( this ).width();
+			if ( !widthMax ) widthMax = itemWidth;
+			else if ( itemWidth > widthMax ) widthMax = itemWidth;
+		});
+
+		nameFields.width( widthMax );
+
+	}	
+};
+
 
 FormUtil.previewData_Standard = function( jsonData, templateFieldTag, formTag )
 {
-	if( formTag == undefined && templateFieldTag == undefined ) 
-	{
-		formTag = $( '<div style="display: table;" />');
-		templateFieldTag = FormUtil.DISPLAY_DATA_DETAILS_AS_TABLE;
-	}
+	if ( formTag === undefined ) formTag = $( '<div style="display: table;" />');
+	if ( templateFieldTag === undefined ) templateFieldTag = FormUtil.DISPLAY_DATA_DETAILS_AS_TABLE;
+		
+	var hideEmptyVal = ConfigManager.getActivityDetailTabContent().hideEmptyVal;  
 
 	if ( jsonData )
 	{
+		// 1. Make this call/method a recursive
+		// 2. Create a new table for each jsonData...
+
 		for ( var fieldName in jsonData ) 
 		{
 			var value = jsonData[ fieldName ];
@@ -1982,24 +2061,125 @@ FormUtil.previewData_Standard = function( jsonData, templateFieldTag, formTag )
 			else
 			{
 				value = FormUtil.getFieldOption_LookupValue( fieldName, value ); 
-				if( !App.displayActivityDetailsWithDataOnly || ( App.displayActivityDetailsWithDataOnly && value != "" ) )
+
+				if ( !hideEmptyVal || ( hideEmptyVal && value !== "" ) )
 				{
-					var valueTag = FormUtil.createValueTag( fieldName, value, templateFieldTag );
-					if( valueTag != undefined )
-					{
-						formTag.append( valueTag );
-					}
+					var valueTag = FormUtil.createValueTag( fieldName, value, $( templateFieldTag ) );
+					if( valueTag != undefined ) formTag.append( valueTag );
 				}
-			}
-			
+			}			
 		}
-	
 	}
 
 	formTag.find(".fieldBlock").css("border", "none");
 	
 	return $("<div style='width:100%'></div>").append( formTag );
 };
+
+
+FormUtil.jsonDataInTable_Wrap = function( jsonData )
+{
+	var hideEmptyVal = ConfigManager.getActivityDetailTabContent().hideEmptyVal;
+
+	return FormUtil.jsonDataInTable( jsonData, hideEmptyVal );
+};
+
+
+FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal )
+{
+	var tableTag = $( '<div style="display: table;" />');
+		
+	if ( jsonData )
+	{
+		// 1. Make this call/method a recursive
+		// 2. Create a new table for each jsonData...
+
+		for ( var fieldName in jsonData ) 
+		{
+			var value = jsonData[ fieldName ];
+
+			if ( fieldName.indexOf( "--SECTION" ) === 0 ) tableTag.append('<div class="section"><label>' + value + '</label></div>' );
+			else
+			{
+				if ( !hideEmptyVal || ( hideEmptyVal && value !== "" ) )
+				{
+					var fieldJson = ConfigManager.getDefinitionFieldById( fieldName );
+
+					if ( !fieldJson || !fieldJson.hidden )
+					{
+						var rowTag = $( '<div style="display: table-row;" ></div>' );
+						tableTag.append( rowTag );
+
+	
+						// Name Part
+						var nameFieldTag = $( '<div style="display: table-cell;" class="fieldName name_sub"></div>' );
+						rowTag.append( nameFieldTag );
+						nameFieldTag.html( Util.getStr( fieldName, 20, true ) );
+						if ( fieldJson ) nameFieldTag.attr( 'term', fieldJson.term );   // if ( fieldJson.term ) nameFieldTag.attr( 'term', fieldJson.term );
+
+						// Value Part
+						var valueFieldTag = $( '<div style="display: table-cell;" class="fieldValue value_sub"></div>' );
+						rowTag.append( valueFieldTag );
+
+						if ( Util.isTypeObject( value ) )
+						{
+							var subTableTag = FormUtil.jsonDataInTable( value, hideEmptyVal );
+							valueFieldTag.append( subTableTag );
+						}
+						else if ( Util.isTypeArray( value ) )
+						{
+							value.forEach( ( pArrItem, i ) => 
+							{
+								if ( Util.isTypeObject( pArrItem ) )
+								{
+									valueFieldTag.append( FormUtil.jsonDataInTable( pArrItem, hideEmptyVal ) );
+								} 
+								else 
+								{	
+									valueFieldTag.append( ' ' + pArrItem.toString() + ' ' );
+								}
+							});
+						}						
+						else if ( Util.isTypeString( value ) )
+						{
+							var value = FormUtil.getFieldOption_LookupValue( fieldName, value ); 
+							valueFieldTag.html( value );
+						}
+						else
+						{
+							valueFieldTag.html( value.toString() );
+						}
+						
+					}
+				}
+			}
+		}
+	}
+
+	tableTag.find(".fieldBlock").css("border", "none");  // only applicable on block stytle..
+	
+	// ?? - Shouldn't we make the row width 100%??
+	return $("<div style='width:100%'></div>").append( tableTag );
+};
+
+
+
+FormUtil.createValueTag = function( fieldName, value, templateFieldTag )
+{
+	var fieldJson = ConfigManager.getDefinitionFieldById( fieldName );
+	var showField = ( fieldJson && fieldJson.hidden === true ) ? false : true;
+
+	if ( showField )
+	{
+		templateFieldTag.find(".fieldName").html( fieldName );
+		templateFieldTag.find(".fieldValue").html( Util.getJsonStr( value ) );
+
+		return templateFieldTag;
+	}
+
+	return;
+};
+
 
 FormUtil.renderPreviewDataForm_WithBlockDefination = function( jsonData )
 {
@@ -2013,14 +2193,14 @@ FormUtil.renderPreviewDataForm_WithBlockDefination = function( jsonData )
 	}
 	
 	// Render data by using Block defination
-	var clientProfileBlockId = ConfigManager.getSettingsClientDef()[App.clientProfileBlockId];
+	var clientProfileBlockId = ConfigManager.getClientDef().clientProfileBlockId;
 	FormUtil.renderBlockByBlockId( clientProfileBlockId, SessionManager.cwsRenderObj, formTag, passedData );
 	
 	// Remove Edit button or any buttons if any
 	formTag.find("[btnid]").remove();
 
   	// Remove empty fields if needed
-  	if( App.displayActivityDetailsWithDataOnly )
+  	if( ConfigManager.getActivityDetailTabContent().dataOnly )
   	{
 		for ( var key in jsonData ) 
 		{
@@ -2039,17 +2219,20 @@ FormUtil.createValueTag = function( fieldName, value, templateFieldTag )
 {
 	var fieldJson = ConfigManager.getDefinitionFieldById( fieldName );
 	var showField = ( fieldJson && fieldJson.hidden === true ) ? false : true;
+
 	if ( showField )
 	{
-		var valueTag = $(templateFieldTag);
-		valueTag.find(".fieldName").html( fieldName );
-		valueTag.find(".fieldValue").html( Util.getJsonStr( value ) );
+		templateFieldTag.find(".fieldName").html( fieldName );
+		templateFieldTag.find(".fieldValue").html( Util.getJsonStr( value ) );
 
-		return valueTag;
+		return templateFieldTag;
 	}
 
 	return;
-}
+};
+
+// Above, remove  templateFieldTag
+
 
 FormUtil.getFieldOptions = function( fieldId )
 {

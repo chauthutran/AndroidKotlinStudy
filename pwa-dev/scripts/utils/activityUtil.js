@@ -97,7 +97,7 @@ ActivityUtil.checkNSet_ActivityDates = function( payload )
 				if ( date.scheduledLoc )
 				{
 					// NEW: Chceck weekends/holidays and move to next business days.
-					var scheduleDateAdjust = ConfigManager.getSettingsActivityDef().scheduleDateAdjust;
+					var scheduleDateAdjust = ConfigManager.getActivityDef().scheduleDateAdjust;
 					if ( scheduleDateAdjust && scheduleDateAdjust.enable ) ActivityUtil.adjustScheduleDate_businessDay( date, scheduleDateAdjust );
 
 					// UTC dateTime generate from scheduledLoc

@@ -367,7 +367,7 @@ function settingsApp( cwsRender )
 
 
 
-        var scheduleDateAdjust = ConfigManager.getSettingsActivityDef().scheduleDateAdjust;
+        var scheduleDateAdjust = ConfigManager.getActivityDef().scheduleDateAdjust;
 		if ( scheduleDateAdjust && scheduleDateAdjust.enable ) 
         {
         

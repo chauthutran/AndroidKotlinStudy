@@ -18,14 +18,14 @@ var JSONViewer = (function(document) {
 	 * @param {Number} [inputMaxLvl] Process only to max level, where 0..n, -1 unlimited
 	 * @param {Number} [inputColAt] Collapse at level, where 0..n, -1 unlimited
 	 */
-	JSONViewer.prototype.showJSON = function(jsonValue, inputMaxLvl, inputColAt) {
+	JSONViewer.prototype.showJSON = function(jsonValue, inputMaxLvl, inputColAt, option) {
 		// Process only to maxLvl, where 0..n, -1 unlimited
 		var maxLvl = typeof inputMaxLvl === "number" ? inputMaxLvl : -1; // max level
 		// Collapse at level colAt, where 0..n, -1 unlimited
 		var colAt = typeof inputColAt === "number" ? inputColAt : -1; // collapse at
 		
 		this._dom_container.innerHTML = "";
-		walkJSONTree(this._dom_container, jsonValue, maxLvl, colAt, 0);
+		walkJSONTree(this._dom_container, jsonValue, maxLvl, colAt, 0, option);
 	};
 
 	/**
@@ -45,8 +45,10 @@ var JSONViewer = (function(document) {
 	 * @param {Number} maxLvl Process only to max level, where 0..n, -1 unlimited
 	 * @param {Number} colAt Collapse at level, where 0..n, -1 unlimited
 	 * @param {Number} lvl Current level
+	 * @param {Object} option Custom option (disable click)
 	 */
-	function walkJSONTree(outputParent, value, maxLvl, colAt, lvl) {
+	function walkJSONTree(outputParent, value, maxLvl, colAt, lvl, option) {
+		if ( !option ) option = {};
 		var isDate = Object_prototype_toString.call(value) === DatePrototypeAsString;
 		var realValue = !isDate && typeof value === "object" && value !== null && "toJSON" in value ? value.toJSON() : value;
 		if (typeof realValue === "object" && realValue !== null && !isDate) {
@@ -63,19 +65,22 @@ var JSONViewer = (function(document) {
 				var rootLink = _createLink(isArray ? "[" : "{");
 
 				if (items.length) {
-					rootLink.addEventListener("click", function() {
-						if (isMaxLvl) return;
-
-						rootLink.classList.toggle("collapsed");
-						rootCount.classList.toggle("hide");
-
-						// main list
-						outputParent.querySelector("ul").classList.toggle("hide");
-					});
-
-					if (isCollapse) {
-						rootLink.classList.add("collapsed");
-						rootCount.classList.remove("hide");
+					if ( !option.readOnly )
+					{
+						rootLink.addEventListener("click", function() {
+							if (isMaxLvl) return;
+	
+							rootLink.classList.toggle("collapsed");
+							rootCount.classList.toggle("hide");
+	
+							// main list
+							outputParent.querySelector("ul").classList.toggle("hide");
+						});
+	
+						if (isCollapse) {
+							rootLink.classList.add("collapsed");
+							rootCount.classList.remove("hide");
+						}	
 					}
 				}
 				else {
@@ -137,7 +142,7 @@ var JSONViewer = (function(document) {
 								};
 
 								// hide/show
-								itemLink.addEventListener("click", itemLinkCb);
+								if ( !option.readOnly ) itemLink.addEventListener("click", itemLinkCb);
 
 								// collapse lower level
 								if (colAt >= 0 && lvl + 1 >= colAt) {

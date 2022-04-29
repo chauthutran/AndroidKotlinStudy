@@ -17,7 +17,7 @@ function ClientRelationshipList( clientId, _relationshipTabTag, blockDefId )
     // Init method
     me.initialize = function() 
     {
-        me.blockDefJson = ConfigManager.getSettingsClientDef()[ me.blockDefId ];
+        me.blockDefJson = ConfigManager.getClientDef()[ me.blockDefId ];
     }
 
     // ----------------------------------------------------------------------------------------

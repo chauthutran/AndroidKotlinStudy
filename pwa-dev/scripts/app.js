@@ -21,13 +21,6 @@ function App() { };
 App.appInstallBtnTag;
 App.ver14 = false;
 
-// 0 : Standard
-// 1 : new style without block
-// 2 : with Block
-App.displayActivityDetailsMode = 0;
-App.displayActivityDetailsWithDataOnly = false;
-App.clientProfileBlockId = "clientProfileBlock";
-
 // -------------------------------
 
 App.run = function () 
