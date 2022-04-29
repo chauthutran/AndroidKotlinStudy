@@ -819,7 +819,7 @@ img.rotateImg {
 }
 .groupByFieldName span {
   font-weight: 600;
-  font-size: calc(12px + 0.4vw);
+  font-size: 14px;
 }
 .groupByFieldValue span {
   font-weight: 400;
@@ -937,13 +937,13 @@ div.errorMsgArrow
   font-weight: 500;
   font-style: italic;
   height: 25px;
-  font-size: calc(12px + 0.4vw);
+  font-size: 14px;
 }
 
 .bt_td_row_even, .bt_td_row_odd
 {
   font-weight: 200;
-  font-size: calc(12px + 0.4vw);
+  font-size: 14px;
 }
 
 

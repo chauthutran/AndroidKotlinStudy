@@ -1525,7 +1525,7 @@ ConfigManager.defaultJsonList =
     },
 
     "activityDef": {
-      "detailTabContent": { "displayMode": 0, "content": "client", "dataOnly": false }
+      "detailTabContent": { "displayMode": 0, "content": "client", "hideEmptyVal": false }
     }
 };
 

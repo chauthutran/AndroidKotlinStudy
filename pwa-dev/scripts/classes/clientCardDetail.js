@@ -8,6 +8,7 @@ function ClientCardDetail( clientId )
     me.clientId = clientId;
     me.actionObj;
     me.cardSheetFullTag;
+    me.timedOut1stTabOpen;
 
 	// ===============================================
 	// === Initialize Related ========================
@@ -71,6 +72,7 @@ function ClientCardDetail( clientId )
         var clientProfileBlockId = ConfigManager.getClientDef().clientProfileBlock;  // Get client Profile Block defition from config.
         sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).click( function() 
         {
+            me.clearTimeout_1stTabClick();
             clientDetailsTabTag.html( '' );
 
             var passedData = me.getPassedData_FromClientDetail( clientId );            
@@ -84,6 +86,8 @@ function ClientCardDetail( clientId )
         var activityTabBodyDivTag = sheetFullTag.find( '[tabButtonId=tab_clientActivities]' );
         sheetFullTag.find( '.tab_fs li[rel=tab_clientActivities]' ).click( function() 
         {
+            me.clearTimeout_1stTabClick();
+
             activityTabBodyDivTag.html( '<div class="activityList tabContentList"></div>' );
             var activityListDivTag = activityTabBodyDivTag.find( '.activityList' );
 
@@ -127,6 +131,8 @@ function ClientCardDetail( clientId )
         var relationshipListObj = new ClientRelationshipList( clientId, relationshipTabTag, 'clientRelationTab' );
         sheetFullTag.find( '.tab_fs li[rel=tab_relationships]' ).click( function() 
         {
+            me.clearTimeout_1stTabClick();
+
             relationshipListObj.render();  // Rendering logic could be replaced with 'itemCardList' definition on 'clientDef'
         });
 
@@ -139,6 +145,8 @@ function ClientCardDetail( clientId )
 
             sheetFullTag.find( '.tab_fs li[rel=tab_previewPayload]' ).click( function() 
             {
+                me.clearTimeout_1stTabClick();
+
                 var jv_payload = new JSONViewer();
                 sheetFullTag.find( '[tabButtonId=tab_previewPayload]' ).find(".payloadData").append( jv_payload.getContainer() );
                 jv_payload.showJSON( ClientDataManager.getClientById( clientId ), -1, 1 );
@@ -152,6 +160,8 @@ function ClientCardDetail( clientId )
             var devTabTag = sheetFullTag.find( '[tabButtonId=tab_optionalDev]' );    
             sheetFullTag.find( '.tab_fs li[rel=tab_optionalDev]' ).click( function() 
             {
+                me.clearTimeout_1stTabClick();
+
                 // A. Client Activity Request Add
                 me.setUpClientActivityRequestAdd( clientId, devTabTag, sheetFullTag );
 
@@ -173,7 +183,17 @@ function ClientCardDetail( clientId )
             // But wants to not display the selection dropdown when size is mobile..        
             defaultTab.attr( 'openingClick', 'Y' );
             defaultTab.click();
-            setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );
+            me.timedOut1stTabOpen = setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );   // Cancel this if other click is applied..
+        }
+    };
+
+
+    me.clearTimeout_1stTabClick = function()
+    {
+        if ( me.timedOut1stTabOpen ) 
+        { 
+            clearTimeout( me.timedOut1stTabOpen ); 
+            me.timedOut1stTabOpen = undefined; 
         }
     };
 
