@@ -1484,7 +1484,7 @@ ConfigManager.defaultJsonList =
 
     "sync": {
       "networkSync": "3600000",
-      "autoSyncOnline_lastSyncHour": 6,      
+      "autoSyncOnline_lastSyncHour": 6,
       "syncUp": {
         "syncUpAttemptLimit": {"maxAttempts": 10, "maxAction": {"status": "error", "msg": "Reached the max sync attempt."}},
         "coolDownTime": "00:01:30",

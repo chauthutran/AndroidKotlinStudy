@@ -27,7 +27,6 @@ SyncManagerNew.syncAll_Running_Manual = false;
 SyncManagerNew.syncAll_Running_Scheduled = false; // SyncManagerNew.isSyncAll_Running();
 
 // Should be obsolete soon, but use the marker as actiivty processing status as 'processing'
-SyncManagerNew.sync_Running = false;   // to avoid multiple syncRuns in parallel
 SyncManagerNew.coolDownEnabled = true;
 
 // If scheduled syncAll gets delayed, 
@@ -64,6 +63,11 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 
         var resultData = { 'success': 0, 'failure': 0 };
 
+
+        // NEW: Other operations to run on SyncAll Online Time: voucherCodeQueue & appUpdate
+        SyncManagerNew.syncAll_OtherOperations();
+
+
         // During the 'sync', it updates the activity list..  
         // Thus, we get below list for just list of activityId..  Copy of the original list. 
         var activityIdCopyList = ActivityDataManager.getActivityIdCopyList();
@@ -85,11 +89,6 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
             SyncManagerNew.SyncMsg_InsertMsg( 'syncAll ' + runType + ' completed..' );
             SyncManagerNew.SyncMsg_InsertSummaryMsg( 'Processed with success ' + resultData.success + ', failure ' + resultData.failure + '..' );
 
-
-            // NEW: Perform other updates after syncAll online: voucherCodeQueue & appUpdate
-            SyncManagerNew.afterOps_syncAll_Online();
-
-
             if ( callBack ) callBack( true );
         });
     }
@@ -109,7 +108,7 @@ SyncManagerNew.syncAll = function( cwsRenderObj, runType, callBack )
 };
 
 
-SyncManagerNew.afterOps_syncAll_Online = function()
+SyncManagerNew.syncAll_OtherOperations = function()
 {
     try
     {
@@ -127,7 +126,7 @@ SyncManagerNew.afterOps_syncAll_Online = function()
     }
     catch( errMsg )
     {
-        console.log( 'ERROR in SyncManagerNew.afterOps_syncAll_Online, ', errMsg );
+        console.log( 'ERROR in SyncManagerNew.syncAll_OtherOperations, ', errMsg );
     }
 };
 
@@ -515,28 +514,14 @@ SyncManagerNew.setSyncAll_Running = function( runType, bRunning )
 {
     if ( runType === 'Manual' ) SyncManagerNew.syncAll_Running_Manual = bRunning;
     else if ( runType === 'Scheduled' ) SyncManagerNew.syncAll_Running_Scheduled = bRunning;    
-}
-
+};
 
 SyncManagerNew.syncAll_FromSchedule = function( cwsRenderObj )
 {
     // Only perform this on online mode - Skip this time if offline..
     if ( ConnManagerNew.isAppMode_Online() )
     {
-        // If other syncs are running, delay it?
-        if ( SyncManagerNew.sync_Running ) 
-        {
-            // Delay for some time... and call again?
-            // We should simply queue the call with 'type'  <-- so we can decide to clear one type
-            //      later..            
-            MsgManager.msgAreaShow ( 'Auto Sync Skipped..' );
-        }
-        else
-        {
-            SyncManagerNew.syncAll( cwsRenderObj, 'Scheduled', function( success ) 
-            {
-            });  
-        }
+        SyncManagerNew.syncAll( cwsRenderObj, 'Scheduled' ); //, function( success ) {}
     }
 };
 

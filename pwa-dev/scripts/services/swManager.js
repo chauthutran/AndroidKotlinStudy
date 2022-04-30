@@ -17,7 +17,8 @@ function SwManager() {};
 SwManager.swFile =  './service-worker.js';
 
 SwManager._newUpdateInstallMsg_interval = 30000;  //30 seconds
-
+SwManager._afterLogin_updateSecondsOver = 5;    // 5 seconds
+SwManager.lastAppFileUpdateDt;
 //SwManager.isApp_standAlone = false;
 
 SwManager.swRegObj;
@@ -148,36 +149,28 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             // NOTE: Thus, this gets called whenever there is a page reload.
             // --> ONLY display the message or run this if we called for reload or app Check...
             if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.showNewAppAvailable( true );
-            if ( SwManager.newAppFileExists_EventCallBack ) SwManager.newAppFileExists_EventCallBack();
-            // 'About page' app update uses above '_EventCallBack'
-            var delayReload = ( SwManager.swUpdateOption && SwManager.swUpdateOption.delayReload ); 
-            
-            // Reset this value
-            //AppInfoManager.clearAutoLogin();
-            //AppInfoLSManager.clearLoginCurrentKeys();
+            if ( SwManager.newAppFileExists_EventCallBack ) {
+                try {
+                    SwManager.newAppFileExists_EventCallBack();
+                } catch ( errMsg ) { console.log( 'ERROR in SwManager.controllerchange, ' + errMsg ); }
+            }
 
-            
-            var allowAppReload_AfterLogin = ConfigManager.getAppUpdateSetting().allowAppReload_AfterLogin;
+            if ( !SwManager.swUpdateOption ) SwManager.swUpdateOption = {};
+
+            // 'About page' app update uses above '_EventCallBack'
+            var delayReload = ( SwManager.swUpdateOption.delayReload ) ? true: false;
+            if ( !delayReload && SwManager.checkSecondsOverAfterLogin( SwManager._afterLogin_updateSecondsOver ) ) delayReload = true; // If over 5 seconds after login, do not reload app for update apply - delay it. 
 
             // For Already logged in, simply delay it --> which the logOut will perform the update.
-            if ( delayReload || ( SessionManager.getLoginStatus() && !allowAppReload_AfterLogin ) )
+            if ( delayReload )
             {
                 console.log( 'App Reload Delayed (After Update).' );
-
                 e.preventDefault();  // WHY USE THIS?
                 return false;
             }
             else
             {
-                // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.                                
-                // If app update happens before login, save the username keys + pins..
-                //if ( SessionManager.Status_LogIn_InProcess ) AppInfoManager.setAutoLogin( new Date() );
-                //else AppInfoLSManager.setLoginCurrentKeys( new Date(), SessionManager.cwsRenderObj.loginObj.getLoginCurrentKeys() );
- 
-
-                // TODO: In Log in page, if fresh app without never logged in case, app get updated, 
-                //      - try to store the userName if typed..
-
+                // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.
                 AppUtil.appReloadWtMsg( 'App Reloading! (After Update)' );
             }   
         }
@@ -201,7 +194,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
 SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
 {
-    //console.log( 'SwManager.checkNewAppFile_OnlyOnline called' );
+    if ( !option ) option = {};
 
     SwManager.newAppFileExists_EventCallBack = runFunction;
     SwManager.swUpdateCase = false;
@@ -210,84 +203,28 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
     // Trigger the sw change/update check event..
     if ( SwManager.swRegObj ) 
     {        
-        console.log( 'SwRegObj.update requested..' );
+        var checkTooClose = false;
 
-        // TODO: Mark dateTime on this try - as last dateTime..  But maybe this is not needed since we have online login check + other flags..
+        // If it has not passed 1 min since last check, do not proceed.
+        if ( !option.noMinTimeSkip && SwManager.lastAppFileUpdateDt && UtilDate.getTimeSince( SwManager.lastAppFileUpdateDt, Util.MS_MIN ) < 1 ) checkTooClose = true;
 
-        SwManager.swUpdateCase = true;
-        SwManager.swRegObj.update();        
-    }
-}
+        // NEW: Check last check dateTime and compare..
 
-/*
-SwManager.checkNewAppFile_OnlyOnline2 = function( runFunction )
-{
-    console.log( 'SwManager.checkNewAppFile_OnlyOnline2 called' );
-
-    if ( ConnManagerNew.isAppMode_Online() ) 
-    {
-        console.log( 'AppMode_Online true' );
-
-        // No need to call this, but just to make sure..
-        SwManager.waitNewAppFileCheckDuringOffline = false;
-
-        SwManager.newAppFileExists_EventCallBack = runFunction;
-
-        // Trigger the sw change/update check event..
-        if ( SwManager.swRegObj ) 
+        if ( !checkTooClose )
         {
-            console.log( '** swRegObj.update requested - with swUpdateCase = true' );
+            SwManager.lastAppFileUpdateDt = new Date().toISOString();
+
+            console.log( 'SwRegObj.update check requested..' );
 
             SwManager.swUpdateCase = true;
-            SwManager.swRegObj.update();
-        }        
-    }
-    else 
-    {
-        console.log( 'AppMode_Offline' ); // <-- ISSUE: GETS called when app starts...  Why Offline?
-
-        if ( SwManager.waitNewAppFileCheckDuringOffline )
-        {
-            console.log( 'Already In-Wait NewAppFileCheck - when become online mode' );
+            SwManager.swRegObj.update();    
         }
-        else 
+        else
         {
-            console.log( 'Adding addToRunSwitchToOnlineList' );
-
-            SwManager.waitNewAppFileCheckDuringOffline = true;
-
-            // If not in AppMode_Online, schedule it to run as soon as it come online..
-            ScheduleManager.addToRunSwitchToOnlineList( "appFileUpdateCheck", function() 
-            { 
-                console.log( 'Switched to Online - calling checkNewAppFile_OnlyOnline()' );
-
-                SwManager.waitNewAppFileCheckDuringOffline = false;
-                SwManager.checkNewAppFile_OnlyOnline( runFunction ); 
-            });    
+            console.log( 'SwRegObj.update check skipped - too close interval checks' );
         }
     }
 };
-*/
-
-/*
-SwManager.checkNewAppFile_OnlyOnline_Back = function( runFunction )
-{
-    if ( ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile( runFunction );
-};
-
-SwManager.checkNewAppFile = function( runFunction )
-{
-    SwManager.newAppFileExists_EventCallBack = runFunction;
-    SwManager.swUpdateCase = false;
-
-    // Trigger the sw change/update check event..
-    if ( SwManager.swRegObj ) 
-    {
-        SwManager.swUpdateCase = true;
-        SwManager.swRegObj.update();
-    }
-};
-*/
 
 
 // NOTE: Only do this if new refresh?
@@ -295,6 +232,27 @@ SwManager.refreshForNewAppFile_IfAvailable = function()
 {
     var spanLoginAppUpdateTag = $( '#spanLoginAppUpdate' );
     if ( spanLoginAppUpdateTag.is( ':visible' ) ) spanLoginAppUpdateTag.click();
+};
+
+
+SwManager.checkSecondsOverAfterLogin = function( secondsAfter )
+{
+    var isOver = false;
+
+    try
+    {
+        // If 5 seconds passed after login, delay the app reload after app files update.
+        if ( SessionManager.getLoginStatus() )
+        {
+            if ( UtilDate.getTimeSince( AppInfoLSManager.getLastOnlineLoginDt(), Util.MS_SEC ) > secondsAfter ) isOver = true;
+        }  
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in SwManager.checkSecondsAfterLogin, ' + errMsg );
+    }
+
+    return isOver;
 };
 
 // -----------------------------------

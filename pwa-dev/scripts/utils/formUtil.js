@@ -2114,7 +2114,7 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal )
 						// Name Part
 						var nameFieldTag = $( '<div style="display: table-cell;" class="fieldName name_sub"></div>' );
 						rowTag.append( nameFieldTag );
-						nameFieldTag.html( Util.getStr( fieldName, 20, true ) );
+						nameFieldTag.html( Util.getStr( fieldName, 20, '..' ) );
 						if ( fieldJson ) nameFieldTag.attr( 'term', fieldJson.term );   // if ( fieldJson.term ) nameFieldTag.attr( 'term', fieldJson.term );
 
 						// Value Part

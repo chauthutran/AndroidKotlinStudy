@@ -63,7 +63,7 @@ Util.isTypeString = function( obj )
 
 // ------------------------------------
 
-Util.getStr = function( input, limit, noTail )
+Util.getStr = function( input, limit, tailStr )
 {
 	var value = '';
 
@@ -80,7 +80,10 @@ Util.getStr = function( input, limit, noTail )
 			if ( limit && value.length > limit ) 
 			{
 				value = value.substr( 0, limit );
-				if ( !noTail ) value += '...';
+
+				if ( !tailStr ) tailStr = '...';
+
+				if ( Util.isTypeString( tailStr ) ) value += tailStr;
 			}
 		}
 	}

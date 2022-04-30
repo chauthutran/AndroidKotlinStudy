@@ -61,10 +61,11 @@ App.run = function ()
 
 	// Service Worker Related Initial Setup
 	SwManager.initialSetup(function () {
-		SwManager.checkNewAppFile_OnlyOnline();
 
 		App.App_UI_startUp_Progress('40%');
 		App.startAppProcess();
+
+		SwManager.checkNewAppFile_OnlyOnline();  // Above 'App.startAppProcess()' has connManagerNew.appStartup_SetStatus()
 	});
 
 };

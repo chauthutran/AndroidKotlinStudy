@@ -152,7 +152,7 @@ function Login()
 				if ( me.lastPinTrigger ) $( '.pin_pw_loading' ).show();
 
 				// NOTE: On login button click, also check app update..
-				SwManager.checkNewAppFile_OnlyOnline();
+				SwManager.checkNewAppFile_OnlyOnline( undefined, { noMinTimeSkip: true } );
 
 
 				// Main Login Processing

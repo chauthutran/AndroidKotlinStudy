@@ -246,12 +246,9 @@ ConnManagerNew.runWhenSwitchedToOnline = function()
 	GAnalytics.offlineCacheSend();
 
 	// 4. 'backgroundUpdateWhenOnline' enabled, perform app Update in background.
-	// TODO(?): REPLACE THIS WITH login/logout update trigger
-	if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) 
-	{	
-		SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
-		// function() { MsgManager.msgAreaShow( 'appUpdate detected!  Update will be performed on logout.', undefined, undefined, 3000 ); }	
-	}
+	// if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) {	SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
+	// SYNC ALL (ONLINE) Does call NewAppFile with delayed reload.
+	
 };
 
 
@@ -259,7 +256,7 @@ ConnManagerNew.runSyncAll_ifOldLastSyncAll = function()
 {
 	try
 	{
-		if ( ConfigManager.getSync().autoSyncOnline_lastSyncHour )
+		if ( ConfigManager.getSync().autoSyncOnline_lastSyncHour ) // This will always exist due to 'default' value merge in 'configManager'
 		{
 			var lastSyncAllDt = AppInfoLSManager.getLastSyncAllDt();
 	

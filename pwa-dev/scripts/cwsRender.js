@@ -419,7 +419,8 @@ function cwsRender()
 		me.logOutUI();
 
 		SwManager.checkNewAppFile_OnlyOnline();
-		SwManager.refreshForNewAppFile_IfAvailable();  // even on offline, this seems to be working?
+				
+		SwManager.refreshForNewAppFile_IfAvailable();  // even on offline
 	}
 
 	me.logOutUI = function()
