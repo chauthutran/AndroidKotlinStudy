@@ -257,14 +257,19 @@ FormUtil.getObjFromDefinition = function( def, definitions, option ) // limitCou
 
 
 		// 2. Make a copy of it rather than itself.. <-- since we now may make changes
-		if ( defJson ) defJson = Util.cloneJson( defJson );
+		if (  Util.isTypeArray( defJson ) || Util.isTypeObject( defJson ) ) defJson = Util.cloneJson( defJson );
 
 
-		// 3. More action: Array combining or userRole filter.
+		// 3. If Object and has inherit (for merging), merge with inherit info.. - has 'mergeList' / 'removeList'
+		if ( Util.isTypeObject( defJson ) && defJson.inherit ) defJson = FormUtil.inheritMergeDef( defJson );
+
+
+		// 4. More action: Array combining or userRole filter.
 		// If Definition is array, check if any string def exists and replace them with array. - also, recursively call def
 		if ( Util.isTypeArray( defJson ) ) 
 		{
 			// A. If def is array ( [ ] ), each item could be string def rather than obj.  In that case, replace it with def object.
+			// 	- Used for common list (of fields array?)
 			FormUtil.arrayDefReplace( defJson, definitions, option );
 
 			// B. For 'conditionEval' case checking, use new array.  Easier than deleting existing array.
@@ -281,18 +286,6 @@ FormUtil.getObjFromDefinition = function( def, definitions, option ) // limitCou
 			//	- If roles does not exists, return undefined.
 			if ( defJson.userRoles && !ConfigManager.matchUserRoles( defJson.userRoles, ConfigManager.login_UserRoles ) ) defJson = undefined;
 
-			/*
-			// If definition obj has 'show
-			if ( defJson && defJson.showConditionEval )
-			{
-				try {
-					evalStr = Util.getEvalStr( defJson.showConditionEval );  // Handle array into string joining
-					if ( evalStr && eval( evalStr ) === false ) defJson = undefined; 
-				}
-				catch( errMsg ) { console.log( 'ERROR in FormUtil.getObjFromDefinition showConditionEval, ' + errMsg ); }
-			}
-			*/
-
 			if ( defJson && !FormUtil.checkConditionEval( defJson.conditionEval ) ) defJson = undefined; 
 		}
 	}
@@ -302,6 +295,102 @@ FormUtil.getObjFromDefinition = function( def, definitions, option ) // limitCou
 	}
 
 	return defJson;
+};
+
+
+FormUtil.inheritMergeDef = function( defJson )
+{
+	var outDef;
+
+	try
+	{
+		if ( defJson.inherit )
+		{
+			var targetDef = FormUtil.getObjFromInherit( defJson.inherit );
+
+			if ( targetDef )
+			{
+				outDef = targetDef;
+
+				// Need to merge with existing ones..
+				if ( Util.isTypeArray( outDef ) )
+				{
+					// Merge List		
+					if ( defJson.mergeList )
+					{
+						defJson.mergeList.forEach( item => 
+						{
+							// If 'id' already exists, remove that - for overriding
+							if ( item.id ) Util.RemoveFromArrayAll( outDef, 'id', item.id );
+
+							outDef.push( item );
+						});
+					}
+
+					// Remove List
+					if ( defJson.removeList )
+					{
+						defJson.removeList.forEach( removeId => 
+						{
+							// If 'id' already exists, remove that - for overriding
+							Util.RemoveFromArrayAll( outDef, 'id', removeId );
+						});
+					}
+				}
+				else if ( Util.isTypeObject( outDef ) )
+				{
+					Util.mergeJson( outDef, defJson );  // not deep json, 
+
+					// Remove Props if 'removePropList' exists
+					if ( defJson.removePropList && Util.isTypeArray( defJson.removePropList ) )
+					{
+						defJson.removePropList.forEach( removeProp => 
+						{
+							if ( outDef[ removeProp ] !== undefined ) delete outDef[ removeProp ];
+						});	
+					}
+				}
+			}
+		}
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in FormUtil.inheritMergeDef, ' + errMsg );
+	}
+
+	return ( outDef ) ? outDef: defJson;
+};
+
+
+FormUtil.getObjFromInherit = function( defName )
+{
+	var targetDef; // could be object or array?
+
+	try
+	{
+		var inheritDef = FormUtil.getObjFromDefinition( defName, ConfigManager.getConfigJson().definitionInheritLinks );
+
+		// If 'target' exists, load it.
+		if ( inheritDef )
+		{
+			if ( inheritDef.section && inheritDef.target )
+			{
+				var configSectionDef = ConfigManager.getConfigJson()[ inheritDef.section ];
+				
+				if ( configSectionDef )
+				{
+					targetDef = FormUtil.getObjFromDefinition( inheritDef.target, configSectionDef );
+					// This targetDef could be array or object <-- depends on the 'def' type
+				}
+			}
+		}
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in FormUtil.getObjFromInherit, ' + errMsg );
+	}
+
+	return targetDef;
 };
 
 
