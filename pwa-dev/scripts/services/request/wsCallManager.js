@@ -289,6 +289,7 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
 
     if ( sourceType ) payloadJson.sourceType = sourceType;
     if ( sourceType === "mongo" && mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
+    if ( ConfigManager.getSettings().uniquePhoneNumberCase === true ) payloadJson.uniquePhoneNumberCase = true;
 
     if ( WsCallManager.actionErr ) payloadJson.actionErr = WsCallManager.actionErr;
     if ( WsCallManager.throwWsError ) payloadJson.throwWsError = WsCallManager.throwWsError;
@@ -356,8 +357,7 @@ WsCallManager.requestGet_Text = function( url, requestOption, loadingTag, return
 // 'action' calls will be using this..
 WsCallManager.requestPost = function( url, requestOption, loadingTag, returnFunc )
 {	        
-    //var requestOption = { headers: { 'Authorization': WsCallManager.requestBasicAuth },        
-    //    body: JSON.stringify( payloadJson )  };
+    //var requestOption = { headers: { 'Authorization': WsCallManager.requestBasicAuth }, body: JSON.stringify( payloadJson )  };
 
     url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
 
@@ -375,8 +375,7 @@ WsCallManager.requestPost = function( url, requestOption, loadingTag, returnFunc
 
 WsCallManager.requestGet = function( url, requestOption, loadingTag, returnFunc )
 {	
-    //var requestOption = { headers: { 'Authorization': WsCallManager.requestBasicAuth } };
-    //if ( optionJson ) Util.mergeJson( requestOption, optionJson );
+    //var requestOption = { headers: { 'Authorization': WsCallManager.requestBasicAuth } }; // ( optionJson ) Util.mergeJson( requestOption, optionJson );
 
     url = WsCallManager.localhostProxyCaseHandle( url ); //, requestOption );
 
