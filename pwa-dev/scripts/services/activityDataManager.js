@@ -639,8 +639,8 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function( activityJson,
         
         payloadJson.payload = {
             'searchValues': activityJson.processing.searchValues,
-            'captureValues': activityJson_Copy,
-            'userFormData': activityJson.formData  // New - send 'form' as well.
+            'captureValues': activityJson_Copy
+            //,'userFormData': activityJson.formData  // OBSOLETE - Replaced by 'formData', which is stored witin activity in mongo.
         };
     }
 
