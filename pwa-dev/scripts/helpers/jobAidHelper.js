@@ -243,6 +243,18 @@ JobAidHelper.handleMsgAction = function( action )
 			console.log('ERROR in JobAidHelper.msgHandle object action, ' + errMsg);
 		}
 	}
+	else if ( action.name === 'getInitialParams' )
+	{
+		actionJson = { 
+			callBackEval: action.callBackEval, 
+			data: {
+				countryCodeNoT:SessionManager.getLoginCountryOuCode_NoT(),
+				countryCode:SessionManager.getLoginCountryOuCode(),
+				loggedUser:SessionManager.sessionData.login_UserName,
+				groupUser: ClientDataManager.getClientLikeCUIC( "SS_"+SessionManager.sessionData.login_UserName ).at(0)?._id
+			}
+		};
+	}
 	else if ( action.name === 'getCountryCode_NoT' ) 
 	{
 		actionJson = { callBackEval: action.callBackEval, data: SessionManager.getLoginCountryOuCode_NoT() };
