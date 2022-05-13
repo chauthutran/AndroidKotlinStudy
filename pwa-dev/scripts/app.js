@@ -122,7 +122,7 @@ App.startAppProcess = function ()
 
 App.App_UI_startUp_loading = function () {
 	// show PWA (loading) screen
-	MsgFormManager.appBlockTemplate('appLoad');
+	MsgFormManager.appBlockTemplate( 'appLoad' );
 
 	App.App_UI_startUp_Progress('10%');
 };
@@ -131,7 +131,7 @@ App.App_UI_startUp_loading = function () {
 App.App_UI_startUp_ready = function () {
 	// hide PWA (loading) screen: timeout used for delay (UI effect)
 	setTimeout(function () {
-		MsgFormManager.appUnblock();
+		MsgFormManager.appUnblock( 'appLoad' );
 	}, 300);
 };
 

@@ -59,13 +59,13 @@ function ActivityCard( activityId, activityCardDivTag, options )
                 // click event - for activitySubmit.., icon/text populate..
                 me.setupSyncBtn( activityCardDivTag, me.activityId, detailViewCase, me.options );  // clickEnable - not checked for SyncBtn/Icon
 
-                // 4. 'phoneNumber' action  button setup
+                // 4. schedule 'favIcon' action button setup
                 ActivityCard.setupFavIconBtn( favIconTag, me.activityId, me.options );
 
-                // 4. 'phoneNumber' action  button setup
-                me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId );
+                // 5. 'phoneNumber' action  button setup
+                me.setupPhoneCallBtn( activityPhoneCallTag, me.activityId, me.options );
 
-                // 5. clickable rerender setup
+                // 6. clickable rerender setup
                 me.setUpReRenderByClick( activityRerenderTag );
 
             }
@@ -126,36 +126,41 @@ function ActivityCard( activityId, activityCardDivTag, options )
     };
 
 
-    me.setupPhoneCallBtn = function( divPhoneCallTag, activityId )
-    {        
-        var clientObj = ClientDataManager.getClientByActivityId( activityId );
-
+    me.setupPhoneCallBtn = function( divPhoneCallTag, activityId, options )
+    {
         divPhoneCallTag.empty().hide();
 
-        if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
+        // If this activityCard is on client detail activityList, hide it/ do not render it.
+        if ( options.displaySetting === 'clientActivity' ) { }
+        else
         {
-            var phoneNumber = Util.trim( clientObj.clientDetails.phoneNumber ); // should we define phoneNumber field in config? might change to something else in the future
-
-            if ( phoneNumber && phoneNumber !== '+' )
+            var clientObj = ClientDataManager.getClientByActivityId( activityId );
+    
+            if ( clientObj.clientDetails && clientObj.clientDetails.phoneNumber )
             {
-                var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
-
-                cellphoneTag.click( function(e) {
+                var phoneNumber = Util.trim( clientObj.clientDetails.phoneNumber ); // should we define phoneNumber field in config? might change to something else in the future
     
-                    e.stopPropagation();
+                if ( phoneNumber && phoneNumber !== '+' )
+                {
+                    var cellphoneTag = $('<img src="images/cellphone.svg" class="phoneCallAction" />');
     
-                    if ( Util.isMobi() )
-                    {
-                        window.location.href = `tel:${phoneNumber}`;
-                    }
-                    else
-                    {
-                        alert( phoneNumber );
-                    }
-                });
-    
-                divPhoneCallTag.append( cellphoneTag );
-                divPhoneCallTag.show();
+                    cellphoneTag.click( function(e) {
+        
+                        e.stopPropagation();
+        
+                        if ( Util.isMobi() )
+                        {
+                            window.location.href = `tel:${phoneNumber}`;
+                        }
+                        else
+                        {
+                            alert( phoneNumber );
+                        }
+                    });
+        
+                    divPhoneCallTag.append( cellphoneTag );
+                    divPhoneCallTag.show();
+                }
             }
         }
     };
@@ -602,19 +607,7 @@ ActivityCard.syncUpResponseHandle = function( activityJson_Orig, activityId, suc
             // Removal of existing activity/client happends within 'mergeDownloadClients()'
             ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 
             {
-                // relationship target clients update sync..
-                /*
-                var otherClients = responseJson.result.otherClients;
-                if ( otherClients )
-                {
-                    ClientDataManager.setActivityDateLocal_clientList( otherClients );
-
-                    ClientDataManager.mergeDownloadedClients( { 'clients': otherClients, 'case': 'syncUpActivity' }, undefined, function() 
-                    {
-                        console.log( 'merged sync otherClients' );
-                    });
-                }
-                */
+                // NOTE: Had - relationship target clients update sync.. - REMOVED CODE HERE..
                
                 // 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
                 ClientDataManager.saveCurrent_ClientsStore( () => {

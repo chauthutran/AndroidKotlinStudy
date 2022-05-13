@@ -37,62 +37,134 @@ MsgFormManager.blockTag = function( bShow, msg, cssSetting, tag )
     else return tag.unblock();
 };
 
-/*
-MsgFormManager.block = function( bShow, msg, cssSetting, itemDef )
-{
-	var msgAndStyle = { message: msg, css: cssSetting };
-
-    if ( bShow ) return $.blockUI( msgAndStyle );
-    else return $.unblockUI();
-};
-*/
 
 // 'itemId' not used for now.
-MsgFormManager.showBlock = function( itemId, msgAndStyle, afterRun )
+MsgFormManager.showNQueue_Block = function( itemId, msgAndStyle, afterRun )
 {
+    var item = { id: itemId, msgAndStyle: msgAndStyle, afterRun: afterRun };
+
     // If blockMsg is already shown currently (for other msg), add to queue instead.
     // if ( $( 'div.blockMsg:visible' ).length > 0 )
-    if ( MsgFormManager.blockShown )
-    {
-        var item = { id: itemId, msgAndStyle: msgAndStyle, afterRun: afterRun };
-        MsgFormManager.queue.push( item );
-        console.log( 'blockUI item Queued' );
-    }
-    else
-    {
-        console.log( 'blockUI called' );
-        $.blockUI( msgAndStyle );  // var msgAndStyle = { message: msg, css: cssSetting };
-        MsgFormManager.blockShown = true;
-        if ( afterRun ) afterRun();
+    if ( MsgFormManager.queue.length <= 0 ) MsgFormManager.displayBlock_byItem( item );
+
+    // Always add 'showNQueue_Block' 'item' in queue.  1st in the list is considered the one shown..
+    MsgFormManager.queue.push( item );
+};
+
+// Actual showing..
+MsgFormManager.displayBlock_byItem = function( item )
+{
+    //console.log( 'blockUI shown' );
+    $.blockUI( item.msgAndStyle );  // var msgAndStyle = { message: msg, css: cssSetting };
+
+    MsgFormManager.getShownFormTag().attr( 'itemId', item.id ); // Tag 'itemId' attr
+
+    if ( item.afterRun ) {
+        try {  item.afterRun();  }
+        catch ( errMsg ) { console.log( 'ERROR in MsgFormManager.displayBlock_byItem afterRun, ' + errMsg ); }
     }
 };
+
 
 // 'itemId' not used for now.
 MsgFormManager.hideBlock = function( itemId )
 {
-    $.unblockUI();
-    MsgFormManager.blockShown = false;
+    // Since 1st one in the queue is considered the one shown, remove 1st one..
+    // - if the id does not match with 1st one, look through until find the one.  and remove until that id?
+    // - hide the UI only if it matches the current one...  <-- 1st in the queue..
 
-    // If there is any queue, show this - with setTimeout?
+    // Consider UI one...  only hide if shown one matches?
+    var shownItemId = MsgFormManager.getShownFormTag().attr( 'itemId' ); // Tag 'itemId' attr
+
+    $.unblockUI();
+    // MsgFormManager.blockShown = false;
+
+
+    // Remove current one
+    if ( MsgFormManager.queue.length > 0 ) 
+    {
+        // 1. If 'itemId' & 'shownItemId' does not exist, take the next item in queue as current item, and remove it
+        if ( !itemId && !shownItemId )
+        {
+            MsgFormManager.queue.shift();
+        }
+        else 
+        {
+            // If same, remove up to that item
+            if ( itemId === shownItemId ) MsgFormManager.removeItemsUntil( itemId );
+            else
+            {
+                // If different, remove up to either of them.
+                if ( itemId ) MsgFormManager.removeItemsUntil( itemId );
+                if ( shownItemId ) MsgFormManager.removeItemsUntil( shownItemId );                        
+            }
+        }
+    }
+
+
+    // Show next item - If there is any queue, show this - with setTimeout?
     if ( MsgFormManager.queue.length > 0 )
     {
         var item = MsgFormManager.queue.shift();
+
         console.log( 'queued msgForm popped' );
         console.log( item );
         console.log( MsgFormManager.queue );
 
-        setTimeout( function() {
+        setTimeout( function() 
+        {
             console.log( 'popped msgForm .4 sec later called' );
-            $.blockUI( item.msgAndStyle ); 
-            MsgFormManager.blockShown = true;
-            if ( item.afterRun ) item.afterRun();        
-            console.log( item );
+            MsgFormManager.displayBlock_byItem( item );
         }, 400);
     }
-
-
-    // Trigger 'queue' removing 'interval'?  <-- until all is removed?
 };
+
+// -----------------------------------
+
+MsgFormManager.getShownFormTag = function( itemId )
+{
+    return $( 'div.blockUI.blockMsg:visible' );
+};
+
+MsgFormManager.getCurrItem_inQueue = function( itemId )
+{
+    var item; // = 
+
+    if ( itemId )
+    {
+        var list = MsgFormManager.queue.filter( item => item.id === itemId );
+        if ( list.length > 0 ) item = list[0];
+    }
+
+    return item;
+};
+
+
+MsgFormManager.removeItemsUntil = function( itemId )
+{
+    // get index number of item
+    var itemIdx;
+
+    if ( itemId )
+    {
+        for ( var i = 0; i < MsgFormManager.queue.length; i++ )
+        {
+            var tmpItem = MsgFormManager.queue[i];
+            if ( tmpItem.id === itemId ) {  itemIdx = i; break;  }
+        }    
+    }
+
+    if ( itemIdx !== undefined )
+    {
+        do {
+            MsgFormManager.queue.shift();
+            itemIdx--;
+        } while ( itemIdx >= 0 || MsgFormManager.queue.length > 0 )
+    }
+};
+
+
+// -----------------------------------
 
 
 MsgFormManager.appBlockTemplate = function( templateId, customTemplate, afterRun )
@@ -136,7 +208,7 @@ MsgFormManager.appBlock = function( itemId, msg, customCss, afterRun )
 
     var css = ( customCss ) ? $.extend( MsgFormManager.cssBlock_Body, customCss ) : MsgFormManager.cssBlock_Body;
 
-    MsgFormManager.showBlock( itemId, { message: msg, css: css }, afterRun );
+    MsgFormManager.showNQueue_Block( itemId, { message: msg, css: css }, afterRun );
 };
 
 MsgFormManager.appUnblock = function( itemId )

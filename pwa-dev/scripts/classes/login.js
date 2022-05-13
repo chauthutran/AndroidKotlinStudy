@@ -501,7 +501,7 @@ function Login()
 			{
 				me.loginAfterProcess( userName );
 				
-				MsgFormManager.appUnblock();
+				MsgFormManager.appUnblock( 'loginAfterLoad' );
 
 				// call CWS start with this config data..
 				SessionManager.cwsRenderObj.startWithConfigLoad( runAfterFunc );

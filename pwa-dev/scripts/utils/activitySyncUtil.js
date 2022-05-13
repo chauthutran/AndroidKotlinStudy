@@ -16,8 +16,7 @@ ActivitySyncUtil.setSyncIconClickEvent = function( divSyncIconTag, cardDivTag, a
 		// This could be called again after activityJson/status is changed, thus, get everything again from activityId
 		e.stopPropagation();  // Stops calling parent tags event calls..
 
-		if ( options && options.clientSync ) cardDivTag.closest( 'div.card.client' ).find( 'div.clientContainer.card__container' ).find( 'div.activityStatusIcon[clientid]' ).click();
-		else ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, activityId, options );
+		ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, activityId, options );
 	});
 };
 
@@ -53,9 +52,11 @@ ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, ca
 
 				Util.callAfterEach( 0, activityIdArr_unsynced, function( item, idx, continueCallBack ) {
 					// each item calling..
+					console.log( 'item iterate by Util.callAfterEach' );
 					ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, item, { clientCard: true, continueCallBack: continueCallBack } );
 				}, function() {
 					// Finish the client call..
+					console.log( 'Finished sync by Util.callAfterEach' );
 					delete ActivitySyncUtil.clientSyncStatus[ clientId ];
 				});		
 			}
@@ -93,19 +94,24 @@ ActivitySyncUtil.clickSyncActivity = function( divSyncIconTag, cardDivTag, activ
 			}
 		}, 
 		function() 
-		{
-			// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
-			ActivitySyncUtil.syncUpActivity_IfOnline( activityId, function() 
+		{			
+			// If the 'sync' click is from client activity list, click on client level sync ( if enabled.. )
+			if ( options.clientSync ) cardDivTag.closest( 'div.card.client' ).find( 'div.clientContainer.card__container' ).find( 'div.activityStatusIcon[clientid]' ).click();
+			else
 			{
-				if ( options.continueCallBack ) options.continueCallBack();  // END POINT
+				// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
+				ActivitySyncUtil.syncUpActivity_IfOnline( activityId, function() 
+				{
+					if ( options.continueCallBack ) options.continueCallBack();  // END POINT
 
-				ActivitySyncUtil.clientActivityList_FavListReload( cardDivTag );
-			}, 
-			function() { 
-				if ( options.continueCallBack ) options.continueCallBack();  // END POINT					
+					ActivitySyncUtil.clientActivityList_FavListReload( cardDivTag );
+				}, 
+				function() { 
+					if ( options.continueCallBack ) options.continueCallBack();  // END POINT					
 
-				MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' ); // TODO: should be called only once?  or discontinue the process..
-			});
+					MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' ); // TODO: should be called only once?  or discontinue the process..
+				});
+			}
 		});
 	}  
 	else if ( statusVal === Constants.status_processing ) 
