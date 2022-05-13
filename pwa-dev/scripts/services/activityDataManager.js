@@ -408,6 +408,8 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         // Existing activity case - Editing
         var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
         var existingActivityJson;
+        var existingActivityJson_Clone;
+
         if ( !extraActionCase && editModeActivityId )
         {
             // ACTIVITY EDITING:
@@ -417,18 +419,23 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
 
             if ( existingActivityJson )
             {
+                existingActivityJson_Clone = Util.cloneJson( existingActivityJson );
+                
                 var statusSynced = ActivityDataManager.isActivityStatusSynced( existingActivityJson );
 
                 if ( existingActivityJson.editMode_existsOnServer || statusSynced ) activityJson.editMode_existsOnServer = true;  // Only applicable on mongo version...
-    
-                if ( activityJson.editMode_existsOnServer ) // if editMode_existsOnServer case, use clientId & activityId for search.
-                {
-                    var client = ClientDataManager.getClientByActivityId( existingActivityJson.id );
 
+                var client = ClientDataManager.getClientByActivityId( existingActivityJson.id );
+                if ( client ) existingClientId = client._id;
+
+                // editMode_existsOnServer case, it means it is not only local version, but also stored in DB.
+                // Use clientId & activityId for search, so that we can delete it on server( db ).
+                if ( activityJson.editMode_existsOnServer )  // It is used only for 'scheduleCancel' case, but wanted to make it more generic?
+                {
                     if ( client )
                     {
                         searchValues = { '_id': client._id };
-                        existingClientId = client._id;
+                        //existingClientId = client._id;
 
                         // 'capturedUTC/Loc' & 'updatedUTC/Loc' would be copied to existing activity on backend.
                         ActivityDataManager.setActivityDate_Update( activityJson, createdDT );
@@ -473,13 +480,10 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         };
 
         if ( actionDefJson && actionDefJson.useMockResponse ) activityJson.processing.useMockResponse = actionDefJson.useMockResponse;
-        if ( existingClientId ) 
-        {
-            activityJson.processing.existingClientId = existingClientId;
-
-            // NEW: Create a way to rollBack.
-            if ( existingActivityJson ) activityJson.processing.editRollBackData = Util.cloneJson( existingActivityJson );
-        }
+        if ( existingClientId ) activityJson.processing.existingClientId = existingClientId;
+        // NEW: Create a way to rollBack - as long as it is still not synced!!  <-- while the change is local.
+        //   - Use Case:  When we created an activity from a schedule using 'fav_sch', we like to roll back to schedule rather than delete.
+        if ( existingActivityJson_Clone ) activityJson.processing.editRollBackData = existingActivityJson_Clone;
 
 
         // Form Information

@@ -434,16 +434,24 @@ ClientDataManager.clientsActivities_AddProcessingInfo = function( newClients, pr
 ClientDataManager.createClient_forActivityPayload = function( activity )
 {
     // Call it from template?
-    var acitivityPayloadClient = Util.cloneJson( ClientDataManager.template_Client );
+    var newTempClientId = ClientDataManager.tempClientNamePre + activity.id;
+    
+    // NEW: If same client with id (local, not synced, id based on activity) exists, use that instead
+    var existingClient = ClientDataManager.getClientById( newTempClientId );
+    if ( existingClient ) return existingClient;
+    else 
+    {
+        var acitivityPayloadClient = Util.cloneJson( ClientDataManager.template_Client );
+    
+        acitivityPayloadClient._id = newTempClientId;    
+        acitivityPayloadClient.clientDetails = ActivityDataManager.getData_FromTrans( activity, "clientDetails" );
+        acitivityPayloadClient.clientConsent = ActivityDataManager.getData_FromTrans( activity, "clientConsent" );
+        acitivityPayloadClient.date = ClientDataManager.dateConvertFromActivityDate( activity );
+    
+        ClientDataManager.insertClient( acitivityPayloadClient );    
 
-    acitivityPayloadClient._id = ClientDataManager.tempClientNamePre + activity.id;
-    acitivityPayloadClient.clientDetails = ActivityDataManager.getData_FromTrans( activity, "clientDetails" );
-    acitivityPayloadClient.clientConsent = ActivityDataManager.getData_FromTrans( activity, "clientConsent" );
-    acitivityPayloadClient.date = ClientDataManager.dateConvertFromActivityDate( activity );
-
-    ClientDataManager.insertClient( acitivityPayloadClient );
-
-    return acitivityPayloadClient;
+        return acitivityPayloadClient;
+    }
 };
 
 
