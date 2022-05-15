@@ -272,6 +272,9 @@ ActivitySyncUtil.displayStatusLabelIcon = function( divSyncIconTag, divSyncStatu
 
 ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 {	
+	var color_error = 'red';
+	var color_failed = 'orange';
+	
 	var bRotating = false;
 	var clientStatusStr = Constants.status_submit;
 	var clientId = client._id;
@@ -279,34 +282,49 @@ ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 	var divSyncIconTag = $( 'div.activityStatusIcon[clientId="' + clientId + '"]' );
 	var divSyncStatusTextTag = $( 'div.activityStatusText[clientId="' + clientId + '"]' );
 
-	divSyncIconTag.empty().attr( 'status', '' );
+	divSyncIconTag.empty().attr( 'status', '' ).css( 'border', 'none' );  // unset (vs none)
 	divSyncStatusTextTag.empty().attr( 'status', '' );
 
 	var imgIcon = $( '<img>' );
 
+
+	// Display colored dot with title.. on existance of 'error' / 'failed' activities
+	var failedList = client.activities.filter( act => ActivityDataManager.getActivityStatus( act ) === Constants.status_failed );
+	if ( failedList.length > 0 ) divSyncStatusTextTag.append( '<span title="' + failedList.length + ' failed" style="font-weight: bold; color: ' + color_failed + ' !important; padding: 0px 3px;">*</span>' );
+
+	var erroredList = client.activities.filter( act => ActivityDataManager.getActivityStatus( act ) === Constants.status_error );
+	if ( erroredList.length > 0 ) divSyncStatusTextTag.append( '<span title="' + erroredList.length + ' errored" style="font-weight: bold; color: ' + color_error + ' !important; padding: 0px 3px;">*</span>' );
+	
 
 	// LOGIC: If any of activity is on processing, it is processing..
 	// After that, if any of the activity is syncable, it is syncable..
 	// Otherwise, it is synced..
 	if ( client.activities.filter( act => ActivityDataManager.getActivityStatus( act ) === Constants.status_processing ).length > 0 ) 
 	{
-		divSyncStatusTextTag.attr( 'status', Constants.status_processing ).css( 'color', '#B1B1B1' ).html( 'Processing' ).attr( 'term', 'activitycard_status_processing' );
+		divSyncStatusTextTag.attr( 'status', Constants.status_processing ).append( '<span term="activitycard_status_processing" style="color: #B1B1B1;">Processing</span>' );
 		imgIcon.attr( 'src', 'images/sync-pending_36.svg' );		
 		divSyncIconTag.attr( 'status', Constants.status_processing );
 		bRotating = true;	
 	}
 	else if ( client.activities.filter( act => SyncManagerNew.statusSyncable( ActivityDataManager.getActivityStatus( act ) ) ).length > 0 ) 
 	{
-		divSyncStatusTextTag.attr( 'status', Constants.status_queued ).css( 'color', '#B1B1B1' ).html( 'Pending' ).attr( 'term', 'activitycard_status_pending' );
+		divSyncStatusTextTag.attr( 'status', Constants.status_queued ).append( '<span term="activitycard_status_pending" style="color: #B1B1B1;">Pending</span>' );
 		imgIcon.attr( 'src', 'images/sync-pending_36.svg' );
 		divSyncIconTag.attr( 'status', Constants.status_queued );
 	}
 	else
 	{
-		divSyncStatusTextTag.attr( 'status', Constants.status_submit ).css( 'color', '#2aad5c' ).html( 'Sync' ).attr( 'term', 'activitycard_status_sync' );
+		divSyncStatusTextTag.attr( 'status', Constants.status_submit ).append( '<span term="activitycard_status_sync" style="color: #2aad5c;">Sync</span>' );
 		imgIcon.attr( 'src', 'images/sync.svg' );
 		divSyncIconTag.attr( 'status', Constants.status_submit );
 	}
+
+	// If latest one had error, show the label with red or yellow (as failed)
+	var lastActivity = ActivityDataManager.getLastActivity( client.activities );
+	var lastActStatus = ActivityDataManager.getActivityStatus( lastActivity );
+	if ( lastActStatus === Constants.status_error ) divSyncIconTag.css( 'border', '1px solid ' + color_error );
+	else if ( lastActStatus === Constants.status_failed ) divSyncIconTag.css( 'border', '1px solid ' + color_failed );
+
 
 	divSyncIconTag.append( imgIcon );
 	FormUtil.rotateTag( divSyncIconTag, bRotating );

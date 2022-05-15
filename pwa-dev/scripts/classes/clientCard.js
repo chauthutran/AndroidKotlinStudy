@@ -55,15 +55,17 @@ function ClientCard( clientId, options )
                 if ( !detailViewCase ) me.clientContentClick_FullView( clientContentTag, me.clientId );
 
 
-                // 3. 'SyncUp' Button Related - click event - for clientSubmit.., icon/text populate..
+                // 3. 'phoneNumber' action  button setup
+                me.setupPhoneCallBtn( clientPhoneCallTag, clientJson );
+
+
+                // 4. 'SyncUp' Button Related - click event - for clientSubmit.., icon/text populate..
                 me.setupSyncBtn( clientCardDivTag, clientJson, detailViewCase );  // clickEnable - not checked for SyncBtn/Icon
+
 
                 // 4. favIcon of the last activity - if scheduled activity case.
                 // ActivityCard.setupFavIconBtn( favIconTag, lastActivityJson.id, { clientCardId: me.clientId, activityId: lastActivityJson.id } );
 
-
-                // 4. 'phoneNumber' action  button setup
-                me.setupPhoneCallBtn( clientPhoneCallTag, clientJson );
 
                 // 5. clickable rerender setup
                 me.setUpReRenderByClick( clientRerenderTag );
@@ -99,18 +101,17 @@ function ClientCard( clientId, options )
             var divSyncIconTag;
             var divSyncStatusTextTag;
             
-            
-            // Config - version/type check here..
+
+            // NEW Client Level Sync Status (has 2 status only - 'synced' / 'pending')
             if ( ConfigManager.isClientSync_ClientLevel() )
             {
                 // add sync button icon..
                 divSyncIconTag = clientCardDivTag.find( '.activityStatusIcon' ).attr( 'clientId', clientId );
                 divSyncStatusTextTag = clientCardDivTag.find( '.activityStatusText' ).attr( 'clientId', clientId );
 
+                // Within it, check if there is any unsynced activities.  If so, the status would be 'unsynced'
                 ActivitySyncUtil.displayStatusLabelIcon_ClientCard( clientJson );
 
-                // get unsynced list..
-                // activityIdArr = ClientCard.getUnsyncedActivities( clientJson ).map( act => act.id );
                 ActivitySyncUtil.setSyncIconClickEvent_ClientCard( divSyncIconTag, clientCardDivTag ); //, activityIdArr );
             }
             else 
