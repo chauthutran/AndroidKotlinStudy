@@ -120,7 +120,7 @@ SyncManagerNew.syncAll_OtherOperations = function()
             // 2. VoucherCode Queue Fill
             VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService(), function() 
             {
-                VoucherCodeManager.refillQueue( userName );
+                VoucherCodeManager.refillQueue( SessionManager.sessionData.login_UserName );
             });
         }    
     }
@@ -701,13 +701,13 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function()
 // Msg Related...
 
 
-SyncManagerNew.bottomMsgShow = function( statusVal, activityJson, activityCardDivTag )
+SyncManagerNew.bottomMsgShow = function( statusVal, activityJson, activityCardDivTag, contentFillFunc )
 {
     // If 'activityCardDivTag ref is not workign with fresh data, we might want to get it by activityId..
     MsgAreaBottom.setMsgAreaBottom( function( syncInfoAreaTag ) 
     {
         SyncManagerNew.syncResultMsg_header( syncInfoAreaTag, activityCardDivTag );
-        SyncManagerNew.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal );
+        SyncManagerNew.syncResultMsg_content( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal, contentFillFunc );
     });
 };
 
@@ -723,35 +723,60 @@ SyncManagerNew.syncResultMsg_header = function( syncInfoAreaTag, activityCardDiv
 };
 
 
-SyncManagerNew.syncResultMsg_content = function( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal )
+SyncManagerNew.syncResultMsg_content = function( syncInfoAreaTag, activityCardDivTag, activityJson, statusVal, contentFillFunc )
 {
     var divBottomTag = syncInfoAreaTag.find( 'div.msgContent' );
     divBottomTag.empty();
 
     // 1. ActivityCard Info Add - From Activity Card Tag  
-    divBottomTag.append( $( activityCardDivTag[ 0 ].outerHTML ) ); // << was activityJson.activityId
+    var cardDivCopyTag = $( activityCardDivTag[ 0 ].outerHTML );
+    cardDivCopyTag.find( 'div.tab_fs' ).remove();  // in case, it is clientCard Detail case, remove tab part under the client card.
+    cardDivCopyTag.find( 'div.tab_fs__container' ).remove();
 
-    // 2. Add 'processing' sync message.. - last one?
-    Util.tryCatchContinue( function() 
+    divBottomTag.append( cardDivCopyTag ); // << was activityJson.activityId
+
+
+    // NEW: TODO: This content fill could be a call back
+    if ( contentFillFunc ) 
     {
-        var historyList = activityJson.processing.history;
-
-        if ( historyList.length > 0 )
+        Util.tryCatchContinue( function() 
         {
-            //var historyList_Sorted = Util.sortByKey_Reverse( activityJson.processing.history, "dateTime" );
-            var latestItem = historyList[ historyList.length - 1];    
-            var msgSectionTag = $( Templates.msgSection );
+            contentFillFunc( divBottomTag );
+        }, "syncResultMsg_content, Error in contentFillFunc call." );
+    }
+    else
+    {
+        // 2. Add 'processing' sync message.. - last one?
+        Util.tryCatchContinue( function() 
+        {
+            var historyList = activityJson.processing.history;
 
-            msgSectionTag.find( 'div.msgSectionTitle' ).text( 'Response code: ' + Util.getStr( latestItem.responseCode ) );
+            if ( historyList.length > 0 )
+            {
+                var latestItem = historyList[ historyList.length - 1];    
 
-            var formattedMsg = SyncManagerNew.getMsgFormatted( latestItem.msg, statusVal );
-            msgSectionTag.find( 'div.msgSectionLog' ).text( formattedMsg );
+                var title = 'Response code: ' + Util.getStr( latestItem.responseCode );
+                var formattedMsg = SyncManagerNew.getMsgFormatted( latestItem.msg, statusVal );
 
-            divBottomTag.append( msgSectionTag );
-        }        
-    }, "syncResultMsg_content, activity processing history lookup" );
+                SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, title, formattedMsg );
+            }        
+        }, "syncResultMsg_content, activity processing history lookup" );
+    }
 };
 
+SyncManagerNew.bottomMsg_sectionRowAdd = function( divBottomTag, title, msg, option )
+{
+    var msgSectionTag = $( Templates.msgSection );
+    msgSectionTag.find( 'div.msgSectionTitle' ).text( title );	
+    msgSectionTag.find( 'div.msgSectionLog' ).text( msg );
+
+    if ( option )
+    {
+        if ( option.sectionMarginTop ) msgSectionTag.css( 'margin-top', option.sectionMarginTop );
+    }
+
+    divBottomTag.append( msgSectionTag );    
+};
 
 SyncManagerNew.getMsgFormatted = function( msg, statusVal )
 {

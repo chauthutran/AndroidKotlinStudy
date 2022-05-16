@@ -34,37 +34,99 @@ ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, ca
 		var clientId = thisSyncIconTag.attr( 'clientid' );
 		var clientStatusStr = thisSyncIconTag.attr( 'status' );
 
-		// Only if the clientId exists (proper clientCard), and in syncable status (not in processing or not in synced)
-		if ( clientId && clientStatusStr === Constants.status_queued )
+		if ( !clientId ) MsgManager.msgAreaShow( 'ClientCard is not marked with clientId.', 'ERROR' );
+		else
 		{
-			// NOTE: This could be Duplicate - on top of checking UI status Above			
-			if ( ActivitySyncUtil.clientSyncStatus[ clientId ] )
+			// Only if the clientId exists (proper clientCard), and in syncable status (not in processing or not in synced)
+			if ( clientStatusStr === Constants.status_queued )
 			{
-				MsgManager.msgAreaShow( 'Client is already in sync processing.' );
+				// NOTE: This could be Duplicate - on top of checking UI status Above			
+				if ( ActivitySyncUtil.clientSyncStatus[ clientId ] )
+				{
+					MsgManager.msgAreaShow( 'Client is already in sync processing.' );
+				}
+				else
+				{
+					ActivitySyncUtil.clientSyncStatus[ clientId ] = true;
+
+					// Get unsynced list..
+					var clientJson = ClientDataManager.getClientById( clientId );
+					var activityIdArr_unsynced = ClientCard.getUnsyncedActivities( clientJson ).map( act => act.id );
+
+					Util.callAfterEach( 0, activityIdArr_unsynced, function( item, idx, continueCallBack ) {
+						// each item calling..
+						ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, item, { clientCard: true, continueCallBack: continueCallBack } );
+					}, function() {
+						// Finish the client call..
+						delete ActivitySyncUtil.clientSyncStatus[ clientId ];
+					});		
+				}
 			}
 			else
 			{
-				ActivitySyncUtil.clientSyncStatus[ clientId ] = true;
+				// Display the bottom layered area msg.
+				SyncManagerNew.bottomMsgShow( undefined, undefined, cardDivTag, function( divBottomTag ) 
+				{
+					// Most recent activity: [2022-05-15 03:15pm] ERROR - error msg...
+					// Activities Summary: total 4 activities with 0 errors, 1 fails..
+					var clientJson = ClientDataManager.getClientById( clientId );
 
-				// Get unsynced list..
-				var clientJson = ClientDataManager.getClientById( clientId );
-				var activityIdArr_unsynced = ClientCard.getUnsyncedActivities( clientJson ).map( act => act.id );
-
-				Util.callAfterEach( 0, activityIdArr_unsynced, function( item, idx, continueCallBack ) {
-					// each item calling..
-					console.log( 'item iterate by Util.callAfterEach' );
-					ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, item, { clientCard: true, continueCallBack: continueCallBack } );
-				}, function() {
-					// Finish the client call..
-					console.log( 'Finished sync by Util.callAfterEach' );
-					delete ActivitySyncUtil.clientSyncStatus[ clientId ];
-				});		
+					var recentActivity = ActivitySyncUtil.getSummaryMsg_recentActivity( clientJson.activities );  //'[2022-05-15 03:15pm] ERROR - error msg';
+					var activitySummary = ActivitySyncUtil.getSummaryMsg_activities( clientJson.activities ); //'total 4 activities with 0 errors, 1 fails';
+					
+					if ( recentActivity ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Most recent activity', recentActivity );
+					if ( activitySummary ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Activity summary', activitySummary, { sectionMarginTop: '12px' } );					
+				});
 			}
 		}
-		// else MsgManager.msgAreaShow( 'ClientCard is not marked with clientId.', 'ERROR' );
 	});
 };
 
+ActivitySyncUtil.getSummaryMsg_recentActivity = function( activities )
+{
+	var msgStr = '';
+
+	if ( activities && activities.length > 0 )
+	{
+		var recentActivity = ActivityDataManager.getLastActivity( activities );
+
+		if ( recentActivity )
+		{
+			var dateTimeStr = UtilDate.formatDate( recentActivity.date.createdLoc, 'yyyy-MM-dd HH:mm' );
+			var statusStr = recentActivity.processing.status;
+			//.toUpperCase();
+			var statusMsg = '';
+
+			var historyList = recentActivity.processing.history;
+			if ( historyList.length > 0 )
+			{
+				var latestItem = historyList[ historyList.length - 1];    
+				statusMsg = SyncManagerNew.getMsgFormatted( latestItem.msg, statusStr );
+			}
+
+			msgStr = '[' + dateTimeStr + '] ' + statusStr.toUpperCase() + ' - ' + statusMsg;
+		}
+	}
+
+	return msgStr;
+};
+
+
+ActivitySyncUtil.getSummaryMsg_activities = function( activities )
+{
+	var msgStr = '';
+
+	if ( !activities ) activities = [];
+
+	// '4 activities in total - has 0 errors, 1 fails';
+	var totalCount = activities.length;
+	var errorList = activities.filter( act => ActivityDataManager.getActivityStatus( act ) === Constants.status_error );
+	var failedList = activities.filter( act => ActivityDataManager.getActivityStatus( act ) === Constants.status_failed );
+
+	msgStr = totalCount + ' activities in total - has ' + errorList.length + ' errors, ' + failedList.length + ' fails';
+		
+	return msgStr;
+};
 
 ActivitySyncUtil.clickSyncActivity = function( divSyncIconTag, cardDivTag, activityId, options )
 {

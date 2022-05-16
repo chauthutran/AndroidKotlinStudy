@@ -124,13 +124,13 @@ Templates.searchOptions_Dialog = `<dialog id="dialog_searchOptions" class="dialo
 
 
 Templates.msgAreaBottomContent = `<div class="msgArea sync_all">
-        <div class="msgHeader sync_all__header" />
-        <div class="msgContent bottom__wrapper list" />
+        <div class="msgHeader sync_all__header" style="height: 20px;" />
+        <div class="msgContent bottom__wrapper list" style="margin-top: 8px;" />
     </div>`;
 
-Templates.syncMsg_Header = `<div class="msgHeaderLabel sync_all__header_title">Synchronization Services Deliveries</div>
-    <div class="divSyncAllClose" style="float: right; margin-right: 8px; cursor: pointer;">
-        <img src="images/close.svg" style="width: 36px; height: 36px;" />
+Templates.syncMsg_Header = `<div class="msgHeaderLabel sync_all__header_title" style="height: 20px;">Synchronization Services Deliveries</div>
+    <div class="divSyncAllClose" style="float: right; cursor: pointer; margin-top: -5px !important;">
+        <img src="images/close.svg" style="width: 26px; height: 26px;" />
     </div>`;
 
 Templates.syncMsg_Section = `<div class="sync_all__section">
