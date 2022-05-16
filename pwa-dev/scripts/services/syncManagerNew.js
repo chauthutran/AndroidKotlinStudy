@@ -115,7 +115,7 @@ SyncManagerNew.syncAll_OtherOperations = function()
         if ( ConnManagerNew.isAppMode_Online() )
         {
             // 1. Check & download AppFile updates.  Without reload afterward ('delayReload')
-            SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
+            SwManager.checkAppUpdate( '[AppUpdateCheck] - SyncAll time run', { 'delayReload': true } );
     
             // 2. VoucherCode Queue Fill
             VoucherCodeManager.setSettingData( ConfigManager.getVoucherCodeService(), function() 

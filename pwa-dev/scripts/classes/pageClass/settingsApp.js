@@ -336,17 +336,14 @@ function settingsApp( cwsRender )
 
         me.settingsFormDivTag.find( '.linkAppUpdateCheck' ).off( 'click' ).click( function() 
         {
-            if ( ConnManagerNew.isAppMode_Online() ) 
+            if ( !ConnManagerNew.isAppMode_Online() ) MsgManager.msgAreaShow( 'This feature is only available in App Online Mode!' );
+            else
             {
-                SwManager.checkNewAppFile_OnlyOnline( function() 
+                SwManager.checkAppUpdate( '[AppUpdateCheck] - SettingsApp linkAppUpdateCheck', {}, function() 
                 {
                     MsgManager.msgAreaShow( 'New App Update Found!' );
                     SessionManager.cwsRenderObj.newSWrefreshNotification();    
                 });
-            }
-            else
-            {
-                MsgManager.msgAreaShow( 'This feature is only available in App Online Mode!' );
             }
         });      
 

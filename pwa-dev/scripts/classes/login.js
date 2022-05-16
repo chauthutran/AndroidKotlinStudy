@@ -82,23 +82,20 @@ function Login()
 	me.setUpInteractionDetect = function()
 	{
 		me.loginFormDivTag.focusin( function() {
-			// console.log( 'FUCUS - loginPage On User Focused ' + (new Date()).toString() );
-			me.checkAppUpdate_InLoginOnce();
+			me.checkAppUpdate_InLoginOnce( '[AppUpdateCheck] - loginFormDiv Focus In' );
 		});
 
 		me.loginFormDivTag.click( function() {
-			// console.log( 'CLICK - loginPage On User Clicked ' + (new Date()).toString() );
-			me.checkAppUpdate_InLoginOnce();
+			me.checkAppUpdate_InLoginOnce(  '[AppUpdateCheck] - loginFormDiv Click' );
 		});
 	};	
 
 
-	me.checkAppUpdate_InLoginOnce = function()
+	me.checkAppUpdate_InLoginOnce = function( checkTypeTitle )
 	{
 		if ( !me.loginAppUpdateCheck )
 		{
-			//console.log( 'checkAppUpdate_InLoginOnce --> SwManager.checkNewAppFile_OnlyOnline()' );
-			SwManager.checkNewAppFile_OnlyOnline();
+			SwManager.checkAppUpdate( checkTypeTitle );
 
 			me.loginAppUpdateCheck = true;
 		}
@@ -120,7 +117,7 @@ function Login()
 
 
 		me.splitPasswordTag.find( '.pin1' ).focus( function() {
-			SwManager.checkNewAppFile_OnlyOnline();
+			SwManager.checkAppUpdate( '[AppUpdateCheck] - PassCode Pin 1' );
 		});
 			
 
@@ -152,7 +149,7 @@ function Login()
 				if ( me.lastPinTrigger ) $( '.pin_pw_loading' ).show();
 
 				// NOTE: On login button click, also check app update..
-				SwManager.checkNewAppFile_OnlyOnline( undefined, { noMinTimeSkip: true } );
+				SwManager.checkAppUpdate( '[AppUpdateCheck] - Login Processing', { noMinTimeSkip: true } );
 
 
 				// Main Login Processing

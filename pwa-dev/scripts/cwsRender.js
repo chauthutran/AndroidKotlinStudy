@@ -418,7 +418,7 @@ function cwsRender()
 
 		me.logOutUI();
 
-		SwManager.checkNewAppFile_OnlyOnline();
+		SwManager.checkAppUpdate( '[AppUpdateCheck] - logOutProcess' );
 				
 		SwManager.refreshForNewAppFile_IfAvailable();  // even on offline
 	}

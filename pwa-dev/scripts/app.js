@@ -65,7 +65,8 @@ App.run = function ()
 		App.App_UI_startUp_Progress('40%');
 		App.startAppProcess();
 
-		SwManager.checkNewAppFile_OnlyOnline();  // Above 'App.startAppProcess()' has connManagerNew.appStartup_SetStatus()
+		console.log( 'AppStart statusInfo.appMode: ' + ConnManagerNew.statusInfo.appMode );
+		SwManager.checkAppUpdate( '[AppUpdateCheck] - App startUp' );
 	});
 
 };

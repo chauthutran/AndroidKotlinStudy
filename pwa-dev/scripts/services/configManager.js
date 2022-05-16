@@ -1033,7 +1033,7 @@ ConfigManager.activityStatusSwitchOps = function( runCase, activities )
     {
         if ( runCase && statusSwitchOps && statusSwitchOps.length > 0 && activities && activities.length > 0 )
         {
-            console.log( 'ConfigManager.activityStatusSwitchOps - ' + runCase );
+            //console.log( 'ConfigManager.activityStatusSwitchOps - ' + runCase );
 
             // Get switchOps that matches with 'runCase'  - NOTE 'arrow function' with 'return' if no '{'
             var matchingOpList = statusSwitchOps.filter( op => op.runCases && op.runCases.indexOf( runCase ) >= 0 );

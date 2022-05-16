@@ -192,9 +192,24 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
 // -----------------------------------
 
+// Wrapper/ShortCut to 'checkNewAppFile_OnlyOnline'
+SwManager.checkAppUpdate = function( checkTypeTitle, option, runFunction )
+{
+    if ( !option ) option = {};
+
+    if ( checkTypeTitle ) option.checkTypeTitle = checkTypeTitle;
+
+    if ( option.skipCheckOnline || ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile_OnlyOnline( runFunction, option );
+    else console.log( 'OFFLINE - AppUpdateCheck not performed - ' + checkTypeTitle );
+};
+
+
 SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
 {
     if ( !option ) option = {};
+
+    if ( option.checkTypeTitle ) console.log( option.checkTypeTitle );
+    else console.log( 'UNKNOWN CHECK TYPE' );
 
     SwManager.newAppFileExists_EventCallBack = runFunction;
     SwManager.swUpdateCase = false;
@@ -209,20 +224,19 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
         if ( !option.noMinTimeSkip && SwManager.lastAppFileUpdateDt && UtilDate.getTimeSince( SwManager.lastAppFileUpdateDt, Util.MS_MIN ) < 1 ) checkTooClose = true;
 
         // NEW: Check last check dateTime and compare..
-
-        if ( !checkTooClose )
+        if ( checkTooClose ) console.log( 'SwRegObj.update Check Skipped - Too Frequent Checks' );
+        else
         {
             SwManager.lastAppFileUpdateDt = new Date().toISOString();
-
-            console.log( 'SwRegObj.update check requested..' );
+            console.log( 'SwRegObj.update requesting..' );
 
             SwManager.swUpdateCase = true;
             SwManager.swRegObj.update();    
         }
-        else
-        {
-            console.log( 'SwRegObj.update check skipped - too close interval checks' );
-        }
+    }
+    else
+    {
+        console.log( 'SwManager.swRegObj is not available!' );
     }
 };
 
