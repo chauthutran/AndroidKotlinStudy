@@ -424,10 +424,16 @@ function ActivityCardDetail( activityId, isRestore )
 ActivityCardDetail.cardFullScreen = `
 <div class="sheet_full-fs detailFullScreen">
   <div class="wapper_card">
-    <div class="sheet-title c_900">
-      <img src='images/arrow_back.svg' class='btnBack'>
-      <span class="sheetTopTitle">Details</span>
-    </div>
+  	 <div style="display: flex;">  
+		<div class="sheet-title c_900">
+			<img src='images/arrow_back.svg' class='btnBack'>
+			<span class="sheetTopTitle" mark="activityFull" style="vertical-align: super;">Details</span>
+		</div>
+		<div style="width: 100px; display: flex">
+			<div class="syncIcon" style="width: 37px; opacity: 0.0; cursor: pointer;">-</div>
+			<div class="onOfflineIcon" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
+  		</div>
+	 </div>		
     <div class="card _tab activity">
       <div class="activityDetailRerender" style="float: left; width: 1px; height: 1px;"></div>
       <div class="activityContainer card__container">

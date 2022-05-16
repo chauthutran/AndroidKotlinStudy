@@ -224,6 +224,19 @@ FormUtil.sheetFullSetup = function( template, options )
 	sheetFullTag.find( '.tab_fs__container' ).css( '--width', sheetFullTag.find( '.tab_fs__container' ).css( 'width' ) );
 	sheetFullTag.find( 'span.sheetTopTitle' ).attr( 'term', term ).text(  title );
 
+
+	// 4. Optional 'syncIcon' or 'onOfflineIcon' click point to actual ones..
+	sheetFullTag.find( '.syncIcon' ).off( 'click' ).click( function( e ) {
+		e.stopPropagation();  // Stops calling parent tags event calls..
+		$( SyncManagerNew.imgAppSyncActionButtonId ).click();
+	});
+
+	sheetFullTag.find( '.onOfflineIcon' ).off( 'click' ).click( function( e ) {
+		e.stopPropagation();  // Stops calling parent tags event calls..
+		$( '#divNetworkStatus' ).click();
+	});
+
+
 	sheetFullTag.show();	
 	
 	return sheetFullTag;

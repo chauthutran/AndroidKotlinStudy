@@ -581,7 +581,7 @@ Templates.sheetFullFrame = `
   <div class="wapper_card">
     <div class="sheet-title c_900" style="width: 100%;">
       <img src="images/arrow_back.svg" class="btnBack">
-      <span class="sheetTopTitle" term="term_newClient">New Client</span>
+      <span class="sheetTopTitle" mark="templateSheetFull" term="term_newClient" style="vertical-align: super;">New Client</span>
     </div>
     <div class="info contentBody" style="background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px);">
     </div>
