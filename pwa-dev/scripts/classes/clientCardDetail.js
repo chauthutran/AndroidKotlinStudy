@@ -425,8 +425,8 @@ ClientCardDetail.cardFullScreen = `
                 <span class="sheetTopTitle" mark="clientFull" style="vertical-align: super;">Details</span>
             </div>
             <div style="width: 100px; display: flex">
-		    	<div class="syncIcon" style="width: 37px; opacity: 0.0; cursor: pointer;">-</div>
-	    		<div class="onOfflineIcon" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
+		    	<div class="syncIcon" title="SyncAll" style="width: 37px; opacity: 0.0; cursor: pointer;">-</div>
+	    		<div class="onOfflineIcon" title="Network" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
       		</div>
         </div>
 
