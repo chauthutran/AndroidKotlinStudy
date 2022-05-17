@@ -334,17 +334,16 @@ ActivitySyncUtil.displayStatusLabelIcon = function( divSyncIconTag, divSyncStatu
 
 ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 {	
-	var color_error = 'red';
-	var color_failed = 'orange';
+	var color_error = 'tomato';
+	var color_failed = 'darksalmon';
 	
 	var bRotating = false;
-	var clientStatusStr = Constants.status_submit;
 	var clientId = client._id;
 
 	var divSyncIconTag = $( 'div.activityStatusIcon[clientId="' + clientId + '"]' );
 	var divSyncStatusTextTag = $( 'div.activityStatusText[clientId="' + clientId + '"]' );
 
-	divSyncIconTag.empty().attr( 'status', '' ).css( 'border', 'none' );  // unset (vs none)
+	divSyncIconTag.empty().attr( 'status', '' ).attr( 'title', '' ); //.css( 'border', 'none' );  // unset (vs none)
 	divSyncStatusTextTag.empty().attr( 'status', '' );
 
 	var imgIcon = $( '<img>' );
@@ -352,10 +351,10 @@ ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 
 	// Display colored dot with title.. on existance of 'error' / 'failed' activities
 	var failedList = client.activities.filter( act => ActivityDataManager.getActivityStatus( act ) === Constants.status_failed );
-	if ( failedList.length > 0 ) divSyncStatusTextTag.append( '<span title="' + failedList.length + ' failed" style="font-weight: bold; color: ' + color_failed + ' !important; padding: 0px 3px;">*</span>' );
+	if ( failedList.length > 0 ) divSyncStatusTextTag.append( '<span title="' + failedList.length + ' failed" style="font-weight: bold; color: ' + color_failed + '; padding-right: 3px;">*</span>' );
 
 	var erroredList = client.activities.filter( act => ActivityDataManager.getActivityStatus( act ) === Constants.status_error );
-	if ( erroredList.length > 0 ) divSyncStatusTextTag.append( '<span title="' + erroredList.length + ' errored" style="font-weight: bold; color: ' + color_error + ' !important; padding: 0px 3px;">*</span>' );
+	if ( erroredList.length > 0 ) divSyncStatusTextTag.append( '<span title="' + erroredList.length + ' errored" style="font-weight: bold; color: ' + color_error + '; padding-right: 3px;">*</span>' );
 	
 
 	// LOGIC: If any of activity is on processing, it is processing..
@@ -381,15 +380,26 @@ ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 		divSyncIconTag.attr( 'status', Constants.status_submit );
 	}
 
-	// If latest one had error, show the label with red or yellow (as failed)
-	var lastActivity = ActivityDataManager.getLastActivity( client.activities );
-	var lastActStatus = ActivityDataManager.getActivityStatus( lastActivity );
-	if ( lastActStatus === Constants.status_error ) divSyncIconTag.css( 'border', '1px solid ' + color_error );
-	else if ( lastActStatus === Constants.status_failed ) divSyncIconTag.css( 'border', '1px solid ' + color_failed );
-
 
 	divSyncIconTag.append( imgIcon );
 	FormUtil.rotateTag( divSyncIconTag, bRotating );
+
+
+	// If latest one had error, show the label with red or yellow (as failed)
+	var lastActivity = ActivityDataManager.getLastActivity( client.activities );
+	var lastActStatus = ActivityDataManager.getActivityStatus( lastActivity );
+
+	if ( lastActStatus === Constants.status_error ) 
+	{
+		imgIcon.css( 'background-color', color_error );
+		divSyncIconTag.attr( 'title', 'Last Activity Status: ' + lastActStatus.toUpperCase() );
+	}
+	//else if ( lastActStatus === Constants.status_failed ) // If pending failed, no need to show the background color to indicate?
+	//{
+	//	imgIcon.css( 'background-color', color_failed );
+	//	divSyncIconTag.attr( 'title', 'Last Activity Status: ' + lastActStatus.toUpperCase() );
+	//}
+	// divSyncIconTag.css( 'border-top', '1px solid ' + color_error );
 };
 
 
