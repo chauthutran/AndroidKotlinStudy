@@ -91,8 +91,10 @@ ConfigManager.setConfigJson = function ( loginData, userRolesOverrides )
 
             ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
 
-            // Populate options 'options_ouChildren' is applicable
+            // Populate options 'options_ouChildren', 'ouTag' is applicable
             ConfigManager.populateOptions_ouChildren( ConfigManager.configJson, loginData );
+            ConfigManager.populateOptions_ouTagOus( ConfigManager.configJson, loginData );
+            // Possibily - populate orgUnitChildren (duplicate) <-- change a bit?
 
         }
     }
@@ -1167,27 +1169,61 @@ ConfigManager.getSyncUpCoolDownTime = function()
 
 ConfigManager.populateOptions_ouChildren = function( configJson, loginData )
 {
-    if ( loginData.orgUnitData && loginData.orgUnitData.orgUnit )
-    {
-        var children = loginData.orgUnitData.orgUnit.children;
+    // Look at both '.orgUnitData.orgUnit' & .loginAfterOpsResult.ouChildren.children;
+    var ouList = [];
 
-        if ( children && children.length > 0 )
+    var ouD = loginData.orgUnitData;
+    var lao = loginData.loginAfterOpsResult;
+
+    if ( ouD && ouD.orgUnit && ouD.orgUnit.children && ouD.orgUnit.children.length > 0 ) ouList = ouD.orgUnit.children;
+    else if ( lao && lao.ouChildren && lao.ouChildren.children && lao.ouChildren.children.length > 0 ) ouList = lao.ouChildren.children; 
+
+    if ( ouList.length > 0 )
+    {
+        try
+        {
+            if ( configJson.definitionOptions && configJson.definitionOptions.options_ouChildren )
+            {
+                var op_children = configJson.definitionOptions.options_ouChildren;
+
+                op_children.splice( 0, op_children.length );
+
+                ouList.forEach( ou => {
+                    op_children.push( { defaultName: ou.name, value: ou.code, term: '' } );
+                });
+            }
+        }
+        catch( errMsg ) {
+            console.log( 'ERROR in ConfigManager.populateOptions_ouChildren, ' + errMsg );
+        }
+    }
+};
+
+
+ConfigManager.populateOptions_ouTagOus = function( configJson, loginData )
+{
+    if ( loginData.loginAfterOpsResult && loginData.loginAfterOpsResult.ouTagOrgUnits )
+    {
+        var ouTagObj = loginData.loginAfterOpsResult.ouTagOrgUnits;
+        var ouTagOus = ouTagObj.organisationUnits;
+
+        if ( ouTagOus && ouTagOus.length > 0 )
         {
             try
             {
-                if ( configJson.definitionOptions && configJson.definitionOptions.options_ouChildren )
+                if ( configJson.definitionOptions && configJson.definitionOptions.options_ouTagOus )
                 {
-                    var op_children = configJson.definitionOptions.options_ouChildren;
+                    var options_ouTagOus = configJson.definitionOptions.options_ouTagOus;
 
-                    op_children.splice(0, op_children.length);
+                    options_ouTagOus.splice(0, options_ouTagOus.length);
 
-                    children.forEach( ou => {
-                        op_children.push( { defaultName: ou.name, value: ou.code, term: '' } );
+                    ouTagOus.forEach( ou => {
+                        options_ouTagOus.push( { defaultName: ou.name, value: ou.code, term: '' } );
                     });
                 }
             }
             catch( errMsg ) {
-                console.log( 'ERROR in ConfigManager.populateOptions_ouChildren, ' + errMsg );
+                console.log( 'ERROR in ConfigManager.populateOptions_ouTagOus, ' + errMsg );
             }
         }
     }
