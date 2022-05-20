@@ -2067,6 +2067,8 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 	}
 	else //if( detailTabContent.displayMode == 0 ) // Old style
 	{
+		// New Activity Details + Client Details in Table rows
+
 		var content = detailTabContent.content;
 		var bShowClient = false;
 		var bShowActivity = false;
@@ -2087,7 +2089,7 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 
 			tabTag.append( '<div class="section" style="margin-left: 0px !important;"><label term="">ACTIVITY DETAIL:</label></div>' );	
 			tabTag.append( '<div class="section" style="padding: 2px;"><label term="">Date:</label></div>' );
-			tabTag.append( FormUtil.jsonDataInTable_Wrap( actJson.date ) );
+			tabTag.append( FormUtil.jsonDataInTable_Wrap( actJson.date, { divTablePaddingLeft: '10px', left2: '20px' } ) );
 
 			actJson.transactions.forEach( trans => 
 			{
@@ -2097,18 +2099,21 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 					else
 					{
 						tabTag.append( '<div style="width:100%;"><hr style="border: 1px solid darkgrey;opacity: 0.3;"></div>' );
-						tabTag.append( '<div class="section" style="padding: 2px;"><label term="">TransType [' + trans.type + ']:</label></div>' );
-		
+
+						var secTag = $( '<div class="section" style="padding: 2px;"><label class="secLabel" term="">TransType</label> [<label class="secLabel2">' + trans.type + '</label>]:</label></div>' );
+						FormUtil.populateFieldTerms( 'TransType', secTag.find( '.secLabel' ) );
+						FormUtil.populateFieldTerms( trans.type, secTag.find( '.secLabel2' ) );
+						tabTag.append( secTag );
+
 						// for each object, display subsection..
-						// 
 						for( var prop in trans )
 						{
 							if ( prop !== 'type' )
 							{
 								var dataJson = trans[prop];
 		
-								tabTag.append( '<div class="section" style="padding: 2px; color: #333;"><label term="">' + prop + ':</label></div>' );
-								tabTag.append( FormUtil.jsonDataInTable_Wrap( dataJson ) );			
+								tabTag.append( '<div class="section" style="padding-left: 10px; color: #333;"><label term="">' + prop + ':</label></div>' );
+								tabTag.append( FormUtil.jsonDataInTable_Wrap( dataJson, { divTablePaddingLeft: '20px', left2: '30px' } ) );			
 							}
 						}		
 					}
@@ -2121,7 +2126,7 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 			if ( bShowActivity ) tabTag.append( '<div style="width:100%;"><hr style="border: 1px solid darkgrey;opacity: 0.3;"></div>' );
 
 			tabTag.append( '<div class="section" style="margin-left: 0px !important;"><label term="activityDetail_details_title">Client DETAIL:</label></div>' );	
-			tabTag.append( FormUtil.jsonDataInTable_Wrap( clientDetails ) );
+			tabTag.append( FormUtil.jsonDataInTable_Wrap( clientDetails, { divTablePaddingLeft: '10px', left2: '20px' } ) );
 		}
 
 
@@ -2179,18 +2184,21 @@ FormUtil.previewData_Standard = function( jsonData, templateFieldTag, formTag )
 };
 
 
-FormUtil.jsonDataInTable_Wrap = function( jsonData )
+FormUtil.jsonDataInTable_Wrap = function( jsonData, option )
 {
 	var hideEmptyVal = ConfigManager.getActivityDetailTabContent().hideEmptyVal;
 
-	return FormUtil.jsonDataInTable( jsonData, hideEmptyVal );
+	return FormUtil.jsonDataInTable( jsonData, hideEmptyVal, option );
 };
 
 
-FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal )
+FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal, option )
 {
+	if ( !option ) option = {};
 	var tableTag = $( '<div style="display: table;" />');
 		
+	if ( option.divTablePaddingLeft ) tableTag.css( 'padding-left', option.divTablePaddingLeft );
+	
 	if ( jsonData )
 	{
 		// 1. Make this call/method a recursive
@@ -2225,7 +2233,7 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal )
 
 						if ( Util.isTypeObject( value ) )
 						{
-							var subTableTag = FormUtil.jsonDataInTable( value, hideEmptyVal );
+							var subTableTag = FormUtil.jsonDataInTable( value, hideEmptyVal, { divTablePaddingLeft: option.left2 } );
 							valueFieldTag.append( subTableTag );
 						}
 						else if ( Util.isTypeArray( value ) )
@@ -2234,7 +2242,7 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal )
 							{
 								if ( Util.isTypeObject( pArrItem ) )
 								{
-									valueFieldTag.append( FormUtil.jsonDataInTable( pArrItem, hideEmptyVal ) );
+									valueFieldTag.append( FormUtil.jsonDataInTable( pArrItem, hideEmptyVal, { divTablePaddingLeft: option.left2 } ) );
 								} 
 								else 
 								{	
