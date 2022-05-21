@@ -21,7 +21,86 @@ ActivitySyncUtil.setSyncIconClickEvent = function( divSyncIconTag, cardDivTag, a
 };
 
 
-ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, cardDivTag ) //, activityIdArr )
+// =======  ActivityCard Version of Sync Click =========================
+ActivitySyncUtil.clickSyncActivity = function( divSyncIconTag, cardDivTag, activityId, options )
+{
+	var activityJson = ActivityDataManager.getActivityById( activityId );
+	var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
+
+	if ( !options ) options = {};
+
+	// NOTE:
+	//  - If status is not syncable one, display bottom message
+	//  - If offline, display the message about it.
+	if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
+	{
+		// If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
+		ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
+		{      
+			if ( !options.clientCard )
+			{
+				// Display Left Msg <-- Do not need if?                          
+				var leftSec = UtilDate.getSecFromMiliSec( timeRemainMs );
+				var coolTime = UtilDate.getSecFromMiliSec( ConfigManager.coolDownTime );
+				MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
+			}
+		},
+		function() 
+		{
+			// If the 'sync' click is from client activity list, click on client level sync ( if enabled.. )
+			if ( options.clientSync ) cardDivTag.closest( 'div.card.client' ).find( 'div.clientContainer.card__container' ).find( 'div.activityStatusIcon[clientid]' ).click();
+			else
+			{
+				// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
+				ActivitySyncUtil.syncUpActivity_IfOnline( activityId, function( syncReadyJson, success, responseJson, newStatus ) 
+				{
+					ActivitySyncUtil.clientActivityList_FavListReload( cardDivTag );
+
+					if ( options.resultJson && newStatus ) 
+					{
+						if ( options.resultJson[ newStatus ] === undefined ) options.resultJson[ newStatus ] = 1;
+						else options.resultJson[ newStatus ]++;
+					}
+
+					if ( options.nextCall ) options.nextCall();  // END POINT
+				}, 
+				function() // failed case..
+				{ 
+					MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' ); // TODO: should be called only once?  or discontinue the process..
+
+					if ( options.nextCall ) options.nextCall();  // END POINT
+				});
+			}
+		});
+	}
+	else if ( statusVal === Constants.status_processing ) 
+	{ 
+		if ( options.nextCall ) options.nextCall();  // END POINT
+	}
+	else
+	{
+		// If status is not syncable one, display the summary as bottom msg section - ONLY for activity ('detailViewCase')
+		if ( !divSyncIconTag.hasClass( 'detailViewCase' ) )
+		{
+			// Display the popup
+			SyncManagerNew.bottomMsgShow( statusVal, activityJson, cardDivTag );
+	
+			// NOTE: STATUS CHANGED!!!!
+			// If submitted with msg one, mark it as 'read' and rerender the activity Div.
+			if ( statusVal === Constants.status_submit_wMsg )        
+			{
+				// TODO: Should create a history...
+				ActivityDataManager.activityUpdate_Status( activityId, Constants.status_submit_wMsgRead );                        
+			}
+		}
+
+		if ( options.nextCall ) options.nextCall();  // END POINT
+	}	
+};
+
+
+// =======  ClientCard Version of Sync Click =========================
+ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, cardDivTag, option ) //, activityIdArr )
 {
 	divSyncIconTag.off( 'click' ).on( 'click', function( e ) 
 	{
@@ -52,35 +131,48 @@ ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, ca
 					// Get unsynced list..
 					var clientJson = ClientDataManager.getClientById( clientId );
 					var activityIdArr_unsynced = ClientCard.getUnsyncedActivities( clientJson ).map( act => act.id );
+					var resultJson = {};
 
-					Util.callAfterEach( 0, activityIdArr_unsynced, function( item, idx, continueCallBack ) {
+					Util.callAfterEach( 0, activityIdArr_unsynced, resultJson, function( item, idx, nextCall ) {
 						// each item calling..
-						ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, item, { clientCard: true, continueCallBack: continueCallBack } );
-					}, function() {
+						ActivitySyncUtil.clickSyncActivity( divSyncIconTag, cardDivTag, item, { clientCard: true, nextCall: nextCall, resultJson: resultJson } );						
+					}, 
+					function( idx, resultJson ) 
+					{
 						// Finish the client call..
 						delete ActivitySyncUtil.clientSyncStatus[ clientId ];
+
+						// If any of activity sync failed, show with bottom msg..
+						if ( resultJson[ Constants.status_failed ] > 0 || resultJson[ Constants.status_error ] > 0 ) ActivitySyncUtil.clientSyncBottomMsg( cardDivTag, clientId );
 					});		
 				}
 			}
 			else
 			{
-				// Display the bottom layered area msg.
-				SyncManagerNew.bottomMsgShow( undefined, undefined, cardDivTag, function( divBottomTag ) 
-				{
-					// Most recent activity: [2022-05-15 03:15pm] ERROR - error msg...
-					// Activities Summary: total 4 activities with 0 errors, 1 fails..
-					var clientJson = ClientDataManager.getClientById( clientId );
-
-					var recentActivity = ActivitySyncUtil.getSummaryMsg_recentActivity( clientJson.activities );  //'[2022-05-15 03:15pm] ERROR - error msg';
-					var activitySummary = ActivitySyncUtil.getSummaryMsg_activities( clientJson.activities ); //'total 4 activities with 0 errors, 1 fails';
-					
-					if ( recentActivity ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Most recent activity', recentActivity );
-					if ( activitySummary ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Activity summary', activitySummary, { sectionMarginTop: '12px' } );					
-				});
+				ActivitySyncUtil.clientSyncBottomMsg( cardDivTag, clientId );
 			}
 		}
 	});
 };
+
+
+ActivitySyncUtil.clientSyncBottomMsg = function( cardDivTag, clientId )
+{
+	// Display the bottom layered area msg.
+	SyncManagerNew.bottomMsgShow( undefined, undefined, cardDivTag, function( divBottomTag ) 
+	{
+		// Most recent activity: [2022-05-15 03:15pm] ERROR - error msg...
+		// Activities Summary: total 4 activities with 0 errors, 1 fails..
+		var clientJson = ClientDataManager.getClientById( clientId );
+
+		var recentActivity = ActivitySyncUtil.getSummaryMsg_recentActivity( clientJson.activities );  //'[2022-05-15 03:15pm] ERROR - error msg';
+		var activitySummary = ActivitySyncUtil.getSummaryMsg_activities( clientJson.activities ); //'total 4 activities with 0 errors, 1 fails';
+		
+		if ( recentActivity ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Most recent activity', recentActivity );
+		if ( activitySummary ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Activity summary', activitySummary, { sectionMarginTop: '12px' } );
+	});
+};
+
 
 ActivitySyncUtil.getSummaryMsg_recentActivity = function( activities )
 {
@@ -128,78 +220,8 @@ ActivitySyncUtil.getSummaryMsg_activities = function( activities )
 	return msgStr;
 };
 
-ActivitySyncUtil.clickSyncActivity = function( divSyncIconTag, cardDivTag, activityId, options )
-{
-	var activityJson = ActivityDataManager.getActivityById( activityId );
-	var statusVal = ( activityJson.processing ) ? activityJson.processing.status: '';
 
-	if ( !options ) options = {};
-
-	// NOTE:
-	//  - If status is not syncable one, display bottom message
-	//  - If offline, display the message about it.
-	if ( SyncManagerNew.isSyncReadyStatus( statusVal ) )
-	{
-		//if ( options.continueCallBack ) options.continueCallBack();  // END POINT
-		//if ( options.syncDisabled )  // OBSOLETE: NOT USED ANYMORE
-		//{ if ( options.syncDisabledMsg ) MsgManager.msgAreaShow( options.syncDisabledMsg ); }
-
-		// If Sync Btn is clicked while in coolDown mode, display msg...  Should be changed..
-		ActivityDataManager.checkActivityCoolDown( activityId, function( timeRemainMs )
-		{      
-			if ( !options.clientCard )
-			{
-				// Display Left Msg <-- Do not need if?                          
-				var leftSec = UtilDate.getSecFromMiliSec( timeRemainMs );
-				var coolTime = UtilDate.getSecFromMiliSec( ConfigManager.coolDownTime );
-				MsgManager.msgAreaShow( '<span term="' + ConfigManager.getSettingsTermId( "coolDownMsgTerm" ) + '">In coolDown mode, left: </span>' + '<span>' + leftSec + 's / ' + coolTime + 's' + '</span>' ); 
-			}
-		}, 
-		function() 
-		{			
-			// If the 'sync' click is from client activity list, click on client level sync ( if enabled.. )
-			if ( options.clientSync ) cardDivTag.closest( 'div.card.client' ).find( 'div.clientContainer.card__container' ).find( 'div.activityStatusIcon[clientid]' ).click();
-			else
-			{
-				// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
-				ActivitySyncUtil.syncUpActivity_IfOnline( activityId, function() 
-				{
-					if ( options.continueCallBack ) options.continueCallBack();  // END POINT
-
-					ActivitySyncUtil.clientActivityList_FavListReload( cardDivTag );
-				}, 
-				function() { 
-					if ( options.continueCallBack ) options.continueCallBack();  // END POINT					
-
-					MsgManager.msgAreaShow( 'Sync is not available with offline AppMode..' ); // TODO: should be called only once?  or discontinue the process..
-				});
-			}
-		});
-	}  
-	else if ( statusVal === Constants.status_processing ) 
-	{ 
-		if ( options.continueCallBack ) options.continueCallBack();  // END POINT
-	}
-	else
-	{
-		if ( !divSyncIconTag.hasClass( 'detailViewCase' ) )
-		{
-			// Display the popup
-			SyncManagerNew.bottomMsgShow( statusVal, activityJson, cardDivTag );
-	
-			// NOTE: STATUS CHANGED!!!!
-			// If submitted with msg one, mark it as 'read' and rerender the activity Div.
-			if ( statusVal === Constants.status_submit_wMsg )        
-			{
-				// TODO: Should create a history...
-				ActivityDataManager.activityUpdate_Status( activityId, Constants.status_submit_wMsgRead );                        
-			}
-		}
-
-		if ( options.continueCallBack ) options.continueCallBack();  // END POINT
-	}	
-};
-
+// ---------------------------------------------
 
 // NEW - If current div card belongs to clientDetail Activity List, reload the favList..
 ActivitySyncUtil.clientActivityList_FavListReload = function( cardDivTag )

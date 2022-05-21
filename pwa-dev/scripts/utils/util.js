@@ -389,11 +389,11 @@ Util.getItemsFromList = function( list, value, propertyName )
 // Recurrsive/iterative - synced call
 
 // CALL BACK WITH ARRAY..  <-- we pass with array and each item calls this?
-Util.callAfterEach = function( idx, list, eachItemCallBack, finishCallBack )
+Util.callAfterEach = function( idx, list, resultJson, eachItemCallBack, finishCallBack )
 {
 	if ( idx > ( list.length - 1 ) )
 	{
-		if ( finishCallBack ) finishCallBack( idx );
+		if ( finishCallBack ) finishCallBack( idx, resultJson );
 	}
 	else
 	{
@@ -402,13 +402,13 @@ Util.callAfterEach = function( idx, list, eachItemCallBack, finishCallBack )
 		try
 		{
 			eachItemCallBack( item, idx, function() {
-				Util.callAfterEach( idx + 1, list, eachItemCallBack, finishCallBack );		
+				Util.callAfterEach( idx + 1, list, resultJson, eachItemCallBack, finishCallBack );		
 			});
 		}
 		catch( errMsg )
 		{
 			console.log( 'ERROR in Util.callAfterEach, ' + errMsg );
-			Util.callAfterEach( idx + 1, list, eachItemCallBack, finishCallBack );  // If failed, continue to next one.
+			Util.callAfterEach( idx + 1, list, resultJson, eachItemCallBack, finishCallBack );  // If failed, continue to next one.
 			//if ( finishCallBack ) finishCallBack( idx );
 		}
 	}

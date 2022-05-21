@@ -249,12 +249,10 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
         // Q: THIS SHOULD NOT BE OBJECT METHOD...  
         ActivityCard.highlightActivityDiv( activityId, true );
 
-        ActivityCard.performSyncUp( activityId, function( success, responseJson ) 
+        ActivityCard.performSyncUp( activityId, function( success, responseJson, newStatus ) 
         {
             // gAnalytics Event
             GAnalytics.setEvent( 'SyncEnded', activityId, success, 1 );
-            //GAnalytics.setEvent = function(category, action, label, value = null) 
-            // ?? might need to change parameters on how to count success vs failure..
             
 
             SyncManagerNew.syncUpActivity_ResultUpdate( success, resultData );
@@ -275,7 +273,7 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
             ClientCard.reRenderClientCardsById( clientId, { 'activitiesTabClick': true } );
 
 
-            if ( returnFunc ) returnFunc( syncReadyJson, success, responseJson );
+            if ( returnFunc ) returnFunc( syncReadyJson, success, responseJson, newStatus );
         });
     }
     else

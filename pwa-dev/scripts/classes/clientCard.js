@@ -101,7 +101,6 @@ function ClientCard( clientId, options )
             var divSyncIconTag;
             var divSyncStatusTextTag;
             
-
             // NEW Client Level Sync Status (has 2 status only - 'synced' / 'pending')
             if ( ConfigManager.isClientSync_ClientLevel() )
             {
@@ -112,7 +111,7 @@ function ClientCard( clientId, options )
                 // Within it, check if there is any unsynced activities.  If so, the status would be 'unsynced'
                 ActivitySyncUtil.displayStatusLabelIcon_ClientCard( clientJson );
 
-                ActivitySyncUtil.setSyncIconClickEvent_ClientCard( divSyncIconTag, clientCardDivTag ); //, activityIdArr );
+                ActivitySyncUtil.setSyncIconClickEvent_ClientCard( divSyncIconTag, clientCardDivTag, { clientClick: true } ); //, activityIdArr );
             }
             else 
             {

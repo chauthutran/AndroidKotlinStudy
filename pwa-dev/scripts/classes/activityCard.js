@@ -456,7 +456,6 @@ ActivityCard.highlightActivityDiv = function( activityId, bHighlight )
 
 // -------------------------------
 
-
 // Perform Submit Operation..
 ActivityCard.performSyncUp = function( activityId, afterDoneCall )
 {
@@ -465,7 +464,6 @@ ActivityCard.performSyncUp = function( activityId, afterDoneCall )
 
     try
     {
-
         // gAnalytics Event
         GAnalytics.setEvent( 'SyncRun', activityId, 'activity', 1 );
         //GAnalytics.setEvent = function(category, action, label, value = null) 
@@ -539,7 +537,7 @@ ActivityCard.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Ori
     // NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
 
     // Based on response(success/fail), perform app/activity/client data change
-    ActivityCard.syncUpResponseHandle( activityJson_Orig, activityId, success, responseJson, function( success, errMsg ) 
+    ActivityCard.syncUpResponseHandle( activityJson_Orig, activityId, success, responseJson, function( success, errMsg, newStatus ) 
     {
         // Updates UI & perform any followUp actions - 'responseCaseAction'
 
@@ -563,7 +561,7 @@ ActivityCard.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Ori
             throw 'FAILED to handle syncUp response, activityId lost: ' + activityId;
         }
 
-        afterDoneCall( success, responseJson );
+        afterDoneCall( success, responseJson, newStatus );
     });   
 };
 
@@ -572,7 +570,6 @@ ActivityCard.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Ori
 ActivityCard.syncUpResponseHandle = function( activityJson_Orig, activityId, success, responseJson, callBack )
 {
     var operationSuccess = false;
-    //var activityId = me.activityId;
 
     // 1. Check success
     if ( success && responseJson && responseJson.result && responseJson.result.client )
@@ -594,24 +591,15 @@ ActivityCard.syncUpResponseHandle = function( activityJson_Orig, activityId, suc
                 delete processingInfo.fixActivityCase;
                 ActivityCard.deleteFixActivityRecord( activityId );
             }
-
             
             ClientDataManager.setActivityDateLocal_client( clientJson );
 
-            // TODO: NOTE!!  COMPLECATED MERGING AND SYNC UP CASES!!
-            // We usually have to delete App version activity at this point!!!! - since the merge only takes in the new activity.
-            // But have the merge take care of this!!
-
-            //else throw "ERROR, Downloaded activity does not contain 'id'.";
-
             // Removal of existing activity/client happends within 'mergeDownloadClients()'
             ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 
-            {
-                // NOTE: Had - relationship target clients update sync.. - REMOVED CODE HERE..
-               
+            {               
                 // 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
                 ClientDataManager.saveCurrent_ClientsStore( () => {
-                    if ( callBack ) callBack( operationSuccess );
+                    if ( callBack ) callBack( operationSuccess, undefined, Constants.status_submit );
                 });
             });
         }
@@ -625,7 +613,7 @@ ActivityCard.syncUpResponseHandle = function( activityJson_Orig, activityId, suc
             ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
 
             ClientDataManager.saveCurrent_ClientsStore( () => {
-                if ( callBack ) callBack( operationSuccess, errMsg );
+                if ( callBack ) callBack( operationSuccess, errMsg, Constants.status_failed );
             });                                      
         }            
     }
@@ -692,7 +680,7 @@ ActivityCard.syncUpResponseHandle = function( activityJson_Orig, activityId, suc
 
         ClientDataManager.saveCurrent_ClientsStore( () => {
             // Add activityJson processing
-            if ( callBack ) callBack( operationSuccess, errMsg );
+            if ( callBack ) callBack( operationSuccess, errMsg, newStatus );
         });                                      
     } 
 };
