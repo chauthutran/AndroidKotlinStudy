@@ -290,7 +290,7 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
     if ( sourceType ) payloadJson.sourceType = sourceType;
     if ( sourceType === "mongo" && mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
     if ( ConfigManager.getSettings().uniquePhoneNumberCase === true ) payloadJson.uniquePhoneNumberCase = true;
-    if ( ConfigManager.getSettings().confirm_backendTransStatusChange === true ) payloadJson.confirm_backendTransStatusChange = true;
+    if ( ConfigManager.getSettings().confirmClientSchLvl > 0 ) payloadJson.confirmClientSchLvl = ConfigManager.getSettings().confirmClientSchLvl;
 
     if ( WsCallManager.actionErr ) payloadJson.actionErr = WsCallManager.actionErr;
     if ( WsCallManager.throwWsError ) payloadJson.throwWsError = WsCallManager.throwWsError;

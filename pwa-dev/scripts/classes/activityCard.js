@@ -667,6 +667,18 @@ ActivityCard.syncUpResponseHandle = function( activityJson_Orig, activityId, suc
 
                 // TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
                 if ( responseJson.subStatus === 'errorStop' || responseJson.subStatus === 'errorRepeatFail' ) newStatus = Constants.status_error;
+                
+                // NEW!!
+                if ( responseJson.subStatus === 'notificationStop' ) 
+                {
+                    newStatus = Constants.status_error;
+                    console.log( '[subStatus notificationStop]' );
+                    console.log( responseJson );
+                    // Need to save the clients 'confirmClients' somewhere...  save in activity..?
+                    // Then, in open msg, we can present it with options...
+                    //activityJson_Orig
+                }
+
             } 
             catch ( errMsgCatched )
             {

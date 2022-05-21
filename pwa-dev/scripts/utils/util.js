@@ -2171,6 +2171,13 @@ Util.getJsonStr = function( json )
 	return output;
 };
 
+
+Util.strEndsWith = function( str, suffix )
+{
+	return ( str.indexOf( suffix, str.length - suffix.length ) !== -1 );
+};
+
+
 // Others
 // ----------------------------------
 

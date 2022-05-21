@@ -2088,8 +2088,19 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 			actJson.transactions = activityJson.transactions;
 
 			tabTag.append( '<div class="section" style="margin-left: 0px !important;"><label term="">ACTIVITY DETAIL:</label></div>' );	
-			tabTag.append( '<div class="section" style="padding: 2px;"><label term="">Date:</label></div>' );
-			tabTag.append( FormUtil.jsonDataInTable_Wrap( actJson.date, { divTablePaddingLeft: '10px', left2: '20px' } ) );
+			tabTag.append( '<div class="section" style="padding: 2px;"><label term="">Date:</label> <a class="dateTypeSwitch" style="display: none;">Loc</a></div>' );
+
+			var datesLoc = FormUtil.dateFieldTypeFilter( actJson.date, 'Loc' );
+
+			tabTag.find( 'div.actDate' ).remove();
+			tabTag.append( FormUtil.jsonDataInTable_Wrap( datesLoc, { tableClass: 'actDate', divTablePaddingLeft: '10px', SndTab: '20px' } ) );
+
+
+			//FormUtil.switchDateJson( tabTag.find( 'a.dateTypeSwitch' ), actJson.date, function( datesJson ) {
+			//	tabTag.find( 'div.actDate' ).remove();
+			//	tabTag.append( FormUtil.jsonDataInTable_Wrap( datesLoc, { tableClass: 'actDate', divTablePaddingLeft: '10px', SndTab: '20px' } ) );
+			//});
+
 
 			actJson.transactions.forEach( trans => 
 			{
@@ -2113,7 +2124,7 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 								var dataJson = trans[prop];
 		
 								tabTag.append( '<div class="section" style="padding-left: 10px; color: #333;"><label term="">' + prop + ':</label></div>' );
-								tabTag.append( FormUtil.jsonDataInTable_Wrap( dataJson, { divTablePaddingLeft: '20px', left2: '30px' } ) );			
+								tabTag.append( FormUtil.jsonDataInTable_Wrap( dataJson, { divTablePaddingLeft: '20px', SndTab: '30px' } ) );			
 							}
 						}		
 					}
@@ -2126,7 +2137,7 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 			if ( bShowActivity ) tabTag.append( '<div style="width:100%;"><hr style="border: 1px solid darkgrey;opacity: 0.3;"></div>' );
 
 			tabTag.append( '<div class="section" style="margin-left: 0px !important;"><label term="activityDetail_details_title">Client DETAIL:</label></div>' );	
-			tabTag.append( FormUtil.jsonDataInTable_Wrap( clientDetails, { divTablePaddingLeft: '10px', left2: '20px' } ) );
+			tabTag.append( FormUtil.jsonDataInTable_Wrap( clientDetails, { divTablePaddingLeft: '10px', SndTab: '20px' } ) );
 		}
 
 
@@ -2142,6 +2153,51 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 		nameFields.width( widthMax );
 
 	}	
+};
+
+
+FormUtil.switchDateJson = function( switchTag, actDateJson, callBack )
+{
+	if ( callBack )
+	{
+		switchTag.click( function( e ) {
+			e.preventDefault();
+
+			// Set the switch tagging..
+			switchTag.text();
+
+			// display with the date type filter			
+			var datesLoc = FormUtil.dateFieldTypeFilter( actJson.date, 'Loc' );
+
+			if ( callBack ) callBack( datesLoc );
+		});
+	}	
+};
+	
+FormUtil.getDateTypesLinks = function() {}
+	
+	
+//	tabTag.find( 'a.dateTypeSwitch' ), actJson.date, function( datesJson ) {
+//	tabTag.append( FormUtil.jsonDataInTable_Wrap( datesLoc, { divTablePaddingLeft: '10px', SndTab: '20px' } ) );
+//});
+
+//var datesLoc = FormUtil.dateFieldTypeFilter( actJson.date, 'Loc' );
+
+
+FormUtil.dateFieldTypeFilter = function( dateJson, type )
+{
+	var newDataJson = {}; //Util.cloneJson( dateJson );
+
+	// If 'type' is 'Loc / UTC'  <-- by checking last name
+	for ( var fieldName in dateJson )
+	{
+		if ( Util.strEndsWith( fieldName, type ) )
+		{
+			newDataJson[fieldName] = dateJson[ fieldName ];
+		}
+	}
+
+	return newDataJson;
 };
 
 
@@ -2197,6 +2253,7 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal, option )
 	if ( !option ) option = {};
 	var tableTag = $( '<div style="display: table;" />');
 		
+	if ( option.tableClass ) tableTag.addClass( option.tableClass );
 	if ( option.divTablePaddingLeft ) tableTag.css( 'padding-left', option.divTablePaddingLeft );
 	
 	if ( jsonData )
@@ -2233,7 +2290,7 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal, option )
 
 						if ( Util.isTypeObject( value ) )
 						{
-							var subTableTag = FormUtil.jsonDataInTable( value, hideEmptyVal, { divTablePaddingLeft: option.left2 } );
+							var subTableTag = FormUtil.jsonDataInTable( value, hideEmptyVal, { divTablePaddingLeft: option.SndTab } );
 							valueFieldTag.append( subTableTag );
 						}
 						else if ( Util.isTypeArray( value ) )
@@ -2242,7 +2299,7 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal, option )
 							{
 								if ( Util.isTypeObject( pArrItem ) )
 								{
-									valueFieldTag.append( FormUtil.jsonDataInTable( pArrItem, hideEmptyVal, { divTablePaddingLeft: option.left2 } ) );
+									valueFieldTag.append( FormUtil.jsonDataInTable( pArrItem, hideEmptyVal, { divTablePaddingLeft: option.SndTab } ) );
 								} 
 								else 
 								{	
