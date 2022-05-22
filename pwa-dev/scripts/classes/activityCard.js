@@ -634,18 +634,9 @@ ActivityCard.syncUpResponseHandle = function( activityJson_Orig, activityId, suc
                     if ( responseJson.result.operation ) errMsg += ' [result.operation]: ' + responseJson.result.operation;
                     if ( responseJson.result.errData ) errMsg += ' [result.errData]: ' + Util.getJsonStr( responseJson.result.errData ); 
                 }
-                else if ( responseJson.errMsg ) 
-                {
-                    errMsg += ' [errMsg]: ' + responseJson.errMsg;
-                }
-                else if ( responseJson.errorMsg ) 
-                {
-                    errMsg += ' [errorMsg]: ' + responseJson.errorMsg;
-                }
-                else if ( responseJson.report )
-                {
-                    errMsg += ' [report.msg]: ' + responseJson.report.msg;
-                }
+                else if ( responseJson.errMsg )  errMsg += ' [errMsg]: ' + responseJson.errMsg;
+                else if ( responseJson.errorMsg ) errMsg += ' [errorMsg]: ' + responseJson.errorMsg;
+                else if ( responseJson.report ) errMsg += ' [report.msg]: ' + responseJson.report.msg;
                 else
                 {
                     // TODO: Need to simplify this...
@@ -662,11 +653,11 @@ ActivityCard.syncUpResponseHandle = function( activityJson_Orig, activityId, suc
                     newStatus = Constants.status_error;
                     console.log( '[subStatus notificationStop]' );
                     console.log( responseJson );
+                    
                     // Need to save the clients 'confirmClients' somewhere...  save in activity..?
                     // Then, in open msg, we can present it with options...
-                    //activityJson_Orig
+                    activityJson_Orig.confirmClients = responseJson.confirmClients;
                 }
-
             } 
             catch ( errMsgCatched )
             {

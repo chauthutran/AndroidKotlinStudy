@@ -165,11 +165,32 @@ ActivitySyncUtil.clientSyncBottomMsg = function( cardDivTag, clientId )
 		// Activities Summary: total 4 activities with 0 errors, 1 fails..
 		var clientJson = ClientDataManager.getClientById( clientId );
 
-		var recentActivity = ActivitySyncUtil.getSummaryMsg_recentActivity( clientJson.activities );  //'[2022-05-15 03:15pm] ERROR - error msg';
-		var activitySummary = ActivitySyncUtil.getSummaryMsg_activities( clientJson.activities ); //'total 4 activities with 0 errors, 1 fails';
+		var recentActivity = ActivityDataManager.getLastActivity( clientJson.activities );
+		var recentActivityMsg = ActivitySyncUtil.getSummaryMsg_recentActivity( clientJson.activities );  //'[2022-05-15 03:15pm] ERROR - error msg';
+		var activitySummaryMsg = ActivitySyncUtil.getSummaryMsg_activities( clientJson.activities ); //'total 4 activities with 0 errors, 1 fails';
 		
-		if ( recentActivity ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Most recent activity', recentActivity );
-		if ( activitySummary ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Activity summary', activitySummary, { sectionMarginTop: '12px' } );
+		if ( recentActivity.confirmClients && recentActivity.confirmClients.length > 0 && recentActivity.processing.status === Constants.status_error )
+		{
+			// NEW: If the most recent acivity has 'error' and confirmClients data, list those clients..  <-- selectable events to be implemented later time.
+			var confirmClientsDivTag = $( '<div><div>[Confirm Clients:]</div></div>' );
+
+			recentActivity.confirmClients.forEach( cClient => {
+				var infoStr = Util.getStr( cClient.clientDetails.firstName ) + ' ' + Util.getStr( cClient.clientDetails.lastName ) + ', ' + Util.getStr( cClient.clientDetails.age );
+				var titleStr = 'created At: ' + cClient.date.createdLoc + ', id: ' + cClient._id;
+				var infoTag = $( '<div style="font-size: 14px;"></div>' );
+				infoTag.text( infoStr ).attr( 'title', titleStr );
+
+				confirmClientsDivTag.append( infoTag );
+			});
+
+			// on click, confirm + create the activityEdit of existing activity (of the recentActivity).. <-- with search by this id..
+
+			divBottomTag.append( confirmClientsDivTag );
+		}
+
+
+		if ( recentActivityMsg ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Most recent activity', recentActivityMsg );
+		if ( activitySummaryMsg ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Activity summary', activitySummaryMsg, { sectionMarginTop: '12px' } );
 	});
 };
 

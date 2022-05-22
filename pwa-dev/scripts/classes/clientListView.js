@@ -214,6 +214,8 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
 
         if ( me.viewDef_Selected )
         {
+            me.viewSelectTag.css( 'background-color', '' );
+
             me.viewFilteredList = me.viewFilterData( me.viewDef_Selected, mainList ); 
         
             // NOTE: TODO: if groupBy exists, we need different sorting?!! <-- 
@@ -228,6 +230,8 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
         else
         {
             console.customLog( 'Selected View definition not found!' );
+
+            me.viewSelectTag.css( 'background-color', 'orange' );
         }   
 
     
