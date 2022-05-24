@@ -91,11 +91,10 @@ ConfigManager.setConfigJson = function ( loginData, userRolesOverrides )
 
             ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
 
-            // Populate options 'options_ouChildren', 'ouTag' is applicable
+            // Populate options 'options_ouChildren', 'ouTag', 'ouVMMC', if applicable
             ConfigManager.populateOptions_ouChildren( ConfigManager.configJson, loginData );
             ConfigManager.populateOptions_ouTagOus( ConfigManager.configJson, loginData );
-            // Possibily - populate orgUnitChildren (duplicate) <-- change a bit?
-
+            ConfigManager.populateOptions_ouVMMC( ConfigManager.configJson, loginData );
         }
     }
     catch ( errMsg )
@@ -1178,54 +1177,42 @@ ConfigManager.populateOptions_ouChildren = function( configJson, loginData )
     if ( ouD && ouD.orgUnit && ouD.orgUnit.children && ouD.orgUnit.children.length > 0 ) ouList = ouD.orgUnit.children;
     else if ( lao && lao.ouChildren && lao.ouChildren.children && lao.ouChildren.children.length > 0 ) ouList = lao.ouChildren.children; 
 
-    if ( ouList.length > 0 )
-    {
-        try
-        {
-            if ( configJson.definitionOptions && configJson.definitionOptions.options_ouChildren )
-            {
-                var op_children = configJson.definitionOptions.options_ouChildren;
-
-                op_children.splice( 0, op_children.length );
-
-                ouList.forEach( ou => {
-                    op_children.push( { defaultName: ou.name, value: ou.code, term: '' } );
-                });
-            }
-        }
-        catch( errMsg ) {
-            console.log( 'ERROR in ConfigManager.populateOptions_ouChildren, ' + errMsg );
-        }
-    }
+    ConfigManager.populateOptionsOuData( configJson, 'options_ouChildren', ouList );
 };
 
 
 ConfigManager.populateOptions_ouTagOus = function( configJson, loginData )
 {
-    if ( loginData.loginAfterOpsResult && loginData.loginAfterOpsResult.ouTagOrgUnits )
+    var data = loginData.loginAfterOpsResult;
+    if ( data && data.ouTagOrgUnits ) ConfigManager.populateOptionsOuData( configJson, 'options_ouTagOus', data.ouTagOrgUnits.organisationUnits );
+};
+
+
+ConfigManager.populateOptions_ouVMMC = function( configJson, loginData )
+{
+    var data = loginData.loginAfterOpsResult;
+    if ( data && data.ouVMMC ) ConfigManager.populateOptionsOuData( configJson, 'options_ouVMMC', data.ouVMMC.organisationUnits );
+};
+
+
+ConfigManager.populateOptionsOuData = function( configJson, optionName, ouList )
+{
+    if ( ouList && ouList.length > 0 )
     {
-        var ouTagObj = loginData.loginAfterOpsResult.ouTagOrgUnits;
-        var ouTagOus = ouTagObj.organisationUnits;
-
-        if ( ouTagOus && ouTagOus.length > 0 )
+        try
         {
-            try
+            if ( configJson.definitionOptions && configJson.definitionOptions[optionName] )
             {
-                if ( configJson.definitionOptions && configJson.definitionOptions.options_ouTagOus )
-                {
-                    var options_ouTagOus = configJson.definitionOptions.options_ouTagOus;
+                var option = configJson.definitionOptions[optionName];
 
-                    options_ouTagOus.splice(0, options_ouTagOus.length);
+                option.splice( 0, option.length );
 
-                    ouTagOus.forEach( ou => {
-                        options_ouTagOus.push( { defaultName: ou.name, value: ou.code, term: '' } );
-                    });
-                }
-            }
-            catch( errMsg ) {
-                console.log( 'ERROR in ConfigManager.populateOptions_ouTagOus, ' + errMsg );
+                ouList.forEach( ou => {
+                    option.push( { defaultName: ou.name, value: ou.code, term: '' } );
+                });
             }
         }
+        catch( errMsg ) { console.log( 'ERROR in ConfigManager.populateOptionsOuData, ' + errMsg ); }
     }
 };
 
