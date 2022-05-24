@@ -156,6 +156,10 @@ ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, ca
 };
 
 
+// ===============================================
+// ---- NOT RELATED to activitySync, but more of bottom section msg?
+
+
 ActivitySyncUtil.clientSyncBottomMsg = function( cardDivTag, clientId )
 {
 	// Display the bottom layered area msg.
@@ -165,35 +169,100 @@ ActivitySyncUtil.clientSyncBottomMsg = function( cardDivTag, clientId )
 		// Activities Summary: total 4 activities with 0 errors, 1 fails..
 		var clientJson = ClientDataManager.getClientById( clientId );
 
-		var recentActivity = ActivityDataManager.getLastActivity( clientJson.activities );
+		// 'confirmClients' activities link show
+		ActivitySyncUtil.confirmClients_Activities( clientJson.activities, divBottomTag );
+
+		// 2 info display - recent activity, summary.
 		var recentActivityMsg = ActivitySyncUtil.getSummaryMsg_recentActivity( clientJson.activities );  //'[2022-05-15 03:15pm] ERROR - error msg';
 		var activitySummaryMsg = ActivitySyncUtil.getSummaryMsg_activities( clientJson.activities ); //'total 4 activities with 0 errors, 1 fails';
-		
-		if ( recentActivity.confirmClients && recentActivity.confirmClients.length > 0 && recentActivity.processing.status === Constants.status_error )
-		{
-			// NEW: If the most recent acivity has 'error' and confirmClients data, list those clients..  <-- selectable events to be implemented later time.
-			var confirmClientsDivTag = $( '<div><div>[Confirm Clients:]</div></div>' );
-
-			recentActivity.confirmClients.forEach( cClient => {
-				var infoStr = Util.getStr( cClient.clientDetails.firstName ) + ' ' + Util.getStr( cClient.clientDetails.lastName ) + ', ' + Util.getStr( cClient.clientDetails.age );
-				var titleStr = 'created At: ' + cClient.date.createdLoc + ', id: ' + cClient._id;
-				var infoTag = $( '<div style="font-size: 14px;"></div>' );
-				infoTag.text( infoStr ).attr( 'title', titleStr );
-
-				confirmClientsDivTag.append( infoTag );
-			});
-
-			// on click, confirm + create the activityEdit of existing activity (of the recentActivity).. <-- with search by this id..
-
-			divBottomTag.append( confirmClientsDivTag );
-		}
-
 
 		if ( recentActivityMsg ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Most recent activity', recentActivityMsg );
 		if ( activitySummaryMsg ) SyncManagerNew.bottomMsg_sectionRowAdd( divBottomTag, 'Activity summary', activitySummaryMsg, { sectionMarginTop: '12px' } );
 	});
 };
 
+
+ActivitySyncUtil.confirmClients_Activities = function( activities, divBottomTag )
+{
+	if ( activities )
+	{
+		//var bHasConfirmClientsCase = false;
+		var actNo = 0;
+		var confirmClientsDivTag = $( '<div style="margin: 8px 2px 10px 2px; padding: 4px; border: 1px solid lightBlue; background-color: cornsilk;"><div style="font-size: 14px; color: tomato;">Confirmation Required:</div></div>' );
+
+		activities.forEach( act => 
+		{
+			if ( act.confirmClients && act.confirmClients.length > 0 && act.processing.status === Constants.status_error )
+			{
+				// Display activities to confirm..  Not only recent Activity..  <-- with border line and padding..
+				//bHasConfirmClientsCase = true;
+				actNo++;
+
+				var activityTag = $( '<div style="margin: 3px 0px 0px 8px;"></div>' );
+
+				var transTypes = act.transactions.map( trans => ( trans.type ) ? trans.type: '' ).join( ', ' );
+
+				// 1. Add createdDate, transTypes, status, # of clients choice..  <-- but can decide to go with new client?
+				var actInfoStr = 'ACT#' + actNo + ': [Created] ' + Util.getStr( act.date.createdLoc ) + ', [TransTypes] ' + transTypes + ', ' + act.confirmClients.length + ' Clients';
+				var actInfoTag = $( '<div style="font-size: 14px; cursor: pointer; color: #333;"></div>' ).text( actInfoStr ).attr( 'title', 'Click to select client' );
+				activityTag.append( actInfoTag );
+
+				var hiddenClientListDivTag = $( '<div style="display: none; margin: 2px 0px 0px 7px;"></div>' );
+
+				var radioName = 'cConfirm_' + act.id;
+
+				act.confirmClients.forEach( cClient => 
+				{
+					var cStr = Util.getStr( cClient.clientDetails.firstName ) + ' ' + Util.getStr( cClient.clientDetails.lastName ) + ', ' + Util.getStr( cClient.clientDetails.age ) + ', Created: ' + cClient.date.createdLoc + ', id: ' + cClient._id;
+					var cTag = $( '<div style="font-size: 13px; padding: 3px;"><input type="radio" name="' + radioName + '" value="' + cClient._id + '" style="width: unset;"><span class="cTitle"></span></div>' );
+					cTag.find( '.cTitle' ).text( cStr );
+
+					hiddenClientListDivTag.append( cTag );					
+				});
+				var newCTag = $( '<div style="font-size: 13px; padding: 3px;"><input type="radio" name="' + radioName + '" value="newClient" style="width: unset;"><span class="cTitle">New Client</span></div>' );
+				var btnCConfirmTag = $( '<div style="font-size: 13px; padding: 3px;"><button class="btnCConfirm cbtn c_cb">Confirm</button></div>' );
+				
+				hiddenClientListDivTag.append( newCTag );					
+				hiddenClientListDivTag.append( btnCConfirmTag );					
+				
+				// TODO: Add Confirm button => execute the activityEdit create and remove this list.. + undo?
+				//   + add radio button with next line layer..
+				// on click, confirm + create the activityEdit of existing activity (of the recentActivity).. <-- with search by this id..
+
+				actInfoTag.click( function( e ) {  hiddenClientListDivTag.toggle();  });
+				btnCConfirmTag.click( function( e ) {
+
+					var radioVal = $( 'input[name="' + radioName + '"]:checked' ).val();
+
+					// Get the selected radio button..
+					if ( !radioVal ) alert( 'Confirm client is not selected, yet!' );
+					else
+					{
+						var reply = confirm( 'This client, ' + radioVal + ', identifies the desired client definitely?' );
+						if ( reply === true ) { alert( 'Edit the activity with searchValues - clientId' ); }
+
+						// Place this on Config?  Or simply get current activity, copy the edit process, replace the search term?
+						//	Place this logic on 'activityDataManager'?
+
+						
+
+					}
+				});
+
+				activityTag.append( hiddenClientListDivTag );
+
+				// 2. Add event to display list of clients as choice..
+				confirmClientsDivTag.append( activityTag );
+			}
+		});
+
+		if ( actNo > 0 )
+		{
+			// NEW: If the most recent acivity has 'error' and confirmClients data, list those clients..  <-- selectable events to be implemented later time.
+			divBottomTag.append( confirmClientsDivTag );
+		}
+	}
+};
 
 ActivitySyncUtil.getSummaryMsg_recentActivity = function( activities )
 {
@@ -386,11 +455,10 @@ ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 	var divSyncIconTag = $( 'div.activityStatusIcon[clientId="' + clientId + '"]' );
 	var divSyncStatusTextTag = $( 'div.activityStatusText[clientId="' + clientId + '"]' );
 
-	divSyncIconTag.empty().attr( 'status', '' ).attr( 'title', '' ); //.css( 'border', 'none' );  // unset (vs none)
+	divSyncIconTag.empty().attr( 'status', '' ).attr( 'title', '' ).append( '<img class="clientSyncIconImg">' ); //.css( 'border', 'none' );  // unset (vs none)
 	divSyncStatusTextTag.empty().attr( 'status', '' );
 
-	var imgIcon = $( '<img>' );
-
+	var imgIcon = divSyncIconTag.find( 'img.clientSyncIconImg' );
 
 	// Display colored dot with title.. on existance of 'error' / 'failed' activities
 	var failedList = client.activities.filter( act => ActivityDataManager.getActivityStatus( act ) === Constants.status_failed );
@@ -423,8 +491,6 @@ ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 		divSyncIconTag.attr( 'status', Constants.status_submit );
 	}
 
-
-	divSyncIconTag.append( imgIcon );
 	FormUtil.rotateTag( divSyncIconTag, bRotating );
 
 

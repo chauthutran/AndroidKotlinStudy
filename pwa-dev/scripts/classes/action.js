@@ -534,7 +534,7 @@ function Action( cwsRenderObj, blockObj )
 					}
 					else if ( clickActionJson.actionType === "editActivitiesInClient" )
 					{
-						// Create a queue payload in WFA app - to send request backend with removal of schedule activity removal
+						// PURPOSE: Create a queue payload in WFA app - to send request backend with removal of schedule activity removal
 
 						// INFO.client is assumed to be populated.
 						if ( !INFO.client ) MsgManager.msgAreaShow( 'editActivitiesInClient needs INFO.client!', 'ERROR' );
