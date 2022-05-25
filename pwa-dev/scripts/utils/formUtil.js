@@ -2095,12 +2095,10 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 			tabTag.find( 'div.actDate' ).remove();
 			tabTag.append( FormUtil.jsonDataInTable_Wrap( datesLoc, { tableClass: 'actDate', divTablePaddingLeft: '10px', SndTab: '20px' } ) );
 
-
 			//FormUtil.switchDateJson( tabTag.find( 'a.dateTypeSwitch' ), actJson.date, function( datesJson ) {
 			//	tabTag.find( 'div.actDate' ).remove();
 			//	tabTag.append( FormUtil.jsonDataInTable_Wrap( datesLoc, { tableClass: 'actDate', divTablePaddingLeft: '10px', SndTab: '20px' } ) );
 			//});
-
 
 			actJson.transactions.forEach( trans => 
 			{
@@ -2288,6 +2286,7 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal, option )
 						var valueFieldTag = $( '<div style="display: table-cell;" class="fieldValue value_sub"></div>' );
 						rowTag.append( valueFieldTag );
 
+
 						if ( Util.isTypeObject( value ) )
 						{
 							var subTableTag = FormUtil.jsonDataInTable( value, hideEmptyVal, { divTablePaddingLeft: option.SndTab } );
@@ -2303,7 +2302,8 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal, option )
 								} 
 								else 
 								{	
-									valueFieldTag.append( ' ' + pArrItem.toString() + ' ' );
+									var value = FormUtil.getFieldOption_LookupValue( fieldName, pArrItem.toString() ); 
+									valueFieldTag.append( ' ' + value + ' ' );
 								}
 							});
 						}						
@@ -2314,9 +2314,9 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal, option )
 						}
 						else
 						{
-							valueFieldTag.html( value.toString() );
-						}
-						
+							var value = FormUtil.getFieldOption_LookupValue( fieldName, value.toString() ); 
+							valueFieldTag.html( value );
+						}						
 					}
 				}
 			}
@@ -2398,8 +2398,6 @@ FormUtil.createValueTag = function( fieldName, value, templateFieldTag )
 	return;
 };
 
-// Above, remove  templateFieldTag
-
 
 FormUtil.getFieldOptions = function( fieldId )
 {
@@ -2414,9 +2412,10 @@ FormUtil.getFieldOptions = function( fieldId )
 	{
 		var matchField = Util.getFromList( defFields, fieldId, "id" );
 
-		if ( matchField && matchField.options )
+		if ( matchField )
 		{
-		   optionsName =  matchField.options;
+			if ( matchField.valueOption ) optionsName = matchField.valueOption;
+			else if ( matchField.options ) optionsName = matchField.options;
 		}
 	}
 

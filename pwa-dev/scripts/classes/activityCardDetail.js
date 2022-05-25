@@ -73,27 +73,17 @@ function ActivityCardDetail( activityId, isRestore )
 	};
 
 
-	me.showClientDetails = function( clientJson, activityJson, tabTag ) 
-	{
-		if ( clientJson )
-		{			
-			FormUtil.displayActivityDetail( clientJson.clientDetails, activityJson, tabTag );
-		}
-	};
-
 	me.setFullPreviewTabContent = function( activityId, sheetFullTag ) 
 	{
 		var clientJson = ClientDataManager.getClientByActivityId(activityId);
 		var activityJson = ActivityDataManager.getActivityById(activityId);
 
-		// TAB #1. Client Details
+		// TAB #1. Activity Details / Content Details
 		var clientDetailsTabTag = sheetFullTag.find('[tabButtonId=tab_previewDetails]');
-		me.showClientDetails(clientJson, activityJson, clientDetailsTabTag);
-
-		// NEW: TODO: use this check and populate the activity content instead..
+		FormUtil.displayActivityDetail( clientJson.clientDetails, activityJson, clientDetailsTabTag );
 
 
-		if (activityJson) 
+		if ( activityJson )
 		{			
 			// TAB #2. Payload Preview
 			var payloadTabTag = sheetFullTag.find( '[tabButtonId=tab_previewPayload]' );
