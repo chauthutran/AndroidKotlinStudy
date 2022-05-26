@@ -129,7 +129,7 @@ Templates.msgAreaBottomContent = `<div class="msgArea sync_all">
     </div>`;
 
 Templates.syncMsg_Header = `<div class="msgHeaderLabel sync_all__header_title" style="height: 20px;">Synchronization Services Deliveries</div>
-    <div class="divSyncAllClose" style="float: right; cursor: pointer; margin-top: -5px !important;">
+    <div class="divSyncAllClose mouseDown" style="float: right; cursor: pointer; margin-top: -5px !important;">
         <img src="images/close.svg" style="width: 26px; height: 26px;" />
     </div>`;
 
@@ -580,10 +580,10 @@ Templates.sheetFullFrame = `
 <div class="sheet_full-fs detailFullScreen sheetFull">
   <div class="wapper_card">
     <div class="sheet-title c_900" style="width: 100%;">
-      <img src="images/arrow_back.svg" class="btnBack">
+      <img src="images/arrow_back.svg" class="btnBack mouseDown">
       <span class="sheetTopTitle" mark="templateSheetFull" term="term_newClient" style="vertical-align: super;">New Client</span>
     </div>
-    <div class="info contentBody" style="background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px);">
+    <div class="info contentBody" style="background-color: #FFF; overflow-y: auto !important; height: 100%;">
     </div>
   </div>
 </div>

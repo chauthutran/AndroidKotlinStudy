@@ -414,7 +414,7 @@ ActivityCard.cardDivTag = `<div class="activity card">
             <div class="activityStatusText card__cta_status"></div>
             <div class="favIcon card__cta_one" style="cursor: pointer; display:none;"></div>
             <div class="activityPhone card__cta_one" style="cursor: pointer; display:none;"></div>
-            <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
+            <div class="activityStatusIcon card__cta_two mouseDown" style="cursor:pointer;"></div>
         </card__cta>
 
         <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>

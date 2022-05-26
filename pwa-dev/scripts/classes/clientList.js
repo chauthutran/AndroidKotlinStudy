@@ -251,7 +251,7 @@ function ClientList( cwsRenderObj, blockObj, blockJson )
 
 
             // If paging is enabled, display the paging status
-            if ( me.pagingData.enabled ) ItemCardList.showListButtonNote( me.listBottomDivTag, currPosJson.endReached );
+            if ( me.pagingData.enabled ) ItemCardList.showListButtonNote( me.listBottomDivTag, currPosJson.endReached, me.scrollList );
 
             TranslationManager.translatePage();
         }

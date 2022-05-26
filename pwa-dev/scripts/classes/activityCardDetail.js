@@ -416,12 +416,12 @@ ActivityCardDetail.cardFullScreen = `
   <div class="wapper_card">
   	 <div style="display: flex;">  
 		<div class="sheet-title c_900">
-			<img src='images/arrow_back.svg' class='btnBack'>
+			<img src="images/arrow_back.svg" class="btnBack mouseDown">
 			<span class="sheetTopTitle" mark="activityFull" style="vertical-align: super;">Details</span>
 		</div>
 		<div style="width: 100px; display: flex">
-			<div class="syncIcon" title="SyncAll" style="width: 37px; opacity: 0.0; cursor: pointer;">-</div>
-			<div class="onOfflineIcon" title="Network" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
+			<div class="syncIcon mouseDown" title="SyncAll" style="width: 45px; opacity: 0.0; cursor: pointer;">-</div>
+			<div class="onOfflineIcon mouseDown" title="Network" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
   		</div>
 	 </div>		
     <div class="card _tab activity">
@@ -431,8 +431,8 @@ ActivityCardDetail.cardFullScreen = `
         <card__content class="activityContent card__content" />
         <card__cta class="activityStatus card__cta">
           <div class="activityStatusText card__cta_status" />
-          <div class="activityPhone card__cta_one" style="cursor: pointer;"></div>
-          <div class="activityStatusIcon card__cta_two" style="cursor: pointer;"></div>
+          <div class="activityPhone card__cta_one mouseDown" style="cursor: pointer;"></div>
+          <div class="activityStatusIcon card__cta_two mouseDown" style="cursor: pointer;"></div>
         </card__cta>
       </div>
 

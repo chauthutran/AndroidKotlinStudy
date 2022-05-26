@@ -107,7 +107,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
             <card__cta class="activityStatus card__cta">
                 <div class="activityStatusText card__cta_status"></div>
                 <div class="activityPhone card__cta_one"></div>
-                <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
+                <div class="activityStatusIcon card__cta_two mouseDown" style="cursor:pointer;"></div>
             </card__cta>
 
             <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
@@ -324,7 +324,7 @@ function BlockList( cwsRenderObj, blockObj, blockJson )
 
 
             // If paging is enabled, display the paging status
-            if ( me.pagingData.enabled ) ItemCardList.showListButtonNote( me.listBottomDivTag, currPosJson.endReached );
+            if ( me.pagingData.enabled ) ItemCardList.showListButtonNote( me.listBottomDivTag, currPosJson.endReached, me.scrollList );
 
             TranslationManager.translatePage();
             //if ( scrollEndFunc ) scrollEndFunc();

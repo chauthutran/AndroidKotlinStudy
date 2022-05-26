@@ -120,7 +120,7 @@ Menu.populateMenuList = function( areaList, exeFunc )
     var navMenuHead = $( '<div class="navigation__header" />' );
     var navMenuLogo = $( '<div class="navigation__logo" />' );
     var navMenuUser = $( '<div class="navigation__user" />' );
-    var navMenuClose = $( '<div class="navigation__close" />' );
+    var navMenuClose = $( '<div class="navigation__close mouseDown" />' );
 
     Menu.navDrawerDivTag.append ( navMenuHead );
     navMenuHead.append ( navMenuLogo );
@@ -148,7 +148,7 @@ Menu.populateMenuList = function( areaList, exeFunc )
                 navItemsUL.append( groupRow );
             }
 
-            var menuLI = $( '<li areaId="' + area.id + '" />' ); // displayName="' + area.name + '"
+            var menuLI = $( '<li class="mouseDown" areaId="' + area.id + '" />' ); // displayName="' + area.name + '"
 
             menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
             menuLI.append( $( '<a ' + FormUtil.getTermAttr( area ) + ' class="pointer" >' + area.name + '</a>' ) );

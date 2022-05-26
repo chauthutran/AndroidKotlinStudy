@@ -385,7 +385,7 @@ function settingsApp( cwsRender )
 
                     var datePickerColl = $( `<span style="font-size: 0.71rem;">Check Date: </span>
                         <input class="inputCustDate statsCusDate" placeholder="YYYY-MM-DD" readonly style="width: 90px;" />
-                        <button class="btnSchDate dateButton2">
+                        <button class="btnSchDate dateButton2 mouseDown">
                             <img src="images/i_date.svg" class="imgCalendarInput">
                         </button>` );
 

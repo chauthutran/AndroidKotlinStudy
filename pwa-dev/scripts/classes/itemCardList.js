@@ -356,11 +356,7 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
 };
 
 
-// 1. Make it COMMON method for all 'listing' class
-// 2. [ -------------------- END -------------------- ] <-- use this text for 'MORE' & 'END'
-// 3.     opacity: 0.7;
-// 4. --------------- MORE ---------------   <-- or Use down Arrow image for more intuitive ones.
-ItemCardList.showListButtonNote = function( listBottomTag, endReached )
+ItemCardList.showListButtonNote_BACK = function( listBottomTag, endReached )
 {
     var endNoteText = ( endReached ) ? '[ -------------------- END -------------------- ]' : 'MORE';
     listBottomTag.css( 'color', '#4753A3' ).text( endNoteText );
@@ -368,9 +364,23 @@ ItemCardList.showListButtonNote = function( listBottomTag, endReached )
     listBottomTag.show();
 };
 
-ItemCardList.template_listBottomDivTag = `<div class="listBottom" style="text-align: center; color: #4753A3; display:none;"></div>`;
+ItemCardList.showListButtonNote = function( listBottomTag, endReached, scrollListCall )
+{
+    listBottomTag.html( '' );
 
-// 1. Make it COMMON method for all 'listing' class
-// 2. [ -------------------- END -------------------- ] <-- use this text for 'MORE' & 'END'
-// 3.     opacity: 0.7;
-// 4. --------------- MORE ---------------   <-- or Use down Arrow image for more intuitive ones.
+    var textDivTag = $( '<div style="text-align: center; color: #4753A3; cursor: pointer;"></div>' );
+    var endNoteText = '';
+
+    if ( endReached ) endNoteText = '[ -------------------- END -------------------- ]';
+    else
+    {
+        endNoteText = 'MORE';
+        textDivTag.click( scrollListCall );
+    }
+
+    textDivTag.text( endNoteText );
+    listBottomTag.append( textDivTag ).show();
+};
+
+
+ItemCardList.template_listBottomDivTag = `<div class="listBottom" style="text-align: center; color: #4753A3; display:none;"></div>`;

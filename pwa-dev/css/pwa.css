@@ -23,6 +23,10 @@
   cursor: pointer;
 }
 
+.mouseDown:active {
+  background-color: #DAEAFE;
+}
+
 /*.card__content:hover {
   box-shadow: 0 0 5px #aae6f7;
 }*/
@@ -93,6 +97,8 @@
 .infoLine {
   font-size: small;
 }
+
+
 /* ----style overwrite/additional setting----------------- */
 
 @media (orientation: portrait) and (min-width: 240px) {

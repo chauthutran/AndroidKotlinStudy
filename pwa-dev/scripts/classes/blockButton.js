@@ -210,7 +210,7 @@ function BlockButton( cwsRenderObj, blockObj )
 
 				if ( me.blockObj.blockType === FormUtil.blockType_MainTabContent )
 				{
-					btnTag = $( '<div ' + btnIdAttr + ' class="button primary button-full_width ' + btnJson.buttonType + '" />' );
+					btnTag = $( '<div ' + btnIdAttr + ' class="button primary mouseDown button-full_width ' + btnJson.buttonType + '" />' );
 				}
 				else
 				{

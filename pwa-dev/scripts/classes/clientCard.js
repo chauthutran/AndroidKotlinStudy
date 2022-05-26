@@ -383,24 +383,21 @@ ClientCard.getUnsyncedActivities = function( clientJson )
 
 
 ClientCard.cardDivTag = `<div class="client card">
-
     <div class="clientContainer card__container">
 
         <card__support_visuals class="clientIcon card__support_visuals" />
 
-        <card__content class="clientContent card__content" style="color: #444; cursor: pointer;" title="Click for detail" />
+        <card__content class="clientContent card__content mouseDown" style="color: #444; cursor: pointer;" title="Click for detail" />
 
         <card__cta class="activityStatus card__cta">
             <div class="activityStatusText card__cta_status"></div>
-            <div class="favIcon card__cta_one" style="cursor: pointer; display:none;"></div>
-            <div class="clientPhone card__cta_one" style="cursor: pointer; display:none;"></div>
-            <div class="activityStatusIcon card__cta_two" style="cursor:pointer;"></div>
+            <div class="favIcon card__cta_one mouseDown" style="cursor: pointer; display:none;"></div>
+            <div class="clientPhone card__cta_one mouseDown" style="cursor: pointer; display:none;"></div>
+            <div class="activityStatusIcon card__cta_two mouseDown" style="cursor:pointer;"></div>
         </card__cta>
 
         <div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
-
     </div>
-
 </div>`;
 
 

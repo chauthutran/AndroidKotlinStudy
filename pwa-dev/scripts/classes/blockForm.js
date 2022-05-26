@@ -531,7 +531,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var wrapperDad = $('<div class="dateContainer"></div>');
 		var wrapperInput = $('<div class="dateWrapper"></div>');
-		var button = $('<button class="dateButton" ></button>');
+		var button = $('<button class="dateButton mouseDown"></button>');
 		var icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
 
 		button.append(icoCalendar);
@@ -599,7 +599,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		var wrapperDad = $('<div class="dateContainer"></div>');
 		var wrapperInput = $('<div class="dateWrapper"></div>');
-		var button = $('<button class="dateButton" ></button>');
+		var button = $('<button class="dateButton mouseDown"></button>');
 		var icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
 
 		button.append(icoCalendar);
@@ -691,7 +691,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 	{
 		wrapperDad = $('<div class="dateContainer"></div>');
 		wrapperInput = $('<div class="dateWrapper"></div>');
-		button = $('<button class="dateButton" ></button>');
+		button = $('<button class="dateButton mouseDown"></button>');
 		icoCalendar = $('<img src="images/i_date.svg" class="imgCalendarInput" />');
 
 		button.append(icoCalendar);
