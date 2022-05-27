@@ -187,11 +187,12 @@ function ActivityCardDetail( activityId, isRestore )
 		// Unmark voucherCode if has v_iss trans
 		me.unload_issuedVoucherCode( activityId );
 
-		var client = ActivityDataManager.deleteExistingActivity_Indexed(activityId);
-		if (client && client.activities.length === 0) ClientDataManager.removeClient(client);  // NOTE: We assume 'reg' activity does not get removed..
+		var client = ActivityDataManager.deleteExistingActivity_Indexed( activityId );
+		// If client is tempClient and activityList is empty, remove the client.
+		ClientDataManager.removeTempClient_ifEmptyActs( client );
+				
 
 		// NOTE: POTENTIALLY delete child activities here.  For now, only applied this deletion on 'rollBack'
-
 		ClientDataManager.saveCurrent_ClientsStore(() => 
 		{
 			if ( btnBackTag ) btnBackTag.click();

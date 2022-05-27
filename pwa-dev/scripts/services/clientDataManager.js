@@ -153,6 +153,16 @@ ClientDataManager.replaceTempClient_withNewClient = function( tempClient, client
 
 // ----- Remove Client ----------------
 
+ClientDataManager.removeTempClient_ifEmptyActs = function( client )
+{
+	// If client is tempClient and activityList is empty, remove the client.
+	if ( client && ClientDataManager.isTempClientCase( client ) && client.activities.length === 0 ) 
+    {
+        ClientDataManager.removeClient( client );
+    }
+};
+
+
 ClientDataManager.removeClient = function( client )
 {
     try
@@ -163,6 +173,9 @@ ClientDataManager.removeClient = function( client )
         // remove client ones..
         ClientDataManager.removeClientIndex( client );        
         Util.RemoveFromArray( ClientDataManager.getClientList(), "_id", client._id );
+        
+        // Remove all clientCards of this id.
+        $('div.client,card[itemid="' + client._id + '"]').remove();
     }
     catch( errMsg )
     {

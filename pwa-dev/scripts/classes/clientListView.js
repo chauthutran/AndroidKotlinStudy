@@ -227,18 +227,12 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
             // Sort with 1st one..
             me.sortViewList_wt1stOne( me.viewDef_Selected.sort );    
         }
-        else
-        {
-            console.customLog( 'Selected View definition not found!' );
+        else me.viewSelectTag.css( 'background-color', 'papayawhip' );
 
-            me.viewSelectTag.css( 'background-color', 'orange' );
-        }   
-
-    
+        
         // Once the viewFiltered List is decided and sorted, reRender it 
         me.clientListObj.reRenderWithList( me.viewFilteredList, me.groupByData, me.viewDef_Selected );  // there is 'callBack' param..  
 
-        
         TranslationManager.translatePage();
     };
 

@@ -230,8 +230,8 @@ ActivitySyncUtil.confirmClients_Activities = function( activities, clientId, div
 				// on click, confirm + create the activityEdit of existing activity (of the recentActivity).. <-- with search by this id..
 
 				actInfoTag.click( function( e ) {  hiddenClientListDivTag.toggle();  });
-				btnCConfirmTag.click( function( e ) {
-
+				btnCConfirmTag.click( function( e ) 
+				{
 					var radioVal = $( 'input[name="' + radioName + '"]:checked' ).val();
 
 					// Get the selected radio button..
@@ -239,10 +239,18 @@ ActivitySyncUtil.confirmClients_Activities = function( activities, clientId, div
 					else
 					{
 						var reply = confirm( 'This client, ' + radioVal + ', identifies the desired client definitely?' );
-						if ( reply === true ) { alert( 'Edit the activity with searchValues - clientId' ); }
+						if ( reply === true ) 
+						{
+							// Create 'editActivity' payload & process it.
+							ActivitySyncUtil.editActivity_confirmClient( act, clientId, radioVal, function() 
+							{							
+								// Update the client status..
+								ClientCard.reRenderClientCardsById( clientId );
 
-						// Create 'editActivity' payload & process it.
-						ActivitySyncUtil.editActivity_confirmClient( act, clientId, radioVal );
+								// Hide the confirm client section..
+								confirmClientsDivTag.remove();
+							});
+						}
 					}
 				});
 
@@ -261,7 +269,7 @@ ActivitySyncUtil.confirmClients_Activities = function( activities, clientId, div
 	}
 };
 
-ActivitySyncUtil.editActivity_confirmClient = function( act, clientId, clientChoice )
+ActivitySyncUtil.editActivity_confirmClient = function( act, clientId, clientChoice, callBack )
 {
 	var actClone = Util.cloneJson( act );
 	if ( actClone.confirmClients ) delete actClone.confirmClients;
@@ -284,8 +292,8 @@ ActivitySyncUtil.editActivity_confirmClient = function( act, clientId, clientCho
 	}
 
 	JobAidHelper.submitActivity( data, function( client, activity ) {
-		console.log( client );
-		console.log( activity );
+		// console.log( client ); // console.log( activity );
+		if ( callBack ) callBack();
 	});
 
 };

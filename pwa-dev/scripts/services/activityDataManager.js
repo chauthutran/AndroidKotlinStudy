@@ -100,17 +100,16 @@ ActivityDataManager.deleteExistingActivity_Indexed = function( activityId )
 
     try
     {
-        // NEW - Is this ok?
         var existingActivity = Util.getFromList( ActivityDataManager._activityList, activityId, "id" );
 
         if ( activityId && existingActivity )
         {
             client = ClientDataManager.getClientByActivityId( activityId );
 
-            // 1. remove from activityList
+            // 1. Remove from activityList
             Util.RemoveFromArray( ActivityDataManager._activityList, "id", activityId );
 
-            // 2. remove from activityClientMap, 3. remove from client activities
+            // 2. Remove from activityClientMap, 3. remove from client activities
             if ( ActivityDataManager._activityToClient[ activityId ] )
             {
                 var activityClient = ActivityDataManager._activityToClient[ activityId ];
@@ -118,7 +117,9 @@ ActivityDataManager.deleteExistingActivity_Indexed = function( activityId )
                 delete ActivityDataManager._activityToClient[ activityId ];
 
                 Util.RemoveFromArray( activityClient.activities, "id", activityId );
-            }   
+            }
+
+            // [NOT] 3. Remove TempClient if the client became empty.  <-- Moved outside of this method..  ClientDataManager.removeTempClient_ifEmptyActs( client );            
         }
     }
     catch ( errMsg )
@@ -138,7 +139,8 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
     {
         // If this client or other client have same activity Id, remove those activites.. 1st..
         // If this activity ID exists in other client (diff obj), remove it.  <-- but if this is 
-        ActivityDataManager.deleteExistingActivity_Indexed( activity.id );
+        var actClient = ActivityDataManager.deleteExistingActivity_Indexed( activity.id );
+        ClientDataManager.removeTempClient_ifEmptyActs( actClient );
 
         // Even on activities merge, (existing client with pendnig acitivty synced, it will remove the activity on this client, and add as a new activity.. )
 
@@ -330,7 +332,7 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
                 // Existing Activity Cases:
                 
                 // If the syncUp performed was on this activity, existing client had this activity payload
-                //  , thus simply write over to app activity --> by putting it as 'newActivity'
+                //  , thus simply write over to app activity --> by adding to 'newActivity' array -> to process it much below.
                 if ( downloadedData.syncUpActivityId && dwActivity.id === downloadedData.syncUpActivityId )
                 {
                     // This 'processingInfo' is already has 'history' of previous activity..
