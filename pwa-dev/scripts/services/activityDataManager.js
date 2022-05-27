@@ -407,6 +407,8 @@ ActivityDataManager.generateActivityPayloadJson = function( actionUrl, blockId, 
         // ===============================================================
         // Existing activity case - Editing
         var editModeActivityId = ActivityDataManager.getEditModeActivityId( blockId );
+        if ( !editModeActivityId && actionDefJson.editActivityId ) editModeActivityId = actionDefJson.editActivityId;
+
         var existingActivityJson;
         var existingActivityJson_Clone;
 
@@ -586,7 +588,11 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
         else activityJson = ActivityDataManager.generateActivityPayloadJson( actionUrl, blockId, formsJsonActivityPayload, actionDefJson, blockPassingData );
 
         var client;
-        if ( actionDefJson.underClient && actionDefJson.clientId ) {
+
+        if ( actionDefJson.currTempClientId ) {
+            client = ClientDataManager.getClientById( actionDefJson.currTempClientId );
+        }
+        else if ( actionDefJson.underClient && actionDefJson.clientId ) {
             client = ClientDataManager.getClientById( actionDefJson.clientId );
         }
         else if ( activityJson.processing.existingClientId ) {
@@ -1530,4 +1536,24 @@ ActivityDataManager.getLatestDateActivity = function( activityList, dateProp )
     }
     
     return latestActivity;
+};
+
+// ===========================================
+// === NEW: Change transaction type in activity
+
+ActivityDataManager.replaceTransType = function( activity, from_transType, to_transType )
+{
+    try
+    {
+        if ( activity && activity.transactions )
+        {
+            activity.transactions.forEach( trans => {
+                if ( trans.type === from_transType ) trans.type = to_transType;
+            });
+        }
+    }
+    catch ( errMsg )
+    {
+        console.customLog( 'Error on ActivityDataManager.replaceTransType, ' + errMsg );        
+    }
 };

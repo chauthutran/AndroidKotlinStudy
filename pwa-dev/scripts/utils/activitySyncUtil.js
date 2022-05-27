@@ -170,7 +170,7 @@ ActivitySyncUtil.clientSyncBottomMsg = function( cardDivTag, clientId )
 		var clientJson = ClientDataManager.getClientById( clientId );
 
 		// 'confirmClients' activities link show
-		ActivitySyncUtil.confirmClients_Activities( clientJson.activities, divBottomTag );
+		ActivitySyncUtil.confirmClients_Activities( clientJson.activities, clientId, divBottomTag );
 
 		// 2 info display - recent activity, summary.
 		var recentActivityMsg = ActivitySyncUtil.getSummaryMsg_recentActivity( clientJson.activities );  //'[2022-05-15 03:15pm] ERROR - error msg';
@@ -182,7 +182,7 @@ ActivitySyncUtil.clientSyncBottomMsg = function( cardDivTag, clientId )
 };
 
 
-ActivitySyncUtil.confirmClients_Activities = function( activities, divBottomTag )
+ActivitySyncUtil.confirmClients_Activities = function( activities, clientId, divBottomTag )
 {
 	if ( activities )
 	{
@@ -241,11 +241,8 @@ ActivitySyncUtil.confirmClients_Activities = function( activities, divBottomTag 
 						var reply = confirm( 'This client, ' + radioVal + ', identifies the desired client definitely?' );
 						if ( reply === true ) { alert( 'Edit the activity with searchValues - clientId' ); }
 
-						// Place this on Config?  Or simply get current activity, copy the edit process, replace the search term?
-						//	Place this logic on 'activityDataManager'?
-
-						
-
+						// Create 'editActivity' payload & process it.
+						ActivitySyncUtil.editActivity_confirmClient( act, clientId, radioVal );
 					}
 				});
 
@@ -262,6 +259,35 @@ ActivitySyncUtil.confirmClients_Activities = function( activities, divBottomTag 
 			divBottomTag.append( confirmClientsDivTag );
 		}
 	}
+};
+
+ActivitySyncUtil.editActivity_confirmClient = function( act, clientId, clientChoice )
+{
+	var actClone = Util.cloneJson( act );
+	if ( actClone.confirmClients ) delete actClone.confirmClients;
+	if ( actClone.processing ) delete actClone.processing;
+	
+	var data = { activityPayload: { searchValues: {}, captureValues: actClone } };
+
+	// Fill 'searchValues' & clientId
+	if ( clientChoice === 'newClient' ) data.activityPayload.searchValues.newClientCase = true;
+	else 
+	{
+		data.currTempClientId = clientId;
+		data.clientId = clientChoice;
+		data.activityPayload.searchValues._id = clientChoice;
+		// NOTE: we need to change the 'c_reg' transaction to 'c_upd'
+		ActivityDataManager.replaceTransType( actClone, 'c_reg', 'c_upd' );
+		ActivityDataManager.replaceTransType( act, 'c_reg', 'c_upd' );  // Also change original since this will be backed up and we like to have this affected.
+
+		data.editActivityId = act.id;  // flag to send to methods 'generateActivityPayloadJson' for existing activity edit case.
+	}
+
+	JobAidHelper.submitActivity( data, function( client, activity ) {
+		console.log( client );
+		console.log( activity );
+	});
+
 };
 
 ActivitySyncUtil.getSummaryMsg_recentActivity = function( activities )

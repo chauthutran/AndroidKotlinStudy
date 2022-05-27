@@ -365,6 +365,12 @@ JobAidHelper.submitActivity = function( data, callBack )
 	var actionJson = ( data.clientId ) ? { underClient: true, clientId: data.clientId } : {};  // Existing vs New Client
 	var blockPassingData = undefined;
 
+
+	// Custom Existing Activity Edit case from 'confirmClient' related.
+	if ( data.editActivityId ) actionJson.editActivityId = data.editActivityId;
+	if ( data.currTempClientId ) actionJson.currTempClientId = data.currTempClientId;
+
+
 	if ( data.activityPayload )
 	{
 		activityPayload = { payload: data.activityPayload };
@@ -372,10 +378,12 @@ JobAidHelper.submitActivity = function( data, callBack )
 	}
 	else if ( data.activityJson )
 	{
+		// NEW: override of already set activityJson - This does not go through 'generateActivityPayloadJson', but simply use 'activityJson'.
 		actionJson.activityJson = data.activityJson;
 		console.log( 'JobAidHelper.submitActivity, activityJson: ' );
 	}
 
+	
 	ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, activityPayload, actionJson, blockPassingData, function( activity, client ) {
 		console.log( activity );
 		if ( callBack ) callBack( client, activity );
