@@ -614,8 +614,7 @@ ActivityDataManager.createNewPayloadActivity = function( actionUrl, blockId, for
     }
     catch( errMsg )
     {    
-        MsgManager.notificationMessage ( 'Failed to generate activity! ' + errMsg, 'notifDark', undefined, '', 'right', 'top' );
-
+        MsgManager.msgAreaShow( 'Failed to generate activity! ' + errMsg, 'ERROR' );
         if ( callBack ) callBack();    
     }
 };

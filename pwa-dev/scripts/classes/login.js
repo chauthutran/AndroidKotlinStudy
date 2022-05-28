@@ -141,8 +141,7 @@ function Login()
 			if( loginUserNameVal == "" || loginUserPinVal == "" )
 			{
 				me.clearResetPasswords();
-
-				MsgManager.notificationMessage ( 'Please enter username / fill all pin', 'notifRed', undefined, '', 'right', 'top' );
+				MsgManager.msgAreaShow( 'Please enter username / fill all pin', 'ERROR' );
 			}
 			else
 			{
@@ -554,7 +553,8 @@ function Login()
 	me.loginOnline = function( userName, password, loadingTag, returnFunc )
 	{
 		WsCallManager.submitLogin( userName, password, loadingTag, function( success, loginData ) 
-		{			
+		{		
+			// Below method also handles 'configNoNewVersion' case - getting offline dcdConfig and use it.
 			me.checkLoginData_wthErrMsg( success, userName, password, loginData, function( resultSuccess ) 
 			{
 				if ( resultSuccess )
@@ -583,7 +583,6 @@ function Login()
 	};
 
 
-	
 	me.loginOffline = function( userName, password, returnFunc )
 	{
 		SessionManager.checkOfflineDataExists( userName, function( dataExists ) 
@@ -604,7 +603,7 @@ function Login()
 						{
 							SessionManager.getLoginRespData_IDB( userName, password, function( loginResp ) 
 							{
-								if ( SessionManager.checkLoginData( loginResp ) )
+								if ( SessionManager.checkLoginOfflineData( loginResp ) )
 								{
 									// load to session
 									SessionManager.loadDataInSession( userName, password, loginResp );
@@ -627,7 +626,7 @@ function Login()
 						else
 						{
 							// MISSING TRANSLATION
-							MsgManager.notificationMessage( me.getLoginFailedMsgSpan() + ' > invalid pin', 'notifRed', undefined, '', 'right', 'top' );
+							MsgManager.msgAreaShow( me.getLoginFailedMsgSpan() + ' > invalid pin', 'ERROR' );
 							if ( returnFunc ) returnFunc( false );
 						}
 					});
@@ -636,7 +635,7 @@ function Login()
 			else
 			{
 				// MISSING TRANSLATION
-				MsgManager.notificationMessage( 'No Offline UserData Available', 'notifDark', undefined, '', 'right', 'top' );
+				MsgManager.msgAreaShow( 'No Offline UserData Available', 'ERROR' );
 				if ( returnFunc ) returnFunc( false );
 			}				
 		} );
@@ -644,53 +643,76 @@ function Login()
 
 	// ----------------------------
 
-
 	me.checkLoginData_wthErrMsg = function ( success, userName, password, loginData, callBack )
 	{
-		var resultSuccess = false;
-
-		if ( success )
+		// var resultSuccess = false;
+		try
 		{
-			if ( !loginData )
+			if ( success )
 			{
-				MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notifRed', undefined, '', 'right', 'top' );
-				resultSuccess = false;
-			} 
-			else if ( !loginData.orgUnitData ) 
-			{
-				MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notifRed', undefined, '', 'right', 'top' );
-				resultSuccess = false;
-			}
-			else if ( !loginData.dcdConfig ) 
-			{
-				MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notifRed', undefined, '', 'right', 'top' );
-				resultSuccess = false;
+				if ( !loginData )
+				{
+					MsgManager.msgAreaShow( 'ERROR - login success, but loginData Empty!', 'ERROR' );
+					callBack( false );
+				} 
+				else if ( !loginData.orgUnitData ) 
+				{
+					MsgManager.msgAreaShow( 'ERROR - login success, but loginData orgUnitData Empty!', 'ERROR' );
+					callBack( false );
+				}
+				else if ( !loginData.dcdConfig )
+				{
+					MsgManager.msgAreaShow( 'ERROR - login success, but dcdConfig Empty!', 'ERROR' );
+					callBack( false );
+				}
+				else if ( !loginData.dcdConfig.sourceType ) 
+				{
+					// Get from offline and set it as 'loginData.dcdConfig'.  What if this is 1st time?  Then, we need to fail it!!
+					SessionManager.getLoginRespData_IDB( userName, password, function( loginResp ) 
+					{
+						if ( !loginResp ) // offline/previous login data not available - 1st time login, but server response not have dcdConfig
+						{
+							MsgManager.msgAreaShow( 'ERROR - login success, but country config not retrieved, and offline replacement also not available!', 'ERROR' );
+							callBack( false );
+						}
+						else
+						{
+							console.log( loginData.dcdConfig );
+	
+							// NOTE: 'dcdConfig' with error is {}, thus, above does not actually catch this.
+							//		However, we will replace/use offline dcdConfig (if available) after this method instead.
+							loginData.dcdConfig = loginResp.dcdConfig;
+							callBack( true );	
+						}
+					});
+				}
+				else
+				{
+					callBack( true );  // resultSuccess = true;
+				}
 			}
 			else
 			{
-				resultSuccess = true;
+				var errDetail = '';
+	
+				// NEW: Save 'blackListing' case to localStorage offline user data..  CREATE CLASS?  OTHER THAN appInfo?
+				if ( loginData && loginData.blackListing ) 
+				{
+					AppInfoLSManager.setBlackListed( true );
+					errDetail =  me.ERR_MSG_blackListing;
+				}
+				else if ( loginData && loginData.returnCode === 502 ) errDetail = ' - Server not available';
+	
+				// MISSING TRANSLATION
+				MsgManager.msgAreaShow( me.getLoginFailedMsgSpan() + ' ' + errDetail, 'ERROR' );	
+				callBack( false );
 			}
 		}
-		else
+		catch ( errMsg )
 		{
-			var errDetail = '';
-
-			// NEW: Save 'blackListing' case to localStorage offline user data..  CREATE CLASS?  OTHER THAN appInfo?
-			if ( loginData && loginData.blackListing ) 
-			{
-				AppInfoLSManager.setBlackListed( true );
-				errDetail =  me.ERR_MSG_blackListing;
-			}
-			else if ( loginData && loginData.returnCode === 502 ) errDetail = ' - Server not available';
-
-
-			// MISSING TRANSLATION
-			MsgManager.msgAreaShow( me.getLoginFailedMsgSpan() + ' ' + errDetail, 'ERROR' );	
-
-			resultSuccess = false;
+			MsgManager.msgAreaShow( 'ERROR during login data check: ' + errMsg, 'ERROR' );	
+			callBack( false );
 		}
-
-		if ( callBack ) callBack( resultSuccess );
 	};
 
 

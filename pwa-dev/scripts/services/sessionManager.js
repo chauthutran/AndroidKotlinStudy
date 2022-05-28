@@ -44,7 +44,7 @@ SessionManager.WSblockFormsJsonArr = [];  // Save block payload - search only fo
 SessionManager.loadDataInSession = function( userName, password, loginData ) 
 {
 	// If dcdConfig or orgUnitData does not exists, we need to notify!!!
-	// SessionManager.checkLoginData( loginData );
+	// SessionManager.checkLoginOfflineData( loginData );
 
 	var newSessionInfo = { 
 		login_UserName: userName,
@@ -113,23 +113,21 @@ SessionManager.checkOfflineDataExists = function( userName, callBack )
 // ----------------------------------------------
 
 // Used in login.js --> validate offline user data
-SessionManager.checkLoginData = function( loginData ) 
+SessionManager.checkLoginOfflineData = function( loginData ) 
 {
 	var validLoginData = false;
 
 	try
 	{
-		if ( !loginData ) MsgManager.notificationMessage ( 'Error - loginData Empty!', 'notifRed', undefined, '', 'right', 'top' );
-		else if ( !loginData.orgUnitData ) MsgManager.notificationMessage ( 'Error - loginData orgUnitData Empty!', 'notifRed', undefined, '', 'right', 'top' );
-		else if ( !loginData.dcdConfig ) MsgManager.notificationMessage ( 'Error - loginData dcdConfig Empty!', 'notifRed', undefined, '', 'right', 'top' );
-		else 
-		{
-			validLoginData = true;
-		}
+		if ( !loginData ) MsgManager.msgAreaShow( 'Error - loginData Empty!', 'ERROR' );
+		else if ( !loginData.orgUnitData ) MsgManager.msgAreaShow( 'Error - loginData orgUnitData Empty!', 'ERROR' );
+		else if ( !loginData.dcdConfig ) MsgManager.msgAreaShow( 'Error - loginData dcdConfig Empty!', 'ERROR' );
+		else if ( !loginData.dcdConfig.sourceType ) MsgManager.msgAreaShow( 'Error - loginData dcdConfig not valid!', 'ERROR' );
+		else validLoginData = true;
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'Error in SessionManager.checkLoginData, errMsg: ' + errMsg );
+		console.customLog( 'Error in SessionManager.checkLoginOfflineData, errMsg: ' + errMsg );
 	}
 
 	return validLoginData;
