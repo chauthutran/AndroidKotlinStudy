@@ -368,14 +368,14 @@ ItemCardList.showListButtonNote = function( listBottomTag, endReached, scrollLis
 {
     listBottomTag.html( '' );
 
-    var textDivTag = $( '<div style="text-align: center; color: #4753A3; cursor: pointer;"></div>' );
+    var textDivTag = $( '<div style="text-align: center; color: #4753A3; display: inline-block;"></div>' );
     var endNoteText = '';
 
     if ( endReached ) endNoteText = '[ -------------------- END -------------------- ]';
     else
     {
         endNoteText = 'MORE';
-        textDivTag.click( scrollListCall );
+        textDivTag.css( 'cursor', 'pointer' ).addClass( 'mouseDown' ).click( scrollListCall );
     }
 
     textDivTag.text( endNoteText );

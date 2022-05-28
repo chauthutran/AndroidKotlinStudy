@@ -1191,7 +1191,22 @@ ConfigManager.populateOptions_ouTagOus = function( configJson, loginData )
 ConfigManager.populateOptions_ouVMMC = function( configJson, loginData )
 {
     var data = loginData.loginAfterOpsResult;
-    if ( data && data.ouVMMC ) ConfigManager.populateOptionsOuData( configJson, 'options_ouVMMC', data.ouVMMC.organisationUnits );
+    if ( data && data.ouVMMC ) {
+
+        var newList = data.ouVMMC.organisationUnits;
+
+        try { 
+            var currUserCode = loginData.orgUnitData.orgUnit.code;
+            console.log( 'VMMC currUserCode: ' + currUserCode );
+
+            newList = newList.filter( ou => ou.code !== currUserCode );
+
+            console.log( newList );
+
+        } catch( errMsg ) { console.log( 'ERROR in ConfigManager.populateOptionsOuData, ' + errMsg ); }
+
+        ConfigManager.populateOptionsOuData( configJson, 'options_ouVMMC', newList );
+    }
 };
 
 
