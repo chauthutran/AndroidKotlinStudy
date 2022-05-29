@@ -41,7 +41,7 @@ SessionManager.WSblockFormsJsonArr = [];  // Save block payload - search only fo
 // ---------------------------------------
 
 // Only used in Login..
-SessionManager.loadDataInSession = function( userName, password, loginData ) 
+SessionManager.loadSessionData_nConfigJson = function( userName, password, loginData ) 
 {
 	// If dcdConfig or orgUnitData does not exists, we need to notify!!!
 	// SessionManager.checkLoginOfflineData( loginData );
@@ -63,7 +63,7 @@ SessionManager.loadDataInSession = function( userName, password, loginData )
 
 
 // On logOut..
-SessionManager.unloadDataInSession = function() 
+SessionManager.unloadSessionData_nConfigJson = function() 
 {
 	SessionManager.sessionData = {
 		login_UserName: '',

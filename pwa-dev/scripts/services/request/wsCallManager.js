@@ -161,9 +161,10 @@ WsCallManager.getWfaProdWsUrl = function( originUrl )
 WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc )
 {        
     var requestOption = { 'userName': userName, 'password': password };
-    if ( ConfigManager.getSettings().configVersioningEnable === true ) {
+
+    if ( AppInfoLSManager.getConfigVersioningEnable() === true ) {
         requestOption.configVersioningEnable = true;
-        requestOption.configVersion = ConfigManager.getConfigJson.version;
+        requestOption.configVersion = AppInfoLSManager.getConfigVersion();
     } 
     //requestOption.getOuChildren = 'Y';  // OLD - OBSOLETE
 

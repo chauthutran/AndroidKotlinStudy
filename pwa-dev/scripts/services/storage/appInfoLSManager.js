@@ -17,6 +17,9 @@ AppInfoLSManager.KEY_NETWORKSYNC = "networkSync";
 AppInfoLSManager.KEY_LAST_SYNCALL_DT = "lastSyncAllDt";
 AppInfoLSManager.KEY_LOCAL_STAGENAME = "localStageName"; 
 AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES = "jobAidFolderNames";
+AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE = "configVersioningEnable";
+AppInfoLSManager.KEY_CONFIG_VERSION = "configVersion";
+
 
 // Old and obsolete keys
 AppInfoLSManager.KEY_USERINFO = "userInfo";  // It actually is 'lastLoginData'
@@ -334,72 +337,63 @@ AppInfoLSManager.getJobAidFolderNames = function()
 // ------------------------------------------------------------------------------------  
 // ----------------  Login Current Keys Related..
 
-// TODO: remove --> replace with userName in 'lastLoginData'
-
-/*
-AppInfoLSManager.getLoginCurrentKeys = function()
-{
-    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LOGINOUT, AppInfoLSManager.KEY_CURRENTKEYS );
-};
-
-AppInfoLSManager.setLoginCurrentKeys = function( dateObj, currentKeysJson )
-{
-    var dataJson = { 'timestamp': Util.formatDateTime( dateObj ), 'keys': currentKeysJson };
-    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LOGINOUT, AppInfoLSManager.KEY_CURRENTKEYS, dataJson );
-};
-
-AppInfoLSManager.clearLoginCurrentKeys = function()
-{    
-    AppInfoLSManager.removeProperty( AppInfoLSManager.KEY_LOGINOUT, AppInfoLSManager.KEY_CURRENTKEYS );
-};
-*/
-
-
-
-// TODO: NEED TO REPLACE THIS!!!
 AppInfoLSManager.getConfigSourceType = function()
 {
-    var configSourceType = 'mongo'; // <-- default one.  Should be between 'mongo' / 'dhis2'
+    var defaultConfigSourceType = 'mongo'; // <-- default one.  Should be between 'mongo' / 'dhis2'
 
-    try
-    {
-        var appInfo_LS = AppInfoLSManager.appInfo_LS;
-         
-        if ( appInfo_LS && appInfo_LS.lastLoginData && appInfo_LS.lastLoginData.configSourceType ) configSourceType = appInfo_LS.lastLoginData.configSourceType;
-    }
-    catch ( errMsg )
-    {
-		console.customLog( 'ERROR in AppInfoLSManager.getConfigSourceType: ' + errMsg );
-    }
+    var existingConfigSourceType = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIGSOURCETYPE );
 
-    return configSourceType;
+    return ( existingConfigSourceType ) ? existingConfigSourceType : defaultConfigSourceType;
 };
 
-
-AppInfoLSManager.saveConfigSourceType = function( loginResp )
+AppInfoLSManager.saveConfigSourceType = function( sourceType )
 {
-    if ( loginResp && loginResp.dcdConfig && loginResp.dcdConfig.sourceType )
-    {        
-        AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIGSOURCETYPE, loginResp.dcdConfig.sourceType );
-    }    
+    if ( sourceType ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIGSOURCETYPE, sourceType );
 };
-
 
 // -----------------------------
-
 AppInfoLSManager.getLastOnlineLoginDt = function()
 {
     return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_LAST_ONLINELOGIN_DT );
-}
+};
 
 AppInfoLSManager.setLastOnlineLoginDt = function( lastOnlineLoginDt )
 {
     AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_LAST_ONLINELOGIN_DT, lastOnlineLoginDt );
 };
 
+// -----------------------------
+AppInfoLSManager.getConfigVersioningEnable = function()
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE );
+};
+
+AppInfoLSManager.setConfigVersioningEnable = function( enable )
+{
+    if ( enable ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE, enable );
+};
 
 // -----------------------------
+AppInfoLSManager.getConfigVersion = function()
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSION );
+};
 
+AppInfoLSManager.setConfigVersion = function( version )
+{
+    if ( version ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSION, version );
+};
+
+
+// On Online success login, (after configManager loaded?)
+//      - Get the configVersioningEnable & version value from 'dcdConfig' (could be new or old cached version)
+//          and save to 'AppInfoLS'
+
+// When performing Online login, send this value
+
+
+
+// -----------------------------
 // networkSync
 AppInfoLSManager.updateNetworkSync = function( dataStr ) 
 {

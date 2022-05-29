@@ -432,14 +432,14 @@ ConfigManager.resetConfigJson = function( userRolesOverrides )
 ConfigManager.clearConfigJson = function() 
 {
     ConfigManager.configJson = {};
-    //ConfigManager.configSetting = {};
 };
 
 // ------------------------------------
 // --- 'Get' related methods
 
-ConfigManager.getConfigJson = function () 
+ConfigManager.getConfigJson = function() 
 {
+    if ( !ConfigManager.configJson ) ConfigManager.configJson = {};
     return ConfigManager.configJson;
 };  
 
@@ -607,7 +607,7 @@ ConfigManager.getSettings = function()
 
     var configJson = ConfigManager.getConfigJson();
 
-    if ( configJson && configJson.settings ) settings = configJson.settings;
+    if ( configJson.settings ) settings = configJson.settings;
     
     return settings;
 };

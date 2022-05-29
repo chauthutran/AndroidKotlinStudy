@@ -561,14 +561,24 @@ function Login()
 				{
 					me.setModifiedOUAttrList( loginData );
 					AppInfoLSManager.setLastOnlineLoginDt( ( new Date() ).toISOString() );
-					AppInfoLSManager.saveConfigSourceType( loginData );
+					//AppInfoLSManager.saveConfigSourceType( loginData );  // MOVED AFTER CONFIGLOADING - For Availability Check Usage
 
 					// Save 'loginData' in indexedDB for offline usage and load to session.
 					SessionManager.setLoginRespData_IDB( userName, password, loginData );
-					SessionManager.loadDataInSession( userName, password, loginData );  // This sets config data in ConfigManager
+
+					// IMPORTANT PART - Load loginData in session, use 'dcdConfig' to load ConfigManager data.
+					SessionManager.loadSessionData_nConfigJson( userName, password, loginData );
+					var configJson = ConfigManager.getConfigJson();
+
+					// Save values in 'AppInfoLS' after online login
+					AppInfoLSManager.saveConfigSourceType( configJson.sourceType );  // For Availability Check Usage, store 'sourceType'
+					AppInfoLSManager.setConfigVersioningEnable( ConfigManager.getSettings().configVersioningEnable ); // Used on login request
+					AppInfoLSManager.setConfigVersion( configJson.version );
+
 
 					me.retrieveStatisticPage( ( fileName, statPageData ) => { me.saveStatisticPage( fileName, statPageData ); } );
 
+					// AppInfo IndexDB one..  What does this do?  forgot..
 					AppInfoManager.loadData_AfterLogin( userName, password, function() 
 					{
 						if( returnFunc ) returnFunc( resultSuccess, loginData );
@@ -606,7 +616,7 @@ function Login()
 								if ( SessionManager.checkLoginOfflineData( loginResp ) )
 								{
 									// load to session
-									SessionManager.loadDataInSession( userName, password, loginResp );
+									SessionManager.loadSessionData_nConfigJson( userName, password, loginResp );
 								
 									// TEST, DEBUG - TO BE REMOVED AFTERWARDS
 									GAnalytics.setEvent( 'LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1 );
@@ -716,6 +726,7 @@ function Login()
 	};
 
 
+	// 'ouAttrVals' set by this method is used by country config evaluation
 	me.setModifiedOUAttrList = function( loginData )
 	{
 		try

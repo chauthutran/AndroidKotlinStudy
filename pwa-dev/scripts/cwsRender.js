@@ -407,7 +407,8 @@ function cwsRender()
 	me.logOutProcess = function()
 	{
 		SessionManager.setLoginStatus( false );
-		SessionManager.unloadDataInSession(); // Include config json unload
+		SessionManager.unloadSessionData_nConfigJson(); // Include config json unload
+
 		AppInfoManager.unloadData_AfterLogOut();
 		
 		// NEW: Remove/Clear all the data <-- index, clientList, etc..
