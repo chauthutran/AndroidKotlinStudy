@@ -436,46 +436,28 @@ Util2.dateToMyFormat = function( date, myFormat )
 
 // ---------------------------------
 
-
 Util2.getAgeValueFromPattern = function( tagTarget, pattern )
 {
 	var formTarg = tagTarget.closest( 'div.formDivSec' );
-	var ret = '';
+	var age = '';
 
-	if ( pattern.indexOf( 'form:' ) >= 0 )
+	try
 	{
-		var targFld = pattern.split( 'form:' )[ 1 ];
-		var targTag = formTarg.find( "[name='" + targFld + "']" ); //"#" + targFld ); //( "[name='" + targFld + "']" );
-
-		if ( targTag )
+		if ( pattern.indexOf( 'form:' ) >= 0 )
 		{
-			var InpVal = targTag.val();
-
-			if ( InpVal && InpVal.length )
+			var targFld = pattern.split( 'form:' )[ 1 ];
+			var targTag = formTarg.find( "[name='" + targFld + "']" ); //"#" + targFld ); //( "[name='" + targFld + "']" );
+	
+			if ( targTag )
 			{
-				var today = new Date();
-				var birthDate = new Date( InpVal );
-				var age = today.getFullYear() - birthDate.getFullYear();
-				var m = today.getMonth() - birthDate.getMonth();
-
-				if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-					age = age - 1;
-				}
-			
-				return age;
+				var InpVal = targTag.val();
+				if ( InpVal && InpVal.length ) age = Util.getAge_ByBirthDate( InpVal );
 			}
-			else
-			{
-				return '';
-			}
-
-		}
-		else
-		{
-			return '';
-		}
-
+		}	
 	}
+	catch ( errMsg ) { console.log( 'ERROR on Util2.getAgeValueFromPattern, ' + errMsg ); }
+
+	return age;
 };
 
 
@@ -532,12 +514,12 @@ Util2.getFormInputValuePattern = function( tagTarget, formInputPattern, patternS
 			}
 			else
 			{
-				console.customLog( ' no corresponding value [' + formInpFld + ']' );
+				console.log( ' no corresponding value [' + formInpFld + ']' );
 			}
 		}
 		else
 		{
-			console.customLog( ' no corresponding field [' + formInpFld + ']' );
+			console.log( ' no corresponding field [' + formInpFld + ']' );
 		}
 	}
 
@@ -583,11 +565,9 @@ Util2.activityListPreviewTable = function( title, arr )
 
 		tbody.append( tr );
 		ret.append( tbody );
-
 	}
 
 	return ret;
-
 };
 
 

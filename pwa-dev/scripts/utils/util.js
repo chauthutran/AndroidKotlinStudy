@@ -2282,3 +2282,35 @@ Util.setDelays_timeout = function( globalTO_ID, timeoutSec, actionFunc )
 
 	Util.g_TimeOutIds[ globalTO_ID ] = setTimeout( actionFunc, timeoutSec * 1000 );
 };
+
+
+// -----------------------------------------------------------------
+
+Util.getAge_ByBirthDate = function( birthDateStr )
+{
+	var age = '';
+
+	try
+	{
+		if ( birthDateStr && birthDateStr.trim() )
+		{
+			var today = new Date();
+			var birthDateObj = new Date( birthDateStr );
+	
+			age = today.getFullYear() - birthDateObj.getFullYear();
+			var notFullYearYet = false;
+	
+			// If months has not been passed, yet, remove 1 year from above simple year diff.
+			if ( today.getMonth() < birthDateObj.getMonth() ) notFullYearYet = true; // 2022-06 vs 2021-07
+			else if ( today.getMonth() === birthDateObj.getMonth() )
+			{
+				if ( today.getDate() < birthDateObj.getDate() ) notFullYearYet = true;
+			}
+	
+			if ( notFullYearYet ) age = age - 1;
+		}	
+	}
+	catch ( errMsg ) { console.log( 'ERROR in Util.getAge_ByBirthDate, ' + errMsg ); }
+
+	return age;
+};

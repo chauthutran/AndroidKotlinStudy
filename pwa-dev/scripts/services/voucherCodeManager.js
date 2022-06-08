@@ -191,35 +191,39 @@ VoucherCodeManager.markVoucherCode_InQueue = function( activityJson, transType, 
    var voucherCode = '';
    var matchVcItem;
 
-   if ( activityJson && transType && markStatus )
+   try
    {
-      // 1. Get voucherCode from activity <-- in trans 'v_iss'
-      activityJson.transactions.forEach( trans => 
+      if ( activityJson && activityJson.transactions && transType && markStatus )
       {
-         if ( trans.type === transType ) // 'v_iss' )
+         // 1. Get voucherCode from activity <-- in trans 'v_iss'
+         activityJson.transactions.forEach( trans => 
          {
-            if ( trans.clientDetails && trans.clientDetails.voucherCode ) 
+            if ( trans.type === transType ) // 'v_iss' )
             {
-               voucherCode = trans.clientDetails.voucherCode;
+               if ( trans.clientDetails && trans.clientDetails.voucherCode ) 
+               {
+                  voucherCode = trans.clientDetails.voucherCode;
+               }
+            }
+         });
+      
+      
+         // 2. Find the voucherCode from queue and mark it as 'InUse' status.
+         var queue = PersisDataLSManager.getVoucherCodes_queue();
+         for( var i = 0; i < queue.length; i++ )
+         {
+            var vcItem = queue[i];
+      
+            if ( vcItem.voucherCode === voucherCode )
+            {
+               matchVcItem = vcItem;
+               VoucherCodeManager.markStaus( vcItem.voucherCode, markStatus );  //'InUse';
+               break;
             }
          }
-      });
-   
-   
-      // 2. Find the voucherCode from queue and mark it as 'InUse' status.
-      var queue = PersisDataLSManager.getVoucherCodes_queue();
-      for( var i = 0; i < queue.length; i++ )
-      {
-         var vcItem = queue[i];
-   
-         if ( vcItem.voucherCode === voucherCode )
-         {
-            matchVcItem = vcItem;
-            VoucherCodeManager.markStaus( vcItem.voucherCode, markStatus );  //'InUse';
-            break;
-         }
-      }
+      }   
    }
+   catch( errMsg ) { console.log( 'ERROR in VoucherCodeManager.markVoucherCode_InQueue, ' + errMsg ); }
 
    return matchVcItem;
 };

@@ -51,19 +51,24 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
         {
             // If 'payloadTemplate' is a single template name, not array list of template names.
             // put one payloadInfo in 'payloadList'.
-            if ( typeof( payloadTemplate ) === "string" ) 
+            if ( Util.isTypeString( payloadTemplate ) ) 
             {
                 var payloadJson = payloadTemplateDefs[ payloadTemplate ];
 
                 if ( payloadJson ) payloadList.push( Util.cloneJson( payloadJson ) );
             }
-            else if ( typeof( payloadTemplate ) === "object" ) 
+            else if ( Util.isTypeArray( payloadTemplate ) ) 
             {
                 for ( var i = 0; i < payloadTemplate.length; i++ ) 
                 {
-                    var payloadTemplateTemp = payloadTemplate[ i ];
+                    var payloadTemplateItem = payloadTemplate[ i ];
 
-                    var payloadJson = payloadTemplateDefs[ payloadTemplateTemp ];
+                    var payloadJson;
+
+                    // Usually, payloadTemplate are array.
+                    // If Object, then, it is likely the expression, not definition ones.
+                    if ( Util.isTypeString( payloadTemplateItem ) ) payloadJson = payloadTemplateDefs[ payloadTemplateItem ];
+                    else if ( Util.isTypeObject( payloadTemplateItem ) ) payloadJson = payloadTemplateItem;
 
                     if ( payloadJson ) payloadList.push( Util.cloneJson( payloadJson ) );
                 }

@@ -2134,7 +2134,7 @@ FormUtil.displayActivityDetail = function( clientDetails, activityJson, tabTag )
 		{
 			if ( bShowActivity ) tabTag.append( '<div style="width:100%;"><hr style="border: 1px solid darkgrey;opacity: 0.3;"></div>' );
 
-			tabTag.append( '<div class="section" style="margin-left: 0px !important;"><label term="activityDetail_details_title">Client DETAIL:</label></div>' );	
+			tabTag.append( '<div class="section" style="margin-left: 0px !important;"><label term="activityDetail_details_title">Client Details:</label></div>' );	
 			tabTag.append( FormUtil.jsonDataInTable_Wrap( clientDetails, { divTablePaddingLeft: '10px', SndTab: '20px' } ) );
 		}
 
@@ -2302,20 +2302,19 @@ FormUtil.jsonDataInTable = function( jsonData, hideEmptyVal, option )
 								} 
 								else 
 								{	
-									var value = FormUtil.getFieldOption_LookupValue( fieldName, pArrItem.toString() ); 
-									valueFieldTag.append( ' ' + value + ' ' );
+									valueFieldTag.append( ' ' + FormUtil.getFieldOption_LookupValue( fieldName, pArrItem.toString() ) + ' ' );
 								}
 							});
 						}						
 						else if ( Util.isTypeString( value ) )
 						{
-							var value = FormUtil.getFieldOption_LookupValue( fieldName, value ); 
-							valueFieldTag.html( value );
+							valueFieldTag.html( FormUtil.getFieldOption_LookupValue( fieldName, value ) );
 						}
-						else
+						else if ( value !== undefined && value !== null )
 						{
-							var value = FormUtil.getFieldOption_LookupValue( fieldName, value.toString() ); 
-							valueFieldTag.html( value );
+							try {
+								valueFieldTag.html( FormUtil.getFieldOption_LookupValue( fieldName, value.toString() ) );
+							} catch( errMsg ) { console.log( 'ERROR in FormUtil.jsonDataInTable, other type value, ' + errMsg ); }
 						}						
 					}
 				}

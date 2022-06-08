@@ -79,8 +79,9 @@ function ActivityCardDetail( activityId, isRestore )
 		var activityJson = ActivityDataManager.getActivityById(activityId);
 
 		// TAB #1. Activity Details / Content Details
-		var clientDetailsTabTag = sheetFullTag.find('[tabButtonId=tab_previewDetails]');
-		FormUtil.displayActivityDetail( clientJson.clientDetails, activityJson, clientDetailsTabTag );
+		var clientDetailsTabTag = sheetFullTag.find('[tabButtonId=tab_previewDetails]').html( '' );
+		clientDetailsTabTag.append( '<div class="innerContentDiv" style="100%"></div>' );
+		FormUtil.displayActivityDetail( clientJson.clientDetails, activityJson, clientDetailsTabTag.find( 'div.innerContentDiv' ) );
 
 
 		if ( activityJson )
