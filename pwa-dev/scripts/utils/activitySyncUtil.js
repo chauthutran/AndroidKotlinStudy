@@ -51,7 +51,7 @@ ActivitySyncUtil.clickSyncActivity = function( divSyncIconTag, cardDivTag, activ
 			if ( options.clientSync ) cardDivTag.closest( 'div.card.client' ).find( 'div.clientContainer.card__container' ).find( 'div.activityStatusIcon[clientid]' ).click();
 			else
 			{
-				// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
+				// Main SyncUp Processing --> Calls 'SyncManagerNew.performSyncUp_Activity' eventually.
 				ActivitySyncUtil.syncUpActivity_IfOnline( activityId, function( syncReadyJson, success, responseJson, newStatus ) 
 				{
 					ActivitySyncUtil.clientActivityList_FavListReload( cardDivTag );
@@ -350,18 +350,18 @@ ActivitySyncUtil.getSummaryMsg_activities = function( activities )
 // NEW - If current div card belongs to clientDetail Activity List, reload the favList..
 ActivitySyncUtil.clientActivityList_FavListReload = function( cardDivTag )
 {
-	var tabClientActivitiesTag_Visible = cardDivTag.closest( 'div[tabbuttonid=tab_clientActivities]:visible' );
-
-	if ( tabClientActivitiesTag_Visible.length > 0 )
+	if ( cardDivTag && cardDivTag.length > 0 )
 	{
-		tabClientActivitiesTag_Visible.find( 'div.favReRender' ).click();
-	}        
+		var tabClientActivitiesTag_Visible = cardDivTag.closest( 'div[tabbuttonid=tab_clientActivities]:visible' );
+
+		if ( tabClientActivitiesTag_Visible.length > 0 ) tabClientActivitiesTag_Visible.find( 'div.favReRender' ).click();	
+	}
 };
 
 
 ActivitySyncUtil.syncUpActivity_IfOnline = function( activityId, returnFunc, failFunc )
 {
-	// Main SyncUp Processing --> Calls 'activityCard.performSyncUp' eventually.
+	// Main SyncUp Processing --> Calls 'SyncManagerNew.performSyncUp_Activity' eventually.
 	if ( ConnManagerNew.isAppMode_Online() ) SyncManagerNew.syncUpActivity( activityId, undefined, returnFunc );
 	else
 	{

@@ -112,11 +112,11 @@ function Action( cwsRenderObj, blockObj )
 				}
 				else
 				{
-					console.customLog( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );					
+					console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );					
 					
 					if ( moreInfoJson ) 
 					{
-						console.customLog( moreInfoJson );
+						console.log( moreInfoJson );
 						if ( moreInfoJson.errMsg ) MsgManager.msgAreaShow( moreInfoJson.errMsg, 'ERROR' );
 					} 
 					
@@ -677,7 +677,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 		catch( errMsg )
 		{
-			console.customLog( "ERROR in action.checkDuplicate_VoucherTransActivity, errMsg: " + errMsg );
+			console.log( "ERROR in action.checkDuplicate_VoucherTransActivity, errMsg: " + errMsg );
 		}	
 
 		return dupVoucherActivityPass;
@@ -850,7 +850,7 @@ function Action( cwsRenderObj, blockObj )
 			}
 			catch( errMsg )
 			{
-				console.customLog( 'ERROR in Action.runNewEvaluateExpression, errMsg: ' + errMsg );
+				console.log( 'ERROR in Action.runNewEvaluateExpression, errMsg: ' + errMsg );
 			}
 		});
 	};
@@ -1040,7 +1040,7 @@ function Action( cwsRenderObj, blockObj )
 		}
 		catch ( errMsg )
 		{
-			console.customLog( 'ERROR in action.handleMultipleVouchersSplit, errMsg: ' + errMsg );
+			console.log( 'ERROR in action.handleMultipleVouchersSplit, errMsg: ' + errMsg );
 		}
 	};
 

@@ -128,6 +128,12 @@ function ClientCard( clientId, options )
 
             // If 'detailView' mode, the bottom message should not show..
             if ( detailViewCase ) divSyncIconTag.addClass( 'detailViewCase' );
+
+
+            // TODO: When ClientCard is clicked in 'clientCardDetail' page, and the syncUp returns with some extra info..
+            //      --> We need to catch the activityList call and return?
+
+
         }
         catch ( errMsg )
         {

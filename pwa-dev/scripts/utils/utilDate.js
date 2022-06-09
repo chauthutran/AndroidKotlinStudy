@@ -8,6 +8,8 @@ UtilDate.dateType1 = "yyyy-MM-ddTHH:mm:ss.SSS";
 UtilDate.dateType_DATE = "yyyy-MM-dd";
 UtilDate.dateType_DATETIME = "yyyy-MM-ddTHH:mm:ss.SSS";
 
+UtilDate.NAME_Date_Loc = 'Loc';
+UtilDate.NAME_Date_UTC = 'UTC';
 // --------------------------------------
 
 UtilDate.checkCalendarDateStrFormat = function( inputStr )
@@ -328,3 +330,53 @@ UtilDate.getTimeSince = function( fromDtStr, timeType )
 
 	return timeSince;
 };
+
+
+// ======================================================
+// ---- 'date' object UTC to Loc convert, visa versa
+
+UtilDate.setDate_LocToUTC_bySrc = function( dateObj, targetDateStartName, srcDateStr )
+{
+    var localDateTimeStr = srcDateStr;
+
+    if ( dateObj && localDateTimeStr ) 
+    {
+        var fieldNameLoc = targetDateStartName + UtilDate.NAME_Date_Loc;
+        var fieldNameUTC = targetDateStartName + UtilDate.NAME_Date_UTC;
+        
+        dateObj[ fieldNameLoc ] = Util.formatDateTime( localDateTimeStr );    
+        dateObj[ fieldNameUTC ] = Util.getUTCDateTimeStr( UtilDate.getDateObj( localDateTimeStr ), 'noZ' );
+    }    
+};
+
+UtilDate.setDate_UTCToLoc_fields = function( dateObj, fieldNameList )
+{
+    if ( dateObj )
+    {
+        if ( fieldNameList === 'ALL' )
+        {
+            var fieldNameUTCs = [];
+
+            for ( var prop in dateObj ) {  
+                if ( Util.endsWith( prop, UtilDate.NAME_Date_UTC ) ) fieldNameUTCs.push( prop );  
+            }
+
+            fieldNameUTCs.forEach( fieldNameUTC => {  UtilDate.setDate_UTCToLoc( dateObj, fieldNameUTC );  } );
+        }
+        else if ( Util.isTypeArray( fieldNameList ) && fieldNameList.length > 0 )  // [ 'captured', 'created', 'updated' ]
+        {
+            fieldNameList.forEach( fieldNameUTC => {  UtilDate.setDate_UTCToLoc( dateObj, fieldNameUTC );  } );
+        }    
+    }
+};
+
+UtilDate.setDate_UTCToLoc = function( dateObj, fieldNameUTC )
+{
+    if ( dateObj && dateObj[ fieldNameUTC ] )
+    {
+        var fieldNameLoc = Util.strCutEnd( fieldNameUTC, 3 ) + UtilDate.NAME_Date_Loc;
+        var localDateTime = Util.dateUTCToLocal( dateObj[ fieldNameUTC ] );
+        if ( localDateTime ) dateObj[ fieldNameLoc ] = Util.formatDateTime( localDateTime );    
+    }
+};
+

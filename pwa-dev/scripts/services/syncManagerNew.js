@@ -249,31 +249,36 @@ SyncManagerNew.syncUpActivity = function( activityId, resultData, returnFunc )
         // Q: THIS SHOULD NOT BE OBJECT METHOD...  
         ActivityCard.highlightActivityDiv( activityId, true );
 
-        ActivityCard.performSyncUp( activityId, function( success, responseJson, newStatus ) 
+        SyncManagerNew.performSyncUp_Activity( activityId, function( success, responseJson, newStatus, extraData ) 
         {
-            // gAnalytics Event
-            GAnalytics.setEvent( 'SyncEnded', activityId, success, 1 );
-            
+            if ( !extraData ) extraData = {};
 
-            SyncManagerNew.syncUpActivity_ResultUpdate( success, resultData );
+            if ( extraData.removedClientId ) { } // In 'removedClientId' case, do not perform below.
+            else
+            {
+                // gAnalytics Event
+                GAnalytics.setEvent( 'SyncEnded', activityId, success, 1 );
+                
 
-            // Cool Down Related Last synced time Set ...
-            if ( SyncManagerNew.coolDownEnabled ) ActivityDataManager.setActivityLastSyncedUp( activityId );
+                SyncManagerNew.syncUpActivity_ResultUpdate( success, resultData );
 
-
-            // NEW - Added.
-            ConfigManager.activityStatusSwitchOps( 'afterSync', [ activityJson ] );
-
-
-            // Activity Card
-            ActivityCard.reRenderAllById( activityId ); //             ActivityCard.reRenderActivityDiv();
-            ActivityCard.highlightActivityDiv( activityId, false );
-
-            // Rerender the client card that holds this activity as well. - if new client case, the id is tempClient, yet.
-            ClientCard.reRenderClientCardsById( clientId, { 'activitiesTabClick': true } );
+                // Cool Down Related Last synced time Set ...
+                if ( SyncManagerNew.coolDownEnabled ) ActivityDataManager.setActivityLastSyncedUp( activityId );
 
 
-            if ( returnFunc ) returnFunc( syncReadyJson, success, responseJson, newStatus );
+                // NEW - Added.
+                ConfigManager.activityStatusSwitchOps( 'afterSync', [ activityJson ] );
+
+
+                // Activity Card
+                ActivityCard.reRenderAllById( activityId ); //             ActivityCard.reRenderActivityDiv();
+                ActivityCard.highlightActivityDiv( activityId, false );
+
+                // Rerender the client card that holds this activity as well. - if new client case, the id is tempClient, yet.
+                ClientCard.reRenderClientCardsById( clientId, { 'activitiesTabClick': true } );
+            }
+
+            if ( returnFunc ) returnFunc( syncReadyJson, success, responseJson, newStatus, extraData );
         });
     }
     else
@@ -454,15 +459,18 @@ SyncManagerNew.syncUpReadyCheck = function( activityJson )
 {    
     var readyJson = { 'ready': false, 'loggedIn': false, 'online': false, 'syncableStatus': false, 'coolDownPass': false };
 
-    readyJson.loggedIn = SessionManager.Status_LoggedIn;
-    readyJson.online = ConnManagerNew.isAppMode_Online();
-    readyJson.syncableStatus = SyncManagerNew.checkActivityStatus_SyncUpReady( activityJson );
-    readyJson.coolDownPass = ActivityDataManager.checkActivityCoolDown( activityJson.id );
-
-    readyJson.ready = ( readyJson.loggedIn && readyJson.online && readyJson.syncableStatus && readyJson.coolDownPass );
-    // For 'ResponseAction' scheduling case, we should stop the calling in background if 'syncableStatus' is false..
-    //      For 'loggedIn' is false, (logged out case), should we stop it?  For now, have it running.
-    //          The best would be 
+    if ( activityJson )
+    {
+        readyJson.loggedIn = SessionManager.Status_LoggedIn;
+        readyJson.online = ConnManagerNew.isAppMode_Online();
+        readyJson.syncableStatus = SyncManagerNew.checkActivityStatus_SyncUpReady( activityJson );
+        readyJson.coolDownPass = ActivityDataManager.checkActivityCoolDown( activityJson.id );
+    
+        readyJson.ready = ( readyJson.loggedIn && readyJson.online && readyJson.syncableStatus && readyJson.coolDownPass );
+        // For 'ResponseAction' scheduling case, we should stop the calling in background if 'syncableStatus' is false..
+        //      For 'loggedIn' is false, (logged out case), should we stop it?  For now, have it running.
+        //          The best would be     
+    }
 
     return readyJson;
 };
@@ -801,6 +809,295 @@ SyncManagerNew.getMsgFormatted = function( msg, statusVal )
     return formattedMsg;
 };
 
-
 // ===================================================
-// === OTHERS Methods =============
+// === ACTIVITY SYNC UP RELATED =============
+
+// Perform Submit Operation..
+SyncManagerNew.performSyncUp_Activity = function( activityId, afterDoneCall )
+{
+    var activityJson_Orig;
+    var syncIconTag = ActivitySyncUtil.getSyncButtonDivTag( activityId );
+
+    try
+    {
+        // gAnalytics Event
+        GAnalytics.setEvent( 'SyncRun', activityId, 'activity', 1 );
+        //GAnalytics.setEvent = function(category, action, label, value = null) 
+
+        activityJson_Orig = ActivityDataManager.getActivityById( activityId );
+
+        if ( !activityJson_Orig.processing ) throw 'Activity.performSyncUp, activity.processing not available';
+        if ( !activityJson_Orig.processing.url ) throw 'Activity.performSyncUp, activity.processing.url not available';
+
+        var mockResponseJson = ConfigManager.getMockResponseJson( activityJson_Orig.processing.useMockResponse );
+
+
+        // NOTE: On 'afterDoneCall', 'reRenderActivityDiv()' gets used to reRender of activity.  
+        //  'displayActivitySyncStatus()' also has 'FormUtil.rotateTag()' in it.
+        //  Probably do not need to save data here.  All the error / success case probably are covered and saves data afterwards.
+        activityJson_Orig.processing.status = Constants.status_processing;
+        activityJson_Orig.processing.syncUpCount = Util.getNumber( activityJson_Orig.processing.syncUpCount ) + 1;
+
+        ActivitySyncUtil.displayActivitySyncStatus( activityId );
+
+        try
+        {
+            // Fake Test Response Json
+            if ( mockResponseJson )
+            {
+                WsCallManager.mockRequestCall( mockResponseJson, undefined, function( success, responseJson )
+                {
+                    SyncManagerNew.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall );
+                });
+            }
+            else
+            {
+                var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit( activityJson_Orig );
+
+                // NOTE: We need to add app timeout, from 'request'... and throw error...
+                WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, undefined, function( success, responseJson )
+                {
+                    SyncManagerNew.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall );
+                });       
+            }
+        }
+        catch ( errMsg )
+        {
+            throw ' Error on wsActionCall - ' + errMsg;  // Go to next 'catch'
+        }
+    }
+    catch( errMsg )
+    {
+        // Stop the Sync Icon rotation
+        // FormUtil.rotateTag( syncIconTag, false );
+
+        // Set the status as 'Error' with detail.  Save to storage.  And then, display the changes on visible.
+        var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_error, 404, 'Error.  Can not be synced.  msg - ' + errMsg );
+        ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+        
+        ClientDataManager.saveCurrent_ClientsStore( () => {
+            ActivitySyncUtil.displayActivitySyncStatus( activityId );
+            afterDoneCall( false, errMsg );
+        });
+    }
+};
+
+// ----------------------------------------------
+
+SyncManagerNew.syncUpWsCall_ResultHandle = function( syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall )
+{        
+    // Stop the Sync Icon rotation
+    FormUtil.rotateTag( syncIconTag, false );
+
+    // NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
+    // Based on response(success/fail), perform app/activity/client data change
+    SyncManagerNew.syncUpResponseHandle( activityJson_Orig, activityId, success, responseJson, function( success, errMsg, newStatus, extraData ) 
+    {
+        if ( !extraData ) extraData = {}; // Always have 'extraData'
+
+        if ( extraData.removedClientId ) { } // In 'removedClientId' case, do not perform below.
+        else
+        {
+            // Updates UI & perform any followUp actions - 'responseCaseAction'
+
+            // On failure, if the syncUpCount has rearched the limit, set the appropriate status.
+            var newActivityJson = ActivityDataManager.getActivityById( activityId );
+            // If 'syncUpResponse' changed status, make the UI applicable..
+            //var newActivityJson = ActivityDataManager.getActivityById( activityId );
+
+            if ( newActivityJson )
+            {
+                ActivitySyncUtil.displayActivitySyncStatus( activityId );
+
+                // Process 'ResponseCaseAction' - responseJson.report - This schedules more syncUp attempts by response status/code
+                //  - EX. if 'X400', try 10 more tries.. etc..
+                if ( responseJson && responseJson.report ) 
+                {
+                    ActivityDataManager.processResponseCaseAction( responseJson.report, activityId );
+                }    
+            }
+            else
+            {
+                throw 'FAILED to handle syncUp response, activityId lost: ' + activityId;
+            }
+        }
+
+        afterDoneCall( success, responseJson, newStatus, extraData );
+    });   
+};
+
+// =============================================
+
+SyncManagerNew.syncUpResponseHandle = function( activityJson_Orig, activityId, success, responseJson, callBack )
+{
+    var operationSuccess = false;
+
+    // 1. Check success
+    if ( success && responseJson && responseJson.result && responseJson.result.client )
+    {
+        var clientJson = ConfigManager.downloadedData_UidMapping( responseJson.result.client );
+
+        // #1. Check if current activity Id exists in 'result.client' activities..
+        if ( clientJson.activities && Util.getFromList( clientJson.activities, activityId, "id" ) )
+        {
+            operationSuccess = true;
+
+            // 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
+            var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing );
+
+            // [NOTE: STILL USED?]
+            // If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
+            if ( processingInfo.fixActivityCase )
+            {
+                delete processingInfo.fixActivityCase;
+                SyncManagerNew.deleteFixActivityRecord( activityId );
+            }
+            
+
+            // TODO: If this was c_switchUser transaction activity case, and the 'oldUser' matches this user,
+            //  remove the user from database..
+            var removedClient_bySwitchUser = false;
+            var transSwitchUserList = activityJson_Orig.transactions.filter( trans => trans.type === 'c_switchUser' );
+            
+            if ( transSwitchUserList.length > 0 )
+            {
+                var lastTrans_SwitchUser = transSwitchUserList[ transSwitchUserList.length - 1 ];
+
+                if ( lastTrans_SwitchUser.dataValues && lastTrans_SwitchUser.dataValues.oldUser === INFO.login_UserName ) removedClient_bySwitchUser = true;
+                // NOT USED - confirm the case for deletion..
+                // if ( clientJson.clientDetails.activeUsers && clientJson.clientDetails.activeUsers.indexOf( INFO.login_UserName ) === -1 ) { } // Also, check for 'creditedUsers' array..
+            }
+            
+            if ( removedClient_bySwitchUser )
+            {
+                // ## TODO: THIS WORKS?  The clientCard is removed automatically..  
+                ClientDataManager.removeClient( clientJson );
+
+                var extraData = { removedClientId: clientJson._id };
+
+                ClientDataManager.saveCurrent_ClientsStore( () => {
+                    if ( callBack ) callBack( operationSuccess, undefined, Constants.status_submit, extraData );
+                });
+            }
+            else
+            {
+                ClientDataManager.setActivityDateLocal_client( clientJson );
+
+                // Removal of existing activity/client happends within 'mergeDownloadClients()'
+                ClientDataManager.mergeDownloadedClients( { 'clients': [ clientJson ], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function() 
+                {               
+                    // 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
+                    ClientDataManager.saveCurrent_ClientsStore( () => {
+                        if ( callBack ) callBack( operationSuccess, undefined, Constants.status_submit );
+                    });
+                });
+            }
+        }
+        else
+        {
+            var errMsg = 'No matching activity with id, ' + activityId + ', found on result.client.';
+            var errStatusCode = 400;
+
+            // 'syncedUp' processing data                
+            var processingInfo = ActivityDataManager.createProcessingInfo_Other( Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg );
+            ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+
+            ClientDataManager.saveCurrent_ClientsStore( () => {
+                if ( callBack ) callBack( operationSuccess, errMsg, Constants.status_failed );
+            });                                      
+        }            
+    }
+    else
+    {
+        var errMsg = 'Error: ';
+        var errStatusCode = 400;
+        var newStatus = Constants.status_failed;
+
+        if ( responseJson )
+        {
+            try
+            {
+                if ( responseJson.errStatus ) errStatusCode = responseJson.errStatus;
+
+                if ( responseJson.result )
+                {
+                    if ( responseJson.result.operation ) errMsg += ' [result.operation]: ' + responseJson.result.operation;
+                    if ( responseJson.result.errData ) errMsg += ' [result.errData]: ' + Util.getJsonStr( responseJson.result.errData ); 
+                }
+                else if ( responseJson.errMsg )  errMsg += ' [errMsg]: ' + responseJson.errMsg;
+                else if ( responseJson.errorMsg ) errMsg += ' [errorMsg]: ' + responseJson.errorMsg;
+                else if ( responseJson.report ) errMsg += ' [report.msg]: ' + responseJson.report.msg;
+                else
+                {
+                    // TODO: Need to simplify this...
+                    SyncManagerNew.cleanUpErrJson( responseJson );
+                    errMsg += ' [else]: ' + Util.getJsonStr( responseJson );
+                }
+
+                // TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
+                if ( responseJson.subStatus === 'errorStop' || responseJson.subStatus === 'errorRepeatFail' ) newStatus = Constants.status_error;
+                
+                // NEW!!
+                if ( responseJson.subStatus === 'notificationStop' ) 
+                {
+                    newStatus = Constants.status_error;
+                    console.log( '[subStatus notificationStop]' );
+                    console.log( responseJson );
+                    
+                    // Need to save the clients 'confirmClients' somewhere...  save in activity..?
+                    // Then, in open msg, we can present it with options...
+                    activityJson_Orig.confirmClients = responseJson.confirmClients;
+                }
+            } 
+            catch ( errMsgCatched )
+            {
+                errMsg += ' [errMsgCatched]: ' + Util.getJsonStr( responseJson ) + 'errMsgCatched: ' + errMsgCatched;
+            }
+        }
+
+        // 'syncedUp' processing data                
+        var processingInfo = ActivityDataManager.createProcessingInfo_Other( newStatus, errStatusCode, errMsg );
+        ActivityDataManager.insertToProcessing( activityJson_Orig, processingInfo );
+
+        ClientDataManager.saveCurrent_ClientsStore( () => {
+            // Add activityJson processing
+            if ( callBack ) callBack( operationSuccess, errMsg, newStatus );
+        });                                      
+    } 
+};
+
+SyncManagerNew.deleteFixActivityRecord = function( activityId )
+{
+    try
+    {
+        //if ( fixedActivityList && fixedActivityList.length > 0 )
+        var payloadJson = { 'find': { 'activityId': activityId } }; //{ '$in': fixedActivityList } } };
+
+        WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, undefined, function() 
+        {
+            console.customLog( 'Deleted fixActivityRecord, activityId ' + activityId );
+        });
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR during SyncManagerNew.deleteFixActivityRecord(), activityId: ' + activityId + ', errMsg: ' + errMsg );
+    }
+};
+
+SyncManagerNew.cleanUpErrJson = function( responseJson )
+{
+    try
+    {
+        if ( responseJson.report )
+        {
+            var report = responseJson.report;
+            if ( report.process ) delete report.process;
+            if ( report.log ) delete report.log;
+            if ( report.req ) delete report.req;
+        }
+    }
+    catch( errMsg )
+    {
+        console.customLog( 'ERROR during SyncManagerNew.cleanUpErrJson, errMsg: ' + errMsg );
+    }        
+};

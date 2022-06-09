@@ -61,7 +61,7 @@ ScheduleManager.scheduleList = {
 ScheduleManager.runSwitchToOnlineList = {};
 
 // ------------------------------------
-// --- SyncUpResponseAction Variables
+// --- SyncUpResponseAction Variables   - 'responseActionList' / 'ResponseCaseAction' defined in config, is a triggering schedule of additional syncUps by the response status.
 ScheduleManager.syncUpResponseAction_DefaultIntervalTime = Util.MS_HR; // 1 hr ( 1 sec, 1min, 1hr)
 ScheduleManager.syncUpResponseActionList = {};  // "activityId": {}, ...
 ScheduleManager.syncUpResponseActionList_History = [];  // { activityId, ... }, ...
@@ -285,6 +285,7 @@ ScheduleManager.fixOperationTimeoutCall = function()
 // -----------------------------------------------
 // --- SyncUpResponseAction Related --------------
 
+// - 'responseActionList' / 'ResponseCaseAction' defined in config, is a triggering schedule of additional syncUps by the response status.
 ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activityId ) 
 { 	
 	var activityActionJson = ScheduleManager.syncUpResponseActionList[ activityId ];

@@ -81,15 +81,32 @@ ActivityDataManager.getActivityIdCopyList = function()
 // ---------------------------------------
 // --- Remove Activity
 
-ActivityDataManager.removeActivities = function( activities )
+ActivityDataManager.removeActivities = function( activities, option )
 {
+    if ( !option ) option = {};
+
     if ( activities && activities.length > 0 )
     {
         for ( var i = activities.length - 1; i >= 0; i-- )
         {
             var activity = activities[ i ];
-            ActivityDataManager.deleteExistingActivity_Indexed( activity.id );
-        }    
+
+            if ( activity )
+            {
+                var activityId = activity.id;
+                ActivityDataManager.deleteExistingActivity_Indexed( activityId );
+    
+                if ( option.removeActivityCardTags )
+                {
+                    // If there is this client detailPage opened up, close it up.
+                    var activityDetailCardTag = $( 'div.card.activity._tab[itemid="' + activityId + '"]' );
+                    if ( activityDetailCardTag.length > 0 ) activityDetailCardTag.closest( 'div.wapper_card' ).find( '.btnBack.clientDetail' ).click();
+
+                    // Remove all activityCards of this id.
+                    $('div.card.activity[itemid="' + activityId + '"]').remove();
+                }    
+            }
+        }
     }
 };
 
@@ -901,38 +918,33 @@ ActivityDataManager.getData_FromTrans = function( activityJson, propName )
     return dataJson;
 };
 
+
+// Used to convert 'UTC' time to 'Loc' time - used when activity/client is downloaded from server
+//  - The used device might have different timezone, thus, we will populate correct Loc time..
 ActivityDataManager.setActivityDateLocal = function( activityJson )
 {
     try
     {
-        if ( activityJson.date && activityJson.date.capturedUTC )
+        if ( activityJson.date )
         {
             if ( ConfigManager.isSourceTypeDhis2() )
             {
-                if ( ConfigManager.getConfigJson().sourceAsLocalTime || ConfigManager.getConfigJson().dhis2UseLocalTime )
-                {
-                    var localDateTime = activityJson.date.capturedUTC;
-                    if ( localDateTime ) 
-                    {
-                        activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );    
-                        activityJson.date.capturedUTC = Util.getUTCDateTimeStr( UtilDate.getDateObj( localDateTime ), 'noZ' );
-                    }
-                } 
-                else
-                {
-                    var localDateTime = Util.dateUTCToLocal( activityJson.date.capturedUTC );
-                    if ( localDateTime ) activityJson.date.capturedLoc = Util.formatDateTime( localDateTime );    
-                }
+                // capturedUTC, createdUTC, updatedUTC <-- if exists, convert Loc
+                var srcLocalTimeCase = ( ConfigManager.getConfigJson().sourceAsLocalTime || ConfigManager.getConfigJson().dhis2UseLocalTime );
+
+                // If Dhis2 stored date is saved as Local dateTime, set it as 'Loc' and get/calculate UTC from it.
+                if ( srcLocalTimeCase ) UtilDate.setDate_LocToUTC_bySrc( activityJson.date, 'captured', activityJson.date.capturedUTC );
+                else UtilDate.setDate_UTCToLoc( activityJson.date, 'capturedUTC' );                    
             }
-            else // Mongo Type
+            else // mongo soruce case
             {
-                // Mongo type does not need to convert date..  Correct?
+                UtilDate.setDate_UTCToLoc_fields( activityJson.date, 'ALL' );  // Or automatically all?
             }
         }
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error in ActivityDataManager.setActivityDateLocal, errMsg: ' + errMsg );
+        console.log( 'Error in ActivityDataManager.setActivityDateLocal, ' + errMsg );
     }
 };
 
@@ -1204,6 +1216,9 @@ ActivityDataManager.isActivityStatusSynced = function( activity )
 // ------------------------------------
 //   ResponseCaseAction Related 
 
+// - 'ResponseCaseAction' defined in config, is a triggering schedule of additional syncUps by the response status.
+// "definitionResponseCaseActions": {  "X400": {  "voucher_not_found": { "syncAction": {"syncInterval": "00:00:10", "maxAttempts": 10,
+// If current activity syncUp response status code is 'X400', try 10 more times in 10 min interval.
 ActivityDataManager.processResponseCaseAction = function( reportJson, activityId )
 {
     // Check for matching oens..

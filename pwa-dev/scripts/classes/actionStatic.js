@@ -86,11 +86,11 @@ Action.handleActionsInSync = function( blockDivTag, formDivSecTag, btnTag, actio
 			}
 			else
 			{
-				console.customLog( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );					
+				console.log( 'Action Failed.  Actions processing stopped at Index ' + actionIndex );					
 				
 				if ( moreInfoJson ) 
 				{
-					console.customLog( moreInfoJson );
+					console.log( moreInfoJson );
 					if ( moreInfoJson.errMsg ) MsgManager.msgAreaShow( moreInfoJson.errMsg, 'ERROR' );
 				} 
 				
@@ -254,7 +254,7 @@ Action.actionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, 
 					var backBtnTags = $( '.btnBack:visible' );
 					if ( backBtnTags.length > 0 ) backBtnTags.first().click();
 					
-					//if ( clickActionJson.areaId == 'list_c-on' ) console.customLog( 'x' );
+					//if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
 					Action.cwsRenderObj.renderArea( clickActionJson.areaId );
 				}
 
@@ -320,12 +320,7 @@ Action.actionPerform = function( actionDef, blockDivTag, formDivSecTag, btnTag, 
 				{						
 					ActivitySyncUtil.syncUpActivity_IfOnline( dataPass.activityJson.id, function( syncReadyJson, success ) 
 					{
-						console.log( 'queuedActivitySync' );
-						console.log( syncReadyJson );
-						console.log( success );
 						afterActionFunc( true );
-
-						// alert case?
 					});
 				}
 
@@ -524,7 +519,7 @@ Action.checkDuplicate_VoucherTransActivity = function( formsJsonActivityPayload,
 	}
 	catch( errMsg )
 	{
-		console.customLog( "ERROR in action.checkDuplicate_VoucherTransActivity, errMsg: " + errMsg );
+		console.log( "ERROR in action.checkDuplicate_VoucherTransActivity, errMsg: " + errMsg );
 	}	
 
 	return dupVoucherActivityPass;
@@ -697,7 +692,7 @@ Action.runNewEvaluateExpression = function( actionExpObj, jsonList )
 		}
 		catch( errMsg )
 		{
-			console.customLog( 'ERROR in Action.runNewEvaluateExpression, errMsg: ' + errMsg );
+			console.log( 'ERROR in Action.runNewEvaluateExpression, errMsg: ' + errMsg );
 		}
 	});
 };
@@ -887,7 +882,7 @@ Action.handleMultipleVouchersSplit = function( responseJson, payloadJson )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR in action.handleMultipleVouchersSplit, errMsg: ' + errMsg );
+		console.log( 'ERROR in action.handleMultipleVouchersSplit, errMsg: ' + errMsg );
 	}
 };
 

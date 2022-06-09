@@ -45,7 +45,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	{
 		// Form BlockTag generate/assign
 		//me.clearClassTag( me.blockId, me.parentTag );
-		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.blockDefJson, me.parentTag );
+		me.blockTag = me.createBlockTag( me.blockId, me.blockType, me.blockDefJson, me.parentTag, me.options );
 
 
 		if ( me.blockDefJson )
@@ -141,11 +141,14 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 	};
 	
 
-	me.createBlockTag = function( blockId, blockType, blockDefJson, parentTag )
+	me.createBlockTag = function( blockId, blockType, blockDefJson, parentTag, options )
 	{
 		//var blockTag = $( '<div class="block" blockId="' + blockId + '" activityType="' + blockDefJson.activityType + '"></div>' );
 		var blockTag = $( '<div class="block" blockId="' + blockId + '" activityType="' + Util.getStr( blockDefJson.activityType ) + '"></div>' );
 		blockTag.addClass( blockType );
+
+		// NEW TRIAL..  CURRENTLY, NOT BEING USED..
+		if ( options.blockCssWidth ) blockTag.css( 'width', blockCssWidth );
 
 		// Put it under parentTag
 		parentTag.append( blockTag.addClass( 'blockStyle' ) );		

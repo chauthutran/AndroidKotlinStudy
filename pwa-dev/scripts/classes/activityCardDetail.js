@@ -189,9 +189,6 @@ function ActivityCardDetail( activityId, isRestore )
 		me.unload_issuedVoucherCode( activityId );
 
 		var client = ActivityDataManager.deleteExistingActivity_Indexed( activityId );
-		// If client is tempClient and activityList is empty, remove the client.
-		ClientDataManager.removeTempClient_ifEmptyActs( client );
-				
 
 		// NOTE: POTENTIALLY delete child activities here.  For now, only applied this deletion on 'rollBack'
 		ClientDataManager.saveCurrent_ClientsStore(() => 
@@ -203,11 +200,14 @@ function ActivityCardDetail( activityId, isRestore )
 			divSyncIconTags.closest('div.card__container').find('div.clientRerender').click();
 
 			// tab clientActivity reClick - to influence the activity list & favList..
-			var tabClientActivitiesTag = $('[itemid="' + activityId + '"]').closest('div[tabbuttonid=tab_clientActivities]');
+			var tabClientActivitiesTag = $('div.card.activity[itemid="' + activityId + '"]').closest('div[tabbuttonid=tab_clientActivities]');
 			if (tabClientActivitiesTag.length > 0) tabClientActivitiesTag.find('div.favReRender').click();
 
 			// Finally, remove all activityCards of this id.
-			$('[itemid="' + activityId + '"]').remove(); // activityCardTags
+			$('div.card.activity[itemid="' + activityId + '"]').remove(); // activityCardTags
+
+			// If client is tempClient and activityList is empty, remove the client.
+			ClientDataManager.removeTempClient_ifEmptyActs( client );
 		});
 	};
 

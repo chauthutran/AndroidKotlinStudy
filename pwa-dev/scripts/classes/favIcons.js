@@ -10,7 +10,8 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     me.targetBlockContainerTag = targetBlockContainerTag;
     me.options = options;
 
-    me.mainFavPreClick;
+    me.mainFavClickPre;
+    me.mainFavClickPost;
 
     // ---------------
     me.favIconsTag;
@@ -35,7 +36,8 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 
         if ( me.options )
         {
-            me.mainFavPreClick = me.options.mainFavPreClick;
+            me.mainFavClickPre = me.options.mainFavClickPre;
+            me.mainFavClickPost = me.options.mainFavClickPost;
 
             if ( me.options.favMainIcon )
             {
@@ -330,7 +332,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
         {
             if ( favItem )
             {
-                if ( me.mainFavPreClick ) me.mainFavPreClick( targetBlockTag, targetBlockContainerTag );
+                if ( me.mainFavClickPre ) me.mainFavClickPre( targetBlockTag, targetBlockContainerTag );
             
                 if ( runFunc ) runFunc( favItem );
 
@@ -339,12 +341,16 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
                     //SessionManager.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
                     SessionManager.cwsRenderObj.renderFavItemBlock( favItem.target.blockId, favItem.target.options
                         ,targetBlockContainerTag, favItem );
+                        
+                    if ( me.mainFavClickPost ) me.mainFavClickPost( targetBlockTag, targetBlockContainerTag );
                 }
                 else if ( favItem.onClick )
                 {
                     var actionObj = new Action( SessionManager.cwsRenderObj, {} );
                     actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag );
-                }    
+
+                    if ( me.mainFavClickPost ) me.mainFavClickPost( targetBlockTag, targetBlockContainerTag );
+                }
             }
         });
     };
@@ -504,7 +510,7 @@ FavIcons.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, t
     {
         if ( favItem )
         {
-            //if ( me.mainFavPreClick ) me.mainFavPreClick( targetBlockTag, targetBlockContainerTag );
+            //if ( me.mainFavClickPre ) me.mainFavClickPre( targetBlockTag, targetBlockContainerTag );
         
             if ( beforeRunFunc ) beforeRunFunc( favItem );
 

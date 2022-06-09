@@ -1385,12 +1385,17 @@ Util.upcaseFirstCharacterWord = function( text ){
 
 Util.startsWith = function( input, suffix )
 {
-    return ( Util.checkValue( input ) && input.substring( 0, suffix.length ) == suffix );
+   return ( Util.checkValue( input ) && input.substring( 0, suffix.length ) == suffix );
 };
 
 Util.endsWith = function( input, suffix ) 
 {
-    return ( Util.checkValue( input ) && input.indexOf( suffix, input.length - suffix.length ) !== -1 );
+   return ( Util.checkValue( input ) && input.indexOf( suffix, input.length - suffix.length ) !== -1 );
+};
+
+Util.strCutEnd = function( input, endCutLength ) 
+{	
+	return input.substr( 0, input.length - endCutLength );
 };
 
 Util.clearList = function( selector ) {

@@ -39,7 +39,7 @@ function ClientRelationshipList( clientId, _relationshipTabTag, blockDefId )
         me.renderRelationshipList( me.listTag, me.clientJson.relationships, me.blockDefJson );
 
         
-        var favIconsObj = new FavIcons( 'clientRelFav', me.listTag, me.relationshipTabTag, { 'mainFavPreClick': function( blockTag, blockContianerTag ) {
+        var favIconsObj = new FavIcons( 'clientRelFav', me.listTag, me.relationshipTabTag, { 'mainFavClickPre': function( blockTag, blockContianerTag ) {
             INFO.client = me.clientJson;  /// ?? Get/refresh client json by id?
         }});
         favIconsObj.render();

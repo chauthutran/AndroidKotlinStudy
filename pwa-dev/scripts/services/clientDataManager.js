@@ -131,8 +131,8 @@ ClientDataManager.replaceTempClient_withNewClient = function( tempClient, client
     });
 
 
-    // 3. Remove the tempClient - also removes client/activities indexes..
-    ClientDataManager.removeClient( tempClient );
+    // 3. Remove the tempClient - also removes client/activities indexes.. - but do not remove the tags..
+    ClientDataManager.removeClient( tempClient, { notRemoveTags: true } );
 
 
     // 4. Modify the moving activity searchValues '_id'
@@ -163,19 +163,28 @@ ClientDataManager.removeTempClient_ifEmptyActs = function( client )
 };
 
 
-ClientDataManager.removeClient = function( client )
+ClientDataManager.removeClient = function( client, option )
 {
     try
     {
+        if ( !option ) option = {};
+
         // Remove activities in it
-        ActivityDataManager.removeActivities( client.activities );
+        ActivityDataManager.removeActivities( client.activities, { removeActivityCardTags: true } );
 
         // remove client ones..
         ClientDataManager.removeClientIndex( client );        
         Util.RemoveFromArray( ClientDataManager.getClientList(), "_id", client._id );
-        
-        // Remove all clientCards of this id.
-        $('div.client,card[itemid="' + client._id + '"]').remove();
+
+        if ( !option.notRemoveTags )
+        {
+            // DetailPage Close - If there is this client detailPage opened up, close it up.
+            var clientDetailCardTag = $( 'div.card.client._tab[itemid="' + client._id + '"]' );
+            if ( clientDetailCardTag.length > 0 ) clientDetailCardTag.closest( 'div.wapper_card' ).find( '.btnBack.clientDetail' ).click();
+
+            // Remove all clientCards of this id.
+            $( 'div.card.client[itemid="' + client._id + '"]' ).remove();
+        }
     }
     catch( errMsg )
     {
@@ -476,6 +485,7 @@ ClientDataManager.dateConvertFromActivityDate = function( activity )
     {
         var actDate = activity.date;
 
+        // 2 Date fields Used by backends.
         //updatedOnMdbUTC: "2021-06-02T02:02:57.026", createdOnMdbUTC: "2021-06-02T02:02:56.550"
         clientDate.createdOnMdbUTC = ( actDate.capturedUTC ) ? actDate.capturedUTC : Util.formatDate( ( new Date() ).toUTCString(), 'yyyyMMdd_HHmmssSSS' );
         clientDate.updatedOnMdbUTC = clientDate.createdOnMdbUTC;
@@ -678,12 +688,15 @@ ClientDataManager.getClientIdCopyList = function()
 
 // ----------------------------------------
 
+// Used by 'SyncDown' downloaded/processed 'client' activity dates..  UTC -> Loc..
 ClientDataManager.setActivityDateLocal_clientList = function( clientList )
 {
     if ( clientList )
     {
         clientList.forEach( client => 
         {
+            ClientDataManager.setClientDateLocal( client );
+
             if ( client.activities ) 
             {
                 client.activities.forEach( activity => {
@@ -694,9 +707,15 @@ ClientDataManager.setActivityDateLocal_clientList = function( clientList )
     }
 };
 
+// Used by 'SyncUp' downloaded/processed 'client' activity dates..  UTC -> Loc..
 ClientDataManager.setActivityDateLocal_client = function( client )
 {
-    if ( client ) ClientDataManager.setActivityDateLocal_clientList( [ client ] );
+    if ( client ) 
+    {
+        ClientDataManager.setClientDateLocal( client );
+
+        ClientDataManager.setActivityDateLocal_clientList( [ client ] );
+    }
 };
 
 ClientDataManager.setActivityDateLocal_clientsAll = function()
@@ -704,6 +723,34 @@ ClientDataManager.setActivityDateLocal_clientsAll = function()
     ClientDataManager.setActivityDateLocal_clientList( ClientDataManager.getClientList() );
 };
 
+ClientDataManager.setClientDateLocal = function( client )
+{
+    try
+    {
+        if ( client.date )
+        {
+            if ( ConfigManager.isSourceTypeDhis2() )
+            {
+                // NOTE: Do not convert DHIS2 ones?  for now?  Safe to not do anything?
+
+                // capturedUTC, createdUTC, updatedUTC <-- if exists, convert Loc
+                //var srcLocalTimeCase = ( ConfigManager.getConfigJson().sourceAsLocalTime || ConfigManager.getConfigJson().dhis2UseLocalTime );
+
+                // If Dhis2 stored date is saved as Local dateTime, set it as 'Loc' and get/calculate UTC from it.
+                //if ( srcLocalTimeCase ) UtilDate.setDate_LocToUTC_bySrc( client.date, 'captured', activityJson.date.capturedUTC );
+                //else UtilDate.setDate_UTCToLoc( client.date, 'capturedUTC' );                    
+            }
+            else // mongo soruce case
+            {
+                UtilDate.setDate_UTCToLoc_fields( client.date, 'ALL' );  // Or automatically all?
+            }
+        }
+    }
+    catch ( errMsg )
+    {
+        console.log( 'Error in ClientDataManager.setActivityDateLocal, ' + errMsg );
+    }
+};
 
 // ----------------------------------------
 

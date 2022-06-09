@@ -96,13 +96,15 @@ function ClientCardDetail( clientId )
 
             // ClientActivity FavList render
             var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag
-            , { 'mainFavPreClick': function( blockTag, blockContianerTag ) 
+            , { 'mainFavClickPre': function( blockTag, blockContianerTag ) 
             {
                 // On fav icon click, perform these below 1st as pre-step.                
                 blockTag.html( '' );
+                
                 // Get proper client into INFO.client - since other client could been loaded by clicks.
                 INFO.client = ClientDataManager.getClientById( me.clientId );
-            }});
+            }, 'mainFavClickPost': function( blockTag ) { blockTag.find( 'div.block:first' ).css( 'width', '100%' ); }
+            });
             var favListArr = favIconsObj.render();
 
 
