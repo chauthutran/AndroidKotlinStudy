@@ -127,6 +127,11 @@ DevHelper.setDevMode = function( bDev )
     }
 };
 
+DevHelper.checkNStartDebugConsole = function()
+{
+    if ( Util.getParameterByName("debug") === Constants.debugConsolePwd ) ConsoleCustomLog.debugConsoleStart();
+};
+
 DevHelper.switchConnectMode = function( connModeStr )
 {
     if ( connModeStr === "STABLE" )

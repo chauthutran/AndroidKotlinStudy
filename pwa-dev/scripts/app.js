@@ -29,22 +29,18 @@ App.run = function ()
 
 	// --------------------------
 	// Handle modes by url pattern or parameters
-	// Show footer for DEBUG mode
-	if ( Util.getParameterByName("mode") === "debug" || Util.getParameterByName("debug") === "true" ) ConsoleCustomLog.debugConsoleStart();
 	if ( Util.getParameterByName("ver") === "1.4" ) App.ver14 = true;
+	DevHelper.checkNStartDebugConsole();
 
 	// --------------------------
 
 	// Default Behavior Modify
-	//App.detectStandAlone();
 	App.windowEvent_BlockBackBtnAction();
 	window.addEventListener('error', App.catchErrorInCustomLog);
 	window.addEventListener('beforeinstallprompt', App.beforeinstallprompt);
 	if (App.isMobileDevice()) App.mobileUISetup();
 
-
 	InfoDataManager.setDeviceInfo_OnStart( App.checkDeviceMinSpec );
-
 
 	// Setup Static Classes
 	MsgManager.initialSetup();
@@ -67,9 +63,7 @@ App.run = function ()
 		console.log( 'AppStart statusInfo.appMode: ' + ConnManagerNew.statusInfo.appMode );
 		SwManager.checkAppUpdate( '[AppUpdateCheck] - App startUp' );
 	});
-
 };
-
 
 // ----------------------------------------------------
 App.startAppProcess = function () 

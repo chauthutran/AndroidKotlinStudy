@@ -1841,7 +1841,6 @@ img.round:hover{
   margin: 0;
   padding: 0;
   font-size: 10px;
-  overflow: auto;
   display: none;
   position: fixed;
   left: 0;
@@ -1849,6 +1848,11 @@ img.round:hover{
   width: 100%;
   height: 20%;
   z-index: 1600;
+}
+
+#consoleMainContent {
+  height: calc(100% - 12px);
+  overflow-y: scroll;
 }
 
 #console .header {
@@ -1931,8 +1935,6 @@ img.round:hover{
   white-space: pre;
   border-radius: 0;
   position: sticky;
-  bottom: 0;
-  left: 0;
   font-size: 11px;
   background: #141619;
   width: 100%;

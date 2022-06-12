@@ -40,9 +40,11 @@ Constants.focusRelegator_MaxOpacity = 0.35;
 Constants.term_LoginFailMsg = 'msg_loginFailed';
 Constants.term_LoginBlackListingMsg = 'msg_blackListingBlock';
 
-
 // ------------------------------------
 // -- Job Aids Demo Related
-
 Constants.jobAides_AreaBlockId = 'blk_c-on_pth-FPL-S_PRO_tabsContainer';  // ET has this.
 Constants.jobAides_tabTargetBlockId = 'btn_c-on_pth-FPL-S_PRO_tabSearchByUser';
+
+// ------------------------------------
+// -- debugConsolePwd
+Constants.debugConsolePwd = '1122';

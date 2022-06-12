@@ -212,6 +212,7 @@ ConsoleCustomLog.debugConsoleStart = function()
 
 ConsoleCustomLog.debugConsoleEvents = function( consoleLogTag )
 {
+    var consoleMainContentTag = $( '#consoleMainContent' );
     var consoleClearBtnTag = $( '#consoleClearBtn' );
     var consoleMinimizeBtnTag = $( '#consoleMinimizeBtn' );    
     var consoleRestoreBtnTag = $( '#consoleRestoreBtn' );    
@@ -222,11 +223,12 @@ ConsoleCustomLog.debugConsoleEvents = function( consoleLogTag )
 
     consoleClearBtnTag.click( e => consoleOutputTag.html( '' ) );
     consoleExitBtnTag.click( e => { if ( confirm( 'Confirm Exit?' ) ) consoleLogTag.hide(); } );
-    consoleMinimizeBtnTag.click( e => consoleLogTag.css( 'height', '20px' ).scrollTop() );
-    consoleRestoreBtnTag.click( e => consoleLogTag.css( 'height', '20%' ).scrollTop() );
+    consoleMinimizeBtnTag.click( e => { consoleLogTag.css( 'height', '12px' ); consoleMainContentTag.hide(); } );
+    consoleRestoreBtnTag.click( e => { consoleLogTag.css( 'height', '20%' ); consoleMainContentTag.show(); } );
+    // NOTE: Could further improve by adding & removing min-height on 'min'/'restore - or do by class add/remove.
 
-    console.log = (text) => consoleOutputTag.append( $( '<p class="console-line"></p>' ).html( "> " + text ) );
-    console.error = (text) => consoleOutputTag.append( $( '<p class="console-line-error"></p>' ).html( "> " + text ) );    
+    console.log = (text) => { consoleOutputTag.append( $( '<p class="console-line"></p>' ).html( "> " + text ) ); consoleMainContentTag.scrollTop(10000); }
+    console.error = (text) => { consoleOutputTag.append( $( '<p class="console-line-error"></p>' ).html( "> " + text ) ); consoleMainContentTag.scrollTop(10000); }
     console.debug = console.info =  console.log;
 
     consoleInputTag.change( function() {
