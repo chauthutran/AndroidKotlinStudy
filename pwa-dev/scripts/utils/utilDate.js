@@ -335,19 +335,50 @@ UtilDate.getTimeSince = function( fromDtStr, timeType )
 // ======================================================
 // ---- 'date' object UTC to Loc convert, visa versa
 
-UtilDate.setDate_LocToUTC_bySrc = function( dateObj, targetDateStartName, srcDateStr )
+UtilDate.setDate_LocToUTC_bySrc = function( dateObj, fieldNameLoc, srcDateStr )
 {
-    var localDateTimeStr = srcDateStr;
+   var localDateTimeStr = srcDateStr;
 
-    if ( dateObj && localDateTimeStr ) 
-    {
-        var fieldNameLoc = targetDateStartName + UtilDate.NAME_Date_Loc;
-        var fieldNameUTC = targetDateStartName + UtilDate.NAME_Date_UTC;
-        
-        dateObj[ fieldNameLoc ] = Util.formatDateTime( localDateTimeStr );    
-        dateObj[ fieldNameUTC ] = Util.getUTCDateTimeStr( UtilDate.getDateObj( localDateTimeStr ), 'noZ' );
-    }    
+   if ( dateObj && localDateTimeStr ) 
+   {
+		var fieldNameUTC = Util.strCutEnd( fieldNameLoc, 3 ) + UtilDate.NAME_Date_UTC;
+		
+		dateObj[ fieldNameLoc ] = Util.formatDateTime( localDateTimeStr );    
+      dateObj[ fieldNameUTC ] = Util.getUTCDateTimeStr( UtilDate.getDateObj( localDateTimeStr ), 'noZ' );
+   }    
 };
+
+UtilDate.setDate_LocToUTC_fields = function( dateObj, fieldNameList )
+{
+    if ( dateObj )
+    {
+        if ( fieldNameList === 'ALL' )
+        {
+            var targetNameArr = [];
+
+            for ( var prop in dateObj ) {  
+                if ( Util.endsWith( prop, UtilDate.NAME_Date_Loc ) ) targetNameArr.push( prop );  
+            }
+
+            targetNameArr.forEach( targetName => {  UtilDate.setDate_LocToUTC( dateObj, targetName );  } );
+        }
+        else if ( Util.isTypeArray( fieldNameList ) && fieldNameList.length > 0 )  // [ 'captured', 'created', 'updated' ]
+        {
+            fieldNameList.forEach( targetName => {  UtilDate.setDate_LocToUTC( dateObj, targetName );  } );
+        }    
+    }
+};
+
+UtilDate.setDate_LocToUTC = function( dateObj, fieldNameLoc )
+{
+   if ( dateObj && dateObj[ fieldNameLoc ] )
+   {
+        var fieldNameUTC = Util.strCutEnd( fieldNameLoc, 3 ) + UtilDate.NAME_Date_UTC;
+        dateObj[ fieldNameUTC ] = Util.getUTCDateTimeStr( UtilDate.getDateObj( dateObj[ fieldNameLoc ] ), 'noZ' );
+	}
+};
+
+// ---------------------
 
 UtilDate.setDate_UTCToLoc_fields = function( dateObj, fieldNameList )
 {
@@ -355,13 +386,13 @@ UtilDate.setDate_UTCToLoc_fields = function( dateObj, fieldNameList )
     {
         if ( fieldNameList === 'ALL' )
         {
-            var fieldNameUTCs = [];
+            var targetNameArr = [];
 
             for ( var prop in dateObj ) {  
-                if ( Util.endsWith( prop, UtilDate.NAME_Date_UTC ) ) fieldNameUTCs.push( prop );  
+                if ( Util.endsWith( prop, UtilDate.NAME_Date_UTC ) ) targetNameArr.push( prop );  
             }
 
-            fieldNameUTCs.forEach( fieldNameUTC => {  UtilDate.setDate_UTCToLoc( dateObj, fieldNameUTC );  } );
+            targetNameArr.forEach( fieldNameUTC => {  UtilDate.setDate_UTCToLoc( dateObj, fieldNameUTC );  } );
         }
         else if ( Util.isTypeArray( fieldNameList ) && fieldNameList.length > 0 )  // [ 'captured', 'created', 'updated' ]
         {

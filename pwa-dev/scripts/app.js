@@ -263,32 +263,39 @@ App.browserResizeHandle = function () {
 
 App.checkDeviceMinSpec = function( info )
 {
-	if ( info.storage )
+	try
 	{
-		var notPass = false;
-
-		var minSpec = InfoDataManager.INFO.deviceMinSpec;  // Only test this once...
-		//var currSpec = { memory: info.memory, storage: App.getStorageGB() };
-		
-		if ( info.memory < minSpec.memory ) 
+		if ( info.storage )
 		{
-			notPass = true;
-		}
-
-		if ( info.storage.quota < ( minSpec.storage * 1000000000 ) )
-		{
-			notPass = true;
-		}
-
-		if ( notPass )
-		{
-			// If POTerm exists (in local storage), translate it..
-
-			var msg = 'This device does not meet the minimum spec. [Min: ' + JSON.stringify( minSpec ) 
-			   + ', Curr: { memory: ' + info.memory + ', storage: ' + AppUtil.getStorageGBStr( info.storage.quota ) + ' }]';
-
-			alert( msg );
-		}
+			var notPass = false;
+	
+			var minSpec = InfoDataManager.INFO.deviceMinSpec;  // Only test this once...
+			//var currSpec = { memory: info.memory, storage: App.getStorageGB() };
+			
+			if ( info.memory < minSpec.memory ) 
+			{
+				notPass = true;
+			}
+	
+			if ( info.storage.quota < ( minSpec.storage * 1000000000 ) )
+			{
+				notPass = true;
+			}
+	
+			if ( notPass )
+			{
+				// If POTerm exists (in local storage), translate it..
+	
+				var msg = 'This device does not meet the minimum spec. [Min: ' + JSON.stringify( minSpec ) 
+					+ ', Curr: { memory: ' + info.memory + ', storage: ' + AppUtil.getStorageGBStr( info.storage.quota ) + ' }]';
+	
+				alert( msg );
+			}
+		}	
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in InfoDataManager.setDeviceInfo_OnStart, ', errMsg );
 	}
 };
 

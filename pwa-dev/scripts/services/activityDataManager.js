@@ -933,7 +933,7 @@ ActivityDataManager.setActivityDateLocal = function( activityJson )
                 var srcLocalTimeCase = ( ConfigManager.getConfigJson().sourceAsLocalTime || ConfigManager.getConfigJson().dhis2UseLocalTime );
 
                 // If Dhis2 stored date is saved as Local dateTime, set it as 'Loc' and get/calculate UTC from it.
-                if ( srcLocalTimeCase ) UtilDate.setDate_LocToUTC_bySrc( activityJson.date, 'captured', activityJson.date.capturedUTC );
+                if ( srcLocalTimeCase ) UtilDate.setDate_LocToUTC_bySrc( activityJson.date, 'capturedLoc', activityJson.date.capturedUTC );
                 else UtilDate.setDate_UTCToLoc( activityJson.date, 'capturedUTC' );                    
             }
             else // mongo soruce case

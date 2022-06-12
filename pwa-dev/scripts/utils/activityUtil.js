@@ -83,28 +83,16 @@ ActivityUtil.checkNSet_ActivityDates = function( payload )
 	
 			if ( Util.isTypeObject( date ) )
 			{
-				// If 'captureLoc' exists, set 'captureUTC' from it.
-				// If 'captureLoc' not exists, but 'captureUTC' exists, create captureLoc from it.
-				// If above 2 does not exists, create both new with current dateTime. 
-				if ( date.capturedLoc && !date.capturedUTC ) date.capturedUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.capturedLoc ), 'noZ' );
-				else if ( date.capturedUTC && !date.capturedLoc ) 
-				{
-					var localDateTime = UtilDate.dateUTCToLocal( date.capturedUTC );
-					if ( localDateTime ) date.capturedLoc = UtilDate.formatDateTime( localDateTime );
-				}
-
-				// NEW: Do not create 'capturedLoc' is scheduledLoc/UTC exists. <-- scheduled vs captured activity.
+				// Chceck weekends/holidays and move to next business days.
 				if ( date.scheduledLoc )
 				{
-					// NEW: Chceck weekends/holidays and move to next business days.
 					var scheduleDateAdjust = ConfigManager.getActivityDef().scheduleDateAdjust;
-					if ( scheduleDateAdjust && scheduleDateAdjust.enable ) ActivityUtil.adjustScheduleDate_businessDay( date, scheduleDateAdjust );
-
-					// UTC dateTime generate from scheduledLoc
-					if ( !date.scheduledUTC ) date.scheduledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduledLoc ), 'noZ' );
+					if ( scheduleDateAdjust && scheduleDateAdjust.enable ) ActivityUtil.adjustScheduleDate_businessDay( date, 'scheduledLoc', scheduleDateAdjust );
 				}
 
-				if ( date.scheduleCancelledLoc && !date.scheduleCancelledUTC ) date.scheduleCancelledUTC = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( date.scheduleCancelledLoc ), 'noZ' );
+				// Generate the other side fields.
+				UtilDate.setDate_LocToUTC_fields( date, 'ALL' );
+				UtilDate.setDate_UTCToLoc_fields( date, 'ALL' );
 
 				// If none of above date exists, create 'capturedLoc' - just in case..
 				if ( !date.capturedLoc && !date.scheduledLoc && !date.scheduleCancelledLoc )
@@ -121,12 +109,12 @@ ActivityUtil.checkNSet_ActivityDates = function( payload )
 	}
 };
 
-
-ActivityUtil.adjustScheduleDate_businessDay = function( date, scheduleDateAdjust )
+// fieldName - 'scheduledLoc'
+ActivityUtil.adjustScheduleDate_businessDay = function( date, fieldName, scheduleDateAdjust )
 {
 	try
 	{
-		var sDate = moment( date.scheduledLoc );
+		var sDate = moment( date[ fieldName ] );
 		var bChanged = false;
 
 		// Walk through the days and go until it is not weekend & holidays.
@@ -135,13 +123,11 @@ ActivityUtil.adjustScheduleDate_businessDay = function( date, scheduleDateAdjust
 			bChanged = true;
 		};
 
-		if ( bChanged )
-		{
-			date.scheduledLoc = Util.formatDate( sDate.toDate() );
-		}
+		if ( bChanged ) date[ fieldName ] = Util.formatDate( sDate.toDate() );
+		
 	}
 	catch( errMsg ) {
-		console.log( 'ERROR during ActivityUtil.checkNSet_ActivityDates, scheduledLoc change to next business day: ' + errMsg );
+		console.log( 'ERROR on ActivityUtil.adjustScheduleDate_businessDay, ' + errMsg );
 	}	
 };
 

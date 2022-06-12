@@ -183,38 +183,54 @@ InfoDataManager.setDeviceInfo_OnStart = function( callBack_storage )
 
 	InfoDataManager.INFO.deviceInfo = info;
 
-	info.UaData = UAParser();
-
-	// 1. Basic Info
-	info.browser = info.UaData.browser;
-	info.engine = info.UaData.engine;
-	info.os = info.UaData.os;
-	info.cpu = info.UaData.cpu;
-	info.cpu.corCount = navigator.hardwareConcurrency;
-	info.memory = navigator.deviceMemory;
-	info.device = info.UaData.device;
-
-	// Delayed info
-	// 2. Battery Info
-	navigator.getBattery().then( function( battery ) 
+	try
 	{
-		info.battery = battery;
-		//var batteryChargingYN = ( battery.charging ) ? 'Y': 'N';
-		//var chargeLvl = ( battery.level * 100 ).toFixed( 0 ) + '%';
-		//var batteryInfo = ', Battery Left: ' + chargeLvl + ', Charging(' + batteryChargingYN + ')';
-	});
+		info.UaData = UAParser();
 
-	// 3. Storage Info
-	if ( 'storage' in navigator && 'estimate' in navigator.storage ) 
-	{
-		navigator.storage.estimate().then( ( { usage, quota } ) => 
+		// 1. Basic Info
+		info.browser = info.UaData.browser;
+		info.engine = info.UaData.engine;
+		info.os = info.UaData.os;
+		info.cpu = info.UaData.cpu;
+		info.cpu.corCount = navigator.hardwareConcurrency;
+		info.memory = navigator.deviceMemory;
+		info.device = info.UaData.device;
+	
+		try
 		{
-			info.storage = { usage: usage, quota: quota };
-			callBack_storage( info );
-		}).catch( error => {
-			console.log( 'ERROR caught on InfoDataManager.getDeviceInfo_storage' );
-			callBack_storage( info );
-		});
+			// Delayed info
+			// 2. Battery Info
+			navigator.getBattery().then( function( battery ) 
+			{
+				info.battery = battery;
+				//var batteryChargingYN = ( battery.charging ) ? 'Y': 'N';
+				//var chargeLvl = ( battery.level * 100 ).toFixed( 0 ) + '%';
+				//var batteryInfo = ', Battery Left: ' + chargeLvl + ', Charging(' + batteryChargingYN + ')';
+			});
+		}
+		catch( errMsg )
+		{
+			console.log( 'ERROR in InfoDataManager.setDeviceInfo_OnStart getBattery, ', errMsg );
+		}
+
+	
+		// 3. Storage Info
+		if ( 'storage' in navigator && 'estimate' in navigator.storage ) 
+		{
+			navigator.storage.estimate().then( ( { usage, quota } ) => 
+			{
+				info.storage = { usage: usage, quota: quota };
+				callBack_storage( info );
+			}).catch( error => {
+				console.log( 'ERROR caught on InfoDataManager.getDeviceInfo_storage' );
+				callBack_storage( info );
+			});
+		}
+		else callBack_storage( info );
 	}
-	else callBack_storage( info );
+	catch( errMsg )
+	{
+		console.log( 'ERROR in InfoDataManager.setDeviceInfo_OnStart, ', errMsg );
+	}
+
 };
