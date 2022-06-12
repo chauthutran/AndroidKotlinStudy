@@ -20,7 +20,7 @@
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
     var _verDate = '2022-06-12';
     var _ver = '1.3.10l';
-    var _versionNote = '- Detail: iphone fix.';
+    var _versionNote = '- Detail: iphone bug, debug console.';
   </script>
 
 
@@ -522,21 +522,15 @@
   <!-- Console FOOTER -->
   <div id="console" style="display: none;">
     <section class="header">
-      <svg class="logo" height="16" version="1.1" viewBox="0 0 24 24">
-        <g stroke-linecap="round" stroke-width="1.8" fill="none" stroke-linejoin="round">
-          <polyline points="4,17 10,11 4,5"></polyline>
-          <line x1="12" x2="20" y1="19" y2="19"></line>
-        </g>
-      </svg>
-      <h3 style="font-size: 1rem;">Console</h3>
+      <div style="font-weight: bold;">Console</div>
       <div class="consoleActions">
-        <span id="consoleClearBtn" style="cursor: pointer; margin-right: 10px;">Clear console</span>
-        <span id="consoleMinimizeBtn" style="cursor: pointer; margin-right: 10px;">Minimize</span>
+        <span id="consoleClearBtn" title="Clear Console" style="cursor: pointer; margin-right: 10px;">Clear</span>
+        <span id="consoleMinimizeBtn" title="Minimize" style="cursor: pointer; margin-right: 10px;">Min</span>
+        <span id="consoleRestoreBtn" title="Restore" style="cursor: pointer; margin-right: 10px;">Restore</span>
+        <span id="consoleExitBtn" title="Exit Debug Console" style="cursor: pointer; margin-right: 10px; color: #c16e60;">Exit</span>
       </div>
     </section>
-
     <div id="consoleOutput"></div>
-    
     <input id="consoleInput" type="text" placeholder=">_">
   </div>
 
@@ -573,7 +567,6 @@
   <script type="text/javascript" src="scripts/helpers/pwaEpoch.js"></script>
   <script type="text/javascript" src="scripts/helpers/baseConverter.js"></script>
   <script type="text/javascript" src="scripts/helpers/jobAidHelper.js"></script>
-  <script type="text/javascript" src="scripts/helpers/debugLog.js"></script>
 
   <script type="text/javascript" src="scripts/services/request/RESTCallManager.js"></script>
   <script type="text/javascript" src="scripts/services/request/wsCallManager.js"></script>

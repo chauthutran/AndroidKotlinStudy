@@ -10,7 +10,6 @@ ConsoleCustomLog.divDialogTagId = '#divCustomLogDisplay';
 // -------------------------------------
 // Custom console log method:
 
-
 console.customLog = function ( msg, label ) 
 {
     console.log( msg );
@@ -32,37 +31,6 @@ console.customLog = function ( msg, label )
         //if ( ConsoleCustomLog.customLogData.length > 200 ) ConsoleCustomLog.customLogData.shift();    
     }
 };
-
-
-/*
-console.customLog = function ( msg, label ) 
-{
-    try
-    {
-        if ( msg )
-        {
-            console.log( msg );
-            
-            // TODO: Ways to display / show the location of error?
-            // NOTE: WAYS TO TELL WHICH METHOD CALLED THIS --> console.log(new Error('I was called').stack) OR Use 'this' on caller!!!
-
-            // Add to debug appInfo - only if the msg is string..
-            var log = { 'dateTime': ( new Date() ).toISOString(), 'msg': Util.getStr( msg, 400 ), 'label': label };
-            AppInfoManager.addToCustomLogHistory( log );
-
-            // NOTE, this could make the app size to get much bigger, 
-            // Thus, we might want to limit the number of storage --> 200?
-            ConsoleCustomLog.customLogData.push( { 'msg': msg, 'label': label } );
-        
-            if ( ConsoleCustomLog.customLogData.length > 200 ) ConsoleCustomLog.customLogData.shift();    
-        }
-    }
-    catch( errMsg )
-    {
-        console.log( 'ERROR on console.customLog, errMsg'  + errMsg + ', msg: ' + msg + ', label ' + label );
-    }
-};
-*/
 
 ConsoleCustomLog.clearLogs = function()
 {
@@ -231,4 +199,39 @@ ConsoleCustomLog.generateContentHtml = function( customLogData )
     }
 
     return contentHtml;
+};
+
+// ----------------------------------
+// -- MOSTLY FOR Displaying the error message on mobile device - on start & during use.
+
+ConsoleCustomLog.debugConsoleStart = function()
+{
+    var consoleLogTag = $( '#console' ).show();
+    ConsoleCustomLog.debugConsoleEvents( consoleLogTag );
+};
+
+ConsoleCustomLog.debugConsoleEvents = function( consoleLogTag )
+{
+    var consoleClearBtnTag = $( '#consoleClearBtn' );
+    var consoleMinimizeBtnTag = $( '#consoleMinimizeBtn' );    
+    var consoleRestoreBtnTag = $( '#consoleRestoreBtn' );    
+    var consoleExitBtnTag = $( '#consoleExitBtn' );    
+    var consoleOutputTag = $( '#consoleOutput' );
+    var consoleInputTag = $( '#consoleInput' );
+    var consoleClearBtnTag = $( '#consoleClearBtn' );
+
+    consoleClearBtnTag.click( e => consoleOutputTag.html( '' ) );
+    consoleExitBtnTag.click( e => { if ( confirm( 'Confirm Exit?' ) ) consoleLogTag.hide(); } );
+    consoleMinimizeBtnTag.click( e => consoleLogTag.css( 'height', '20px' ).scrollTop() );
+    consoleRestoreBtnTag.click( e => consoleLogTag.css( 'height', '20%' ).scrollTop() );
+
+    console.log = (text) => consoleOutputTag.append( $( '<p class="console-line"></p>' ).html( "> " + text ) );
+    console.error = (text) => consoleOutputTag.append( $( '<p class="console-line-error"></p>' ).html( "> " + text ) );    
+    console.debug = console.info =  console.log;
+
+    consoleInputTag.change( function() {
+        var value = consoleInputTag.val();
+        consoleInputTag.val( '' );
+        console.log( eval( value ) );
+    });
 };

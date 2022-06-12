@@ -30,10 +30,9 @@ App.run = function ()
 	// --------------------------
 	// Handle modes by url pattern or parameters
 	// Show footer for DEBUG mode
-	if (Util.getParameterByName("mode") === "debug") DebugLog.start();
-	if (Util.getParameterByName("ver") === "1.4") App.ver14 = true;
+	if ( Util.getParameterByName("mode") === "debug" || Util.getParameterByName("debug") === "true" ) ConsoleCustomLog.debugConsoleStart();
+	if ( Util.getParameterByName("ver") === "1.4" ) App.ver14 = true;
 
-	// 'pwa-dev' only enabling  //if ( location.href.indexOf( 'pwa-dev' ) >= 0 ) { }
 	// --------------------------
 
 	// Default Behavior Modify
