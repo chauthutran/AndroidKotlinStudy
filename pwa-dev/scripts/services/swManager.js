@@ -32,6 +32,7 @@ SwManager.newAppFileExists_EventCallBack;
 
 SwManager.newAppFileFound_Downloading = false; // Use some UI when this is true.. <-- blinking?
 SwManager.interval_newAppFileDownloading;
+SwManager.newAppFileDownloadingMsgTimeMs = 3000;  // 3 seconds
 
 SwManager.installStateProgress = {
         'installing': '1/4',
@@ -111,7 +112,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
         console.log( SwManager._swStage2 + 'start onstatechange watching!' );
         SwManager.newAppFileFound_Downloading = true;
-        SwManager.appUpdateUI_DownloadingNewFiles(); // Top Left Dot blinking..
+        SwManager.appUpdateUI_DownloadingNewFiles( 'New Update Found!  Downloaind Files..' ); // Top Left Dot blinking.. + Msg show 3 seconds
 
         // sw state changes 1-4 (ref: SwManager.installStateProgress )
         SwManager.swInstallObj.onstatechange = () => 
@@ -188,7 +189,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
                 // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.
                 var newMsg = SwManager._swStage3 + 'App Reloading! (After Update)';
                 console.log( newMsg );
-                AppUtil.appReloadWtMsg( newMsg );
+                AppUtil.appReloadWtMsg( 'App Reloading - New App Update Found!' );
             }   
         }
     });
@@ -356,8 +357,12 @@ SwManager.listFilesInCache = function( cacheKey )
     
 // --------------------------------------
 
-SwManager.appUpdateUI_DownloadingNewFiles = function()
-{
+SwManager.appUpdateUI_DownloadingNewFiles = function( msg )
+{    
+    // Msg - hide in 3 seconds
+    MsgManager.msgAreaShow( msg, undefined, undefined, SwManager.newAppFileDownloadingMsgTimeMs );
+
+    // Top Left Blinking
     var tag = $( '.appUpdateStatusDiv' ).show();
 
     // Set interval blinking..

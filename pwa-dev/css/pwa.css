@@ -392,9 +392,9 @@ input.loginUserPinNumeric:focus
 
 .appUpdateStatusDiv
 {
-  background-color: #A7C1F2;
-  width: 2px;
-  height: 2px;
+  background-color: orange;
+  width: 3px;
+  height: 3px;
   position: absolute;
   top: 0;
   left: 0;
