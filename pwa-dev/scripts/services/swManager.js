@@ -106,7 +106,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
     {
         SwManager.swInstallObj = swRegObj.installing;
 
-        console.log( SwManager._swStage2 + 'swRegObj.onupdatefound EVENT!' );
+        console.log( SwManager._swStage2 + 'start onstatechange watching!' );
 
         // sw state changes 1-4 (ref: SwManager.installStateProgress )
         SwManager.swInstallObj.onstatechange = () => 
@@ -119,12 +119,12 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             {
                 case 'installing':
                     // SW installing (1) - applying changes
-                    console.log( SwManager._swStage2 + '1. installing!' );                    
+                    //console.log( SwManager._swStage2 + '1. installing!' );                    
                     break; // do nothing
 
                 case 'installed':
                     // SW installed (2) - changes applied
-                    console.log( SwManager._swStage2 + '2. installed!' );                    
+                    //console.log( SwManager._swStage2 + '2. installed!' );                    
                     break;
 
                 case 'activating':

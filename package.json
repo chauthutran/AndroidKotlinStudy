@@ -1,11 +1,11 @@
 {
-  "name": "wfaBuild",
+  "name": "wfa",
   "version": "1.0.0",
-  "description": "CwS PWA service worker build",
+  "description": "WorkForceApp PWA service worker build",
   "author": "James Chang",
   "scripts": {
-    "localDev": "node sw_build_pwa-dev.js && xcopy pwa-dev deploy\\pwa-dev /E/H/C/I/Y",
-    "localDevTomcat": "node sw_build_pwa-dev.js && xcopy pwa-dev C:\\Work\\tomcat8\\webapps\\pwa-dev /E/H/C/I/Y",
+    "localDev": "del pwa-dev\\workbox-* && node sw_build_pwa-dev.js && xcopy pwa-dev deploy\\pwa-dev /E/H/C/I/Y",
+    "localDevTomcat": "del pwa-dev\\workbox-* && node sw_build_pwa-dev.js && xcopy pwa-dev C:\\Work\\tomcat8\\webapps\\pwa-dev /E/H/C/I/Y",
 
     "devBuild": "node sw_build_pwa-dev.js && tar.exe cf pwa-dev.zip pwa-dev",
 
