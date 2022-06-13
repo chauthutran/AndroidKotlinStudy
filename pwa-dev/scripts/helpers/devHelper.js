@@ -19,6 +19,8 @@ DevHelper.devModeAccessCode = '4512';
 DevHelper.devModeFailCount = 0;
 DevHelper.devModeFailMax = 5;
 
+DevHelper.debugConsoleMode = false;
+
 DevHelper.sampleDataTemplate = 
 [
   {
@@ -129,7 +131,11 @@ DevHelper.setDevMode = function( bDev )
 
 DevHelper.checkNStartDebugConsole = function()
 {
-    if ( Util.getParameterByName("debug") === Constants.debugConsolePwd ) ConsoleCustomLog.debugConsoleStart();
+    if ( Util.getParameterByName("debug") === Constants.debugConsolePwd ) 
+    {
+        DevHelper.debugConsoleMode = true;
+        ConsoleCustomLog.debugConsoleStart();
+    }
 };
 
 DevHelper.switchConnectMode = function( connModeStr )

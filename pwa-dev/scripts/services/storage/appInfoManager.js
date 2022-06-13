@@ -1,7 +1,7 @@
 function AppInfoManager() {}
 
-AppInfoManager.ActivityHistoryMaxLength = 100;
-AppInfoManager.CustomLogHistoryMaxLength = 100;
+AppInfoManager.ActivityHistoryMaxLength = 50;
+AppInfoManager.CustomLogHistoryMaxLength = 50;
 AppInfoManager.FixOperationMaxLength = 30;
 
 // ---------------------------
@@ -306,10 +306,8 @@ AppInfoManager.addToActivityHistory = function( activityJson )
 // ------------------------------------------------------------------------------------  
 // ---------------- DEBUG customLog List Related..
 
-AppInfoManager.getCustomLogHistory = function()
-{    
-    return AppInfoManager.getHistory_CMN( AppInfoManager.KEY_CUSTOM_LOG_HISTORY );
-};
+AppInfoManager.getCustomLogHistory = () => AppInfoManager.getHistory_CMN( AppInfoManager.KEY_CUSTOM_LOG_HISTORY );
+AppInfoManager.clearCustomLogHistory = () => AppInfoManager.clearHistory_CMN( AppInfoManager.KEY_CUSTOM_LOG_HISTORY, 'clearCustomLogHistory' );
 
 AppInfoManager.addToCustomLogHistory = function( msg )
 {    
@@ -323,10 +321,7 @@ AppInfoManager.addToCustomLogHistory = function( msg )
 // ------------------------------------------------------------------------------------  
 // ---------------- DEBUG fix operation List Related..
 
-AppInfoManager.getFixOperationHistory = function()
-{    
-    return AppInfoManager.getHistory_CMN( AppInfoManager.KEY_FIX_OPERATION_HISTORY );
-};
+AppInfoManager.getFixOperationHistory = () => AppInfoManager.getHistory_CMN( AppInfoManager.KEY_FIX_OPERATION_HISTORY );
 
 AppInfoManager.addToFixOperationHistory = function( msg )
 {
@@ -370,10 +365,22 @@ AppInfoManager.addHistory_CMN = function( data, subKey, historyList, historyMax,
     }
     catch( errMsg )
     {
-        console.customLog( 'ERROR in AppInfoManager.' + optTitle + '(addHistory_CMN), errMsg: ' + errMsg );
+        console.log( 'ERROR in AppInfoManager.' + optTitle + '(addHistory_CMN), errMsg: ' + errMsg );
     }
 };
 
+
+AppInfoManager.clearHistory_CMN = function( subKey, optTitle )
+{    
+    try
+    {
+        AppInfoManager.updatePropertyValue( AppInfoManager.KEY_DEBUG, subKey, [] );
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in AppInfoManager.' + optTitle + '(clearHistory_CMN), errMsg: ' + errMsg );
+    }
+};
 // ------------------------------------------------------------------------------------  
 // ---------------- Sync Last Downloaded
 

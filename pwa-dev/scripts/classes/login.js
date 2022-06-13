@@ -150,10 +150,9 @@ function Login()
 				// NOTE: On login button click, also check app update..
 				SwManager.checkAppUpdate( '[AppUpdateCheck] - Login Processing', { noMinTimeSkip: true } );
 
-
 				// Main Login Processing
-				me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ), function( success ) {
-
+				me.processLogin( loginUserNameVal, loginUserPinVal, location.origin, $( this ), function( success ) 
+				{
 					me.clearResetPasswords();
 					if ( !success ) $( '.pin1' ).focus();
 				});

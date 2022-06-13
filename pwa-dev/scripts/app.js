@@ -30,7 +30,6 @@ App.run = function ()
 	// --------------------------
 	// Handle modes by url pattern or parameters
 	if ( Util.getParameterByName("ver") === "1.4" ) App.ver14 = true;
-	DevHelper.checkNStartDebugConsole();
 
 	// --------------------------
 
@@ -52,6 +51,10 @@ App.run = function ()
 	AppInfoLSManager.initialDataLoad_LocalStorage();
 
 	App.App_UI_startUp_loading(); // << should we move this into cwsRender?
+
+
+	// By param 'debug' with pwd - uses AppInfoLSManager
+	DevHelper.checkNStartDebugConsole();
 
 
 	// Service Worker Related Initial Setup

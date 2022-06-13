@@ -208,6 +208,18 @@ ConsoleCustomLog.debugConsoleStart = function()
 {
     var consoleLogTag = $( '#console' ).show();
     ConsoleCustomLog.debugConsoleEvents( consoleLogTag );
+
+    // For previous msg, show..
+    var lastDevLogs = AppInfoLSManager.getDevDebugLogHistory();
+    
+    if ( Util.isTypeArray( lastDevLogs ) && lastDevLogs.length > 0 ) 
+    {
+        for ( var i = lastDevLogs.length - 1; i >= 0; i-- ) {  ConsoleCustomLog.log_NoRec( lastDevLogs[i] );  }
+        ConsoleCustomLog.log_NoRec( '------------ NEW START ----------------' );
+    }    
+
+    // Clear the history after displaying..
+    AppInfoLSManager.clearDevDebugLogHistory();    
 };
 
 ConsoleCustomLog.debugConsoleEvents = function( consoleLogTag )
@@ -227,8 +239,9 @@ ConsoleCustomLog.debugConsoleEvents = function( consoleLogTag )
     consoleRestoreBtnTag.click( e => { consoleLogTag.css( 'height', '20%' ); consoleMainContentTag.show(); } );
     // NOTE: Could further improve by adding & removing min-height on 'min'/'restore - or do by class add/remove.
 
-    console.log = (text) => { consoleOutputTag.append( $( '<p class="console-line"></p>' ).html( "> " + text ) ); consoleMainContentTag.scrollTop(10000); }
-    console.error = (text) => { consoleOutputTag.append( $( '<p class="console-line-error"></p>' ).html( "> " + text ) ); consoleMainContentTag.scrollTop(10000); }
+
+    console.log = (text) => { consoleOutputTag.append( $( '<p class="console-line"></p>' ).html( "> " + text ) ); consoleMainContentTag.scrollTop(10000); AppInfoLSManager.addToDevDebugLogHistory( text ); }
+    console.error = (text) => { consoleOutputTag.append( $( '<p class="console-line-error"></p>' ).html( "> " + text ) ); consoleMainContentTag.scrollTop(10000); AppInfoLSManager.addToDevDebugLogHistory( text ); }
     console.debug = console.info =  console.log;
 
     consoleInputTag.change( function() {
@@ -236,4 +249,14 @@ ConsoleCustomLog.debugConsoleEvents = function( consoleLogTag )
         consoleInputTag.val( '' );
         console.log( eval( value ) );
     });
+};
+
+
+ConsoleCustomLog.log_NoRec = function( text )
+{
+    var consoleMainContentTag = $( '#consoleMainContent' );
+    var consoleOutputTag = $( '#consoleOutput' );    
+    
+    consoleOutputTag.append( $( '<p class="console-line"></p>' ).html( "> " + text ) ); 
+    consoleMainContentTag.scrollTop(10000);
 };

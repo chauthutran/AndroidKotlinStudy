@@ -43,6 +43,10 @@ SwManager.waitNewAppFileCheckDuringOffline = false;
 
 SwManager.swUpdateCase = false;
 
+SwManager._swStage1 = '[SW1 CHK] - ';
+SwManager._swStage2 = '[SW2 ONUPDATEFOUND] - ';
+SwManager._swStage3 = '[SW3 CHK] - ';
+
 // --------------------------------------------
 
 SwManager.initialSetup = function ( callBack ) 
@@ -102,19 +106,25 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
     {
         SwManager.swInstallObj = swRegObj.installing;
 
+        console.log( SwManager._swStage2 + 'swRegObj.onupdatefound EVENT!' );
+
         // sw state changes 1-4 (ref: SwManager.installStateProgress )
         SwManager.swInstallObj.onstatechange = () => 
         {
             SwManager.registrationUpdates = true;
 
+            console.log( SwManager._swStage2 + 'state: ' + SwManager.swInstallObj.state );
+
             switch ( SwManager.swInstallObj.state ) 
             {
                 case 'installing':
                     // SW installing (1) - applying changes
+                    console.log( SwManager._swStage2 + '1. installing!' );                    
                     break; // do nothing
 
                 case 'installed':
                     // SW installed (2) - changes applied
+                    console.log( SwManager._swStage2 + '2. installed!' );                    
                     break;
 
                 case 'activating':
@@ -128,20 +138,19 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         };
     };
 
-
     // This gets triggered after the new files are downloaded already...  Anyway to show 'download in progress'?
     navigator.serviceWorker.addEventListener( 'controllerchange', ( e ) => 
     {
         // The oncontrollerchange property of the ServiceWorkerContainer interface is 
         // an event handler fired whenever a controllerchange event occurs 
         //  — when the document's associated ServiceWorkerRegistration acquires a new active worker.
-        console.log( 'swUpdate - controllerchange DETECTED' );
+        console.log( SwManager._swStage3 + '3. ControllerChange DETECTED' );
 
         // The known WFA App triggered App Reloading Process Flag..
 	    if ( AppUtil.appReloading )
         {
             // In app reload/refresh, this also gets called since new service worker gets to start.
-            console.log( 'App Intentional Reloading.. skip manual reload.' );
+            console.log( SwManager._swStage3 + 'App Intentional Reloading -> DISGARDING THIS MANUAL UPDATE CALL.' );
         }
         // Service Worker update check requested case.
         else if ( SwManager.swUpdateCase )
@@ -152,7 +161,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             if ( SwManager.newAppFileExists_EventCallBack ) {
                 try {
                     SwManager.newAppFileExists_EventCallBack();
-                } catch ( errMsg ) { console.log( 'ERROR in SwManager.controllerchange, ' + errMsg ); }
+                } catch ( errMsg ) { console.log( SwManager._swStage3 + 'ERROR in SwManager.controllerchange, ' + errMsg ); }
             }
 
             if ( !SwManager.swUpdateOption ) SwManager.swUpdateOption = {};
@@ -164,14 +173,14 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             // For Already logged in, simply delay it --> which the logOut will perform the update.
             if ( delayReload )
             {
-                console.log( 'App Reload Delayed (After Update).' );
+                console.log( SwManager._swStage3 + 'App Reload Delayed (After Update).' );
                 e.preventDefault();  // WHY USE THIS?
                 return false;
             }
             else
             {
                 // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.
-                AppUtil.appReloadWtMsg( 'App Reloading! (After Update)' );
+                AppUtil.appReloadWtMsg( SwManager._swStage3 + 'App Reloading! (After Update)' );
             }   
         }
     });
@@ -192,24 +201,11 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
 // -----------------------------------
 
-// Wrapper/ShortCut to 'checkNewAppFile_OnlyOnline'
-SwManager.checkAppUpdate = function( checkTypeTitle, option, runFunction )
-{
-    if ( !option ) option = {};
-
-    if ( checkTypeTitle ) option.checkTypeTitle = checkTypeTitle;
-
-    if ( option.skipCheckOnline || ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile_OnlyOnline( runFunction, option );
-    else console.log( 'OFFLINE - AppUpdateCheck not performed - ' + checkTypeTitle );
-};
-
-
 SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
 {
     if ( !option ) option = {};
-
-    if ( option.checkTypeTitle ) console.log( option.checkTypeTitle );
-    else console.log( 'UNKNOWN CHECK TYPE' );
+    // 'checkTypeTitle' Use on below actual msg.
+    if ( !option.checkTypeTitle ) ption.checkTypeTitle = 'UNKNOWN CHECK TYPE';
 
     SwManager.newAppFileExists_EventCallBack = runFunction;
     SwManager.swUpdateCase = false;
@@ -224,20 +220,32 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
         if ( !option.noMinTimeSkip && SwManager.lastAppFileUpdateDt && UtilDate.getTimeSince( SwManager.lastAppFileUpdateDt, Util.MS_MIN ) < 1 ) checkTooClose = true;
 
         // NEW: Check last check dateTime and compare..
-        if ( checkTooClose ) console.log( 'SwRegObj.update Check Skipped - Too Frequent Checks' );
+        if ( checkTooClose ) console.log( SwManager._swStage1 + option.checkTypeTitle + ' --> Too Frequent Checks, SKIPPED.' );
         else
         {
             SwManager.lastAppFileUpdateDt = new Date().toISOString();
-            console.log( 'SwRegObj.update requesting..' );
+            console.log( SwManager._swStage1 + option.checkTypeTitle + ' --> UPDATES CHECKING..' );
 
             SwManager.swUpdateCase = true;
-            SwManager.swRegObj.update();    
+            SwManager.swRegObj.update();
         }
     }
     else
     {
-        console.log( 'SwManager.swRegObj is not available!' );
+        console.log( SwManager._swStage1 + option.checkTypeTitle + ' --> SwManager.swRegObj not available!' );
     }
+};
+
+
+// Wrapper/ShortCut to 'checkNewAppFile_OnlyOnline'
+SwManager.checkAppUpdate = function( checkTypeTitle, option, runFunction )
+{
+    if ( !option ) option = {};
+
+    if ( checkTypeTitle ) option.checkTypeTitle = checkTypeTitle;
+
+    if ( option.skipCheckOnline || ConnManagerNew.isAppMode_Online() ) SwManager.checkNewAppFile_OnlyOnline( runFunction, option );
+    else console.log( 'OFFLINE - AppUpdateCheck not performed - ' + checkTypeTitle );
 };
 
 

@@ -20,6 +20,9 @@ AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES = "jobAidFolderNames";
 AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE = "configVersioningEnable";
 AppInfoLSManager.KEY_CONFIG_VERSION = "configVersion";
 
+AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY = "devDebugLogHistory";
+AppInfoLSManager.DevDebugLogHistoryMaxLength = 30;
+
 
 // Old and obsolete keys
 AppInfoLSManager.KEY_USERINFO = "userInfo";  // It actually is 'lastLoginData'
@@ -436,28 +439,6 @@ AppInfoLSManager.setLocalStageName = function( stageName )
     AppInfoLSManager.updateKey_StrValue( AppInfoLSManager.KEY_LOCAL_STAGENAME, stageName );
 };
 
-
-// ------------------------------------------------------------------------------------  
-// ----------------  Auto Login Related..
-
-//AppInfoLSManager.setAutoLogin = function( dateObj )
-//{
-//    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LOGINOUT, AppInfoLSManager.KEY_AUTOLOGINSET, Util.formatDateTime( dateObj ) );
-//};
-
-//AppInfoLSManager.getAutoLogin = function()
-//{
-//    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LOGINOUT, AppInfoLSManager.KEY_AUTOLOGINSET );
-//};
-
-//AppInfoLSManager.clearAutoLogin = function()
-//{    
-//    AppInfoLSManager.removeProperty( AppInfoLSManager.KEY_LOGINOUT, AppInfoLSManager.KEY_AUTOLOGINSET );
-//};
-
-
-
-
 AppInfoLSManager.getLoginRespOLD_createdDT = function( loginRespOLD ) 
 {
     var createdDate;
@@ -470,38 +451,79 @@ AppInfoLSManager.getLoginRespOLD_createdDT = function( loginRespOLD )
     return createdDate;
 };
 
+// ----------------------------------
+// === Simple Data Store - SAVE / GET
 
-/*
-// ------------------------------------------------------------------------------------  
-// ----------------  sync Last Downloaded
+AppInfoLSManager.getHistory_CMN = function( subKey )
+{    
+    var history = [];
 
-AppInfoLSManager.updateSyncLastDownloadInfo = function( dateStr )
-{
-    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_SYNC, AppInfoLSManager.KEY_SYNC_LAST_DOWNLOADINFO, dateStr );
+    try
+    {
+        history = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, subKey );
+    }
+    catch ( errMsg ) {}
 
-    // Update the 'INFO' when updated - since we use this through 'INFO' object.
-    InfoDataManager.setINFO_lastDownloaded( dateStr );
-};	
-
-AppInfoLSManager.getSyncLastDownloadInfo = function()
-{
-    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_SYNC, AppInfoLSManager.KEY_SYNC_LAST_DOWNLOADINFO );
-};	
-
-
-// ------------------------------------------------------------------------------------  
-// ----------------  fix Operation Last Performed
-
-AppInfoLSManager.updateFixOperationLast = function( dateStr )
-{
-    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_SYNC, AppInfoLSManager.KEY_FIX_OPERATION_LAST, dateStr );
-
-    // Update the 'INFO' when updated - since we use this through 'INFO' object.
-    InfoDataManager.setINFO_fixOperationLast( dateStr );
-};	
-
-AppInfoLSManager.getFixOperationLast = function()
-{
-    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_SYNC, AppInfoLSManager.KEY_FIX_OPERATION_LAST );
+    return history;
 };
-*/
+
+AppInfoLSManager.addHistory_CMN = function( data, subKey, historyList, historyMax, optTitle )
+{    
+    try
+    {
+        if ( data ) 
+        {
+            historyList.unshift( data );
+
+            var exceedCount = historyList.length - historyMax; //AppInfoManager.DevDebugLogHistoryMaxLength;
+    
+            // Remove if equal to or exceed to 100.  if 100, remove 1.  if 101, remove 2.
+            if ( exceedCount > 0 ) 
+            {
+                for( var i = 0; i < exceedCount; i++ )
+                {
+                    historyList.pop();
+                }
+            }
+            
+            AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, subKey, historyList );
+        }
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in AppInfoLSManager.' + optTitle + '(addHistory_CMN), errMsg: ' + errMsg );
+    }
+};
+
+
+AppInfoLSManager.clearHistory_CMN = function( subKey, optTitle )
+{    
+    try
+    {
+        AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, subKey, [] );
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in AppInfoLSManager.' + optTitle + '(clearHistory_CMN), errMsg: ' + errMsg );
+    }
+};
+
+// ------------------------------------------------------------------------------------  
+// ---------------- DEBUG appUpdate log Related..
+
+
+AppInfoLSManager.getDevDebugLogHistory = () => AppInfoLSManager.getHistory_CMN( AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY );
+AppInfoLSManager.clearDevDebugLogHistory = () => AppInfoLSManager.clearHistory_CMN( AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY, 'clearDevDebugLogHistory' );
+
+AppInfoLSManager.addToDevDebugLogHistory = function( msg )
+{    
+    var timeMin = UtilDate.formatDate( new Date(), "mm:ss.SSS" );
+
+    msg = '[' + timeMin + '] ' + msg;
+
+    AppInfoLSManager.addHistory_CMN( msg
+        , AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY
+        , AppInfoLSManager.getDevDebugLogHistory()
+        , AppInfoLSManager.DevDebugLogHistoryMaxLength
+        , 'addToDevDebugLogHistory' );
+};
