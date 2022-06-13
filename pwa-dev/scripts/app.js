@@ -30,7 +30,7 @@ App.run = function ()
 	// --------------------------
 	// Handle modes by url pattern or parameters
 	if ( Util.getParameterByName("ver") === "1.4" ) App.ver14 = true;
-
+	
 	// --------------------------
 
 	// Default Behavior Modify

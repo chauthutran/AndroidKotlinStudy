@@ -215,7 +215,7 @@ ConsoleCustomLog.debugConsoleStart = function()
     if ( Util.isTypeArray( lastDevLogs ) && lastDevLogs.length > 0 ) 
     {
         for ( var i = lastDevLogs.length - 1; i >= 0; i-- ) {  ConsoleCustomLog.log_NoRec( lastDevLogs[i] );  }
-        ConsoleCustomLog.log_NoRec( '------------ NEW START ----------------' );
+        ConsoleCustomLog.log_NoRec( ConsoleCustomLog.addTimeStr( '---------- NEW START -------------' ) );
     }    
 
     // Clear the history after displaying..
@@ -240,8 +240,20 @@ ConsoleCustomLog.debugConsoleEvents = function( consoleLogTag )
     // NOTE: Could further improve by adding & removing min-height on 'min'/'restore - or do by class add/remove.
 
 
-    console.log = (text) => { consoleOutputTag.append( $( '<p class="console-line"></p>' ).html( "> " + text ) ); consoleMainContentTag.scrollTop(10000); AppInfoLSManager.addToDevDebugLogHistory( text ); }
-    console.error = (text) => { consoleOutputTag.append( $( '<p class="console-line-error"></p>' ).html( "> " + text ) ); consoleMainContentTag.scrollTop(10000); AppInfoLSManager.addToDevDebugLogHistory( text ); }
+    console.log = (text) => { 
+        text = ConsoleCustomLog.addTimeStr( text );
+        consoleOutputTag.append( $( '<p class="console-line"></p>' ).html( "> " + text ) ); 
+        consoleMainContentTag.scrollTop(10000); 
+        AppInfoLSManager.addToDevDebugLogHistory( text ); 
+    };
+
+    console.error = (text) => { 
+        text = ConsoleCustomLog.addTimeStr( text );
+        consoleOutputTag.append( $( '<p class="console-line-error"></p>' ).html( "> " + text ) ); 
+        consoleMainContentTag.scrollTop(10000); 
+        AppInfoLSManager.addToDevDebugLogHistory( text ); 
+    };
+
     console.debug = console.info =  console.log;
 
     consoleInputTag.change( function() {
@@ -251,7 +263,6 @@ ConsoleCustomLog.debugConsoleEvents = function( consoleLogTag )
     });
 };
 
-
 ConsoleCustomLog.log_NoRec = function( text )
 {
     var consoleMainContentTag = $( '#consoleMainContent' );
@@ -259,4 +270,10 @@ ConsoleCustomLog.log_NoRec = function( text )
     
     consoleOutputTag.append( $( '<p class="console-line"></p>' ).html( "> " + text ) ); 
     consoleMainContentTag.scrollTop(10000);
+};
+
+ConsoleCustomLog.addTimeStr = function( msg )
+{
+    var timeMin = UtilDate.formatDate( new Date(), "mm:ss.SSS" );
+    return '[' + timeMin + '] ' + msg;
 };

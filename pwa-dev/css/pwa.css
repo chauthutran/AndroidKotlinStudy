@@ -385,6 +385,21 @@ input.loginUserPinNumeric:focus
 }
 /* ### LOGIN SCREEN ### */
 
+#divProgressBar
+{
+  z-index: 3000;
+}
+
+.appUpdateStatusDiv
+{
+  background-color: #A7C1F2;
+  width: 2px;
+  height: 2px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3000;
+}
 
 /*  ### NAVMENU (DRAWER) ### */
 /* Menu Smooth/Rapid TRANSITION UI EFFECT */

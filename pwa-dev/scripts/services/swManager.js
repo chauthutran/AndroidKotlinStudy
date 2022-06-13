@@ -30,6 +30,9 @@ SwManager.registrationUpdates = false;
 //SwManager.newAppFilesFound = false;
 SwManager.newAppFileExists_EventCallBack;
 
+SwManager.newAppFileFound_Downloading = false; // Use some UI when this is true.. <-- blinking?
+SwManager.interval_newAppFileDownloading;
+
 SwManager.installStateProgress = {
         'installing': '1/4',
         'installed': '2/4',
@@ -107,6 +110,8 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         SwManager.swInstallObj = swRegObj.installing;
 
         console.log( SwManager._swStage2 + 'start onstatechange watching!' );
+        SwManager.newAppFileFound_Downloading = true;
+        SwManager.appUpdateUI_DownloadingNewFiles(); // Top Left Dot blinking..
 
         // sw state changes 1-4 (ref: SwManager.installStateProgress )
         SwManager.swInstallObj.onstatechange = () => 
@@ -124,7 +129,8 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
 
                 case 'installed':
                     // SW installed (2) - changes applied
-                    //console.log( SwManager._swStage2 + '2. installed!' );                    
+                    //console.log( SwManager._swStage2 + '2. installed!' );
+                    SwManager.appUpdateUI_Downloaded_NewFiles();
                     break;
 
                 case 'activating':
@@ -180,7 +186,9 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             else
             {
                 // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.
-                AppUtil.appReloadWtMsg( SwManager._swStage3 + 'App Reloading! (After Update)' );
+                var newMsg = SwManager._swStage3 + 'App Reloading! (After Update)';
+                console.log( newMsg );
+                AppUtil.appReloadWtMsg( newMsg );
             }   
         }
     });
@@ -346,4 +354,28 @@ SwManager.listFilesInCache = function( cacheKey )
     });
 };
     
-    
+// --------------------------------------
+
+SwManager.appUpdateUI_DownloadingNewFiles = function()
+{
+    var tag = $( '.appUpdateStatusDiv' ).show();
+
+    // Set interval blinking..
+    SwManager.interval_newAppFileDownloading = setInterval( function () 
+    {
+        var vis = tag.css( "visibility" );
+ 
+        if ( !vis ) vis = "visible";
+        else if ( vis === "visible" ) vis = "hidden";
+        else vis = "visible";
+
+        tag.css( "visibility", vis );
+     }, 300 );
+};
+
+SwManager.appUpdateUI_Downloaded_NewFiles = function()
+{
+    clearInterval( SwManager.interval_newAppFileDownloading );
+    $( '.appUpdateStatusDiv' ).hide();
+};
+

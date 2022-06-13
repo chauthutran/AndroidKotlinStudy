@@ -1700,14 +1700,14 @@ FormUtil.showProgressBar = function( width )
 		$( 'div.determinate' ).css('width', width );
 	}
 	$( '#divProgressBar' ).css( 'display', 'block' );
-	$( '#divProgressBar' ).css( 'zIndex', '200' );
+	//$( '#divProgressBar' ).css( 'zIndex', '200' );
 	$( '#divProgressBar' ).show();
 }
 
 FormUtil.hideProgressBar = function()
 {
 	$( '#divProgressBar' ).hide();
-	$( '#divProgressBar' ).css( 'zIndex', '0' );
+	//$( '#divProgressBar' ).css( 'zIndex', '0' );
 }
 
 

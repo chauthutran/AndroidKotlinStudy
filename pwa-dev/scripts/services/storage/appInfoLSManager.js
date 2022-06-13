@@ -517,9 +517,8 @@ AppInfoLSManager.clearDevDebugLogHistory = () => AppInfoLSManager.clearHistory_C
 
 AppInfoLSManager.addToDevDebugLogHistory = function( msg )
 {    
-    var timeMin = UtilDate.formatDate( new Date(), "mm:ss.SSS" );
-
-    msg = '[' + timeMin + '] ' + msg;
+    //var timeMin = UtilDate.formatDate( new Date(), "mm:ss.SSS" );
+    //msg = '[' + timeMin + '] ' + msg;
 
     AppInfoLSManager.addHistory_CMN( msg
         , AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY
