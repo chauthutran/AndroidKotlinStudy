@@ -30,7 +30,6 @@ SwManager.registrationUpdates = false;
 //SwManager.newAppFilesFound = false;
 SwManager.newAppFileExists_EventCallBack;
 
-SwManager.newAppFileFound_Downloading = false; // Use some UI when this is true.. <-- blinking?
 SwManager.interval_newAppFileDownloading;
 SwManager.newAppFileDownloadingMsgTimeMs = 3000;  // 3 seconds
 
@@ -90,35 +89,23 @@ SwManager.runSWregistration = function ( callBack )
 
 SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack ) 
 {
-    // track status of registration object (for observing updates + install events > prompt)
-
-    if ( !swRegObj.active )
-    {
-        SwManager.newRegistration = true; // 1st time running SW registration (1st time running PWA)
-        SwManager.registrationState = 'sw: new install';
-    }
-    else 
-    {
-        SwManager.newRegistration = false; // installed previously
-        SwManager.registrationState = 'sw: existing';
-    }
-
-    //if ( SwManager.debugMode) console.customLog( ' - ' + SwManager.registrationState );
+    // 1st time running SW registration (1st time running PWA)    
+    if ( !swRegObj.active ) {  SwManager.newRegistration = true;  SwManager.registrationState = 'sw: new install';  }
+    else {  SwManager.newRegistration = false;  SwManager.registrationState = 'sw: existing';  }
 
     // SW update change event 
     swRegObj.onupdatefound = () => 
     {
         SwManager.swInstallObj = swRegObj.installing;
 
-        console.log( SwManager._swStage2 + 'start onstatechange watching!' );
-        SwManager.newAppFileFound_Downloading = true;
-        SwManager.appUpdateUI_DownloadingNewFiles( 'New Update Found!  Downloaind Files..' ); // Top Left Dot blinking.. + Msg show 3 seconds
+        var newUpdateMsg = 'New Update Found!  Downloading Files..';
+        console.log( SwManager._swStage2 + newUpdateMsg );
+        SwManager.appUpdateUI_DownloadingNewFiles( newUpdateMsg ); // Top Left Dot blinking.. + Msg show 3 seconds
 
         // sw state changes 1-4 (ref: SwManager.installStateProgress )
         SwManager.swInstallObj.onstatechange = () => 
         {
             SwManager.registrationUpdates = true;
-
             console.log( SwManager._swStage2 + 'state: ' + SwManager.swInstallObj.state );
 
             switch ( SwManager.swInstallObj.state ) 
@@ -180,16 +167,16 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             // For Already logged in, simply delay it --> which the logOut will perform the update.
             if ( delayReload )
             {
-                console.log( SwManager._swStage3 + 'App Reload Delayed (After Update).' );
+                console.log( SwManager._swStage3 + 'App Reload Delayed - After Installing New Update.' );
                 e.preventDefault();  // WHY USE THIS?
                 return false;
             }
             else
             {
                 // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.
-                var newMsg = SwManager._swStage3 + 'App Reloading! (After Update)';
-                console.log( newMsg );
-                AppUtil.appReloadWtMsg( 'App Reloading - New App Update Found!' );
+                var newMsg = 'App Reloading - After Installing New Update.';
+                console.log( SwManager._swStage3 + newMsg );
+                AppUtil.appReloadWtMsg( newMsg );
             }   
         }
     });

@@ -117,7 +117,8 @@ ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, ca
 		else
 		{
 			// Only if the clientId exists (proper clientCard), and in syncable status (not in processing or not in synced)
-			if ( clientStatusStr === Constants.status_queued )
+			// if ( clientStatusStr === Constants.status_queued )
+			if ( SyncManagerNew.isSyncReadyStatus( clientStatusStr ) )			
 			{
 				// NOTE: This could be Duplicate - on top of checking UI status Above			
 				if ( ActivitySyncUtil.clientSyncStatus[ clientId ] )
