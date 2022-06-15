@@ -282,8 +282,9 @@ WsCallManager.dwsAvailabilityCheck = function( sourceType, returnFunc )
 };
 
 // --------------------------------------------------
-
-
+// ===== MAIN ACTION CALL ================
+//WsCallManager.wsActionCall( activityJson_Orig.processing.url, payload, undefined, function( success, responseJson )
+//    SyncManagerNew.syncUpWsCall_ResultHandle( syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall );
 WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnFunc )
 {	    
     var configJson = ConfigManager.getConfigJson();
@@ -345,13 +346,6 @@ WsCallManager.requestGetDws = function( apiPath, optionJson, loadingTag, returnF
 
     if ( optionJson ) Util.mergeJson( requestOption, optionJson );
 
-    WsCallManager.requestGet( url, requestOption, loadingTag, returnFunc );
-};
-
-// Temporary text response one - we should unify all the response as json
-WsCallManager.requestGet_Text = function( url, requestOption, loadingTag, returnFunc )
-{
-    requestOption.returnDataType = 'text';
     WsCallManager.requestGet( url, requestOption, loadingTag, returnFunc );
 };
 

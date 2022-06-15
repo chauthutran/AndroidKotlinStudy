@@ -41,13 +41,13 @@ RESTCallManager.performPost = function( url, requestOption, returnFunc )
 // NEW
 RESTCallManager.timeoutPromise = function( promise, timeout, error ) 
 {
-    return new Promise( ( resolve, reject ) => {
-
+    return new Promise( ( resolve, reject ) => 
+    {
         setTimeout(() => {
             reject( { 'errMsg': error, 'errType': 'timeout' } );
         }, timeout );
 
-      promise.then( resolve, reject );
+        promise.then( resolve, reject );
     });
 };
 
@@ -64,47 +64,32 @@ RESTCallManager.fetchTimeout = function( url, options )
 RESTCallManager.performREST = function( url, requestData, returnFunc )
 {
     var reponseNotOK = false;
-    var notOKJson = {};
+    //var notOKJson = {};
 
     //fetch( url, requestData )
     RESTCallManager.fetchTimeout( url, requestData )
-    .then( response => {
-        //console.customLog( response );
-        if ( response.ok ) 
-        {            
-            if ( requestData.returnDataType === 'text' ) return response.text();
-            else return response.json();
-        }
+    .then( response => 
+    {
+        // 'ok' means response status code is 2XX        
+        if ( response.ok ) return response.json();
         else
         {
             reponseNotOK = true;
-            notOKJson = { 'errMsg': response.statusText, 'errType': 'responseErr', 'errResponse': response, 'errStatus': response.status };
-
+            console.log( response.headers.get('Content-Type') );
+            // NOTE: Failed request has a couple types: 1. DWS json response with status 400/500, 2. server failure/unreach with text, 3. etc..
+            // Since we do not know if the content is text or json (), GET IT AS TEXT and try to convert it to json.
+            //  ( ? Maybe with response.headers.get('Content-Type'); ?  We can get? )
             return response.text();            
         }         
     })
-    .then( responseBody => {
-        try
-        {
-            if ( reponseNotOK )
-            {
-                RESTCallManager.setDwsErrMsg( notOKJson, responseBody );
-                throw notOKJson;
-            }
-            else
-            {
-                returnFunc( true, responseBody );
-            }
-        }
-        catch ( errMsg )
-        {
-            errMag = 'RESTCallManager.performREST, responseBody handling err: ' + errMsg;
-            console.customLog( errMsg );
-            throw errMsg;
-        }
+    .then( responseBody => 
+    {
+        if ( reponseNotOK ) throw RESTCallManager.getDwsErrMsgJson( responseBody );
+        else returnFunc( true, responseBody );
     })
-    .catch( ( error ) => {
-        console.customLog( 'RESTCallManager.performREST Cached Error: ' + Util.getStr( error, 300 ) );
+    .catch( ( error ) => 
+    {
+        console.log( 'RESTCallManager.performREST Cached Error: ' + Util.getStr( error, 300 ) );
 
         var errJson;
         if ( Util.isTypeObject( error ) ) errJson = error;
@@ -116,24 +101,35 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
 };
 
 
-RESTCallManager.setDwsErrMsg = function( notOKJson, responseBodyStr )
+RESTCallManager.getDwsErrMsgJson = function( responseBodyStr )
 {
+    // NOTE: Failed request has a couple types: 1. DWS json response with status 400/500, 2. server failure/unreach with text, 3. etc..
+    // Since we do not know if the content is text or json (), GET IT AS TEXT and try to convert it to json.
+    var notOKJson = { errMsg: '' };
+    var responseJson;
+
+    // try catch to see if we can get 'responseJson..
+    try { responseJson = JSON.parse( responseBodyStr ); }
+    catch ( errMsg ) { }
+
     try
     {
-        if ( responseBodyStr.indexOf( 'ERROR_CASE' ) )
+        if ( responseJson && Util.isTypeObject( responseJson ) )
         {
-            var returnJson = JSON.parse( responseBodyStr );
+            notOKJson = { 'errMsg': responseJson.statusText, 'errType': 'responseErr', 'errResponse': responseJson, 'errStatus': responseJson.status };
 
-            notOKJson.errMsg += ' ERROR_MSG: ' + returnJson.ERROR_MSG;
+            if ( responseBodyStr.indexOf( 'ERROR_CASE' ) ) notOKJson.errMsg += ' ERROR_MSG: ' + responseJson.ERROR_MSG;
         }
         else
         {
-            var msg = ( responseBodyStr.length > 50 ) ? responseBodyStr.substring( 0, 50 ) + '...' : responseBodyStr;
-            notOKJson.errMsg += ' ErrMsg: ' + msg;            
+            // text version..
+            notOKJson.errMsg = ' ErrMsg: ' + ( responseBodyStr.length > 50 ) ? responseBodyStr.substring( 0, 50 ) + '...' : responseBodyStr;         
         }
     }
     catch ( errMsgInner )
     {
         notOKJson.errMsg += ' ErrMsg: ' + errMsgInner;
     }
+
+    return notOKJson;
 };
