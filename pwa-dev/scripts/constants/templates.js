@@ -583,7 +583,7 @@ Templates.sheetFullFrame = `
       <img src="images/arrow_back.svg" class="btnBack mouseDown">
       <span class="sheetTopTitle" mark="templateSheetFull" term="term_newClient" style="vertical-align: super;">New Client</span>
     </div>
-    <div class="info contentBody" style="background-color: #FFF; overflow-y: auto !important; height: 100%;">
+    <div class="info contentBody" style="background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px);">
     </div>
   </div>
 </div>
