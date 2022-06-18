@@ -588,7 +588,3 @@ Templates.sheetFullFrame = `
   </div>
 </div>
 `;
-
-Templates.sffBack = `<div class="info contentBody"
-style="padding: 8px; background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 70px); width: calc(100vw - 16px);">
-</div>`;

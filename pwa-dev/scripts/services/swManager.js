@@ -44,7 +44,7 @@ SwManager.debugMode = false;
 
 SwManager.waitNewAppFileCheckDuringOffline = false;
 
-SwManager.swUpdateCase = false;
+//SwManager.swUpdateCase = false;
 
 SwManager._swStage1 = '[SW1 CHK] - ';
 SwManager._swStage2 = '[SW2 ONUPDATEFOUND] - ';
@@ -140,14 +140,9 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
         //  — when the document's associated ServiceWorkerRegistration acquires a new active worker.
         console.log( SwManager._swStage3 + '3. ControllerChange DETECTED' );
 
-        // The known WFA App triggered App Reloading Process Flag..
-	    if ( AppUtil.appReloading )
-        {
-            // In app reload/refresh, this also gets called since new service worker gets to start.
-            console.log( SwManager._swStage3 + 'App Intentional Reloading -> DISGARDING THIS MANUAL UPDATE CALL.' );
-        }
-        // Service Worker update check requested case.
-        else if ( SwManager.swUpdateCase )
+        // App is in process of reloading/refersh/restarting.  No need to perform restart
+	    if ( AppUtil.appReloading ) console.log( SwManager._swStage3 + 'App Intentional Reloading -> DISGARDING THIS MANUAL UPDATE CALL.' );
+        else // if ( SwManager.swUpdateCase )
         {
             // NOTE: Thus, this gets called whenever there is a page reload.
             // --> ONLY display the message or run this if we called for reload or app Check...
@@ -204,7 +199,7 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
     if ( !option.checkTypeTitle ) ption.checkTypeTitle = 'UNKNOWN CHECK TYPE';
 
     SwManager.newAppFileExists_EventCallBack = runFunction;
-    SwManager.swUpdateCase = false;
+    //SwManager.swUpdateCase = false;
     SwManager.swUpdateOption = option;
 
     // Trigger the sw change/update check event..
@@ -222,7 +217,7 @@ SwManager.checkNewAppFile_OnlyOnline = function( runFunction, option )
             SwManager.lastAppFileUpdateDt = new Date().toISOString();
             console.log( SwManager._swStage1 + option.checkTypeTitle + ' --> UPDATES CHECKING..' );
 
-            SwManager.swUpdateCase = true;
+            //SwManager.swUpdateCase = true;
             SwManager.swRegObj.update();
         }
     }
