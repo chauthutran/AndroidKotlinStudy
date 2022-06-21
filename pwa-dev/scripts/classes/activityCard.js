@@ -71,7 +71,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
             }
             catch( errMsg )
             {
-                console.customLog( 'Error on ActivityCard.render, errMsg: ' + errMsg );
+                console.log( 'Error on ActivityCard.render, errMsg: ' + errMsg );
             }
         }
     };
@@ -221,7 +221,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
         }
         catch ( errMsg )
         {
-            console.customLog( 'ERROR in activityCard.setActivityContentDisplay, errMsg: ' + errMsg );
+            console.log( 'ERROR in activityCard.setActivityContentDisplay, errMsg: ' + errMsg );
         }
     };
 
@@ -253,7 +253,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
         }
         catch( errMsg )
         {
-            console.customLog( 'Error on ActivityCard.syncUpStatusDisplay, errMsg: ' + errMsg );
+            console.log( 'Error on ActivityCard.syncUpStatusDisplay, errMsg: ' + errMsg );
         }        
     };
 
@@ -280,7 +280,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
         }
         catch( errMsg )
         {
-            console.customLog( 'Error on ActivityCard.activityTypeDisplay, errMsg: ' + errMsg );
+            console.log( 'Error on ActivityCard.activityTypeDisplay, errMsg: ' + errMsg );
         }        
     };                
 
@@ -356,7 +356,7 @@ function ActivityCard( activityId, activityCardDivTag, options )
         }
         catch ( errMsg )
         {
-            console.customLog( 'Error on ActivityCard.setActivitySyncUpStatus, errMsg: ' + errMsg );
+            console.log( 'Error on ActivityCard.setActivitySyncUpStatus, errMsg: ' + errMsg );
         }
     };
 

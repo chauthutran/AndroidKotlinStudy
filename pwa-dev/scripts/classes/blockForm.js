@@ -1428,7 +1428,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 					}
 					catch( errMsg )
 					{
-						console.customLog( 'ERROR in blockForm.setEventsAndRules entryTag.keydown, errMsg: ' + errMsg );
+						console.log( 'ERROR in blockForm.setEventsAndRules entryTag.keydown, errMsg: ' + errMsg );
 					}
 					
 					return false;
@@ -1988,7 +1988,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 		catch( errMsg ) 
 		{
-			console.customLog( 'ERROR in BlockForm.checkCondition, ' + errMsg );
+			console.log( 'ERROR in BlockForm.checkCondition, ' + errMsg );
 		}
 
 		return result;
@@ -2137,7 +2137,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 		catch ( errMsg )
 		{
-			console.customLog( 'Error in blockForm.populateFormData_Common: errMsg: ' + errMsg );
+			console.log( 'Error in blockForm.populateFormData_Common: errMsg: ' + errMsg );
 		}		
 	};
 
@@ -2154,7 +2154,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 		catch ( errMsg )
 		{
-			console.customLog( 'Error in blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
+			console.log( 'Error in blockForm.populateFormData_ObjByName: errMsg: ' + errMsg );
 		}
 	};
 
@@ -2178,7 +2178,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 		catch ( errMsg )
 		{
-			console.customLog( 'Error in blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
+			console.log( 'Error in blockForm.populateFormData_ArrayDataByUid: errMsg: ' + errMsg );
 		}
 	};
 
@@ -2377,7 +2377,7 @@ function BlockForm( cwsRenderObj, blockObj, actionJson )
 		}
 		catch ( errMsg )
 		{
-			console.customLog( 'Error in blockForm.removeGroupDotName: errMsg: ' + errMsg );
+			console.log( 'Error in blockForm.removeGroupDotName: errMsg: ' + errMsg );
 		}
 
 		return outputName;

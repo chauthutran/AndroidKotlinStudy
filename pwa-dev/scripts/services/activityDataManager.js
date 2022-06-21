@@ -141,7 +141,7 @@ ActivityDataManager.deleteExistingActivity_Indexed = function( activityId )
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error on ActivityDataManager.deleteExistingActivity_Indexed, errMsg: ' + errMsg );
+        console.log( 'Error on ActivityDataManager.deleteExistingActivity_Indexed, errMsg: ' + errMsg );
     }
 
     return client;
@@ -378,7 +378,7 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
         }
         catch( errMsg )
         {
-            console.customLog( 'Error during ActivityDataManager.mergeDownloadedActivities, errMsg: ' + errMsg );
+            console.log( 'Error during ActivityDataManager.mergeDownloadedActivities, errMsg: ' + errMsg );
         }
     });
 
@@ -711,7 +711,7 @@ ActivityDataManager.getHistoryData = function( history )
         }
         catch ( errMsg )
         {
-            console.customLog( 'ERROR on ActivityDataManager.getHistoryData, errMsg: ' + errMsg );
+            console.log( 'ERROR on ActivityDataManager.getHistoryData, errMsg: ' + errMsg );
         }
     }
 
@@ -837,7 +837,7 @@ ActivityDataManager.updateProcessing_CreatedDate = function( activity )
     }
     catch( errMsg )
     {
-        console.customLog( 'ERROR in ActivityDataManager.updateProcessing_Created, errMsg: ' + errMsg );
+        console.log( 'ERROR in ActivityDataManager.updateProcessing_Created, errMsg: ' + errMsg );
     }
 };
 
@@ -879,7 +879,7 @@ ActivityDataManager.getCombinedTrans = function( activityJson )
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error during ActivityDataManager.getCombinedTrans, errMsg: ' + errMsg );
+        console.log( 'Error during ActivityDataManager.getCombinedTrans, errMsg: ' + errMsg );
     }
 
     return jsonCombined;
@@ -912,7 +912,7 @@ ActivityDataManager.getData_FromTrans = function( activityJson, propName )
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error during ActivityDataManager.getData_FromTrans, errMsg: ' + errMsg );
+        console.log( 'Error during ActivityDataManager.getData_FromTrans, errMsg: ' + errMsg );
     }
 
     return dataJson;
@@ -1166,7 +1166,7 @@ ActivityDataManager.checkActivityCoolDown = function( activityId, optCallBack_co
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR in ActivityDataManager.checkActivityCoolDown, errMsg: ' + errMsg );
+		console.log( 'ERROR in ActivityDataManager.checkActivityCoolDown, errMsg: ' + errMsg );
 	}
 
 
@@ -1570,6 +1570,6 @@ ActivityDataManager.replaceTransType = function( activity, from_transType, to_tr
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error on ActivityDataManager.replaceTransType, ' + errMsg );        
+        console.log( 'Error on ActivityDataManager.replaceTransType, ' + errMsg );        
     }
 };

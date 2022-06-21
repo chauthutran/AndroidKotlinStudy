@@ -188,7 +188,7 @@ ClientDataManager.removeClient = function( client, option )
     }
     catch( errMsg )
     {
-        console.customLog( 'Error in ClientDataManager.removeClient, errMsg: ' + errMsg );
+        console.log( 'Error in ClientDataManager.removeClient, errMsg: ' + errMsg );
     } 
 };
 
@@ -203,11 +203,11 @@ ClientDataManager.removeClientsAll = function()
             ClientDataManager.removeClient( client );
         });
 
-        console.customLog( 'Removed ' + clientCount + ' clients.' );
+        console.log( 'Removed ' + clientCount + ' clients.' );
     }
     catch( errMsg )
     {
-        console.customLog( 'Error in ClientDataManager.removeAllClient, errMsg: ' + errMsg );
+        console.log( 'Error in ClientDataManager.removeAllClient, errMsg: ' + errMsg );
     } 
 };
 
@@ -224,7 +224,7 @@ ClientDataManager.removeClientsByIdArr = function( clientIdsArr )
     }
     catch( errMsg )
     {
-        console.customLog( 'ERROR in ClientDataManager.removeClientsByIdArr, ' + errMsg );
+        console.log( 'ERROR in ClientDataManager.removeClientsByIdArr, ' + errMsg );
     } 
 };
 
@@ -404,7 +404,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
             }        
             catch( errMsg )
             {
-                console.customLog( 'Error during ClientDataManager.mergeDownloadedClients, errMsg: ' + errMsg );
+                console.log( 'Error during ClientDataManager.mergeDownloadedClients, errMsg: ' + errMsg );
             }
         });
     }
@@ -646,7 +646,7 @@ ClientDataManager.loadSampleData = function( icount, sampleDataTemplate, callBac
         
 
         new Date().toISOString().split( 'T')[0].replace(/-/g,'')
-        //console.customLog( ' ~ type: ' + actType + ' ( ' + status + ' ) ', recDate, earlierDate );
+        //console.log( ' ~ type: ' + actType + ' ( ' + status + ' ) ', recDate, earlierDate );
     
         ClientDataManager.insertClients( JSON.parse( tmp ) );
     }

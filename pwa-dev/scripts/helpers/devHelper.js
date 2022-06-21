@@ -98,7 +98,7 @@ DevHelper.setDevMode = function( bDev )
         var devModeAccessCode = Util.trim( prompt( 'Please enter the dev mode access code.' ) );
         if( devModeAccessCode === DevHelper.devModeAccessCode )
         {   
-            console.customLog( 'DevMode set.' );
+            console.log( 'DevMode set.' );
             MsgManager.msgAreaShow( 'DevMode set.' );
                  
             DevHelper.devMode = true;
@@ -112,13 +112,13 @@ DevHelper.setDevMode = function( bDev )
             if( DevHelper.devModeFailCount > DevHelper.devModeFailMax )
             {
                 MsgManager.msgAreaShow( 'Wrong DevMode access code. Forcing logOut due to too many failure.', 'ERROR' );
-                console.customLog( 'Too many DevMode set failed - wrong access code.  FailedCount: ' + DevHelper.devModeFailCount );
+                console.log( 'Too many DevMode set failed - wrong access code.  FailedCount: ' + DevHelper.devModeFailCount );
                 SessionManager.cwsRenderObj.logOutProcess();
             }
             else
             {
                 MsgManager.msgAreaShow( 'Wrong DevMode access code.', 'ERROR' );
-                console.customLog( 'DevMode set failed - wrong access code.' )    
+                console.log( 'DevMode set failed - wrong access code.' )    
             }
         }
     }

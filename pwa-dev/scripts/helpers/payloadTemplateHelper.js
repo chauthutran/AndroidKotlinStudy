@@ -76,7 +76,7 @@ PayloadTemplateHelper.getPayloadListFromTemplate = function( payloadTemplate, pa
         }
         catch( errMsg )
         {
-            console.customLog( 'Error in PayloadTemplateHelper.getPayloadListFromTemplate, errMsg: ' + errMsg );
+            console.log( 'Error in PayloadTemplateHelper.getPayloadListFromTemplate, errMsg: ' + errMsg );
         }
     }
 

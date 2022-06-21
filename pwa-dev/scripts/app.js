@@ -169,14 +169,14 @@ App.windowEvent_BlockBackBtnAction = function () {
 
 App.detectStandAlone = function () {
 	if (window.matchMedia('(display-mode: standalone)').matches) {
-		// console.customLog( "Running as standalone." );
+		// console.log( "Running as standalone." );
 	}
 };
 
 
 App.catchErrorInCustomLog = function (e) {
 	// const { message, source, lineno, colno, error } = e; 
-	console.customLog(e.message);
+	console.log(e.message);
 };
 
 

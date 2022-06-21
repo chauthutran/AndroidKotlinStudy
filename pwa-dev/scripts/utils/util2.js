@@ -118,7 +118,7 @@ Util2.getLocalStorageObjectValue = function( objKeyVal )
 
 	if ( ( !userName && !objKeyVal ) || ( objKeyVal && objKeyVal.length == 0) )
 	{
-		console.customLog( ' exiting getLocalStorageObjectValue ');
+		console.log( ' exiting getLocalStorageObjectValue ');
 		return;
 	}
 	else
@@ -195,12 +195,12 @@ Util2.newLocalSequence = function( pattern, commitSEQIncr )
 				}
 				else
 				{
-					console.customLog( ' ~ no newLocalSequence comma separator');
+					console.log( ' ~ no newLocalSequence comma separator');
 				}
 			}
 			else
 			{
-				console.customLog( ' ~ no localSequence parms');
+				console.log( ' ~ no localSequence parms');
 			}	
 		}
 	});

@@ -60,7 +60,7 @@ ConnManagerNew.appStartUp_SetStatus = function() //, callBack )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR during ConnManagerNew.firstNetworkConnSet, errMsg: ' + errMsg );
+		console.log( 'ERROR during ConnManagerNew.firstNetworkConnSet, errMsg: ' + errMsg );
 		//callBack( false );
 	}
 };

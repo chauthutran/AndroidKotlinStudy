@@ -59,7 +59,7 @@ ConsoleCustomLog.showDialog = function()
     }
     catch( errMsg )
     {
-        console.customLog( errMsg );
+        console.log( errMsg );
     }
 
     divDialogTag.show();
@@ -110,8 +110,8 @@ ConsoleCustomLog.addEvents = function( divMainContentTag, divDialogTag )
         }
         else if ( caseStr === 'showOtherUsefulCommands' )
         {
-            console.customLog( '1. ClientDataManager.getClientById( "-----" );' );
-            console.customLog( '2. ClientDataManager.getClientByActivityId( "------" );' );
+            console.log( '1. ClientDataManager.getClientById( "-----" );' );
+            console.log( '2. ClientDataManager.getClientByActivityId( "------" );' );
             inputCommandTag.val( '/* Commands shown on above log area. */' );
         }
         else if ( caseStr === 'devMode' )
@@ -152,12 +152,12 @@ ConsoleCustomLog.addEvents = function( divMainContentTag, divDialogTag )
 
         var runCommandVal = divDialogTag.find( '.inputLogRunCommand' ).val();
 
-        console.customLog( 'runCommandVal: ' + runCommandVal );
+        console.log( 'runCommandVal: ' + runCommandVal );
 
         Util.tryCatchContinue( function() {
 
             var valueResult = eval( runCommandVal );
-            console.customLog( valueResult );
+            console.log( valueResult );
 
             ConsoleCustomLog.setMainContent( divMainContentTag, ConsoleCustomLog.customLogData );
 

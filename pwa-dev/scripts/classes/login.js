@@ -745,7 +745,7 @@ function Login()
 		}
 		catch( errMsg )
 		{
-			console.customLog( 'ERROR in login.setModifiedOUAttrList, errMsg: ' + errMsg );
+			console.log( 'ERROR in login.setModifiedOUAttrList, errMsg: ' + errMsg );
 		}
 	};
 

@@ -237,7 +237,7 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
         }
         else
         {
-            console.customLog( 'Selected View definition not found!' );
+            console.log( 'Selected View definition not found!' );
         }   
 
     
@@ -355,7 +355,7 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
         }
         catch ( errMsg )
         {
-            console.customLog( 'Error in activityListView.getGroup_FromViewDef(), errMsg: ' + errMsg );
+            console.log( 'Error in activityListView.getGroup_FromViewDef(), errMsg: ' + errMsg );
         }
 
         return groupMatched;
@@ -406,7 +406,7 @@ function ActivityListView( cwsRenderObj, activityList, viewListNames )
         if ( me.usedGroupBy( groupByData ) )
         {
             // Use the sorting in the groupBy..
-            //console.customLog( '**** Use GroupBy sorting!! ******' );
+            //console.log( '**** Use GroupBy sorting!! ******' );
 
             // TODO: NEED TO SETUP GROUP SORTING..
         }

@@ -16,7 +16,7 @@ Validation.disableValidation = function( execFunc )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'Error in Validation.disableValidation execute, errMsg: ' + errMsg );
+		console.log( 'Error in Validation.disableValidation execute, errMsg: ' + errMsg );
 	}
 
 	Validation._DisableValidation = false;
@@ -459,7 +459,7 @@ Validation.checkValue_RegxRules = function( inputTag, divTag, type )
             }
             catch( ex )
             {
-                console.customLog( 'rule regex check failed.. ' + ex );
+                console.log( 'rule regex check failed.. ' + ex );
             }
         }
     }
@@ -519,14 +519,14 @@ Validation.checkValue_customEvalRuleIds = function( inputTag, divTag )
                 }
                 catch( ex )
                 {
-                    console.customLog( 'customEvalRule check failed, ' + ex );
+                    console.log( 'customEvalRule check failed, ' + ex );
                 }
             });
         }
     }
     catch( ex )
     {
-        console.customLog( 'Error in Validation.checkValue_customEvalRuleIds, ' + ex );
+        console.log( 'Error in Validation.checkValue_customEvalRuleIds, ' + ex );
     }
 
     return valid;

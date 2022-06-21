@@ -154,7 +154,7 @@ TranslationManager.downloadLangTerms = function( returnFunc )
 		else
 		{
 			// Try retrieving all dailyCache on WebService..
-			console.customLog( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
+			console.log( '=== LANG TERMS ==> Requesting Web Service To DOWNLOAD TRANSLATIONS' );
 
 
 			var dailyCache = '/PWA.dailyCache';

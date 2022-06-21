@@ -127,7 +127,7 @@ SessionManager.checkLoginOfflineData = function( loginData )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'Error in SessionManager.checkLoginOfflineData, errMsg: ' + errMsg );
+		console.log( 'Error in SessionManager.checkLoginOfflineData, errMsg: ' + errMsg );
 	}
 
 	return validLoginData;

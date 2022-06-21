@@ -579,9 +579,15 @@ Templates.settings_app_data_configuration = `
 Templates.sheetFullFrame = `
 <div class="sheet_full-fs detailFullScreen sheetFull">
   <div class="wapper_card">
-    <div class="sheet-title c_900" style="width: 100%;">
-      <img src="images/arrow_back.svg" class="btnBack mouseDown">
-      <span class="sheetTopTitle" mark="templateSheetFull" term="term_newClient" style="vertical-align: super;">New Client</span>
+    <div style="display: flex;">
+      <div class="sheet-title c_900">
+        <img src="images/arrow_back.svg" class="btnBack mouseDown">
+        <span class="sheetTopTitle" mark="templateSheetFull" term="term_newClient" style="vertical-align: super;">New Client</span>
+      </div>
+      <div style="width: 100px; display: flex">
+        <div class="syncIcon mouseDown" title="SyncAll" style="width: 45px; opacity: 0.0; cursor: pointer;">-</div>
+        <div class="onOfflineIcon mouseDown" title="Network" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
+      </div>
     </div>
     <div class="info contentBody" style="background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px);">
     </div>

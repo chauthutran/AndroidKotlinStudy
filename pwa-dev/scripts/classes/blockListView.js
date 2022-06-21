@@ -278,7 +278,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         }
         else
         {
-            console.customLog( 'Selected View definition not found!' );
+            console.log( 'Selected View definition not found!' );
         }   
 
     
@@ -393,7 +393,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         }
         catch ( errMsg )
         {
-            console.customLog( 'Error in BlockListView.getGroup_FromViewDef(), errMsg: ' + errMsg );
+            console.log( 'Error in BlockListView.getGroup_FromViewDef(), errMsg: ' + errMsg );
         }
 
         return groupMatched;
@@ -444,7 +444,7 @@ function BlockListView( cwsRenderObj, blockList, viewListNames )
         if ( me.usedGroupBy( groupByData ) )
         {
             // Use the sorting in the groupBy..
-            //console.customLog( '**** Use GroupBy sorting!! ******' );
+            //console.log( '**** Use GroupBy sorting!! ******' );
 
             // TODO: NEED TO SETUP GROUP SORTING..
         }

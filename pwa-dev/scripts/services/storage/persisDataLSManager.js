@@ -174,7 +174,7 @@ PersisDataLSManager.getLangCode = function()
 	}
 	catch ( err )
 	{
-		console.customLog( 'Error in PersisDataLSManager.getLangCode: ' + err );
+		console.log( 'Error in PersisDataLSManager.getLangCode: ' + err );
 	}
 
 	return langCode;

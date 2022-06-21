@@ -58,7 +58,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
         }
         catch( errMsg )
         {
-            console.customLog( 'Error on ItemCard.render, errMsg: ' + errMsg );
+            console.log( 'Error on ItemCard.render, errMsg: ' + errMsg );
         }
     };
 
@@ -223,7 +223,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
         }
         catch ( errMsg )
         {
-            console.customLog( 'ERROR in itemCard.setItemContentDisplay, errMsg: ' + errMsg );
+            console.log( 'ERROR in itemCard.setItemContentDisplay, errMsg: ' + errMsg );
         }
     };
 
@@ -243,7 +243,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
         }
         catch( errMsg )
         {
-            console.customLog( 'Error on ItemCard.clientTypeDisplay, errMsg: ' + errMsg );
+            console.log( 'Error on ItemCard.clientTypeDisplay, errMsg: ' + errMsg );
         }        
     };                
 

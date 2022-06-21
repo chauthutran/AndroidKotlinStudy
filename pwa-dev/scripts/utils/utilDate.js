@@ -155,7 +155,7 @@ UtilDate.getTimePassedMs = function( fromDtStr )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR in UtilDate.getTimePassedMs, errMsg: ' + errMsg );
+		console.log( 'ERROR in UtilDate.getTimePassedMs, errMsg: ' + errMsg );
 	}
 
 	return timePassedMs;
@@ -186,7 +186,7 @@ UtilDate.dateUTCToLocal = function( dateStr )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR in UtilDate.dateUTCToLocal, errMsg: ' + errMsg );
+		console.log( 'ERROR in UtilDate.dateUTCToLocal, errMsg: ' + errMsg );
 	}
 
 	return localDateObj;
@@ -301,7 +301,7 @@ UtilDate.getSecFromMiliSec = function( miliSec )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR in UtilDate.getSecFromMiliSec, errMsg: ' + errMsg );
+		console.log( 'ERROR in UtilDate.getSecFromMiliSec, errMsg: ' + errMsg );
 	}
 
 	return sec;

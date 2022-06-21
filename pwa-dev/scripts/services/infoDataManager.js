@@ -76,7 +76,7 @@ InfoDataManager.setDataAfterLogin = function()
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR in InfoDataManager.setDataAfterLogin, errMsg: ' + errMsg );
+		console.log( 'ERROR in InfoDataManager.setDataAfterLogin, errMsg: ' + errMsg );
 	}
 };
 

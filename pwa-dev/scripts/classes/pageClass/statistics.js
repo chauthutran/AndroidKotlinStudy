@@ -114,7 +114,7 @@ function Statistics( cwsRenderObj )
 
         me.statisticsFormDiv.find( 'img.btnBack' ).off( 'click' ).click( function()
         { 
-            //console.customLog( 'CardClose button clicked' );
+            //console.log( 'CardClose button clicked' );
             me.allStats = [];
             me.statisticsFormDiv.fadeOut();
         });
@@ -233,7 +233,7 @@ function Statistics( cwsRenderObj )
             {
                 try
                 {
-                    //console.customLog( el );
+                    //console.log( el );
                     if ( el.id === 'mainScript' )
                     {
                         statsContentPageTag.append( '<script>' + el.textContent + '</' + 'script>' );
@@ -258,7 +258,7 @@ function Statistics( cwsRenderObj )
                     }    
                 }
                 catch ( errMsg ) {
-                    console.customLog( errMsg );
+                    console.log( errMsg );
                 }
             });
 
@@ -275,7 +275,7 @@ function Statistics( cwsRenderObj )
                     }
                 }
                 catch ( errMsg ) {
-                    console.customLog( errMsg );
+                    console.log( errMsg );
                 }
             });
 
@@ -300,7 +300,7 @@ function Statistics( cwsRenderObj )
                     }
                 }
                 catch ( errMsg ) {
-                    console.customLog( errMsg );
+                    console.log( errMsg );
                 }
             });
 
@@ -390,7 +390,7 @@ function Statistics( cwsRenderObj )
             }
             catch( errMsg )
             {
-                console.customLog( 'ERROR in statistics.convertPeriodOpts' );
+                console.log( 'ERROR in statistics.convertPeriodOpts' );
             }
         }
 

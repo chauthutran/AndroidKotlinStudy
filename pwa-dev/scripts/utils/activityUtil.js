@@ -429,7 +429,7 @@ ActivityUtil.setFormsJsonGroup_Val = function( nameVal, val, dataGroup, formsJso
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'Error in ActivityUtil.setFormsJsonGroup_Val, errMsg: ' + errMsg );
+		console.log( 'Error in ActivityUtil.setFormsJsonGroup_Val, errMsg: ' + errMsg );
 	}
 
 	return nameVal;

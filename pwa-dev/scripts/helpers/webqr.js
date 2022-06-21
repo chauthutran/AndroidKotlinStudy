@@ -129,13 +129,13 @@ function readQR( valueTag ){
                 gCtx.drawImage( v, 0, 0 );
                 try {
                     qrcode.decode();
-                    if ( debugMode ) console.customLog('DECODED QR') /* SUCCESSFUL DECODE OF QR CODE */
+                    if ( debugMode ) console.log('DECODED QR') /* SUCCESSFUL DECODE OF QR CODE */
                     if ( me.valueTag ){
                         me.valueTag.val( qrData );
                     } 
                     else
                     {
-                        console.customLog( qrData );
+                        console.log( qrData );
                     }
 
                     me.endQRstream();
@@ -144,7 +144,7 @@ function readQR( valueTag ){
                 catch (e) {
                     if ( e ) 
                     {
-                        console.customLog(e);
+                        console.log(e);
                         if ( me.qrAttempts <= me.qrScanLimit )
                         {
                             setTimeout( me.captureToCanvas, 500 );
@@ -160,7 +160,7 @@ function readQR( valueTag ){
             catch (e) {
                 if ( e ) 
                 {
-                    console.customLog(e);
+                    console.log(e);
                     setTimeout( me.captureToCanvas, 500 );    
                 }
             };
@@ -229,26 +229,26 @@ function readQR( valueTag ){
                 navigator.mediaDevices.enumerateDevices()
                     .then(function (devices) {
                         devices.forEach(function (device) {
-                            console.customLog( device );
+                            console.log( device );
                             if (device.kind === 'videoinput') {
                                 videolabels += 1;
                                 if ( device.label.length ) validLabels += 1;
                                 if (device.label.toLowerCase().search("back") > -1)
                                     options = { 'deviceId': { 'exact': device.deviceId }, 'facingMode': 'environment' };
                             }
-                            if ( debugMode ) console.customLog(device.kind + ": " + device.label + " id = " + device.deviceId);
+                            if ( debugMode ) console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
                         });
-                        console.customLog( options );
-                        console.customLog( validLabels + ' / ' + videolabels );
+                        console.log( options );
+                        console.log( validLabels + ' / ' + videolabels );
                         me.setwebcam2(options);
                     });
             }
             catch (e) {
-                console.customLog(e);
+                console.log(e);
             }
         }
         else {
-            console.customLog("no navigator.mediaDevices.enumerateDevices");
+            console.log("no navigator.mediaDevices.enumerateDevices");
             me.setwebcam2(options);
         }
 
@@ -305,26 +305,26 @@ function readQR( valueTag ){
                 navigator.mediaDevices.enumerateDevices()
                     .then(function (devices) {
                         devices.forEach(function (device) {
-                            console.customLog( device );
+                            console.log( device );
                             if (device.kind === 'videoinput') {
                                 videolabels += 1;
                                 if ( device.label.length ) validLabels += 1;
                             }
                         });
 
-                        console.customLog( validLabels + ' / ' + videolabels );
+                        console.log( validLabels + ' / ' + videolabels );
 
                         if ( callBack ) callBack();
 
                     });
             }
             catch (e) {
-                console.customLog(e);
+                console.log(e);
                 if ( callBack ) callBack();
             }
         }
         else {
-            console.customLog("no navigator.mediaDevices.enumerateDevices");
+            console.log("no navigator.mediaDevices.enumerateDevices");
             if ( callBack ) callBack();
         }
     }

@@ -68,7 +68,7 @@ MsgManager.msgAreaShow = function( msg, type, optClasses, hideTimeMs )
     }
     catch ( errMsg )
     {
-        console.customLog( 'ERROR in MsgManager.msgAreaShow, errMsg: ' + errMsg );
+        console.log( 'ERROR in MsgManager.msgAreaShow, errMsg: ' + errMsg );
     }
 
     return msgTag;

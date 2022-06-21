@@ -67,7 +67,7 @@ SettingsStatic.fixOptEvalRun = function( fixOpt, INFO )
 		var errMsgMain = Util.ERR_FIX_OP + ' ' + fixOpt.operationName + ', ErrMsg: ' + errMsg;
         if ( fixOpt.operation ) errMsgMain += ', EvalVal: ' + fixOpt.operation.substr( 0, 40 );
 
-        console.customLog( errMsgMain );
+        console.log( errMsgMain );
 		returnVal = errMsgMain;
 	}
 
@@ -90,8 +90,8 @@ SettingsStatic.showMsg = function( returnMsg, errCase )
     }
     catch( errMsg )
     {
-        console.customLog( returnMsg );
-        console.customLog( 'ERROR in SettingsStatic.showMsg, errMsg: ' + errMsg );
+        console.log( returnMsg );
+        console.log( 'ERROR in SettingsStatic.showMsg, errMsg: ' + errMsg );
     }
 };
 

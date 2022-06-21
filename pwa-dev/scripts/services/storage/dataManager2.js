@@ -306,8 +306,8 @@ DataManager2.getData_LS_JSON = function( key )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR during DataManager2.getData_LS_JSON, errMsg - ' + errMsg );
-		console.customLog( ' - LocalStorage data might not be JSON Format String' );
+		console.log( 'ERROR during DataManager2.getData_LS_JSON, errMsg - ' + errMsg );
+		console.log( ' - LocalStorage data might not be JSON Format String' );
 	}
 
 	return jsonData;
@@ -345,7 +345,7 @@ DataManager2.deleteAllStorageData = function( callBack )
 DataManager2.deleteDataByStorageType = function( storageTypeStr, secName ) 
 {
 	StorageMng.removeItem ( storageTypeStr, secName, function(){ 
-		console.customLog( secName + " DELETE successfully !!!");
+		console.log( secName + " DELETE successfully !!!");
 	} );
 };
 

@@ -291,7 +291,7 @@ function Action( cwsRenderObj, blockObj )
 							var backBtnTags = $( '.btnBack:visible' );
 							if ( backBtnTags.length > 0 ) backBtnTags.first().click();
 							
-							//if ( clickActionJson.areaId == 'list_c-on' ) console.customLog( 'x' );
+							//if ( clickActionJson.areaId == 'list_c-on' ) console.log( 'x' );
 							me.cwsRenderObj.renderArea( clickActionJson.areaId );
 						}
 

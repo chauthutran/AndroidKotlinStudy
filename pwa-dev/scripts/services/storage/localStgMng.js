@@ -30,7 +30,7 @@ LocalStgMng.lastDownload_Get = function()
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'Error in LocalStgMng.lastDownload_Get, errMsg: ' + errMsg );
+		console.log( 'Error in LocalStgMng.lastDownload_Get, errMsg: ' + errMsg );
 	}
 
 	return dateISOStr;  // return 'undefined' if lastDownload does not exists..
@@ -68,7 +68,7 @@ LocalStgMng.getJsonData = function( key ) {
 	}
 	catch( errMsg )
 	{
-		console.customLog( "Error in LocalStgMng.getJsonData, errMsg: " + errMsg );
+		console.log( "Error in LocalStgMng.getJsonData, errMsg: " + errMsg );
 	}
 
 	return jsonData;

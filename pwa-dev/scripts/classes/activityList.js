@@ -114,7 +114,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson, options )
         }
         else
         {
-            console.customLog( 'ERROR on blockList.reRenderWithList - blockList_UI_Tag not available - probably not rendered, yet' );
+            console.log( 'ERROR on blockList.reRenderWithList - blockList_UI_Tag not available - probably not rendered, yet' );
         } 
     };
 
@@ -439,7 +439,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson, options )
         }
         catch( errMsg )
         {
-            console.customLog( 'Error in BlockList.setGroupDiv(), errMsg: ' + errMsg );
+            console.log( 'Error in BlockList.setGroupDiv(), errMsg: ' + errMsg );
         }
 
         return groupAttrVal;
@@ -499,7 +499,7 @@ function ActivityList( cwsRenderObj, blockObj, blockJson, options )
             }
             catch( errMsg )
             {
-                console.customLog( 'Error in BlockList.setTdGroupClick(), errMsg: ' + errMsg );
+                console.log( 'Error in BlockList.setTdGroupClick(), errMsg: ' + errMsg );
             }
         });        
     };

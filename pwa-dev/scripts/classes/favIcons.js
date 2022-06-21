@@ -257,7 +257,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 		}
 		catch( errMsg ) 
 		{
-			console.customLog( 'ERROR in favIcons.checkCondition, ' + errMsg );
+			console.log( 'ERROR in favIcons.checkCondition, ' + errMsg );
 		}
 
 		return result;
@@ -431,7 +431,7 @@ FavIcons.generateSvgIconFromPath = function( favItem, activityTypeDef, svgIconTa
         }
         catch ( errMsg )
         {
-            console.customLog( 'Error on FavIcons.generateSvgIconFromPath, errMsg: ' + errMsg );
+            console.log( 'Error on FavIcons.generateSvgIconFromPath, errMsg: ' + errMsg );
         }
     }
 };

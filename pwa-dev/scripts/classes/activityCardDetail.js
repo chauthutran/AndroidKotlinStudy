@@ -297,7 +297,7 @@ function ActivityCardDetail( activityId, isRestore )
 			}
 		}
 		catch (errMsg) {
-			console.customLog('ERROR in ActivityCard.setUpActivityEditBtn, errMsg: ' + errMsg);
+			console.log('ERROR in ActivityCard.setUpActivityEditBtn, errMsg: ' + errMsg);
 		}
 	};
 

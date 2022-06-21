@@ -236,7 +236,7 @@ function BlockButton( cwsRenderObj, blockObj )
 
 				if ( divTag )
 				{
-					//console.customLog( svgStyle );
+					//console.log( svgStyle );
 					btnTag.attr( 'width', '60px' ); // ( divTag.css( 'width' ) ? divTag.css( 'width' ) : '60px' ) ); //svgStyle.width
 					btnTag.attr( 'height', '60px' ); // ( divTag.css( 'height' ) ? divTag.css( 'height' ) : '60px' ) );	//svgStyle.height
 				}

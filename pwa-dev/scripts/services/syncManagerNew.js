@@ -407,7 +407,7 @@ SyncManagerNew.downloadClients = function( callBack )
     }
     catch( errMsg )
     {
-        console.customLog( 'Error in SyncManagerNew.downloadClients - ' + errMsg );
+        console.log( 'Error in SyncManagerNew.downloadClients - ' + errMsg );
         callBack( false, ' ErrorMsg - ' + errMsg );
     }
 };
@@ -561,11 +561,11 @@ SyncManagerNew.SyncMsg_InsertMsg = function( msgStr )
         var newMsgJson = { "msg": msgStr, "datetime": Util.formatDateTime( new Date(), Util.dateType_DATETIME_s1 ) };
         SyncManagerNew.SyncMsg_Get().msgList.push( newMsgJson );
 
-        //console.customLog( 'SyncManagerNew.SyncMsg: ' + JSON.stringify( newMsgJson ) );
+        //console.log( 'SyncManagerNew.SyncMsg: ' + JSON.stringify( newMsgJson ) );
     }
     catch( errMsg )
     {
-        console.customLog( 'Error SyncManagerNew.SyncMsg_InsertMsg, errMsg: ' + errMsg );
+        console.log( 'Error SyncManagerNew.SyncMsg_InsertMsg, errMsg: ' + errMsg );
     }
 };
 
@@ -580,11 +580,11 @@ SyncManagerNew.SyncMsg_InsertSummaryMsg = function( summaryMsgStr )
         
         syncMsgJson.summaryList.push( newSummaryMsgJson );
 
-        //console.customLog( 'SyncManagerNew.SummarySyncMsg: ' + JSON.stringify( newSummaryMsgJson ) );
+        //console.log( 'SyncManagerNew.SummarySyncMsg: ' + JSON.stringify( newSummaryMsgJson ) );
     }
     else
     {
-        //console.customLog( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
+        //console.log( 'Error SyncManagerNew.SyncMsg_InsertMsg, syncMsgJson undefined.' );
     }    
 };
 
@@ -1075,12 +1075,12 @@ SyncManagerNew.deleteFixActivityRecord = function( activityId )
 
         WsCallManager.requestDWS_DELETE( WsCallManager.EndPoint_PWAFixActivitiesDEL, payloadJson, undefined, function() 
         {
-            console.customLog( 'Deleted fixActivityRecord, activityId ' + activityId );
+            console.log( 'Deleted fixActivityRecord, activityId ' + activityId );
         });
     }
     catch( errMsg )
     {
-        console.customLog( 'ERROR during SyncManagerNew.deleteFixActivityRecord(), activityId: ' + activityId + ', errMsg: ' + errMsg );
+        console.log( 'ERROR during SyncManagerNew.deleteFixActivityRecord(), activityId: ' + activityId + ', errMsg: ' + errMsg );
     }
 };
 
@@ -1098,6 +1098,6 @@ SyncManagerNew.cleanUpErrJson = function( responseJson )
     }
     catch( errMsg )
     {
-        console.customLog( 'ERROR during SyncManagerNew.cleanUpErrJson, errMsg: ' + errMsg );
+        console.log( 'ERROR during SyncManagerNew.cleanUpErrJson, errMsg: ' + errMsg );
     }        
 };

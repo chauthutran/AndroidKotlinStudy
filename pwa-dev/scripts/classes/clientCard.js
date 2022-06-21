@@ -73,7 +73,7 @@ function ClientCard( clientId, options )
             }
             catch( errMsg )
             {
-                console.customLog( 'Error on ClientCard.render, errMsg: ' + errMsg );
+                console.log( 'Error on ClientCard.render, errMsg: ' + errMsg );
             }
         }
     };
@@ -220,7 +220,7 @@ function ClientCard( clientId, options )
         }
         catch ( errMsg )
         {
-            console.customLog( 'ERROR in clientCard.setClientContentDisplay, errMsg: ' + errMsg );
+            console.log( 'ERROR in clientCard.setClientContentDisplay, errMsg: ' + errMsg );
         }
     };
 
@@ -240,7 +240,7 @@ function ClientCard( clientId, options )
         }
         catch( errMsg )
         {
-            console.customLog( 'Error on ClientCard.clientTypeDisplay, errMsg: ' + errMsg );
+            console.log( 'Error on ClientCard.clientTypeDisplay, errMsg: ' + errMsg );
         }        
     };                
 

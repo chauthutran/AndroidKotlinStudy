@@ -349,7 +349,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
         }
         catch ( errMsg )
         {
-            console.customLog( 'Error in clientListView.getGroup_FromViewDef(), errMsg: ' + errMsg );
+            console.log( 'Error in clientListView.getGroup_FromViewDef(), errMsg: ' + errMsg );
         }
 
         return groupMatched;
@@ -400,7 +400,7 @@ function ClientListView( cwsRenderObj, clientList, viewListNames )
         if ( me.usedGroupBy( groupByData ) )
         {
             // Use the sorting in the groupBy..
-            //console.customLog( '**** Use GroupBy sorting!! ******' );
+            //console.log( '**** Use GroupBy sorting!! ******' );
 
             // TODO: NEED TO SETUP GROUP SORTING..
         }

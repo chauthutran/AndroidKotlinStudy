@@ -149,7 +149,7 @@ function ClientRelationshipList( clientId, _relationshipTabTag, blockDefId )
         }
         catch( errMsg )
         {
-            console.customLog( 'Error on ClientCard.clientTypeDisplay, errMsg: ' + errMsg );
+            console.log( 'Error on ClientCard.clientTypeDisplay, errMsg: ' + errMsg );
         }        
     };   
     

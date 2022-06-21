@@ -331,7 +331,7 @@ function settingsApp( cwsRender )
     {
         me.settingsFormDivTag.find( '.linkAppVersionCheck' ).off( 'click' ).click( function() 
         {
-            console.customLog( 'linkAppVersionCheck clicked!!' );
+            console.log( 'linkAppVersionCheck clicked!!' );
         });    
 
         me.settingsFormDivTag.find( '.linkAppUpdateCheck' ).off( 'click' ).click( function() 
@@ -706,7 +706,7 @@ function settingsApp( cwsRender )
                     {					
                         shareCodeTag.val( '' );
                         isSuccess = true;
-                        //console.customLog( returnJson );    
+                        //console.log( returnJson );    
 
                         me.AddShareLogMsg( divDataShareTag, 'SHARE UPLOADED. shareCode: ' + shareCode );
                     }
@@ -750,7 +750,7 @@ function settingsApp( cwsRender )
 
                             ClientDataManager.mergeDownloadedClients( { 'clients': clientList }, undefined, function() 
                             {
-                                console.customLog( 'LoadData clients merged' );
+                                console.log( 'LoadData clients merged' );
                                 SessionManager.cwsRenderObj.renderArea1st();
                             });    
                         }

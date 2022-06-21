@@ -274,7 +274,7 @@ WsCallManager.dwsAvailabilityCheck = function( sourceType, returnFunc )
         }
         catch( errMsg )
         {
-            console.customLog( 'ERROR in WsCallManager.getDwsAvailabilityCheck, errMsg: ' + errMsg );
+            console.log( 'ERROR in WsCallManager.getDwsAvailabilityCheck, errMsg: ' + errMsg );
         }
 
         returnFunc( bCheck );
@@ -503,7 +503,7 @@ WsCallManager.mockRequestCall = function( mockResponseJson, loadingTag, returnFu
     }
     catch( errMsg )
     {
-        console.customLog( 'ERROR in WsCallManager.mockRequestCall, errMsg: ' + errMsg );
+        console.log( 'ERROR in WsCallManager.mockRequestCall, errMsg: ' + errMsg );
 
         WsCallManager.loadingTagClear( loadingTag );
 

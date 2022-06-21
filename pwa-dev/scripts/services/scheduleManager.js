@@ -139,7 +139,7 @@ ScheduleManager.runWhenSwitchedToOnline = function()
 			delete ScheduleManager.runSwitchToOnlineList[ requestId ];
 		}
 		catch( errMsg ) {
-			console.customLog( 'ERROR on ScheduleManager.runWhenSwitchedToOnline, requesteId: ' + requestId + ', errMsg: ' + errMsg );
+			console.log( 'ERROR on ScheduleManager.runWhenSwitchedToOnline, requesteId: ' + requestId + ', errMsg: ' + errMsg );
 		}
 	});
 };
@@ -176,7 +176,7 @@ ScheduleManager.schedule_syncDownRunOnce = function()
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'Error in ScheduleManager.schedule_syncDownRunOnce, errMsg: ' + errMsg );
+		console.log( 'Error in ScheduleManager.schedule_syncDownRunOnce, errMsg: ' + errMsg );
 	}
 };
 
@@ -189,7 +189,7 @@ ScheduleManager.schedule_fixOperationRunOnce = function()
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'Error in ScheduleManager.schedule_fixOperationRunOnce, errMsg: ' + errMsg );
+		console.log( 'Error in ScheduleManager.schedule_fixOperationRunOnce, errMsg: ' + errMsg );
 	}
 };
 
@@ -206,7 +206,7 @@ ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 
 		if ( syncScheduleTimeMs > 0 )
 		{
-			//console.customLog( 'SyncAll Schedule Started with frequency ' + syncScheduleTimeMs );
+			//console.log( 'SyncAll Schedule Started with frequency ' + syncScheduleTimeMs );
 			ScheduleManager.timerID_scheduleSyncAllRun = setInterval( function() 
 			{
 				SyncManagerNew.syncAll_FromSchedule( cwsRenderObj ); 
@@ -215,7 +215,7 @@ ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'Error in ScheduleManager.schedule_syncAll_Background, errMsg: ' + errMsg );
+		console.log( 'Error in ScheduleManager.schedule_syncAll_Background, errMsg: ' + errMsg );
 	}		
 };
 
@@ -324,7 +324,7 @@ ScheduleManager.syncUpResponseActionListInsert = function( syncActionJson, activ
 				{
 					// Check the ScheduleManager.syncUpActionList by activityId and increment the count...
 					activityActionJson.tryCount++;
-					//console.customLog( activityActionJson );
+					//console.log( activityActionJson );
 
 					if ( syncUpSuccess )
 					{
@@ -367,6 +367,6 @@ ScheduleManager.syncUpResponseAction_ScheduleFinish = function( activityActionJs
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR in ScheduleManager.syncUpResponseAction_ScheduleFinish, errMsg: ' + errMsg );
+		console.log( 'ERROR in ScheduleManager.syncUpResponseAction_ScheduleFinish, errMsg: ' + errMsg );
 	}
 };

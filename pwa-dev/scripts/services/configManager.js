@@ -99,7 +99,7 @@ ConfigManager.setConfigJson = function ( loginData, userRolesOverrides )
     }
     catch ( errMsg )
     {
-        console.customLog( 'Error in ConfigManager.setConfigJson, errMsg: ' + errMsg );
+        console.log( 'Error in ConfigManager.setConfigJson, errMsg: ' + errMsg );
     }
 };
 
@@ -141,7 +141,7 @@ ConfigManager.applyFilter_SourceType = function( configJson )
     }
     catch( errMsg )
     {
-        console.customLog( 'ERROR in ConfigManager.applyFilter_SourceType, errMsg: ' + errMsg );
+        console.log( 'ERROR in ConfigManager.applyFilter_SourceType, errMsg: ' + errMsg );
     }   
 };
 
@@ -498,7 +498,7 @@ ConfigManager.setUpLogin_UserRoles = function( defUserRoles, sessionOrgUnitData,
         }
         catch( errMsg )
         {
-            console.customLog( 'ERROR in ConfigManager.setLogin_UserRoles, errMsg: ' + errMsg );
+            console.log( 'ERROR in ConfigManager.setLogin_UserRoles, errMsg: ' + errMsg );
         }
     }
 
@@ -896,7 +896,7 @@ ConfigManager.getActivitySyncUpStatusConfig = function( activityJson )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'Error on ConfigManager.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
+		console.log( 'Error on ConfigManager.getActivitySyncUpStatusConfig, errMsg: ' + errMsg );
     }
     
     return activityStatusConfig;
@@ -913,7 +913,7 @@ ConfigManager.getActivityTypeConfig = function( activityJson )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
+		console.log( 'Error on ConfigManager.getActivityTypeConfig, errMsg: ' + errMsg );
     }
 
     if ( !activityTypeConfig ) activityTypeConfig = ConfigManager.defaultActivityType;
@@ -946,7 +946,7 @@ ConfigManager.filterBySourceType_SyncDownList = function( configJson )
     }
     catch ( errMsg )
     {
-        console.customLog( 'ERROR on ConfigManager.filterBySourceType_SyncDownList, errMsg: ' + errMsg );
+        console.log( 'ERROR on ConfigManager.filterBySourceType_SyncDownList, errMsg: ' + errMsg );
     }
 };
 
@@ -1159,7 +1159,7 @@ ConfigManager.getSyncUpCoolDownTime = function()
     }
     catch ( errMsg )
     {
-        console.customLog( 'ERROR in ConfigManager.getSyncUpCoolDownTime, errMsg: ' + errMsg );
+        console.log( 'ERROR in ConfigManager.getSyncUpCoolDownTime, errMsg: ' + errMsg );
     }
 
     return ( coolDownTime ) ? coolDownTime : ConfigManager.coolDownTime;
@@ -1269,7 +1269,7 @@ ConfigManager.getDefinitionFieldById = function( fieldId )
         }
         catch( errMsg )
         {
-            console.customLog( 'ERROR in ConfigManager.getDefinitionFieldById, errMsg: ' + errMsg );
+            console.log( 'ERROR in ConfigManager.getDefinitionFieldById, errMsg: ' + errMsg );
         }    
     }
 
@@ -1338,7 +1338,7 @@ ConfigManager.getStatisticJson = function()
         }
     }
 
-    //console.customLog( 'statisticJson Used: ' + JSON.stringify( statisticJson ) );
+    //console.log( 'statisticJson Used: ' + JSON.stringify( statisticJson ) );
 
     return statisticJson;
 };

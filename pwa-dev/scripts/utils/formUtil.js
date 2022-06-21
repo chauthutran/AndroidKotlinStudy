@@ -304,7 +304,7 @@ FormUtil.getObjFromDefinition = function( def, definitions, option ) // limitCou
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR in FormUtil.getObjFromDefinition, id: ' + def + ', errMsg: ' + errMsg );
+		console.log( 'ERROR in FormUtil.getObjFromDefinition, id: ' + def + ', errMsg: ' + errMsg );
 	}
 
 	return defJson;
@@ -829,7 +829,7 @@ FormUtil.getDatePastFuture = function( formDefJson )
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'ERROR on FormUtil.getDatePastFuture, errMsg: ' + errMsg );
+		console.log( 'ERROR on FormUtil.getDatePastFuture, errMsg: ' + errMsg );
 	}
 
 	return datePastFuture;
@@ -851,7 +851,7 @@ FormUtil.getCustomDate = function( customDateJson )
 	}
 	catch( errMsg ) 
 	{
-		console.customLog( 'ERROR on FormUtil.getCustomDate, errMsg: ' + errMsg );
+		console.log( 'ERROR on FormUtil.getCustomDate, errMsg: ' + errMsg );
 	}
 
 	return customDate;
@@ -1345,7 +1345,7 @@ FormUtil.eval = function( val )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'Error on FormUtil.eval, value: ' + val + ', errMsg: ' + errMsg );
+		console.log( 'Error on FormUtil.eval, value: ' + val + ', errMsg: ' + errMsg );
 	}	
 
 	return evalVal;
@@ -1502,7 +1502,7 @@ FormUtil.tryEval = function( form, evalTry )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'Error on FormUtil.tryEval, errMsg: ' + errMsg + ' ==> ON: ' + evalTry );
+		console.log( 'Error on FormUtil.tryEval, errMsg: ' + errMsg + ' ==> ON: ' + evalTry );
 	}
 
 	return returnVal;
@@ -1779,7 +1779,7 @@ FormUtil.appendActivityTypeIcon = function ( iconObj, activityType, statusOpt, c
 	}
 	catch ( errMsg )
 	{
-		console.customLog( 'Error on FormUtil.appendActivityTypeIcon, errMsg: ' + errMsg );
+		console.log( 'Error on FormUtil.appendActivityTypeIcon, errMsg: ' + errMsg );
 	}
 }
 
@@ -2448,7 +2448,7 @@ FormUtil.getFieldOption_LookupValue = function( key, val )
 	}
 	catch( errMsg )
 	{
-		console.customLog( 'ERROR in AcitivityCard.getFieldOptionLookupValue, errMsg: ' + errMsg );
+		console.log( 'ERROR in AcitivityCard.getFieldOptionLookupValue, errMsg: ' + errMsg );
 	}
 
 	return retValue;
