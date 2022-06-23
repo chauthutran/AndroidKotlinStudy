@@ -100,7 +100,20 @@ ClientDataManager.insertClient = function( client )
 {
     // Client Activity Reorder - #3 - whenever client is added (from download, etc), make sure activities are sorted properly.
     InfoDataManager.setINFOdata( 'client_sort', client );
-    if ( !ConfigManager.activitySorting_EvalRun( "insertClient" ) ) Util.evalSort( 'date.createdLoc', client.activities, 'asc' ); 
+
+    if ( !ConfigManager.activitySorting_EvalRun( "insertClient" ) ) 
+    {
+        // NOTE: TODO: this cause issues...  
+        try
+        {
+            Util.evalSort( 'date.createdLoc', client.activities, 'asc' ); 
+        }
+        catch ( errMsg )
+        {
+            console.log( 'ERROR during ClientDataManager.insertClient, sorting activities by date.createdLoc, ' + errMsg );
+        }
+    } 
+
 
     ClientDataManager.getClientList().unshift( client ); // Add to top of list...
 

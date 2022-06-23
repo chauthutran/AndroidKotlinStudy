@@ -9,6 +9,7 @@ Menu.menuItems_Loaded = []; //varInfo = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStag
 
 // [JOB_AID]
 Menu.menuJson_JobAids = { id: "jobAids", name: "Job Aids", term: "menu_jobAids", icon: "settings", groupBefore: true, groupAfter: false };
+Menu.menuJson_Chat = { id: "chat", name: "Chat", term: "menu_chat", icon: "settings", groupBefore: true, groupAfter: false };
 Menu.menuJson_HNQIS_RDQA = { id: "hnqis_rdqaPage", name: "HNQIS", term: "menu_hnqis_rdqa", icon: "statistics", groupBefore: true, groupAfter: false };
 Menu.menuJson_Statistics = { id: "statisticsPage", name: "Statistics", term: "menu_statistics", icon: "statistics", groupBefore: true, groupAfter: false };
 Menu.menuJson_Settings = { id: "settingsPage", name: "Settings", term: "menu_settings", icon: "settings", groupBefore: true, groupAfter: false };
@@ -42,7 +43,9 @@ Menu.populateStandardMenuList = function( menuItems )
             $( '.jobAidFiling' ).show();
             $( '.jobAidFileListing' ).show();
         }
+
         if ( ConfigManager.getAreas().options.hnqisRdqa ) menuItems.push( Menu.menuJson_HNQIS_RDQA );    
+        if ( ConfigManager.getAreas().options.chat ) menuItems.push( Menu.menuJson_Chat );    
     }
 
     

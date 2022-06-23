@@ -120,7 +120,8 @@ function cwsRender()
 			&& clicked_areaId !== 'settingsPage' 
 			&& clicked_areaId !== 'aboutPage' 
 			&& clicked_areaId !== 'jobAids'  // [JOB_AID]
-            && clicked_areaId !== 'hnqis_rdqaPage' )
+			&& clicked_areaId !== 'chat'  // [CHAT]
+         && clicked_areaId !== 'hnqis_rdqaPage' )
 		{
 			$( 'div.Nav__Title' ).html( '<span term=' + termId + '>' + displayText + '</span>' );
 		}
@@ -174,6 +175,7 @@ function cwsRender()
 			, 'settingsPage'
 			, 'statisticsPage'
 			, 'jobAids'
+			, 'chat'
 			, 'hnqis_rdqaPage' ].indexOf( areaId ) < 0 ) me.resetPageDivContent();
 
 		me.hideAreaRelatedParts();
@@ -201,10 +203,25 @@ function cwsRender()
 
 				//$( '#divJobAid' ).show();
 			}
-			else if ( areaId === 'hnqis_rdqaPage' )
-			{
+			else if ( areaId === 'chat') 
+			{ 
+				console.log( 'chat area render started' );
+				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
+
+				if ( !INFO.chatUserName ) INFO.chatUserName = 'test';
+
+				var chatAppObj = new ChatApp( INFO.chatUserName );
+
+				var chatDivTag = $( '#chatDiv' ).show();
+
+				chatDivTag.find( 'img.btnBack' ).off( 'click' ).click( () =>
+				{
+					 if ( $( 'img.rotateImg' ).length  ) $( 'img.rotateImg' ).click();
+					 else chatDivTag.hide();
+				});
 				
 			}
+			else if ( areaId === 'hnqis_rdqaPage' ) {  }
 			else if ( areaId === 'aboutPage') me.aboutApp.render();
 			else
 			{
