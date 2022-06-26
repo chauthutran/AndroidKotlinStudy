@@ -184,6 +184,7 @@ ScheduleManager.schedule_fixOperationRunOnce = function()
 {
 	try
 	{
+		// NOTE: - Alternative: use setInterval, with canceling interval if run once, or not in log-in status..  or interval this is called again..
 		ScheduleManager.clearTimeout_fixOperationRunOnce();
 		ScheduleManager.fixOperationRun_Online_Login();
 	}
