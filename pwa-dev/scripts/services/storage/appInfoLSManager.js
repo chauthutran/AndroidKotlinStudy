@@ -326,7 +326,6 @@ AppInfoLSManager.setBlackListed = function( blackListed )
 
 // ----------------------------------------------------
 
-// After success login, mark the userName in localStorage as last used username
 AppInfoLSManager.setJobAidFolderNames = function( namesJsonStr )
 {
     AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES, namesJsonStr );
