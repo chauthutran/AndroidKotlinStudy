@@ -18,8 +18,15 @@ self.addEventListener('message', (event) =>
   
         reqList.forEach( reqUrl => 
         {
-          cache.add( reqUrl ).then( () => 
+          // Way to add to list and if not in caache, show as error (not downloaded).
+          
+          cache.add( reqUrl ).then( ( res ) => 
           {
+            // 100% downloaded, 
+            // If not 100% downloaded, show it as error..
+
+            console.log( res );
+
             doneCount++;
             var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options } );
             //console.log( 'returnMsgStr: ' + returnMsgStr );

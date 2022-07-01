@@ -872,12 +872,22 @@ settingsApp.jobAidFilesPopulate = function( divTag )
 {
     divTag.html( '' );
 
-    JobAidHelper.getCacheKeys( ( keys ) => 
+    JobAidHelper.getCacheKeys( ( keys, cache ) => 
     {
+        // console.log( 'Cache keys: ' );
+
         if ( keys && keys.length > 0 )
         {
             keys.forEach( request => 
             { 
+                /*
+                cache.match( request ).then( res => {	                    
+                    res.clone().blob().then(b => {
+                        console.log( b.size ); 
+                    });
+                });
+                */
+
                 divTag.append( '<div class="infoLine">' + Util.getUrlLastName( request.url ) + '</div>' );
             });                
         }

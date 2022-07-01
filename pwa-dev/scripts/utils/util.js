@@ -1383,19 +1383,47 @@ Util.upcaseFirstCharacterWord = function( text ){
 };
 
 
-Util.startsWith = function( input, suffix )
+Util.startsWith = function( input, suffix, option )
 {
-   return ( Util.checkValue( input ) && input.substring( 0, suffix.length ) == suffix );
+	if ( !option ) option = {};
+
+	if ( option.upper ) {
+		input = input.toUpperCase();
+		suffix = suffix.toUpperCase();
+	}	
+    return ( Util.checkValue( input ) && input.substring( 0, suffix.length ) == suffix );
 };
 
-Util.endsWith = function( input, suffix ) 
+Util.endsWith = function( input, suffix, option ) 
 {
-   return ( Util.checkValue( input ) && input.indexOf( suffix, input.length - suffix.length ) !== -1 );
+	if ( !option ) option = {};
+
+	if ( option.upper ) {
+		input = input.toUpperCase();
+		suffix = suffix.toUpperCase();
+	}
+
+	return ( Util.checkValue( input ) && input.indexOf( suffix, input.length - suffix.length ) !== -1 );
 };
 
-Util.strCutEnd = function( input, endCutLength ) 
-{	
-	return input.substr( 0, input.length - endCutLength );
+Util.endsWith_Arr = function( input, suffixArr, option ) 
+{
+	var bReturn = false;
+
+   if ( Util.checkValue( input ) && Util.isTypeArray( suffixArr ) )
+	{
+		for ( var i = 0; suffixArr.length > i; i++ )
+		{
+			var suffix = suffixArr[i];
+			if ( Util.endsWith( input, suffix, option ) ) 
+			{
+				bReturn = true;
+				break;
+			}
+		}
+	}
+
+	return bReturn;
 };
 
 Util.clearList = function( selector ) {

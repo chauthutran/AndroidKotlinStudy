@@ -13,6 +13,9 @@ JobAidHelper.jobAid_CACHE_URLS2 = 'CACHE_URLS2';
 JobAidHelper.jobAid_CACHE_DELETE = 'CACHE_DELETE';
 JobAidHelper.jobAid_jobTest2 = 'jobTest2';
 
+JobAidHelper.EXTS_VIDEO = [ '.webm', '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.ogg', '.mp4', '.m4p', '.m4v', '.avi', '.wmv', '.mov', '.qt', '.flv', '.swf', '.avchd'  ];  // upper case when comparing
+JobAidHelper.EXTS_AUDIO = [ '.abc', '.flp', '.ec3', '.mp3', '.flac' ];  // upper case when comparing
+
 // =========================
 
 JobAidHelper.getCacheKeys = function( callBack )
@@ -21,7 +24,17 @@ JobAidHelper.getCacheKeys = function( callBack )
 	{ 
 		cache.keys().then( keys => 
 		{ 
-			callBack( keys );				
+			/*
+			keys.map( req => cache.match( req ).then( res => 
+			{	
+				return res.clone().blob().then(b => { 
+				return b.size;
+				});
+			}
+			));
+			*/
+
+			callBack( keys, cache );
 		}); 
 	});   
 };
@@ -56,14 +69,15 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 			//		<-- but each diff country has diff job files, so we should handle for all cases?	
 		} 
 
-		//var payload = { 'isLocal': localCase, 'appName': appName, 'isListingApp': options.isListingApp, 'btnParentTag': btnParentTag, 'projDir': options.projDir };
-		var optionsStr = JSON.stringify( options );
-
 		// TODO: FOR NOW, LET 'test' have old JobAid download all at once version..
 		//if ( WsCallManager.stageName === 'test' ) requestUrl = (options.isLocal) ? 'http://localhost:8384/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFilingTest');
 		requestUrl = (options.isLocal) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
 		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
 
+
+		// NOTE: For filtering video/audio or audio/video only files, we could do on below nodeJS, but for now, simply filter it with method.
+		// var payload = { 'isLocal': localCase, 'appName': appName, 'isListingApp': options.isListingApp, 'btnParentTag': btnParentTag, 'projDir': options.projDir };
+		var optionsStr = JSON.stringify( options );
 
 		$.ajax({
 			url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
@@ -83,34 +97,44 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 					'type': JobAidHelper.jobAid_CACHE_URLS2
 					, 'cacheName': JobAidHelper.jobAid_jobTest2
 					, 'options': options
-					, 'payload': JobAidHelper.sortVideoAtTheEnd( response.list )
-				});				
-				// caches.open( JobAidHelper.jobAid_jobTest2 ).then( cache => { cache.add( reqUrl ).then(
-				
+					, 'payload': JobAidHelper.sort_filter_files( response.list, options )
+				});
 			},
 			error: function (error) {
 				MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
 			}
 		});
-
 	}
-	else {
-		MsgManager.msgAreaShowErr('JobAid Filing is only available in online mode');
-	}
+	else MsgManager.msgAreaShowErr('JobAid Filing is only available in online mode');
 };
 
 
-JobAidHelper.sortVideoAtTheEnd = function( list ) 
+JobAidHelper.sort_filter_files = function( list, options ) 
 {
 	var newList = [];
 	
 	try
 	{
-		var videoList = list.filter( item => item.endsWith( '.mp4' ) );
-		var audioList = list.filter( item => item.endsWith( '.mp3' ) );
-		var newList = Util.cloneJson( list.filter( item => ( !item.endsWith( '.mp4' ) && !item.endsWith( '.mp3' ) )  ) );
-		Util.mergeArrays( newList, audioList );
-		Util.mergeArrays( newList, videoList );
+		// autio: true/false, video: true/false, 
+		if ( options.audioOnly ) newList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
+		else if ( options.videoOnly ) newList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) );
+		else if ( options.audio_videoOnly ) newList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO.concat( JobAidHelper.EXTS_VIDEO ), { upper: true } ) );
+		else if ( options.withoutAudioVideo ) newList = Util.cloneJson( list.filter( item => !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO.concat( JobAidHelper.EXTS_VIDEO ), { upper: true } ) ) );
+		else // options.all
+		{
+			// Remove audio/video type file names
+			newList = Util.cloneJson( list.filter( item => 
+				( !Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) 
+				&& !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) ) 
+				) );
+	
+			// Add audio/video type file names at the end, audio 1st.
+			var audioList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
+			var videoList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) );
+	
+			Util.mergeArrays( newList, audioList );
+			Util.mergeArrays( newList, videoList );	
+		}
 	}
 	catch ( errMsg )
 	{
