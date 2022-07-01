@@ -89,6 +89,14 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 				+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
 				+ '</div>');
 
+				var newFileList = JobAidHelper.sort_filter_files( response.list, options );
+
+				// ==> Add this list to local storage?  with NA as content?  and not yet downloaded?
+				// ==> But this is only update if existing one exists?
+
+				JobAidHelper.updateJobFilingContent( newFileList, options.projDir );
+
+
 				// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
 				//    However, since we do not want anyone to access jobs folder directly, but only through cache
 				//		We need to have service worker Read & Cache it.
@@ -97,7 +105,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 					'type': JobAidHelper.jobAid_CACHE_URLS2
 					, 'cacheName': JobAidHelper.jobAid_jobTest2
 					, 'options': options
-					, 'payload': JobAidHelper.sort_filter_files( response.list, options )
+					, 'payload': newFileList
 				});
 			},
 			error: function (error) {
@@ -145,6 +153,25 @@ JobAidHelper.sort_filter_files = function( list, options )
 	return newList;
 };
 
+JobAidHelper.updateJobFilingContent = function( newFileList, projDir )
+{
+	if ( projDir !== undefined )
+	{
+		var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
+		
+		if ( !projStatus.content ) projStatus.content = {};
+
+		newFileList.forEach( fileName => {			
+			if ( !projStatus.content[ fileName ] ) projStatus.content[ fileName ] = { size: '', date: '', status: 'Not Downloaded' };
+		});
+
+		// if 'delete' happens, we need to remove this..
+		
+		PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
+	}
+};
+
+
 
 JobAidHelper.JobFilingProgress = function( msgData ) 
 {
@@ -159,7 +186,7 @@ JobAidHelper.JobFilingProgress = function( msgData )
 
 			// Create delayed action (for 1 sec overwrite)
 			Util.setDelays_timeout( 'jobFiling', 1, function() {
-				JobAidHelper.storeFilingStatus( msgData.options.projDir, msgData.process ); 
+				JobAidHelper.storeFilingStatus( msgData.options.projDir, msgData ); //msgData.process ); 
 			});
 			
 		}
@@ -198,22 +225,36 @@ JobAidHelper.JobFilingProgress = function( msgData )
 				
 				// Save Status on WFA LocalStorage, but do it with delayed action (for 1 sec overwrite) - so fast calls do not perform store, but slow or last one does.
 				Util.setDelays_timeout( 'jobFiling', 1, function() {
-					JobAidHelper.storeFilingStatus( 'jobListingApp', msgData.process );
+					JobAidHelper.storeFilingStatus( 'jobListingApp', msgData ); //msgData.process );
 				});
 			}
 		}
 	}
 };
 
-JobAidHelper.storeFilingStatus = function ( projDir, process ) 
+JobAidHelper.storeFilingStatus = function ( projDir, msgData ) 
 {
 	// Structure: { projDir: { -- process -- } }
 	//   			{ listingApp: { -- process -- } } // listingApp case..
 	// 			process: { total: totalCount, curr: doneCount, name: reqUrl }
 
-	var process = { total: process.total, curr: process.curr };
+	var process = msgData.process;  // could be empty..
+	var content = msgData.content;
 
-	PersisDataLSManager.updateJobFilingProjDirStatus( projDir, process );
+	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
+
+	if ( process ) {
+		projStatus.total = process.total;
+		projStatus.curr = process.curr;
+	}
+
+	if ( content ) {
+		if ( !projStatus.content ) projStatus.content = {};
+
+		// Update the content status..
+	}
+
+	PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
 }
 
 // =========================

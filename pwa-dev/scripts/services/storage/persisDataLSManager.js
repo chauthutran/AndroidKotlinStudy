@@ -248,6 +248,13 @@ PersisDataLSManager.getJobFilingStatus = function()
     return PersisDataLSManager.getData( PersisDataLSManager.KEY_JOB_FILING_STATUS ); 
 };
 
+PersisDataLSManager.getJobFilingProjDirStatus = function( projDir )
+{
+    var jobFilingStatusJson = PersisDataLSManager.getJobFilingStatus();
+
+    return ( jobFilingStatusJson && jobFilingStatusJson[ projDir ] ) ? jobFilingStatusJson[ projDir ] : {};    
+};
+
 // Not get used
 // PersisDataLSManager.updateJobFilingStatus = function( json ) { return PersisDataLSManager.updateData( PersisDataLSManager.KEY_JOB_FILING_STATUS, json ); };
 

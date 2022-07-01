@@ -514,6 +514,8 @@ function settingsApp( cwsRender )
                     {                            
                         JobAidHelper.deleteCacheStorage().then( () => 
                         {
+                            PersisDataLSManager.removeData( PersisDataLSManager.KEY_JOB_FILING_STATUS );
+
                             MsgManager.msgAreaShow( "clearing files success" );
                             settingsApp.jobAidFilesPopulate( divMainContentTag );
                         });                            

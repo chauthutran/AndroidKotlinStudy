@@ -1595,6 +1595,8 @@ FormUtil.getLastPayload = function( namedPayload )
 	}
 }
 
+
+// Obsolete?
 FormUtil.deleteCacheKeys = function( thenFunc )
 {
 	if ( caches )
@@ -1620,6 +1622,7 @@ FormUtil.deleteCacheKeys = function( thenFunc )
 	}
 }
 
+// Obsolete?
 FormUtil.swCacheReset = function( returnFunc )
 {
 	if ( caches )

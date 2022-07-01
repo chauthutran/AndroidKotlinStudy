@@ -21,21 +21,25 @@ self.addEventListener('message', (event) =>
           // Way to add to list and if not in caache, show as error (not downloaded).
           
           cache.add( reqUrl ).then( ( res ) => 
-          {
-            // 100% downloaded, 
-            // If not 100% downloaded, show it as error..
-
-            console.log( res );
-
+          {            
             doneCount++;
-            var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options } );
-            //console.log( 'returnMsgStr: ' + returnMsgStr );
-            event.source.postMessage( returnMsgStr );  
+
+            var infoJson = { type: 'jobFiling', content: { }, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options };
+           
+            // TEST - 100% downloaded.  If not 100% downloaded, show it as error..
+            // console.log( res );
+
+            // size estimate, date as well
+            res.clone().blob().then( b => 
+            { 
+              infoJson.content = { size: b.size, date: new Date().toISOString() };
+
+              event.source.postMessage( JSON.stringify( infoJson ) );
+            });
           });
         });
       }  
     }
-
   }()); // async IIFE
 });
 
