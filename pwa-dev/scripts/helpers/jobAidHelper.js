@@ -198,12 +198,15 @@ JobAidHelper.JobFilingProgress = function( msgData )
 		
 			if ( name && name.length > 10 ) name = '--' + name.substr( name.length - 10 );  // Get only last 10 char..
 		
-	
 			var divJobFileLoadingTag = $('.divJobFileLoading');
 			var spanJobFilingMsgTag = $('.spanJobFilingMsg');
 	
-
-			if ( total && total > 0 && curr )
+			if ( !total ) 
+			{
+				divJobFileLoadingTag.find('img').remove();
+				spanJobFilingMsgTag.text('No files to Process.');
+			}
+			else if ( total && total > 0 && curr )
 			{
 			  	if ( curr < total ) 
 				{

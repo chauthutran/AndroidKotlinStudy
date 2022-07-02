@@ -1426,6 +1426,13 @@ Util.endsWith_Arr = function( input, suffixArr, option )
 	return bReturn;
 };
 
+
+Util.strCutEnd = function( input, endCutLength ) 
+{	
+	return input.substr( 0, input.length - endCutLength );
+};
+
+
 Util.clearList = function( selector ) {
 	selector.children().remove();
 };

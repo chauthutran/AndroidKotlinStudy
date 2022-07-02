@@ -194,8 +194,8 @@ ScheduleManager.schedule_fixOperationRunOnce = function()
 	}
 };
 
-// When to call this?  It gets called on login..  Which is enough..
-// It also gets called again from 'Settings' when sync frequency gets changed..
+
+// Start the background frequent 'syncAll' call
 ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 {
 	try
@@ -207,7 +207,6 @@ ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 
 		if ( syncScheduleTimeMs > 0 )
 		{
-			//console.log( 'SyncAll Schedule Started with frequency ' + syncScheduleTimeMs );
 			ScheduleManager.timerID_scheduleSyncAllRun = setInterval( function() 
 			{
 				SyncManagerNew.syncAll_FromSchedule( cwsRenderObj ); 

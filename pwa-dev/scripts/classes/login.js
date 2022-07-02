@@ -489,27 +489,35 @@ function Login()
 		if ( !loginData.dcdConfig || loginData.dcdConfig.ERROR ) MsgManager.msgAreaShow( '<span term="msgNotif_loginSuccess_noConfig">Login Success, but country config not available.</span> <span>Msg: ' + loginData.dcdConfig.ERROR + '</span>', 'ERROR' );
 		else 
 		{
+			// Block with loading msg
 			MsgFormManager.appBlockTemplate( 'loginAfterLoad' );
 
 			// Load Activities
 			SessionManager.cwsRenderObj.loadActivityListData_AfterLogin( function() 
-			{
-				me.loginAfterProcess( userName );
-				
+			{				
+				me.showHideUi_SetVals_AfterLogin( userName );
+
+				// Unblock with loading msg
 				MsgFormManager.appUnblock( 'loginAfterLoad' );
 
-				// call CWS start with this config data..
+				// Some eval opereations or other operations to run after login
+				me.operationsAfterLogin( userName );
+				
+
+				// call CWS start with this config data.. - Block Start
 				SessionManager.cwsRenderObj.startWithConfigLoad( runAfterFunc );
 
-				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.
-				// For availableType 'v2' only.
-				ConnManagerNew.checkNSet_ServerAvailable();
+				// "SCH_SyncDown_RunOnce", "SCH_FixOper_RunOnce", "SCH_SyncAll_Background"
+				ScheduleManager.runSchedules_AfterLogin( SessionManager.cwsRenderObj );				
+
+				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.  For availableType 'v2' only.
+				ConnManagerNew.checkNSet_ServerAvailable();				
 			});			
 		}
 	};
 
 
-	me.loginAfterProcess = function( userName )
+	me.showHideUi_SetVals_AfterLogin = function( userName )
 	{
 		// 1. Data Related Process
 		SyncManagerNew.SyncMsg_Reset();
@@ -531,20 +539,27 @@ function Login()
 		me.closeForm();
 
 		SessionManager.cwsRenderObj.showPageDiv();
+	};
 
 
+	me.operationsAfterLogin = function()
+	{
 		// NOTE: After Login Operations BELOW: (Client data are loaded in memory already)
+		try
+		{
+			// #1 - Eval methods or run methods after 'login' time.
+			// - Eval statements placed in config file to run after login time
+			ConfigManager.runAppRunEvals( 'login' );
+			
+			ConfigManager.activityStatusSwitchOps( 'onLogin', ActivityDataManager.getActivityList() );
 
-		// #1. "SCH_SyncDown_RunOnce", "SCH_FixOper_RunOnce", "SCH_SyncAll_Background"
-		ScheduleManager.runSchedules_AfterLogin( SessionManager.cwsRenderObj );
-
-		// #2
-		ConfigManager.runAppRunEvals( 'login' );
-
-		ConfigManager.activityStatusSwitchOps( 'onLogin', ActivityDataManager.getActivityList() );
-
-		// Config > 'settings' > 'loginTimeRuns'
-		ConfigManager.runLoginTimeRuns();
+			// Config > 'settings' > 'loginTimeRuns'
+			ConfigManager.runLoginTimeRuns();
+		}
+		catch( errMsg )
+		{
+			console.log( 'ERROR in operationsAfterLogin, ' + errMsg );
+		}
 	};
 
 	// ----------------------------------------------

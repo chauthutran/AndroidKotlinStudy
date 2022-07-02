@@ -16,28 +16,34 @@ self.addEventListener('message', (event) =>
         var totalCount = reqList.length;
         var doneCount = 0;
   
-        reqList.forEach( reqUrl => 
+        if ( totalCount <= 0 ) {
+          event.source.postMessage( JSON.stringify( { type: 'jobFiling', content: { }, process: { total: 0, curr: 0, name: '' }, options: options } ) );
+        }
+        else
         {
-          // Way to add to list and if not in caache, show as error (not downloaded).
-          
-          cache.add( reqUrl ).then( ( res ) => 
-          {            
-            doneCount++;
-
-            var infoJson = { type: 'jobFiling', content: { }, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options };
-           
-            // TEST - 100% downloaded.  If not 100% downloaded, show it as error..
-            // console.log( res );
-
-            // size estimate, date as well
-            res.clone().blob().then( b => 
-            { 
-              infoJson.content = { size: b.size, date: new Date().toISOString() };
-
-              event.source.postMessage( JSON.stringify( infoJson ) );
+          reqList.forEach( reqUrl => 
+          {
+            // Way to add to list and if not in caache, show as error (not downloaded).
+            
+            cache.add( reqUrl ).then( ( res ) => 
+            {            
+              doneCount++;
+  
+              var infoJson = { type: 'jobFiling', content: { }, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options };
+              
+              // TEST - 100% downloaded.  If not 100% downloaded, show it as error..
+              // console.log( res );
+  
+              // size estimate, date as well
+              res.clone().blob().then( b => 
+              { 
+                infoJson.content = { size: b.size, date: new Date().toISOString() };
+  
+                event.source.postMessage( JSON.stringify( infoJson ) );
+              });
             });
           });
-        });
+        }
       }  
     }
   }()); // async IIFE
