@@ -889,6 +889,8 @@ settingsApp.jobAidFilesPopulate = function( divTag )
                     });
                 });
                 */
+                // TODO: Read from 'localStorage' Persist---  Rather than get estimate here?
+                //  Or we can get the estimate only 1st time and reuse it?
 
                 divTag.append( '<div class="infoLine">' + Util.getUrlLastName( request.url ) + '</div>' );
             });                

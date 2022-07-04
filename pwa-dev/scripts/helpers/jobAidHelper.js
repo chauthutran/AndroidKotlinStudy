@@ -16,6 +16,9 @@ JobAidHelper.jobAid_jobTest2 = 'jobTest2';
 JobAidHelper.EXTS_VIDEO = [ '.webm', '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.ogg', '.mp4', '.m4p', '.m4v', '.avi', '.wmv', '.mov', '.qt', '.flv', '.swf', '.avchd'  ];  // upper case when comparing
 JobAidHelper.EXTS_AUDIO = [ '.abc', '.flp', '.ec3', '.mp3', '.flac' ];  // upper case when comparing
 
+JobAidHelper.cacheRequestList = [];
+JobAidHelper.cacheSuccessList = [];
+
 // =========================
 
 JobAidHelper.getCacheKeys = function( callBack )
@@ -23,17 +26,7 @@ JobAidHelper.getCacheKeys = function( callBack )
 	caches.open( JobAidHelper.jobAid_jobTest2 ).then( cache => 
 	{ 
 		cache.keys().then( keys => 
-		{ 
-			/*
-			keys.map( req => cache.match( req ).then( res => 
-			{	
-				return res.clone().blob().then(b => { 
-				return b.size;
-				});
-			}
-			));
-			*/
-
+		{
 			callBack( keys, cache );
 		}); 
 	});   
@@ -61,12 +54,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 		if ( WsCallManager.stageName === 'test' ) options.appName = 'pwa-test';
 		else if ( WsCallManager.stageName === 'stage' ) options.appName = 'pwa-stage';
 		else if ( WsCallManager.stageName === 'prod' ) {
-			// if ( WsCallManager.urlStartWith === 'wfa' )
-			// else if ( WsCallManager.urlStartWith === 'wfa-lac' )  // Users can not interchange 'wfa' url..
-			
+			// if ( WsCallManager.urlStartWith === 'wfa' ) ... else if ( WsCallManager.urlStartWith === 'wfa-lac' )  // Users can not interchange 'wfa' url..			
 			//options.appName = 'wfa'; // only 'wfa' should hold jobAid file.  Not all 'wfa-lac', etc..
-			//		However, that would not work either <-- since the apps needs to access jobAid files..
-			//		<-- but each diff country has diff job files, so we should handle for all cases?	
+			//		However, that would not work either <-- since the apps needs to access jobAid files.. //		<-- but each diff country has diff job files, so we should handle for all cases?	
 		} 
 
 		// TODO: FOR NOW, LET 'test' have old JobAid download all at once version..
@@ -94,7 +84,8 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 				// ==> Add this list to local storage?  with NA as content?  and not yet downloaded?
 				// ==> But this is only update if existing one exists?
 
-				JobAidHelper.updateJobFilingContent( newFileList, options.projDir );
+				// JOB AID 'CONTENT' #1 - SET UP/START LIST
+				JobAidHelper.filingContent_setUp( newFileList, options.projDir );
 
 
 				// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
@@ -153,29 +144,73 @@ JobAidHelper.sort_filter_files = function( list, options )
 	return newList;
 };
 
-JobAidHelper.updateJobFilingContent = function( newFileList, projDir )
+
+JobAidHelper.filingContent_setUp = function( newFileList, projDir )
 {
-	if ( projDir !== undefined )
+	try
 	{
-		var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
-		
-		if ( !projStatus.content ) projStatus.content = {};
+		// Setup the 'localStorage' with 'ProjDir' <-- setup with empty content list.
+		//		- However, if already existing ones are there, we should not empty it out..
+		if ( projDir !== undefined )
+		{
+			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
+			
+			if ( !projStatus.content ) projStatus.content = {};
 
-		newFileList.forEach( fileName => {			
-			if ( !projStatus.content[ fileName ] ) projStatus.content[ fileName ] = { size: '', date: '', status: 'Not Downloaded' };
-		});
+			newFileList.forEach( fileName => {			
+				if ( !projStatus.content[ fileName ] ) projStatus.content[ fileName ] = { size: '', date: '', status: 'Not Downloaded' };
+			});
 
-		// if 'delete' happens, we need to remove this..
-		
-		PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
+			// if 'delete' happens, we need to remove this..
+			
+			PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
+
+
+			// Set the list.
+			JobAidHelper.cacheRequestList = newFileList;
+			JobAidHelper.cacheSuccessList = [];
+		}
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in JobAidHelper.filingContent_setUp, ' + errMsg );
 	}
 };
 
+JobAidHelper.filingContent_calcData = function( cacheSuccessList, projDir )
+{
+	/*
+	// projDir
+	caches.open( JobAidHelper.jobAid_jobTest2 ).then( jaCache => 
+	{ 
+		jaCache.keys().then( keys => 
+		{ 
+			keys.forEach( kReq => 
+			{
+				if ( cacheSuccessList.indexOf( kReq.url ) >= 0 )
+				{
+					jaCache.match( kReq ).then( resp => 
+					{	
+						resp.clone().blob().then( b => 
+						{
+							var info = { url: kReq.url, size: b.size, date: new Date().toISOString() };
+
+							console.log( info );
+						});
+					});		
+				}
+			});				
+		}); 
+	});  
+	*/
+};
 
 
 JobAidHelper.JobFilingProgress = function( msgData ) 
 {
-	if ( msgData && msgData.process ) 
+	//res.clone().blob().then( b => { 
+
+	if ( msgData ) 
 	{
 		if ( msgData.options && msgData.options.target === 'jobAidIFrame' )
 		{
@@ -190,8 +225,10 @@ JobAidHelper.JobFilingProgress = function( msgData )
 			});
 			
 		}
-		else
+		else if ( msgData.process )
 		{
+			// NOTE: We also like to store 'content' - file size (EST) + date..
+
 			var total = msgData.process.total;
 			var curr = msgData.process.curr;
 			var name = msgData.process.name;
@@ -200,7 +237,7 @@ JobAidHelper.JobFilingProgress = function( msgData )
 		
 			var divJobFileLoadingTag = $('.divJobFileLoading');
 			var spanJobFilingMsgTag = $('.spanJobFilingMsg');
-	
+
 			if ( !total ) 
 			{
 				divJobFileLoadingTag.find('img').remove();
@@ -208,6 +245,11 @@ JobAidHelper.JobFilingProgress = function( msgData )
 			}
 			else if ( total && total > 0 && curr )
 			{
+
+				// JOB AID 'CONTENT' #2 - SET UP/START LIST
+				JobAidHelper.cacheSuccessList.push( name );
+
+
 			  	if ( curr < total ) 
 				{
 					// update the processing msg..
@@ -217,14 +259,19 @@ JobAidHelper.JobFilingProgress = function( msgData )
 				else 
 				{
 					divJobFileLoadingTag.find('img').remove();
-					spanJobFilingMsgTag.text('Processing all done.');
+					spanJobFilingMsgTag.text( 'Processing all done.' );
 		
-					MsgManager.msgAreaShow('Job Aid Filing Finished.');	
+					MsgManager.msgAreaShow( 'Job Aid Filing Finished.' );	
 
 					// If option has 'runEval_AfterFinish' prop, execute it here.            
 					settingsApp.jobAidFilesPopulate( $( '.divMainContent' ) );
-				}
 
+
+					// TODO: Create 'Util.timeMeasure()' <-- Start / End / Reset / GetResult
+
+					// JOB AID 'CONTENT' #3 - GetContents of cached files.
+					JobAidHelper.filingContent_calcData( JobAidHelper.cacheSuccessList, msgData.options.projDir );
+				}
 				
 				// Save Status on WFA LocalStorage, but do it with delayed action (for 1 sec overwrite) - so fast calls do not perform store, but slow or last one does.
 				Util.setDelays_timeout( 'jobFiling', 1, function() {

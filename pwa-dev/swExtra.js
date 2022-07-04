@@ -35,12 +35,12 @@ self.addEventListener('message', (event) =>
               // console.log( res );
   
               // size estimate, date as well
-              res.clone().blob().then( b => 
-              { 
-                infoJson.content = { size: b.size, date: new Date().toISOString() };
+              //res.clone().blob().then( b => 
+              //{ 
+              //  infoJson.content = { size: b.size, date: new Date().toISOString() };
   
                 event.source.postMessage( JSON.stringify( infoJson ) );
-              });
+              //});
             });
           });
         }
