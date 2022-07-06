@@ -7,3 +7,4 @@ pwa-test.zip
 pwa-dev/service-worker.js
 pwa-dev/service-worker.js.map
 deploy/*
+*/node_modules
