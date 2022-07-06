@@ -155,14 +155,14 @@ JobAidHelper.filingContent_setUp = function( newFileList, projDir )
 		{
 			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
 			
-			if ( !projStatus.content ) projStatus.content = {};
+			if ( !projStatus ) projStatus = {};
+			if ( !projStatus.processed ) projStatus.processed = {};
 
 			newFileList.forEach( fileName => {			
-				if ( !projStatus.content[ fileName ] ) projStatus.content[ fileName ] = { size: '', date: '', status: 'Not Downloaded' };
+				projStatus.processed[ fileName ] = { size: '', reqDate: new Date().toISOString(), downloaded: false };
 			});
 
-			// if 'delete' happens, we need to remove this..
-			
+			// if 'delete' happens, we need to remove this..			
 			PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
 
 
