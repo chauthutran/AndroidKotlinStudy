@@ -83,7 +83,7 @@ function ChatApp( username )
             withCredentials: true,
             extraHeaders: {  "Access-Control-Allow-Origin": "origin-list"  },
 				autoConnect: false,
-				path: "/ws/chat/",  // PATH should be changed?  for localhost?
+				path: ( WsCallManager.isLocalDevCase ) ? '': "/ws/chat/",  // PATH should be changed?  for localhost?
 				auth: { username: me.username }
         });
 
