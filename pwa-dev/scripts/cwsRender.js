@@ -19,6 +19,7 @@ function cwsRender()
 	me.statisticsObj;
 	me.registrationObj;
 	me.loginObj;
+	me.chatAppObj;
 	//me.sessionObj; // NEW PROPOSAL
 
 
@@ -208,9 +209,9 @@ function cwsRender()
 				console.log( 'chat area render started' );
 				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
 
-				if ( !INFO.chatUserName ) INFO.chatUserName = 'test';
-
-				var chatAppObj = new ChatApp( INFO.chatUserName );
+				var chatUserName = ( INFO.chatUserName ) ? INFO.chatUserName: '+447897018987'; // INFO.login_UserName;
+		
+				me.chatAppObj = new ChatApp( chatUserName );
 
 				var chatDivTag = $( '#chatDiv' ).show();
 
@@ -218,8 +219,9 @@ function cwsRender()
 				{
 					 if ( $( 'img.rotateImg' ).length  ) $( 'img.rotateImg' ).click();
 					 else chatDivTag.hide();
-				});
-				
+
+					 me.chatAppObj.socket.disconnect();
+				});				
 			}
 			else if ( areaId === 'hnqis_rdqaPage' ) {  }
 			else if ( areaId === 'aboutPage') me.aboutApp.render();
@@ -243,7 +245,6 @@ function cwsRender()
 		else console.log( 'ERROR - areaId on CwsRender.renderArea is emtpy' );
 
 	};
-
 
 	// Used by FavIconClick..  - this also switches area?
 	// This is similar to calling 'renderArea()', which we might need to combine..

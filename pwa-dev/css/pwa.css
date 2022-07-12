@@ -2022,8 +2022,12 @@ body {
 }
 .people-list ul {
   padding: 20px;
-  height: 770px;
+  /* height: 770px; */
   list-style: none;
+  height: calc(100vh - 327px);
+  border-bottom: 1px solid #f0f8ff;
+  overflow: scroll;
+  overflow-x: hidden;
 }
 .people-list ul li {
   padding-bottom: 20px;
@@ -2229,13 +2233,52 @@ body {
   font-size: 16px;
 }
 
+#editContactList {
+  color: #aeb0e3;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+#editContactList:hover {
+  color: #6d71e5;
+}
+
+.remove-icon {
+  float: left;
+  color: #e14f65;
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #6c6f74;
+  border-radius: 5px;
+}
+
+.remove-icon:hover {
+  background-color: #ddd;
+}
+
 .leave-btn
 {
   cursor: pointer;
   float: right;
   font-weight: bold;
+  font-size: 20px;
 }
 
+.add-user-btn
+{
+  cursor: pointer;
+  float: right;
+  color: #fff;
+  padding-left: 5px;   
+  margin-top: 5px;
+}
+
+.add-user-btn:hover {
+  color: #97b0ca;
+}
 
 .online {
   font-weight: bold;
@@ -2264,7 +2307,7 @@ div.searchForm {
   border-radius: 5px;
 }
 
-.searchForm input[type="search"] {
+.searchForm input.search {
   border: none;
   background: transparent;
   margin: 0;
@@ -2275,7 +2318,7 @@ div.searchForm {
   border-radius: inherit;
 }
 
-input[type="search"]::placeholder {
+input.search::placeholder {
   color: #bbb;
 }
 

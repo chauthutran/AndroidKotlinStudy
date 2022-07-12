@@ -70,12 +70,15 @@
 
 
   <!-- CHAT RELATED  -->
-  <script
+  <!--script
 	src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.2/qs.min.js"
 	integrity="sha256-TDxXjkAUay70ae/QJBEpGKkpVslXaHHayklIVglFRT4="
 	crossorigin="anonymous"
-></script>
-  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
+></script-->
+  <!--script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script-->
+  <!--script src="scripts/chat/socket/socket.io.esm.min.js"></script>
+  <script src="scripts/chat/socket/socket.io.msgpack.min.js"></script-->
+  <script src="scripts/chat/socket/socket.io.min.js"></script>
 
   <script src="scripts/chat/utils/constants.js"></script>
   <script src="scripts/chat/utils/localStorage.js"></script>
@@ -460,17 +463,21 @@
               <div class="curUsserDiv">
                 <div class="user-icon" id="curUserIcon"></div>
                 <div class="about">
-                  <div class="name" id="curUsername"></div>
-                  <div class="status">
-                    <i class="fa fa-circle online"></i> online
+                  <div class="name">
+                    <span id="curUsername"></span> 
+                    <span id="editContactList" mode="hide">&#9998;</span>
                   </div>
+                  <!-- <div class="status">
+                    <i class="fa fa-circle online"></i> online
+                  </div> -->
                 </div>
-                <div class="leave-btn">Log-out</div>
+                <!-- <div class="leave-btn" id="logOutBtn">Log-out</div> -->
                 <!-- <i class="fa fa-search"></i> -->
               </div>
 
               <div class="searchForm">
-                <input class="nosubmit" type="search" placeholder="Search..." style="background-color: white;">
+                <input class="nosubmit search" id="searchContactName" placeholder="Search..." style="background-color: white;">
+                <div class="add-user-btn" id="addUserBtn" style="display:none;">Add</div>
               </div>              
                 <ul id="users">
                 </ul>
