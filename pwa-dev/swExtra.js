@@ -14,34 +14,61 @@ self.addEventListener('message', (event) =>
         var cache = await caches.open( cacheName );
         
         var totalCount = reqList.length;
-        var doneCount = 0;
+        //var old_doneCount = 0;
   
-        if ( totalCount <= 0 ) {
-          event.source.postMessage( JSON.stringify( { type: 'jobFiling', content: { }, process: { total: 0, curr: 0, name: '' }, options: options } ) );
+        if ( totalCount <= 0 ) { // Never hit here - sending method already checks for this.
+          event.source.postMessage( JSON.stringify( { type: 'jobFiling', process: { total: 0, url: '' }, options: options } ) );
         }
         else
         {
+          var modifyUrlFunc = function( url ) 
+          {
+            if ( url ) {
+              var jobStrIdx = url.indexOf( '/jobs/' );
+              if ( jobStrIdx >= 0 ) url = url.substr( jobStrIdx );  
+            }
+
+            return url;
+          };
+
           reqList.forEach( reqUrl => 
           {
-            // Way to add to list and if not in caache, show as error (not downloaded).
+            // Way to add to list and if not in caache, show as error (not downloaded).            
+            //cache.add( reqUrl ).then( ( res ) => 
+            var itemJson = { type: 'jobFiling', process: { total: totalCount, downloaded: false }, options: options };
+
+            var repResult;
+
+            fetch( reqUrl ).then( function( response ) 
+            {
+              if ( !response.ok ) throw new TypeError('Bad response status');
             
-            cache.add( reqUrl ).then( ( res ) => 
-            {            
-              doneCount++;
-  
-              var infoJson = { type: 'jobFiling', content: { }, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options };
-              
-              // TEST - 100% downloaded.  If not 100% downloaded, show it as error..
-              // console.log( res );
-  
-              // size estimate, date as well
-              //res.clone().blob().then( b => 
-              //{ 
-              //  infoJson.content = { size: b.size, date: new Date().toISOString() };
-  
-                event.source.postMessage( JSON.stringify( infoJson ) );
-              //});
-            });
+              repResult = response.clone();
+
+              return cache.put( reqUrl, response );                
+            }).then( function() 
+            {
+              repResult.blob().then( function( myBlob ) 
+              {
+                //old_doneCount++;
+                itemJson.process.url = modifyUrlFunc( reqUrl );
+                itemJson.process.downloaded = true;
+                itemJson.process.size = myBlob.size;
+                itemJson.process.date = new Date().toISOString();
+
+                event.source.postMessage( JSON.stringify( itemJson ) );
+              });
+            })            
+            .catch( function() 
+            {
+              itemJson.process.url = modifyUrlFunc( reqUrl );
+              itemJson.process.downloaded = false;
+              itemJson.process.size = 0;
+              itemJson.process.date = new Date().toISOString();
+
+              event.source.postMessage( JSON.stringify( itemJson ) );
+            });   
+    
           });
         }
       }  

@@ -514,6 +514,7 @@ function settingsApp( cwsRender )
                     {                            
                         JobAidHelper.deleteCacheStorage().then( () => 
                         {
+                            // NOTE: TODO: If this is changed to be individual data removal, change below to follow that.
                             PersisDataLSManager.removeData( PersisDataLSManager.KEY_JOB_FILING_STATUS );
 
                             MsgManager.msgAreaShow( "clearing files success" );
@@ -874,26 +875,10 @@ settingsApp.jobAidFilesPopulate = function( divTag )
 {
     divTag.html( '' );
 
-    JobAidHelper.getCacheKeys( ( keys, cache ) => 
-    {
-        // console.log( 'Cache keys: ' );
-
-        if ( keys && keys.length > 0 )
-        {
-            keys.forEach( request => 
-            { 
-                /*
-                cache.match( request ).then( res => {	                    
-                    res.clone().blob().then(b => {
-                        console.log( b.size ); 
-                    });
-                });
-                */
-                // TODO: Read from 'localStorage' Persist---  Rather than get estimate here?
-                //  Or we can get the estimate only 1st time and reuse it?
-
-                divTag.append( '<div class="infoLine">' + Util.getUrlLastName( request.url ) + '</div>' );
-            });                
-        }
+    //JobAidHelper.getCacheKeys( ( keys, cache ) => 
+    JobAidHelper.renderEachData( itemJson => {
+        try {
+            if ( itemJson ) divTag.append( '<div class="infoLine">' + JSON.stringify( itemJson ) + '</div>' );
+        } catch ( errMsg ) { console.log( 'ERROR in settingsApp.jobAidFilesPopulate, ' + errMsg ); } 
     });
 };

@@ -13,11 +13,13 @@ JobAidHelper.jobAid_CACHE_URLS2 = 'CACHE_URLS2';
 JobAidHelper.jobAid_CACHE_DELETE = 'CACHE_DELETE';
 JobAidHelper.jobAid_jobTest2 = 'jobTest2';
 
+JobAidHelper.NAME_jobListingApp = 'jobListingApp';
+
 JobAidHelper.EXTS_VIDEO = [ '.webm', '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.ogg', '.mp4', '.m4p', '.m4v', '.avi', '.wmv', '.mov', '.qt', '.flv', '.swf', '.avchd'  ];  // upper case when comparing
 JobAidHelper.EXTS_AUDIO = [ '.abc', '.flp', '.ec3', '.mp3', '.flac' ];  // upper case when comparing
 
 JobAidHelper.cacheRequestList = [];
-JobAidHelper.cacheSuccessList = [];
+JobAidHelper.cacheProcessedData = {};
 
 // =========================
 
@@ -33,10 +35,128 @@ JobAidHelper.getCacheKeys = function( callBack )
 };
 
 
+JobAidHelper.renderEachData = function( callBack )
+{
+	JobAidHelper.getCacheKeys( function( keys, cache )
+	{
+		var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
+
+		if ( keys && keys.length > 0 )
+		{
+			keys.forEach( request => 
+			{ 
+				var url = JobAidHelper.modifyUrlFunc( request.url );
+
+				var itemJson = { url: url };
+				// Check the storage and add additional info
+				JobAidHelper.setExtraStatusInfo( itemJson, statusFullJson );
+
+				callBack( itemJson );
+				// divTag.append( '<div class="infoLine">' + Util.getUrlLastName( request.url ) + '</div>' );
+			});                
+		}
+	});
+};
+
+
+JobAidHelper.getCachedDataInfo = function( projDir, callBack )
+{
+	JobAidHelper.getCacheKeys( function( keys )
+	{
+		var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
+
+		var projKeyJson = {};
+
+		if ( keys && keys.length > 0 )
+		{
+			keys.forEach( request => 
+			{ 
+				var url = JobAidHelper.modifyUrlFunc( request.url );
+
+				if ( url.indexOf( '/jobs/jobAid/' + projDir ) === 0 )
+				{
+					var itemJson = { url: url };
+					// Check the storage and add additional info
+					JobAidHelper.setExtraStatusInfo( itemJson, statusFullJson );			
+	
+					projKeyJson[url] = itemJson;
+				}
+			});
+		}
+
+		callBack( projKeyJson );
+	});
+};
+
+
+JobAidHelper.modifyUrlFunc = function( url ) 
+{
+  if ( url ) {
+	 var jobStrIdx = url.indexOf( '/jobs/' );
+	 if ( jobStrIdx >= 0 ) url = url.substr( jobStrIdx );  
+  }
+
+  return url;
+};
+
+JobAidHelper.getJobFilingStatusIndexed = function()
+{
+	var statusFullJson = {};
+
+	try
+	{
+		// Also, get the 'jobAidStatus' - go through all...
+		var jobFilingStatus = PersisDataLSManager.getJobFilingStatus();
+
+		for ( var prop in jobFilingStatus )
+		{
+			var proj = jobFilingStatus[ prop ];
+
+			if ( proj && proj.process )
+			{
+				Object.keys( proj.process ).forEach( key => statusFullJson[ key ] = proj.process[ key ] );
+			}
+		}
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in JobAidHelper.getJobFilingStatusIndexed, ' + errMsg );
+	}
+
+	return statusFullJson;
+};
+
+JobAidHelper.setExtraStatusInfo = function( itemJson, statusFullJson )
+{
+	if ( statusFullJson && itemJson && itemJson.url )
+	{
+		var urlInfo = statusFullJson[ itemJson.url ];
+
+		if ( urlInfo )
+		{
+			Util.mergeJson( itemJson, urlInfo );
+		}
+	}
+
+	return itemJson;
+};
+
 JobAidHelper.deleteCacheStorage = async function()
 {
 	return caches.delete( JobAidHelper.jobAid_jobTest2 );
 };
+
+
+// TODO: It is better to store in separate storage...  <-- put the app in other place?
+// The most affortable way is to create new storage name for each 'App Filing' or even new proj pack?
+
+/*  https://docs.w3cub.com/dom/cache/delete
+caches.open('v1').then(function(cache) {
+	cache.delete('/images/image.png').then(function(response) {
+	  someUIUpdateFunction();
+	});
+ })
+*/
 
 
 JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // returnFunc )
@@ -50,6 +170,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 
 		options.isLocal = WsCallManager.checkLocalDevCase(window.location.origin);
 		options.appName = 'pwa-dev';
+		if ( options.isListingApp ) options.projDir = JobAidHelper.NAME_jobListingApp;
 	
 		if ( WsCallManager.stageName === 'test' ) options.appName = 'pwa-test';
 		else if ( WsCallManager.stageName === 'stage' ) options.appName = 'pwa-stage';
@@ -69,42 +190,50 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 		// var payload = { 'isLocal': localCase, 'appName': appName, 'isListingApp': options.isListingApp, 'btnParentTag': btnParentTag, 'projDir': options.projDir };
 		var optionsStr = JSON.stringify( options );
 
+		if ( jobAidBtnParentTag ) jobAidBtnParentTag.append( 
+			`<div class="divJobFileLoading" style="display: contents;">
+				<img src="images/loading_big_blue.gif" style="height: 17px;">
+				<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>
+			</div>` );
+
+
 		$.ajax({
 			url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
 			type: "GET",
 			dataType: "json",
 			success: function (response) 
 			{
-				if ( jobAidBtnParentTag ) jobAidBtnParentTag.append('<div class="divJobFileLoading" style="display: contents;"><img src="images/loading_big_blue.gif" style="height: 17px;">'
-				+ '<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>'
-				+ '</div>');
-
 				var newFileList = JobAidHelper.sort_filter_files( response.list, options );
-
-				// ==> Add this list to local storage?  with NA as content?  and not yet downloaded?
-				// ==> But this is only update if existing one exists?
 
 				// JOB AID 'CONTENT' #1 - SET UP/START LIST
 				JobAidHelper.filingContent_setUp( newFileList, options.projDir );
 
-
-				// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
-				//    However, since we do not want anyone to access jobs folder directly, but only through cache
-				//		We need to have service worker Read & Cache it.
-				//		And once it is on cache (only allowed ones), we can read however we want afterwards (without going through service worker)
-				SwManager.swRegObj.active.postMessage({
-					'type': JobAidHelper.jobAid_CACHE_URLS2
-					, 'cacheName': JobAidHelper.jobAid_jobTest2
-					, 'options': options
-					, 'payload': newFileList
-				});
+				if ( newFileList.length <= 0 ) $( '.spanJobFilingMsg' ).text( 'Empty process list.' );
+				else
+				{				
+					// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
+					//    However, since we do not want anyone to access jobs folder directly, but only through cache
+					//		We need to have service worker Read & Cache it.
+					//		And once it is on cache (only allowed ones), we can read however we want afterwards (without going through service worker)
+					SwManager.swRegObj.active.postMessage({
+						'type': JobAidHelper.jobAid_CACHE_URLS2
+						, 'cacheName': JobAidHelper.jobAid_jobTest2
+						, 'options': options
+						, 'payload': newFileList
+					});
+				}
 			},
-			error: function (error) {
+			error: function ( error ) {
+				$( '.spanJobFilingMsg' ).text( 'Failed - ' + error );
+				console.log( error );
 				MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
-			}
+			},
+			complete: function () {
+				$( '.divJobFileLoading' ).find( 'img' ).remove();
+			}			
 		});
 	}
-	else MsgManager.msgAreaShowErr('JobAid Filing is only available in online mode');
+	else MsgManager.msgAreaShowErr( 'Offline - JobAid Filing is only available in online mode.' );
 };
 
 
@@ -150,25 +279,28 @@ JobAidHelper.filingContent_setUp = function( newFileList, projDir )
 	try
 	{
 		// Setup the 'localStorage' with 'ProjDir' <-- setup with empty content list.
-		//		- However, if already existing ones are there, we should not empty it out..
+		//		- However, if already existing ones are there, we should not empty it out?..
+		//		- No, we should emtpy it out since it goes through re-download?
+
 		if ( projDir !== undefined )
 		{
 			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
 			
-			if ( !projStatus ) projStatus = {};
-			if ( !projStatus.processed ) projStatus.processed = {};
+			if ( !projStatus.process ) projStatus.process = {};
 
 			newFileList.forEach( fileName => {			
-				projStatus.processed[ fileName ] = { size: '', reqDate: new Date().toISOString(), downloaded: false };
+				// if ( !projStatus.content[ fileName ] ) projStatus.content[ fileName ] = { size: '', date: '', downloaded: 'Not Downloaded' };
+				projStatus.process[ fileName ] = { size: '', reqDate: new Date().toISOString(), downloaded: false };
 			});
 
-			// if 'delete' happens, we need to remove this..			
+			// if 'delete' happens, we need to remove this..
+			
 			PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
 
 
 			// Set the list.
 			JobAidHelper.cacheRequestList = newFileList;
-			JobAidHelper.cacheSuccessList = [];
+			JobAidHelper.cacheProcessedData = {};
 		}
 	}
 	catch( errMsg )
@@ -177,137 +309,112 @@ JobAidHelper.filingContent_setUp = function( newFileList, projDir )
 	}
 };
 
-JobAidHelper.filingContent_calcData = function( cacheSuccessList, projDir )
-{
-	/*
-	// projDir
-	caches.open( JobAidHelper.jobAid_jobTest2 ).then( jaCache => 
-	{ 
-		jaCache.keys().then( keys => 
-		{ 
-			keys.forEach( kReq => 
-			{
-				if ( cacheSuccessList.indexOf( kReq.url ) >= 0 )
-				{
-					jaCache.match( kReq ).then( resp => 
-					{	
-						resp.clone().blob().then( b => 
-						{
-							var info = { url: kReq.url, size: b.size, date: new Date().toISOString() };
-
-							console.log( info );
-						});
-					});		
-				}
-			});				
-		}); 
-	});  
-	*/
-};
-
-
 JobAidHelper.JobFilingProgress = function( msgData ) 
 {
-	//res.clone().blob().then( b => { 
-
 	if ( msgData ) 
 	{
+		// NOTE: 'jobAidIFrame' ones are used for individual Project Pack (vs jobFilingApp files)
 		if ( msgData.options && msgData.options.target === 'jobAidIFrame' )
 		{
-			var data = { action: { name: 'simpleMsg', msgData: msgData } };
-			// var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options } );
+			var url = msgData.process.url;
+			
+			// JOB AID 'CONTENT' #2 - SET UP/START LIST
+			JobAidHelper.cacheProcessedData[ url ] = msgData.process;
 
-			JobAidHelper.msgHandle( data );
+			msgData.process.name = url;
+			msgData.process.curr = Object.keys( JobAidHelper.cacheProcessedData ).length;
 
 			// Create delayed action (for 1 sec overwrite)
 			Util.setDelays_timeout( 'jobFiling', 1, function() {
-				JobAidHelper.storeFilingStatus( msgData.options.projDir, msgData ); //msgData.process ); 
+				JobAidHelper.storeFilingStatus( msgData.options.projDir, JobAidHelper.cacheRequestList, JobAidHelper.cacheProcessedData );
 			});
+
 			
+			var data = { action: { name: 'simpleMsg', msgData: msgData } };
+
+			JobAidHelper.msgHandle( data );
 		}
 		else if ( msgData.process )
 		{
 			// NOTE: We also like to store 'content' - file size (EST) + date..
 
-			var total = msgData.process.total;
-			var curr = msgData.process.curr;
-			var name = msgData.process.name;
+			var total = msgData.process.total;			
+			//var curr = msgData.process.curr;
+			var url = msgData.process.url;
 		
-			if ( name && name.length > 10 ) name = '--' + name.substr( name.length - 10 );  // Get only last 10 char..
 		
 			var divJobFileLoadingTag = $('.divJobFileLoading');
 			var spanJobFilingMsgTag = $('.spanJobFilingMsg');
 
-			if ( !total ) 
+			if ( total && total > 0 )
 			{
-				divJobFileLoadingTag.find('img').remove();
-				spanJobFilingMsgTag.text('No files to Process.');
-			}
-			else if ( total && total > 0 && curr )
-			{
-
-				// JOB AID 'CONTENT' #2 - SET UP/START LIST
-				JobAidHelper.cacheSuccessList.push( name );
-
-
-			  	if ( curr < total ) 
-				{
-					// update the processing msg..
-					var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + name + ']';
-					spanJobFilingMsgTag.text(prgMsg);
+				if ( !url ) {
+					console.log( 'ERROR in JobAidHelper.JobFilingProgress, url is empty' );
 				}
-				else 
+				else
 				{
-					divJobFileLoadingTag.find('img').remove();
-					spanJobFilingMsgTag.text( 'Processing all done.' );
-		
-					MsgManager.msgAreaShow( 'Job Aid Filing Finished.' );	
+					// JOB AID 'CONTENT' #2 - SET UP/START LIST
+					JobAidHelper.cacheProcessedData[ url ] = msgData.process;
 
-					// If option has 'runEval_AfterFinish' prop, execute it here.            
-					settingsApp.jobAidFilesPopulate( $( '.divMainContent' ) );
+					var curr = Object.keys( JobAidHelper.cacheProcessedData ).length;
 
+					if ( curr < total )
+					{
+						// Save Status on WFA LocalStorage, but do it with delayed action (for 1 sec overwrite) - so fast calls do not perform store, but slow or last one does.
+						Util.setDelays_timeout( 'jobFiling', 1, function() {
+							JobAidHelper.storeFilingStatus( JobAidHelper.NAME_jobListingApp, JobAidHelper.cacheRequestList, JobAidHelper.cacheProcessedData );
+						});
 
-					// TODO: Create 'Util.timeMeasure()' <-- Start / End / Reset / GetResult
+						var urlNameShort = ( url && url.length > 10 ) ? '--' + url.substr( url.length - 10 ): url;  // Get only last 10 char..
+						var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + urlNameShort + ']';
+						spanJobFilingMsgTag.text( prgMsg );
+					}
+					else
+					{
+						JobAidHelper.storeFilingStatus( JobAidHelper.NAME_jobListingApp, JobAidHelper.cacheRequestList, JobAidHelper.cacheProcessedData );
 
-					// JOB AID 'CONTENT' #3 - GetContents of cached files.
-					JobAidHelper.filingContent_calcData( JobAidHelper.cacheSuccessList, msgData.options.projDir );
+						divJobFileLoadingTag.find('img').remove();
+						spanJobFilingMsgTag.text( 'Processing all done.' );
+						MsgManager.msgAreaShow( 'Job Aid Filing Finished.' );
+
+						// If option has 'runEval_AfterFinish' prop, execute it here -  but we should 
+						settingsApp.jobAidFilesPopulate( $( '.divMainContent' ) );
+					}
 				}
-				
-				// Save Status on WFA LocalStorage, but do it with delayed action (for 1 sec overwrite) - so fast calls do not perform store, but slow or last one does.
-				Util.setDelays_timeout( 'jobFiling', 1, function() {
-					JobAidHelper.storeFilingStatus( 'jobListingApp', msgData ); //msgData.process );
-				});
+
 			}
 		}
 	}
 };
 
-JobAidHelper.storeFilingStatus = function ( projDir, msgData ) 
-{
-	// Structure: { projDir: { -- process -- } }
-	//   			{ listingApp: { -- process -- } } // listingApp case..
-	// 			process: { total: totalCount, curr: doneCount, name: reqUrl }
 
-	var process = msgData.process;  // could be empty..
-	var content = msgData.content;
+JobAidHelper.storeFilingStatus = function ( projDir, cacheRequestList, cacheProcessedData ) 
+{
+	// { process: { total: , curr: , name: , url }
 
 	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
 
-	if ( process ) {
-		projStatus.total = process.total;
-		projStatus.curr = process.curr;
-	}
+	if ( !projStatus.process ) projStatus.process = {};
 
-	if ( content ) {
-		if ( !projStatus.content ) projStatus.content = {};
+	projStatus.total = cacheRequestList.length;
+	projStatus.curr = Object.keys( cacheProcessedData ).length;
+	projStatus.success = Object.values( cacheProcessedData ).filter( msgData => msgData.downloaded ).length;
+	projStatus.failed = projStatus.total - projStatus.success;
 
-		// Update the content status..
+	for ( var prop in cacheProcessedData ) 
+	{
+		var item = cacheProcessedData[ prop ];
+
+		if ( projStatus.process[ prop ] ) Util.mergeJson( projStatus.process[ prop ], item );
+		else projStatus.process[ prop ] = item;
 	}
+	//projStatus.process = cacheProcessedData;  // NOT GOOD
+
 
 	PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
 }
-
 // =========================
+
 
 JobAidHelper.msgHandle = function ( data ) 
 {
@@ -396,6 +503,15 @@ JobAidHelper.handleMsgAction = function( action )
 			$( 'div.clientListRerender' ).click(); // refresh the clientList..
 			var thisAction = { callBackEval: action.callBackEval, data: { client: client, activity: activity } };
 			$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { action: thisAction }, '*');  // pass single action rather than 'actions'
+		});
+	}
+	else if ( action.name === 'getProjDownloaded' ) 
+	{
+		// { name: 'getProjDownloaded', projDir: 'EN_LOW' } 
+		// Due to callBack, call iframe directly..
+		JobAidHelper.getCachedDataInfo( action.projDir, function( dataJson ) {
+			var thisAction = { callBackEval: action.callBackEval, data: dataJson };
+			$( "iframe.jobAidIFrame" )[0].contentWindow.postMessage( { action: thisAction }, "*" );
 		});
 	}
 	else if ( action.name === 'WFARunEval' )
@@ -504,75 +620,3 @@ JobAidHelper.submitActivity = function( data, callBack )
 		if ( callBack ) callBack( client, activity );
 	});	
 };
-
-
-/*
-JobAidHelper.submitActivityTest_New = function()
-{
-	var payload = {
-		searchValues: {
-			newClientCase: true
-		},
-		captureValues: {
-			date: { capturedLoc: "2022-04-06T23:01:45.832" },
-			type: "JobAidActType",
-			activeUser: "GT2_TEST_IPC",
-			creditedUsers: [ "GT2_TEST_IPC" ],
-			location: {},
-			dc: { app: "WF-App", "network": "Online", "control": "wfa v~1.3.0, c:Online" },
-			transactions: [
-				{ 
-				type: "c_reg", 
-				clientDetails: {
-					firstName: "Mark1a",
-					lastName: "Tester1",
-					age: "21"
-				}
-				},
-				{
-					type: "s_info",
-					dataValues: {
-						info1: 'test1'
-					}
-				}
-			]
-		}
-	};
-
-	JobAidHelper.submitActivity( { activityPayload: payload }, function( client, activity ) {
-		console.log( client );
-		console.log( activity );
-	});
-};
-
-JobAidHelper.submitActivityTest_Exist = function()
-{
-	var payload = {
-		searchValues: {
-			_id: "624ee3bd997e596bde59e1dd"
-		},
-		captureValues: {
-			date: { capturedLoc: "2022-04-07T23:01:45.832" },
-			type: "JobAidActType",
-			activeUser: "GT2_TEST_IPC",
-			creditedUsers: [ "GT2_TEST_IPC" ],
-			location: {},
-			dc: { app: "WF-App", "network": "Online", "control": "wfa v~1.3.0, c:Online" },
-			transactions: [
-				{
-					type: "s_info",
-					dataValues: {
-						info1: 'test2'
-					}
-				}
-			]
-		}
-	};
-
-
-	JobAidHelper.submitActivity( { clientId: '624ee3bd997e596bde59e1dd', activityPayload: payload }, function( client, activity ) {
-		console.log( client );
-		console.log( activity );
-	});
-};
-*/

@@ -19,8 +19,8 @@ MsgFormManager.cssBlock_Body = {
     ,'top': '50%'
     ,'width': '70px'
     ,'height': 'auto' //74px
-    ,'margin-left' : ( ( $('nav.bg-color-program').width() <= 450 && ( $(document).height() <= 1000 ) ) ? '-10%' : ( ( $('nav.bg-color-program').width() <= 1000 ) ? '-5%' : '-3%' ) ) 
-    ,'margin-top' : ( ( $(document).height() <= 650 && $('nav.bg-color-program').width() <= 800 ) ? '-11%' : ( ( $(document).height() <= 1000 ) ? '-6%' : '-3%' ) )
+//    ,'margin-left' : ( ( $('nav.bg-color-program').width() <= 450 && ( $(document).height() <= 1000 ) ) ? '-10%' : ( ( $('nav.bg-color-program').width() <= 1000 ) ? '-5%' : '-3%' ) ) 
+//    ,'margin-top' : ( ( $(document).height() <= 650 && $('nav.bg-color-program').width() <= 800 ) ? '-11%' : ( ( $(document).height() <= 1000 ) ? '-6%' : '-3%' ) )
     ,'white-space': 'normal'
     ,overflow: 'display'
     ,verticalAlign: 'middle'
@@ -206,6 +206,11 @@ MsgFormManager.appBlock = function( itemId, msg, customCss, afterRun )
 {
     if ( !msg ) msg = "Processing..";
 
+    MsgFormManager.cssBlock_Body[ 'margin-left' ] = ( $('nav.bg-color-program').width() <= 450 && ( $(document).height() <= 1000 ) ) ? '-10%' : ( ( $('nav.bg-color-program').width() <= 1000 ) ? '-5%' : '-3%' );
+
+    MsgFormManager.cssBlock_Body[ 'margin-top' ] = ( ( $(document).height() <= 650 && $('nav.bg-color-program').width() <= 800 ) ? '-11%' : ( ( $(document).height() <= 1000 ) ? '-6%' : '-3%' ) );
+
+    
     var css = ( customCss ) ? $.extend( MsgFormManager.cssBlock_Body, customCss ) : MsgFormManager.cssBlock_Body;
 
     MsgFormManager.showNQueue_Block( itemId, { message: msg, css: css }, afterRun );
