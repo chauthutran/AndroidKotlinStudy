@@ -325,9 +325,9 @@ JobAidHelper.JobFilingProgress = function( msgData )
 			msgData.process.curr = Object.keys( JobAidHelper.cacheProcessedData ).length;
 
 			// Create delayed action (for 1 sec overwrite)
-			Util.setDelays_timeout( 'jobFiling', 1, function() {
-				JobAidHelper.storeFilingStatus( msgData.options.projDir, JobAidHelper.cacheRequestList, JobAidHelper.cacheProcessedData );
-			});
+			//Util.setDelays_timeout( 'jobFiling', 1, function() {
+			JobAidHelper.storeFilingStatus( msgData.options.projDir, JobAidHelper.cacheRequestList, JobAidHelper.cacheProcessedData );
+			//});
 
 			
 			var data = { action: { name: 'simpleMsg', msgData: msgData } };
@@ -361,9 +361,9 @@ JobAidHelper.JobFilingProgress = function( msgData )
 					if ( curr < total )
 					{
 						// Save Status on WFA LocalStorage, but do it with delayed action (for 1 sec overwrite) - so fast calls do not perform store, but slow or last one does.
-						Util.setDelays_timeout( 'jobFiling', 1, function() {
+						//Util.setDelays_timeout( 'jobFiling', 1, function() {
 							JobAidHelper.storeFilingStatus( JobAidHelper.NAME_jobListingApp, JobAidHelper.cacheRequestList, JobAidHelper.cacheProcessedData );
-						});
+						//});
 
 						var urlNameShort = ( url && url.length > 10 ) ? '--' + url.substr( url.length - 10 ): url;  // Get only last 10 char..
 						var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + urlNameShort + ']';
