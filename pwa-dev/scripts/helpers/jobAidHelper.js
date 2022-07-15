@@ -164,8 +164,8 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 	if ( ConnManagerNew.isAppMode_Online() ) 
 	{
 		if ( !options ) options = {};
-		$('.divJobFileLoading').remove();
-
+		$('.divJobFileLoading').remove();			
+		
 		var requestUrl;
 
 		options.isLocal = WsCallManager.checkLocalDevCase(window.location.origin);
@@ -515,10 +515,13 @@ JobAidHelper.handleMsgAction = function( action )
 		//		' { callBackEval: action.callBackEval, data: clientList }; ' 
 		//	 ], callBackEval: 'clientsFound( action.data );', 
 		//  data: { firstName: 'james', lastName: 'chang' } } 
-		try {
+		try 
+		{
 			if ( action.WFARunEval ) 
 			{
-				actionJson = eval( Util.getEvalStr( action.WFARunEval ) );
+				var wEvalStr = Util.getEvalStr( action.WFARunEval );
+
+				actionJson = eval( wEvalStr );
 			}
 		}
 		catch ( errMsg ) { console.log( 'ERROR in JobAidHelper.handleMsgAction WFARunEval action, ' + errMsg ); }
