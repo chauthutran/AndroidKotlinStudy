@@ -543,6 +543,30 @@ JobAidHelper.clearFiles = function( runAfterEval )
 };
 
 
+// But this does not have a feature to delete the application..
+// For application, list the folder & root files..
+JobAidHelper.cacheKeyDelete = function( startName, returnFunc )
+{
+	caches.open( JobAidHelper.jobAid_jobTest2 ).then( cache => 
+	{ 
+		cache.keys().then( keys => 
+		{
+			keys.forEach( function( key ) {
+				
+				console.log( key.url );
+				// if ( Util.startsWith( key.url, startName ) ) { // Because it has 'http://127.0.0...'
+				if ( key.url.indexOf( startName ) >= 0 ) {
+					console.log( 'deleting..' );
+					caches.delete(key);  // Use await here!!
+				}
+			});
+
+			if ( returnFunc ) returnFunc();
+		}); 
+	});   		
+};
+
+
 // -------------------------------------
 // -- Old msg action structure support
 
