@@ -31,6 +31,24 @@
   box-shadow: 0 0 5px #aae6f7;
 }*/
 
+/* NEW */
+.lastVoucherInfoDiv {
+  display: inline-block; 
+  width: 100%; 
+  background-color: beige;
+  padding: 3px;  
+  font-size: 14px;
+  height: fit-content;
+}
+
+.overrideLastVoucherDiv {
+  display: inline-block;
+  margin-left: 10px;
+  background-color: lightgray;
+  padding: 4px;  
+  font-size: 14px;
+}
+
 .btnBack {
   cursor: pointer;
 }
