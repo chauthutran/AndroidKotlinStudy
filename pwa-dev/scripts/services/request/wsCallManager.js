@@ -320,6 +320,9 @@ WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, retur
     if ( SessionManager.getLoginStatus() ) WsCallManager.addExtraPayload_BySourceType( ConfigManager.getConfigJson(), payloadJson );
     WsCallManager.addExtraPayload_Version( payloadJson );
 
+    // NEW - for adding 'syncDownWaitMs': 70000
+    if ( INFO.wsDebug ) payloadJson.wsDebug = INFO.wsDebug;
+
     var url = WsCallManager.composeDwsWsFullUrl( apiPath, true );
 
     var requestOption = {

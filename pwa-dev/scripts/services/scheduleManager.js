@@ -241,7 +241,9 @@ ScheduleManager.syncDownRun_Online_Login = function()
 					}
 				}
 			} 
-			else ScheduleManager.syncDownTimeoutCall();
+
+			// If not success, still, do not do retry... <-- just once is enough..
+			//else ScheduleManager.syncDownTimeoutCall();
 		});
 	}
 	else

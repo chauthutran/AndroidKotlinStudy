@@ -45,6 +45,8 @@ SyncManagerNew.syncMsgJson;  // will get loaded on 1st use or on app startup
 
 SyncManagerNew.syncAllStartTime;  // Use this for tracking how long the 'syncAll' took, and run UI a bit more if less than 1 sec.
 
+SyncManagerNew.MSG_ServerFailed_TooLong = 'The operation took too long (over 1 min) to process.  Server Stopped this operation.';
+
 // ===================================================
 // === MAIN 2 FEATURES =============
 
@@ -134,7 +136,7 @@ SyncManagerNew.syncAll_OtherOperations = function()
 SyncManagerNew.syncDown = function( runType, callBack )
 {
     SyncManagerNew.update_UI_StartSyncAll();
-    SyncManagerNew.SyncMsg_InsertMsg( "download started.." );
+    SyncManagerNew.SyncMsg_InsertMsg( "SyncDown Download started.." );
 
     // Retrieve data..
     SyncManagerNew.downloadClients( function( downloadSuccess, returnJson, mockCase ) 
@@ -164,11 +166,37 @@ SyncManagerNew.syncDown = function( runType, callBack )
 
         if ( isFailed )
         { 
-            console.log( returnJson );
+            // console.log( returnJson );
+            var errMsg = "SyncDown Failed: ";
+            var errMsgDetail = 'Unknown Error';
 
-            SyncManagerNew.SyncMsg_InsertMsg( "Failed on download, msg: " + Util.getStr( returnJson, 300 ) );
+            try
+            {
+                if ( returnJson && Util.isTypeObject( returnJson ) )
+                {
+                    if ( returnJson.errResponse )
+                    {
+                        if ( returnJson.errResponse.Error ) errMsgDetail = returnJson.errResponse.Error;
+                        else errMsgDetail = Util.getStr( returnJson.errResponse, 50 );
+                    }
+                    else if ( returnJson.errMsg ) errMsgDetail = Util.getStr( returnJson.errMsg, 50 );
+                    else errMsgDetail = Util.getStr( returnJson, 80 );                    
+                }
+    
+                if ( errMsgDetail.indexOf( 'Request too long. The execution exceeded' ) === 0 
+                    || errMsgDetail.indexOf( '<html>\r\n<head><title>504 Gateway Time-out' ) === 0 
+                ) errMsgDetail = SyncManagerNew.MSG_ServerFailed_TooLong;    
+            }
+            catch ( errMsg ) { console.log( 'ERROR in syncDown errMsg formatting, ' + errMsg ); }
+            
 
-            if ( callBack ) callBack( downloadSuccess, changeOccurred ); 
+            errMsg += errMsgDetail;
+
+            MsgManager.msgAreaShow( errMsg, 'ERROR', undefined, 180000 );
+
+            SyncManagerNew.SyncMsg_InsertMsg( errMsg );
+
+            if ( callBack ) callBack( downloadSuccess, changeOccurred, errMsg ); 
         }
         else
         {
@@ -669,7 +697,7 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function()
             // 1. SyncDown
             if ( ConfigManager.getSyncDownSetting().enable && ConnManagerNew.isAppMode_Online() ) 
             {
-                SyncManagerNew.syncDown( 'manualClick_syncAll', function( success, changeOccurred ) 
+                SyncManagerNew.syncDown( 'manualClick_syncAll', function( success, changeOccurred, errMsg ) 
                 {        
                     if ( success ) 
                     {  
@@ -677,7 +705,7 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function()
                         if ( changeOccurred )
                         {
                             // Display the summary of 'syncDown'.  However, this could be a bit confusing
-                            SyncManagerNew.SyncMsg_ShowBottomMsg();
+                            //SyncManagerNew.SyncMsg_ShowBottomMsg();
 
                             var btnRefresh = $( '<a class="notifBtn" term=""> REFRESH </a>');
         
@@ -688,7 +716,9 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function()
                             MsgManager.notificationMessage ( 'SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false );
                         }
                     }
-                    else MsgManager.msgAreaShow( 'SyncDown not successful.' );  // Add to syncAll history?
+                    else {  } // Already displayed the error message in MsgManager.showMsg..
+
+                    SyncManagerNew.SyncMsg_ShowBottomMsg();
                 });   
             }
                 
