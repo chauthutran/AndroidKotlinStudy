@@ -92,7 +92,14 @@ function ClientCardDetail( clientId )
             var activityListDivTag = activityTabBodyDivTag.find( '.activityList' );
 
             var clientJson = ClientDataManager.getClientById( clientId ); // for changed client data?
-            if ( clientJson ) me.populateActivityCardList( clientJson.activities, activityListDivTag );
+            if ( clientJson )
+            { 
+                // NEW - switchLatestVoucherRoles
+                var divLatestVoucherTag = me.displayLatestVoucherInfo( clientJson, activityTabBodyDivTag ); // only if there is vouchers..
+                if ( ConfigManager.switchLatestVoucher() && divLatestVoucherTag ) me.setSwitchLatestVoucher( clientJson, divLatestVoucherTag, activityTabBodyDivTag );
+
+                me.populateActivityCardList( clientJson.activities, activityListDivTag );
+            }
 
             // ClientActivity FavList render
             var favIconsObj = new FavIcons( 'clientActivityFav', activityTabBodyDivTag, activityTabBodyDivTag
@@ -187,6 +194,49 @@ function ClientCardDetail( clientId )
             defaultTab.click();
             me.timedOut1stTabOpen = setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );   // Cancel this if other click is applied..
         }
+    };
+
+
+    // TODO: However, we need to close this whenever other blocks are rendered (when activityList is removed..)
+    me.displayLatestVoucherInfo = function( clientJson, activityTabBodyDivTag )
+    {
+        var divLatestVoucherTag = '';
+
+        // only if there is a voucher, choose the latest voucher..
+
+        var lastVoucherData = ClientDataManager.getLastVoucherData( clientJson );
+
+        if ( lastVoucherData )
+        {
+            divLatestVoucherTag = $( '<div class="lastVoucherInfo"></div>' );
+            activityTabBodyDivTag.prepend( divLatestVoucherTag );
+            divLatestVoucherTag.append( lastVoucherData.voucherCode );
+        }
+
+        return divLatestVoucherTag;
+    };
+    
+    me.setSwitchLatestVoucher = function( clientJson, divLatestVoucherTag, activityTabBodyDivTag )
+    {
+        var voucherDataList = ClientDataManager.getVoucherDataList( clientJson );
+
+        // Insert into divLatestVoucher - to add dropdown..
+        var selectTag = $( '<select class="switchVc"></select>' );
+        divLatestVoucherTag.append( selectTag );
+
+        voucherDataList.forEach( vcData => {
+            var itemTag = $( '<option value="' + vcData.voucherCode + '" >' + vcData.voucherCode + '</option>' );
+            selectTag.append( itemTag );
+        });
+        
+        // TOOD: On dropdown change, set INFO.lastVoucher_overrideVC = 'asoidjfasfd';
+        selectTag.change( function() 
+        {
+            INFO.lastVoucher_overrideVC = selectTag.val();
+
+            // Reload Fav <-- 
+            activityTabBodyDivTag.click();
+        });
     };
 
 
