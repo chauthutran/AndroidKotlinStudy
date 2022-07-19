@@ -214,9 +214,11 @@ function ClientCardDetail( clientId )
             divLatestVoucherTag = $( '<div class="lastVoucherInfoDiv"></div>' );
             activityListDivTag.prepend( divLatestVoucherTag );
 
-            var voucherCodeDivTag = $( '<div style="display: inline-block;"><span>Current Voucher:</span> <span class="spanLastVoucherCode"></span></div>' );
+            var voucherCodeDivTag = $( '<div style="display: inline-block;"><span>Current Voucher:</span> <span class="spanLastVc"></span> <span class="spanLastVcDate" style="color: gray; font-size: 13px;"></span></div>' );
 
-            voucherCodeDivTag.find( 'span.spanLastVoucherCode' ).text( lastVoucherData.voucherCode ).attr( 'title', 'Issued: ' + lastVoucherData.v_issDateStr );
+            voucherCodeDivTag.find( 'span.spanLastVc' ).text( lastVoucherData.voucherCode ).attr( 'title', 'Issued: ' + lastVoucherData.v_issDateStr );
+            voucherCodeDivTag.find( 'span.spanLastVcDate' ).text( ' [' + UtilDate.formatDateTimeStr( lastVoucherData.v_issDateStr, 'MMM d' ) +  ']' );
+
             divLatestVoucherTag.attr( 'voucherCode', lastVoucherData.voucherCode );
 
             divLatestVoucherTag.append( voucherCodeDivTag );
@@ -232,14 +234,16 @@ function ClientCardDetail( clientId )
         if ( voucherDataList.length > 1 )
         {
             // Insert into divLatestVoucher - to add dropdown..
-            var selectDivTag = $( '<div class="overrideLastVoucherDiv"><span>Override:</span> <select class="switchVc" style="width: 100px; background-color: #FEFEFE;"></select></div>' );
+            var selectDivTag = $( '<div class="overrideLastVoucherDiv"><span>Override:</span> <select class="switchVc"></select></div>' );
             var selectTag = selectDivTag.find( 'select' );
             divLatestVoucherTag.append( selectDivTag );
 
             var currLastVoucherCode = divLatestVoucherTag.attr( 'voucherCode' );
 
-            voucherDataList.forEach( vcData => {
-                var itemTag = $( '<option value="' + vcData.voucherCode + '" >' + vcData.voucherCode + '</option>' );
+            voucherDataList.forEach( vcData => 
+            {
+                var itemTag = $( '<option value="' + vcData.voucherCode + '" >' + vcData.voucherCode + ' [' + UtilDate.formatDateTimeStr( vcData.v_issDateStr, 'MMM d' ) +  ']</option>' );
+
                 selectTag.append( itemTag );
                 if ( vcData.voucherCode === currLastVoucherCode ) itemTag.attr( 'selected', 'selected' );  // INFO.lastVoucher_overrideVC
             });
