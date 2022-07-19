@@ -994,3 +994,21 @@ ClientDataManager.getClientLikeCUIC = function( CUIC )
 
     return matchedList;
 };
+
+
+ClientDataManager.checkClientCreator = function( client, username )
+{
+    var bOwner = false;
+
+    try
+    {
+        var regActList = ActivityDataManager.getActivitiesByTrans( client.activities, [ { type: 'c_reg' } ] );
+
+        if ( regActList.filter( act => act.activeUser === username ).length > 0 ) bOwner = true;
+    }
+    catch ( errMsg ) {
+        console.log( 'ERROR in ClientDataManager.isClientOwner, ' + errMsg );
+    }
+
+    return bOwner;
+};

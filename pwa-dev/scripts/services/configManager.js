@@ -260,7 +260,7 @@ ConfigManager.matchUserRoles = function( itemUserRoles, inputUserRoles )
 
     try
     {
-        if ( Util.isTypeArray( itemUserRoles ) )
+        if ( itemUserRoles && Util.isTypeArray( itemUserRoles ) )
         {
             for ( var i = 0; i < itemUserRoles.length; i++ )
             {
@@ -283,15 +283,14 @@ ConfigManager.matchUserRoles = function( itemUserRoles, inputUserRoles )
 // NEW - switchLatestVoucherRoles under 'settings' check
 ConfigManager.switchLatestVoucher = function()
 {
-    var bSwitch = false;
+    return ConfigManager.matchUserRoles( ConfigManager.getSettings().switchLatestVoucherRoles, ConfigManager.login_UserRoles );
+};
 
-    if ( ConfigManager.getSettings().switchLatestVoucherRoles )
-    {
-        bSwitch = ConfigManager.matchUserRoles( ConfigManager.getSettings().switchLatestVoucherRoles, ConfigManager.login_UserRoles );
-    }
+ConfigManager.externalPartner = function()
+{
+    return ConfigManager.matchUserRoles( ConfigManager.getSettings().externalPartnerRoles, ConfigManager.login_UserRoles );
+};
 
-    return bSwitch;
-}
 // ----------------------------------------------------
 // === UserRoles Filter/Check Related Methods
 

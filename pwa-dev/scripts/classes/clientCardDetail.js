@@ -16,15 +16,33 @@ function ClientCardDetail( clientId )
     me.initialize = function() 
     { 
         me.actionObj = new Action( SessionManager.cwsRenderObj, {} );
-
-        // Optional 'clientRelationshipTab' removal - set in config.
         var preCall = undefined;
-        if ( ConfigManager.getHideClientRelationshipTab() ) {
-            preCall = function( sheetFullTag ) {
+        var clientJson = ClientDataManager.getClientById( me.clientId );
+
+        // If current user belongs to externerPartner role, and , Optional ActivityTab removal + client Edit + relationship  <-- View only?
+        if ( ConfigManager.externalPartner() && !ClientDataManager.checkClientCreator( clientJson, SessionManager.sessionData.login_UserName ) )
+        {
+            INFO.clientReadOnly = clientJson;
+
+            preCall = function( sheetFullTag ) 
+            {
+                sheetFullTag.find( 'li[rel=tab_clientActivities]' ).remove();
+                sheetFullTag.find( 'div[tabButtonId=tab_clientActivities]' ).remove();
+
+                sheetFullTag.find( 'li[rel=tab_relationships]' ).remove();
+                sheetFullTag.find( 'div[tabButtonId=tab_relationships]' ).remove();
+            };            
+        }
+        // Optional 'clientRelationshipTab' removal - set in config.
+        else if ( ConfigManager.getHideClientRelationshipTab() ) 
+        {
+            preCall = function( sheetFullTag ) 
+            {
                 sheetFullTag.find( 'li[rel=tab_relationships]' ).remove();
                 sheetFullTag.find( 'div[tabButtonId=tab_relationships]' ).remove();
             };
         }
+
 
         // sheetFull Initialize / populate template
         me.cardSheetFullTag = FormUtil.sheetFullSetup( ClientCardDetail.cardFullScreen, { title: 'Client Detail', term: '', cssClasses: [ 'clientDetail' ], preCall: preCall } );
