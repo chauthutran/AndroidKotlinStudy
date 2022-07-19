@@ -194,8 +194,8 @@ function ClientCardDetail( clientId )
             var defaultTab = sheetFullTag.find( '.tab_fs li[rel=' + openUp_tabRel + ']' );
             // var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
             // But wants to not display the selection dropdown when size is mobile..        
-            defaultTab.attr( 'openingClick', 'Y' );
-            defaultTab.click();
+            defaultTab.attr( 'openingClick', 'Y' ).click();
+            
             me.timedOut1stTabOpen = setTimeout( function() { defaultTab.attr( 'openingClick', '' ); }, 400 );   // Cancel this if other click is applied..
         }
     };
@@ -253,7 +253,8 @@ function ClientCardDetail( clientId )
                 INFO.lastVoucher_overrideVC = selectTag.val();
 
                 // Reload Fav <-- 
-                activityTabTag.click();
+                // FormUtil.setForReloading( activityTabTag );
+                activityTabTag.attr( 'reloading', 'Y' ).click();
             });
         }
     };

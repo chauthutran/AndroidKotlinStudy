@@ -1241,10 +1241,8 @@ FormUtil.setUpEntryTabClick = function( tag, targetOff, eventName )
 
 		}
 
-
 		// After all operation, clear the one off temporary attribute values.
 		selLiTag.attr( 'reloading', '' ).attr( 'openingClick', '' );
-
 	});
 };
 

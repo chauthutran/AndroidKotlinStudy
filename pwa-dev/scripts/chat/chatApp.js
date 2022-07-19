@@ -264,7 +264,14 @@ function ChatApp( username )
 				{
 					if( contactInfo.hasNewMessages )
 					{
-						userTag.find(".has-new-message").show();
+						userTag.remove();
+						
+						const contactData = JSON.parse( userTag.attr("user") );
+						const contactTag = me.appendUserInContactList( contactData, false );
+						// if( contactTag != undefined )
+						// {
+						contactTag.find(".has-new-message").show();
+						// }
 					}
 					else
 					{
@@ -360,7 +367,7 @@ function ChatApp( username )
 
         me.emojjiDashboardTag.find("ul").find("li").off("click").on("click", function() {
             Utils.insertText( me.msgTag, $(this).html() );
-				me.emojjiDashboardTag.slideUp('fast');
+            me.emojjiDashboardTag.slideUp('fast');
         });
 
 
@@ -465,7 +472,7 @@ function ChatApp( username )
 		});
 	}
 
-	me.appendUserInContactList = function( userData )
+	me.appendUserInContactList = function( userData, isAppend )
 	{
 		if( me.userListTag.find(`[username='${userData.username}']`).length == 0 )
 		{
@@ -495,7 +502,16 @@ function ChatApp( username )
 			}
 
 			me.setupEvent_UserItemOnClick( userTag );
-			me.userListTag.append( userTag );
+			if( isAppend == undefined || isAppend )
+			{
+				me.userListTag.append( userTag );
+			}
+			else if( !isAppend )
+			{
+				me.userListTag.prepend( userTag );
+			}
+
+			return userTag;
 		}
 	}
 
@@ -605,6 +621,13 @@ function ChatApp( username )
 			if( ( me.username == message.sender && me.selectedUser.username == message.receiver ) ||
 				( me.username == message.receiver && me.selectedUser.username == message.sender ) )
 			{
+				// Re-order the contact list
+				const userTag = me.userListTag.find(`[username='${me.selectedUser.username}']`);
+				const contactData = JSON.parse( userTag.attr("user") );
+				userTag.remove();
+				me.appendUserInContactList( contactData, false );
+
+				
 				// Only remove message from localStorage if the socket is online and this message existed 
 				if( me.socket.connected )
 				{ 
