@@ -48,6 +48,12 @@ function ChatApp( username )
 
     me.init = function() 
 	{
+		me.chatViewTag.hide();
+		if( !me.curUser)
+		{
+			me.initChatMsgTag.show().html("Loading ...");
+		}
+
         // Add Emoji in Emoji Dashboard
         for( var i=0; i<emojiCodes.length; i++ )
         {
@@ -64,6 +70,8 @@ function ChatApp( username )
 			me.initSocket();
 
             me.curUser = userProfile.curUser;
+			me.initChatMsgTag.show().html(`Welcome, ${me.curUser.fullName}`);
+			
 
             // Render contact list
             me.outputUsers( userProfile );
@@ -77,6 +85,7 @@ function ChatApp( username )
 		me.editContactListTag.attr("mode", "hide");
 		me.searchContactNameTag.val("");
 		me.addUserBtnTag.hide();
+		
 
         me.setUp_Events();
     };
@@ -100,24 +109,26 @@ function ChatApp( username )
 
         me.socket = io( me.chatServerURL, option );
 
-			// Register a catch-all listener, which is very useful during development:
-			me.socket.onAny((event, ...args) => {
-				console.log(event, args);
-			});
-			
-			const sessionID = localStorage.getItem("sessionID");
-			if (sessionID) {
-				// me.socket.auth = { sessionID, username: me.username };
-				me.socket.auth = { sessionID };
-			}
-			else
-			{
-				me.socket.auth = { username: me.username };
-			}
+		// Register a catch-all listener, which is very useful during development:
+		me.socket.onAny((event, ...args) => {
+			console.log(event, args);
+		});
+		
+		const sessionID = localStorage.getItem("sessionID");
+		if (sessionID) {
+			// me.socket.auth = { sessionID, username: me.username };
+			me.socket.auth = { sessionID };
+		}
+		else
+		{
+			me.socket.auth = { username: me.username };
+		}
 
-			me.socket.connect();
+		me.socket.connect();
+		
+		me.chatViewTag.hide();
 
-        me.socketEventListener();
+		me.socketEventListener();
     }
 
     me.socketEventListener = function()
@@ -211,6 +222,7 @@ function ChatApp( username )
 			const found = Utils.findItemFromList( userData.contacts, me.curUser.username, "contactName" );
 			if( found )
 			{
+				me.curUser.contacts.push({contactName: userData.username, hasNewMessages: found.hasNewMessages });
 				me.appendUserInContactList( userData );
 			}
 		});
@@ -231,9 +243,9 @@ function ChatApp( username )
 		me.socket.on('message_list', ( data ) => {
 			const messages = Utils.mergeWithOfflineMessages( data.messages, data.users.username1, data.users.username2 );
 			me.outputMessageList( messages );
-			me.userListTag.find(`[username='${me.selectedUser.username}']`).find("span").removeClass("has-new-message");
+			me.userListTag.find(`[username='${me.selectedUser.username}']`).find(".has-new-message").hide();
 
-			// me.socket.emit("has_new_message", { userData: me.curUser, contactName: me.selectedUser.username, hasNewMessages: false });
+			me.socket.emit("has_new_message", { userData: me.curUser, contactName: me.selectedUser.username, hasNewMessages: false });
 
 		});
 		
@@ -250,14 +262,14 @@ function ChatApp( username )
 				const userTag = me.userListTag.find(`[username='${contactInfo.contactName}']`);
 				if( userTag.length > 0 )
 				{
-					// if( contactInfo.hasNewMessages )
-					// {
-					// 	userTag.find("span").addClass("has-new-message");
-					// }
-					// else
-					// {
-					// 	userTag.find("span").removeClass("has-new-message");
-					// }
+					if( contactInfo.hasNewMessages )
+					{
+						userTag.find(".has-new-message").show();
+					}
+					else
+					{
+						userTag.find(".has-new-message").hide();
+					}
 				}
 			}
 		});
@@ -265,10 +277,10 @@ function ChatApp( username )
 		me.socket.on('sendMsg', data => {
 			me.outputMessage( data );
 
-			// if( this.selectedUser == undefined || data.receiver != this.selectedUser.username )
-			// {
-			// 	me.socket.emit("has_new_message", { userData: me.curUser, contactName: data.sender, hasNewMessages: true });
-			// }
+			if( this.selectedUser == undefined || data.receiver != this.selectedUser.username )
+			{
+				me.socket.emit("has_new_message", { userData: me.curUser, contactName: data.sender, hasNewMessages: true });
+			}
 		})
 
 		me.socket.on('user_disconnected', ( username ) => {
@@ -369,12 +381,6 @@ function ChatApp( username )
                     else
                     {
                         me.socket.emit("private_message", data );
-
-                        // if( me.selectedUser.messages == undefined )
-                        // {
-                        //     me.selectedUser.messages = [];
-                        // }
-                        // me.selectedUser.messages.push(data);
                     }
 
 					me.outputMessage( data );
@@ -468,6 +474,7 @@ function ChatApp( username )
 			const bgColorIcon = Utils.stringToLightColour( contactName );
 			const colorIcon = Utils.stringToDarkColour( contactName );
 			const userInfo = JSON.stringify( userData );
+			const hasNewMessages = Utils.findItemFromList( me.curUser.contacts, userData.username, "contactName").hasNewMessages;
 
 			// Set status "offline" for all users in contact list. Will update after getting online user list / OR when an user is online
 			var userTag = $(`<li class="clearfix" style="cursor:pointer;" username='${contactName}' user='${userInfo}'>
@@ -475,17 +482,17 @@ function ChatApp( username )
 								<div class="remove-icon" style="display:none;">&#128465;</div>
 								<div class="user-icon" style="background-color: ${bgColorIcon}; color: ${colorIcon}">${firstChar}</div>
 								<div class="about">
-									<div class="name">${userData.fullName}</div>
+									<div class="name"><span>${userData.fullName}</span><span class="has-new-message" style="display:none;">(N)</span></div>
 									<!-- div class="status">
 										<i class="fa fa-circle offline"></i> <span>offline</span>
 									</div -->
 								</div>
 							</li>`);
 
-			// if( hasNewMessages )
-			// {
-			// 	userTag.find(".status > span").addClass("has-new-message");
-			// }
+			if( hasNewMessages )
+			{
+				userTag.find(".has-new-message").show();
+			}
 
 			me.setupEvent_UserItemOnClick( userTag );
 			me.userListTag.append( userTag );
@@ -561,7 +568,6 @@ function ChatApp( username )
 		}
 
         const data = Utils.formatMessage( me.curUser.username, me.selectedUser.username, msg );
-        console.log(data);
 		if( me.socket.connected )
 		{
 			// Emit message to server
@@ -628,7 +634,14 @@ function ChatApp( username )
 						}
 					} 
 					else {
-						messageTextDivTag = `<span>${message.msg}</span>`;
+						const utf8 = new Uint8Array(
+							Array.prototype.map.call(
+								message.msg, 
+								c => c.charCodeAt(0)
+							)
+						);
+						const msg = new TextDecoder('utf8').decode(utf8);
+						messageTextDivTag = `<span>${msg}</span>`;
 					}
 			
 			
@@ -636,10 +649,11 @@ function ChatApp( username )
 	
 					if( message.sender == me.username )
 					{
+						const senderFullName = me.curUser.fullName;
 						messageTag = $(`<li id='${message.datetime}' class="${offlineClazz}">
 											<div class="message-data">
 												<span class="message-data-time" >${DateUtils.formatDisplayDateTime(message.datetime)}</span> &nbsp; &nbsp;
-												<span class="message-data-name" >${message.sender}</span> <i class="fa fa-circle me"></i>
+												<span class="message-data-name" >${senderFullName}</span> <i class="fa fa-circle me"></i>
 												
 												</div>
 												<div class="message my-message">
@@ -649,10 +663,11 @@ function ChatApp( username )
 					}
 					else
 					{
+						const senderFullName = me.selectedUser.fullName;
 						messageTag = $(`<li id='${message.datetime}' class="clearfix ${offlineClazz}">
 								<div class="message-data align-right">
 									<span class="message-data-time" >${DateUtils.formatDisplayDateTime(message.datetime)}</span> &nbsp; &nbsp;
-									<span class="message-data-name" >${message.sender}</span> <i class="fa fa-circle me"></i>
+									<span class="message-data-name" >${senderFullName}</span> <i class="fa fa-circle me"></i>
 								</div>
 								<div class="message other-message float-right">
 									${messageTextDivTag}

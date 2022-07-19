@@ -209,7 +209,7 @@ function cwsRender()
 				console.log( 'chat area render started' );
 				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
 
-				var chatUserName = ( INFO.chatUserName ) ? INFO.chatUserName: '+447897018987'; // INFO.login_UserName;
+				var chatUserName = ( INFO.chatUserName ) ? INFO.chatUserName:  INFO.login_UserName; // '+447897018987';
 		
 				me.chatAppObj = new ChatApp( chatUserName );
 
