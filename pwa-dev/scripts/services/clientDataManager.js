@@ -782,7 +782,7 @@ ClientDataManager.getLastVoucherData = function( client )
         var override_Vc;
 
         // NEW: If 'overrideVC' is specified, use it to get 'getLastVoucherData'
-        if ( INFO.lastVoucher_overrideVC ) 
+        if ( INFO.lastVoucher_overrideClient === client._id && INFO.lastVoucher_overrideVC ) 
         {
             var vcList = voucherDataList.filter( vc => vc.voucherCode === INFO.lastVoucher_overrideVC );
             if ( vcList.length > 0 ) override_Vc = vcList[ vcList.length - 1 ];

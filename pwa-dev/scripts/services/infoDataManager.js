@@ -27,6 +27,8 @@ InfoDataManager.NAME_syncLastDownloaded_noZ = 'syncLastDownloaded_noZ';	// These
 InfoDataManager.NAME_fixOperationLast = 'fixOperationLast';
 InfoDataManager.NAME_fixOperationLast_noZ = 'fixOperationLast_noZ';
 
+//InfoDataManager.NAME_lastVoucher_overrideVC = 'lastVoucher_overrideVC'; // per client data, set as {} initially
+
 InfoDataManager.NAME_INFO = 'INFO'; // Used for array list 'INFO' name..
 
 // --------------------------------------
@@ -73,6 +75,9 @@ InfoDataManager.setDataAfterLogin = function()
 
 		// NOTE: But we can access by '_ver' in anywhere.
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_app_version, Util.getStr( _ver ) );
+
+		// Set initial empty - will get added/removed as it goes..
+		//InfoDataManager.setINFOdata( InfoDataManager.NAME_lastVoucher_overrideVC, { } );
 	}
 	catch ( errMsg )
 	{

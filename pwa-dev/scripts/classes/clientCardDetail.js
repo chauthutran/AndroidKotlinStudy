@@ -42,7 +42,10 @@ function ClientCardDetail( clientId )
             me.cardSheetFullTag.find( '.tab_fs__head li.primary.active' ).click();
         });
 
+
+        // Reset the overrideVC (lastVoucher)
         INFO.lastVoucher_overrideVC = '';
+        INFO.lastVoucher_overrideClient = me.clientId;        
     };
 
     // ----------------------------------
@@ -245,12 +248,13 @@ function ClientCardDetail( clientId )
                 var itemTag = $( '<option value="' + vcData.voucherCode + '" >' + vcData.voucherCode + ' [' + UtilDate.formatDateTimeStr( vcData.v_issDateStr, 'MMM d' ) +  ']</option>' );
 
                 selectTag.append( itemTag );
-                if ( vcData.voucherCode === currLastVoucherCode ) itemTag.attr( 'selected', 'selected' );  // INFO.lastVoucher_overrideVC
+                if ( vcData.voucherCode === currLastVoucherCode ) itemTag.attr( 'selected', 'selected' );
             });
             
             selectTag.change( function() 
             {
                 INFO.lastVoucher_overrideVC = selectTag.val();
+                INFO.lastVoucher_overrideClient = clientJson._id;
 
                 // Reload Fav <-- 
                 // FormUtil.setForReloading( activityTabTag );
