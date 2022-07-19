@@ -360,7 +360,7 @@ function ChatApp( username )
 
         me.emojjiDashboardTag.find("ul").find("li").off("click").on("click", function() {
             Utils.insertText( me.msgTag, $(this).html() );
-            me.emojjiDashboardTagslideUp('fast');
+				me.emojjiDashboardTag.slideUp('fast');
         });
 
 
