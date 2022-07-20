@@ -249,25 +249,21 @@ function ChatApp( username )
 
 		});
 		
-		me.socket.on("receive_message", (userData) => {
-			const contacts = userData.contacts;
+		me.socket.on("receive_message", ({userData, contacts}) => {
+			const contactList = userData.contacts;
 			if( me.curUser.username == userData.username )
 			{
 				me.curUser = userData;
 			}
 
-			for( var i=0; i< contacts.length; i++ )
+			for( var i=0; i< contactList.length; i++ )
 			{
-				const contactInfo = contacts[i];
+				const contactInfo = contactList[i];
 				const userTag = me.userListTag.find(`[username='${contactInfo.contactName}']`);
 				if( userTag.length > 0 )
 				{
 					if( contactInfo.hasNewMessages )
 					{
-						// const contactData = JSON.parse( userTag.attr("user") );
-						// userTag.remove();
-						// const contactTag = me.appendUserInContactList( contactData, false );
-						
 						const contactTag = me.moveContactOnTop( contactInfo.contactName );
 						if( contactInfo.contactName !== this.selectedUser.username )
 						{
@@ -282,6 +278,14 @@ function ChatApp( username )
 					else
 					{
 						userTag.find(".has-new-message").hide();
+					}
+				}
+				else if( contacts != undefined )
+				{
+					const found = Utils.findItemFromList( contacts, contactInfo.contactName, "username");
+					if( found )
+					{
+						me.appendUserInContactList( found, true );
 					}
 				}
 			}
