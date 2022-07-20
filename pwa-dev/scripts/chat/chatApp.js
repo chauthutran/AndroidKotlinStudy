@@ -9,7 +9,7 @@ function ChatApp(username) {
 	me.socket;
 	me.selectedUser;
 	me.users = [];
-	me.chatServerURL = (WsCallManager.isLocalDevCase) ? chatServerURL_local : chatServerURL;
+	me.chatServerURL = ( WsCallManager.isLocalDevCase ) ? chatServerURL_local : chatServerURL;
 
 	// ------------------------------------------------------------------------
 	// HTML Tags
@@ -61,7 +61,7 @@ function ChatApp(username) {
 		}
 
 		// Get contact list of username
-		$.get( me.chatServerURL + INFO.chatPath + "/users?username=" + encodeURIComponent(me.username), {}, function (userProfile) {
+		$.get( me.chatServerURL + "/users?username=" + encodeURIComponent(me.username), {}, function (userProfile) {
 			me.initSocket();
 
 			me.curUser = userProfile.curUser;
@@ -99,9 +99,9 @@ function ChatApp(username) {
 			auth: { username: me.username }
 		};
 
-		if ( !WsCallManager.isLocalDevCase && INFO.chatPath ) option.path = INFO.chatPath; // '/ws/chat';
+		//if ( !WsCallManager.isLocalDevCase && INFO.chatPath ) option.path = INFO.chatPath; // '/ws/chat';
 
-		me.socket = io(me.chatServerURL, option);
+		me.socket = io( me.chatServerURL, option );
 
 		// Register a catch-all listener, which is very useful during development:
 		me.socket.onAny((event, ...args) => {
