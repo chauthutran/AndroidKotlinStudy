@@ -1,158 +1,149 @@
 // const { find } = require("../../server/models/messages");
 
-function ChatApp( username )
-{
-    var me = this;
+function ChatApp(username) {
+	var me = this;
 
 	me.username = username;
-    me.curUser = {};
-    // me.sockeObj = _sockeObj;
-    me.socket;
-    me.selectedUser;
+	me.curUser = {};
+	// me.sockeObj = _sockeObj;
+	me.socket;
+	me.selectedUser;
 	me.users = [];
-	me.chatServerURL = ( WsCallManager.isLocalDevCase ) ? chatServerURL_local : chatServerURL;
+	me.chatServerURL = (WsCallManager.isLocalDevCase) ? chatServerURL_local : chatServerURL;
 
-    // ------------------------------------------------------------------------
-    // HTML Tags
+	// ------------------------------------------------------------------------
+	// HTML Tags
 
-	me.btnChatBackBtnTag = $(".btnChatBack"); 
+	me.btnChatBackBtnTag = $(".btnChatBack");
 
-    me.curUserDivTag = $("#curUserDiv");
-    me.curUsernameTag = $("#curUsername");
-    me.curUserIconTag = $("#curUserIcon");
+	me.curUserDivTag = $("#curUserDiv");
+	me.curUsernameTag = $("#curUsername");
+	me.curUserIconTag = $("#curUserIcon");
 	me.editContactListTag = $("#editContactList");
-    me.sendBtnTag = $("#sendBtn");
-    me.msgTag = $("#msg");
+	me.sendBtnTag = $("#sendBtn");
+	me.msgTag = $("#msg");
 	me.searchContactNameTag = $("#searchContactName");
 	me.uploadInputTag = $("#upload_input");
 
-    me.userListTag = $("#users");
-    
-    me.logoutBtnTag = $('#logOutBtn');
+	me.userListTag = $("#users");
+
+	me.logoutBtnTag = $('#logOutBtn');
 	me.addUserBtnTag = $("#addUserBtn");
-    me.emojjiDashboardTag = $(".emoji-dashboard");
-    me.showEmojiDashboardTag = $("#showEmojiDashboard");
-    
-	
+	me.emojjiDashboardTag = $(".emoji-dashboard");
+	me.showEmojiDashboardTag = $("#showEmojiDashboard");
+
+
 	me.chatWithUserTag = $(".chat-with");
-    me.chatWithIconTag = $(".chat-with-icon");
+	me.chatWithIconTag = $(".chat-with-icon");
 	me.chatViewTag = $("#chatView");
 	me.initChatMsgTag = $("#initChatMsg");
-	
-    me.chatHistoryTag = $('.chat-history');
-    me.chatHistoryMsgNoTag = $(".chat-num-messages")
 
-    
-    // ------------------------------------------------------------------------
-    // INIT method
+	me.chatHistoryTag = $('.chat-history');
+	me.chatHistoryMsgNoTag = $(".chat-num-messages")
 
-    me.init = function() 
-	{
+
+	// ------------------------------------------------------------------------
+	// INIT method
+
+	me.init = function () {
 		me.chatViewTag.hide();
-		if( !me.curUser)
-		{
+		if (!me.curUser) {
 			me.initChatMsgTag.show().html("Loading ...");
 		}
 
-        // Add Emoji in Emoji Dashboard
-        for( var i=0; i<emojiCodes.length; i++ )
-        {
-            var liTag = $("<li></li>");
-            liTag.val("&#" + emojiCodes[i]+ ";")
-            liTag.append("&#" + emojiCodes[i]+ ";");
+		// Add Emoji in Emoji Dashboard
+		for (var i = 0; i < emojiCodes.length; i++) {
+			var liTag = $("<li></li>");
+			liTag.val("&#" + emojiCodes[i] + ";")
+			liTag.append("&#" + emojiCodes[i] + ";");
 
-            me.emojjiDashboardTag.find("ul").append(liTag);
-        }
+			me.emojjiDashboardTag.find("ul").append(liTag);
+		}
 
-        // Get contact list of username
-        $.get( me.chatServerURL + "/users?username=" + encodeURIComponent(me.username),{}, function( userProfile )
-		{
+		// Get contact list of username
+		$.get( me.chatServerURL + INFO.chatPath + "/users?username=" + encodeURIComponent(me.username), {}, function (userProfile) {
 			me.initSocket();
 
-            me.curUser = userProfile.curUser;
+			me.curUser = userProfile.curUser;
 			me.initChatMsgTag.show().html(`Welcome, ${me.curUser.fullName}`);
-			
 
-            // Render contact list
-            me.outputUsers( userProfile );
 
-            // Update the contact list status
-            me.users.forEach( (user) => {  me.setUserStatus(user);  } );
+			// Render contact list
+			me.outputUsers(userProfile);
 
-        });
+			// Update the contact list status
+			me.users.forEach((user) => { me.setUserStatus(user); });
+
+		});
 
 		// Init Chat form
 		me.editContactListTag.attr("mode", "hide");
 		me.searchContactNameTag.val("");
 		me.addUserBtnTag.hide();
-		
-
-        me.setUp_Events();
-    };
 
 
-    // =====================================================================
-    // For Socket
+		me.setUp_Events();
+	};
 
-    me.initSocket = function()
-    {
+
+	// =====================================================================
+	// For Socket
+
+	me.initSocket = function () {
 		var option = {
 			reconnectionDelayMax: 1000,
 			withCredentials: true,
-		// path: ( WsCallManager.isLocalDevCase ) ? '': "/ws/chat/",  // PATH should be changed?  for localhost?
-			extraHeaders: {  "Access-Control-Allow-Origin": "origin-list"  },
+			//path: ( WsCallManager.isLocalDevCase ) ? '': "/ws/chat/",  // PATH should be changed?  for localhost?
+			extraHeaders: { "Access-Control-Allow-Origin": "origin-list" },
 			autoConnect: false,
 			auth: { username: me.username }
-	  	};		
+		};
 
-		//if ( !WsCallManager.isLocalDevCase ) option.path = '/ws/chat';
+		if ( !WsCallManager.isLocalDevCase && INFO.chatPath ) option.path = INFO.chatPath; // '/ws/chat';
 
-        me.socket = io( me.chatServerURL, option );
+		me.socket = io(me.chatServerURL, option);
 
 		// Register a catch-all listener, which is very useful during development:
 		me.socket.onAny((event, ...args) => {
 			console.log(event, args);
 		});
-		
+
 		const sessionID = localStorage.getItem("sessionID");
 		if (sessionID) {
 			// me.socket.auth = { sessionID, username: me.username };
 			me.socket.auth = { sessionID };
 		}
-		else
-		{
+		else {
 			me.socket.auth = { username: me.username };
 		}
 
 		me.socket.connect();
-		
+
 		me.chatViewTag.hide();
 
 		me.socketEventListener();
-    }
+	}
 
-    me.socketEventListener = function()
-    {
-	  	// ---------------------------------------------------------------------------
+	me.socketEventListener = function () {
+		// ---------------------------------------------------------------------------
 		// SocketIO Connection Event Listener
 
 		me.socket.on("connect", () => {
-		
+
 			console.log('Socket is connected.');
 
-			const user = {username: me.username, connected: true};
-			me.setUserStatus( user );
+			const user = { username: me.username, connected: true };
+			me.setUserStatus(user);
 
-            
-            var offlineMessages = getOfflineMessages();
-            for( i=offlineMessages.length - 1; i>=0; i-- )
-            {
-                const data = offlineMessages[i];
-                me.socket.emit('private_message', data );
-            }
-			
+
+			var offlineMessages = getOfflineMessages();
+			for (i = offlineMessages.length - 1; i >= 0; i--) {
+				const data = offlineMessages[i];
+				me.socket.emit('private_message', data);
+			}
+
 		});
-		  
+
 		me.socket.on("disconnect", () => {
 
 			// var usernameList = Object.keys( me.users );
@@ -166,30 +157,31 @@ function ChatApp( username )
 
 		});
 
-		me.socket.on('connect_error', function(err) {
+		me.socket.on('connect_error', function (err) {
+
+			console.log( err );
+
 			if (err.message === "invalid username") {
-                console.log( err.message );
+				console.log(err.message);
 
-                const sessionID = localStorage.getItem("sessionID");
-                if (sessionID) {
-                    me.socket.auth = { sessionID, username: me.username };
-                }
-                else
-                {
-                    me.socket.auth = { username: me.username };
-                }
+				const sessionID = localStorage.getItem("sessionID");
+				if (sessionID) {
+					me.socket.auth = { sessionID, username: me.username };
+				}
+				else {
+					me.socket.auth = { username: me.username };
+				}
 
-                me.socket.connect();
+				me.socket.connect();
 			}
-			else
-			{
+			else {
 				console.log('Failed to connect to server');
 			}
 		});
 
 		// END - SocketIO Connection Event Listener
 		// ---------------------------------------------------------------------------
-		
+
 
 		me.socket.on("session", ({ sessionID, userID, username }) => {
 			// Attach the session ID to the next reconnection attempts
@@ -218,17 +210,16 @@ function ChatApp( username )
 			me.setUserStatus(user);
 		});
 
-		me.socket.on('new_user_created', ( userData ) => {
-			const found = Utils.findItemFromList( userData.contacts, me.curUser.username, "contactName" );
-			if( found )
-			{
-				me.curUser.contacts.push({contactName: userData.username, hasNewMessages: found.hasNewMessages });
-				me.appendUserInContactList( userData );
+		me.socket.on('new_user_created', (userData) => {
+			const found = Utils.findItemFromList(userData.contacts, me.curUser.username, "contactName");
+			if (found) {
+				me.curUser.contacts.push({ contactName: userData.username, hasNewMessages: found.hasNewMessages });
+				me.appendUserInContactList(userData);
 			}
 		});
-	
-		me.socket.on('contact_removed', (contactName ) => {
-			me.curUser.contacts = Utils.removeFromArray( me.curUser.contacts, contactName, "contactName" );
+
+		me.socket.on('contact_removed', (contactName) => {
+			me.curUser.contacts = Utils.removeFromArray(me.curUser.contacts, contactName, "contactName");
 			me.userListTag.find(`li[username="${contactName}"]`).remove();
 		});
 
@@ -236,285 +227,257 @@ function ChatApp( username )
 		// ---------------------------------------------------------------------------
 
 
-		
-	  	// ---------------------------------------------------------------------------
+
+		// ---------------------------------------------------------------------------
 		// For "Message" Event Listeners 
 
-		me.socket.on('message_list', ( data ) => {
-			const messages = Utils.mergeWithOfflineMessages( data.messages, data.users.username1, data.users.username2 );
-			me.outputMessageList( messages );
+		me.socket.on('message_list', (data) => {
+			const messages = Utils.mergeWithOfflineMessages(data.messages, data.users.username1, data.users.username2);
+			me.outputMessageList(messages);
 			me.userListTag.find(`[username='${me.selectedUser.username}']`).find(".has-new-message").hide();
 
 			me.socket.emit("has_new_message", { userData: me.curUser, contactName: me.selectedUser.username, hasNewMessages: false });
 
 		});
-		
-		me.socket.on("receive_message", ({userData, contacts}) => {
+
+		me.socket.on("receive_message", ({ userData, contacts }) => {
 			const contactList = userData.contacts;
-			if( me.curUser.username == userData.username )
-			{
+			if (me.curUser.username == userData.username) {
 				me.curUser = userData;
 			}
 
-			for( var i=0; i< contactList.length; i++ )
-			{
+			for (var i = 0; i < contactList.length; i++) {
 				const contactInfo = contactList[i];
 				const userTag = me.userListTag.find(`[username='${contactInfo.contactName}']`);
-				if( userTag.length > 0 )
-				{
-					if( contactInfo.hasNewMessages )
-					{
-						const contactTag = me.moveContactOnTop( contactInfo.contactName );
-						if( contactInfo.contactName !== this.selectedUser.username )
-						{
+				if (userTag.length > 0) {
+					if (contactInfo.hasNewMessages) {
+						const contactTag = me.moveContactOnTop(contactInfo.contactName);
+						if (contactInfo.contactName !== this.selectedUser.username) {
 							contactTag.find(".has-new-message").show();
 						}
-						else
-						{
+						else {
 							contactTag.find(".has-new-message").hide();
 							me.socket.emit("has_new_message", { userData: me.curUser, contactName: me.selectedUser.username, hasNewMessages: false });
 						}
 					}
-					else
-					{
+					else {
 						userTag.find(".has-new-message").hide();
 					}
 				}
-				else if( contacts != undefined )
-				{
-					const found = Utils.findItemFromList( contacts, contactInfo.contactName, "username");
-					if( found )
-					{
-						me.appendUserInContactList( found, true );
+				else if (contacts != undefined) {
+					const found = Utils.findItemFromList(contacts, contactInfo.contactName, "username");
+					if (found) {
+						me.appendUserInContactList(found, true);
 					}
 				}
 			}
 		});
 
 		me.socket.on('sendMsg', data => {
-			me.outputMessage( data );
+			me.outputMessage(data);
 
-			if( this.selectedUser == undefined || data.receiver != this.selectedUser.username )
-			{
+			if (this.selectedUser == undefined || data.receiver != this.selectedUser.username) {
 				me.socket.emit("has_new_message", { userData: me.curUser, contactName: data.sender, hasNewMessages: true });
 			}
-			
+
 		})
 
-		me.socket.on('user_disconnected', ( username ) => {
-			const user = {username, connected: false }
-			me.setUserStatus( user );
+		me.socket.on('user_disconnected', (username) => {
+			const user = { username, connected: false }
+			me.setUserStatus(user);
 		});
 
-    }
+	}
 
 	// For Socket - END
 	// =====================================================================
 
 
 
-    // ------------------------------------------------------------------------
-    // HTML Tags's events
+	// ------------------------------------------------------------------------
+	// HTML Tags's events
 
-    me.setUp_Events = function()
-    {
-        me.sendBtnTag.off("click").on("click", function(e){
-            me.submitChatMessage( e )
-        });
-    
-        me.msgTag.off("keypress").on("keypress", function(e){
-            if( e.key === "Enter") {
-                me.submitChatMessage( e )
-            }
-        });
-
-		me.searchContactNameTag.off("keyup").on("keyup", function(){
-           me.searchContactUsers();
-        });
-
-		me.addUserBtnTag.off("click").on("click", function(){
-			me.socket.emit("create_new_user", {username1: me.curUser.username, username2: me.searchContactNameTag.val() });
+	me.setUp_Events = function () {
+		me.sendBtnTag.off("click").on("click", function (e) {
+			me.submitChatMessage(e)
 		});
 
-		me.editContactListTag.off("click").on("click", function(){
+		me.msgTag.off("keypress").on("keypress", function (e) {
+			if (e.key === "Enter") {
+				me.submitChatMessage(e)
+			}
+		});
+
+		me.searchContactNameTag.off("keyup").on("keyup", function () {
+			me.searchContactUsers();
+		});
+
+		me.addUserBtnTag.off("click").on("click", function () {
+			me.socket.emit("create_new_user", { username1: me.curUser.username, username2: me.searchContactNameTag.val() });
+		});
+
+		me.editContactListTag.off("click").on("click", function () {
 			const mode = $(this).attr("mode")
-			if( mode == "hide" )
-			{
+			if (mode == "hide") {
 				me.userListTag.find(".remove-icon").show();
 				$(this).attr("mode", "show");
 			}
-			else if( mode == "show" )
-			{
+			else if (mode == "show") {
 				me.userListTag.find(".remove-icon").hide();
 				$(this).attr("mode", "hide");
 			}
 		});
 
-        // // // Log-out button
+		// // // Log-out button
 		// me.btnChatBackBtnTag.click(function() {
 		// 	me.socket.emit("disconnect");
 		// }); 
 
-        // me.logoutBtnTag.click(function() {
-        //     const leaveRoom = confirm('Are you sure you want to log-out ?');
-        //     if (leaveRoom) {
-        //         me.socket.off("connect_error");
-        //         window.location = 'index.html';
-        //     } 
-        //     else {
-        //     }
-        // }); 
+		// me.logoutBtnTag.click(function() {
+		//     const leaveRoom = confirm('Are you sure you want to log-out ?');
+		//     if (leaveRoom) {
+		//         me.socket.off("connect_error");
+		//         window.location = 'index.html';
+		//     } 
+		//     else {
+		//     }
+		// }); 
 
-        $(document).off("click").on("click", function(e){
-            me.emojjiDashboardTag.slideUp('fast');
-        });
-        
-
-        // Show Emoji Dashboard
-        me.showEmojiDashboardTag.off("click").on("click", function(e){
-            me.emojjiDashboardTag.slideToggle('fast');
-            e.stopPropagation();
-        });
-
-        me.emojjiDashboardTag.find("ul").find("li").off("click").on("click", function() {
-            Utils.insertText( me.msgTag, $(this).html() );
-            me.emojjiDashboardTag.slideUp('fast');
-        });
+		$(document).off("click").on("click", function (e) {
+			me.emojjiDashboardTag.slideUp('fast');
+		});
 
 
-        me.uploadInputTag.off("change").on("change", function(event){
-            var files = event.target.files;
-            if( ( files != undefined || files != null ) && files.length > 0 )
-            {
-                const file = files[0];
+		// Show Emoji Dashboard
+		me.showEmojiDashboardTag.off("click").on("click", function (e) {
+			me.emojjiDashboardTag.slideToggle('fast');
+			e.stopPropagation();
+		});
+
+		me.emojjiDashboardTag.find("ul").find("li").off("click").on("click", function () {
+			Utils.insertText(me.msgTag, $(this).html());
+			me.emojjiDashboardTag.slideUp('fast');
+		});
+
+
+		me.uploadInputTag.off("change").on("change", function (event) {
+			var files = event.target.files;
+			if ((files != undefined || files != null) && files.length > 0) {
+				const file = files[0];
 				const reader = new FileReader();
-				reader.addEventListener( "load", () => {
-					const type = ( file.type.indexOf("image/") == 0 ) ? "IMAGE" : "FILE";
-                    const data = Utils.formatMessage( me.curUser.username, me.selectedUser.username, reader.result, type, file.name );
+				reader.addEventListener("load", () => {
+					const type = (file.type.indexOf("image/") == 0) ? "IMAGE" : "FILE";
+					const data = Utils.formatMessage(me.curUser.username, me.selectedUser.username, reader.result, type, file.name);
 
-                    if( !me.socket.connected )
-                    {
-                        saveOfflineMessage( data );
-                    }
-                    else
-                    {
-                        me.socket.emit("private_message", data );
-                    }
+					if (!me.socket.connected) {
+						saveOfflineMessage(data);
+					}
+					else {
+						me.socket.emit("private_message", data);
+					}
 
 					// Re-order the contact list
-					me.moveContactOnTop( me.selectedUser.username );
+					me.moveContactOnTop(me.selectedUser.username);
 
 					// const userTag = me.userListTag.find(`[username='${me.selectedUser.username}']`);
 					// const contactData = JSON.parse( userTag.attr("user") );
 					// userTag.remove();
 					// me.appendUserInContactList( contactData, false );
-					
-					
-					me.outputMessage( data );
+
+
+					me.outputMessage(data);
 				});
 
-				reader.readAsDataURL( file );
-            }
-        })
+				reader.readAsDataURL(file);
+			}
+		})
 
-    }
+	}
 
-	me.moveContactOnTop = function(contactName )
-	{
+	me.moveContactOnTop = function (contactName) {
 		// Re-order the contact list
 		const userTag = me.userListTag.find(`[username='${contactName}']`);
-		const contactData = JSON.parse( userTag.attr("user") );
+		const contactData = JSON.parse(userTag.attr("user"));
 		userTag.remove();
-		return me.appendUserInContactList( contactData, false );
+		return me.appendUserInContactList(contactData, false);
 	}
 
 
-    // ------------------------------------------------------------------------
-    // Supportive methods - For Users
-    
-	me.searchContactUsers = function(){
+	// ------------------------------------------------------------------------
+	// Supportive methods - For Users
+
+	me.searchContactUsers = function () {
 		me.userListTag.find("li").hide();
 		var searchText = me.searchContactNameTag.val().toUpperCase();
 
-		if( searchText != "" )
-		{
+		if (searchText != "") {
 			let canAddNew = true;
-			me.userListTag.find("li").each( function(){
+			me.userListTag.find("li").each(function () {
 				var fullName = $(this).html();
 				var userName = $(this).attr("user");
-				if( fullName.toUpperCase().indexOf( searchText ) >= 0 || userName.toUpperCase().indexOf( searchText ) >= 0 )
-				{
+				if (fullName.toUpperCase().indexOf(searchText) >= 0 || userName.toUpperCase().indexOf(searchText) >= 0) {
 					$(this).show();
 
-					if( fullName.toUpperCase() == searchText || userName.toUpperCase() == searchText )
-					{
+					if (fullName.toUpperCase() == searchText || userName.toUpperCase() == searchText) {
 						canAddNew = false;
 					}
 				}
 			});
 
-			if( canAddNew )
-			{
+			if (canAddNew) {
 				me.addUserBtnTag.show();
 			}
-			else
-			{
+			else {
 				me.addUserBtnTag.hide();
 			}
 		}
-		else
-		{
+		else {
 			me.userListTag.find("li").show();
 			me.addUserBtnTag.hide();
 		}
 	}
 
-    me.setCurrentUserInfo = function()
-    {
-        me.curUserDivTag.attr(`username="${me.curUser.username}"`);
-	    me.curUsernameTag.html( me.curUser.fullName );
+	me.setCurrentUserInfo = function () {
+		me.curUserDivTag.attr(`username="${me.curUser.username}"`);
+		me.curUsernameTag.html(me.curUser.fullName);
 
-        // For curUser icon background-color
-        me.curUserIconTag.html( me.curUser.fullName.substring(0, 2).toUpperCase() );
-        // me.curUserIconTag.css("backgroundColor", "#" + randomColor);
-        me.curUserIconTag.css("color", "#" + Utils.stringToDarkColour( me.curUser.username ));
-        me.curUserIconTag.css("backgroundColor", Utils.stringToLightColour( me.curUser.username ));
-    }
+		// For curUser icon background-color
+		me.curUserIconTag.html(me.curUser.fullName.substring(0, 2).toUpperCase());
+		// me.curUserIconTag.css("backgroundColor", "#" + randomColor);
+		me.curUserIconTag.css("color", "#" + Utils.stringToDarkColour(me.curUser.username));
+		me.curUserIconTag.css("backgroundColor", Utils.stringToLightColour(me.curUser.username));
+	}
 
 
-    // Output user list
-    me.outputUsers = function( data ) {
+	// Output user list
+	me.outputUsers = function (data) {
 
-        me.curUser = data.curUser;
-        me.setCurrentUserInfo();
+		me.curUser = data.curUser;
+		me.setCurrentUserInfo();
 
 		me.userListTag.html("");
-		
+
 		// Add the proper list here
 		data.contacts.forEach((user) => {
-			
-			if( user != null )
-			{
+
+			if (user != null) {
 				const contactName = user.username;
-				if( contactName != me.username )
-				{
-					me.appendUserInContactList( user );
+				if (contactName != me.username) {
+					me.appendUserInContactList(user);
 				}
 			}
-			
+
 		});
 	}
 
-	me.appendUserInContactList = function( userData, isAppend )
-	{
-		if( me.userListTag.find(`[username='${userData.username}']`).length == 0 )
-		{
+	me.appendUserInContactList = function (userData, isAppend) {
+		if (me.userListTag.find(`[username='${userData.username}']`).length == 0) {
 			const contactName = userData.username;
-			const firstChar = userData.fullName.substring(0,2).toUpperCase();
-			const bgColorIcon = Utils.stringToLightColour( contactName );
-			const colorIcon = Utils.stringToDarkColour( contactName );
-			const userInfo = JSON.stringify( userData );
-			const hasNewMessages = Utils.findItemFromList( me.curUser.contacts, userData.username, "contactName").hasNewMessages;
+			const firstChar = userData.fullName.substring(0, 2).toUpperCase();
+			const bgColorIcon = Utils.stringToLightColour(contactName);
+			const colorIcon = Utils.stringToDarkColour(contactName);
+			const userInfo = JSON.stringify(userData);
+			const hasNewMessages = Utils.findItemFromList(me.curUser.contacts, userData.username, "contactName").hasNewMessages;
 
 			// Set status "offline" for all users in contact list. Will update after getting online user list / OR when an user is online
 			var userTag = $(`<li class="clearfix" style="cursor:pointer;" username='${contactName}' user='${userInfo}'>
@@ -529,19 +492,16 @@ function ChatApp( username )
 								</div>
 							</li>`);
 
-			if( hasNewMessages )
-			{
+			if (hasNewMessages) {
 				userTag.find(".has-new-message").show();
 			}
 
-			me.setupEvent_UserItemOnClick( userTag );
-			if( isAppend == undefined || isAppend )
-			{
-				me.userListTag.append( userTag );
+			me.setupEvent_UserItemOnClick(userTag);
+			if (isAppend == undefined || isAppend) {
+				me.userListTag.append(userTag);
 			}
-			else if( !isAppend )
-			{
-				me.userListTag.prepend( userTag );
+			else if (!isAppend) {
+				me.userListTag.prepend(userTag);
 			}
 
 			return userTag;
@@ -550,63 +510,61 @@ function ChatApp( username )
 
 	// Select an user
 
-	me.selectContactUser = function( userTag ) {
-		me.selectedUser = JSON.parse( userTag.attr("user") ); 
-		me.chatWithUserTag.html( `Chat with ${me.selectedUser.fullName}` );
-		me.chatWithIconTag.html( me.selectedUser.fullName.substring(0,2).toUpperCase() )
-		me.chatWithIconTag.css( "color", "#" + Utils.stringToDarkColour( me.selectedUser.username ) );
-		me.chatWithIconTag.css( "backgroundColor", Utils.stringToLightColour( me.selectedUser.username ) );
+	me.selectContactUser = function (userTag) {
+		me.selectedUser = JSON.parse(userTag.attr("user"));
+		me.chatWithUserTag.html(`Chat with ${me.selectedUser.fullName}`);
+		me.chatWithIconTag.html(me.selectedUser.fullName.substring(0, 2).toUpperCase())
+		me.chatWithIconTag.css("color", "#" + Utils.stringToDarkColour(me.selectedUser.username));
+		me.chatWithIconTag.css("backgroundColor", Utils.stringToLightColour(me.selectedUser.username));
 		me.chatHistoryTag.find("ul").html("");
 
-		
+
 		me.chatViewTag.show();
 		me.initChatMsgTag.hide();
 
-		me.socket.emit('get_message_list', { username1: me.username, username2: me.selectedUser.username } );
+		me.socket.emit('get_message_list', { username1: me.username, username2: me.selectedUser.username });
 	}
 
-    me.setupEvent_UserItemOnClick = function( userTag ) {
+	me.setupEvent_UserItemOnClick = function (userTag) {
 		// Show the conversation when a contact is selected
-		userTag.find(".user-icon").click(function(e){
+		userTag.find(".user-icon").click(function (e) {
 			me.selectContactUser(userTag)
 		});
-		userTag.find(".about").click(function(e){
+		userTag.find(".about").click(function (e) {
 			me.selectContactUser(userTag)
 		});
 
 		// Remove a contact in list
-		userTag.find(".remove-icon").click(function(e){
+		userTag.find(".remove-icon").click(function (e) {
 			var ok = confirm("Are you sure you want to remove this contact ?");
-			if( ok )
-			{
-				const contactUser = JSON.parse( userTag.attr("user") ); 
-				me.socket.emit("remove_contact", { userData : me.curUser, contactName: contactUser.username });
+			if (ok) {
+				const contactUser = JSON.parse(userTag.attr("user"));
+				me.socket.emit("remove_contact", { userData: me.curUser, contactName: contactUser.username });
 			}
 		});
 	}
-   
-    me.setUserStatus = function(user) {
-        let userTag = $(`[username="${user.username}"]`);
-        if( userTag.length > 0 )
-        {
-            var statusTag = userTag.find("div.status");
-            const status = user.connected ? "online" : "offline";
-            statusTag.find("i").removeClass("offline").removeClass("online").addClass(status);
-            statusTag.find("span").html(status);
-        }
-        
-    }
+
+	me.setUserStatus = function (user) {
+		let userTag = $(`[username="${user.username}"]`);
+		if (userTag.length > 0) {
+			var statusTag = userTag.find("div.status");
+			const status = user.connected ? "online" : "offline";
+			statusTag.find("i").removeClass("offline").removeClass("online").addClass(status);
+			statusTag.find("span").html(status);
+		}
+
+	}
 
 	me.initReactiveProperties = (user) => {
 		user.messages = [];
 		// user.hasNewMessages = false;
 	};
 
-    // ------------------------------------------------------------------------
-    // Supportive methods - For messages
+	// ------------------------------------------------------------------------
+	// Supportive methods - For messages
 
-    // Message submit
-	me.submitChatMessage = function(e) {
+	// Message submit
+	me.submitChatMessage = function (e) {
 		e.preventDefault();
 
 		// Get message.msg
@@ -616,91 +574,78 @@ function ChatApp( username )
 			return false;
 		}
 
-        const data = Utils.formatMessage( me.curUser.username, me.selectedUser.username, msg );
-		if( me.socket.connected )
-		{
+		const data = Utils.formatMessage(me.curUser.username, me.selectedUser.username, msg);
+		if (me.socket.connected) {
 			// Emit message to server
-            me.socket.emit("private_message", data);
+			me.socket.emit("private_message", data);
 			// me.socket.emit("has_new_message", { userData: me.selectedUser, contactName: me.curUser.username, hasNewMessages: true });
 		}
-		else
-		{
-			saveOfflineMessage( data );
+		else {
+			saveOfflineMessage(data);
 		}
 
-		
-		me.moveContactOnTop( me.selectedUser.username );
 
-		me.outputMessage( data );
+		me.moveContactOnTop(me.selectedUser.username);
+
+		me.outputMessage(data);
 
 		// Clear input
 		me.msgTag.val("");
 	}
 
-    
-    // Output message list
-    me.outputMessageList = function( list ) {
 
-        for( let i=0; i<list.length; i++ )
-        {
-            me.outputMessage( list[i] );
-        }
+	// Output message list
+	me.outputMessageList = function (list) {
+
+		for (let i = 0; i < list.length; i++) {
+			me.outputMessage(list[i]);
+		}
 
 	}
 
 
-    // Output a message
-    me.outputMessage = function(message) {
+	// Output a message
+	me.outputMessage = function (message) {
 
-		if( me.selectedUser != undefined )
-		{
-			if( ( me.username == message.sender && me.selectedUser.username == message.receiver ) ||
-				( me.username == message.receiver && me.selectedUser.username == message.sender ) )
-			{
+		if (me.selectedUser != undefined) {
+			if ((me.username == message.sender && me.selectedUser.username == message.receiver) ||
+				(me.username == message.receiver && me.selectedUser.username == message.sender)) {
 				// Only remove message from localStorage if the socket is online and this message existed 
-				if( me.socket.connected )
-				{ 
-					removeOfflineMessage( message ); 
+				if (me.socket.connected) {
+					removeOfflineMessage(message);
 				}
-	
+
 				var messageTag = me.chatHistoryTag.find(`ul li[id="${message.datetime}"]`);
-				if( messageTag.length > 0 ) 
-				{
-					if( messageTag.hasClass("offline") )
-					{
+				if (messageTag.length > 0) {
+					if (messageTag.hasClass("offline")) {
 						messageTag.removeClass("offline");
 					}
 				}
-				else
-				{
+				else {
 					var messageTextDivTag;
-					if( message.filetype != undefined )
-					{
-						if( message.filetype == "IMAGE" )
-						{
+					if (message.filetype != undefined) {
+						if (message.filetype == "IMAGE") {
 							messageTextDivTag = `<img style="width: 300px;" src="${message.msg}">`;
 						}
-						else
-						{
+						else {
 							messageTextDivTag = `<a href="${message.msg}" target="_blank">${message.name}</a>`;
 						}
-					} 
+					}
 					else {
 						const utf8 = new Uint8Array(
 							Array.prototype.map.call(
-								message.msg, 
+								message.msg,
 								c => c.charCodeAt(0)
 							)
 						);
 						const msg = new TextDecoder('utf8').decode(utf8);
 						messageTextDivTag = `<span>${msg}</span>`;
 					}
-			
-			
-					const offlineClazz = ( me.socket.connected ) ? "" : "offline";
-	
-					if( message.sender == me.username )
-					{
+
+
+					const offlineClazz = (me.socket.connected) ? "" : "offline";
+
+					if (message.sender == me.username) {
 						const senderFullName = me.curUser.fullName;
 						messageTag = $(`<li id='${message.datetime}' class="${offlineClazz}">
 											<div class="message-data">
@@ -713,8 +658,7 @@ function ChatApp( username )
 												</div>
 										</li>`)
 					}
-					else
-					{
+					else {
 						const senderFullName = me.selectedUser.fullName;
 						messageTag = $(`<li id='${message.datetime}' class="clearfix ${offlineClazz}">
 								<div class="message-data align-right">
@@ -726,9 +670,9 @@ function ChatApp( username )
 								</div>
 							</li>`)
 					}
-	
-					me.chatHistoryTag.find("ul").append( messageTag );
-					me.chatHistoryMsgNoTag.html( "already " + NumberUtils.formatDisplayNumber( me.chatHistoryTag.find("ul li").length ) + " messages" );
+
+					me.chatHistoryTag.find("ul").append(messageTag);
+					me.chatHistoryMsgNoTag.html("already " + NumberUtils.formatDisplayNumber(me.chatHistoryTag.find("ul li").length) + " messages");
 					me.chatHistoryTag.scrollTop(me.chatHistoryTag[0].scrollHeight);
 				}
 			}
@@ -736,8 +680,8 @@ function ChatApp( username )
 	}
 
 
-    // ------------------------------------------------------------------------
-    // Run INIT
+	// ------------------------------------------------------------------------
+	// Run INIT
 
-    me.init();
+	me.init();
 }
