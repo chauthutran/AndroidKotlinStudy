@@ -192,21 +192,29 @@ function cwsRender()
 			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
 			else if ( areaId === 'settingsPage') me.settingsApp.render();
 			// [JOB_AID]
-			else if ( areaId === 'jobAids') 
+			else if ( areaId === Menu.menuJson_JobAids.id ) 
 			{ 
-				var styleStr = ' style="width:100%; height: 100%; overflow:auto; border:none;"';
-  				$( '#divJobAid' ).html( '' ).show().append( '<iframe class="jobAidIFrame" src="' + JobAidHelper.jobAid_startPagePath + '" ' 
-				  + styleStr + '>iframe not compatible..</iframe>' );
+				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
 
-		        //$( '#jobAidIFrame' ).attr( 'src', JobAidHelper.jobAid_startPagePath );
-        		// NEW: add '?v=234234' new Date().getTime() to avoid the caching of previous html <-- did not work since it is considered not same by service worker..
-				//$( '#jobAidIFrame' ).attr( 'data', JobAidHelper.jobAid_startPagePath );
+				if ( ConfigManager.getSettings().jobAid_newDesign )
+				{
+					var jobAidDivTag = $( '#jobAidDiv' ).show();
 
-				//$( '#divJobAid' ).show();
+					jobAidDivTag.find( 'img.btnBack' ).off( 'click' ).click( () =>
+					{
+						 if ( $( 'img.rotateImg' ).length  ) $( 'img.rotateImg' ).click();
+						 else jobAidDivTag.hide();
+					});
+				}
+				else
+				{
+					var styleStr = ' style="width:100%; height: 100%; overflow:auto; border:none;"';
+					$( '#divJobAid' ).html( '' ).show().append( '<iframe class="jobAidIFrame" src="' + JobAidHelper.jobAid_startPagePath + '" ' 
+					+ styleStr + '>iframe not compatible..</iframe>' ); 
+				}
 			}
-			else if ( areaId === 'chat') 
+			else if ( areaId === Menu.menuJson_Chat.id ) 
 			{ 
-				console.log( 'chat area render started' );
 				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
 
 				var chatUserName = ( INFO.chatUserName ) ? INFO.chatUserName:  INFO.login_UserName; // '+447897018987';
@@ -223,7 +231,7 @@ function cwsRender()
 					 me.chatAppObj.socket.disconnect();
 				});				
 			}
-			else if ( areaId === 'hnqis_rdqaPage' ) {  }
+			else if ( areaId === Menu.menuJson_HNQIS_RDQA.id ) {  }
 			else if ( areaId === 'aboutPage') me.aboutApp.render();
 			else
 			{

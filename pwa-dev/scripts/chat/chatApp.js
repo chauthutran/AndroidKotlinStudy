@@ -264,14 +264,20 @@ function ChatApp( username )
 				{
 					if( contactInfo.hasNewMessages )
 					{
-						userTag.remove();
+						// const contactData = JSON.parse( userTag.attr("user") );
+						// userTag.remove();
+						// const contactTag = me.appendUserInContactList( contactData, false );
 						
-						const contactData = JSON.parse( userTag.attr("user") );
-						const contactTag = me.appendUserInContactList( contactData, false );
-						// if( contactTag != undefined )
-						// {
-						contactTag.find(".has-new-message").show();
-						// }
+						const contactTag = me.moveContactOnTop( contactInfo.contactName );
+						if( contactInfo.contactName !== this.selectedUser.username )
+						{
+							contactTag.find(".has-new-message").show();
+						}
+						else
+						{
+							contactTag.find(".has-new-message").hide();
+							me.socket.emit("has_new_message", { userData: me.curUser, contactName: me.selectedUser.username, hasNewMessages: false });
+						}
 					}
 					else
 					{
@@ -288,6 +294,7 @@ function ChatApp( username )
 			{
 				me.socket.emit("has_new_message", { userData: me.curUser, contactName: data.sender, hasNewMessages: true });
 			}
+			
 		})
 
 		me.socket.on('user_disconnected', ( username ) => {
@@ -390,6 +397,15 @@ function ChatApp( username )
                         me.socket.emit("private_message", data );
                     }
 
+					// Re-order the contact list
+					me.moveContactOnTop( me.selectedUser.username );
+
+					// const userTag = me.userListTag.find(`[username='${me.selectedUser.username}']`);
+					// const contactData = JSON.parse( userTag.attr("user") );
+					// userTag.remove();
+					// me.appendUserInContactList( contactData, false );
+					
+					
 					me.outputMessage( data );
 				});
 
@@ -398,6 +414,15 @@ function ChatApp( username )
         })
 
     }
+
+	me.moveContactOnTop = function(contactName )
+	{
+		// Re-order the contact list
+		const userTag = me.userListTag.find(`[username='${contactName}']`);
+		const contactData = JSON.parse( userTag.attr("user") );
+		userTag.remove();
+		return me.appendUserInContactList( contactData, false );
+	}
 
 
     // ------------------------------------------------------------------------
@@ -595,6 +620,9 @@ function ChatApp( username )
 			saveOfflineMessage( data );
 		}
 
+		
+		me.moveContactOnTop( me.selectedUser.username );
+
 		me.outputMessage( data );
 
 		// Clear input
@@ -621,13 +649,6 @@ function ChatApp( username )
 			if( ( me.username == message.sender && me.selectedUser.username == message.receiver ) ||
 				( me.username == message.receiver && me.selectedUser.username == message.sender ) )
 			{
-				// Re-order the contact list
-				const userTag = me.userListTag.find(`[username='${me.selectedUser.username}']`);
-				const contactData = JSON.parse( userTag.attr("user") );
-				userTag.remove();
-				me.appendUserInContactList( contactData, false );
-
-				
 				// Only remove message from localStorage if the socket is online and this message existed 
 				if( me.socket.connected )
 				{ 

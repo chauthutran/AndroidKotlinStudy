@@ -39,7 +39,9 @@ Menu.populateStandardMenuList = function( menuItems )
     if ( ConfigManager.getAreas().options )
     {
         if ( ConfigManager.getAreas().options.jobAids ) {
-            menuItems.push( Menu.menuJson_JobAids );        
+            menuItems.push( Menu.menuJson_JobAids );  
+            
+            // Obsolete..
             $( '.jobAidFiling' ).show();
             $( '.jobAidFileListing' ).show();
         }
