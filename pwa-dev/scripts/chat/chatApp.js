@@ -489,11 +489,15 @@ function ChatApp( username )
 		// Add the proper list here
 		data.contacts.forEach((user) => {
 			
-			const contactName = user.username;
-			if( contactName != me.username )
+			if( user != null )
 			{
-				me.appendUserInContactList( user );
+				const contactName = user.username;
+				if( contactName != me.username )
+				{
+					me.appendUserInContactList( user );
+				}
 			}
+			
 		});
 	}
 
