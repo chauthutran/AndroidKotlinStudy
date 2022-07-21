@@ -250,6 +250,7 @@ function ChatApp( username )
 		});
 		
 		me.socket.on("receive_message", ({userData, contacts}) => {
+
 			const contactList = userData.contacts;
 			if( me.curUser.username == userData.username )
 			{
