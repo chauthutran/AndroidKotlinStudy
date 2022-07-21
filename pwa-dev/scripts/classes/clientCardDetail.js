@@ -9,6 +9,9 @@ function ClientCardDetail( clientId )
     me.actionObj;
     me.cardSheetFullTag;
     me.timedOut1stTabOpen;
+    me.bExternalPartner = false;
+    me.bClientCreator = false;
+    me.bClientLimitedAccess = false;
 
 	// ===============================================
 	// === Initialize Related ========================
@@ -19,15 +22,23 @@ function ClientCardDetail( clientId )
         var preCall = undefined;
         var clientJson = ClientDataManager.getClientById( me.clientId );
 
+        me.bExternalPartner = ConfigManager.externalPartner();
+        me.bClientCreator = ClientDataManager.checkClientCreator( clientJson, SessionManager.sessionData.login_UserName );
+
         // If current user belongs to externerPartner role, and , Optional ActivityTab removal + client Edit + relationship  <-- View only?
-        if ( ConfigManager.externalPartner() && !ClientDataManager.checkClientCreator( clientJson, SessionManager.sessionData.login_UserName ) )
+        if ( me.bExternalPartner && !me.bClientCreator )
         {
-            INFO.clientReadOnly = clientJson;
+            INFO.clientLimitedAccess = clientJson;
+            me.bClientLimitedAccess = true;
 
             preCall = function( sheetFullTag ) 
             {
-                sheetFullTag.find( 'li[rel=tab_clientActivities]' ).remove();
-                sheetFullTag.find( 'div[tabButtonId=tab_clientActivities]' ).remove();
+                //sheetFullTag.find( 'li[rel=tab_clientActivities]' ).remove();
+                //sheetFullTag.find( 'div[tabButtonId=tab_clientActivities]' ).remove();
+
+                // INSTEAD, disable the activity ownership...
+                // This, we can check the activitylist
+
 
                 sheetFullTag.find( 'li[rel=tab_relationships]' ).remove();
                 sheetFullTag.find( 'div[tabButtonId=tab_relationships]' ).remove();
@@ -457,15 +468,23 @@ function ClientCardDetail( clientId )
                 Util.evalSort( 'date.capturedLoc', actList_sort, 'asc' );
             }
 
-            for( var i = actList_sort.length - 1; i >= 0; i-- )
+            for ( var i = actList_sort.length - 1; i >= 0; i-- )
             {
                 var activityJson = actList_sort[i];
 
-                try {
-                    var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
-                    activityCardObj.render();
+                var bAllowAccess = true;
+
+                // If the user (login_UserName) is external partner and is not owner of the activity, 
+                if ( me.bClientLimitedAccess && activityJson.activeUser !== SessionManager.sessionData.login_UserName ) bAllowAccess = false;
+
+                if ( bAllowAccess )
+                {
+                    try {
+                        var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
+                        activityCardObj.render();
+                    }
+                    catch( errMsg ) { console.log( 'ERROR in ClientCardDetail.populateActivityCardList, ' + errMsg ); }    
                 }
-                catch( errMsg ) { console.log( 'ERROR in ClientCardDetail.populateActivityCardList, ' + errMsg ); }
             }
 
             TranslationManager.translatePage();
