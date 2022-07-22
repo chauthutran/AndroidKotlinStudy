@@ -28,15 +28,12 @@ JobAidHelper.getCacheKeys = function( callBack )
 	caches.open( JobAidHelper.jobAid_jobTest2 ).then( cache => 
 	{ 
 		cache.keys().then( keys => 
-		{ 
-			callBack( keys );				
+		{
+			callBack( keys, cache );
 		}); 
 	});   
 };
 
-
-// ---------------------------------------------------
-// ---- New Pending Implementations -----
 
 JobAidHelper.renderEachData = function( callBack )
 {
@@ -144,13 +141,22 @@ JobAidHelper.setExtraStatusInfo = function( itemJson, statusFullJson )
 	return itemJson;
 };
 
-// -------------------------------------------
-
-
 JobAidHelper.deleteCacheStorage = async function()
 {
 	return caches.delete( JobAidHelper.jobAid_jobTest2 );
 };
+
+
+// TODO: It is better to store in separate storage...  <-- put the app in other place?
+// The most affortable way is to create new storage name for each 'App Filing' or even new proj pack?
+
+/*  https://docs.w3cub.com/dom/cache/delete
+caches.open('v1').then(function(cache) {
+	cache.delete('/images/image.png').then(function(response) {
+	  someUIUpdateFunction();
+	});
+ })
+*/
 
 
 JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // returnFunc )
@@ -158,20 +164,21 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 	if ( ConnManagerNew.isAppMode_Online() ) 
 	{
 		if ( !options ) options = {};
-		$('.divJobFileLoading').remove();
-
+		$('.divJobFileLoading').remove();			
+		
 		var requestUrl;
 
 		options.isLocal = WsCallManager.checkLocalDevCase(window.location.origin);
 		options.appName = 'pwa-dev';
 		if ( options.isListingApp ) options.projDir = JobAidHelper.NAME_jobListingApp;
-
+	
 		if ( WsCallManager.stageName === 'test' ) options.appName = 'pwa-test';
 		else if ( WsCallManager.stageName === 'stage' ) options.appName = 'pwa-stage';
 		else if ( WsCallManager.stageName === 'prod' ) options.appName = 'wfa';  // 'wfa' vs 'wfa-lac' <-- can use url determination
 
 		requestUrl = (options.isLocal) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
 		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
+
 		
 		// NOTE: For filtering video/audio or audio/video only files, we could do on below nodeJS, but for now, simply filter it with method.
 		// var payload = { 'isLocal': localCase, 'appName': appName, 'isListingApp': options.isListingApp, 'btnParentTag': btnParentTag, 'projDir': options.projDir };
@@ -192,8 +199,8 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 			{
 				var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 
-				// JOB AID 'CONTENT' #1 - SET UP/START LIST  <-- WITH CONFIG FLAG?
-				// JobAidHelper.filingContent_setUp( newFileList, options.projDir );
+				// JOB AID 'CONTENT' #1 - SET UP/START LIST
+				JobAidHelper.filingContent_setUp( newFileList, options.projDir );
 
 				if ( newFileList.length <= 0 ) $( '.spanJobFilingMsg' ).text( 'Empty process list.' );
 				else
@@ -237,11 +244,8 @@ JobAidHelper.sort_filter_files = function( list, options )
 		else if ( options.withoutAudioVideo ) newList = Util.cloneJson( list.filter( item => !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO.concat( JobAidHelper.EXTS_VIDEO ), { upper: true } ) ) );
 		else // options.all
 		{
-			// Sorting option - by Config?  <-- but can be overridable by options (request)
-			var mediaFirst = ( ConfigManager.getJobAidSetting().downloadOrder === "mediaFirst" );
-
 			// Remove audio/video type file names
-			var noMediaList = Util.cloneJson( list.filter( item => 
+			newList = Util.cloneJson( list.filter( item => 
 				( !Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) 
 				&& !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) ) 
 				) );
@@ -250,18 +254,8 @@ JobAidHelper.sort_filter_files = function( list, options )
 			var audioList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
 			var videoList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) );
 	
-			if ( mediaFirst ) // large file types download 1st
-			{
-				Util.mergeArrays( newList, videoList );
-				Util.mergeArrays( newList, audioList );
-				Util.mergeArrays( newList, noMediaList );
-			}
-			else // Media Last
-			{				
-				Util.mergeArrays( newList, noMediaList );
-				Util.mergeArrays( newList, audioList );
-				Util.mergeArrays( newList, videoList );
-			}
+			Util.mergeArrays( newList, audioList );
+			Util.mergeArrays( newList, videoList );	
 		}
 	}
 	catch ( errMsg )
@@ -309,83 +303,112 @@ JobAidHelper.filingContent_setUp = function( newFileList, projDir )
 	}
 };
 
-
 JobAidHelper.JobFilingProgress = function( msgData ) 
 {
-	// 'name' is reqUrl..
-	if ( msgData && msgData.process ) 
+	if ( msgData ) 
 	{
+		// NOTE: 'jobAidIFrame' ones are used for individual Project Pack (vs jobFilingApp files)
 		if ( msgData.options && msgData.options.target === 'jobAidIFrame' )
 		{
-			var data = { action: { name: 'simpleMsg', msgData: msgData } };
-			// var returnMsgStr = JSON.stringify( { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options } );
+			var url = msgData.process.url;
+			
+			// JOB AID 'CONTENT' #2 - SET UP/START LIST
+			JobAidHelper.cacheProcessedData[ url ] = msgData.process;
 
-			JobAidHelper.msgHandle( data );
-
-
-			// TODO: If we are using real-time data logging, we need to send data without delay.
-			//   In that case, make below 'setDelays_..' configurable.
+			msgData.process.name = url;
+			msgData.process.curr = Object.keys( JobAidHelper.cacheProcessedData ).length;
 
 			// Create delayed action (for 1 sec overwrite)
-			Util.setDelays_timeout( 'jobFiling', 1, function() {
-				JobAidHelper.storeFilingStatus( msgData.options.projDir, msgData.process ); 
-			});
+			//Util.setDelays_timeout( 'jobFiling', 1, function() {
+			JobAidHelper.storeFilingStatus( msgData.options.projDir, JobAidHelper.cacheRequestList, JobAidHelper.cacheProcessedData );
+			//});
+
 			
+			var data = { action: { name: 'simpleMsg', msgData: msgData } };
+
+			JobAidHelper.msgHandle( data );
 		}
-		else
+		else if ( msgData.process )
 		{
-			var total = msgData.process.total;
-			var curr = msgData.process.curr;
-			var name = msgData.process.name;
+			// NOTE: We also like to store 'content' - file size (EST) + date..
+
+			var total = msgData.process.total;			
+			//var curr = msgData.process.curr;
+			var url = msgData.process.url;
 		
-			if ( name && name.length > 10 ) name = '--' + name.substr( name.length - 10 );  // Get only last 10 char..
 		
-	
 			var divJobFileLoadingTag = $('.divJobFileLoading');
 			var spanJobFilingMsgTag = $('.spanJobFilingMsg');
-	
 
-			if ( total && total > 0 && curr )
+			if ( total && total > 0 )
 			{
-			  	if ( curr < total ) 
-				{
-					// update the processing msg..
-					var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + name + ']';
-					spanJobFilingMsgTag.text(prgMsg);
+				if ( !url ) {
+					console.log( 'ERROR in JobAidHelper.JobFilingProgress, url is empty' );
 				}
-				else 
+				else
 				{
-					divJobFileLoadingTag.find('img').remove();
-					spanJobFilingMsgTag.text('Processing all done.');
-		
-					MsgManager.msgAreaShow('Job Aid Filing Finished.');	
+					// JOB AID 'CONTENT' #2 - SET UP/START LIST
+					JobAidHelper.cacheProcessedData[ url ] = msgData.process;
 
-					// If option has 'runEval_AfterFinish' prop, execute it here.            
-					settingsApp.jobAidFilesPopulate( $( '.divMainContent' ) );
+					var curr = Object.keys( JobAidHelper.cacheProcessedData ).length;
+
+					if ( curr < total )
+					{
+						// Save Status on WFA LocalStorage, but do it with delayed action (for 1 sec overwrite) - so fast calls do not perform store, but slow or last one does.
+						//Util.setDelays_timeout( 'jobFiling', 1, function() {
+							JobAidHelper.storeFilingStatus( JobAidHelper.NAME_jobListingApp, JobAidHelper.cacheRequestList, JobAidHelper.cacheProcessedData );
+						//});
+
+						var urlNameShort = ( url && url.length > 10 ) ? '--' + url.substr( url.length - 10 ): url;  // Get only last 10 char..
+						var prgMsg = 'Processing ' + curr + ' of ' + total + ' [' + urlNameShort + ']';
+						spanJobFilingMsgTag.text( prgMsg );
+					}
+					else
+					{
+						JobAidHelper.storeFilingStatus( JobAidHelper.NAME_jobListingApp, JobAidHelper.cacheRequestList, JobAidHelper.cacheProcessedData );
+
+						divJobFileLoadingTag.find('img').remove();
+						spanJobFilingMsgTag.text( 'Processing all done.' );
+						MsgManager.msgAreaShow( 'Job Aid Filing Finished.' );
+
+						// If option has 'runEval_AfterFinish' prop, execute it here -  but we should 
+						settingsApp.jobAidFilesPopulate( $( '.divMainContent' ) );
+					}
 				}
 
-				
-				// Save Status on WFA LocalStorage, but do it with delayed action (for 1 sec overwrite) - so fast calls do not perform store, but slow or last one does.
-				Util.setDelays_timeout( 'jobFiling', 1, function() {
-					JobAidHelper.storeFilingStatus( 'jobListingApp', msgData.process );
-				});
 			}
 		}
 	}
 };
 
-JobAidHelper.storeFilingStatus = function ( projDir, process ) 
+
+JobAidHelper.storeFilingStatus = function ( projDir, cacheRequestList, cacheProcessedData ) 
 {
-	// Structure: { projDir: { -- process -- } }
-	//   			{ listingApp: { -- process -- } } // listingApp case..
-	// 			process: { total: totalCount, curr: doneCount, name: reqUrl }
+	// { process: { total: , curr: , name: , url }
 
-	var process = { total: process.total, curr: process.curr };
+	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
 
-	PersisDataLSManager.updateJobFilingProjDirStatus( projDir, process );
+	if ( !projStatus.process ) projStatus.process = {};
+
+	projStatus.total = cacheRequestList.length;
+	projStatus.curr = Object.keys( cacheProcessedData ).length;
+	projStatus.success = Object.values( cacheProcessedData ).filter( msgData => msgData.downloaded ).length;
+	projStatus.failed = projStatus.total - projStatus.success;
+
+	for ( var prop in cacheProcessedData ) 
+	{
+		var item = cacheProcessedData[ prop ];
+
+		if ( projStatus.process[ prop ] ) Util.mergeJson( projStatus.process[ prop ], item );
+		else projStatus.process[ prop ] = item;
+	}
+	//projStatus.process = cacheProcessedData;  // NOT GOOD
+
+
+	PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
 }
-
 // =========================
+
 
 JobAidHelper.msgHandle = function ( data ) 
 {
@@ -476,6 +499,15 @@ JobAidHelper.handleMsgAction = function( action )
 			$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { action: thisAction }, '*');  // pass single action rather than 'actions'
 		});
 	}
+	else if ( action.name === 'getProjDownloaded' ) 
+	{
+		// { name: 'getProjDownloaded', projDir: 'EN_LOW' } 
+		// Due to callBack, call iframe directly..
+		JobAidHelper.getCachedDataInfo( action.projDir, function( dataJson ) {
+			var thisAction = { callBackEval: action.callBackEval, data: dataJson };
+			$( "iframe.jobAidIFrame" )[0].contentWindow.postMessage( { action: thisAction }, "*" );
+		});
+	}
 	else if ( action.name === 'WFARunEval' )
 	{
 		// { name: 'WFARunEval', WFARunEval: [ 
@@ -483,10 +515,13 @@ JobAidHelper.handleMsgAction = function( action )
 		//		' { callBackEval: action.callBackEval, data: clientList }; ' 
 		//	 ], callBackEval: 'clientsFound( action.data );', 
 		//  data: { firstName: 'james', lastName: 'chang' } } 
-		try {
+		try 
+		{
 			if ( action.WFARunEval ) 
 			{
-				actionJson = eval( Util.getEvalStr( action.WFARunEval ) );
+				var wEvalStr = Util.getEvalStr( action.WFARunEval );
+
+				actionJson = eval( wEvalStr );
 			}
 		}
 		catch ( errMsg ) { console.log( 'ERROR in JobAidHelper.handleMsgAction WFARunEval action, ' + errMsg ); }
@@ -505,6 +540,30 @@ JobAidHelper.clearFiles = function( runAfterEval )
 		, 'cacheName': JobAidHelper.jobAid_jobTest2
 		, 'options': { runAfterEval: runAfterEval }
 	});		
+};
+
+
+// But this does not have a feature to delete the application..
+// For application, list the folder & root files..
+JobAidHelper.cacheKeyDelete = function( startName, returnFunc )
+{
+	caches.open( JobAidHelper.jobAid_jobTest2 ).then( cache => 
+	{ 
+		cache.keys().then( keys => 
+		{
+			keys.forEach( function( key ) {
+				
+				console.log( key.url );
+				// if ( Util.startsWith( key.url, startName ) ) { // Because it has 'http://127.0.0...'
+				if ( key.url.indexOf( startName ) >= 0 ) {
+					console.log( 'deleting..' );
+					caches.delete(key);  // Use await here!!
+				}
+			});
+
+			if ( returnFunc ) returnFunc();
+		}); 
+	});   		
 };
 
 

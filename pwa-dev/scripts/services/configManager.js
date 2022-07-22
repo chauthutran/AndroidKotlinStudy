@@ -627,6 +627,17 @@ ConfigManager.getSettings = function()
     return settings;
 };
 
+
+// NEW
+ConfigManager.getSettingsPropJson = function( propName )
+{
+    var settings = ConfigManager.getSettings();
+
+    return ( Util.isTypeObject( settings[ propName ] ) ) ? settings[ propName ]: {};
+};
+
+
+
 ConfigManager.getSettingPaging = function()
 {
     var pagingSetting = ConfigManager.default_SettingPaging;
@@ -743,10 +754,26 @@ ConfigManager.getActivitySch_favClickOpen = function()
     return actionName;
 };
 
+// ---------------------------------
+
 ConfigManager.getVoucherCodeService = function()
 {
-    var settings = ConfigManager.getSettings();
-    return ( settings.voucherCodeService ) ? settings.voucherCodeService: {};
+    return ConfigManager.getSettingsPropJson( 'voucherCodeService' );
+};
+
+ConfigManager.getJobAidSetting = function()
+{
+    return ConfigManager.getSettingsPropJson( 'jobAid' );
+};
+
+ConfigManager.getAppUpdateSetting = function()
+{    
+    return ConfigManager.getSettingsPropJson( 'appUpdate' );
+};
+
+ConfigManager.getConfigUpdateSetting = function()
+{
+    return ConfigManager.getSettingsPropJson( 'configUpdate' );
 };
 
 // ---------------------------------------------
@@ -1094,8 +1121,7 @@ ConfigManager.activityStatusSwitchOps = function( runCase, activities )
 
 ConfigManager.getSync = function()
 {
-    var settings = ConfigManager.getSettings();
-    return ( settings.sync ) ? settings.sync : {};
+    return ConfigManager.getSettingsPropJson( 'sync' );
 };
 
 
@@ -1289,20 +1315,6 @@ ConfigManager.getDefinitionFieldById = function( fieldId )
     }
 
     return fieldJson;
-};
-
-
-ConfigManager.getAppUpdateSetting = function()
-{    
-    // If not logged in, 'settings' is undefined.
-    var settings = ConfigManager.getConfigJson().settings;
-    return ( settings && settings.appUpdate ) ? settings.appUpdate: {};
-};
-
-ConfigManager.getConfigUpdateSetting = function()
-{
-    var settings = ConfigManager.getConfigJson().settings;
-    return ( settings && settings.configUpdate ) ? settings.configUpdate: {};
 };
 
 // ---------------------------------------------
