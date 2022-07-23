@@ -196,19 +196,19 @@ FormUtil.getNextZIndex_cardFullScreen = function()
 };
 
 
-// FormUtil.sheetFullSetup_Show = function( sheetFull, itemType, itemId, isRestore )
-
-
 FormUtil.sheetFullSetup = function( template, options )
 {
 	if ( !options ) options = {};
+
 	var title = Util.getStr( options.title );
 	var term = Util.getStr( options.term );
 	var cssClasses = ( options.cssClasses ) ? options.cssClasses : [];
 
+	var zIndex = ( options.zIndex ) ? options.zIndex : FormUtil.getNextZIndex_cardFullScreen();
 
+	
 	// 1. create with template & append to body
-	var sheetFullTag = $( template ).css( 'z-index', FormUtil.getNextZIndex_cardFullScreen() );
+	var sheetFullTag = $( template ).css( 'z-index', zIndex );
 
 	if ( options.preCall ) options.preCall( sheetFullTag );
 

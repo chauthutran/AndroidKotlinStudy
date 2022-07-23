@@ -20,6 +20,7 @@ function cwsRender()
 	me.registrationObj;
 	me.loginObj;
 	me.chatAppObj;
+	me.jobAidPageObj;
 	//me.sessionObj; // NEW PROPOSAL
 
 
@@ -90,6 +91,7 @@ function cwsRender()
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
 		me.statisticsObj = new Statistics( me );
+		me.jobAidPageObj = new jobAidPage( me );
 	};
 	// =============================================
 
@@ -196,8 +198,12 @@ function cwsRender()
 			{ 
 				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
 
-				if ( ConfigManager.getSettings().jobAid_newDesign )
+				if ( ConfigManager.getJobAidSetting().newDesign )
 				{
+
+					me.jobAidPageObj.render();
+
+					/*
 					var jobAidDivTag = $( '#jobAidDiv' ).show();
 
 					jobAidDivTag.find( 'img.btnBack' ).off( 'click' ).click( () =>
@@ -205,6 +211,7 @@ function cwsRender()
 						 if ( $( 'img.rotateImg' ).length  ) $( 'img.rotateImg' ).click();
 						 else jobAidDivTag.hide();
 					});
+					*/
 				}
 				else
 				{
