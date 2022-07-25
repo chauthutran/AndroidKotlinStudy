@@ -153,6 +153,36 @@ JobAidHelper.deleteCacheStorage = async function()
 };
 
 
+
+JobAidHelper.manifestRun = function()
+{
+	var options = { projDir: '', isListingApp: false, isLocal: true, appName: 'pwa-dev' };
+
+	var requestUrl = 'http://localhost:8383/manifests';
+	requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
+
+	var optionsStr = JSON.stringify( options );
+	
+	$.ajax({
+		url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
+		type: "GET",
+		dataType: "json",
+		success: function (response) 
+		{
+			console.log( 'success: ' );
+			console.log( response );
+		},
+		error: function ( error ) {
+			console.log( 'error: ' );
+			console.log( error );
+		},
+		complete: function () {
+			console.log( 'completed' );
+		}			
+	});
+
+};
+
 JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // returnFunc )
 {
 	if ( ConnManagerNew.isAppMode_Online() ) 
