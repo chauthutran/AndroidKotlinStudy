@@ -31,7 +31,7 @@ RESTCallManager.performPost = function( url, requestOption, returnFunc )
         method: 'POST', 
         body: '{}'
     };
-
+  
     if ( requestOption ) Util.mergeJson( requestData, requestOption );
 
     RESTCallManager.performREST( url, requestData, returnFunc );
@@ -47,7 +47,11 @@ RESTCallManager.timeoutPromise = function( promise, timeout, error )
             reject( { 'errMsg': error, 'errType': 'timeout' } );
         }, timeout );
 
-        promise.then( resolve, reject );
+        promise.then( resolve, reject );  // .catch( errMsg => {} )
+
+        // For availability check, server not available case (due to offline, etc..)
+        // We could handle the catch above?
+
     });
 };
 
@@ -89,7 +93,8 @@ RESTCallManager.performREST = function( url, requestData, returnFunc )
     })
     .catch( ( error ) => 
     {
-        console.log( 'RESTCallManager.performREST Cached Error: ' + Util.getStr( error, 300 ) );
+        if ( url.indexOf( '/availability' ) > 0 ) { } // For availability one, be silent about error.
+        else console.log( 'RESTCallManager.performREST Error, ' + Util.getStr( error, 300 ) );
 
         var errJson;
         if ( Util.isTypeObject( error ) ) errJson = error;
