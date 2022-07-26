@@ -153,7 +153,7 @@ JobAidHelper.deleteCacheStorage = async function()
 };
 
 
-JobAidHelper.manifestRun = function( callBack )
+JobAidHelper.getServerManifestsRun = function( callBack )
 {
 	var options = { projDir: '', isListingApp: false, isLocal: true, appName: 'pwa-dev' };
 	options.isLocal = WsCallManager.checkLocalDevCase( window.location.origin );

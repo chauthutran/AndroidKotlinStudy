@@ -20,7 +20,6 @@ function cwsRender()
 	me.registrationObj;
 	me.loginObj;
 	me.chatAppObj;
-	me.jobAidPageObj;
 	//me.sessionObj; // NEW PROPOSAL
 
 
@@ -91,7 +90,6 @@ function cwsRender()
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
 		me.statisticsObj = new Statistics( me );
-		me.jobAidPageObj = new jobAidPage( me );
 	};
 	// =============================================
 
@@ -200,9 +198,7 @@ function cwsRender()
 
 				if ( ConfigManager.getJobAidSetting().newDesign )
 				{
-
-					me.jobAidPageObj.render();
-
+					JobAidPage.render();
 					/*
 					var jobAidDivTag = $( '#jobAidDiv' ).show();
 
