@@ -50,14 +50,16 @@ function jobAidPage(cwsRender)
 
    // ------------------
 
-   me.render = function () {
-      //me.options.preCall = function(sheetFullTag) {};
+   me.render = function () 
+   {
+      me.sheetFullTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, me.options);  // .options.preCall
 
-      me.sheetFullTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, me.options);
+      JobAidHelper.manifestRun( function( results ) 
+      {
+         me.populatePageContent( me.sheetFullTag.find( '.contentBody' ) );   
 
-      me.populatePageContent( me.sheetFullTag.find( '.contentBody' ) );   
-
-      TranslationManager.translatePage();
+         TranslationManager.translatePage();
+      });   
    };
 
    // ------------------
