@@ -51,15 +51,15 @@ JobAidPage.render = function ()
 
 // ------------------
 
-JobAidPage.getManifestJobAidInfo = function( results )
+JobAidPage.getManifestJobAidInfo = function( list )
 {
    var manifestsData = [];
 
    try
    {
-      if ( Util.isTypeArray( results ) )
+      if ( Util.isTypeArray( list ) )
       {
-         results.forEach( item => 
+         list.forEach( item => 
          {
             if ( Util.isTypeObject( item.jobAidInfo ) ) manifestsData.push( item.jobAidInfo );
          });
@@ -99,7 +99,8 @@ JobAidPage.populateSectionLists = function( contentBodyTag, callBack )
    {
       divAvailablePacksTag.html( '' ); // Clear loading Img
 
-      JobAidPage.serverManifestsData = JobAidPage.getManifestJobAidInfo( results );
+      var list = results.list;
+      JobAidPage.serverManifestsData = JobAidPage.getManifestJobAidInfo( list );
 
       // List All server manifest list - Available Packs
       JobAidPage.serverManifestsData.forEach( function( item ) 
