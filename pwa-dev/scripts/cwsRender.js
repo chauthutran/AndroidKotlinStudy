@@ -196,19 +196,7 @@ function cwsRender()
 			{ 
 				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
 
-				if ( ConfigManager.getJobAidSetting().newDesign )
-				{
-					JobAidPage.render();
-					/*
-					var jobAidDivTag = $( '#jobAidDiv' ).show();
-
-					jobAidDivTag.find( 'img.btnBack' ).off( 'click' ).click( () =>
-					{
-						 if ( $( 'img.rotateImg' ).length  ) $( 'img.rotateImg' ).click();
-						 else jobAidDivTag.hide();
-					});
-					*/
-				}
+				if ( ConfigManager.getJobAidSetting().newDesign ) JobAidPage.render();
 				else
 				{
 					var styleStr = ' style="width:100%; height: 100%; overflow:auto; border:none;"';

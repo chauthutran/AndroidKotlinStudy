@@ -7,6 +7,8 @@ JobAidPage.options = {
    'zIndex': 1600
 };
 
+JobAidPage.rootPath = '/jobs/jobAid/';
+
 JobAidPage.sheetFullTag;
 JobAidPage.contentBodyTag;
 JobAidPage.divAvailablePacksTag;
@@ -169,7 +171,7 @@ JobAidPage.updateSectionLists = function( projDir, statusType )
       }
       else if ( statusType === 'downloaded' )
       {
-         var itemTag = JobAidPage.divDownloadedPacksTag.find( 'div.jobAidItem[projDir=' + projDir + ']' ).html('').append( JobAidPage.templateItem_container );
+         var itemTag = JobAidPage.divDownloadedPacksTag.find( 'div.jobAidItem[projDir=' + projDir + ']' ).html('').append( JobAidPage.templateItem_body );
          
          // Add to the cached..
          JobAidPage.populateItem( item, itemTag, 'downloaded' );
@@ -203,7 +205,9 @@ JobAidPage.populateItem = function( itemData, itemTag, statusType )
 {
    // type = 'available' vs 'downloaded'
    // pack = {code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false };
-   // status, buildDate, 
+   // status, buildDate,       
+   itemTag.off( 'click'); // reset previous click if exists.
+
 
    itemTag.attr( 'data-language', itemData.code );
    itemTag.attr( 'projDir', itemData.projDir );
@@ -211,24 +215,6 @@ JobAidPage.populateItem = function( itemData, itemTag, statusType )
 
    var titleStrongTag = $( '<strong></strong>' ).append( itemData.title + ' [' + Util.getStr( itemData.language ) + ']' );
    if ( itemData.noMedia ) titleStrongTag.append( ' [WITHOUT MEDIA]' );
-
-   if ( statusType === "downloaded" ) 
-   {
-      var spanDeleteTag = $( '<span title="delete" style="margin-left: 11px; color: tomato; cursor: pointer;">[delete]</span>' );
-      titleStrongTag.append( spanDeleteTag );
-
-      spanDeleteTag.click( function( e ) 
-      {
-         var result = confirm( 'Are you sure you want to delete this, "' + itemData.projDir + '"?' );
-         if ( result ) 
-         {
-            JobAidHelper.deleteCacheKeys( '/jobs/jobAid/' + itemData.projDir + '/' ).then( function( deletedArr ) 
-            {            
-               JobAidPage.updateSectionLists( itemData.projDir, 'downloaded_delete' );            
-            });
-         }
-      });
-   }
 
    itemTag.find( '.divTitle' ).append( titleStrongTag );
    itemTag.find( '.divBuildDate' ).append( '<strong>Release date: </strong>' + Util.getStr( itemData.buildDate ) );
@@ -248,6 +234,39 @@ JobAidPage.populateItem = function( itemData, itemTag, statusType )
          JobAidHelper.runTimeCache_JobAid( { projDir: projDir, target: 'jobAidPage' } );
       }
    });
+
+
+   // Downloaded Case - 'open' in iFrame case, 'delete' case.
+   if ( statusType === "downloaded" ) 
+   {
+      // Open Up in iFrame Click Setup..
+      itemTag.click( function( e ) 
+      {
+         var srcStr = JobAidPage.rootPath + itemData.projDir + '/index.html';
+         var styleStr = 'width:100%; height: 100%; overflow:auto; border:none;';
+
+         $( '#divJobAid' ).html( '' ).show().append( `<iframe class="jobAidIFrame" src="${srcStr}" style="${styleStr}">iframe not compatible..</iframe>` );
+      });
+
+
+      // Delete Tag Create & Click Handler
+      var spanDeleteTag = $( '<span title="delete" style="margin-left: 11px; color: tomato; cursor: pointer;">[delete]</span>' );
+      titleStrongTag.append( spanDeleteTag );
+
+      spanDeleteTag.click( function( e ) 
+      {
+         e.stopPropagation();
+
+         var result = confirm( 'Are you sure you want to delete this, "' + itemData.projDir + '"?' );
+         if ( result ) 
+         {
+            JobAidHelper.deleteCacheKeys( JobAidPage.rootPath + itemData.projDir + '/' ).then( function( deletedArr ) 
+            {            
+               JobAidPage.updateSectionLists( itemData.projDir, 'downloaded_delete' );            
+            });
+         }
+      });
+   }   
 };
 
 // ------------------------------------
@@ -371,7 +390,7 @@ JobAidPage.templateSections = `
    </div>
 `;
 
-JobAidPage.templateItem_container = `
+JobAidPage.templateItem_body = `
    <div class="card__container">
    <card__support_visuals class="card__support_visuals" style="padding-left: 4px;"><img src="images/JobAidicons.png"></card__support_visuals>
    <card__content class="card__content" style="padding-left: 4px;">
@@ -386,6 +405,6 @@ JobAidPage.templateItem_container = `
 
 JobAidPage.templateItem = `
    <div class="card jobAidItem smartStart" data-language="" projdir="" style="opacity: 1;display: inline-block; height: unset;" downloaded="Y">
-   ${JobAidPage.templateItem_container}
+   ${JobAidPage.templateItem_body}
    </div>
 `;
