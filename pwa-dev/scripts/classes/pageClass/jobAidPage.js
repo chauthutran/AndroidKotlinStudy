@@ -169,12 +169,23 @@ JobAidPage.updateSectionLists = function( projDir, statusType )
       }
       else if ( statusType === 'downloaded' )
       {
-         var itemTag_pre = $( JobAidPage.templateItem );
          var itemTag = JobAidPage.divDownloadedPacksTag.find( 'div.jobAidItem[projDir=' + projDir + ']' ).html('').append( JobAidPage.templateItem_container );
          
          // Add to the cached..
          JobAidPage.populateItem( item, itemTag, 'downloaded' );
          JobAidPage.divDownloadedPacksTag.append( itemTag );
+      }
+      else if ( statusType === 'downloaded_delete' )
+      {
+         JobAidPage.divDownloadedPacksTag.find( 'div.jobAidItem[projDir=' + projDir + ']' ).remove();
+
+         // Also, Just In CASE, if there is available one, remove it as well
+         JobAidPage.divAvailablePacksTag.find( 'div.jobAidItem[projDir=' + projDir + ']' ).remove();
+
+         // Add to the cached..
+         var itemTag = $( JobAidPage.templateItem );
+         JobAidPage.populateItem( item, itemTag, 'available' );
+         JobAidPage.divAvailablePacksTag.append( itemTag );
       }
       else
       {
@@ -200,6 +211,24 @@ JobAidPage.populateItem = function( itemData, itemTag, statusType )
 
    var titleStrongTag = $( '<strong></strong>' ).append( itemData.title + ' [' + Util.getStr( itemData.language ) + ']' );
    if ( itemData.noMedia ) titleStrongTag.append( ' [WITHOUT MEDIA]' );
+
+   if ( statusType === "downloaded" ) 
+   {
+      var spanDeleteTag = $( '<span title="delete" style="margin-left: 11px; color: tomato; cursor: pointer;">[delete]</span>' );
+      titleStrongTag.append( spanDeleteTag );
+
+      spanDeleteTag.click( function( e ) 
+      {
+         var result = confirm( 'Are you sure you want to delete this, "' + itemData.projDir + '"?' );
+         if ( result ) 
+         {
+            JobAidHelper.deleteCacheKeys( '/jobs/jobAid/' + itemData.projDir + '/' ).then( function( deletedArr ) 
+            {            
+               JobAidPage.updateSectionLists( itemData.projDir, 'downloaded_delete' );            
+            });
+         }
+      });
+   }
 
    itemTag.find( '.divTitle' ).append( titleStrongTag );
    itemTag.find( '.divBuildDate' ).append( '<strong>Release date: </strong>' + Util.getStr( itemData.buildDate ) );
@@ -333,11 +362,11 @@ JobAidPage.getManifestJsons = function( urlList, i, result, finishCallBack )
 // ------------------------------------
 
 JobAidPage.templateSections = `
-   <div style="background-color: gray;padding: 8px;">Downloaded packs</div>
+   <div class="sectionTitle_jobAid">Downloaded packs</div>
    <div class="divDownloadedPacks">
    </div>
 
-   <div style="background-color: gray;padding: 8px;">Packs available for download</div>
+   <div class="sectionTitle_jobAid">Packs available for download</div>
    <div class="divAvailablePacks">
    </div>
 `;
@@ -360,41 +389,3 @@ JobAidPage.templateItem = `
    ${JobAidPage.templateItem_container}
    </div>
 `;
-
-
-
-
-/*
-
-JobAidPage.updateProjCards_wtStatus = function( jobFilingStatus )
-{
-
-   // console.log(jobFilingStatus);
-   
-   for ( var prop in jobFilingStatus ) 
-   {
-      var statusJson = jobFilingStatus[prop];
-
-      var projCardTag = getProjCardTag(prop);
-      
-      if ( projCardTag.length > 0 ) 
-      {
-         if (statusJson.curr === statusJson.total || statusJson.curr > 5) setProjCardStatus(projCardTag, statusJson);
-      }
-   }
-};
-
-JobAidPage.setProjCardStatus = function( projCardTag, statusJson ) 
-{
-   var statusStr = statusJson.curr + '/' + statusJson.total;
-   if (statusJson.name) statusStr += ' ' + statusJson.name;
-
-   projCardTag.find('span.downloadStatus').text('Downloaded. ' + statusStr);
-
-   if (statusJson.curr > 5)
-   {
-      projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
-      projCardTag.css('opacity',1)
-   }
-};
-*/

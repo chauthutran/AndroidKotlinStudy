@@ -35,6 +35,38 @@ JobAidHelper.getCacheKeys = function( callBack )
 };
 
 
+JobAidHelper.deleteCacheKeys = async function( partialPath )
+{
+	var deletedArr = [];
+	
+	if ( Util.isTypeString( partialPath ) && partialPath.length >= 3 )
+	{
+		var cache = await caches.open( JobAidHelper.jobAid_jobTest2 );
+		var keysReq = await cache.keys();
+
+		for ( var i = 0; i < keysReq.length; i++ )
+		{
+			var req = keysReq[i];
+
+			var reqUrl = req.url;
+			if ( reqUrl.indexOf( partialPath ) >= 0 )
+			{
+				var success = await cache.delete( reqUrl );	
+				if ( success ) deletedArr.push( reqUrl );				
+			}
+		}
+	}
+	else {
+		console.log( 'partialPath param is not string or length not 3 or longer.' );
+	}
+
+	return deletedArr;
+};
+
+
+// JobAidHelper.deleteCacheKeys( '/jobs/jobAid/OM_LOW/' ).then( function( deletedArr ) {  console.log( deletedArr );  });
+
+
 // ---------------------------------------------------
 // ---- New Pending Implementations -----
 
@@ -146,7 +178,8 @@ JobAidHelper.setExtraStatusInfo = function( itemJson, statusFullJson )
 
 // -------------------------------------------
 
-
+// How we currently delete/clear all JobAid files
+//		- We need more refined ones that deletes everything under one directory..
 JobAidHelper.deleteCacheStorage = async function()
 {
 	return caches.delete( JobAidHelper.jobAid_jobTest2 );
@@ -526,6 +559,7 @@ JobAidHelper.handleMsgAction = function( action )
 };
 
 
+// NOT USED?
 JobAidHelper.clearFiles = function( runAfterEval )
 {
 	SwManager.swRegObj.active.postMessage({

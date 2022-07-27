@@ -63,6 +63,11 @@
   background-color: #FFF;
 }
 
+.sectionTitle_jobAid {
+  background-color: #b1b1b1;
+  padding: 8px;  
+  border-top: 1px solid black;
+}
 /* ================================ */
 
 .btnBack {
