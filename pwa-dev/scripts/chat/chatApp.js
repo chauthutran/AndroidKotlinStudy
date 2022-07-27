@@ -48,7 +48,10 @@ function ChatApp( username )
 
     me.init = function() 
 	{
+		FormUtil.blockPage();
 		me.chatViewTag.hide();
+		me.initChatMsgTag.show().html(`Loading ...`);
+
 		if( !me.curUser)
 		{
 			me.initChatMsgTag.show().html("Loading ...");
@@ -70,7 +73,6 @@ function ChatApp( username )
 			me.initSocket();
 
             me.curUser = userProfile.curUser;
-			me.initChatMsgTag.show().html(`Welcome, ${me.curUser.fullName}`);
 			
 
             // Render contact list
@@ -150,6 +152,9 @@ function ChatApp( username )
                 const data = offlineMessages[i];
                 me.socket.emit('private_message', data );
             }
+			
+			me.initChatMsgTag.show().html(`Welcome, ${me.curUser.fullName}`);
+			FormUtil.unblockPage();
 			
 		});
 		  
@@ -249,8 +254,7 @@ function ChatApp( username )
 
 		});
 		
-		me.socket.on("receive_message", ({userData, contacts}) => {
-
+		me.socket.on("receive_message", ({userData, newContact}) => {
 			const contactList = userData.contacts;
 			if( me.curUser.username == userData.username )
 			{
@@ -281,12 +285,12 @@ function ChatApp( username )
 						userTag.find(".has-new-message").hide();
 					}
 				}
-				else if( contacts != undefined )
+				else if( newContact != undefined )
 				{
-					const found = Utils.findItemFromList( contacts, contactInfo.contactName, "username");
+					const found = Utils.findItemFromList( contactList, newContact.username, "contactName");
 					if( found )
 					{
-						me.appendUserInContactList( found, true );
+						me.appendUserInContactList( newContact, false );
 					}
 				}
 			}
