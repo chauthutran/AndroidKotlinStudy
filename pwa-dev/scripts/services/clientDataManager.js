@@ -1012,3 +1012,23 @@ ClientDataManager.checkClientCreator = function( client, username )
 
     return bOwner;
 };
+
+ClientDataManager.getReferringClient = function( client )
+{
+    var referringClient = ''; // could use undefined.
+
+    try
+    {
+        var acts = client.activities.filter( act => act.referringClient );
+
+        if ( acts.length > 0 )
+        {
+            referringClient = acts[ acts.length - 1 ].referringClient;
+        }
+    }
+    catch ( errMsg ) {
+        console.log( 'ERROR in ClientDataManager.getReferringClient, ' + errMsg );
+    }
+
+    return referringClient;
+};
