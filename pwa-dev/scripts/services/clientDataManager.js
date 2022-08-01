@@ -1013,22 +1013,24 @@ ClientDataManager.checkClientCreator = function( client, username )
     return bOwner;
 };
 
-ClientDataManager.getReferringClient = function( client )
+// prop: 'referringClient' / 'creditedClient'
+ClientDataManager.getInClientActs = function( client, prop )
 {
-    var referringClient = ''; // could use undefined.
+    var foundVal = ''; // could use undefined.
 
     try
     {
-        var acts = client.activities.filter( act => act.referringClient );
+        var acts = client.activities.filter( act => act[ prop ] );
 
         if ( acts.length > 0 )
         {
-            referringClient = acts[ acts.length - 1 ].referringClient;
+            var lastAct = acts[ acts.length - 1 ];
+            foundVal = lastAct[ prop ];
         }
     }
     catch ( errMsg ) {
-        console.log( 'ERROR in ClientDataManager.getReferringClient, ' + errMsg );
+        console.log( 'ERROR in ClientDataManager.getInClientActs, ' + errMsg );
     }
 
-    return referringClient;
+    return foundVal;
 };
