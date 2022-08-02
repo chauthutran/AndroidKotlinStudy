@@ -5,7 +5,7 @@ function ActivitySyncUtil() {}
 
 ActivitySyncUtil.coolDownMoveRate = 300; // 100 would move 10 times per sec..
 
-ActivitySyncUtil.clientSyncStatus = {};  // Add clientId if in process - of client level sync
+//ActivitySyncUtil.clientSyncStatus = {};  // Add clientId if in process - of client level sync
 
 // ==== Methods ======================
 
@@ -121,13 +121,13 @@ ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, ca
 			if ( SyncManagerNew.isSyncReadyStatus( clientStatusStr ) )			
 			{
 				// NOTE: This could be Duplicate - on top of checking UI status Above			
-				if ( ActivitySyncUtil.clientSyncStatus[ clientId ] )
-				{
-					MsgManager.msgAreaShow( 'Client is already in sync processing.' );
-				}
-				else
-				{
-					ActivitySyncUtil.clientSyncStatus[ clientId ] = true;
+				//if ( ActivitySyncUtil.clientSyncStatus[ clientId ] )
+				//{
+				//	MsgManager.msgAreaShow( 'Client is already in sync processing.' );
+				//}
+				//else
+				//{
+					//ActivitySyncUtil.clientSyncStatus[ clientId ] = true;
 
 					// Get unsynced list..
 					var clientJson = ClientDataManager.getClientById( clientId );
@@ -141,12 +141,12 @@ ActivitySyncUtil.setSyncIconClickEvent_ClientCard = function( divSyncIconTag, ca
 					function( idx, resultJson ) 
 					{
 						// Finish the client call..
-						delete ActivitySyncUtil.clientSyncStatus[ clientId ];
+						//delete ActivitySyncUtil.clientSyncStatus[ clientId ];
 
 						// If any of activity sync failed, show with bottom msg..
 						if ( resultJson[ Constants.status_failed ] > 0 || resultJson[ Constants.status_error ] > 0 ) ActivitySyncUtil.clientSyncBottomMsg( cardDivTag, clientId );
 					});		
-				}
+				//}
 			}
 			else
 			{
@@ -544,6 +544,8 @@ ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 		divSyncStatusTextTag.attr( 'status', Constants.status_failed ).append( '<span class="spanStatusTxt" term="activitycard_status_failed" style="color: #FF0000;">Failed</span>' );
 		imgIcon.attr( 'src', 'images/sync-postponed_36.svg' );
 		divSyncIconTag.attr( 'status', Constants.status_failed ).attr( 'title', 'Last Activity Status: ' + lastActStatus.toUpperCase() );
+
+		ActivitySyncUtil.syncUpCoolDownTime_CheckNProgressSet( lastActivity.id, divSyncIconTag );
 	}
 	//if ( lastActStatus === Constants.status_error ) imgIcon.css( 'background-color', color_error );
 

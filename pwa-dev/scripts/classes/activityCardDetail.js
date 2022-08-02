@@ -118,26 +118,32 @@ function ActivityCardDetail( activityId, isRestore )
 				//		<-- Is it possible?  <-- 
 				if ( activityJson.processing.editRollBackData )
 				{
-					rollBackEditActivityBtn.show().click(function () {
+					rollBackEditActivityBtn.show().click(function () 
+					{
 						var result = confirm("Are you sure you want to rollback to previous data?");
-						if (result) {
+						if (result) 
+						{
+							var clientId = ClientDataManager.getClientIdByActivityId( activityId );
+
 							me.rollBackEditActivityNCard( activityId, activityJson.processing.editRollBackData, sheetFullTag.find('img.btnBack'));
 
 							// Reload the client if client is enabled..
-							var clientId = ClientDataManager.getClientByActivityId( activityId )._id;							
 							ClientCard.reRenderClientCardsById( clientId, { 'activitiesTabClick': true } );
 						}
 					});
 				}
 				else
 				{
-					removeActivityBtn.show().click(function () {
+					removeActivityBtn.show().click(function () 
+					{
 						var result = confirm("Are you sure you want to delete this activity?");
-						if (result) {
+						if (result) 
+						{
+							var clientId = ClientDataManager.getClientIdByActivityId( activityId );
+
 							me.removeActivityNCard( activityId, sheetFullTag.find('img.btnBack'));
 
 							// Reload the client if client is enabled..
-							var clientId = ClientDataManager.getClientByActivityId( activityId )._id;							
 							ClientCard.reRenderClientCardsById( clientId, { 'activitiesTabClick': true } );
 						}
 					});

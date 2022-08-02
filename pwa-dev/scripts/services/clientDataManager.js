@@ -70,6 +70,19 @@ ClientDataManager.getClientByActivityId = function( activityId )
     return client;
 };
 
+ClientDataManager.getClientIdByActivityId = function( activityId )
+{
+    var clientId = '';
+
+    try
+    {
+        var client = ClientDataManager.getClientByActivityId( activityId );
+        if ( client ) clientId = client._id;    
+    } catch ( errMsg ) {  console.log( 'ERROR in ClientDataManager.getClientIdByActivityId, ' + errMsg );  }
+
+    return clientId;
+};
+
 ClientDataManager.getClientByActivity = function( activity )
 {
     var client;
