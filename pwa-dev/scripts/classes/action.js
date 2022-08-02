@@ -510,7 +510,16 @@ function Action( cwsRenderObj, blockObj )
 											dataPass.prevWsReplyData = { 'resultData': { 'status': 'queued ' + ConnManagerNew.statusInfo.appMode.toLowerCase() } };
 											dataPass.activityJson = activityJson;
 
-											if ( editModeActivityId ) MsgManager.msgAreaShow( 'Edit activity done.', '', MsgManager.CLNAME_PersistSwitch );
+											if ( editModeActivityId )
+											{
+												MsgManager.msgAreaShow( 'Edit activity done.', '', MsgManager.CLNAME_PersistSwitch );
+
+												// Reload the client if client is enabled..
+												try {
+													var clientId = ClientDataManager.getClientByActivityId( editModeActivityId )._id;							
+													ClientCard.reRenderClientCardsById( clientId, { 'activitiesTabClick': true } );	
+												} catch ( errMsg ) {  console.log( 'ERROR in Action.queueActivity, editModeActivityId, ' + errMsg );  }
+											}
 
 											afterActionFunc( true );
 										}

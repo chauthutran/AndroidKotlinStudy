@@ -122,6 +122,10 @@ function ActivityCardDetail( activityId, isRestore )
 						var result = confirm("Are you sure you want to rollback to previous data?");
 						if (result) {
 							me.rollBackEditActivityNCard( activityId, activityJson.processing.editRollBackData, sheetFullTag.find('img.btnBack'));
+
+							// Reload the client if client is enabled..
+							var clientId = ClientDataManager.getClientByActivityId( activityId )._id;							
+							ClientCard.reRenderClientCardsById( clientId, { 'activitiesTabClick': true } );
 						}
 					});
 				}
@@ -130,7 +134,11 @@ function ActivityCardDetail( activityId, isRestore )
 					removeActivityBtn.show().click(function () {
 						var result = confirm("Are you sure you want to delete this activity?");
 						if (result) {
-							me.removeActivityNCard(activityId, sheetFullTag.find('img.btnBack'));
+							me.removeActivityNCard( activityId, sheetFullTag.find('img.btnBack'));
+
+							// Reload the client if client is enabled..
+							var clientId = ClientDataManager.getClientByActivityId( activityId )._id;							
+							ClientCard.reRenderClientCardsById( clientId, { 'activitiesTabClick': true } );
 						}
 					});
 				}
