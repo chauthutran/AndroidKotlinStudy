@@ -356,8 +356,10 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
         case_dhis2RedeemMerge = ( downloadedData.case === 'dhis2RedeemMerge' );
         case_noClientDateCheck = ( downloadedData.case === 'syncUpActivity' );
 
-        downloadedData.clients.forEach( dwClient => 
+        for ( var i = 0; i < downloadedData.clients.length; i++ )
         {
+            var dwClient = downloadedData.clients[ i ];
+
             try 
             {
                 if ( dwClient._id )
@@ -419,7 +421,7 @@ ClientDataManager.mergeDownloadedClients = function( downloadedData, processingI
             {
                 console.log( 'Error during ClientDataManager.mergeDownloadedClients, errMsg: ' + errMsg );
             }
-        });
+        }
     }
 
 

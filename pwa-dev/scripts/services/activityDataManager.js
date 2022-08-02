@@ -152,8 +152,10 @@ ActivityDataManager.deleteExistingActivity_Indexed = function( activityId )
 
 ActivityDataManager.insertActivitiesToClient = function( activities, client, option )
 {
-    activities.forEach( activity => 
+    for ( var i = 0; i < activities.length; i++ )
     {
+        var activity = activities[ i ];
+
         // If this client or other client have same activity Id, remove those activites.. 1st..
         // If this activity ID exists in other client (diff obj), remove it.  <-- but if this is 
         var actClient = ActivityDataManager.deleteExistingActivity_Indexed( activity.id );
@@ -165,7 +167,7 @@ ActivityDataManager.insertActivitiesToClient = function( activities, client, opt
         client.activities.push( activity );
 
         ActivityDataManager.updateActivityIdx( activity.id, activity, client, option );
-    });
+    }
 
     // Client Activity Reorder - #1
     InfoDataManager.setINFOdata( 'client_sort', client );
@@ -336,8 +338,10 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
     var newActivities = [];
 
     // NOTE: New Client case will never reach here, thus, tempClient (delete on merge) case will not apply
-    downActivities.forEach( dwActivity => 
+    for ( var i = 0; i < downActivities.length; i++ )
     {
+        var dwActivity = downActivities[ i ];
+
         try
         {
             // 'syncDown' - NEW ACTIVITY - only add new ones with passed 'processingInfo' ('download')
@@ -361,6 +365,7 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
                 
                 // If the syncUp performed was on this activity, existing client had this activity payload
                 //  , thus simply write over to app activity --> by adding to 'newActivity' array -> to process it much below.
+                //  --> 'ActivityDataManager.insertActivitiesToClient' has deleting same id activity and placing the downloaded one.
                 if ( downloadedData.syncUpActivityId && dwActivity.id === downloadedData.syncUpActivityId )
                 {
                     // This 'processingInfo' is already has 'history' of previous activity..
@@ -391,7 +396,7 @@ ActivityDataManager.mergeDownloadedActivities = function( downActivities, appCli
         {
             console.log( 'Error during ActivityDataManager.mergeDownloadedActivities, errMsg: ' + errMsg );
         }
-    });
+    }
 
 
     // if new list to push to appClientActivities exists, add to the list.
