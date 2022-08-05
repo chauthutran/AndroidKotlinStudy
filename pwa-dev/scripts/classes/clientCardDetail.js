@@ -28,18 +28,13 @@ function ClientCardDetail( clientId )
         // If current user belongs to externerPartner role, and , Optional ActivityTab removal + client Edit + relationship  <-- View only?
         if ( me.bExternalPartner && !me.bClientCreator )
         {
-            INFO.clientLimitedAccess = clientJson;
+            INFO.clientLimitedAccess = clientJson;  // This gets used on Client Profile Edit Button show/hide
+            // Also, ClientDataManager.getVoucherDataList uses this as well..
+
             me.bClientLimitedAccess = true;
 
             preCall = function( sheetFullTag ) 
             {
-                //sheetFullTag.find( 'li[rel=tab_clientActivities]' ).remove();
-                //sheetFullTag.find( 'div[tabButtonId=tab_clientActivities]' ).remove();
-
-                // INSTEAD, disable the activity ownership...
-                // This, we can check the activitylist
-
-
                 sheetFullTag.find( 'li[rel=tab_relationships]' ).remove();
                 sheetFullTag.find( 'div[tabButtonId=tab_relationships]' ).remove();
             };            
@@ -134,7 +129,8 @@ function ClientCardDetail( clientId )
                 var divLatestVoucherTag = me.displayLatestVoucherInfo( clientJson, activityListDivTag ); // only if there is vouchers..
                 if ( ConfigManager.switchLatestVoucher() && divLatestVoucherTag ) me.setSwitchLatestVoucher( clientJson, divLatestVoucherTag, activityTabTag );
 
-                me.populateActivityCardList( clientJson.activities, activityListDivTag );
+                var filteredActivities = ClientDataManager.getActivities_EP_Filtered( clientJson );  // clientJson.activities
+                me.populateActivityCardList( filteredActivities, activityListDivTag );
             }
 
             // ClientActivity FavList render
@@ -168,6 +164,8 @@ function ClientCardDetail( clientId )
                     setTimeout( () => { option.openFav_ActId = false; }, 1000 );
                 }
             }
+
+            TranslationManager.translatePage();
         });
 
 
@@ -472,23 +470,15 @@ function ClientCardDetail( clientId )
             {
                 var activityJson = actList_sort[i];
 
-                var bAllowAccess = true;
-
-                // If the user (login_UserName) is external partner and is not owner of the activity, 
-                if ( me.bClientLimitedAccess && activityJson.activeUser !== SessionManager.sessionData.login_UserName ) bAllowAccess = false;
-
-                if ( bAllowAccess )
-                {
-                    try {
-                        var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
-                        activityCardObj.render();
-                    }
-                    catch( errMsg ) { console.log( 'ERROR in ClientCardDetail.populateActivityCardList, ' + errMsg ); }    
+                try {
+                    var activityCardObj = me.createActivityCard( activityJson, listTableTbodyTag );
+                    activityCardObj.render();
                 }
+                catch( errMsg ) { console.log( 'ERROR in ClientCardDetail.populateActivityCardList, ' + errMsg ); }    
             }
-
-            TranslationManager.translatePage();
         }
+
+        // TranslationManager.translatePage();
     };
 
     me.createActivityCard = function( activityJson, listTableTbodyTag )

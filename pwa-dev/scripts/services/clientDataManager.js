@@ -876,14 +876,20 @@ ClientDataManager.getVoucherDataList = function( client, overrideDateName )
         if ( clientDetails.voucherCodes && Util.isTypeArray( clientDetails.voucherCodes ) ) voucherCodes = clientDetails.voucherCodes;
         else if ( clientDetails.voucherCode && Util.isTypeArray( clientDetails.voucherCode ) ) voucherCodes = clientDetails.voucherCode;
         else if ( clientDetails.voucherCode && Util.isTypeString( clientDetails.voucherCode ) ) voucherCodes.push( clientDetails.voucherCode );
-    
+
+
         if ( voucherCodes.length > 0 )
         {
+            var filteredActivities = ClientDataManager.getActivities_EP_Filtered( client );   // client.activities
+                        
             // 1. Organize data by voucherCode ->  { voucherCode, createdDateStr/v_issDateStr, activities([]) }
-            voucherCodes.forEach( voucherCode => 
+            for ( var i = 0; i < voucherCodes.length; i++ )
             {
-                voucherDataList.push( ActivityDataManager.getVoucherActivitiesData( client.activities, voucherCode ) );
-            });
+                var voucherCode = voucherCodes[i];
+
+                var voucherData = ActivityDataManager.getVoucherActivitiesData( filteredActivities, voucherCode );
+                if ( voucherData.activities.length > 0 ) voucherDataList.push( voucherData );
+            }
 
             // 2. Sort by 'v_issDateStr' in ascending order <-- But should be changed to 'v_issCreatedDateStr'?
             voucherDataList.sort( function(a, b) { 
@@ -894,6 +900,22 @@ ClientDataManager.getVoucherDataList = function( client, overrideDateName )
     }
 
     return voucherDataList;
+};
+
+// NEW
+ClientDataManager.getActivities_EP_Filtered = function( client )
+{
+    var activities = [];
+
+    // External Role Filter.. - If the current user belong to External Partner (by userRole), only get the owner activities
+    // 'INFO.clientLimitedAccess' set by clientCardDetail opening.
+    if ( INFO.clientLimitedAccess && INFO.clientLimitedAccess._id === client._id )
+    {
+        activities = client.activities.filter( act => act.activeUser === SessionManager.sessionData.login_UserName );
+    }
+    else activities = client.activities;
+
+    return activities;
 };
 
 
