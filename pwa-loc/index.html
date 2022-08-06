@@ -50,9 +50,9 @@
   <script type="text/javascript" src="scripts/libraries/maska.js"></script>
   <script type="text/javascript" src="scripts/libraries/localforage.min.js"></script>
   <script type="text/javascript" src="scripts/libraries/json-viewer.js"></script>
-  <!--script type="text/javascript" src="scripts/libraries/d3.min.js"></script-->
   <script type="text/javascript" src="scripts/libraries/tabulate.js"></script>
   <script type="text/javascript" src="scripts/libraries/ua-parser.min.js"></script>
+  <script type="text/javascript" src="scripts/libraries/context-menu.js"></script>
 
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -67,6 +67,7 @@
   <link rel="stylesheet" type="text/css" href="css/mdDateTimePicker.min.css">
   <link rel="stylesheet" type="text/css" href="css/mdtimepicker.min.css">
   <link rel="stylesheet" type="text/css" href="css/json-viewer.css">
+  <link rel="stylesheet" type="text/css" href="css/context-menu.css">
 
 
   <!-- CHAT RELATED  -->
@@ -85,6 +86,7 @@
   <noscript>
     Your browser does not support JavaScript! Oops, not good :~(
   </noscript>
+
 
   <!-- LV1. START > MAIN NAV HEADER (TOOLBAR) DIV -->
   <div id="Nav1" class="Nav1" style="display: none;">
@@ -120,15 +122,26 @@
       </table>
     </div>
   </div>
-  <!-- END > MAIN NAV HEADER (TOOLBAR) DIV -->
 
   <!-- LV1. START > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
   <div id="Nav2" class="Nav2" style="display:none;"></div>
-  <!-- END > 2ND NAV HEADER : ActivityListViews FILTER list DIV -->
 
   <!-- LV1. START > MENU LIST CONTAINER DIV -->
   <div id="navDrawerDiv" class="menu-mobile transitionSmooth navigation" style="z-index: 2100; display: none; width: 280px; left: -280px; height: 100%;"></div>
-  <!-- END > MENU LIST CONTAINER DIV -->
+
+
+  <!-- LV1. START > AFTER LOGIN - MAIN APP CONTENT DIV -->
+  <div id="pageDiv" class="wrapper"></div>
+
+  <!-- LV1. START > LOGIN FORM DIV -->
+  <div id="loginFormDiv" style="display:none;"></div>
+
+  <!-- LV1. Features/Menues -->
+  <div id="settingsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;"></div>
+  <div id="aboutFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;"></div>
+  <div id="statisticsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display:none;"></div>
+  <div id="chatDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;"></div>
+
 
   <!-- Top SyncAll Progress Bar - style="z-index: 3000;" -->
   <div id="divProgressBar" class="progress" style="display: none;">
@@ -137,104 +150,6 @@
 
   <div class="appUpdateStatusDiv" style="display: none;"></div>
 
-  <!-- LV1. START > LOGIN FORM DIV -->
-  <div id="loginFormDiv" style="display:none;">
-    <div class="wrapper_login">
-      <div class="login_header">
-        <div class="login_logo__image"></div>
-        <div class="login_title" term="login_title">PSI - workforce app</div>
-      </div>
-
-      <div class="login_data">
-        <div class="login_data__fields">
-          <h4 id="loginUserNameH4" style="display:none; text-align: left; margin-left: 10px;"></h4>
-          <div id="loginField" class="field" style="background-color: white;">
-            <div class="field__label">
-              <label term="login_userName">User code</label><span>*</span>
-            </div>
-            <div class="field__controls">
-              <div class="field__left">
-                <input class="auto_compl loginUserName" type="text" autocomplete="off" mandatory="true"
-                  placeholder="Enter your user code" term="login_enterUserCode" tabindex="1">
-              </div>
-              <div class="field__right"></div>
-            </div>
-          </div>
-          <div class="field pin">
-            <div class="field__label">
-              <label term="login_password">PIN</label><span>*</span>
-            </div>
-            <div class="field__controls">
-              <div class="field__left split_password" style="width: 100%;">
-                <div class="loginPinDiv" style="float: left;">
-                  <input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4"
-                    autocomplete="new-password" mandatory="true">
-                  <input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="number" maxlength="1" autocomplete="new-password"
-                    pattern="[0-9]*" inputmode="numeric">
-                  <input tabindex="3" class="onKeyboardOnOff pin_pw pin2" type="number" maxlength="1" autocomplete="new-password"
-                    pattern="[0-9]*" inputmode="numeric">
-                  <input tabindex="4" class="onKeyboardOnOff pin_pw pin3" type="number" maxlength="1" autocomplete="new-password"
-                    pattern="[0-9]*" inputmode="numeric">
-                  <input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="number" maxlength="1" autocomplete="new-password"
-                    pattern="[0-9]*" inputmode="numeric">
-                </div>
-                <div class="mouseDown" style="float: left;">
-                  <button id="loginPinClear" class="cbtn" term="login_passwordClear">clear</button>
-                </div>
-                <div style="float: left;">
-                  <img class="pin_pw_loading" src="images/loading_small2.svg"
-                    style="display:none; width:30px; height:30px; margin-left:10px; margin-top:10px;">
-                </div>
-              </div>
-              <div class="field__right"></div>
-            </div>
-          </div>
-        </div>
-        <div id="divAppVersion" class="login_data__more" style="text-align: left;">
-          <div>
-            <label id="spanVersion" style="color: #999999; font-weight: 350;">Version #.#</label>&nbsp;
-            <label id="spanVerDate" style="margin-left: 7px; color: #999999; font-weight: 350;">[2020---]</label>
-            <span id="spanLoginAppUpdate" term="login_updateApp"
-              style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top;">[UPDATE
-              APP]</span>
-          </div>
-          <div id="loginVersionNote" style="margin-left: 7px; color: #999999;"></div>
-          <!-- a id="spanVersion" href="versions.html" target="_blank" style="float: left; color: #888;" >Version #.#</a-->
-          <!-- <a href="#">Forgot your PIN?</a> -->
-        </div>
-        <div id="localSiteInfo" style="display: none; color: orange;text-align: left;">
-          [Connected To: 
-          <select id="localStage" style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 4px;">
-            <option value="dev">dev</option>
-            <option value="test">test</option>
-            <option value="prod">prod</option>
-          </select>]
-        </div>        
-      </div>
-
-      <div class="login_buttons login_cta">
-        <div class="login_buttons__container">
-          <div class="button l-emphasis button-full_width mouseDown" id="advanceOptionLoginBtn">
-            <div class="button__container">
-              <div class="button-label" term="login_options">Options</div>
-            </div>
-          </div>
-          <div class="button h-emphasis button-full_width loginBtn mouseDown" tabindex="6">
-            <div class="button__container ">
-              <div class="button-label" term="login_btn_login">Login</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-  <!-- END > LOGIN FORM DIV -->
-
-  <!-- LV1. START > AFTER LOGIN - MAIN APP CONTENT DIV -->
-  <div id="pageDiv" class="wrapper"></div>
-  <!-- END > AFTER LOGIN - MAIN APP CONTENT DIV -->
 
   <div id="pulsatingDots" class="lv-dots lv-mid md" data-label="Loading..." style="display:none;">
     <div></div>
@@ -243,353 +158,19 @@
     <div></div>
   </div>
 
-  <!-- LV1. START > SETTINGS FORM DIV -->
-  <div id="settingsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;">
-    <div class="wapper_card">
-      <div class="sheet-title c_900" style="width: 100%;">
-        <img src="images/arrow_back.svg" class="btnSettingsBack btnBack mouseDown">
-        <span term="menu_settings">Settings</span>
-      </div>
-      <div class="card"
-        style="padding: 8px; background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px); width: calc(100vw - 16px);">
-        <div class="field">
-          <div class="field__label"><label term="settings_network_sync">Network sync</label></div>
-          <div class="field__controls">
-            <div class="field__selector">
-              <select id="settingsInfo_networkSync"></select>
-            </div>
-            <div class="field__right"></div>
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="field__label"><label term="settings_userLanguage">User language</label></div>
-          <div class="field__controls">
-            <div class="field__selector">
-              <select id="settingsInfo_langSelect"></select>
-            </div>
-            <div class="field__right"></div>
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="field__label"><label term="settings_Language_pack_date" id="languageCollapsibleHeader">Language
-              pack
-              date</label></div>
-          <div class="field__controls">
-            <div class="field__left">
-              <input id="settingsInfo_userLanguage_Update" type="text" mandatory="true" readonly>
-            </div>
-            <div class="field__right"></div>
-
-            <div id="settingsInfo_newLangTermsDownload">
-              <img id="imgSettingLangTermRotate" src="images/sync-banner.svg" alt=""
-                style="margin-right: 9px; opacity: 0,65;" class="">
-            </div>
-
-          </div>
-        </div>
-        
-        <div class="field">
-          <div class="field__label"><label term="settings_other">Others</label></div>
-          <div class="field__controls">
-            <div class="field__selector">
-              <button class="appInstall cbtn" style="background-color: silver;">App Setup</button>
-              <button class="linkAppUpdateCheck cbtn c_cb">AppFileNew Check</button>
-              <button class="linkAppUpdateRefresh cbtn" style="display: none; color: orange;">AppFileNew Apply</button>
-              <button class="holidaysWeekends cbtn" style="display: none;">Holidays/Weekends</button>
-              <button class="showLogs cbtn c_cb">Logs</button>
-              <button class="dataShare cbtn">Data Share</button>
-              <button class="fixActivities cbtn">Fix Data</button>
-              <button class="jobAidFileListing cbtn c_cb" style="display: none;">JobAid</button>
-              <button class="vcQueue cbtn" style="display: none;">VoucherCode Queue</button>
-            </div>
-            <div class="field__right"></div>
-          </div>
-        </div>
-
-        <!-- /scripts/classes/settingsApp line 89 -->
-        <div class="field settingsGroupDiv" id="resetCollapsible" style="font-size: 0.875rem;padding:4px; margin-bottom: 30px;">
-          <div class="field__label">
-            <div class="" id="settingsAppRestHeader" style="cursor: pointer;">
-              <div class="field__controls">
-                <div class="field__left" style="padding: 4px 0;">
-                  <svg width="21" height="18" viewBox="0 0 21 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M14 9C14 7.9 13.1 7 12 7C10.9 7 10 7.9 10 9C10 10.1 10.9 11 12 11C13.1 11 14 10.1 14 9ZM12 0C7.03 0 3 4.03 3 9H0L4 13L8 9H5C5 5.13 8.13 2 12 2C15.87 2 19 5.13 19 9C19 12.87 15.87 16 12 16C10.49 16 9.09 15.51 7.94 14.7L6.52 16.14C8.04 17.3 9.94 18 12 18C16.97 18 21 13.97 21 9C21 4.03 16.97 0 12 0Z"
-                      fill="#333333" fill-opacity="0.87"></path>
-                  </svg>
-                  <label term="settings_reset_app_configuration" style="font-size: 1rem;padding: 4px;line-height: 29px;" term="settings_reset_app_configuration">Reset app data &
-                    configuration</label>
-                </div>
-                <div class="field__right"></div>
-              </div>
-
-              <div class="collapsible-body" id="bodyCollapsible" style="display: none;">
-                <div id="bodyCollapsible__text" term="settings_reset_app_configuration_detailed">
-                  Your configuration and App data stored in the device will be deleted. You will be asked to log in
-                  again and data which is not synced to the server will be lost.
-                </div>
-                <div id="buttonResetData" class="button-text alert" style="float:right;">
-                  <div class="button__container">
-                    <div class="button-label" term="settings_reset_label">RESET</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- JobAid Context-menu Sample - will be replaced later.. -->
+  <div class="context-menu-container" id="context-menu-items" style="top: 399px; left: 861px; position: absolute; display: none;">
+    <ul>
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+    </ul>
   </div>
-  <!-- END > SETTINGS FORM DIV -->
-
-  <!-- LV1. START > ABOUT FORM DIV -->
-  <div id="aboutFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;">
-
-    <div class="wapper_card">
-      <div class="sheet-title c_900" style="width:100%">
-        <img src="images/arrow_back.svg" class="btnAboutBack btnBack mouseDown">
-        <span term="menu_about">About</span>
-      </div>
-
-      <div class="card" style="padding: 8px; background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px); width: calc(100vw - 16px);">
-        <div class="subContent" style="margin-bottom: 30px;">
-          <div class="principal_section"
-            style="height:75px; margin:0; width:100vw; position:relative; background-color:#fff;padding: 8px 0 12px 8px;">
-            <div class="principal_section__icon">
-              <img src="images/Connect.svg" style="width: inherit;height: inherit;">
-            </div>
-            <div class="principal_section__title">Workforce App</div>
-          </div>
-          <div class="field-read_only">
-            <div class="field-read_only__label"><label term="about_applicationVersion">Application version</label></div>
-            <div class="field-read_only__text" id="aboutInfo_AppVersion">release candidate version number</div>
-          </div>
-          <div class="field-read_only">
-            <div class="field-read_only__label"><label term="about_configVersion">Config version</label></div>
-            <div class="field-read_only__text" id="aboutInfo_dcdVersion">13-lucky-number</div>
-          </div>
-          <div class="field-read_only">
-            <div class="field-read_only__label"><label term="about_networkMode">Network mode</label></div>
-            <div class="field-read_only__text" id="aboutInfo_networkMode">Online-are-you-sure</div>
-          </div>
-          <!--div class="field-read_only">
-            <div class="field-read_only__label"><label term="about_geoLocation">Location permission</label></div>
-            <div class="field-read_only__text" id="aboutInfo_geoLocation">Granted-so-i-say?</div>
-          </div-->
-          <div class="field-read_only">
-            <div class="field-read_only__label"><label term="about_info">Info</label></div>
-            <div class="field-read_only__text" id="aboutInfo_info"></div>
-          </div>
-        </div>      
-
-      </div>
-
-    </div>
-
-  </div>
-  <!-- END > ABOUT FORM DIV -->
-
-  <!-- LV1.  START > STATISTICS REPORT -->
-  <div id="statisticsFormDiv" class="sheet_full-fs subMenu_PageDiv" style="display:none;">
-    <div class="wapper_card">
-      <div class="sheet-title c_900" style="width: 100%;">
-        <img src="images/arrow_back.svg" class="btnBack mouseDown">
-        <span term="menu_statistics">Statistics</span>
-      </div>
-    
-      <div id="statsNav2" class="Nav2" style="position:absolute !important; z-index: 1500;">
-        <div class="controls">
-            <div class="field">
-                <div class="field__label"><label term="stats_period_select">Select a period</label><span>*</span></div>
-                <div class="field__controls">
-                    <div class="field__selector">
-                        <select class="stats_select_period" mandatory="true">
-                            <option from="0" to="0" value="0" term="stats_period_select">Select a period</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="stats_t_info text_help" style="display:none;">
-              <span term="stats_periodDateBetween">Between</span> <span class="spanPeriod_Start"></span> <span term="stats_periodDateAnd">and</span> <span class="spanPeriod_End"></span>
-            </div>
-            <div class="stats_t_custom text_help" style="display:none;">
-              <span style="font-size: 0.71rem;" term="stats_periodDateBetween">Between</span>
-              <input class="inputCustomPeriod_Start statsCusDate" placeholder="YYYY-MM-DD" readonly />
-              <button class="customStartPeriodBtn dateButton2 mouseDown"><img src="images/i_date.svg" class="imgCalendarInput"></button>
-              <span style="font-size: 0.71rem;" term="stats_periodDateAnd">And</span>
-              <input class="inputCustomPeriod_End statsCusDate" placeholder="YYYY-MM-DD" readonly/> 
-              <button class="customEndPeriodBtn dateButton2 mouseDown"><img src="images/i_date.svg" class="imgCalendarInput"></button>
-              <button class="btnCustomPeriodRun cbtn c_cfb" term="stats_period_customRange_run">Run</button>
-            </div>
-        </div>
-      </div>
-      
-      <div class="loadingImg_statistic" style="margin: 80px 0px 0px 50px; display: none;"><img src="images/loading_big_blue.gif"></div>
-    
-      <div class="statsContentPage card" style="overflow: auto !important; height: calc(100vh - 60px);"></div>
-    </div>
-  </div>
-  <!-- END > STATISTICS REPORT -->
-  
-
-  <!-- LV1.  START > CHAT -->
-  <div id="chatDiv" class="sheet_full-fs subMenu_PageDiv" style="display: none;">
-
-    <div class="wapper_card">
-      <div class="sheet-title c_900" style="width:100%">
-        <img src="images/arrow_back.svg" class="btnChatBack btnBack mouseDown">
-        <span term="menu_chat">Chat</span>
-      </div>
-
-      <div class="card" style="padding: 8px; background-color: #FFF; height: calc( 100vh - 70px ); width: 98%; display: flex;">
-        <div class="subContent" style="width: 100%; height: 100%;">
-
-            <!-- partial:index.partial.html -->
-            <div class="chatContainer clearfix">
-              <div class="people-list" id="people-list">
-              <div class="curUsserDiv">
-                <div class="user-icon" id="curUserIcon"></div>
-                <div class="about">
-                  <div class="name">
-                    <span id="curUsername"></span> 
-                    <span id="editContactList" mode="hide">&#9998;</span>
-                  </div>
-                  <!-- <div class="status">
-                    <i class="fa fa-circle online"></i> online
-                  </div> -->
-                </div>
-                <!-- <div class="leave-btn" id="logOutBtn">Log-out</div> -->
-                <!-- <i class="fa fa-search"></i> -->
-              </div>
-
-              <div class="searchForm">
-                <input class="nosubmit search" id="searchContactName" placeholder="Search..." style="background-color: white;">
-                <div class="add-user-btn" id="addUserBtn" style="display:none;">Add</div>
-              </div>              
-                <ul id="users">
-                </ul>
-              </div>
-              
-              <div class="chat" style="display: none;" id="chatView">
-                <div class="chat-header clearfix">
-                  <div class="user-icon chat-with-icon"></div>
-                  <div class="chat-about">
-                    <div class="chat-with"></div>
-                    <div class="chat-num-messages"></div>
-                  </div>
-                  <i class="fa fa-star"></i>
-                </div> <!-- end chat-header -->
-                
-                <div class="chat-history">
-                  <ul>
-                  </ul>
-                  
-                </div> <!-- end chat-history -->
-                
-                <div class="chat-message clearfix chat-form">
-                  
-                  <!-- <form> -->
-                    <!-- <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="3"></textarea> -->
-                    <input id="msg" type="text" class="message-text" placeholder="Enter Message" required="" autocomplete="off" placeholder ="Type your message">
-                    <img id="showEmojiDashboard" src="images/smile.png" style="width: 16px; opacity: 0.4; cursor: pointer;">
-                    <label>
-                      <!-- <input type="file" id="upload_input" multiple accept="image/*" style="display:none"/> -->
-                      <input type="file" id="upload_input" multiple style="display:none"/>
-                      <img src="images/file-icon.png" style="width: 13px; opacity: 0.4; margin-left: 10px; cursor: pointer;"/>
-                    </label>
-
-                    <button class="btn" id="sendBtn">Send</button>
-
-                  <!-- </form> -->
-                  <div class="emoji-dashboard" style="display:none">
-                    <ul></ul>
-                  </div>
-                </div> <!-- end chat-message -->
-                
-              
-              </div> <!-- end chat -->
-              
-              <div class="chat" id="initChatMsg" style="height: 917px; font-size: 40px; text-align: center; padding: 100px 0;">
-              </div>
-
-              </div>
-            </div> <!-- end container -->
-
-        </div>
-      </div>
-    </div>
-
-  </div>
-  <!-- END > CHAT -->
 
 
-  <!-- LV1.  START > CUSTOM LOG INFO -->
-  <div id="divCustomLogDisplay" style="display:none;">
-    <div class="divMainLayout popupAreaCss">
-      <div style="margin-bottom: 5px;">Logs:</div>
-      <div class="divMainContent" style="overflow: scroll;height: 70%;background-color: #eee;padding: 7px;"></div>
-      <div class="divRunCommand" style="width: 100%; margin-top: 3px;">
-        <select class="selLogRunCommandCase"
-          style="display: unset; width: unset; border: solid 1px #ccc; font-size: 0.75rem;">
-          <option value="custom">Custom</option>
-          <option value="loadSampleData">Load SampData</option>
-          <option value="removeSampleData">Remove SampData</option>
-          <option value="listClientData">List ClientData</option>
-          <option value="overrideSyncLastDwDate">Override syncLastDwDate</option>
-          <option value="showOtherUsefulCommands">Show Other Commands</option>
-          <option value="devMode">devMode</option>
-          <option value="serverLinkOff">Set ServerLink Off</option>
-          <option value="serverLinkOn">Set ServerLink On</option>
-          <option value="serverAvailableCheck">Server AvailCheck</option>
-          <option value="disableConnCheck">Disable ConnCheck</option>
-          <option value="reEnableConnCheck">ReEnable ConnCheck</option>
-          <option value="clearLogs">Clear Logs</option>
-        </select>
-        <input class="inputLogRunCommand" style="width: 50%; border: solid 1px #ccc; font-size: 0.75rem;" />
-        <button class="btnLogRunCommand">Run</button>
-      </div>
-
-      <div class="button-text warning" style="width: 100%;margin: 10px 0px 0px 0px;height: 25px;cursor: unset;">
-        <div class="button__container" style="float:right;">
-          <div class="close button-label" style="line-height: unset;cursor: pointer;">CLOSE</div>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-  <!--  END > CUSTOM LOG INFO -->
-
-  <!-- LV1. SETTINGS DATA SHARE POPUP DIV -->
-  <div id="divDataShare" class="popupAreaCss" style="display:none;">
-    <div class="divMainLayout" style="height:100%;">
-
-      <div style="margin-bottom: 5px;">Data Share:</div>
-
-      <div>
-        <div>
-          <input class="inputShareCode" placeholder="Share Code" style="width: 140px; border: solid 1px #ccc; font-size: 0.75rem;" />
-          <button class="btnShare cbtn" style="background-color: cadetblue;" >Share</button>  
-        </div>
-        <div>
-          <input class="inputLoadCode" placeholder="Load Code" style="width: 140px; border: solid 1px #ccc; font-size: 0.75rem;" />
-          <button class="btnLoad cbtn">Load</button>  
-        </div>  
-      </div>
-
-      <div class="divMainContent" style="overflow: scroll;height: 65%; margin-top: 10px; background-color: #eee;padding: 7px;">
-      </div>
-
-      <div class="button-text warning" style="width: 100%; margin: 20px 0px 0px 0px; height: 25px; cursor: unset;">
-        <div class="button__container">
-          <div class="close button-label" style="line-height: unset;cursor: pointer;">CLOSE</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
+  <!-- LV1.  START > Settings > CUSTOM LOG INFO / dataShare -->
+  <div id="divCustomLogDisplay" style="display:none;"></div>
+  <div id="divDataShare" class="popupAreaCss" style="display:none;"></div>
 
   <!-- LV1. NETWORK SWITCH DIV -->
   <div id="networkSwitch" style="display:none;"></div>
@@ -597,9 +178,7 @@
   <!-- LV1. Overlay gray layer for clicks -->
   <div id="divPopupArea" class="popupAreaCss" style="display:none;">
     <div class="divMainLayout" style="height:100%;">
-
-      <div class="divMainContent"></div> <!--style="overflow: scroll;height: 85%; margin-top: 10px; background-color: #eee;padding: 7px;"-->
-
+      <div class="divMainContent"></div>
       <div class="button-text warning" style="width: 100%; margin: 20px 0px 0px 0px; height: 25px; cursor: unset;">
         <div class="button__container">
           <div class="close button-label" style="line-height: unset;cursor: pointer;">CLOSE</div>

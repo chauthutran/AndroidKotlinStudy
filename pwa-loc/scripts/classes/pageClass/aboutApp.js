@@ -1,231 +1,194 @@
 // -------------------------------------------
 // -- BlockMsg Class/Methods
-function aboutApp( cwsRender )
-{
-    var me = this;
+function aboutApp(cwsRender) {
+	var me = this;
 
-    me.cwsRenderObj = cwsRender;
+	me.cwsRenderObj = cwsRender;
 
-    me.aboutFormDivTag = $( '#aboutFormDiv' );
-    me.aboutData;
+	me.aboutFormDivTag = $('#aboutFormDiv');
 
-    // ----- Tags -----------
-    me.aboutInfo_langSelectTag = $( '#aboutInfo_langSelect' );
-    me.aboutInfo_ThemeSelectTag = $( '#aboutInfo_ThemeSelect' );
-    me.aboutInfo_NetworkSync = $( '#aboutInfo_networkSync' );
-    
+	// ----- Tags -----------
+	me.aboutInfo_langSelectTag;
+	me.aboutInfo_ThemeSelectTag;
+	me.aboutInfo_NetworkSync;
 
-    me.easterEgg1Timer = 0; // click 5x to change network mode to opposite of current mode
-    me.easterEgg2Timer = 0; // activate Translations debugging
-
-	// TODO: NEED TO IMPLEMENT
-	// =============================================
 	// === TEMPLATE METHODS ========================
 
-    me.initialize = function() 
-    {
-        me.setEvents_OnInit();
-    }
+	me.initialize = function () {
+
+		// Set HTML & values related
+		me.aboutFormDivTag.append(aboutApp.contentHtml);
+
+		me.aboutInfo_langSelectTag = $('#aboutInfo_langSelect');
+		me.aboutInfo_ThemeSelectTag = $('#aboutInfo_ThemeSelect');
+		me.aboutInfo_NetworkSync = $('#aboutInfo_networkSync');
+
+
+		me.setEvents_OnInit();
+	};
 
 	// ------------------
 
-    me.render = function() 
-    {
-        me.populateAboutPageData( ConfigManager.getConfigJson() );
-        
-        TranslationManager.translatePage();
+	me.render = function () {
+		me.populateAboutPageData(ConfigManager.getConfigJson());
 
-        me.showAboutPage();
-    }
+		TranslationManager.translatePage();
 
-	// ------------------
-
-	me.setEvents_OnInit = function()
-	{		
-        // --------------
-        // BUTTON CLICKS
-
-        me.aboutFormDivTag.find( 'img.btnBack' ).click( () =>
-        {
-            if ( $( 'img.rotateImg' ).length  )
-            {
-                $( 'img.rotateImg' ).click();
-            }
-            else
-            {
-                me.hideAboutPage();
-            }
-        });
-
-        me.evalHideSections = function( excludeID )
-        {
-            $( 'li.aboutGroupDiv' ).each(function(i, obj) {
-
-                if ( $( obj ).attr( 'id' ) != excludeID && ! $( obj ).hasClass( 'byPassAboutMore' ) )
-                {
-                    if ( $( obj ).is(':visible') ) $( obj ).hide();
-                    else $( obj ).show();
-                }
-
-            });
-        }
-    }
-
+		me.showAboutPage();
+	};
 
 	// ------------------
 
-    me.showAboutPage = function()
-    {
-        if ( $( '#loginFormDiv' ).is( ":visible" ) )
-        {
-            $( '#loginFormDiv' ).hide();
-        }
+	me.setEvents_OnInit = function () {
+		// --------------
+		// BUTTON CLICKS
 
-        me.renderNonEssentialFields( SessionManager.getLoginStatus() );
-
-        me.aboutFormDivTag.show();
-    }
-
-    me.hideAboutPage = function()
-    {
-        //me.aboutFormDivTag.fadeOut( 500 );
-        me.aboutFormDivTag.hide();
-    }
-
-
-    me.renderNonEssentialFields = function( userLoggedIn )
-    {
-        if ( ! $( '#aboutInfo_networkMode' ).attr( 'unselectable' )  )
-        {
-            $( '#aboutInfo_networkMode' ).attr( 'unselectable', 'on' );
-            $( '#aboutInfo_networkMode' ).css( 'user-select', 'none' );
-            $( '#aboutInfo_networkMode' ).on( 'selectstart', false );
-        }
-    }
-
-    me.populateAboutPageData = function( dcdConfig ) 
-    {
-        // Dcd Config related data set
-        var dcdConfigVersion = ( dcdConfig && dcdConfig.version ) ? dcdConfig.version : "";
-
-        // Populate data
-        $( '#aboutInfo_AppVersion' ).html( $( '#spanVersion' ).html() );
-
-        $( '#aboutInfo_dcdVersion' ).html( dcdConfigVersion );
-
-        $( '#aboutInfo_networkMode' ).html( '<div>' + ConnManagerNew.statusInfo.appMode + '</div>' );
-
-        me.displayDeviceInfo( $( '#aboutInfo_info' ) );
-        //$( '#aboutInfo_info' ).html( me.getNavigatorInfo() );
-
-        //$( '#aboutInfo_geoLocation' ).html( '<div>' + FormUtil.geoLocationState + ( ( me.getCoordinatesForPresentation() ).toString().length ? ': ' + me.getCoordinatesForPresentation() : '' ) + '</div>' );
-        //<!--div class="field-read_only">
-        //  <div class="field-read_only__label"><label term="about_geoLocation">Location permission</label></div>
-        //  <div class="field-read_only__text" id="aboutInfo_geoLocation">Granted-so-i-say?</div>
-        //</div-->
-
-    }
-
-
-
-    // -----------------------------------
-
-    me.setLanguageDropdownFromCode = function ( languageList, langCode )
-    {
-		$.each( languageList, function( i, item ) 
-		{
-            if ( item.id == langCode )
-            {
-                Util.setSelectDefaultByName( me.aboutInfo_langSelectTag, item.name );
-            }
+		me.aboutFormDivTag.find('img.btnBack').click(() => {
+			if ($('img.rotateImg').length) {
+				$('img.rotateImg').click();
+			}
+			else {
+				me.hideAboutPage();
+			}
 		});
-    }
 
-    me.getListNameFromID = function( arrList, idVal )
-    {
-        for( i = 0; i < arrList.length; i++ )
-        {
-            if ( arrList[i].id == idVal )
-            {
-                return arrList[i].name;
-            }
-        }
-    }
+		me.evalHideSections = function (excludeID) {
+			$('li.aboutGroupDiv').each(function (i, obj) {
 
- 
-    me.getCoordinatesForPresentation = function()
-    {
-        var ret = ''; //'<div term="">not required by PWA</div>';
-        if ( FormUtil.geoLocationLatLon )
-        {
-            if ( FormUtil.geoLocationLatLon.toString().length )
-            {
-                ret = '[' + FormUtil.geoLocationLatLon.toString() + ']'
-            }
-        }
-        return ret;
-    }
+				if ($(obj).attr('id') != excludeID && !$(obj).hasClass('byPassAboutMore')) {
+					if ($(obj).is(':visible')) $(obj).hide();
+					else $(obj).show();
+				}
+
+			});
+		}
+	};
+
+	// ------------------
+
+	me.showAboutPage = function () {
+		if ($('#loginFormDiv').is(":visible")) {
+			$('#loginFormDiv').hide();
+		}
+
+		me.renderNonEssentialFields(SessionManager.getLoginStatus());
+
+		me.aboutFormDivTag.show();
+	};
+
+	me.hideAboutPage = function () {
+		//me.aboutFormDivTag.fadeOut( 500 );
+		me.aboutFormDivTag.hide();
+	};
 
 
-    me.displayDeviceInfo = function( aboutInfoTag )
-    {
-        var info = InfoDataManager.INFO.deviceInfo;
+	me.renderNonEssentialFields = function (userLoggedIn) {
+		if (!$('#aboutInfo_networkMode').attr('unselectable')) {
+			$('#aboutInfo_networkMode').attr('unselectable', 'on');
+			$('#aboutInfo_networkMode').css('user-select', 'none');
+			$('#aboutInfo_networkMode').on('selectstart', false);
+		}
+	};
 
-        var infoDivTag1 = `<div class="deviceInfoRow1">Browser: ${Util.getStr( info.browser.name )} ${Util.getStr( info.browser.version ).substr( 0, 2 )} 
-            Engine: ${Util.getStr( info.engine.name )} ${Util.getStr( info.engine.version )}
-            , OS: ${Util.getStr( info.os.name )} ${Util.getStr( info.os.version )}
-            , CPU: ${Util.getStr( info.cpu.architecture )} (CoreCount ${Util.getStr( info.cpu.corCount )}
-            , Memory: at least ${Util.getStr( info.memory )} GB [Measurement Max 8]
+	me.populateAboutPageData = function (dcdConfig) {
+		// Dcd Config related data set
+		var dcdConfigVersion = (dcdConfig && dcdConfig.version) ? dcdConfig.version : "";
+
+		// Populate data
+		$('#aboutInfo_AppVersion').html($('#spanVersion').html());
+		$('#aboutInfo_dcdVersion').html(dcdConfigVersion);
+		$('#aboutInfo_networkMode').html('<div>' + ConnManagerNew.statusInfo.appMode + '</div>');
+
+		me.displayDeviceInfo($('#aboutInfo_info'));
+	};
+
+	// -----------------------------------
+
+	me.setLanguageDropdownFromCode = function (languageList, langCode) {
+		$.each(languageList, function (i, item) {
+			if (item.id == langCode) {
+				Util.setSelectDefaultByName(me.aboutInfo_langSelectTag, item.name);
+			}
+		});
+	};
+
+	me.getListNameFromID = function (arrList, idVal) {
+		for (i = 0; i < arrList.length; i++) {
+			if (arrList[i].id == idVal) {
+				return arrList[i].name;
+			}
+		}
+	};
+
+	me.getCoordinatesForPresentation = function () {
+		var ret = ''; //'<div term="">not required by PWA</div>';
+		if (FormUtil.geoLocationLatLon) {
+			if (FormUtil.geoLocationLatLon.toString().length) {
+				ret = '[' + FormUtil.geoLocationLatLon.toString() + ']'
+			}
+		}
+		return ret;
+	};
+
+
+	me.displayDeviceInfo = function (aboutInfoTag) {
+		var info = InfoDataManager.INFO.deviceInfo;
+
+		var infoDivTag1 = `<div class="deviceInfoRow1">Browser: ${Util.getStr(info.browser.name)} ${Util.getStr(info.browser.version).substr(0, 2)} 
+            Engine: ${Util.getStr(info.engine.name)} ${Util.getStr(info.engine.version)}
+            , OS: ${Util.getStr(info.os.name)} ${Util.getStr(info.os.version)}
+            , CPU: ${Util.getStr(info.cpu.architecture)} (CoreCount ${Util.getStr(info.cpu.corCount)}
+            , Memory: at least ${Util.getStr(info.memory)} GB [Measurement Max 8]
         </div>`;
 
-        var infoDivTag2 = `<div class="deviceInfoRow2">Device: ${Util.getStr( info.device.type )} ${Util.getStr( info.device.vendor )} ${Util.getStr( info.device.model )}
-            , Storage: [Using] ${AppUtil.getDiffSize( info.storage.usage, 1000000, 'MB')} / ${AppUtil.getDiffSize( info.storage.quota, 1000000000, 'GB')} [Browser Usable/DeviceSize]
+		var infoDivTag2 = `<div class="deviceInfoRow2">Device: ${Util.getStr(info.device.type)} ${Util.getStr(info.device.vendor)} ${Util.getStr(info.device.model)}
+            , Storage: [Using] ${AppUtil.getDiffSize(info.storage.usage, 1000000, 'MB')} / ${AppUtil.getDiffSize(info.storage.quota, 1000000000, 'GB')} [Browser Usable/DeviceSize]
         </div>`;
 
-        aboutInfoTag.append( infoDivTag1 );
-        aboutInfoTag.append( infoDivTag2 );
-    };
-
-    /*
-    me.getNavigatorInfo = function()
-    {
-        var returnData = '';
-
-        returnData += '<div>Browser: ' + Util.getStr( App.UaData.browser.name ) + ' ' + Util.getStr( App.UaData.browser.version ).substr( 0, 2 );
-        //returnData += ' Engine: ' + Util.getStr( App.UaData.engine.name ) + Util.getStr( App.UaData.engine.version );
-        returnData += ', OS: ' + Util.getStr( App.UaData.os.name ) + ' ' + Util.getStr( App.UaData.os.version );
-        returnData += ', CPU: ' + Util.getStr( App.UaData.cpu.architecture ) + '(CoreCount ' + Util.getStr( navigator.hardwareConcurrency ) + ')';
-        returnData += ', Memory: at least ' + Util.getStr( navigator.deviceMemory ) + ' GB [Measurement Max 8]';
-        returnData += '</div>'; 
-
-        returnData += '<div class="divAboutInfo2ndRow">Device: ' + Util.getStr( App.UaData.device.type ) + ' ' 
-            + Util.getStr( App.UaData.device.vendor ) + ' ' 
-            + Util.getStr( App.UaData.device.model );
-        returnData += '</div>'; 
-
-        navigator.getBattery().then( function( battery ) 
-        {
-            var batteryChargingYN = ( battery.charging ) ? 'Y': 'N';
-            var chargeLvl = ( battery.level * 100 ).toFixed( 0 ) + '%';
-            var batteryInfo = ', Battery Left: ' + chargeLvl + ', Charging(' + batteryChargingYN + ')';
-
-            $( 'div.divAboutInfo2ndRow' ).append( batteryInfo );
-        });
-
-        if ( 'storage' in navigator && 'estimate' in navigator.storage ) 
-        {
-            navigator.storage.estimate().then(({usage, quota}) => {
-                var spaceStr = ', Storage: [Using] ' + AppUtil.getDiffSize( usage, 1000000, 'MB' ) + '/ ' + AppUtil.getDiffSize( quota, 1000000000, 'GB' ) + ' [Browser Usable/DeviceFree]';
-
-                $( 'div.divAboutInfo2ndRow' ).append( spaceStr );
-            });
-        }
-          
-        return returnData;
-    };
-    */
+		aboutInfoTag.append(infoDivTag1);
+		aboutInfoTag.append(infoDivTag2);
+	};
 
 	// ------------------------------------
 
 	me.initialize();
-}
+};
+
+aboutApp.contentHtml = `
+<div class="wapper_card">
+	<div class="sheet-title c_900" style="width:100%">
+		<img src="images/arrow_back.svg" class="btnAboutBack btnBack mouseDown">
+			<span term="menu_about">About</span>
+	</div>
+
+	<div class="card" style="padding: 8px; background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px); width: calc(100vw - 16px);">
+		<div class="subContent" style="margin-bottom: 30px;">
+			<div class="principal_section"
+				style="height:75px; margin:0; width:100vw; position:relative; background-color:#fff;padding: 8px 0 12px 8px;">
+				<div class="principal_section__icon">
+					<img src="images/Connect.svg" style="width: inherit;height: inherit;">
+				</div>
+				<div class="principal_section__title">Workforce App</div>
+			</div>
+			<div class="field-read_only">
+				<div class="field-read_only__label"><label term="about_applicationVersion">Application version</label></div>
+				<div class="field-read_only__text" id="aboutInfo_AppVersion">release candidate version number</div>
+			</div>
+			<div class="field-read_only">
+				<div class="field-read_only__label"><label term="about_configVersion">Config version</label></div>
+				<div class="field-read_only__text" id="aboutInfo_dcdVersion">13-lucky-number</div>
+			</div>
+			<div class="field-read_only">
+				<div class="field-read_only__label"><label term="about_networkMode">Network mode</label></div>
+				<div class="field-read_only__text" id="aboutInfo_networkMode">Online-are-you-sure</div>
+			</div>
+			<div class="field-read_only">
+				<div class="field-read_only__label"><label term="about_info">Info</label></div>
+				<div class="field-read_only__text" id="aboutInfo_info"></div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+`;

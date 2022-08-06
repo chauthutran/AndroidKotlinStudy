@@ -210,17 +210,7 @@ function cwsRender()
 
 				var chatUserName = ( INFO.chatUserName ) ? INFO.chatUserName:  INFO.login_UserName; // '+447897018987';
 		
-				me.chatAppObj = new ChatApp( chatUserName );
-
-				var chatDivTag = $( '#chatDiv' ).show();
-
-				chatDivTag.find( 'img.btnBack' ).off( 'click' ).click( () =>
-				{
-					 if ( $( 'img.rotateImg' ).length  ) $( 'img.rotateImg' ).click();
-					 else chatDivTag.hide();
-
-					 me.chatAppObj.socket.disconnect();
-				});				
+				me.chatAppObj = new ChatApp( chatUserName );				
 			}
 			else if ( areaId === Menu.menuJson_HNQIS_RDQA.id ) {  }
 			else if ( areaId === 'aboutPage') me.aboutApp.render();

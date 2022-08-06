@@ -40,6 +40,14 @@ ConsoleCustomLog.clearLogs = function()
 // -------------------------------------
 // Data UI show/hide 
 
+ConsoleCustomLog.setInitialHtml = function()
+{
+	var divDialogTag = $( ConsoleCustomLog.divDialogTagId );
+
+	// Set HTML & values related
+	divDialogTag.append(ConsoleCustomLog.contentHtml);
+};
+
 ConsoleCustomLog.showDialog = function()
 {
     var divDialogTag = $( ConsoleCustomLog.divDialogTagId );
@@ -52,10 +60,8 @@ ConsoleCustomLog.showDialog = function()
         // Display the content..
         ConsoleCustomLog.setMainContent( divMainContentTag, ConsoleCustomLog.customLogData );
 
-
         // Add events..
         ConsoleCustomLog.addEvents( divMainContentTag, divDialogTag );
-
     }
     catch( errMsg )
     {
@@ -277,3 +283,36 @@ ConsoleCustomLog.addTimeStr = function( msg )
     var timeMin = UtilDate.formatDate( new Date(), "mm:ss.SSS" );
     return '[' + timeMin + '] ' + msg;
 };
+
+ConsoleCustomLog.contentHtml = `
+<div class="divMainLayout popupAreaCss">
+	<div style="margin-bottom: 5px;">Logs:</div>
+	<div class="divMainContent" style="overflow: scroll;height: 70%;background-color: #eee;padding: 7px;"></div>
+	<div class="divRunCommand" style="width: 100%; margin-top: 3px;">
+		<select class="selLogRunCommandCase"
+			style="display: unset; width: unset; border: solid 1px #ccc; font-size: 0.75rem;">
+			<option value="custom">Custom</option>
+			<option value="loadSampleData">Load SampData</option>
+			<option value="removeSampleData">Remove SampData</option>
+			<option value="listClientData">List ClientData</option>
+			<option value="overrideSyncLastDwDate">Override syncLastDwDate</option>
+			<option value="showOtherUsefulCommands">Show Other Commands</option>
+			<option value="devMode">devMode</option>
+			<option value="serverLinkOff">Set ServerLink Off</option>
+			<option value="serverLinkOn">Set ServerLink On</option>
+			<option value="serverAvailableCheck">Server AvailCheck</option>
+			<option value="disableConnCheck">Disable ConnCheck</option>
+			<option value="reEnableConnCheck">ReEnable ConnCheck</option>
+			<option value="clearLogs">Clear Logs</option>
+		</select>
+		<input class="inputLogRunCommand" style="width: 50%; border: solid 1px #ccc; font-size: 0.75rem;" />
+		<button class="btnLogRunCommand">Run</button>
+	</div>
+
+	<div class="button-text warning" style="width: 100%;margin: 10px 0px 0px 0px;height: 25px;cursor: unset;">
+		<div class="button__container" style="float:right;">
+			<div class="close button-label" style="line-height: unset;cursor: pointer;">CLOSE</div>
+		</div>
+	</div>
+</div>
+`;
