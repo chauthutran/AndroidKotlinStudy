@@ -3,6 +3,6 @@ coverage/*
 pwa-test/*
 pwa/*
 pwa-*.zip
-pwa-dev/service-worker.*
+pwa-loc/service-worker.*
 deploy/*
 */node_modules
