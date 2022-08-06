@@ -4,25 +4,33 @@
   "description": "WorkForceApp PWA service worker build",
   "author": "James Chang",
   "scripts": {
-    "localDev": "del pwa-dev\\workbox-* && node sw_build_pwa-dev.js && xcopy pwa-dev deploy\\pwa-dev /E/H/C/I/Y",
-    "localDevTomcat": "del pwa-dev\\workbox-* && node sw_build_pwa-dev.js && xcopy pwa-dev C:\\Work\\tomcat8\\webapps\\pwa-dev /E/H/C/I/Y",
+    "localDev": "del pwa-loc\\workbox-* && node sw_build_pwa-loc.js && xcopy pwa-loc deploy\\pwa-dev /E/H/C/I/Y",
+    "localDevTomcat": "del pwa-loc\\workbox-* && node sw_build_pwa-loc.js && xcopy pwa-loc C:\\Work\\tomcat8\\webapps\\pwa-dev /E/H/C/I/Y",
 
-    "devBuild": "node sw_build_pwa-dev.js && tar.exe cf pwa-dev.zip pwa-dev",
+    "todoNote": "We can go with reusing localDev folder?  hard to reuse since we need to delete them..",
 
-    "t_copyDev": "xcopy pwa-dev pwa-test /E/H/C/I/Y",
+    "d_copyDev": "xcopy pwa-loc pwa-dev /E/H/C/I/Y",
+    "d_cleanUp": "del /s /q pwa-dev\\*.map && del pwa-dev\\workbox-* && rmdir /s /q pwa-dev\\scss",
+    "d_cleanUp2": "del /q pwa-dev\\*.map",
+    "dBuild": "npm run d_copyDev && npm run d_cleanUp && node sw_build_pwa-dev.js && npm run d_cleanUp2 && tar.exe cf pwa-dev.zip pwa-dev && RMDIR /Q /S pwa-dev",
+
+    "t_copyDev": "xcopy pwa-loc pwa-test /E/H/C/I/Y",
+    "t_cleanUp": "del /s /q pwa-test\\*.map && del pwa-test\\workbox-* && rmdir /s /q pwa-test\\scss",
     "t_setFiles": "xcopy stageFiles\\test_manifest.json pwa-test\\manifest.json /Y && xcopy stageFiles\\test-icons pwa-test\\images\\icons /E/H/C/I/Y",
     "t_swZipFolder": "node sw_build_pwa-test.js && tar.exe cf pwa-test.zip pwa-test && RMDIR /Q /S pwa-test",
-    "tBuild": "npm run t_copyDev && npm run t_setFiles && npm run t_swZipFolder",
+    "tBuild": "npm run t_copyDev && npm run t_cleanUp && npm run t_setFiles && npm run t_swZipFolder",
 
-    "s_copyDev": "xcopy pwa-dev pwa-stage /E/H/C/I/Y",
+    "s_copyDev": "xcopy pwa-loc pwa-stage /E/H/C/I/Y",
+    "s_cleanUp": "del /s /q pwa-stage\\*.map && del pwa-stage\\workbox-* && rmdir /s /q pwa-stage\\scss",
     "s_setFiles": "xcopy stageFiles\\stage_manifest.json pwa-stage\\manifest.json /Y && xcopy stageFiles\\stage-icons pwa-stage\\images\\icons /E/H/C/I/Y",
     "s_swZipFolder": "node sw_build_pwa-stage.js && tar.exe cf pwa-stage.zip pwa-stage && RMDIR /Q /S pwa-stage",
-    "sBuild": "npm run s_copyDev && npm run s_setFiles && npm run s_swZipFolder",
+    "sBuild": "npm run s_copyDev && npm run s_cleanUp npm run s_setFiles && npm run s_swZipFolder",
 
-    "w_copyDev": "xcopy pwa-dev wfa /E/H/C/I/Y",
+    "w_copyDev": "xcopy pwa-loc wfa /E/H/C/I/Y",
+    "w_cleanUp": "del /s /q wfa\\*.map && del wfa\\workbox-* && rmdir /s /q wfa\\scss",
     "w_setFiles": "xcopy stageFiles\\wfa_manifest.json wfa\\manifest.json /Y && xcopy stageFiles\\wfa-icons wfa\\images\\icons /E/H/C/I/Y",
     "w_swZipFolder": "node sw_build-wfa.js && tar.exe cf wfa.zip wfa && RMDIR /Q /S wfa",
-    "wBuild": "npm run w_copyDev && npm run w_setFiles && npm run w_swZipFolder",
+    "wBuild": "npm run w_copyDev && npm run w_cleanUp && npm run w_setFiles && npm run w_swZipFolder",
 
     "minifyJS": "uglifyjs scripts.js --compress --mangle --warn --output scripts.min.js",
     "utest": "karma start",
