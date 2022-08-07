@@ -337,7 +337,7 @@ function ChatApp(username) {
 			 if ( $( 'img.rotateImg' ).length  ) $( 'img.rotateImg' ).click();
 			 else me.chatDivTag.hide();
 
-			 me.socket.disconnect();
+			 if ( me.socket ) me.socket.disconnect();
 		});
 
 
