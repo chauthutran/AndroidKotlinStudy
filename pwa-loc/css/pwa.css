@@ -24,7 +24,7 @@
 }
 
 .mouseDown:active {
-  background-color: #DAEAFE;
+  background-color: #DAEAFE !important;
 }
 
 /*.card__content:hover {
@@ -55,7 +55,7 @@
   padding-right: 24px;
 }
 
-/* ================================ */
+/* ===== Job Aid Releated =========================== */
 
 .card_jobAid {
   width: 100%;
@@ -68,6 +68,18 @@
   padding: 8px;  
   border-top: 1px solid black;
 }
+
+.threeDotMenu {
+  font-size: 25px;
+  padding: 10px;
+  cursor: pointer;  
+}    
+
+.threeDotMenu:hover {
+  background-color: #FAFAFA;
+}    
+
+
 /* ================================ */
 
 .btnBack {

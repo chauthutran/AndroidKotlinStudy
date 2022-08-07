@@ -1,22 +1,20 @@
 
 // -------------------------------------------
 // -- Utility Class/Methods
-
-// ---------------------------
+//
 // GET & CHECK Variable Types Check
-// ----------------------------------
+//
 // Array Operation Related
-// ----------------------------------
+//
 // Recurrsive/iterative - synced call
-// ----------------------------------
+//
 // JSON Copy Related
-// ----------------------------------
-// ---- Try Cache / Eval related methods
-// ----------------------------------
-// .............
+//
+// Try Cache / Eval related methods
+//
+// ---------------------------
 
-
-function Util() {}
+function Util() { }
 
 Util.MS_DAY = 86400000;
 Util.MS_HR = 3600000;
@@ -44,137 +42,116 @@ Util.ERR_FIX_OP = 'ERR_FixOp';
 // ---------------------------
 // GET & CHECK Variable Types Check
 
-Util.isTypeObject = function( obj )
-{
+Util.isTypeObject = function (obj) {
 	// Array is also 'object' type, thus, check to make sure this is not array.
-	if ( Util.isTypeArray( obj ) ) return false;
-	else return ( obj !== undefined && typeof( obj ) === 'object' );
+	if (Util.isTypeArray(obj)) return false;
+	else return (obj !== undefined && typeof (obj) === 'object');
 };
 
-Util.isTypeArray = function( obj )
-{
-	return ( obj !== undefined && Array.isArray( obj ) );
+Util.isTypeArray = function (obj) {
+	return (obj !== undefined && Array.isArray(obj));
 };
 
-Util.isTypeString = function( obj )
-{
-	return ( obj !== undefined && typeof( obj ) === 'string' );
+Util.isTypeString = function (obj) {
+	return (obj !== undefined && typeof (obj) === 'string');
 };
 
 // ------------------------------------
 
-Util.getStr = function( input, limit, tailStr )
-{
+Util.getStr = function (input, limit, tailStr) {
 	var value = '';
 
-	try
-	{
-		if ( input !== undefined && input !== '' )
-		{
+	try {
+		if (input !== undefined && input !== '') {
 			// Convert the input into string value.
-			if ( Util.isTypeObject( input ) || Util.isTypeArray( input ) ) value = JSON.stringify( input );
-			else if ( Util.isTypeString( input ) ) value = input;
+			if (Util.isTypeObject(input) || Util.isTypeArray(input)) value = JSON.stringify(input);
+			else if (Util.isTypeString(input)) value = input;
 			else value = input.toString();
 
 			// If limit is passed, cut the length of string value to that limit length.
-			if ( limit && value.length > limit ) 
-			{
-				value = value.substr( 0, limit );
+			if (limit && value.length > limit) {
+				value = value.substr(0, limit);
 
-				if ( !tailStr ) tailStr = '...';
+				if (!tailStr) tailStr = '...';
 
-				if ( Util.isTypeString( tailStr ) ) value += tailStr;
+				if (Util.isTypeString(tailStr)) value += tailStr;
 			}
 		}
 	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in Util.getStr, errMsg: ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.getStr, errMsg: ' + errMsg);
 	}
 
 	return value;
 };
 
-Util.getJson = function( input )
-{
+Util.getJson = function (input) {
 	var value = {};
 
-	try
-	{
-		if ( input )
-		{
-			if ( !Util.isObjEmpty( input ) )
-			{
-				if ( Util.isTypeString( input ) ) value = JSON.parse( input );
-				else if ( Util.isTypeObject( input ) || Util.isTypeArray( input ) ) value = JSON.parse( JSON.stringify( input ) );
-				else value = JSON.parse( input.toString() );
+	try {
+		if (input) {
+			if (!Util.isObjEmpty(input)) {
+				if (Util.isTypeString(input)) value = JSON.parse(input);
+				else if (Util.isTypeObject(input) || Util.isTypeArray(input)) value = JSON.parse(JSON.stringify(input));
+				else value = JSON.parse(input.toString());
 			}
 		}
 	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in Util.getJson, errMsg: ' + errMsg );
-		console.log( input );
+	catch (errMsg) {
+		console.log('ERROR in Util.getJson, errMsg: ' + errMsg);
+		console.log(input);
 	}
 
 	return value;
 };
 
 // Checks if the json is emtpy
-Util.isObjEmpty = function( obj ) 
-{
-    //for ( var key in obj ) { if ( obj.hasOwnProperty( key ) ) return false; }	
-    //return true;
-	return ( Object.keys( obj ).length === 0 );
+Util.isObjEmpty = function (obj) {
+	//for ( var key in obj ) { if ( obj.hasOwnProperty( key ) ) return false; }	
+	//return true;
+	return (Object.keys(obj).length === 0);
 };
 
-Util.isJsonEmpty = function( obj ) 
-{
-	Util.isObjEmpty( obj );
+Util.isJsonEmpty = function (obj) {
+	Util.isObjEmpty(obj);
 };
 
-Util.getProperValue = function( val )
-{
-	Util.getNotEmpty( val );
+Util.getProperValue = function (val) {
+	Util.getNotEmpty(val);
 };
 
-Util.getNotEmpty = function( input ) {
+Util.getNotEmpty = function (input) {
 
-	if ( Util.checkDefined( input ) )
-	{
+	if (Util.checkDefined(input)) {
 		return input
 	}
 	else return "";
 };
 
-Util.checkDefined = function( input ) {
+Util.checkDefined = function (input) {
 
-	if( input !== undefined && input != null ) return true;
+	if (input !== undefined && input != null) return true;
 	else return false;
 };
 
-Util.checkValue = function( input ) {
+Util.checkValue = function (input) {
 
-	if ( Util.checkDefined( input ) && input.length > 0 ) return true;
+	if (Util.checkDefined(input) && input.length > 0) return true;
 	else return false;
 };
 
-Util.checkDataExists = function( input ) {
+Util.checkDataExists = function (input) {
 
-	return Util.checkValue( input );
+	return Util.checkValue(input);
 };
 
-Util.checkData_WithPropertyVal = function( arr, propertyName, value ) 
-{
+Util.checkData_WithPropertyVal = function (arr, propertyName, value) {
 	var found = false;
 
-	if ( Util.checkDataExists( arr ) )
-	{
-		for ( var i = 0; i < arr.length; i++ )
-		{
+	if (Util.checkDataExists(arr)) {
+		for (var i = 0; i < arr.length; i++) {
 			var arrItem = arr[i];
-			if ( Util.checkDefined( arrItem[ propertyName ] ) && arrItem[ propertyName ] == value )
-			{
+			if (Util.checkDefined(arrItem[propertyName]) && arrItem[propertyName] == value) {
 				found = true;
 				break;
 			}
@@ -184,71 +161,62 @@ Util.checkData_WithPropertyVal = function( arr, propertyName, value )
 	return found;
 };
 
-Util.isInt = function(n){
-    return Number(n) === n && n % 1 === 0;
+Util.isInt = function (n) {
+	return Number(n) === n && n % 1 === 0;
 };
 
-Util.isNumeric = function(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
+Util.isNumeric = function (n) {
+	return !isNaN(parseFloat(n)) && isFinite(n);
 };
 
-Util.getNum = function( n ) {
+Util.getNum = function (n) {
 	var val = 0;
-	
-	try { 
-		if ( n ) val = Number( n ); 
+
+	try {
+		if (n) val = Number(n);
 	}
-	catch ( err ) { }
-	
+	catch (err) { }
+
 	return val;
 };
 
-Util.getNumber = function( n ) 
-{
-	return Util.getNum( n );
+Util.getNumber = function (n) {
+	return Util.getNum(n);
 };
 
 
 // Get array from obj map json
-Util.convertObjMapToArray = function( objMapJson )
-{
+Util.convertObjMapToArray = function (objMapJson) {
 	var array = [];
 
-	for ( var key in objMapJson )
-	{
-		array.push( { key: key, value: objMapJson[key] } );
-	}	
+	for (var key in objMapJson) {
+		array.push({ key: key, value: objMapJson[key] });
+	}
 
 	return array;
 };
 
-Util.getArrayFromObjMap = function( objMapJson )
-{
-	Util.convertObjMapToArray( objMapJson );
+Util.getArrayFromObjMap = function (objMapJson) {
+	Util.convertObjMapToArray(objMapJson);
 };
 
 // ----------------------------------
 // Array Operation Related
 
 // MOST USED #1
-Util.getFromList = function( list, value, propertyName )
-{
+Util.getFromList = function (list, value, propertyName) {
 	var item;
 
-	if ( list )
-	{
+	if (list) {
 		// If propertyName being compare to has not been passed, set it as 'id'.
-		if ( propertyName === undefined )
-		{
+		if (propertyName === undefined) {
 			propertyName = "id";
 		}
 
-		for( i = 0; i < list.length; i++ )
-		{
+		for (i = 0; i < list.length; i++) {
 			var listItem = list[i];
 
-			if ( listItem[propertyName] && listItem[propertyName] === value )
-			{
+			if (listItem[propertyName] && listItem[propertyName] === value) {
 				item = listItem;
 				break;
 			}
@@ -260,90 +228,72 @@ Util.getFromList = function( list, value, propertyName )
 
 
 // MOST USED #2 - remove from list, all.
-Util.RemoveFromArrayAll = function( list, propertyName, value )
-{
-	try
-	{
-		if ( list )
-		{
-			for ( var i = list.length - 1; i >= 0;  i-- )
-			{
+Util.RemoveFromArrayAll = function (list, propertyName, value) {
+	try {
+		if (list) {
+			for (var i = list.length - 1; i >= 0; i--) {
 				var arrItem = list[i];
-	
-				if ( arrItem[propertyName] === value )
-				{
-					list.splice( i, 1 );
+
+				if (arrItem[propertyName] === value) {
+					list.splice(i, 1);
 				}
 			}
 		}
 	}
-	catch ( errMsg ) { console.log( 'ERROR in Util.RemoveFromArrayAll, ' + errMsg ); }
+	catch (errMsg) { console.log('ERROR in Util.RemoveFromArrayAll, ' + errMsg); }
 };
 
 
 // New - insert array items to 'index' position of list.
-Util.insertItmesOnArray = function( list, index, items )
-{
-	if ( list )
-	{
-		if ( Util.isTypeArray( items ) )
-		{
-			for ( var i = items.length - 1; i >= 0;  i-- )
-			{
+Util.insertItmesOnArray = function (list, index, items) {
+	if (list) {
+		if (Util.isTypeArray(items)) {
+			for (var i = items.length - 1; i >= 0; i--) {
 				var item = items[i];
-				list.splice( index, 0, item );
+				list.splice(index, 0, item);
 			}
 		}
-		else
-		{
-			list.splice( index, 0, items );
+		else {
+			list.splice(index, 0, items);
 		}
 	}
 };
 
 
-Util.arrayReplaceData = function( orig, newData )
-{
+Util.arrayReplaceData = function (orig, newData) {
 	orig.splice(0); // Remove all data in array
 
-	newData.forEach( item => {
-		orig.push( item );
+	newData.forEach(item => {
+		orig.push(item);
 	});
 };
 
 
-Util.RemoveFromArray = function( list, propertyName, value )
-{
+Util.RemoveFromArray = function (list, propertyName, value) {
 	var index;
-	
-	if ( list && propertyName && value !== undefined )
-	{
-		for ( var i = 0; i < list.length; i++ ) 
-		{
+
+	if (list && propertyName && value !== undefined) {
+		for (var i = 0; i < list.length; i++) {
 			var item = list[i];
-	
-			if ( item[ propertyName ] === value ) 
-			{
+
+			if (item[propertyName] === value) {
 				index = i;
 				break;
 			}
 		}
-	
-		if ( index !== undefined ) list.splice( index, 1 );	
+
+		if (index !== undefined) list.splice(index, 1);
 	}
 
 	return index;
 };
 
 
-Util.getFromListByName = function( list, name )
-{
+Util.getFromListByName = function (list, name) {
 	var item;
 
-	for( i = 0; i < list.length; i++ )
-	{
-		if ( list[i].name === name )
-		{
+	for (i = 0; i < list.length; i++) {
+		if (list[i].name === name) {
 			item = list[i];
 			break;
 		}
@@ -353,30 +303,24 @@ Util.getFromListByName = function( list, name )
 };
 
 
-Util.getItemFromList = function( list, value, propertyName )
-{
-	return Util.getFromList( list, value, propertyName );
+Util.getItemFromList = function (list, value, propertyName) {
+	return Util.getFromList(list, value, propertyName);
 };
 
-Util.getItemsFromList = function( list, value, propertyName )
-{
+Util.getItemsFromList = function (list, value, propertyName) {
 	var items = [];
 
-	if ( list )
-	{
+	if (list) {
 		// If propertyName being compare to has not been passed, set it as 'id'.
-		if ( propertyName === undefined )
-		{
+		if (propertyName === undefined) {
 			propertyName = "id";
 		}
 
-		for( i = 0; i < list.length; i++ )
-		{
+		for (i = 0; i < list.length; i++) {
 			var listItem = list[i];
 
-			if ( listItem[propertyName] && listItem[propertyName] === value )
-			{
-				items.push( listItem );
+			if (listItem[propertyName] && listItem[propertyName] === value) {
+				items.push(listItem);
 			}
 		}
 	}
@@ -389,26 +333,21 @@ Util.getItemsFromList = function( list, value, propertyName )
 // Recurrsive/iterative - synced call
 
 // CALL BACK WITH ARRAY..  <-- we pass with array and each item calls this?
-Util.callAfterEach = function( idx, list, resultJson, eachItemCallBack, finishCallBack )
-{
-	if ( idx > ( list.length - 1 ) )
-	{
-		if ( finishCallBack ) finishCallBack( idx, resultJson );
+Util.callAfterEach = function (idx, list, resultJson, eachItemCallBack, finishCallBack) {
+	if (idx > (list.length - 1)) {
+		if (finishCallBack) finishCallBack(idx, resultJson);
 	}
-	else
-	{
-		var item = list[ idx ];
+	else {
+		var item = list[idx];
 
-		try
-		{
-			eachItemCallBack( item, idx, function() {
-				Util.callAfterEach( idx + 1, list, resultJson, eachItemCallBack, finishCallBack );		
+		try {
+			eachItemCallBack(item, idx, function () {
+				Util.callAfterEach(idx + 1, list, resultJson, eachItemCallBack, finishCallBack);
 			});
 		}
-		catch( errMsg )
-		{
-			console.log( 'ERROR in Util.callAfterEach, ' + errMsg );
-			Util.callAfterEach( idx + 1, list, resultJson, eachItemCallBack, finishCallBack );  // If failed, continue to next one.
+		catch (errMsg) {
+			console.log('ERROR in Util.callAfterEach, ' + errMsg);
+			Util.callAfterEach(idx + 1, list, resultJson, eachItemCallBack, finishCallBack);  // If failed, continue to next one.
 			//if ( finishCallBack ) finishCallBack( idx );
 		}
 	}
@@ -418,104 +357,84 @@ Util.callAfterEach = function( idx, list, resultJson, eachItemCallBack, finishCa
 // ----------------------------------
 // JSON Copy Related
 
-Util.cloneJson = function( jsonObj )
-{
-	return Util.getJsonDeepCopy( jsonObj );  // Use this instead? {...jsonObj}
+Util.cloneJson = function (jsonObj) {
+	return Util.getJsonDeepCopy(jsonObj);  // Use this instead? {...jsonObj}
 };
 
 // Handles both object and array
-Util.getJsonDeepCopy = function( jsonObj )
-{
+Util.getJsonDeepCopy = function (jsonObj) {
 	var newJsonObj;
 
-	if ( jsonObj )
-	{
-		try
-		{
-			newJsonObj = JSON.parse( JSON.stringify( jsonObj ) );
+	if (jsonObj) {
+		try {
+			newJsonObj = JSON.parse(JSON.stringify(jsonObj));
 		}
-		catch( errMsg ) {
-			console.log( 'ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg );
+		catch (errMsg) {
+			console.log('ERROR in Util.getJsonDeepCopy, errMsg: ' + errMsg);
 		}
-	} 
+	}
 
 	return newJsonObj;
 };
 
-Util.copyProperties = function( source, dest, option )
-{
-	try
-	{
-		var exceptions = ( option && option.exceptions && Util.isTypeObject( option.exceptions ) ) ? option.exceptions : {};
-		var consoleLog = ( option && option.consoleLog ) ? option.consoleLog: false;
+Util.copyProperties = function (source, dest, option) {
+	try {
+		var exceptions = (option && option.exceptions && Util.isTypeObject(option.exceptions)) ? option.exceptions : {};
+		var consoleLog = (option && option.consoleLog) ? option.consoleLog : false;
 
-		for ( var key in source )
-		{
-			if ( consoleLog ) console.log( 'key: ' + key );
-			if ( !exceptions[ key ] ) dest[ key ] = source[ key ];
-		}	
+		for (var key in source) {
+			if (consoleLog) console.log('key: ' + key);
+			if (!exceptions[key]) dest[key] = source[key];
+		}
 	}
-	catch( errMsg ) 
-	{
-		console.log( 'ERROR in Util.copyProperties, errMsg: ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.copyProperties, errMsg: ' + errMsg);
 	}
 };
 
 // Copy Content Json without overwriting the reference of original Json
-Util.overwriteJsonContent = function( origJson, newJson )
-{
-	if ( origJson !== newJson )
-	{
+Util.overwriteJsonContent = function (origJson, newJson) {
+	if (origJson !== newJson) {
 		// Clear content
-		for ( var key in origJson )
-		{
+		for (var key in origJson) {
 			delete origJson[key];
-		}	
+		}
 
 		// Add the newJson prop
-		for ( var key in newJson )
-		{
-			origJson[ key ] = newJson[ key ];
-		}	
+		for (var key in newJson) {
+			origJson[key] = newJson[key];
+		}
 	}
 };
 
 
-Util.clearEmptyProp = function( inputJson )
-{
-	if ( inputJson )
-	{
+Util.clearEmptyProp = function (inputJson) {
+	if (inputJson) {
 		// Clear content
-		for ( var key in inputJson )
-		{
-			if ( !inputJson[key] ) delete inputJson[key];
+		for (var key in inputJson) {
+			if (!inputJson[key]) delete inputJson[key];
 		}
 	}
 
 	return inputJson;
 };
 
-Util.emptyJson = function( inputJson )
-{
-	return Util.clearEmptyProp( inputJson );
+Util.emptyJson = function (inputJson) {
+	return Util.clearEmptyProp(inputJson);
 };
 
-Util.clearJson = function( inputJson )
-{
-	return Util.clearEmptyProp( inputJson );
+Util.clearJson = function (inputJson) {
+	return Util.clearEmptyProp(inputJson);
 };
 
-Util.compareJsonPropVal = function( sourceJson, targetJson )
-{
+Util.compareJsonPropVal = function (sourceJson, targetJson) {
 	var isMatch = true;
 
-	for ( var key in sourceJson )
-	{
-		if ( sourceJson[key] !== targetJson[key] ) 
-		{
-           isMatch = false; 
-           break;
-        }
+	for (var key in sourceJson) {
+		if (sourceJson[key] !== targetJson[key]) {
+			isMatch = false;
+			break;
+		}
 	}
 
 	return isMatch;
@@ -524,62 +443,51 @@ Util.compareJsonPropVal = function( sourceJson, targetJson )
 // ----------------------------------------------------
 // ---- Try Cache / Eval related methods
 
-Util.tryCatchContinue = function( runFunc, optionalMsg )
-{
-	try
-	{
+Util.tryCatchContinue = function (runFunc, optionalMsg) {
+	try {
 		runFunc();
 	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR, tryCatchContinue ' + optionalMsg + ', errMsg - ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR, tryCatchContinue ' + optionalMsg + ', errMsg - ' + errMsg);
 	}
 };
 
 
-Util.tryCatchCallBack = function( callBack, runFunc )
-{
-	try
-	{
-		runFunc( callBack );
+Util.tryCatchCallBack = function (callBack, runFunc) {
+	try {
+		runFunc(callBack);
 	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR, tryCatchCallback, errMsg - ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR, tryCatchCallback, errMsg - ' + errMsg);
 		callBack();
 	}
 };
 
 
-Util.evalTryCatch = function( inputVal, INFO, optionalTitle, optionalFunc )
-{
+Util.evalTryCatch = function (inputVal, INFO, optionalTitle, optionalFunc) {
 	var returnVal;
 
-	try
-	{
+	try {
 		// Handle array into string joining
-		inputVal = Util.getEvalStr( inputVal );
+		inputVal = Util.getEvalStr(inputVal);
 
-		if ( inputVal )
-		{
-			returnVal = eval( inputVal );
+		if (inputVal) {
+			returnVal = eval(inputVal);
 
-			if ( returnVal && typeof( returnVal ) === "string" ) 
-			{
-				returnVal = returnVal.replace( /undefined/g, '' );
-			}	
+			if (returnVal && typeof (returnVal) === "string") {
+				returnVal = returnVal.replace(/undefined/g, '');
+			}
 		}
 	}
-	catch( errMsg )
-	{
-		if ( !optionalTitle ) optionalTitle = '';
+	catch (errMsg) {
+		if (!optionalTitle) optionalTitle = '';
 
 		var errMsgMain = Util.evalTryCatch_ERR + optionalTitle + ', ErrMsg - ' + errMsg;
-		var errMsgSub = ( inputVal ) ? ', EvalVal: ' + inputVal.substr( 0, 40 ) : '';
+		var errMsgSub = (inputVal) ? ', EvalVal: ' + inputVal.substr(0, 40) : '';
 		var errMsgFull = errMsgMain + errMsgSub;
-		
-		if ( optionalFunc ) optionalFunc( errMsgFull );
-		else console.log( errMsgFull );
+
+		if (optionalFunc) optionalFunc(errMsgFull);
+		else console.log(errMsgFull);
 
 		returnVal = errMsgFull; // + ': ' + returnVal;
 	}
@@ -588,393 +496,320 @@ Util.evalTryCatch = function( inputVal, INFO, optionalTitle, optionalFunc )
 };
 
 
-Util.getEvalStr = function( evalObj )
-{
+Util.getEvalStr = function (evalObj) {
 	var evalStr = '';
 
-	try
-	{
-		if ( Util.isTypeString( evalObj ) ) evalStr = evalObj;
-		else if ( Util.isTypeArray( evalObj ) ) evalStr = evalObj.join( '\r\n' );
+	try {
+		if (Util.isTypeString(evalObj)) evalStr = evalObj;
+		else if (Util.isTypeArray(evalObj)) evalStr = evalObj.join('\r\n');
 	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in blockForm.getEvalStr, errMsg: ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in blockForm.getEvalStr, errMsg: ' + errMsg);
 	}
 
 	return evalStr;
 };
 
 
-Util.checkConditionEval = function( evalCondition )
-{
+Util.checkConditionEval = function (evalCondition) {
 	var result = false;
 
-	try
-	{
-		if ( evalCondition )
-		{
+	try {
+		if (evalCondition) {
 			// Handle array into string joining
-			evalCondition = Util.getEvalStr( evalCondition );
+			evalCondition = Util.getEvalStr(evalCondition);
 
-			if ( evalCondition )
-			{
-				result = eval( evalCondition );	
+			if (evalCondition) {
+				result = eval(evalCondition);
 			}
 		}
 	}
-	catch( errMsg ) 
-	{
-		console.log( 'ERROR in Util.checkEvalCondition, ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.checkEvalCondition, ' + errMsg);
 	}
 
 	return result;
 }
 
 
-Util.traverseEval = function( obj, INFO, iDepth, limit )
-{
-	if ( iDepth === limit )
-	{
+Util.traverseEval = function (obj, INFO, iDepth, limit) {
+	if (iDepth === limit) {
 		throw 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth;
 	}
-	else
-	{
-		Object.keys( obj ).forEach( key => 
-		{
+	else {
+		Object.keys(obj).forEach(key => {
 			var prop = obj[key];
-	
-			if ( Util.isTypeArray( prop ) )
-			{
+
+			if (Util.isTypeArray(prop)) {
 				var iDepthArr = iDepth + 1;
 
-				prop.forEach( ( pArrItem, i ) => 
-				{
-					if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
-					{						
-						Util.traverseEval( pArrItem, INFO, iDepthArr, limit );
+				prop.forEach((pArrItem, i) => {
+					if (Util.isTypeObject(pArrItem) || Util.isTypeArray(pArrItem)) {
+						Util.traverseEval(pArrItem, INFO, iDepthArr, limit);
 					}
-					else if ( Util.isTypeString( pArrItem ) )
-					{		
-						try { prop[i] = eval( pArrItem ); } 
-						catch ( errMsg ) { throw 'Error in Util.traverseEval, arrayItem str eval: ' + errMsg; }
+					else if (Util.isTypeString(pArrItem)) {
+						try { prop[i] = eval(pArrItem); }
+						catch (errMsg) { throw 'Error in Util.traverseEval, arrayItem str eval: ' + errMsg; }
 					}
 				});
 			}
-			else if ( Util.isTypeObject( prop ) )
-			{
-				Util.traverseEval( prop, INFO, iDepth + 1, limit );
+			else if (Util.isTypeObject(prop)) {
+				Util.traverseEval(prop, INFO, iDepth + 1, limit);
 			}
-			else if ( Util.isTypeString( prop ) )
-			{				
-				try { obj[key] = eval( prop ); } 
-				catch ( errMsg ) { throw 'Error in Util.traverseEval, str eval: ' + errMsg; }
+			else if (Util.isTypeString(prop)) {
+				try { obj[key] = eval(prop); }
+				catch (errMsg) { throw 'Error in Util.traverseEval, str eval: ' + errMsg; }
 			}
 		});
 	}
-};	
+};
 
 
 Util.trvEval_payload = {};
 
 // Traverse and Add all the templates
-Util.trvEval_INSERT_SUBTEMPLATES = function( obj, INFO, defPTemplates, iDepth, limit )
-{
-	if ( iDepth === limit )
-	{
+Util.trvEval_INSERT_SUBTEMPLATES = function (obj, INFO, defPTemplates, iDepth, limit) {
+	if (iDepth === limit) {
 		throw 'Error in Util.trvEval_INSERT_SUBTEMPLATES, Traverse depth limit has reached: ' + iDepth;
 	}
-	else
-	{
-		var keyArr = Object.keys( obj );
+	else {
+		var keyArr = Object.keys(obj);
 
-		for ( var i = 0; i < keyArr.length; i++) 
-		{
+		for (var i = 0; i < keyArr.length; i++) {
 			var key = keyArr[i];
 			var propVal = obj[key];
 
 			//if ( key === Util.KEY_TEMPLATE_ADD ) 
-			if ( key.indexOf( Util.KEY_TEMPLATE_ADD ) === 0 ) 
-			{
-				var templateObj = defPTemplates[ propVal ];
+			if (key.indexOf(Util.KEY_TEMPLATE_ADD) === 0) {
+				var templateObj = defPTemplates[propVal];
 
-				if ( templateObj )
-				{
-					var subTemplate = Util.cloneJson( templateObj );
+				if (templateObj) {
+					var subTemplate = Util.cloneJson(templateObj);
 					// OPTIONALLY, WE CAN LOOK FOR SAME SUBTEMP INSERT ON HERE AS WELL..
 					// Util.trvEval_INSERT_SUBTEMPLATES( subTemplate, INFO, defPTemplates, iDepth, limit );
-					Util.mergeDeep( obj, subTemplate );
+					Util.mergeDeep(obj, subTemplate);
 				}
 
-				delete obj[ key ];
+				delete obj[key];
 			}
-			else if ( key.indexOf( Util.KEY_TEMPLATE_ADD_ARR ) === 0 ) 
-			{
-				propVal.forEach( pArrItem => 
-				{
-					var templateObj = defPTemplates[ pArrItem ];
+			else if (key.indexOf(Util.KEY_TEMPLATE_ADD_ARR) === 0) {
+				propVal.forEach(pArrItem => {
+					var templateObj = defPTemplates[pArrItem];
 
-					if ( templateObj )
-					{
-						var subTemplate = Util.cloneJson( templateObj );	
+					if (templateObj) {
+						var subTemplate = Util.cloneJson(templateObj);
 						// Util.trvEval_INSERT_SUBTEMPLATES( subTemplate, INFO, defPTemplates, iDepth, limit );
-						Util.mergeDeep( obj, subTemplate );
+						Util.mergeDeep(obj, subTemplate);
 					}
 				});
 
-				delete obj[ key ];
+				delete obj[key];
 			}
-			else
-			{	
-				if ( Util.isTypeArray( propVal ) )
-				{
+			else {
+				if (Util.isTypeArray(propVal)) {
 					var iDepthArr = iDepth + 1;
-	
-					propVal.forEach( pArrItem => 
-					{
-						if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
-						{						
-							Util.trvEval_INSERT_SUBTEMPLATES( pArrItem, INFO, defPTemplates, iDepthArr, limit );
+
+					propVal.forEach(pArrItem => {
+						if (Util.isTypeObject(pArrItem) || Util.isTypeArray(pArrItem)) {
+							Util.trvEval_INSERT_SUBTEMPLATES(pArrItem, INFO, defPTemplates, iDepthArr, limit);
 						}
 					});
 				}
-				else if ( Util.isTypeObject( propVal ) )
-				{
-					Util.trvEval_INSERT_SUBTEMPLATES( propVal, INFO, defPTemplates, iDepth + 1, limit );
+				else if (Util.isTypeObject(propVal)) {
+					Util.trvEval_INSERT_SUBTEMPLATES(propVal, INFO, defPTemplates, iDepth + 1, limit);
 				}
 			}
 		}
-	}	
+	}
 };
 
 // NOTE: 'defPTemplates' is passed & used for referencing other templates while evaluating / traversing json..
-Util.trvEval_TEMPLATE = function( obj, INFO, defPTemplates, iDepth, limit )
-{
-	if ( iDepth === limit )
-	{
+Util.trvEval_TEMPLATE = function (obj, INFO, defPTemplates, iDepth, limit) {
+	if (iDepth === limit) {
 		throw 'Error in Util.trvEval_TEMPLATE, Traverse depth limit has reached: ' + iDepth;
 	}
-	else
-	{
-		var keyArr = Object.keys( obj );
+	else {
+		var keyArr = Object.keys(obj);
 
-		for ( var i = 0; i < keyArr.length; i++) 
-		{
+		for (var i = 0; i < keyArr.length; i++) {
 			var key = keyArr[i];
 			var propVal = obj[key];
 
-			if ( key === Util.KEY_CONDITION_CHECK ) 
-			{
-				try
-				{
+			if (key === Util.KEY_CONDITION_CHECK) {
+				try {
 					// If condition pass (as 'true'), remove this condition check property and simply move on.
 					// Otherwise, return with this object remove marking..
-					if ( eval( propVal ) === true ) delete obj[key];
+					if (eval(propVal) === true) delete obj[key];
 					else {
 						obj[key] = Util.KEY_OBJECT_REMOVE;
 						return Util.KEY_OBJECT_REMOVE;
 					}
 				}
-				catch ( errMsg ) { throw 'Error in Util.trvEval_TEMPLATE, Key ConditionCheck: ' + errMsg; }
+				catch (errMsg) { throw 'Error in Util.trvEval_TEMPLATE, Key ConditionCheck: ' + errMsg; }
 			}
-			else
-			{	
-				if ( Util.isTypeArray( propVal ) )
-				{
+			else {
+				if (Util.isTypeArray(propVal)) {
 					var iDepthArr = iDepth + 1;
-	
-					propVal.forEach( ( pArrItem, p, object ) => 
-					{
-						if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
-						{						
-							Util.trvEval_TEMPLATE( pArrItem, INFO, defPTemplates, iDepthArr, limit );
+
+					propVal.forEach((pArrItem, p, object) => {
+						if (Util.isTypeObject(pArrItem) || Util.isTypeArray(pArrItem)) {
+							Util.trvEval_TEMPLATE(pArrItem, INFO, defPTemplates, iDepthArr, limit);
 						}
-						else if ( Util.isTypeString( pArrItem ) )
-						{		
-							try { propVal[p] = eval( pArrItem ); } 
-							catch ( errMsg ) { throw 'Error in Util.trvEval_TEMPLATE, ArrayItem String Eval: ' + errMsg; }
+						else if (Util.isTypeString(pArrItem)) {
+							try { propVal[p] = eval(pArrItem); }
+							catch (errMsg) { throw 'Error in Util.trvEval_TEMPLATE, ArrayItem String Eval: ' + errMsg; }
 						}
 					});
 
-					
+
 					// Due to some unknown issue of removing the item on above loop, use here to remov eit..
-					Util.RemoveFromArrayAll( propVal, Util.KEY_CONDITION_CHECK, Util.KEY_OBJECT_REMOVE );
+					Util.RemoveFromArrayAll(propVal, Util.KEY_CONDITION_CHECK, Util.KEY_OBJECT_REMOVE);
 				}
-				else if ( Util.isTypeObject( propVal ) )
-				{
-					var returnVal = Util.trvEval_TEMPLATE( propVal, INFO, defPTemplates, iDepth + 1, limit );
-					if ( returnVal === Util.KEY_OBJECT_REMOVE ) delete obj[key];
+				else if (Util.isTypeObject(propVal)) {
+					var returnVal = Util.trvEval_TEMPLATE(propVal, INFO, defPTemplates, iDepth + 1, limit);
+					if (returnVal === Util.KEY_OBJECT_REMOVE) delete obj[key];
 				}
-				else if ( Util.isTypeString( propVal ) )
-				{		
-					try
-					{
-						var evalResult = eval( propVal );
-						if ( evalResult === Util.KEY_PROPERTY_REMOVE ) delete obj[key];
-						else if ( evalResult === Util.KEY_OBJECT_REMOVE ) return Util.KEY_OBJECT_REMOVE;
+				else if (Util.isTypeString(propVal)) {
+					try {
+						var evalResult = eval(propVal);
+						if (evalResult === Util.KEY_PROPERTY_REMOVE) delete obj[key];
+						else if (evalResult === Util.KEY_OBJECT_REMOVE) return Util.KEY_OBJECT_REMOVE;
 						else obj[key] = evalResult;
 					}
-					catch ( errMsg ) { throw 'Error in Util.trvEval_TEMPLATE, String Eval: ' + errMsg; }
+					catch (errMsg) { throw 'Error in Util.trvEval_TEMPLATE, String Eval: ' + errMsg; }
 				}
 			}
 		}
 	}
-};	
+};
 
 
 
 // Replace json 'key' names using 'keyListset' ( { 'keys': [], 'keysNew': [] } (same list) )
 // Only replace 'key' where the value is string or number/boolean?..
-Util.jsonKeysReplace_Ref = function( obj, keyListSet, iDepth, limit )
-{
-	if ( iDepth === limit )
-	{
+Util.jsonKeysReplace_Ref = function (obj, keyListSet, iDepth, limit) {
+	if (iDepth === limit) {
 		var errMsg = 'Error in Util.jsonKeysReplace, Traverse depth limit has reached: ' + iDepth;
-		console.log( errMsg );
+		console.log(errMsg);
 		throw errMsg;
 	}
-	else
-	{
-		Object.keys( obj ).forEach( key => 
-		{
-			var prop = obj[key];	
+	else {
+		Object.keys(obj).forEach(key => {
+			var prop = obj[key];
 
-			if ( Util.isTypeArray( prop ) )
-			{
+			if (Util.isTypeArray(prop)) {
 				var iDepthArr = iDepth + 1;
 
-				prop.forEach( ( pArrItem, i ) => 
-				{
-					if ( Util.isTypeObject( pArrItem ) || Util.isTypeArray( pArrItem ) ) 
-					{						
-						Util.jsonKeysReplace_Ref( pArrItem, keyListSet, iDepthArr, limit );
+				prop.forEach((pArrItem, i) => {
+					if (Util.isTypeObject(pArrItem) || Util.isTypeArray(pArrItem)) {
+						Util.jsonKeysReplace_Ref(pArrItem, keyListSet, iDepthArr, limit);
 					}
 					//else if ( Util.isTypeString( pArrItem ) ) Util.jsonKeyReplace( obj, obj[ i ], keyListSet, 'array' );		
 				});
 			}
-			else if ( Util.isTypeObject( prop ) )
-			{
-				Util.jsonKeysReplace_Ref( prop, keyListSet, iDepth + 1, limit );
-			}				
+			else if (Util.isTypeObject(prop)) {
+				Util.jsonKeysReplace_Ref(prop, keyListSet, iDepth + 1, limit);
+			}
 			else //if ( Util.isTypeString( prop ) )
 			{
 				// For now, only do this for string value type keys..
-				Util.jsonKeyReplace( obj, key, keyListSet );		
+				Util.jsonKeyReplace(obj, key, keyListSet);
 			}
 		});
 	}
-};	
+};
 
 // Only do obj that is key/value one...
-Util.jsonKeyReplace = function( obj, key, keyListSet )
-{
-	var foundIndex = keyListSet.keys.indexOf( key );
+Util.jsonKeyReplace = function (obj, key, keyListSet) {
+	var foundIndex = keyListSet.keys.indexOf(key);
 
-	if ( foundIndex >= 0 ) 
-	{
-		var origVal = obj[ key ]; 
-		var keyNew = keyListSet.keysNew[ foundIndex ];
+	if (foundIndex >= 0) {
+		var origVal = obj[key];
+		var keyNew = keyListSet.keysNew[foundIndex];
 
 		// get the value/object set from 'key' before deleting the key.
-		obj[ keyNew ] = origVal;
+		obj[keyNew] = origVal;
 		//( Util.isTypeArray( origVal ) || Util.isTypeObject( origVal ) ) ? Util.cloneJson( origVal ) : origVal;
 
-		delete obj[ key ];
+		delete obj[key];
 	}
 };
 
 
 // Return new obj with key replaced. New obj created, thus will loose reference..
 //   keyListSet - { "asofiajs": "firstName", "asjfoasdjif": "lastName }
-Util.jsonKeysReplace_Str = function( obj, keyListSet )
-{
+Util.jsonKeysReplace_Str = function (obj, keyListSet) {
 	var newObj = obj;  // set to original data by default if there is issue..
 
-	try
-	{
-		if ( obj && Util.isTypeObject( obj ) && keyListSet )
-		{
-			var objInStr = JSON.stringify( obj );
-	
-			Object.keys( keyListSet ).forEach( key => 
-			{
+	try {
+		if (obj && Util.isTypeObject(obj) && keyListSet) {
+			var objInStr = JSON.stringify(obj);
+
+			Object.keys(keyListSet).forEach(key => {
 				var keyProp = '"' + key + '":';
-	
-				if ( objInStr.indexOf( keyProp ) >= 0 )
-				{
+
+				if (objInStr.indexOf(keyProp) >= 0) {
 					var newKey = keyListSet[key];
 					var newkeyProp = '"' + newKey + '":';
-	
-					objInStr = objInStr.replaceAll( keyProp, newkeyProp );
-				}	
-			});		
-	
-			newObj = JSON.parse( objInStr );
-		}	
+
+					objInStr = objInStr.replaceAll(keyProp, newkeyProp);
+				}
+			});
+
+			newObj = JSON.parse(objInStr);
+		}
 	}
-	catch ( errMsg )
-	{
-		console.log( 'ERROR in Util.jsonKeysReplace_Str, errMsg: ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.jsonKeysReplace_Str, errMsg: ' + errMsg);
 	}
 
 	return newObj;
 };
 
 
-Util.jsonCleanEmptyRunTimes = function( obj, runTime )
-{
-	for ( var i = 0; i < runTime; i++ )
-	{
-		Util.jsonCleanEmpty( obj );
+Util.jsonCleanEmptyRunTimes = function (obj, runTime) {
+	for (var i = 0; i < runTime; i++) {
+		Util.jsonCleanEmpty(obj);
 	}
 };
 
-Util.getJsonCleanEmpty = function( obj )
-{
-	var jsonNew = Util.cloneJson( obj );
+Util.getJsonCleanEmpty = function (obj) {
+	var jsonNew = Util.cloneJson(obj);
 
-	Util.jsonCleanEmpty( jsonNew );
+	Util.jsonCleanEmpty(jsonNew);
 
 	return jsonNew;
 }
 
-Util.jsonCleanEmpty = function( obj )
-{
-	Object.keys(obj).forEach( key => 
-	{
+Util.jsonCleanEmpty = function (obj) {
+	Object.keys(obj).forEach(key => {
 		var item = obj[key];
 
-		if ( item )
-		{
-			if ( Util.isTypeArray( item ) )
-			{
-				if ( item.length == 0 ) delete obj[key];
-				else Util.jsonCleanEmpty( item );
+		if (item) {
+			if (Util.isTypeArray(item)) {
+				if (item.length == 0) delete obj[key];
+				else Util.jsonCleanEmpty(item);
 			}
-			else if ( Util.isTypeObject( item ) )
-			{
-				if ( Util.isObjEmpty( item ) ) delete obj[key];
-				else Util.jsonCleanEmpty( item );	
+			else if (Util.isTypeObject(item)) {
+				if (Util.isObjEmpty(item)) delete obj[key];
+				else Util.jsonCleanEmpty(item);
 			}
-		}		
-		else if ( item === "" || item === undefined || item === null ) delete obj[key];
+		}
+		else if (item === "" || item === undefined || item === null) delete obj[key];
 	});
 };
 
 
-Util.getObjRef_fromList = function( list, prop )
-{
+Util.getObjRef_fromList = function (list, prop) {
 	var objRef = {};
 
-	if ( list && prop )
-	{
-		for ( var i = 0; i < list.length; i++ )
-		{
-			var obj = list[ i ];
+	if (list && prop) {
+		for (var i = 0; i < list.length; i++) {
+			var obj = list[i];
 
-			var objId = obj[ prop ];
+			var objId = obj[prop];
 
-			if ( objId ) objRef[ objId ] = obj;
+			if (objId) objRef[objId] = obj;
 		}
 	}
 
@@ -983,18 +818,14 @@ Util.getObjRef_fromList = function( list, prop )
 
 // ----------------------------------------------------
 
-Util.strCombine = function( input )
-{	
+Util.strCombine = function (input) {
 	var output = '';
 
-	if ( input )
-	{
-		if ( Util.isTypeArray( input ) )
-		{
-			output = input.join( ' ' );
+	if (input) {
+		if (Util.isTypeArray(input)) {
+			output = input.join(' ');
 		}
-		else
-		{
+		else {
 			output = input;
 		}
 	}
@@ -1003,80 +834,66 @@ Util.strCombine = function( input )
 };
 
 
-Util.objKeyCount = function( obj )
-{
-	return ( obj ) ? Object.keys( obj ).length: 0;
+Util.objKeyCount = function (obj) {
+	return (obj) ? Object.keys(obj).length : 0;
 };
 
-Util.disableTag = function( tag, isDisable )
-{
+Util.disableTag = function (tag, isDisable) {
 	tag.prop('disabled', isDisable);
 }
 
 // ---------------------------------------
 
-Util.array_TakeOutOne = function( arr )
-{
+Util.array_TakeOutOne = function (arr) {
 	var returnArr = [];
-	
-	if ( arr ) arr.splice( 0, 1 );
 
-	return ( returnArr.length > 0 ) ? returnArr[0]: undefined;
+	if (arr) arr.splice(0, 1);
+
+	return (returnArr.length > 0) ? returnArr[0] : undefined;
 };
 
 // NOTE: Should be named 'append'?
-Util.mergeArrays = function( mainArr, newArr )
-{
-	for ( var i = 0; i < newArr.length; i++ )
-	{
-		mainArr.push( newArr[ i ] );
+Util.mergeArrays = function (mainArr, newArr) {
+	for (var i = 0; i < newArr.length; i++) {
+		mainArr.push(newArr[i]);
 	}
 };
 
-Util.appendArray = function( mainArr, newArr )
-{
-	Util.mergeArrays( mainArr, newArr );
+Util.appendArray = function (mainArr, newArr) {
+	Util.mergeArrays(mainArr, newArr);
 };
 
-Util.getCombinedArrays = function( arr1, arr2 )
-{
+Util.getCombinedArrays = function (arr1, arr2) {
 	var combinedArr = [];
 
-	for ( var i = 0; i < arr1.length; i++ ) combinedArr.push( arr1[ i ] );
-	for ( var i = 0; i < arr2.length; i++ ) combinedArr.push( arr2[ i ] );
+	for (var i = 0; i < arr1.length; i++) combinedArr.push(arr1[i]);
+	for (var i = 0; i < arr2.length; i++) combinedArr.push(arr2[i]);
 
 	return combinedArr;
 };
 
-Util.mergeJson = function( destObj, srcObj )
-{
-	if ( srcObj )
-	{
-		for( var key in srcObj )
-		{
+Util.mergeJson = function (destObj, srcObj) {
+	if (srcObj) {
+		for (var key in srcObj) {
 			destObj[key] = srcObj[key];
-		}		
+		}
 	}
 };
 
-Util.mergeDeep = function ( dest, obj, option ) 
-{
-	Object.keys( obj ).forEach( key => {
+Util.mergeDeep = function (dest, obj, option) {
+	Object.keys(obj).forEach(key => {
 
 		var dVal = dest[key];
 		var oVal = obj[key];
 
-		if ( Util.isTypeArray( dVal ) && Util.isTypeArray( oVal ) ) 
-		{
-			if ( option && option.arrOverwrite && oVal.length > 0 ) dest[key] = oVal;
-			else Util.mergeArrays( dVal, oVal );			
-		} 
-		else if ( Util.isTypeObject( dVal ) && Util.isTypeObject( oVal ) ) 
-		{
-			Util.mergeDeep( dVal, oVal );
-		} 
-		else 
-		{
+		if (Util.isTypeArray(dVal) && Util.isTypeArray(oVal)) {
+			if (option && option.arrOverwrite && oVal.length > 0) dest[key] = oVal;
+			else Util.mergeArrays(dVal, oVal);
+		}
+		else if (Util.isTypeObject(dVal) && Util.isTypeObject(oVal)) {
+			Util.mergeDeep(dVal, oVal);
+		}
+		else {
 			dest[key] = oVal;
 		}
 	});
@@ -1085,59 +902,49 @@ Util.mergeDeep = function ( dest, obj, option )
 };
 
 
-Util.dotNotation = function ( dest, obj, parentObjName ) 
-{
-	Object.keys( obj ).forEach( function( key ) {
+Util.dotNotation = function (dest, obj, parentObjName) {
+	Object.keys(obj).forEach(function (key) {
 
 		var oVal = obj[key];
 
-		if ( Util.isTypeArray( oVal ) )  dest[ parentObjName + '.' + key ] = oVal;
-		else if ( typeof oVal === 'object' ) 
-		{
-			Util.dotNotation( dest, oVal, parentObjName + '.' + key );
-		} 
-		else 
-		{
-			dest[ parentObjName + '.' + key ] = oVal;
+		if (Util.isTypeArray(oVal)) dest[parentObjName + '.' + key] = oVal;
+		else if (typeof oVal === 'object') {
+			Util.dotNotation(dest, oVal, parentObjName + '.' + key);
+		}
+		else {
+			dest[parentObjName + '.' + key] = oVal;
 		}
 	});
 };
 
-Util.getPathObj = function( obj, pathArr )
-{
-    var tempObj = Util.cloneJson( obj );
+Util.getPathObj = function (obj, pathArr) {
+	var tempObj = Util.cloneJson(obj);
 
-    for ( var i = 0; i < pathArr.length; i++ )
-    {
-        var path = pathArr[i];
-        tempObj = tempObj[path];
-    }
+	for (var i = 0; i < pathArr.length; i++) {
+		var path = pathArr[i];
+		tempObj = tempObj[path];
+	}
 
-    return tempObj;
+	return tempObj;
 };
 
 
 // Performs a deep merge of objects and returns new object. Does not modify objects
-Util.mergeDeep_v2 = function (...objects) 
-{
+Util.mergeDeep_v2 = function (...objects) {
 	const isObject = obj => obj && typeof obj === 'object';
 
-	return objects.reduce( ( prev, obj ) => 
-	{
-		Object.keys( obj ).forEach( key => {
+	return objects.reduce((prev, obj) => {
+		Object.keys(obj).forEach(key => {
 			const pVal = prev[key];
 			const oVal = obj[key];
 
-			if ( Util.isTypeArray( pVal ) && Util.isTypeArray( oVal ) ) 
-			{
+			if (Util.isTypeArray(pVal) && Util.isTypeArray(oVal)) {
 				prev[key] = pVal.concat(...oVal);
-			} 
-			else if ( isObject( pVal ) && isObject( oVal ) ) 
-			{
-				prev[key] = Util.mergeDeep_v2( pVal, oVal );
-			} 
-			else 
-			{
+			}
+			else if (isObject(pVal) && isObject(oVal)) {
+				prev[key] = Util.mergeDeep_v2(pVal, oVal);
+			}
+			else {
 				prev[key] = oVal;
 			}
 		});
@@ -1146,23 +953,20 @@ Util.mergeDeep_v2 = function (...objects)
 	}, {});
 };
 
-Util.getCombinedJson = function( obj1, obj2 )
-{
+Util.getCombinedJson = function (obj1, obj2) {
 	var combinedObj = {};
 
-	for( var key in obj1 ) combinedObj[key] = obj1[key];
-	for( var key in obj2 ) combinedObj[key] = obj2[key];
+	for (var key in obj1) combinedObj[key] = obj1[key];
+	for (var key in obj2) combinedObj[key] = obj2[key];
 
 	return combinedObj;
 };
 
-Util.getCombinedJsonInArr = function( objArr )
-{
+Util.getCombinedJsonInArr = function (objArr) {
 	var combinedObj = {};
 
-	for ( var i = 0; i < objArr.length; i++ ) 
-	{
-		Util.mergeJson( combinedObj, objArr[i] );
+	for (var i = 0; i < objArr.length; i++) {
+		Util.mergeJson(combinedObj, objArr[i]);
 	}
 
 	return combinedObj;
@@ -1175,44 +979,36 @@ Util.getCombinedJsonInArr = function( objArr )
 
 // Sort - by 'Acending' order by default.  1st 2 params (array, key) are required.
 //	NO NEED TO return!!!  <-- makes changes on itself!!!
-Util.sortByKey = function( array, key, noCase, order, emptyStringLast ) 
-{
-	try
-	{
-		if ( array && key )
-		{
-			if ( array.length == 0 || array[0][key] === undefined ) return array;
-			else
-			{
+Util.sortByKey = function (array, key, noCase, order, emptyStringLast) {
+	try {
+		if (array && key) {
+			if (array.length == 0 || array[0][key] === undefined) return array;
+			else {
 				// NOTE: no need to 'return' <-- this makes changes on the array itself!!!
-				return array.sort( function( a, b ) {
-				
-					var x = a[key]; 
+				return array.sort(function (a, b) {
+
+					var x = a[key];
 					var y = b[key];
-		
-					if ( x === undefined ) x = "";
-					if ( y === undefined ) y = "";
-		
-					if ( noCase !== undefined && noCase )
-					{
+
+					if (x === undefined) x = "";
+					if (y === undefined) y = "";
+
+					if (noCase !== undefined && noCase) {
 						x = x.toLowerCase();
 						y = y.toLowerCase();
 					}
-		
-					if ( emptyStringLast !== undefined && emptyStringLast && ( x == "" || y == "" ) ) 
-					{
-						if ( x == "" && y == "" ) return 0;
-						else if ( x == "" ) return 1;
-						else if ( y == "" ) return -1;
+
+					if (emptyStringLast !== undefined && emptyStringLast && (x == "" || y == "")) {
+						if (x == "" && y == "") return 0;
+						else if (x == "") return 1;
+						else if (y == "") return -1;
 					}
-					else
-					{
-						if ( order === undefined ) return Util.sortCompare( x, y );
-						else
-						{
+					else {
+						if (order === undefined) return Util.sortCompare(x, y);
+						else {
 							// return ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
-							if ( order === "Acending" || order === "asc" ) return Util.sortCompare( x, y );
-							else if ( order === "Decending" || order === "desc" ) return Util.sortCompare( y, x );
+							if (order === "Acending" || order === "asc") return Util.sortCompare(x, y);
+							else if (order === "Decending" || order === "desc") return Util.sortCompare(y, x);
 						}
 					}
 				});
@@ -1220,107 +1016,92 @@ Util.sortByKey = function( array, key, noCase, order, emptyStringLast )
 		}
 		else return array;
 	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in Util.sortByKey, ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.sortByKey, ' + errMsg);
 		return array;
 	}
 };
 
 // For reverse or decending order, call param reversed: Util.sortCompare( y, x )
-Util.sortCompare = function( x, y )
-{
+Util.sortCompare = function (x, y) {
 	var returnVal = 0;
 
-	try
-	{
-		if ( x < y ) returnVal = -1;
-		else if ( x > y ) returnVal = 1;
-		else returnVal = 0;	
+	try {
+		if (x < y) returnVal = -1;
+		else if (x > y) returnVal = 1;
+		else returnVal = 0;
 	}
-	catch ( errMsg )
-	{
-		console.log( 'ERROR in Util.sortCompare, ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.sortCompare, ' + errMsg);
 	}
 
 	return returnVal;
 };
 
-Util.sortByKey2 = function( array, key, order, options ) 
-{
+Util.sortByKey2 = function (array, key, order, options) {
 	var noCase;
 	var emptyStringLast;
 
-	if ( options )
-	{
-		noCase = ( options.noCase ) ? options.noCase : undefined;
-		emptyStringLast = ( options.emptyStringLast ) ? options.emptyStringLast : undefined;
+	if (options) {
+		noCase = (options.noCase) ? options.noCase : undefined;
+		emptyStringLast = (options.emptyStringLast) ? options.emptyStringLast : undefined;
 	}
 
-	return Util.sortByKey( array, key, noCase, order, emptyStringLast );
+	return Util.sortByKey(array, key, noCase, order, emptyStringLast);
 };
 
-Util.sortByKey_Reverse = function( array, key ) {
-	return array.sort( function( b, a ) {
+Util.sortByKey_Reverse = function (array, key) {
+	return array.sort(function (b, a) {
 		var x = a[key]; var y = b[key];  // reversed by use of b, a param rather than a, b param.
-		return Util.sortCompare( x, y ); // ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
+		return Util.sortCompare(x, y); // ( ( x < y ) ? -1 : ( ( x > y ) ? 1 : 0 ) );
 	});
 };
 
-Util.evalSort = function( fieldName, list, orderStr )
-{
-	try
-	{
-		var isDescending = ( orderStr === 'desc' );
+Util.evalSort = function (fieldName, list, orderStr) {
+	try {
+		var isDescending = (orderStr === 'desc');
 		var sortEvalStr = 'Util.sortCompare( a.' + fieldName + ', b.' + fieldName + ')';
-	
-		if ( !isDescending ) list.sort( function( a, b ) { return eval( sortEvalStr ); });
-		else list.sort( function( b, a ) { return eval( sortEvalStr ); });	
+
+		if (!isDescending) list.sort(function (a, b) { return eval(sortEvalStr); });
+		else list.sort(function (b, a) { return eval(sortEvalStr); });
 	}
-	catch ( errMsg )
-	{
-		console.log( 'ERROR in Util.evalSort, ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.evalSort, ' + errMsg);
 	}
 };
 
 // -------------------------------------------
 
-Util.performChekcSum34 = function( tagVal, valLength )
-{
+Util.performChekcSum34 = function (tagVal, valLength) {
 	var valid = false;
 
-	try
-	{
-		if ( tagVal.length === valLength )
-		{
-			var realValStr = tagVal.substr( 0, valLength - 1 );
-			var checkSumStr = tagVal.substr( valLength - 1, 1 );
-	
-			valid = Util.checkSumCheck( realValStr, checkSumStr, 34 );
-		}	
+	try {
+		if (tagVal.length === valLength) {
+			var realValStr = tagVal.substr(0, valLength - 1);
+			var checkSumStr = tagVal.substr(valLength - 1, 1);
+
+			valid = Util.checkSumCheck(realValStr, checkSumStr, 34);
+		}
 	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in Util.performChekcSum34, ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.performChekcSum34, ' + errMsg);
 	}
 
 	return valid;
 };
 
 
-Util.checkSumCheck = function( realValStr, checkSumStr, baseDigit )
-{
-   var sum = 0;
-	var checkSumNum = parseInt( checkSumStr, baseDigit );
+Util.checkSumCheck = function (realValStr, checkSumStr, baseDigit) {
+	var sum = 0;
+	var checkSumNum = parseInt(checkSumStr, baseDigit);
 
 	// Change back blocked char: Y -> I, Z -> O  (It was converted when realVal were being created.) 
-	realValStr = realValStr.replace( /Y/g, 'I' ).replace( /Z/g, 'O' );
+	realValStr = realValStr.replace(/Y/g, 'I').replace(/Z/g, 'O');
 
 	// Convert each digit (base34) to base10
-	for ( var i = 0; i < realValStr.length; i++ ) 
-	{
+	for (var i = 0; i < realValStr.length; i++) {
 		var char = realValStr.charAt(i);
-		var num = parseInt( char, baseDigit );
+		var num = parseInt(char, baseDigit);
 		sum += num;
 	}
 
@@ -1328,102 +1109,88 @@ Util.checkSumCheck = function( realValStr, checkSumStr, baseDigit )
 	var remainder = sum % baseDigit;
 
 	// Check if the checkSum value is same as the calculated remainer 
-	return ( checkSumNum === remainder );
+	return (checkSumNum === remainder);
 };
 
 
-Util.searchByName = function( array, propertyName, value )
-{
-	for( var i in array ){
-		if( array[i][propertyName] == value ){
+Util.searchByName = function (array, propertyName, value) {
+	for (var i in array) {
+		if (array[i][propertyName] == value) {
 			return array[i];
 		}
 	}
 	return "";
 };
 
-Util.trim = function( input )
-{
-	if ( Util.isTypeString( input ) ) return input.replace( /^\s+|\s+$/gm, '' );
+Util.trim = function (input) {
+	if (Util.isTypeString(input)) return input.replace(/^\s+|\s+$/gm, '');
 	else return input;
 };
 
-Util.trimTags = function( tags )
-{
-	tags.each( function() {
-		$( this ).val( Util.trim( $( this ).val() ) );
+Util.trimTags = function (tags) {
+	tags.each(function () {
+		$(this).val(Util.trim($(this).val()));
 	});
 };
 
-Util.replaceAllRegx = function( fullText, strReplacing, strReplacedWith )
-{
-	var rePattern = new RegExp( strReplacing, "g" );
-	return fullText.replace( rePattern, strReplacedWith );
+Util.replaceAllRegx = function (fullText, strReplacing, strReplacedWith) {
+	var rePattern = new RegExp(strReplacing, "g");
+	return fullText.replace(rePattern, strReplacedWith);
 };
 
-Util.replaceAll = function( fullText, keyStr, replaceStr )
-{
+Util.replaceAll = function (fullText, keyStr, replaceStr) {
 	var index = -1;
 	do {
-		fullText = fullText.replace( keyStr, replaceStr );
-		index = fullText.indexOf( keyStr, index + 1 );
-	} while( index != -1 );
+		fullText = fullText.replace(keyStr, replaceStr);
+		index = fullText.indexOf(keyStr, index + 1);
+	} while (index != -1);
 
 	return fullText;
 };
 
-Util.stringSearch = function( inputString, searchWord )
-{
-	if( inputString.search( new RegExp( searchWord, 'i' ) ) >= 0 )
-	{
+Util.stringSearch = function (inputString, searchWord) {
+	if (inputString.search(new RegExp(searchWord, 'i')) >= 0) {
 		return true;
 	}
-	else
-	{
+	else {
 		return false;
 	}
 };
 
-Util.upcaseFirstCharacterWord = function( text ){
-	var result = text.replace( /([A-Z])/g, " $1" );
-	return result.charAt(0).toUpperCase() + result.slice(1); 
+Util.upcaseFirstCharacterWord = function (text) {
+	var result = text.replace(/([A-Z])/g, " $1");
+	return result.charAt(0).toUpperCase() + result.slice(1);
 };
 
 
-Util.startsWith = function( input, suffix, option )
-{
-	if ( !option ) option = {};
+Util.startsWith = function (input, suffix, option) {
+	if (!option) option = {};
 
-	if ( option.upper ) {
+	if (option.upper) {
 		input = input.toUpperCase();
 		suffix = suffix.toUpperCase();
-	}	
-    return ( Util.checkValue( input ) && input.substring( 0, suffix.length ) == suffix );
+	}
+	return (Util.checkValue(input) && input.substring(0, suffix.length) == suffix);
 };
 
-Util.endsWith = function( input, suffix, option ) 
-{
-	if ( !option ) option = {};
+Util.endsWith = function (input, suffix, option) {
+	if (!option) option = {};
 
-	if ( option.upper ) {
+	if (option.upper) {
 		input = input.toUpperCase();
 		suffix = suffix.toUpperCase();
 	}
 
-	return ( Util.checkValue( input ) && input.indexOf( suffix, input.length - suffix.length ) !== -1 );
+	return (Util.checkValue(input) && input.indexOf(suffix, input.length - suffix.length) !== -1);
 };
 
-Util.endsWith_Arr = function( input, suffixArr, option ) 
-{
+Util.endsWith_Arr = function (input, suffixArr, option) {
 	var bReturn = false;
 
-   if ( Util.checkValue( input ) && Util.isTypeArray( suffixArr ) )
-	{
-		for ( var i = 0; suffixArr.length > i; i++ )
-		{
+	if (Util.checkValue(input) && Util.isTypeArray(suffixArr)) {
+		for (var i = 0; suffixArr.length > i; i++) {
 			var suffix = suffixArr[i];
-			if ( Util.endsWith( input, suffix, option ) ) 
-			{
+			if (Util.endsWith(input, suffix, option)) {
 				bReturn = true;
 				break;
 			}
@@ -1434,74 +1201,65 @@ Util.endsWith_Arr = function( input, suffixArr, option )
 };
 
 
-Util.strCutEnd = function( input, endCutLength ) 
-{	
-	return input.substr( 0, input.length - endCutLength );
+Util.strCutEnd = function (input, endCutLength) {
+	return input.substr(0, input.length - endCutLength);
 };
 
 
-Util.clearList = function( selector ) {
+Util.clearList = function (selector) {
 	selector.children().remove();
 };
 
-Util.moveSelectedById = function( fromListId, targetListId ) {
-	return !$('#' + fromListId + ' option:selected').remove().appendTo('#' + targetListId ); 
+Util.moveSelectedById = function (fromListId, targetListId) {
+	return !$('#' + fromListId + ' option:selected').remove().appendTo('#' + targetListId);
 };
 
-Util.selectAllOption = function ( listTag ) {
+Util.selectAllOption = function (listTag) {
 	listTag.find('option').attr('selected', true);
 };
 
-Util.unselectAllOption = function ( listTag ) {
+Util.unselectAllOption = function (listTag) {
 	listTag.find('option').attr('selected', true);
 };
 
-Util.valueEscape = function( input )
-{
+Util.valueEscape = function (input) {
 	//input.replaceAll( '\', '\\' );
 	//input = input.replace( "'", "\'" );
-	input = input.replace( '"', '\"' );
+	input = input.replace('"', '\"');
 
 	return input;
 };
 
-Util.valueUnescape = function( input )
-{
+Util.valueUnescape = function (input) {
 	//input.replaceAll( '\', '\\' );
 	//input = input.replace( "\'", "'" );
-	input = input.replace( '\"', '"' );
+	input = input.replace('\"', '"');
 
 	return input;
 };
 
-Util.reverseArray = function( arr )
-{
+Util.reverseArray = function (arr) {
 	return arr.reverse();
 };
 
 // ----------------------------------
 // List / Array Related
 
-Util.getMatchData = function( settingData, matchSet )
-{
+Util.getMatchData = function (settingData, matchSet) {
 	var returnData = new Array();
-	
-	$.each( settingData, function( i, item )
-	{
+
+	$.each(settingData, function (i, item) {
 		var match = true;
 
-		for ( var propName in matchSet )
-		{
-			if ( matchSet[ propName ] != item[ propName ] ) 
-			{
+		for (var propName in matchSet) {
+			if (matchSet[propName] != item[propName]) {
 				match = false;
 				break;
 			}
 		}
 
-		if ( match )
-		{
-			returnData.push( item );
+		if (match) {
+			returnData.push(item);
 		}
 	});
 
@@ -1509,59 +1267,50 @@ Util.getMatchData = function( settingData, matchSet )
 };
 
 
-Util.getFirst = function( inputList ) 
-{
+Util.getFirst = function (inputList) {
 	var returnVal;
 
-	if( inputList !== undefined && inputList != null && inputList.length > 0 )
-	{
+	if (inputList !== undefined && inputList != null && inputList.length > 0) {
 		returnVal = inputList[0];
 	}
-	
+
 	return returnVal;
 };
 
 
 // $.inArray( item_event.trackedEntityInstance, personList ) == -1
 
-Util.checkExistInList = function( list, value, propertyName )
-{
-	var item = Util.getFromList( list, value, propertyName );
+Util.checkExistInList = function (list, value, propertyName) {
+	var item = Util.getFromList(list, value, propertyName);
 
-	if ( item === undefined ) return false;
+	if (item === undefined) return false;
 	else return true;
 };
 
 
-Util.checkEmptyId_FromList = function( list )
-{
-	return ( Util.getFromList( list, '' ) !== undefined );
+Util.checkEmptyId_FromList = function (list) {
+	return (Util.getFromList(list, '') !== undefined);
 };
 
-Util.jsonToArray = function( jsonData, structureConfig )
-{
+Util.jsonToArray = function (jsonData, structureConfig) {
 	//parameter structureConfig (optional), e.g. 'name:value', or 'id:val', etc;
 	//to do: make recursive in the presence of nested json objects (typeOf obj === "object" )
-	var strucConfArr = ( structureConfig ? structureConfig.split( ':' ) : undefined );
+	var strucConfArr = (structureConfig ? structureConfig.split(':') : undefined);
 	var arrRet = [];
 	var fldExcl = 'userName,password,';
 
-	for( var keyName in jsonData )
-	{
-		if ( fldExcl.indexOf( keyName ) < 0 )
-		{
-			var obj = jsonData[ keyName ];
+	for (var keyName in jsonData) {
+		if (fldExcl.indexOf(keyName) < 0) {
+			var obj = jsonData[keyName];
 
-			if ( strucConfArr )
-			{
-				var jDat = { [ strucConfArr[ 0 ] ]: keyName, [ strucConfArr[ 1 ] ]: obj };
+			if (strucConfArr) {
+				var jDat = { [strucConfArr[0]]: keyName, [strucConfArr[1]]: obj };
 			}
-			else
-			{
-				var jDat = { [ keyName ]: obj };
+			else {
+				var jDat = { [keyName]: obj };
 			}
-	
-			arrRet.push ( jDat );
+
+			arrRet.push(jDat);
 		}
 	}
 
@@ -1569,18 +1318,15 @@ Util.jsonToArray = function( jsonData, structureConfig )
 };
 
 
-Util.recursiveCalls = function( dataObj, i, runMethod, finishCallBack )
-{
-    if ( dataObj.list.length <= i )
-    {
-        return finishCallBack();        
-    }
-    else
-    {
-        runMethod( dataObj.list[i], function() {
-            Util.recursiveCalls( dataObj, i + 1, runMethod, finishCallBack );
-        }, finishCallBack );
-    }
+Util.recursiveCalls = function (dataObj, i, runMethod, finishCallBack) {
+	if (dataObj.list.length <= i) {
+		return finishCallBack();
+	}
+	else {
+		runMethod(dataObj.list[i], function () {
+			Util.recursiveCalls(dataObj, i + 1, runMethod, finishCallBack);
+		}, finishCallBack);
+	}
 };
 
 // List / Array Related
@@ -1589,61 +1335,53 @@ Util.recursiveCalls = function( dataObj, i, runMethod, finishCallBack )
 // ------------------------------------------------------------------------------------------------------
 // For URL
 
-Util.getServerUrl = function()
-{
+Util.getServerUrl = function () {
 	return location.protocol + '//' + location.host;
 };
 
 
-Util.getParameterByName = function( name, url ) 
-{
-    if (!url) url = window.location.href;
- 
+Util.getParameterByName = function (name, url) {
+	if (!url) url = window.location.href;
+
 	name = name.replace(/[\[\]]/g, "\\$&");
 
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
-    var results = regex.exec(url);
+	var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+	var results = regex.exec(url);
 
-    if (!results) return '';
+	if (!results) return '';
 
-    if (!results[2]) return '';
+	if (!results[2]) return '';
 
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
+	return decodeURIComponent(results[2].replace(/\+/g, " "));
 };
 
 
-Util.getParameterInside = function( value, openClose )
-{
+Util.getParameterInside = function (value, openClose) {
 	// intended to be used as follows: Util.getValueInside( '##calculatePattern{AA-BB}', '{}' ) --> returns 'AA-BB'
-	if ( value.indexOf( openClose.substring( 0,1 ) ) > -1 )
-	{
-		var split1 = openClose.substring( 0,1 ), split2 = openClose.substring( 1,2 );
-		return ( value.split( split1 ) [ 1 ] ).split( split2 ) [ 0 ];	
+	if (value.indexOf(openClose.substring(0, 1)) > -1) {
+		var split1 = openClose.substring(0, 1), split2 = openClose.substring(1, 2);
+		return (value.split(split1)[1]).split(split2)[0];
 	}
-	else
-	{
+	else {
 		return '';
 	}
 };
 
 
-Util.getURL_pathname = function( loc )
-{
+Util.getURL_pathname = function (loc) {
 	// '/api/apps/NetworkListing/index.html', loc = 4 by - '', 'api', 'apps', 'NetworkListing'
 	var pathName = "";
-	var strSplits = window.location.pathname.split( '/' );
+	var strSplits = window.location.pathname.split('/');
 
-	if ( strSplits.length >= loc )
-	{
-		pathName = strSplits[ loc - 1 ];
+	if (strSplits.length >= loc) {
+		pathName = strSplits[loc - 1];
 	}
 
 	return pathName;
 };
 
-Util.setUrlParam = function( url, paramKey, paramVal )
-{
-    var startChar = ( url.indexOf( '?' ) < 0 ) ? '?' : '&';
+Util.setUrlParam = function (url, paramKey, paramVal) {
+	var startChar = (url.indexOf('?') < 0) ? '?' : '&';
 
 	url += startChar + paramKey + '=' + paramVal;
 
@@ -1651,18 +1389,16 @@ Util.setUrlParam = function( url, paramKey, paramVal )
 };
 
 
-Util.getUrlLastName = function( url )
-{
-	return url.substring( url.lastIndexOf('/') + 1 );
+Util.getUrlLastName = function (url) {
+	return url.substring(url.lastIndexOf('/') + 1);
 };
 
 // --------------------------------------------
 
-Util.getObjPropertyCount = function( list )
-{
+Util.getObjPropertyCount = function (list) {
 	var count = 0;
 
-	for ( var prop in list ) { count++; }
+	for (var prop in list) { count++; }
 	//var len = Object.keys(obj).length;
 
 	return count;
@@ -1677,111 +1413,97 @@ Util.getObjPropertyCount = function( list )
 // Seletet Tag Populate, Etc Related
 // -- Move to either 'Util2' class, or 'FormUtil' class
 
-Util.populateSelect_ByList = function( selectTag, listData, dataType )
-{
+Util.populateSelect_ByList = function (selectTag, listData, dataType) {
 	selectTag.empty();
 
-	$.each( listData, function( i, item ) 
-	{
-		var option = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+	$.each(listData, function (i, item) {
+		var option = $('<option ' + FormUtil.getTermAttr(item) + '></option>');
 
-		if ( dataType !== undefined && dataType == "Array" )
-		{
-			option.attr( "value", item ).text( item );
+		if (dataType !== undefined && dataType == "Array") {
+			option.attr("value", item).text(item);
 		}
-		else
-		{
-			option.attr( "value", item.id ).text( item.name );
+		else {
+			option.attr("value", item.id).text(item.name);
 		}
-			
-		selectTag.append( option );
+
+		selectTag.append(option);
 	});
 };
 
-Util.populateSelect_Simple = function( selectObj, json_Data )
-{
+Util.populateSelect_Simple = function (selectObj, json_Data) {
 	selectObj.empty();
 
-	$.each( json_Data, function( i, item ) {	
-		if ( Util.isTypeObject( item ) )
-		{
-			selectObj.append( '<option ' + FormUtil.getTermAttr( item ) + ' value="' + item.id + '">' + item.name + '</option>' );
+	$.each(json_Data, function (i, item) {
+		if (Util.isTypeObject(item)) {
+			selectObj.append('<option ' + FormUtil.getTermAttr(item) + ' value="' + item.id + '">' + item.name + '</option>');
 		}
-		else if ( Util.isTypeString( item ) )
-		{
-			selectObj.append( '<option value="' + item + '">' + item + '</option>' );
+		else if (Util.isTypeString(item)) {
+			selectObj.append('<option value="' + item + '">' + item + '</option>');
 		}
 	});
 };
 
-Util.populateSelectDefault = function( selectObj, selectNoneName, json_Data, inputOption )
-{
+Util.populateSelectDefault = function (selectObj, selectNoneName, json_Data, inputOption) {
 	selectObj.empty();
-	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">' + selectNoneName + '</option>' );
+	selectObj.append('<option term="' + Util.termName_pleaseSelectOne + '" value="">' + selectNoneName + '</option>');
 
 	var valuePropStr = "id";
 	var namePropStr = "name";
 
-	if ( inputOption !== undefined )
-	{
+	if (inputOption !== undefined) {
 		valuePropStr = inputOption.val;
 		namePropStr = inputOption.name;
 	}
 
-	if ( json_Data !== undefined )
-	{
-		$.each( json_Data, function( i, item ) {
+	if (json_Data !== undefined) {
+		$.each(json_Data, function (i, item) {
 
-			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+			var optionTag = $('<option ' + FormUtil.getTermAttr(item) + '></option>');
 
-			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
+			optionTag.attr("value", item[valuePropStr]).text(item[namePropStr]);
 
-			selectObj.append( optionTag );
+			selectObj.append(optionTag);
 		});
 	}
 };
 
 
-Util.populateSelect_newOption = function( selectObj, json_Data, inputOption )
-{
+Util.populateSelect_newOption = function (selectObj, json_Data, inputOption) {
 	selectObj.empty();
-	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" selected disabled="disabled">Choose an option</option>' );
-	
+	selectObj.append('<option term="' + Util.termName_pleaseSelectOne + '" selected disabled="disabled">Choose an option</option>');
+
 	var valuePropStr = "id";
 	var namePropStr = "name";
 
-	if ( inputOption !== undefined )
-	{
+	if (inputOption !== undefined) {
 		valuePropStr = inputOption.val;
 		namePropStr = inputOption.name;
 	}
 
-	if ( json_Data !== undefined )
-	{
-		$.each( json_Data, function( i, item ) {
+	if (json_Data !== undefined) {
+		$.each(json_Data, function (i, item) {
 
-			var optionTag = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+			var optionTag = $('<option ' + FormUtil.getTermAttr(item) + '></option>');
 
-			optionTag.attr( "value", item[ valuePropStr ] ).text( item[ namePropStr ] );
+			optionTag.attr("value", item[valuePropStr]).text(item[namePropStr]);
 
-			selectObj.append( optionTag );
+			selectObj.append(optionTag);
 		});
 	}
 };
 
-Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
-{
-	json_Data.forEach( optionData => {
+Util.populateUl_newOption = function (selectObj, json_Data, eventsOptions) {
+	json_Data.forEach(optionData => {
 
 		let option = document.createElement('option')
 
 		$(option).css({
-			'display':'none',
-			'width':'100%',
-			'list-style':'none',
-			'background':'white',
-			'padding':'4px 8px',
-			'font-size':'14px'
+			'display': 'none',
+			'width': '100%',
+			'list-style': 'none',
+			'background': 'white',
+			'padding': '4px 8px',
+			'font-size': '14px'
 		})
 
 		option.textContent = optionData.defaultName
@@ -1789,167 +1511,144 @@ Util.populateUl_newOption = function( selectObj, json_Data, eventsOptions )
 
 		$(option).click(eventsOptions)
 
-		selectObj.appendChild( option )
+		selectObj.appendChild(option)
 
 	})
 };
 
 
-Util.populateSelect = function( selectObj, selectName, json_Data, dataType )
-{
+Util.populateSelect = function (selectObj, selectName, json_Data, dataType) {
 	selectObj.empty();
-	selectObj.append( '<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>' );
+	selectObj.append('<option term="' + Util.termName_pleaseSelectOne + '" value="">Select ' + selectName + '</option>');
 
-	if ( json_Data !== undefined )
-	{
-		$.each( json_Data, function( i, item ) 
-		{
-			var option = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+	if (json_Data !== undefined) {
+		$.each(json_Data, function (i, item) {
+			var option = $('<option ' + FormUtil.getTermAttr(item) + '></option>');
 
-			if ( dataType !== undefined && dataType == "Array" )
-			{
-				option.attr( "value", item ).text( item );
+			if (dataType !== undefined && dataType == "Array") {
+				option.attr("value", item).text(item);
 			}
-			else
-			{
-				option.attr( "value", item.id ).text( item.name );
+			else {
+				option.attr("value", item.id).text(item.name);
 			}
-				
-			selectObj.append( option );
+
+			selectObj.append(option);
 		});
 	}
 };
 
 
-Util.appendOnSelect = function( selectObj, dataArr, dataType )
-{
-	if ( dataArr )
-	{
-		dataArr.forEach( item => 
-		{
-			var option = $( '<option ' + FormUtil.getTermAttr( item ) + '></option>' );
+Util.appendOnSelect = function (selectObj, dataArr, dataType) {
+	if (dataArr) {
+		dataArr.forEach(item => {
+			var option = $('<option ' + FormUtil.getTermAttr(item) + '></option>');
 
-			if ( dataType === "Array" ) option.attr( "value", item ).text( item );
-			else option.attr( "value", item.id ).text( item.name );
+			if (dataType === "Array") option.attr("value", item).text(item);
+			else option.attr("value", item.id).text(item.name);
 
-			selectObj.append( option );
+			selectObj.append(option);
 		});
 	}
 };
 
 
-Util.checkItemOnSelect = function( selectObj, itemValue )
-{
-	return ( selectObj.find( 'option[value="' + itemValue + '"]' ).length > 0 );
+Util.checkItemOnSelect = function (selectObj, itemValue) {
+	return (selectObj.find('option[value="' + itemValue + '"]').length > 0);
 };
 
 // -------------------------
 
-Util.decodeURI_ItemList = function( jsonItemList, propName )
-{
-	if ( jsonItemList )
-	{
-		$.each( jsonItemList, function( i, item ) 
-		{
-			if ( item[ propName ] )
-			{
-				item[ propName ] = decodeURI( item[ propName ] );
+Util.decodeURI_ItemList = function (jsonItemList, propName) {
+	if (jsonItemList) {
+		$.each(jsonItemList, function (i, item) {
+			if (item[propName]) {
+				item[propName] = decodeURI(item[propName]);
 			}
 		});
 	}
 };
 
-Util.setSelectDefaultByName = function( ctrlTag, name )
-{
-	ctrlTag.find( "option:contains(" + name + ")" ).attr( 'selected', 'selected' ); //true
+Util.setSelectDefaultByName = function (ctrlTag, name) {
+	ctrlTag.find("option:contains(" + name + ")").attr('selected', 'selected'); //true
 };
 
 
-Util.getSelectedOptionName = function( ctrlTag )
-{
-	return ctrlTag.find( "option:selected" ).text();
+Util.getSelectedOptionName = function (ctrlTag) {
+	return ctrlTag.find("option:selected").text();
 	// return ctrlTag.options[ ctrlTag.selectedIndex ].text; // Javascript version
 };
 
-Util.reset_tagsListData = function( tags, listJson )
-{
-	tags.each( function() {
+Util.reset_tagsListData = function (tags, listJson) {
+	tags.each(function () {
 
-		var tag = $( this );
+		var tag = $(this);
 		var tagVal = tag.val();
 
-		tag.find( 'option' ).remove();
+		tag.find('option').remove();
 
-		Util.populateSelectDefault( tag, "", listJson );
-		
-		tag.val( tagVal );
+		Util.populateSelectDefault(tag, "", listJson);
+
+		tag.val(tagVal);
 	});
 };
 // Seletet Tag Populate, Etc Related
 // ----------------------------------
 
-Util.checkInteger = function( input )
-{
+Util.checkInteger = function (input) {
 	var intRegex = /^\d+$/;
-	return intRegex.test( input );
+	return intRegex.test(input);
 };
 
-Util.checkCalendarDateStrFormat = function( inputStr )
-{
-	if( inputStr.length == 10
+Util.checkCalendarDateStrFormat = function (inputStr) {
+	if (inputStr.length == 10
 		&& inputStr.substring(4, 5) == '/'
 		&& inputStr.substring(7, 8) == '/'
-		&& Util.checkInteger( inputStr.substring(0, 4) )
-		&& Util.checkInteger( inputStr.substring(5, 7) )
-		&& Util.checkInteger( inputStr.substring(8, 10) )
-		)
-	{
+		&& Util.checkInteger(inputStr.substring(0, 4))
+		&& Util.checkInteger(inputStr.substring(5, 7))
+		&& Util.checkInteger(inputStr.substring(8, 10))
+	) {
 		return true;
 	}
-	else
-	{
+	else {
 		return false;
 	}
 };
 
-Util.isDate = function(date) {
-   return ( (new Date(date) !== "Invalid Date" && !isNaN(new Date(date)) ));
+Util.isDate = function (date) {
+	return ((new Date(date) !== "Invalid Date" && !isNaN(new Date(date))));
 };
 
 // ----------------------------------
 // Date Formatting Related
 
 
-Util.addZero = function( i )
-{
-    if (i < 10) {
-        i = "0" + i;
-    }
-    return i;
+Util.addZero = function (i) {
+	if (i < 10) {
+		i = "0" + i;
+	}
+	return i;
 };
 
-Util.dateToString = function( date )
-{
-	var month = eval( date.getMonth() ) + 1;
-	month = ( month < 10 ) ? "0" + month : month;
-	
-	var day = eval( date.getDate() );
-	day = ( day < 10 ) ? "0" + day : day;
-		
+Util.dateToString = function (date) {
+	var month = eval(date.getMonth()) + 1;
+	month = (month < 10) ? "0" + month : month;
+
+	var day = eval(date.getDate());
+	day = (day < 10) ? "0" + day : day;
+
 	return date.getFullYear() + "-" + month + "-" + day;
 };
 
 
-Util.dateToStr = function( date, separator )
-{
-	if ( !separator ) separator = "";
+Util.dateToStr = function (date, separator) {
+	if (!separator) separator = "";
 
-	var month = eval( date.getMonth() ) + 1;
-	month = ( month < 10 ) ? "0" + month : month;
-	
-	var day = eval( date.getDate() );
-	day = ( day < 10 ) ? "0" + day : day;
-		
+	var month = eval(date.getMonth()) + 1;
+	month = (month < 10) ? "0" + month : month;
+
+	var day = eval(date.getDate());
+	day = (day < 10) ? "0" + day : day;
+
 	return date.getFullYear() + separator + month + separator + day;
 };
 
@@ -1958,158 +1657,136 @@ Util.dateToStr = function( date, separator )
 
 
 // NEW DATE FORMATTER --> DATE STRING..
-Util.dateStr = function( formatType, inputDate )
-{
-	var date = ( inputDate ) ? inputDate: new Date();
+Util.dateStr = function (formatType, inputDate) {
+	var date = (inputDate) ? inputDate : new Date();
 	var formatPattern = Util.dateType1;
 
-	if ( formatType )
-	{
-		if ( formatType === 'D' || formatType === 'DATE' ) formatPattern = Util.dateType_DATE;
-		else if ( formatType === 'DT' || formatType === 'DATETIME' ) formatPattern = Util.dateType_DATETIME;
+	if (formatType) {
+		if (formatType === 'D' || formatType === 'DATE') formatPattern = Util.dateType_DATE;
+		else if (formatType === 'DT' || formatType === 'DATETIME') formatPattern = Util.dateType_DATETIME;
 		else formatPattern = formatType;
 	}
-	
-	return Util.formatDate( date, formatPattern );
+
+	return Util.formatDate(date, formatPattern);
 };
 
 
-Util.dateAddStr = function( formatType, addDateNumber )
-{
+Util.dateAddStr = function (formatType, addDateNumber) {
 	var date = new Date();
 
-	date.setDate( date.getDate() + addDateNumber );
+	date.setDate(date.getDate() + addDateNumber);
 
-	return Util.dateStr( formatType, date );
+	return Util.dateStr(formatType, date);
 };
 
 
-Util.getDateTimeStr = function()
-{
-	return Util.formatDateTime( new Date() );
+Util.getDateTimeStr = function () {
+	return Util.formatDateTime(new Date());
 };
 
 // ===============================================
 
 
 // Main Eventual date format method others calls at the end.
-Util.formatDate = function( date, formatPattern )
-{
+Util.formatDate = function (date, formatPattern) {
 	var outDateStr = '';
 
-	try
-	{
-		if ( date )
-		{
-			if ( !formatPattern ) formatPattern = Util.dateType1;
+	try {
+		if (date) {
+			if (!formatPattern) formatPattern = Util.dateType1;
 
-			if ( Util.isTypeString( date ) && date.length === 10 ) date = date + 'T00:00:00.000';
+			if (Util.isTypeString(date) && date.length === 10) date = date + 'T00:00:00.000';
 
 			// '$.format.date' allows Javascript date object or string in various format.
-			outDateStr = $.format.date( date, formatPattern );		
+			outDateStr = $.format.date(date, formatPattern);
 		}
 	}
-	catch ( errMsg )
-	{
-		console.log( 'ERROR in Util.formatDate, errMsg: ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.formatDate, errMsg: ' + errMsg);
 	}
 
 	return outDateStr;
 };
 
-Util.formatDateTime = function( dateObj, dateType )
-{
-	return Util.formatDateTimeStr( dateObj.toString(), dateType );
+Util.formatDateTime = function (dateObj, dateType) {
+	return Util.formatDateTimeStr(dateObj.toString(), dateType);
 };
 
-Util.formatDateTimeStr = function( dateStr, dateType )
-{
-	return Util.formatDate( dateStr, dateType );
+Util.formatDateTimeStr = function (dateStr, dateType) {
+	return Util.formatDate(dateStr, dateType);
 };
 
-Util.timeCalculation = function( dtmNewer, dtmOlder )
-{
+Util.timeCalculation = function (dtmNewer, dtmOlder) {
 	var reSult = { 'hh': 0, 'mm': 0, 'ss': 0 };
 
-	var sec_num = ( new Date( dtmNewer ).getTime()  - new Date( dtmOlder ).getTime() ) / Util.MS_SEC;
+	var sec_num = (new Date(dtmNewer).getTime() - new Date(dtmOlder).getTime()) / Util.MS_SEC;
 
-    var hours   = Math.floor(sec_num / 3600); // round (down)
-    var minutes = Math.floor((sec_num - (hours * 3600)) / 60); // round (down)
-    var seconds = Math.round(sec_num - (hours * 3600) - (minutes * 60) ); // round (up)
+	var hours = Math.floor(sec_num / 3600); // round (down)
+	var minutes = Math.floor((sec_num - (hours * 3600)) / 60); // round (down)
+	var seconds = Math.round(sec_num - (hours * 3600) - (minutes * 60)); // round (up)
 
-    if (hours   < 10) {hours   = "0"+hours;}
-    if (minutes < 10) {minutes = "0"+minutes;}
-	if (seconds < 10) {seconds = "0"+seconds;}
+	if (hours < 10) { hours = "0" + hours; }
+	if (minutes < 10) { minutes = "0" + minutes; }
+	if (seconds < 10) { seconds = "0" + seconds; }
 
 	reSult.hh = hours;
 	reSult.mm = minutes;
 	reSult.ss = seconds;
 
-    return reSult;
+	return reSult;
 
 };
 
-Util.getTimePassedMs = function( fromDtStr )
-{
+Util.getTimePassedMs = function (fromDtStr) {
 	var timePassedMs = -1;
 
-	try
-	{
+	try {
 		var currDt = new Date().getTime();
-		var fromDt = new Date( fromDtStr ).getTime();
+		var fromDt = new Date(fromDtStr).getTime();
 
 		var timePassedMs = currDt - fromDt;
 	}
-	catch ( errMsg )
-	{
-		console.log( 'ERROR in Util.getTimePassedMs, errMsg: ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.getTimePassedMs, errMsg: ' + errMsg);
 	}
 
 	return timePassedMs;
 };
 
-Util.dateUTCToLocal = function( dateStr )
-{
+Util.dateUTCToLocal = function (dateStr) {
 	var localDateObj;
 
-	try
-	{
-		if ( dateStr )
-		{
+	try {
+		if (dateStr) {
 			// If the input utc date string does not have 'Z' at the end, add it.  <--- but need to be full length?
-			if ( dateStr.indexOf( 'Z' ) === -1 ) 
-			{
+			if (dateStr.indexOf('Z') === -1) {
 				dateStr += 'Z';
 			}
 
-			localDateObj = new Date( dateStr );
+			localDateObj = new Date(dateStr);
 		}
-		else
-		{
+		else {
 			localDateObj = new Date();
 		}
 	}
-	catch ( errMsg )
-	{
-		console.log( 'ERROR in Util.dateUTCToLocal, errMsg: ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.dateUTCToLocal, errMsg: ' + errMsg);
 	}
 
 	return localDateObj;
 };
 
-Util.getUTCDateTimeStr = function( dateObj, optionStr )
-{
-	if ( !dateObj ) dateObj = new Date();
+Util.getUTCDateTimeStr = function (dateObj, optionStr) {
+	if (!dateObj) dateObj = new Date();
 
 	var dtStr = dateObj.toISOString();
-	if ( optionStr === 'noZ' ) dtStr = dtStr.replace( 'Z', '' );
+	if (optionStr === 'noZ') dtStr = dtStr.replace('Z', '');
 
 	return dtStr;
 };
 
-Util.addDay = function( dateObj, addDay )
-{
-	return dateObj.setDate( dateObj.getDate() + addDay );
+Util.addDay = function (dateObj, addDay) {
+	return dateObj.setDate(dateObj.getDate() + addDay);
 };
 
 // Date Formatting Related
@@ -2118,100 +1795,85 @@ Util.addDay = function( dateObj, addDay )
 // ----------------------------------
 // Others
 
-Util.getStrLastChar = function( inputVal )
-{
-	return inputVal.slice( inputVal.length - 1 );
+Util.getStrLastChar = function (inputVal) {
+	return inputVal.slice(inputVal.length - 1);
 };
 
-Util.generateRandomId = function( len ) 
-{
+Util.generateRandomId = function (len) {
 	var id = '';
 	var charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    var id_size = 12;
+	var id_size = 12;
 
-	if ( len ) id_size = len;
+	if (len) id_size = len;
 
-	for (var i = 1; i <= id_size; i++) 
-	{
-		var randPos = Math.floor( Math.random() * charSet.length );
-		id += charSet[ randPos ];
+	for (var i = 1; i <= id_size; i++) {
+		var randPos = Math.floor(Math.random() * charSet.length);
+		id += charSet[randPos];
 	}
-	
+
 	return id;
 };
 
-Util.generateTimedUid = function() 
-{
-	return ( new Date().getTime() ).toString( 36 );
+Util.generateTimedUid = function () {
+	return (new Date().getTime()).toString(36);
 }
 
 
-Util.generateRandomNumberRange = function(min_value , max_value) 
-{
-	return Math.random() * ( max_value - min_value ) + min_value;
+Util.generateRandomNumberRange = function (min_value, max_value) {
+	return Math.random() * (max_value - min_value) + min_value;
 }
 
-Util.getRandomWord = function( slist, anythingRandom )
-{
+Util.getRandomWord = function (slist, anythingRandom) {
 	var arrL = slist.split(',');
-	var i = Util.generateRandomNumberRange( 0, arrL.length -1 ).toFixed(0);
+	var i = Util.generateRandomNumberRange(0, arrL.length - 1).toFixed(0);
 	return arrL[i];
 }
 
 
-Util.generateRandomNumber = function( len ) 
-{
+Util.generateRandomNumber = function (len) {
 	var text = "";
 	var possible = "0123456789";
 
 	for (var i = 0; i < len; i++)
-		text += possible.charAt( Math.floor( Math.random() * possible.length ) );
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
 
 	return text;
 }
 
-Util.getIndexes = function( inputStr, keyStr )
-{
+Util.getIndexes = function (inputStr, keyStr) {
 	var indexes = [];
 
-	var idx = inputStr.indexOf( keyStr );
-	while ( idx != -1 ) {
+	var idx = inputStr.indexOf(keyStr);
+	while (idx != -1) {
 		indexes.push(idx);
-		  idx = inputStr.indexOf( keyStr, idx + 1 );
+		idx = inputStr.indexOf(keyStr, idx + 1);
 	}
 
 	return indexes;
 };
 
-Util.upNumber_IntArr = function( arr, upNumber )
-{
-	for ( var i = 0; i < arr.length; i++ )
-	{
+Util.upNumber_IntArr = function (arr, upNumber) {
+	for (var i = 0; i < arr.length; i++) {
 		arr[i] = arr[i] + upNumber;
 	}
 };
 
 
-Util.getBaseFromBase = function ( input, from, to )
-{
-	return ConvertBase.custom( input, from, to );
+Util.getBaseFromBase = function (input, from, to) {
+	return ConvertBase.custom(input, from, to);
 };
 
 
-Util.getJsonStr = function( json )
-{
+Util.getJsonStr = function (json) {
 	var output = '';
 
-	try
-	{
-		if ( json )
-		{
-			if ( typeof( json ) === 'object' )  output = JSON.stringify( json );
+	try {
+		if (json) {
+			if (typeof (json) === 'object') output = JSON.stringify(json);
 			else output = json.toString();
 		}
 	}
-	catch ( errMsg )
-	{
+	catch (errMsg) {
 		output = ' convert to string failed: ' + errMsg;
 	}
 
@@ -2219,39 +1881,33 @@ Util.getJsonStr = function( json )
 };
 
 
-Util.strEndsWith = function( str, suffix )
-{
-	return ( str.indexOf( suffix, str.length - suffix.length ) !== -1 );
+Util.strEndsWith = function (str, suffix) {
+	return (str.indexOf(suffix, str.length - suffix.length) !== -1);
 };
 
 
 // Others
 // ----------------------------------
 
-Util.encrypt = function (seed,loops) 
-{
+Util.encrypt = function (seed, loops) {
 	let ret = seed;
-	
-	if ( seed )
-	{
-		for ( var i = 0; i < loops; i++ )
-		{
+
+	if (seed) {
+		for (var i = 0; i < loops; i++) {
 			ret = btoa(ret); //SHA256(ret)
-		}	
+		}
 	}
 
 	return ret;
 };
 
-Util.decrypt = function (garbage,loops) 
-{
+Util.decrypt = function (garbage, loops) {
 	let seed = garbage;
-	for ( var i = 0; i < loops; i++ )
-	{
+	for (var i = 0; i < loops; i++) {
 		seed = atob(seed);
 	}
 	return seed;
-} ;
+};
 
 // --------------------------------------
 // Mobile Check Related --------
@@ -2291,28 +1947,25 @@ Util.numberWithCommas = function (x) {
 
 // -----------------------------------------------------------------
 
-Util.stylesStrAppy = function( stylesStr, tag ) 
-{
+Util.stylesStrAppy = function (stylesStr, tag) {
 	try {
-		stylesStr.split( ';' ).forEach( style => {
-			var styleData = style.split( ':' );
-			if ( styleData.length >= 2 ) tag.css( styleData[0], styleData[1] );
+		stylesStr.split(';').forEach(style => {
+			var styleData = style.split(':');
+			if (styleData.length >= 2) tag.css(styleData[0], styleData[1]);
 		});
 	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in Util.stylesStrAppy, errMsg: ' + errMsg );
+	catch (errMsg) {
+		console.log('ERROR in Util.stylesStrAppy, errMsg: ' + errMsg);
 	}
 };
 
 // -----------------------------------------------------------------
 
-Util.getAsArray = function( inputData )
-{
+Util.getAsArray = function (inputData) {
 	var dataArray = [];
 
-	if ( Util.isTypeArray( inputData ) ) dataArray = inputData;
-	else if ( Util.isTypeObject( inputData ) ) dataArray = [ inputData ];  // if single obj, get as Array
+	if (Util.isTypeArray(inputData)) dataArray = inputData;
+	else if (Util.isTypeObject(inputData)) dataArray = [inputData];  // if single obj, get as Array
 
 	return dataArray;
 };
@@ -2321,43 +1974,38 @@ Util.getAsArray = function( inputData )
 
 Util.g_TimeOutIds = {};
 
-Util.setDelays_timeout = function( globalTO_ID, timeoutSec, actionFunc )
-{
-	var theTimeOutId = Util.g_TimeOutIds[ globalTO_ID ];
+Util.setDelays_timeout = function (globalTO_ID, timeoutSec, actionFunc) {
+	var theTimeOutId = Util.g_TimeOutIds[globalTO_ID];
 
-	if ( theTimeOutId ) clearTimeout( theTimeOutId );
+	if (theTimeOutId) clearTimeout(theTimeOutId);
 
-	Util.g_TimeOutIds[ globalTO_ID ] = setTimeout( actionFunc, timeoutSec * 1000 );
+	Util.g_TimeOutIds[globalTO_ID] = setTimeout(actionFunc, timeoutSec * 1000);
 };
 
 
 // -----------------------------------------------------------------
 
-Util.getAge_ByBirthDate = function( birthDateStr )
-{
+Util.getAge_ByBirthDate = function (birthDateStr) {
 	var age = '';
 
-	try
-	{
-		if ( birthDateStr && birthDateStr.trim() )
-		{
+	try {
+		if (birthDateStr && birthDateStr.trim()) {
 			var today = new Date();
-			var birthDateObj = new Date( birthDateStr );
-	
+			var birthDateObj = new Date(birthDateStr);
+
 			age = today.getFullYear() - birthDateObj.getFullYear();
 			var notFullYearYet = false;
-	
+
 			// If months has not been passed, yet, remove 1 year from above simple year diff.
-			if ( today.getMonth() < birthDateObj.getMonth() ) notFullYearYet = true; // 2022-06 vs 2021-07
-			else if ( today.getMonth() === birthDateObj.getMonth() )
-			{
-				if ( today.getDate() < birthDateObj.getDate() ) notFullYearYet = true;
+			if (today.getMonth() < birthDateObj.getMonth()) notFullYearYet = true; // 2022-06 vs 2021-07
+			else if (today.getMonth() === birthDateObj.getMonth()) {
+				if (today.getDate() < birthDateObj.getDate()) notFullYearYet = true;
 			}
-	
-			if ( notFullYearYet ) age = age - 1;
-		}	
+
+			if (notFullYearYet) age = age - 1;
+		}
 	}
-	catch ( errMsg ) { console.log( 'ERROR in Util.getAge_ByBirthDate, ' + errMsg ); }
+	catch (errMsg) { console.log('ERROR in Util.getAge_ByBirthDate, ' + errMsg); }
 
 	return age;
 };

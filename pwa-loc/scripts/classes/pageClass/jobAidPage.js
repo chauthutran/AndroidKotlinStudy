@@ -47,6 +47,28 @@ JobAidPage.render = function ()
       TranslationManager.translatePage();
    });   
 
+
+   $.contextMenu( {
+      selector: 'div.jobContextMenu',
+      trigger: 'left',
+      build: function( $triggerElement, e ) 
+      {
+         var jobAidItemTag = $triggerElement.closest( 'div.jobAidItem' );
+
+         console.log( jobAidItemTag.attr( 'projDir' ) );
+
+         return {
+             callback: function( key, options ) {
+               if ( key === 'download' ) JobAidPage.itemDownload( jobAidItemTag );
+             },
+             items: {
+               download: { name: "download" },
+               test: { name: "test" }
+            }
+         };
+      }
+  });
+
 };
 
 // ------------------
@@ -204,6 +226,8 @@ JobAidPage.updateSectionLists = function( projDir, statusType )
 
 JobAidPage.populateItem = function( itemData, itemTag, statusType )
 {
+   var menus = [];
+
    // type = 'available' vs 'downloaded'
    // pack = {code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false };
    // status, buildDate,       
@@ -222,26 +246,29 @@ JobAidPage.populateItem = function( itemData, itemTag, statusType )
    itemTag.find( '.divDownloadSize' ).append( '<strong>Download size: </strong>' + Util.getStr( itemData.size ) );
    itemTag.find( '.divDownloadStatus' ).append( '<span class="downloadStatus">downloaded. 197/197</span>' );
 
-   itemTag.find( 'div.download' ).off( 'click' ).click( function( e ) 
+   /*
+   itemTag.find( 'div.jobContextMenu' ).off( 'click' ).click( function( e ) 
    {
-      var divDownloadTag = $( this );
+      var thisTag = $( this );
       e.stopPropagation();
 
-      var projDirTag = divDownloadTag.closest( 'div.jobAidItem[projDir]' );
-      var projDir = projDirTag.attr( 'projDir' );
-
-      if ( projDir )
-      {
-         JobAidHelper.runTimeCache_JobAid( { projDir: projDir, target: 'jobAidPage' } );
-      }
+      thisTag.contextMenu( { x: e.offsetX, y: e.offsetY } );
    });
+   */
 
-
-   // Downloaded Case - 'open' in iFrame case, 'delete' case.
-   if ( statusType === "downloaded" ) 
+   if ( statusType === 'available' )
    {
+      menus.push( 'download' );
+   }
+   // Downloaded Case - 'open' in iFrame case, 'delete' case.
+   else if ( statusType === 'downloaded' ) 
+   {
+      menus.push( 'open' );
+      menus.push( 'delete' );
+
+
       // Open Up in iFrame Click Setup..
-      itemTag.click( function( e ) 
+      itemTag.find( '.card__content' ).off( 'click' ).click( function( e ) 
       {
          var srcStr = JobAidPage.rootPath + itemData.projDir + '/index.html';
          var styleStr = 'width:100%; height: 100%; overflow:auto; border:none;';
@@ -268,7 +295,22 @@ JobAidPage.populateItem = function( itemData, itemTag, statusType )
          }
       });
    }   
+
+   var menusStr = menus.join( ';' );
+   itemTag.attr( 'menus', menusStr );
 };
+
+
+JobAidPage.itemDownload = function( jobAidItemTag )
+{
+   var projDir = jobAidItemTag.attr( 'projDir' );
+
+   if ( projDir )
+   {
+      JobAidHelper.runTimeCache_JobAid( { projDir: projDir, target: 'jobAidPage' } );
+   }
+};
+
 
 // ------------------------------------
 
@@ -393,14 +435,17 @@ JobAidPage.templateSections = `
 
 JobAidPage.templateItem_body = `
    <div class="card__container">
-   <card__support_visuals class="card__support_visuals" style="padding-left: 4px;"><img src="images/JobAidicons.png"></card__support_visuals>
-   <card__content class="card__content" style="padding-left: 4px;">
-      <div class="card__row divTitle"></div>
-      <div class="card__row divBuildDate"></div>
-      <div class="card__row divDownloadSize"></div>
-      <div class="card__row divDownloadStatus"></div>
-   </card__content>
-   <card__cta class="card__cta"><div class="download" style="padding: 18px; cursor: pointer;"><img src="images/appIcons/downloadIcon.png"></div></card__cta>
+      <card__support_visuals class="card__support_visuals" style="padding-left: 4px;"><img src="images/JobAidicons.png"></card__support_visuals>
+      <card__content class="card__content" style="padding-left: 4px;">
+         <div class="card__row divTitle"></div>
+         <div class="card__row divBuildDate"></div>
+         <div class="card__row divDownloadSize"></div>
+         <div class="card__row divDownloadStatus"></div>
+      </card__content>
+      <card__cta class="card__cta">
+         <!--div class="download" style="padding: 18px; cursor: pointer;"><img src="images/appIcons/downloadIcon.png"></div-->
+         <div class="jobContextMenu threeDotMenu mouseDown">&#10247;</div>
+      </card__cta>
    </div>
 `;
 
