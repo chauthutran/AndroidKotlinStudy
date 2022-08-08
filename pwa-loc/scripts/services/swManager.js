@@ -31,7 +31,7 @@ SwManager.registrationUpdates = false;
 SwManager.newAppFileExists_EventCallBack;
 
 SwManager.interval_newAppFileDownloading;
-SwManager.newAppFileDownloadingMsgTimeMs = 3000;  // 3 seconds
+SwManager.newAppFileDownloadingMsgTimeMs = 30000;  // 30 seconds
 
 SwManager.installStateProgress = {
         'installing': '1/4',
@@ -98,9 +98,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
     {
         SwManager.swInstallObj = swRegObj.installing;
 
-        var newUpdateMsg = 'New Update Found!  Downloading Files..';
-        console.log( SwManager._swStage2 + newUpdateMsg );
-        SwManager.appUpdateUI_DownloadingNewFiles( newUpdateMsg ); // Top Left Dot blinking.. + Msg show 3 seconds
+        SwManager.appUpdateUI_DownloadingNewFiles_wtMsg(); // Top Left Dot blinking.. + Msg show 3 seconds
 
         // sw state changes 1-4 (ref: SwManager.installStateProgress )
         SwManager.swInstallObj.onstatechange = () => 
@@ -169,7 +167,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             else
             {
                 // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.
-                var newMsg = 'App Reloading - After Installing New Update.';
+                var newMsg = 'App Reloading - New Update Installed.';
                 console.log( SwManager._swStage3 + newMsg );
                 AppUtil.appReloadWtMsg( newMsg );
             }   
@@ -282,8 +280,7 @@ SwManager.newSWrefreshNotification = function()
     // move to cwsRender ?
     btnUpgrade.click ( () => {  AppUtil.appReloadWtMsg();  });
 
-    // MISSING TRANSLATION
-    MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notifDark', btnUpgrade, '', 'right', 'top', 25000 );
+    MsgManager.msgAreaShowOpt( 'Updates installed. Refresh to apply', 'notifDark', btnUpgrade, '', 'right', 'top', 25000 );
 };
 
 
@@ -342,11 +339,18 @@ SwManager.listFilesInCache = function( cacheKey )
     
 // --------------------------------------
 
-SwManager.appUpdateUI_DownloadingNewFiles = function( msg )
+SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function()
 {    
-    // Msg - hide in 3 seconds
-    MsgManager.msgAreaShow( msg, undefined, undefined, SwManager.newAppFileDownloadingMsgTimeMs );
+    var dotPlusingTag = `<div class="lv-dots lv-mid sd" ><div></div><div></div><div></div><div></div></div>`;
 
+    var newUpdateMsg = 'App New Updates Downloading..';
+    console.log( SwManager._swStage2 + newUpdateMsg );
+    
+    var msgTag = MsgManager.msgAreaShowOpt( '<span>' + newUpdateMsg + '</span>', { cssClasses: 'notifCBlue', hideTimeMs: 30000, tdMid: dotPlusingTag } );
+    msgTag.attr( 'noticeId', 'downloading' ).find( '.tdMsg' ).css( 'padding', '' );
+
+
+    /*
     // Top Left Blinking
     var tag = $( '.appUpdateStatusDiv' ).show();
 
@@ -361,6 +365,7 @@ SwManager.appUpdateUI_DownloadingNewFiles = function( msg )
 
         tag.css( "visibility", vis );
      }, 300 );
+     */
 };
 
 SwManager.appUpdateUI_Downloaded_NewFiles = function()

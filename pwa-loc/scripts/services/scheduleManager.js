@@ -236,7 +236,7 @@ ScheduleManager.syncDownRun_Online_Login = function()
 					{
 						SessionManager.cwsRenderObj.renderArea1st();
 
-						MsgManager.notifMsg_WtOption( '<span term="msg_syncDownDataMerged">SyncDown data added/merged</span>: ' + mergedActivities.length
+						MsgManager.noticeMsg( '<span term="msg_syncDownDataMerged">SyncDown data added/merged</span>: ' + mergedActivities.length
 						, { cssClasses: 'notifBlue' } );
 					}
 				}

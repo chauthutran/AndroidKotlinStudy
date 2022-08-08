@@ -12,12 +12,15 @@ AppUtil.appReloading = false;
 AppUtil.appReloadWtMsg = function( optionalMsg )
 {    
 	var defaultMsg = 'App Reloading!!';
+	if ( !optionalMsg ) optionalMsg = defaultMsg;
 
-	if ( optionalMsg === undefined ) MsgManager.msgAreaShow( defaultMsg );
-	else if ( optionalMsg !== '' ) // if 'optionMsg' is '', skip the msgAreaShow.
+	var downloadingTag = $( 'div.notifMsg[noticeid=downloading]' );
+	if ( downloadingTag.length > 0 )
 	{
-		MsgManager.msgAreaShow( optionalMsg );		
+		downloadingTag.find( 'tdMid' ).remove();        
+		downloadingTag.find( 'tdMsg' ).html( '' ).append( optionalMsg );
 	}
+	else	MsgManager.msgAreaShowOpt( optionalMsg, { cssClasses: 'notifCBlue' } );
 
 	AppUtil.appReloading = true;
 	window.location.reload();
