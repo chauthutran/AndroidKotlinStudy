@@ -1593,7 +1593,7 @@ div.errorMsgArrow
   -moz-border-radius: 10px 10px 10px 10px;
   border-radius: 10px 10px 10px 10px;
 }
-img.round:hover{
+img.round {
   background-color: #666666;
 }
 

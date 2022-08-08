@@ -31,7 +31,7 @@ SwManager.registrationUpdates = false;
 SwManager.newAppFileExists_EventCallBack;
 
 SwManager.interval_newAppFileDownloading;
-SwManager.newAppFileDownloadingMsgTimeMs = 3000;  // 3 seconds
+SwManager.newAppFileDownloadingMsgTimeMs = 30000;  // 30 seconds
 
 SwManager.installStateProgress = {
         'installing': '1/4',
@@ -98,9 +98,7 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
     {
         SwManager.swInstallObj = swRegObj.installing;
 
-        var newUpdateMsg = 'New Update Found!  Downloading Files..';
-        console.log( SwManager._swStage2 + newUpdateMsg );
-        SwManager.appUpdateUI_DownloadingNewFiles( newUpdateMsg ); // Top Left Dot blinking.. + Msg show 3 seconds
+        SwManager.appUpdateUI_DownloadingNewFiles_wtMsg(); // Top Left Dot blinking.. + Msg show 3 seconds
 
         // sw state changes 1-4 (ref: SwManager.installStateProgress )
         SwManager.swInstallObj.onstatechange = () => 
@@ -342,10 +340,15 @@ SwManager.listFilesInCache = function( cacheKey )
     
 // --------------------------------------
 
-SwManager.appUpdateUI_DownloadingNewFiles = function( msg )
+SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function()
 {    
+    var dotPlusingTag = `<div class="lv-dots lv-mid md" ><div></div><div></div><div></div><div></div></div>`;
+
+    var newUpdateMsg = 'App New Updates Downloading..';
+    console.log( SwManager._swStage2 + newUpdateMsg );
+
     // Msg - hide in 3 seconds
-    MsgManager.msgAreaShow( msg, undefined, undefined, SwManager.newAppFileDownloadingMsgTimeMs );
+    MsgManager.msgAreaShow( '<span>' + newUpdateMsg + '</span>' + dotPlusingTag, undefined, undefined, SwManager.newAppFileDownloadingMsgTimeMs );
 
     // Top Left Blinking
     var tag = $( '.appUpdateStatusDiv' ).show();
