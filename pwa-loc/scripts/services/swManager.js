@@ -167,12 +167,9 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
             else
             {
                 // If Not logged in, perform App Reload to show the app update - [?] add 'autoLogin' flag before triggering page reload with below 'appReloadWtMsg'.
-                var newMsg = 'App Reloading - After Installing New Update.';
+                var newMsg = 'App Reloading - New Update Installed.';
                 console.log( SwManager._swStage3 + newMsg );
                 AppUtil.appReloadWtMsg( newMsg );
-
-
-
             }   
         }
     });
@@ -344,13 +341,10 @@ SwManager.listFilesInCache = function( cacheKey )
 
 SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function()
 {    
-    var dotPlusingTag = `<div class="lv-dots lv-mid md" ><div></div><div></div><div></div><div></div></div>`;
+    var dotPlusingTag = `<div class="lv-dots lv-mid sd" ><div></div><div></div><div></div><div></div></div>`;
 
     var newUpdateMsg = 'App New Updates Downloading..';
     console.log( SwManager._swStage2 + newUpdateMsg );
-
-    // Msg - hide in 3 seconds
-    //MsgManager.msgAreaShow( '<span>' + newUpdateMsg + '</span>' + dotPlusingTag, undefined, undefined, SwManager.newAppFileDownloadingMsgTimeMs );
     
     var msgTag = MsgManager.msgAreaShowOpt( '<span>' + newUpdateMsg + '</span>', { cssClasses: 'notifCBlue', hideTimeMs: 30000, tdMid: dotPlusingTag } );
     msgTag.attr( 'noticeId', 'downloading' ).find( '.tdMsg' ).css( 'padding', '' );
