@@ -4,5 +4,6 @@ pwa-test/*
 pwa/*
 pwa-*.zip
 pwa-loc/service-worker.*
+pwa-loc/workbox-*
 deploy/*
 */node_modules

@@ -128,33 +128,39 @@ ClientDataManager.insertClient = function (client) {
 
 // TempClient --> New Client MOVE CASE:
 ClientDataManager.replaceTempClient_withNewClient = function (tempClient, client) {
-	// 1. Add Map for UI ClientCard Tag itemId attribute changing <-- on ClientCard Object ReRender Time.
-	ClientDataManager.addMap_TempClient_NewClient(tempClient._id, client._id);
+	try
+	{
+		// 1. Add Map for UI ClientCard Tag itemId attribute changing <-- on ClientCard Object ReRender Time.
+		ClientDataManager.addMap_TempClient_NewClient(tempClient._id, client._id);
 
 
-	// 2. Save the Moving activities from TempClient
-	var moveOtherActivities = [];
-
-	tempClient.activities.forEach(act => {
-		moveOtherActivities.push(Util.cloneJson(act));
-	});
+		// 2. Save the Moving activities from TempClient
+		var moveOtherActivities = [];
+		for ( var i = 0; i < tempClient.activities.length; i++ ) { moveOtherActivities.push( Util.cloneJson( tempClient.activities[i] ) );  }
 
 
-	// 3. Remove the tempClient - also removes client/activities indexes.. - but do not remove the tags..
-	ClientDataManager.removeClient(tempClient, { notRemoveTags: true });
+		// 3. Remove the tempClient - also removes client/activities indexes.. - but do not remove the tags..
+		ClientDataManager.removeClient(tempClient, { notRemoveTags: true });
+		
 
-
-	// 4. Modify the moving activity searchValues '_id'
-	moveOtherActivities.forEach(act => {
-		if (act.processing && act.processing.searchValues) {
-			var searchVal = act.processing.searchValues;
-			if (searchVal._id) searchVal._id = client._id;
+		// 4. Modify the moving activity searchValues '_id'
+		for ( var i = 0; i < moveOtherActivities.length; i++ ) 
+		{ 
+			var act = moveOtherActivities[i];
+			if (act.processing && act.processing.searchValues) {
+				var searchVal = act.processing.searchValues;
+				if (searchVal._id) searchVal._id = client._id;
+			}
 		}
-	});
 
-
-	// 5. Insert the moving activities to the new client
-	ActivityDataManager.insertActivitiesToClient(moveOtherActivities, client);
+		// 5. Insert the moving activities to the new client
+		ActivityDataManager.insertActivitiesToClient(moveOtherActivities, client);
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in ClientDataManager.replaceTempClient_withNewClient, ' + errMsg );
+		MsgManager.msgAreaShow( 'ERROR while temp client change', 'ERROR' );
+	}
 };
 
 
