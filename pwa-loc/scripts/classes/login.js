@@ -68,15 +68,6 @@ function Login() {
 
 		// Translate the page..
 		TranslationManager.translatePage();
-
-
-		var dotPlusingTag = `<div class="lv-dots lv-mid md" ><div></div><div></div><div></div><div></div></div>`;
-		var newUpdateMsg = 'App New Updates Downloading..';
-  
-		// Msg - hide in 3 seconds
-		MsgManager.msgAreaShow( '<span>' + newUpdateMsg + '</span>' + dotPlusingTag, undefined, undefined, 900000 );
-		
-
 	};
 
 	// =============================================

@@ -508,6 +508,9 @@ input.loginUserPinNumeric:focus
 .notifBlue { background-color: #0048FF; }
 .notifBlue a { color: #BFD8FF !important; }
 
+.notifCBlue { background-color: cornflowerblue; }
+.notifCBlue a { color: #BFD8FF !important; }
+
 .notifGreen { background-color: #31B031; }
 .notifGreen a { color: #FFC800 !important; }
 
@@ -1739,6 +1742,12 @@ img.round {
   height: 100px;
   width: 100px;
 }
+
+.lv-dots.sd {
+  height: 30px;
+  width: 30px;
+}
+
 .lv-dots {
   position: relative;
 }

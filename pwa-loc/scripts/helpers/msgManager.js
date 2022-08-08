@@ -53,13 +53,21 @@ MsgManager.initialSetup = function () {
 };
 
 
-MsgManager.msgAreaShow = function (msg, type, optClasses, hideTimeMs) {
+MsgManager.msgAreaShow = function (msg, type, optClasses, hideTimeMs, options) {
 	var msgTag;
 
 	try {
-		var colorClass = (type === 'ERROR') ? 'notifRed' : 'notifDark';
+		if ( !options ) options = {};
 
-		msgTag = MsgManager.noticeMsg(msg, { cssClasses: colorClass, Xpos: 'right', Ypos: 'top', hideTimeMs: hideTimeMs } );
+		if ( options.type ) type = options.type;
+		if ( options.optClasses ) optClasses = options.optClasses;
+
+		if ( !options.cssClasses ) options.cssClasses = (type === 'ERROR') ? 'notifRed' : 'notifDark';
+		if ( !options.Xpos ) options.Xpos = 'right';
+		if ( !options.Ypos ) options.Ypos = 'top';
+		if ( !options.hideTimeMs ) options.hideTimeMs = hideTimeMs;
+
+		msgTag = MsgManager.noticeMsg(msg, options );
 
 		if (optClasses) msgTag.addClass(optClasses); // Use 'persistSwitch' - for persisting between block button click/area close.    
 	}
@@ -68,6 +76,12 @@ MsgManager.msgAreaShow = function (msg, type, optClasses, hideTimeMs) {
 	return msgTag;
 };
 
+
+// This 'options' can take 'type', 'optClasses' on top of normal options.
+// MsgManager.msgAreaShowOpt( msg, { cssClasses: 'notifBlue', hideTimeMs: 30000 } );
+MsgManager.msgAreaShowOpt = function (msg, options ) {
+	return MsgManager.msgAreaShow(msg, undefined, undefined, undefined, options );
+};
 
 MsgManager.msgAreaShowErr = function (msg, optClasses, hideTimeMs) {
 	return MsgManager.msgAreaShow(msg, 'ERROR', optClasses, hideTimeMs);
@@ -90,7 +104,7 @@ MsgManager.msgAreaClear_Alt = function (speed) {
 
 
 // Old compatible method.
-MsgManager.notificationMessage(bodyMessage, cssClasses, actionButton, styles, Xpos, Ypos, hideTimeMs, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth)
+MsgManager.notificationMessage = function(bodyMessage, cssClasses, actionButton, styles, Xpos, Ypos, hideTimeMs, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth)
 {
 	options = {
 		cssClasses: cssClasses,
@@ -112,20 +126,20 @@ MsgManager.notificationMessage(bodyMessage, cssClasses, actionButton, styles, Xp
 
 MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionButton, styles, Xpos, Ypos, hideTimeMs, autoClick, addtoCloseClick, ReserveMsgID, disableClose, disableAutoWidth) 
 {
-	// New Options
-	if (options) {
-		cssClasses = optionJson.cssClasses;
-		actionButton = optionJson.actionButton;
-		styles = optionJson.styles;
-		Xpos = optionJson.Xpos;
-		Ypos = optionJson.Ypos;
-		hideTimeMs = optionJson.hideTimeMs;
-		autoClick = optionJson.autoClick;
-		addtoCloseClick = optionJson.addtoCloseClick;
-		ReserveMsgID = optionJson.ReserveMsgID;
-		disableClose = optionJson.disableClose;
-		disableAutoWidth = optionJson.disableAutoWidth;
-	}
+	if ( !options ) options = {};
+	
+	var cssClasses = options.cssClasses;
+	var actionButton = options.actionButton;
+	var styles = options.styles;
+	var Xpos = options.Xpos;
+	var Ypos = options.Ypos;
+	var hideTimeMs = options.hideTimeMs;
+	var autoClick = options.autoClick;
+	var addtoCloseClick = options.addtoCloseClick;
+	var ReserveMsgID = options.ReserveMsgID;
+	var disableClose = options.disableClose;
+	var disableAutoWidth = options.disableAutoWidth;
+	var tdMid = options.tdMid;
 
 	// ----------------
 
@@ -160,21 +174,24 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	if (Ypos) notifDiv.css(Ypos, offsetPosition);
 	if (styles) Util.stylesStrAppy(styles, notifDiv);
 
-	var Tbl = $('<table style="width:100%;padding:6px 4px;">');
+	var Tbl = $('<table class="tableMsg" style="width:100%;padding:6px 4px;">');
 	var tBody = $('<tbody>');
-	var trBody = $('<tr>');
-	var tdMessage = $('<td style="padding: 0px 5px;">');
+	var trBody = $('<tr class="trMsg">');
+	var tdMessage = $('<td class="tdMsg" style="padding: 0px 5px;">');
 
+
+	// Table Tags add
 	notifDiv.append(Tbl);
 	Tbl.append(tBody);
 	tBody.append(trBody);
 	trBody.append(tdMessage);
 	tdMessage.append(bodyMessage);
+	if ( tdMid ) trBody.append( $( '<td class="tdMid"></td>' ).append( tdMid ) );
 
 
 	// TODO: These 'actionButton' need to be redesigned / cleaned...
 	if (actionButton) {
-		var tdAction = $('<td>');
+		var tdAction = $('<td class="tdAction">');
 		trBody.append(tdAction);
 		tdAction.append('<span>&nbsp;</span>');
 		tdAction.append(actionButton);
@@ -196,14 +213,11 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 
 	if (!disableClose) {
 		var tdClose = $('<td style="width:24px;">');
-		var notifClose = $('<img class="round" src="images/close_white.svg" style="border-radius:12px;" >');
+		var notifClose = $('<img class="round" src="images/close_white.svg" style="border-radius:12px; cursor: pointer;" >');
 
 		$(notifClose).click(() => {
-
-			if (addtoCloseClick != undefined) addtoCloseClick();
-
-			if (ReserveMsgID != undefined) MsgManager.clearReservedMessage(ReserveMsgID);
-
+			if (addtoCloseClick) addtoCloseClick();
+			if (ReserveMsgID) MsgManager.clearReservedMessage(ReserveMsgID);
 			$('#notif_' + unqID).remove();
 		});
 
@@ -216,17 +230,14 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	if (!hideTimeMs) hideTimeMs = MsgManager._autoHideDelay;  // 10 sec..
 
 	setTimeout(function () {
-
 		if ($('#notif_' + unqID).is(':visible')) {
 			$('#notif_' + unqID).fadeOut(750);
 
 			setTimeout(function () {
-
-				if (ReserveMsgID != undefined) MsgManager.clearReservedMessage(ReserveMsgID);
+				if (ReserveMsgID) MsgManager.clearReservedMessage(ReserveMsgID);
 				else $('#notif_' + unqID).remove();
 			}, Util.MS_SEC);
 		}
-
 	}, hideTimeMs);
 
 

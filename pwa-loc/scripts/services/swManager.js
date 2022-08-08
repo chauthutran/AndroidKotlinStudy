@@ -170,6 +170,9 @@ SwManager.createInstallAndStateChangeEvents = function( swRegObj ) //, callBack 
                 var newMsg = 'App Reloading - After Installing New Update.';
                 console.log( SwManager._swStage3 + newMsg );
                 AppUtil.appReloadWtMsg( newMsg );
+
+
+
             }   
         }
     });
@@ -280,8 +283,7 @@ SwManager.newSWrefreshNotification = function()
     // move to cwsRender ?
     btnUpgrade.click ( () => {  AppUtil.appReloadWtMsg();  });
 
-    // MISSING TRANSLATION
-    MsgManager.notificationMessage( 'Updates installed. Refresh to apply', 'notifDark', btnUpgrade, '', 'right', 'top', 25000 );
+    MsgManager.msgAreaShowOpt( 'Updates installed. Refresh to apply', 'notifDark', btnUpgrade, '', 'right', 'top', 25000 );
 };
 
 
@@ -348,8 +350,13 @@ SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function()
     console.log( SwManager._swStage2 + newUpdateMsg );
 
     // Msg - hide in 3 seconds
-    MsgManager.msgAreaShow( '<span>' + newUpdateMsg + '</span>' + dotPlusingTag, undefined, undefined, SwManager.newAppFileDownloadingMsgTimeMs );
+    //MsgManager.msgAreaShow( '<span>' + newUpdateMsg + '</span>' + dotPlusingTag, undefined, undefined, SwManager.newAppFileDownloadingMsgTimeMs );
+    
+    var msgTag = MsgManager.msgAreaShowOpt( '<span>' + newUpdateMsg + '</span>', { cssClasses: 'notifCBlue', hideTimeMs: 30000, tdMid: dotPlusingTag } );
+    msgTag.attr( 'noticeId', 'downloading' ).find( '.tdMsg' ).css( 'padding', '' );
 
+
+    /*
     // Top Left Blinking
     var tag = $( '.appUpdateStatusDiv' ).show();
 
@@ -364,6 +371,7 @@ SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function()
 
         tag.css( "visibility", vis );
      }, 300 );
+     */
 };
 
 SwManager.appUpdateUI_Downloaded_NewFiles = function()
