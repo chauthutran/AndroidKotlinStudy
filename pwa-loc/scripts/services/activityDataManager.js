@@ -1230,6 +1230,24 @@ ActivityDataManager.getActivityByTrans = function (activityList, matchCondiArr) 
 };
 
 
+ActivityDataManager.hasActivityTransMatch = function (activity, matchCondiArr) {
+	var isMatch = false;
+
+	if ( activity.transactions )
+	{
+		for ( var i = 0; i < activity.transactions.length; i++ )
+		{
+			var trans = activity.transactions[i];
+			if ( ActivityDataManager.isTransMatch(trans, matchCondiArr) ) {
+				isMatch = true;
+				break;
+			}
+		}	
+	}
+
+	return isMatch;
+};
+
 ActivityDataManager.getActivitiesByTrans = function (activityList, matchCondiArr) {
 	var activities = [];
 

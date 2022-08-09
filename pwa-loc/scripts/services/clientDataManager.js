@@ -943,3 +943,27 @@ ClientDataManager.getInClientActs = function (client, prop) {
 
 	return foundVal;
 };
+
+ClientDataManager.hasUsedActivities = function ( client ) {
+	var hasUsedAct = false;
+
+	try {
+		for ( var i = 0; i < client.activities.length; i++ )
+		{
+			var act = client.activities[i];
+
+			// If the activity does not contain 'c_reg', 
+			var isCReg = ActivityDataManager.hasActivityTransMatch( act, [ { 'type': 'c_reg' } ] );
+
+			if ( !isCReg ) {
+				hasUsedAct = true;
+				break;
+			}
+		}
+	}
+	catch (errMsg) {
+		console.log('ERROR in ClientDataManager.getInClientActs, ' + errMsg);
+	}
+
+	return hasUsedAct;
+};
