@@ -14,13 +14,16 @@ AppUtil.appReloadWtMsg = function( optionalMsg )
 	var defaultMsg = 'App Reloading!!';
 	if ( !optionalMsg ) optionalMsg = defaultMsg;
 
+	/*
 	var downloadingTag = $( 'div.notifMsg[noticeid=downloading]' );
 	if ( downloadingTag.length > 0 )
 	{
 		downloadingTag.find( 'tdMid' ).remove();        
 		downloadingTag.find( 'tdMsg' ).html( '' ).append( optionalMsg );
 	}
-	else	MsgManager.msgAreaShowOpt( optionalMsg, { cssClasses: 'notifCBlue' } );
+	else	
+	*/
+	MsgManager.msgAreaShowOpt( optionalMsg, { cssClasses: 'notifCBlue', closeOthers: true } );
 
 	AppUtil.appReloading = true;
 	window.location.reload();

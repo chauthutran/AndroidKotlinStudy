@@ -68,6 +68,8 @@ function Login() {
 
 		// Translate the page..
 		TranslationManager.translatePage();
+
+		//MsgManager.msgAreaShowOpt( 'Testing Notification Msg', { cssClasses: 'notifCBlue', hideTimeMs: 900000, styleArr: [ { name: 'background-color', value: '#50A3C6' } ] } );
 	};
 
 	// =============================================

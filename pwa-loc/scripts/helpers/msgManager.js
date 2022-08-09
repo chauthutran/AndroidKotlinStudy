@@ -129,6 +129,7 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	if ( !options ) options = {};
 	
 	var cssClasses = options.cssClasses;
+	var styleArr = options.styleArr;
 	var actionButton = options.actionButton;
 	var styles = options.styles;
 	var Xpos = options.Xpos;
@@ -140,8 +141,11 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	var disableClose = options.disableClose;
 	var disableAutoWidth = options.disableAutoWidth;
 	var tdMid = options.tdMid;
+	var closeOthers = options.closeOthers;
 
 	// ----------------
+
+	if ( closeOthers ) $( 'div.notifMsg' ).remove();
 
 	var unqID = Util.generateRandomId();
 
@@ -157,16 +161,26 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	var screenWidth = document.body.clientWidth;
 	var screenHeight = document.body.clientHeight;
 	var offsetPosition = (disableAutoWidth != undefined ? (disableAutoWidth ? '4%' : (screenWidth < 480 ? '0' : '4%')) : (screenWidth < 480 ? '0' : '4%'));
-	var optStyle = (disableAutoWidth != undefined ? 'style="max-width:93%;"' : (screenWidth < 480 ? 'style="width:100%;height:55px;padding: 6px 0 6px 0;"' : 'style="max-width:93%;"')); //93% = 97% - 4% (offsetPosition)
+	var optStyle = (disableAutoWidth != undefined ? 'max-width:93%;' : (screenWidth < 480 ? 'width:100%; height:55px; padding: 6px 0 6px 0;' : 'max-width:93%;'));
 
 	// cssClasses <-- We could accept it as a single string class name or array of class names and apply properly..
 
 	var class_RoundType = (disableAutoWidth != undefined && disableAutoWidth) ? 'rounded' : ((screenWidth < 480) ? '' : 'rounded');
 
 	// THE MAIN TAG - 'notiDiv'
-	var notifDiv = $('<div id="notif_' + unqID + '" class="notifMsg" ' + optStyle + '>'); // class="' + notifMsgClass + ' ' + cssClasses + ' ' + class_RoundType + '" >' );
+	var notifDiv = $('<div id="notif_' + unqID + '" class="notifMsg" style="' + optStyle + '">');
 	notifDiv.addClass(['notifBase', cssClasses, class_RoundType]);
 
+	if ( Util.isTypeArray( styleArr ) )
+	{
+		for ( var i = 0; i < styleArr.length; i++ )
+		{
+			var styleItem = styleArr[i];
+			try {  notifDiv.css( styleItem.name, styleItem.value );  }
+			catch( errMsg ) {  console.log( 'ERROR in MsgManager.noticeMsg, styleArr, ' + errMsg ); }
+		}	
+	}
+	
 
 	$('body').append(notifDiv)
 
@@ -213,16 +227,16 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 
 	if (!disableClose) {
 		var tdClose = $('<td style="width:24px;">');
-		var notifClose = $('<img class="round" src="images/close_white.svg" style="border-radius:12px; cursor: pointer;" >');
+		var closeImgTag = $('<img class="round imgMsgClose" src="images/close_white.svg" style="border-radius:12px; cursor: pointer;" >');
 
-		$(notifClose).click(() => {
+		$(closeImgTag).click(() => {
 			if (addtoCloseClick) addtoCloseClick();
 			if (ReserveMsgID) MsgManager.clearReservedMessage(ReserveMsgID);
 			$('#notif_' + unqID).remove();
 		});
 
 		trBody.append(tdClose);
-		tdClose.append(notifClose);
+		tdClose.append(closeImgTag);
 	}
 
 
