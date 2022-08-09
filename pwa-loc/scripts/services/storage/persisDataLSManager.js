@@ -255,10 +255,12 @@ PersisDataLSManager.getJobFilingProjDirStatus = function( projDir )
     return ( jobFilingStatusJson && jobFilingStatusJson[ projDir ] ) ? jobFilingStatusJson[ projDir ] : {};    
 };
 
-// Not get used
-// PersisDataLSManager.updateJobFilingStatus = function( json ) { return PersisDataLSManager.updateData( PersisDataLSManager.KEY_JOB_FILING_STATUS, json ); };
-
 PersisDataLSManager.updateJobFilingProjDirStatus = function( projDir, jsonData )
 {
     PersisDataLSManager.updatePropertyValue( PersisDataLSManager.KEY_JOB_FILING_STATUS, projDir, jsonData );
+};
+
+PersisDataLSManager.deleteJobFilingProjDir = function( projDir )
+{
+    PersisDataLSManager.removeProperty( PersisDataLSManager.KEY_JOB_FILING_STATUS, projDir );
 };

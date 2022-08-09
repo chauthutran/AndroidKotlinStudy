@@ -290,6 +290,9 @@ JobAidPage.populateItem = function( itemData, itemTag, statusType )
          {
             JobAidHelper.deleteCacheKeys( JobAidPage.rootPath + itemData.projDir + '/' ).then( function( deletedArr ) 
             {            
+               // Delete on localStorage 'persisData'
+               PersisDataLSManager.deleteJobFilingProjDir( itemData.projDir );
+
                JobAidPage.updateSectionLists( itemData.projDir, 'downloaded_delete' );            
             });
          }
@@ -308,6 +311,10 @@ JobAidPage.itemDownload = function( jobAidItemTag )
    if ( projDir )
    {
       JobAidHelper.runTimeCache_JobAid( { projDir: projDir, target: 'jobAidPage' } );
+
+
+      // When finished downloading, could we get a call back?
+
    }
 };
 
@@ -327,6 +334,12 @@ JobAidPage.jobFilingUpdate = function( msgData )
 
       if ( prc.total && prc.total > 0 && prc.curr ) 
       {
+
+         console.log( prc );
+         // calc Size.. + downloaded status..
+
+
+
          if ( prc.curr < prc.total ) 
          {
             spanTag.text( `Processing: ${prc.curr} of ${prc.total} [${prc.name.split('.').at(-1)}]` );
@@ -341,10 +354,52 @@ JobAidPage.jobFilingUpdate = function( msgData )
 
             // We need to refresh the list...
             JobAidPage.updateSectionLists( msgData.options.projDir, projCardTag.attr( 'statusType' ) );
+
+
+            // TODO: We need to do this on real time... not when finished..  <-- also, need to remove 
+            //  Util.setDelays_timeout( 'jobFiling', 1, function() {
+            //JobAidPage.updatePersisData_calcFileSize( msgData.options.projDir );
+
          }
       }
    }
 };
+
+
+// TODO: Change for single update?
+JobAidPage.updatePersisData_calcFileSize = function( projDir )
+{
+	JobAidHelper.getCacheKeys( function( keys, cache )
+	{
+		var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
+
+		if ( keys && keys.length > 0 )
+		{
+			keys.forEach( request => 
+			{ 
+				var url = JobAidHelper.modifyUrlFunc( request.url );
+
+				// If the file is within 'projDir', get size
+				if ( url.indexOf( 'jobs/jobAid/' + projDir ) >= 0 )
+				{
+					var itemJson = { url: url };
+					// Check the storage and add additional info
+					JobAidHelper.setExtraStatusInfo( itemJson, statusFullJson );
+	
+					cache.match(request).then( function( response ) 
+					{
+						response.clone().blob().then( function( myBlob ) 
+						{
+							// update to job
+							JobAidHelper.projProcessDataUpdate( projDir, url, myBlob.size );
+						});
+					});
+				}
+			});                
+		}
+	});
+};
+
 
 
 JobAidPage.getProjCardTag = function( projDir ) 
