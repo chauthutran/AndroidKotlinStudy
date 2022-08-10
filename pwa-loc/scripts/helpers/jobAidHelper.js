@@ -35,33 +35,6 @@ JobAidHelper.getCacheKeys = function( callBack )
 };
 
 
-JobAidHelper.projProcessDataUpdate = function( projDir, url, size )
-{
-	try
-	{
-		if ( projDir && url && size )
-		{
-			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
-			
-			if ( projStatus.process && projStatus.process[ url ] ) 
-			{
-				var item = projStatus.process[ url ];
-				
-				item.size = size;
-				item.date = new Date().toISOString();
-				item.downloaded = true;
-
-				PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
-			}			
-		}
-	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in JobAidHelper.projProcessDataUpdate, ' + errMsg );
-	}
-};
-
-
 JobAidHelper.deleteCacheKeys = async function( partialPath )
 {
 	var deletedArr = [];
@@ -280,7 +253,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 			{
 				var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 
-				// JOB AID 'CONTENT' #1 - SET UP/START LIST  <-- WITH CONFIG FLAG?
+				// JOB AID 'CONTENT' #1 - SET UP/START LIST  <-- WITH CONFIG FLAG? - Also, clears out.
 				JobAidHelper.filingContent_setUp( newFileList, options.projDir );
 
 				if ( newFileList.length <= 0 ) $( '.spanJobFilingMsg' ).text( 'Empty process list.' );
