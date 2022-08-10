@@ -12,7 +12,7 @@ function ChatApp(username) {
 	// ------------------------------------------------------------------------
 	// HTML Tags
 
-	me.chatDivTag = $( '#chatDiv' );
+	me.chatDivTag = $('#chatDiv');
 
 	me.btnChatBackBtnTag;
 
@@ -45,6 +45,7 @@ function ChatApp(username) {
 
 	me.init = function () {
 
+
 		// Set HTML & values related
 		me.chatDivTag.html('').append(ChatApp.contentHtml);
 
@@ -59,27 +60,29 @@ function ChatApp(username) {
 		me.msgTag = $("#msg");
 		me.searchContactNameTag = $("#searchContactName");
 		me.uploadInputTag = $("#upload_input");
-	
+
 		me.userListTag = $("#users");
-	
+
 		me.logoutBtnTag = $('#logOutBtn');
 		me.addUserBtnTag = $("#addUserBtn");
 		me.emojjiDashboardTag = $(".emoji-dashboard");
 		me.showEmojiDashboardTag = $("#showEmojiDashboard");
-	
-	
+
+
 		me.chatWithUserTag = $(".chat-with");
 		me.chatWithIconTag = $(".chat-with-icon");
 		me.chatViewTag = $("#chatView");
 		me.initChatMsgTag = $("#initChatMsg");
-	
+
 		me.chatHistoryTag = $('.chat-history');
-		me.chatHistoryMsgNoTag = $(".chat-num-messages");	
+		me.chatHistoryMsgNoTag = $(".chat-num-messages");
 
 
 		// ------------------------
 
+		FormUtil.blockPage();
 		me.chatViewTag.hide();
+		me.initChatMsgTag.show().html(`Loading ...`);
 
 		if (!me.curUser) {
 			me.initChatMsgTag.show().html("Loading ...");
@@ -99,8 +102,6 @@ function ChatApp(username) {
 			me.initSocket();
 
 			me.curUser = userProfile.curUser;
-			me.initChatMsgTag.show().html(`Welcome, ${me.curUser.fullName}`);
-
 
 			// Render contact list
 			me.outputUsers(userProfile);
@@ -115,8 +116,9 @@ function ChatApp(username) {
 		me.searchContactNameTag.val("");
 		me.addUserBtnTag.hide();
 
+
 		me.setUp_Events();
-		
+
 		me.chatDivTag.show();
 	};
 
@@ -145,8 +147,8 @@ function ChatApp(username) {
 
 		const sessionID = localStorage.getItem("sessionID");
 		if (sessionID) {
-			// me.socket.auth = { sessionID, username: me.username };
-			me.socket.auth = { sessionID };
+			me.socket.auth = { sessionID, username: me.username };
+			// me.socket.auth = { sessionID };
 		}
 		else {
 			me.socket.auth = { username: me.username };
@@ -157,6 +159,7 @@ function ChatApp(username) {
 		me.chatViewTag.hide();
 
 		me.socketEventListener();
+		me.setUp_UploadFile();
 	}
 
 	me.socketEventListener = function () {
@@ -176,6 +179,9 @@ function ChatApp(username) {
 				const data = offlineMessages[i];
 				me.socket.emit('private_message', data);
 			}
+
+			me.initChatMsgTag.show().html(`Welcome, ${me.curUser.fullName}`);
+			FormUtil.unblockPage();
 
 		});
 
@@ -208,6 +214,8 @@ function ChatApp(username) {
 			}
 			else {
 				console.log('Failed to connect to server');
+				me.initChatMsgTag.show().html(`Failed to connect to chat server. Please contact administrator.`);
+				FormUtil.unblockPage();
 			}
 		});
 
@@ -272,8 +280,7 @@ function ChatApp(username) {
 
 		});
 
-		me.socket.on("receive_message", ({ userData, contacts }) => {
-
+		me.socket.on("receive_message", ({ userData, newContact }) => {
 			const contactList = userData.contacts;
 			if (me.curUser.username == userData.username) {
 				me.curUser = userData;
@@ -297,10 +304,10 @@ function ChatApp(username) {
 						userTag.find(".has-new-message").hide();
 					}
 				}
-				else if (contacts != undefined) {
-					const found = Utils.findItemFromList(contacts, contactInfo.contactName, "username");
+				else if (newContact != undefined) {
+					const found = Utils.findItemFromList(contactList, newContact.username, "contactName");
 					if (found) {
-						me.appendUserInContactList(found, true);
+						me.appendUserInContactList(newContact, false);
 					}
 				}
 			}
@@ -322,6 +329,51 @@ function ChatApp(username) {
 
 	}
 
+
+	me.setUp_UploadFile = function () {
+		// -----------------------------------------------------------------------
+		// Upload file'
+
+		var siofu = new SocketIOFileUpload(me.socket);
+
+		siofu.listenOnInput(document.getElementById("upload_input"));
+
+		// Do something on upload progress:
+		siofu.addEventListener("progress", function (event) {
+			var percent = (event.bytesLoaded / event.file.size) * 100;
+			console.log("File is", percent.toFixed(2), "percent loaded");
+		});
+
+		// Do something when a file is uploaded:
+		siofu.addEventListener("complete", function (event) {
+			console.log(event);
+
+			const file = event.file;
+			const type = (file.type.indexOf("image/") == 0) ? "IMAGE" : "FILE";
+			const data = Utils.formatMessage(me.curUser.username, me.selectedUser.username, event.detail.name, type, event.detail.name);
+			me.outputMessage(data);
+
+			me.socket.emit("private_message", data);
+
+			// 	var messageTag = $(`<li class="clearfix">
+			// 		<div class="message-data align-right">
+			// 		<span class="message-data-time" >${message.time}</span> &nbsp; &nbsp;
+			// 		<span class="message-data-name" >${message.username}</span> <i class="fa fa-circle me"></i>
+
+			// 		</div>
+			// 		<div class="message other-message float-right">
+			// 			${message.text}
+			// 		</div>
+			// 	</li>`)
+			// 	$('.chat-history').find("ul").append( messageTag );
+
+			//   div.appendChild(img);
+
+		});
+
+		// ---------------------------------------------------------------------------
+
+	}
 	// For Socket - END
 	// =====================================================================
 
@@ -330,17 +382,7 @@ function ChatApp(username) {
 	// ------------------------------------------------------------------------
 	// HTML Tags's events
 
-	me.setUp_Events = function () 
-	{
-		me.chatDivTag.find( 'img.btnBack' ).off( 'click' ).click( () =>
-		{
-			 if ( $( 'img.rotateImg' ).length  ) $( 'img.rotateImg' ).click();
-			 else me.chatDivTag.hide();
-
-			 if ( me.socket ) me.socket.disconnect();
-		});
-
-
+	me.setUp_Events = function () {
 		me.sendBtnTag.off("click").on("click", function (e) {
 			me.submitChatMessage(e)
 		});
@@ -403,37 +445,46 @@ function ChatApp(username) {
 		});
 
 
-		me.uploadInputTag.off("change").on("change", function (event) {
-			var files = event.target.files;
-			if ((files != undefined || files != null) && files.length > 0) {
-				const file = files[0];
-				const reader = new FileReader();
-				reader.addEventListener("load", () => {
-					const type = (file.type.indexOf("image/") == 0) ? "IMAGE" : "FILE";
-					const data = Utils.formatMessage(me.curUser.username, me.selectedUser.username, reader.result, type, file.name);
+		// me.uploadInputTag.off("change").on("change", function(event){
+		// 	me.socket.emit("upload", event.target.files[0], (status) => {
+		// 		console.log(status);
+		// 	});
+		// })
 
-					if (!me.socket.connected) {
-						saveOfflineMessage(data);
-					}
-					else {
-						me.socket.emit("private_message", data);
-					}
+		// me.uploadInputTag.off("change").on("change", function(event){
+		//     var files = event.target.files;
+		//     if( ( files != undefined || files != null ) && files.length > 0 )
+		//     {
+		//         const file = files[0];
+		// 		const reader = new FileReader();
+		// 		reader.addEventListener( "load", () => {
+		// 			const type = ( file.type.indexOf("image/") == 0 ) ? "IMAGE" : "FILE";
+		//             const data = Utils.formatMessage( me.curUser.username, me.selectedUser.username, reader.result, type, file.name );
 
-					// Re-order the contact list
-					me.moveContactOnTop(me.selectedUser.username);
+		//             if( !me.socket.connected )
+		//             {
+		//                 saveOfflineMessage( data );
+		//             }
+		//             else
+		//             {
+		//                 me.socket.emit("private_message", data );
+		//             }
 
-					// const userTag = me.userListTag.find(`[username='${me.selectedUser.username}']`);
-					// const contactData = JSON.parse( userTag.attr("user") );
-					// userTag.remove();
-					// me.appendUserInContactList( contactData, false );
+		// 			// Re-order the contact list
+		// 			me.moveContactOnTop( me.selectedUser.username );
+
+		// 			// const userTag = me.userListTag.find(`[username='${me.selectedUser.username}']`);
+		// 			// const contactData = JSON.parse( userTag.attr("user") );
+		// 			// userTag.remove();
+		// 			// me.appendUserInContactList( contactData, false );
 
 
-					me.outputMessage(data);
-				});
+		// 			me.outputMessage( data );
+		// 		});
 
-				reader.readAsDataURL(file);
-			}
-		})
+		// 		reader.readAsDataURL( file );
+		//     }
+		// })
 
 	}
 
@@ -667,22 +718,30 @@ function ChatApp(username) {
 				else {
 					var messageTextDivTag;
 					if (message.filetype != undefined) {
+						const url = `${me.chatServerURL}/uploads?path=${message.name}`;
 						if (message.filetype == "IMAGE") {
-							messageTextDivTag = `<img style="width: 300px;" src="${message.msg}">`;
+							messageTextDivTag = `<img style="width: 300px;" src="${url}">`;
 						}
 						else {
-							messageTextDivTag = `<a href="${message.msg}" target="_blank">${message.name}</a>`;
+							messageTextDivTag = `<a href="${url}" target="_blank">${message.name}</a>`;
 						}
 					}
 					else {
-						const utf8 = new Uint8Array(
-							Array.prototype.map.call(
-								message.msg,
-								c => c.charCodeAt(0)
-							)
-						);
-						const msg = new TextDecoder('utf8').decode(utf8);
-						messageTextDivTag = `<span>${msg}</span>`;
+						// const utf8 = new Uint8Array(
+						// 	Array.prototype.map.call(
+						// 		message.msg, 
+						// 		c => c.charCodeAt(0)
+						// 	)
+						// );
+
+						// const msg = new TextDecoder('utf8').decode(utf8);
+						// messageTextDivTag = `<span>${msg }</span>`;
+
+						// const str = message.msg;
+						// const rex = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/ug;
+						// const msg = str.replace(rex, match => `${match.codePointAt(0).toString(16)}`);
+
+						messageTextDivTag = `<span>${Utils.convertUnicodeEmoji(message.msg)}</span>`;
 					}
 
 
