@@ -457,6 +457,8 @@ JobAidPage.fileContentDialogOpen = function(projDir) {
 
 	var projDirStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
 
+	console.log( projDirStatus );
+
 	if ( projDirStatus && projDirStatus.process )
 	{
 		var processData = projDirStatus.process;
@@ -466,12 +468,12 @@ JobAidPage.fileContentDialogOpen = function(projDir) {
 	
 		// Add close event
 		divDialogTag.find('div.close').off('click').click(function () {
-			$('.scrim').hide();
+			//$('.scrim').hide();
 			divDialogTag.hide();
 		});
 	
 		divDialogTag.show();
-		$('.scrim').show();
+		//$('.scrim').show();
 	}
 	else
 	{

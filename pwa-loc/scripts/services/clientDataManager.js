@@ -948,18 +948,15 @@ ClientDataManager.hasUsedActivities = function ( client ) {
 	var hasUsedAct = false;
 
 	try {
-		for ( var i = 0; i < client.activities.length; i++ )
-		{
-			var act = client.activities[i];
-
-			// If the activity does not contain 'c_reg', 
+		if ( client.activities.length === 0 ) hasUsedAct = false;
+		else if ( client.activities.length === 1 ) {
+			var act = client.activities[0];
+			// NOTE: 'r_add' is also allowed transaction activtiy, however, it always go with 'c_reg' in 1st activity, thus, no need to add additional logic.
 			var isCReg = ActivityDataManager.hasActivityTransMatch( act, [ { 'type': 'c_reg' } ] );
-
-			if ( !isCReg ) {
-				hasUsedAct = true;
-				break;
-			}
+			if ( isCReg ) hasUsedAct = false;
+			else hasUsedAct = true;
 		}
+		else hasUsedAct = true;
 	}
 	catch (errMsg) {
 		console.log('ERROR in ClientDataManager.getInClientActs, ' + errMsg);
