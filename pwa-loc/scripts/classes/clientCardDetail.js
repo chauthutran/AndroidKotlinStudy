@@ -8,9 +8,6 @@ function ClientCardDetail(clientId) {
 	me.actionObj;
 	me.cardSheetFullTag;
 	me.timedOut1stTabOpen;
-	me.bExternalPartner = false;
-	me.bClientCreator = false;
-	me.bClientLimitedAccess = false;
 
 	// ===============================================
 	// === Initialize Related ========================
@@ -20,16 +17,12 @@ function ClientCardDetail(clientId) {
 		var preCall = undefined;
 		var clientJson = ClientDataManager.getClientById(me.clientId);
 
-		me.bExternalPartner = ConfigManager.externalPartner();
+		var bExternalPartner = ConfigManager.externalPartner();
 
 		// If current user belongs to externerPartner role, and , Optional ActivityTab removal + client Edit + relationship  <-- View only?
-		if (me.bExternalPartner ) { // && !me.bClientCreator) {
-			INFO.clientLimitedAccess = clientJson;  // This gets used on 'ClientDataManager' activity/voucher list filtering + Client Profile Edit Button show/hide
+		if (bExternalPartner ) {
+			INFO.clientLimitedAccess = clientJson;  // This gets used on 'ClientDataManager' activity/voucher list filtering, Client Profile Edit Button show/hide, ClientDataManager.getVoucherDataList uses this
 			INFO.clientCreator = ClientDataManager.checkClientCreator(clientJson, SessionManager.sessionData.login_UserName);
-
-			// Also, ClientDataManager.getVoucherDataList uses this as well..
-
-			me.bClientLimitedAccess = true;
 
 			preCall = function (sheetFullTag) {
 				sheetFullTag.find('li[rel=tab_relationships]').remove();
