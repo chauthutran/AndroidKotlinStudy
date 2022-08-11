@@ -1733,8 +1733,10 @@ img.round {
 }
 
 .lv-dots.sd {
-  height: 30px;
-  width: 30px;
+  height: 50px;
+  width: 50px;
+  margin-top: -15px;
+  margin-bottom: -15px;
 }
 
 .lv-dots {
