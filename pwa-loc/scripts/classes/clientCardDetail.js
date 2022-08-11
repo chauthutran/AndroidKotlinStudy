@@ -21,11 +21,12 @@ function ClientCardDetail(clientId) {
 		var clientJson = ClientDataManager.getClientById(me.clientId);
 
 		me.bExternalPartner = ConfigManager.externalPartner();
-		// me.bClientCreator = ClientDataManager.checkClientCreator(clientJson, SessionManager.sessionData.login_UserName);
 
 		// If current user belongs to externerPartner role, and , Optional ActivityTab removal + client Edit + relationship  <-- View only?
 		if (me.bExternalPartner ) { // && !me.bClientCreator) {
-			INFO.clientLimitedAccess = clientJson;  // This gets used on Client Profile Edit Button show/hide
+			INFO.clientLimitedAccess = clientJson;  // This gets used on 'ClientDataManager' activity/voucher list filtering + Client Profile Edit Button show/hide
+			INFO.clientCreator = ClientDataManager.checkClientCreator(clientJson, SessionManager.sessionData.login_UserName);
+
 			// Also, ClientDataManager.getVoucherDataList uses this as well..
 
 			me.bClientLimitedAccess = true;
