@@ -350,7 +350,9 @@ function ChatApp(username) {
 
 			const file = event.file;
 			const type = (file.type.indexOf("image/") == 0) ? "IMAGE" : "FILE";
-			const data = Utils.formatMessage(me.curUser.username, me.selectedUser.username, event.detail.name, type, event.detail.name);
+			
+			const url = `${me.chatServerURL}/uploads?path=${event.detail.name}`;
+			const data = Utils.formatMessage(me.curUser.username, me.selectedUser.username, url, type, url);
 			me.outputMessage(data);
 
 			me.socket.emit("private_message", data);
@@ -718,12 +720,11 @@ function ChatApp(username) {
 				else {
 					var messageTextDivTag;
 					if (message.filetype != undefined) {
-						const url = `${me.chatServerURL}/uploads?path=${message.name}`;
 						if (message.filetype == "IMAGE") {
-							messageTextDivTag = `<img style="width: 300px;" src="${url}">`;
+							messageTextDivTag = `<img style="width: 300px;" src="${message.name}">`;
 						}
 						else {
-							messageTextDivTag = `<a href="${url}" target="_blank">${message.name}</a>`;
+							messageTextDivTag = `<a href="${message.name}" target="_blank">${message.name}</a>`;
 						}
 					}
 					else {
