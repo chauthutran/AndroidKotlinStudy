@@ -795,7 +795,7 @@ ClientDataManager.getVoucherDataList = function (client, overrideDateName) {
 	return voucherDataList;
 };
 
-// NEW
+// NEW - External Partner case filtering activities (they are not the owner of)
 ClientDataManager.getActivities_EP_Filtered = function (client) {
 	var activities = [];
 
