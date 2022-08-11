@@ -11,8 +11,7 @@
 
     "d_copyDev": "xcopy pwa-loc pwa-dev /E/H/C/I/Y",
     "d_cleanUp": "del /s /q pwa-dev\\*.map && del pwa-dev\\workbox-* && rmdir /s /q pwa-dev\\scss",
-    "d_cleanUp2": "del /q pwa-dev\\*.map",
-    "dBuild": "npm run d_copyDev && npm run d_cleanUp && node sw_build_pwa-dev.js && npm run d_cleanUp2 && tar.exe cf pwa-dev.zip pwa-dev && RMDIR /Q /S pwa-dev",
+    "dBuild": "npm run d_copyDev && npm run d_cleanUp && node sw_build_pwa-dev.js && tar.exe cf pwa-dev.zip pwa-dev && RMDIR /Q /S pwa-dev",
 
     "t_copyDev": "xcopy pwa-loc pwa-test /E/H/C/I/Y",
     "t_cleanUp": "del /s /q pwa-test\\*.map && del pwa-test\\workbox-* && rmdir /s /q pwa-test\\scss",
