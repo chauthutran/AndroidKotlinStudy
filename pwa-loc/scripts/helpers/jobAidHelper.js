@@ -34,6 +34,15 @@ JobAidHelper.getCacheKeys = function( callBack )
 	});   
 };
 
+JobAidHelper.getCacheKeys_async = async function()
+{
+	var cache = await caches.open( JobAidHelper.jobAid_jobTest2 );
+
+	var keys = await cache.keys();
+
+	return { cache: cache, keys: keys };
+};
+
 
 JobAidHelper.deleteCacheKeys = async function( partialPath )
 {

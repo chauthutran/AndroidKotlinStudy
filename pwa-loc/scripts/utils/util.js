@@ -2009,3 +2009,30 @@ Util.getAge_ByBirthDate = function (birthDateStr) {
 
 	return age;
 };
+
+
+Util.shortenFileName = function (fileName, shortenLength ) 
+{
+	var displayName = fileName;
+			
+	if ( fileName.length > shortenLength )
+	{
+		var size_minus3Dot = shortenLength - 3;
+
+		// locate extention dot place..
+		var lastIdxPos = fileName.lastIndexOf( '.' );
+
+		if ( lastIdxPos === -1 ) {
+			displayName = fileName.substr( 0, size_minus3Dot ) + '...';
+		}
+		else
+		{
+			var extLength = fileName.length - lastIdxPos;
+			var extName = fileName.substr( lastIdxPos );
+
+			displayName = fileName.substr( 0, size_minus3Dot - extLength ) + '...' + extName;
+		}
+	}
+
+	return  displayName;
+};

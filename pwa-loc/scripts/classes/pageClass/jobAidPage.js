@@ -337,63 +337,6 @@ JobAidPage.jobFilingUpdate = function (msgData) {
 	}
 };
 
-
-// Call this whenever opening the file content?  Or just once?  Need marker..
-JobAidPage.projProcessData_calcFileSize = function (projDir) {
-	JobAidHelper.getCacheKeys(function (keys, cache) {
-		var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
-
-		if (keys && keys.length > 0) {
-			keys.forEach(request => {
-				var url = JobAidHelper.modifyUrlFunc(request.url);
-
-				// If the file is within 'projDir', get size
-				if (url.indexOf('jobs/jobAid/' + projDir) >= 0) {
-					var itemJson = { url: url };
-					// Check the storage and add additional info
-					JobAidHelper.setExtraStatusInfo(itemJson, statusFullJson);
-
-					cache.match(request).then(function (response) {
-						response.clone().blob().then(function (myBlob) {
-							// update to job
-							JobAidPage.projProcessDataUpdate(projDir, url, { size: myBlob.size });
-						});
-					});
-				}
-			});
-		}
-	});
-};
-
-
-JobAidPage.projProcessDataUpdate = function (projDir, url, updateJson) {
-	try {
-		if (projDir && url && updateJson) {
-			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
-
-			if (projStatus.process && projStatus.process[url]) {
-				var item = projStatus.process[url];
-
-				Util.mergeJson(item, updateJson);
-				//item.size = size;
-				//item.date = new Date().toISOString();
-				//item.downloaded = true;
-
-				PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
-			}
-		}
-	}
-	catch (errMsg) {
-		console.log('ERROR in JobAidHelper.projProcessDataUpdate, ' + errMsg);
-	}
-};
-
-
-JobAidPage.getProjCardTag = function (projDir) {
-	return $('div.jobAidItem[projDir=' + projDir + ']');
-};
-
-
 // ------------------------------------
 
 JobAidPage.matchInServerList = function (item, serverManifestsData) {
@@ -451,7 +394,8 @@ JobAidPage.getManifestJsons = function (urlList, i, result, finishCallBack) {
 
 // ------------------------------------
 
-JobAidPage.fileContentDialogOpen = function(projDir) {
+JobAidPage.fileContentDialogOpen = async function(projDir) 
+{
 	var divDialogTag = JobAidPage.contentBodyTag.find('div.divFileContentDisplay');  // Content Tag..
 	var divMainContentTag = divDialogTag.find('div.divMainContent');
 
@@ -462,6 +406,9 @@ JobAidPage.fileContentDialogOpen = function(projDir) {
 	if ( projDirStatus && projDirStatus.process )
 	{
 		var processData = projDirStatus.process;
+
+		// Size calculate - ONLY calculate if not calculated already..
+		if ( JobAidPage.sizeNotCalculated(processData) ) await JobAidPage.projProcessData_calcFileSize(projDir);
 
 		// Display the content..
 		JobAidPage.populateFileContent(divMainContentTag, processData);
@@ -481,9 +428,100 @@ JobAidPage.fileContentDialogOpen = function(projDir) {
 	}
 };
 
+
+JobAidPage.sizeNotCalculated = function(processData)
+{
+	var notCalc = false;
+
+	var keyArr = Object.keys( processData );
+
+	for ( var i = 0; i < keyArr.length; i++ )
+	{
+		var key = keyArr[i];		
+		var propItem = processData[key];
+
+		if ( propItem.downloaded === true && !propItem.size )
+		{
+			notCalc = true;
+			break;
+		}
+	}
+
+	return notCalc;
+};
+
+JobAidPage.projProcessData_calcFileSize = async function (projDir) 
+{
+	var tempJson = {};
+	var cacheKeyJson = await JobAidHelper.getCacheKeys_async();
+	var keys = cacheKeyJson.keys;
+	var cache = cacheKeyJson.cache;
+
+	// JobAidHelper.getCacheKeys(function (keys, cache) {
+	var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
+
+	if (keys && keys.length > 0) 
+	{
+		for ( var i = 0; i < keys.length; i++ )
+		{
+			var request = keys[i];
+
+			var url = JobAidHelper.modifyUrlFunc(request.url);
+
+			// If the file is within 'projDir', get size
+			if (url.indexOf('jobs/jobAid/' + projDir) >= 0) 
+			{
+				var itemJson = { url: url };
+				// Check the storage and add additional info
+				JobAidHelper.setExtraStatusInfo(itemJson, statusFullJson);
+
+				var response = await cache.match(request);
+				var myBlob = await response.clone().blob();
+				var size = myBlob.size;
+				tempJson[url] = size;
+
+				// update to job
+				JobAidPage.projProcessDataUpdate(projDir, url, { size: size });				
+			}
+		}
+	}
+
+	return tempJson;
+};
+
+
+JobAidPage.projProcessDataUpdate = function (projDir, url, updateJson) {
+	try {
+		if (projDir && url && updateJson) {
+			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
+
+			if (projStatus.process && projStatus.process[url]) {
+				var item = projStatus.process[url];
+
+				Util.mergeJson(item, updateJson);
+				//item.size = size;
+				//item.date = new Date().toISOString();
+				//item.downloaded = true;
+
+				PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
+			}
+		}
+	}
+	catch (errMsg) {
+		console.log('ERROR in JobAidHelper.projProcessDataUpdate, ' + errMsg);
+	}
+};
+
+
+JobAidPage.getProjCardTag = function (projDir) {
+	return $('div.jobAidItem[projDir=' + projDir + ']');
+};
+
+
 JobAidPage.populateFileContent = function(divMainContentTag, processData) {
 	divMainContentTag.html('');
 
+	var urlArr = Object.keys( processData );
 	var valArr = Object.values(processData);
 
 	if (valArr && valArr.length) {
@@ -494,7 +532,7 @@ JobAidPage.populateFileContent = function(divMainContentTag, processData) {
 
 		colNames = colNames.filter(col => removalCols.indexOf(col) === -1);
 
-		var divTableTag = JobAidPage.divTablePopulate(colNames, valArr);
+		var divTableTag = JobAidPage.divTablePopulate(colNames, valArr, urlArr);
 
 		divMainContentTag.append(divTableTag);
 
@@ -503,13 +541,15 @@ JobAidPage.populateFileContent = function(divMainContentTag, processData) {
 };
 
 
-JobAidPage.divTablePopulate = function(colNames, arrData) {
+JobAidPage.divTablePopulate = function(colNames, arrData, urlArr) {
 	var tableTag = $('<table class="contentTable"><tbody></tbody></table>');
 	var tbodyTag = tableTag.find('tbody');
 
 	// 1. Header Rows      
 	var rowHeaderTag = $('<tr style="background-color: darkgray; color: #555; font-weight: 500;"></tr>');
 	tbodyTag.append(rowHeaderTag);
+
+	rowHeaderTag.append('<td>name</td>');
 
 	for (var p = 0; p < colNames.length; p++) {
 		var colName = colNames[p];
@@ -526,13 +566,24 @@ JobAidPage.divTablePopulate = function(colNames, arrData) {
 	// 2. Body Rows.
 	for (var i = arrData.length - 1; i >= 0; i--) {
 		var rowData = arrData[i]; // arrary of column
+		var url = urlArr[i];
 
 		var rowTag = $('<tr></tr>');
 		tbodyTag.append(rowTag);
 
 		var downloadedVal = false;
 
-		for (var p = 0; p < colNames.length; p++) {
+
+		// URL column Populate
+		var tdUrlTag = $('<td></td>');
+		rowTag.append( tdUrlTag );
+
+		JobAidPage.setUrlCol( url, tdUrlTag );
+
+
+		// Rest of the columns populate
+		for (var p = 0; p < colNames.length; p++) 
+		{
 			var colName = colNames[p];
 
 			var colVal_full = rowData[colName];
@@ -540,44 +591,7 @@ JobAidPage.divTablePopulate = function(colNames, arrData) {
 
 			var tdTag = $('<td></td>');
 
-
-			if (colName === 'url') {
-				var strArr = colVal_full.split('/');
-				var lastIdx = strArr.length - 1;
-				colVal_short = strArr[lastIdx];
-
-				var isAudio = Util.endsWith_Arr(colVal_short, EXTS_AUDIO, { upper: true });
-				var isVideo = Util.endsWith_Arr(colVal_short, EXTS_VIDEO, { upper: true });
-
-				if (isAudio || isVideo) {
-					colVal_full = colVal_full.replace('/jobs/', '');
-
-					tdTag.css('cursor', 'pointer').css('color', (isAudio) ? 'cadetblue' : 'blue');
-					tdTag.attr('play_type', (isAudio) ? 'audio' : 'video').attr('play_full', colVal_full);
-
-
-					tdTag.click(function () {
-						var divPopupVideoTag = $('#divPopupVideo');
-						var divMainContentTag = divPopupVideoTag.find('div.divMainContent');
-						divMainContentTag.html('');
-
-						var thisTag = $(this);
-						var play_full = thisTag.attr('play_full');
-						var play_type = thisTag.attr('play_type');
-
-						if (play_type === 'audio') divMainContentTag.append('<audio controls><source src="' + play_full + '" >Your browser does not support the audio element.</audio>');
-						else if (play_type === 'video') divMainContentTag.append('<video src="' + play_full + '" preload="auto" controls="" style="width: 100%; height: 100%;"></video>');
-
-						// Add close event
-						divPopupVideoTag.find('div.close').off('click').click(function () {
-							divPopupVideoTag.hide();
-						});
-
-						divPopupVideoTag.show();
-					});
-				}
-			}
-			else if (colName === 'size') tdTag.css('width', '90px');
+			if (colName === 'size') tdTag.css('width', '90px');
 			else if (colName === 'downloaded') {
 				tdTag.css('width', '90px');
 				if (colVal_full == true) downloadedVal = true;
@@ -594,6 +608,52 @@ JobAidPage.divTablePopulate = function(colNames, arrData) {
 	return tableTag;
 };
 
+JobAidPage.setUrlCol = function(colVal_full, tdTag) 
+{
+	if (colVal_full !== undefined)
+	{
+		var strArr = colVal_full.split('/');
+		var lastIdx = strArr.length - 1;
+		var colVal_short = strArr[lastIdx];
+	
+		var displayName = Util.shortenFileName( colVal_short, 20 );
+
+		tdTag.append(displayName).attr('title',  'name: ' + colVal_short ); //colVal_full);
+	
+	
+		var isAudio = Util.endsWith_Arr(colVal_short, JobAidHelper.EXTS_AUDIO, { upper: true });
+		var isVideo = Util.endsWith_Arr(colVal_short, JobAidHelper.EXTS_VIDEO, { upper: true });
+	
+		if (isAudio || isVideo) 
+		{
+			colVal_full = colVal_full.replace('/jobs/', '');
+	
+			tdTag.css('cursor', 'pointer').css('color', (isAudio) ? 'cadetblue' : 'blue');
+			tdTag.attr('play_type', (isAudio) ? 'audio' : 'video').attr('play_full', colVal_full);
+	
+			tdTag.click(function () 
+			{
+				var divPopupVideoTag = $('#divPopupVideo');
+				var divMainContentTag = divPopupVideoTag.find('div.divMainContent');
+				divMainContentTag.html('');
+	
+				var thisTag = $(this);
+				var play_full = thisTag.attr('play_full');
+				var play_type = thisTag.attr('play_type');
+	
+				if (play_type === 'audio') divMainContentTag.append('<audio controls><source src="' + play_full + '" >Your browser does not support the audio element.</audio>');
+				else if (play_type === 'video') divMainContentTag.append('<video src="' + play_full + '" preload="auto" controls="" style="width: 100%; height: 100%;"></video>');
+	
+				// Add close event
+				divPopupVideoTag.find('div.close').off('click').click(function () {
+					divPopupVideoTag.hide();
+				});
+	
+				divPopupVideoTag.show();
+			});
+		}
+	}
+};
 
 // ------------------------------------
 
