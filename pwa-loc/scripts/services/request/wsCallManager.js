@@ -165,6 +165,9 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
     if ( AppInfoLSManager.getConfigVersioningEnable() === true ) {
         requestOption.configVersioningEnable = true;
         requestOption.configVersion = AppInfoLSManager.getConfigVersion();
+
+        var loginPrevData = AppInfoLSManager.getLoginPrevData();
+        if ( loginPrevData.retrievedDateTime ) requestOption.loginPrevData = loginPrevData;
     } 
     //requestOption.getOuChildren = 'Y';  // OLD - OBSOLETE
 

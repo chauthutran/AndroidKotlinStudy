@@ -537,6 +537,17 @@ function Login() {
 					AppInfoLSManager.setConfigVersioningEnable(ConfigManager.getSettings().configVersioningEnable); // Used on login request
 					AppInfoLSManager.setConfigVersion(configJson.version);
 
+					var loginPrevData = { 
+						retrievedDateTime: configJson.retrievedDateTime,
+						settings: {
+							login_GetOuChildren: configJson.settings.login_GetOuChildren,
+							login_GetOuTagOrgUnits: configJson.settings.login_GetOuTagOrgUnits,
+							login_GetVMMC_OugId: configJson.settings.login_GetVMMC_OugId	
+						}
+					};
+
+					AppInfoLSManager.setLoginPrevData(loginPrevData);
+
 
 					me.retrieveStatisticPage((fileName, statPageData) => { me.saveStatisticPage(fileName, statPageData); });
 
@@ -617,6 +628,9 @@ function Login() {
 					callBack(false);
 				}
 				else if (!loginData.dcdConfig.sourceType) {
+					// CASE: Warning Case: login was success, but dcdConfig were not retrieved:
+					//		- Due to error or noNewVersion, etc case..  - Use offline country config (dcdConfig) instead.
+
 					// Get from offline and set it as 'loginData.dcdConfig'.  What if this is 1st time?  Then, we need to fail it!!
 					SessionManager.getLoginRespData_IDB(userName, password, function (loginResp) {
 						if (!loginResp) // offline/previous login data not available - 1st time login, but server response not have dcdConfig
@@ -625,8 +639,6 @@ function Login() {
 							callBack(false);
 						}
 						else {
-							console.log(loginData.dcdConfig);
-
 							// NOTE: 'dcdConfig' with error is {}, thus, above does not actually catch this.
 							//		However, we will replace/use offline dcdConfig (if available) after this method instead.
 							loginData.dcdConfig = loginResp.dcdConfig;
@@ -689,7 +701,7 @@ function Login() {
 
 		if (statJson.fileName) {
 			// per apiPath (vs per fileName)
-			var apiPath = ConfigManager.getStatisticApiPath();
+			var apiPath = ConfigManager.getStatisticApiPath();   // TODO: backend need to be modified...  need to pass 'retrievedDateTime'
 
 			WsCallManager.requestGetDws(apiPath, {}, undefined, function (success, returnJson) {
 
@@ -703,6 +715,9 @@ function Login() {
 	me.saveStatisticPage = function (fileName, dataStr) {
 		// Either store it on localHost, IDB
 		AppInfoManager.updateStatisticPages(fileName, dataStr);
+
+		// TODO: Need to save the 'retrievedDateTime' of AppInfoLSManager on local storage...
+
 	};
 
 	// ----------------------------------------------

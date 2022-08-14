@@ -19,6 +19,7 @@ AppInfoLSManager.KEY_LOCAL_STAGENAME = "localStageName";
 AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES = "jobAidFolderNames";
 AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE = "configVersioningEnable";
 AppInfoLSManager.KEY_CONFIG_VERSION = "configVersion";
+AppInfoLSManager.KEY_LOGIN_PREV_DATA = "loginPrevData";
 
 AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY = "devDebugLogHistory";
 AppInfoLSManager.DevDebugLogHistoryMaxLength = 30;
@@ -384,6 +385,17 @@ AppInfoLSManager.getConfigVersion = function()
 AppInfoLSManager.setConfigVersion = function( version )
 {
     if ( version ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSION, version );
+};
+
+// -----------------------------
+AppInfoLSManager.getLoginPrevData = function()
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_LOGIN_PREV_DATA );
+};
+
+AppInfoLSManager.setLoginPrevData = function( loginPrevData )
+{
+    if ( loginPrevData ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_LOGIN_PREV_DATA, loginPrevData );
 };
 
 
