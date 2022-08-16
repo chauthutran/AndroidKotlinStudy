@@ -253,17 +253,17 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 				<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>
 			</div>` );
 
-
 		$.ajax({
 			url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
 			type: "GET",
 			dataType: "json",
 			success: function (response) 
 			{
+				// 1. Filter list, Sort List - New JobAid 'downloadOption' ('woMedia', 'addMedia')
 				var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 
-				// JOB AID 'CONTENT' #1 - SET UP/START LIST  <-- WITH CONFIG FLAG? - Also, clears out.
-				JobAidHelper.filingContent_setUp( newFileList, options.projDir );
+				// 2. Save the list info on localStorage (PersisManager) by 'projDir' name - Does not remove existing data.
+				JobAidHelper.filingContent_setUp( newFileList, options );
 
 				if ( newFileList.length <= 0 ) $( '.spanJobFilingMsg' ).text( 'Empty process list.' );
 				else
@@ -297,57 +297,82 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 JobAidHelper.sort_filter_files = function( list, options ) 
 {
 	var newList = [];
+	var listFiltered = list; // Start with 'list', but overwrite with filtered list.
 	
 	try
 	{
-		// autio: true/false, video: true/false, 
-		if ( options.audioOnly ) newList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
-		else if ( options.videoOnly ) newList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) );
-		else if ( options.audio_videoOnly ) newList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO.concat( JobAidHelper.EXTS_VIDEO ), { upper: true } ) );
-		else if ( options.withoutAudioVideo ) newList = Util.cloneJson( list.filter( item => !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO.concat( JobAidHelper.EXTS_VIDEO ), { upper: true } ) ) );
-		else // options.all
+		// 1. FILTERING
+		// 1A. New JobAid Filtering with 'downloadOption' - 'woMedia', 'addMedia'
+		if ( options.downloadOption && options.downloadOption !== 'all' && options.projDir )
 		{
-			// Sorting option - by Config?  <-- but can be overridable by options (request)
-			var mediaFirst = ( ConfigManager.getJobAidSetting().downloadOrder === "mediaFirst" );
+			// Filter with fodler name..
+			var folderName = '/' + options.projDir + '/media/';
 
-			// Remove audio/video type file names
-			var noMediaList = Util.cloneJson( list.filter( item => 
-				( !Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) 
-				&& !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) ) 
-				) );
-	
-			// Add audio/video type file names at the end, audio 1st.
-			var audioList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
-			var videoList = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) );
-	
-			if ( mediaFirst ) // large file types download 1st
-			{
-				Util.mergeArrays( newList, videoList );
-				Util.mergeArrays( newList, audioList );
-				Util.mergeArrays( newList, noMediaList );
-			}
-			else // Media Last
-			{				
-				Util.mergeArrays( newList, noMediaList );
-				Util.mergeArrays( newList, audioList );
-				Util.mergeArrays( newList, videoList );
-			}
+			if ( options.downloadOption === 'addMedia' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) >= 0 );
+			else if ( options.downloadOption === 'woMedia' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) === -1 );
+
+			console.log( listFiltered );  // TEMP
 		}
+		// 1B. Existing Filtering Options..
+		else if ( options.audioOnly ) listFiltered = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
+		else if ( options.videoOnly ) listFiltered = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) );
+		else if ( options.audio_videoOnly ) listFiltered = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO.concat( JobAidHelper.EXTS_VIDEO ), { upper: true } ) );
+		else if ( options.withoutAudioVideo ) listFiltered = Util.cloneJson( list.filter( item => !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO.concat( JobAidHelper.EXTS_VIDEO ), { upper: true } ) ) );
+
 	}
 	catch ( errMsg )
 	{
-		console.log( 'ERROR in JobAidHelper.sortVideoAtTheEnd, ' + errMsg );
-		newList = list;
+		console.log( 'ERROR in JobAidHelper.sort_filter_files filering, ' + errMsg );
+	}
+
+
+	try
+	{
+		// 2. SORTING -----------------
+
+		// Sorting option - by Config?  <-- but can be overridable by options (request)
+		var mediaFirst = ( ConfigManager.getJobAidSetting().downloadOrder === "mediaFirst" );
+
+		// Remove audio/video type file names
+		var noMediaList = Util.cloneJson( listFiltered.filter( item => 
+			( !Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) 
+			&& !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) ) 
+			) );
+
+		// Add audio/video type file names at the end, audio 1st.
+		var audioList = listFiltered.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
+		var videoList = listFiltered.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) );
+
+
+		if ( mediaFirst ) // large file types download 1st
+		{
+			Util.mergeArrays( newList, videoList );
+			Util.mergeArrays( newList, audioList );
+			Util.mergeArrays( newList, noMediaList );
+		}
+		else // Media Last
+		{				
+			Util.mergeArrays( newList, noMediaList );
+			Util.mergeArrays( newList, audioList );
+			Util.mergeArrays( newList, videoList );
+		}	
+
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in JobAidHelper.sort_filter_files sorting, ' + errMsg );
+		newList = listFiltered;
 	}
 
 	return newList;
 };
 
 
-JobAidHelper.filingContent_setUp = function( newFileList, projDir )
+JobAidHelper.filingContent_setUp = function( newFileList, options )
 {
 	try
 	{
+		var projDir = options.projDir;
 		// Setup the 'localStorage' with 'ProjDir' <-- setup with empty content list.
 		//		- However, if already existing ones are there, we should not empty it out?..
 		//		- No, we should emtpy it out since it goes through re-download?
@@ -357,6 +382,8 @@ JobAidHelper.filingContent_setUp = function( newFileList, projDir )
 			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
 			
 			if ( !projStatus.process ) projStatus.process = {};
+			projStatus.downloadOption = options.downloadOption;
+
 
 			newFileList.forEach( fileName => {			
 				// if ( !projStatus.content[ fileName ] ) projStatus.content[ fileName ] = { size: '', date: '', downloaded: 'Not Downloaded' };
