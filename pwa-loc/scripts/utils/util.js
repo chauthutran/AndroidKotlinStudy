@@ -2036,3 +2036,33 @@ Util.shortenFileName = function (fileName, shortenLength )
 
 	return  displayName;
 };
+
+// option: { unit:'MB', decimal:2, upUnit: true }
+Util.formatFileSizeMB = function( val ) //, option )
+{
+	var resultStr = '';
+	var divide = 1000000.0;  //if ( !option ) option = {};
+
+	try
+	{
+		var calVal = val / divide;
+
+		// UpUnit..
+		if ( calVal >= 1000 )
+		{
+			calVal = calVal / 1000.0;
+			resultStr = calVal.toFixed( 2 ) + ' GB';
+		}
+		else 
+		{
+			if ( calVal < 0.01 ) calVal = 0.01;  // set min express val.			
+			resultStr = calVal.toFixed( 2 ) + ' MB';
+		}
+	}
+	catch ( errMsg ) 
+	{
+		console.log( 'ERROR in Util.formatFileSizeMB, ' + errMsg );
+	}
+
+	return resultStr;
+};

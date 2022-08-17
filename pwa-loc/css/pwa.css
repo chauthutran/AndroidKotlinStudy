@@ -79,6 +79,10 @@
   background-color: #FAFAFA;
 }    
 
+.downloadStatus {
+  color: blue;
+  margin-left: 10px;
+}
 
 /* ================================ */
 

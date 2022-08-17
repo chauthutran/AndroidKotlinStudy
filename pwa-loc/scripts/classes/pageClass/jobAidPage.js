@@ -300,8 +300,10 @@ JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 
 
 	itemTag.find('.divTitle').append(titleStrongTag);
-	itemTag.find('.divBuildDate').append('<strong>Release date: </strong>' + Util.getStr(itemData.buildDate));
-	var divDownloadInfoTag = itemTag.find('.divDownloadInfo');
+
+	itemTag.find('.divBuildDate').append('<strong>Release date: </strong>' + UtilDate.formatDate( Util.getStr(itemData.buildDate), "MMM dd, yyyy" ) );
+
+	var divDownloadInfoTag = itemTag.find('.divDownloadInfo').html('');
 	var divDownloadFilesTag = itemTag.find('.divDownloadFiles').html('<span><strong>Files</strong>: </span>').hide();
 	var divMediaStatusTag = itemTag.find( '.divMediaStatus').html('<span><strong>Media</strong>(mp3/mp4): </span>').hide();
 
@@ -314,7 +316,7 @@ JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 		}
 		else menus.push('Download');
 
-		divDownloadInfoTag.append('<span class="downloadInfo"><strong>Download size: </strong>' + Util.getStr(itemData.size) + '</span> <span class="downloadStatus></span>' );	
+		divDownloadInfoTag.append('<span class="downloadInfo"><strong>Download size: </strong>' + Util.getStr(itemData.size) + '</span> <span class="downloadStatus"></span>' );	
 	}
 	// Downloaded Case - 'open' in iFrame case, 'delete' case.
 	else if (statusType === 'downloaded') 
@@ -345,8 +347,9 @@ JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 			}
 		}
 
-		divDownloadInfoTag.append('<span class="downloadInfo"><strong>Downloaded: </strong>' +  UtilDate.formatDate( downloadDate, "MMM dd, yyyy" ) + '</span> <span class="downloadStatus></span>' );	
-		divDownloadFilesTag.append( fileCountDownloaded + '/' + fileCountAll + ' | ' + ( totalSize / 1000000.0 ).toFixed( 2 ) + 'MB' );
+		divDownloadInfoTag.append('<span class="downloadInfo"><strong>Downloaded: </strong>' +  UtilDate.formatDate( downloadDate, "MMM dd, yyyy" ) + '</span> <span class="downloadStatus"></span>' );	
+
+		divDownloadFilesTag.show().append( fileCountDownloaded + '/' + fileCountAll + ' | ' + Util.formatFileSizeMB( totalSize ) );
 		divMediaStatusTag.show().append( mediaStr );	
 
 
@@ -509,7 +512,10 @@ JobAidPage.divTablePopulate = function(colNames, arrData, urlArr) {
 
 			var tdTag = $('<td></td>');
 
-			if (colName === 'size') tdTag.css('width', '90px');
+			if (colName === 'size') {
+				tdTag.css('width', '90px');
+				colVal_short = Util.formatFileSizeMB( colVal_short );
+			}
 			else if (colName === 'downloaded') {
 				tdTag.css('width', '90px');
 				if (colVal_full == true) downloadedVal = true;
@@ -597,7 +603,7 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 
 
 			if (prc.curr < prc.total) {
-				spanTag.text(`Processing: ${prc.curr} of ${prc.total} [${url.split('.').at(-1)}]`);
+				spanTag.html(`<strong>Processing:<strong> ${prc.curr} of ${prc.total} [${url.split('.').at(-1)}]`);
 				if (prc.curr > 5) projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
 				projCardTag.css('opacity', 1);
 			}
@@ -606,7 +612,7 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 				// Calculate the files size here and place it on 'persisData'
 				await JobAidPage.updateFilesInfo(projDir);
 
-				spanTag.text('Download completed!');
+				spanTag.html('<strong>Download completed!</strong>');
 				projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
 				projCardTag.css('opacity', 1);
 
