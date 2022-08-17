@@ -204,15 +204,14 @@ JobAidHelper.getServerManifestsRun = function( callBack )
 	requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
 
 	var optionsStr = JSON.stringify( options );
-	
+
 	$.ajax({
 		url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
 		type: "GET",
 		dataType: "json",
 		success: function (response) 
 		{
-			console.log( 'success: ' );
-			console.log( response );
+			// console.log( 'success: ' );  console.log( response );
 			if ( callBack ) callBack( response );
 		},
 		error: function ( error ) {
@@ -310,8 +309,6 @@ JobAidHelper.sort_filter_files = function( list, options )
 
 			if ( options.downloadOption === 'addMedia' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) >= 0 );
 			else if ( options.downloadOption === 'woMedia' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) === -1 );
-
-			console.log( listFiltered );  // TEMP
 		}
 		// 1B. Existing Filtering Options..
 		else if ( options.audioOnly ) listFiltered = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );

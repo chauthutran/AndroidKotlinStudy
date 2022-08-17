@@ -1,74 +1,144 @@
 var express = require('express');
 const bodyParser = require("body-parser");
-const router = express.Router();
+//const router = express.Router();
 const app = express();
-
-app.use("/", router);  // add router in the Express app.
-
 
 const { FileNameList } = require('./loadFileNames.js');
 const fileNameList = new FileNameList();
+const { ManifestsCollect } = require('./manifestsCollect.js');
+const manifestsCollect = new ManifestsCollect();
+
+// app.use("/", router);  // add router in the Express app.
+
+// ---------------------------------
+// --- 'list' - Getting the files under a directory
+// --- 'manifests' - Getting each folder/dir and collect manifest
+//          - 2nd phase will be how to save theses ('even' list) <-- cache the info.. (place in memory - variable)
+//          - Unless the file is changed (file update mark on top level.. (for both 'list' & 'manifest'))
+
 
 // create application/json parser
 var jsonParser = bodyParser.json()
 // create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
- 
+
 // "c:\\WORKS\\SOFTWARES\\apache-tomcat\\webapps\\pwa-dev\\jobs\\"
 //const fileLoc = '/opt/tomcat/apache-tomcat-9.0.22/webapps/pwa-dev/jobs';
 
-const settings = { 
-  jobsDir: 'jobs'
-  , jobAidDir: 'jobAid'
-  , fileBaseServ: '/opt/tomcat/apache-tomcat-9.0.22/webapps'
-  , fileBaseLocl: 'C:\\Users\\james\\Documents\\GitHub\\connectPWA\\deploy'
+const settings = {
+   jobsDir: 'jobs'
+   , jobAidDir: 'jobAid'
+   , fileBaseServ: '/opt/tomcat/apache-tomcat-9.0.22/webapps'
+   , fileBaseLocl: 'C:\\Users\\james\\Documents\\GitHub\\connectPWA\\deploy'
 };
+
+// -------------------------------------
+// --- Memory Variable
+var mem_manifestResp;
+var mem_buildDate;
+
+// -------------------------------------
 
 const portNum = 8383;
 const PORT = process.env.PORT || portNum;
 
+app.listen(PORT, function () {
+   console.log('jobsFiling service listening on port ' + portNum);
+});
 
-router.get('/list', (req, res) => 
+// ----------------------------------
+// --- Routs..
+
+app.get('/list', (req, res) => 
 {
-  // reqData = { 'isLocal': localCase, 'appName': appName, 'isListingApp': true, projDir: 'proj1' };
-  var reqData = JSON.parse( req.query.optionsStr );
-  dataJson = { reqData: reqData, settings: settings };
+   // reqData = { 'isLocal': localCase, 'appName': appName, 'isListingApp': true, projDir: 'proj1' };
+   var reqData = JSON.parse(req.query.optionsStr);
+   dataJson = { reqData: reqData, settings: settings };
 
-  var dir = getDirLocation( dataJson );
+   var dir = getDirLocation(dataJson);
 
-  fileNameList.walk( dir, dataJson, function(err, results) 
-  {
-    if (err) throw err;
+   fileNameList.walk(dir, dataJson, function (err, results) {
+      if (err) throw err;
 
-    console.log( results );
+      // console.log( results ); // only show console if local - or by request?
 
-    res.json({list: results});
-  });
+      res.json({ list: results });
+   });
 
 });
 
 
-function getDirLocation( dataJson )
+app.get('/manifests', (req, res) => 
 {
-  var dir = '';
-  var divider = '/';
-  var fileBaseDir = dataJson.settings.fileBaseServ;
+   // Use existing one.
+   if ( mem_manifestResp ) res.json( mem_manifestResp );      
+   else 
+   {
+      // reqData = { 'isLocal': localCase, 'appName': appName, 'isListingApp': true, projDir: 'proj1' };
+      var reqData = JSON.parse(req.query.optionsStr);
 
-  if ( dataJson.reqData.isLocal )
-  {
-    divider = '\\';
-    fileBaseDir = dataJson.settings.fileBaseLocl;
-  }
-  
-  dir = fileBaseDir + divider + dataJson.reqData.appName + divider + dataJson.settings.jobsDir;
+      manifestDataCollect( reqData, function( mem_manifestResp ) {
+         res.json( mem_manifestResp );
+      });
+   }
+});
 
-  // If not listing app, add more sub folder..
-	if ( !dataJson.reqData.isListingApp ) dir = dir + divider + dataJson.settings.jobAidDir + divider + dataJson.reqData.projDir;
+app.get('/manifestsReload', (req, res) => 
+{
+   if ( mem_manifestResp )
+   {
+      manifestDataCollect( mem_manifestResp.reqData, function( mem_manifestResp_new ) {
+         res.json( mem_manifestResp_new );
+      });      
+   }
+   else res.json( { ERROR_NOTE: 'Nothing in memory' } );  // simply go ahead with using in app, this will put the resp on memory
+});
 
-  
-  return dir;
+app.get('/manifestsInMemory', (req, res) => 
+{
+   if ( mem_manifestResp )
+   {
+      res.json( mem_manifestResp );      
+   }
+   else res.json( { ERROR_NOTE: 'Nothing in memory' } );
+});
+
+// ---------------------------------------------
+
+function manifestDataCollect( reqData, callBack )
+{
+   dataJson = { reqData: reqData, settings: settings };
+
+   var dir = getDirLocation(dataJson); //console.log( dir ); // only show console if local - or by request?
+
+   manifestsCollect.collect(dir, dataJson, function (results, topManifest) 
+   {   
+      // save to memory
+      mem_manifestResp = { topManifest: topManifest, list: results, reqData: reqData };
+
+      callBack( mem_manifestResp );
+   });
 };
 
-app.listen(PORT, function () {
-  console.log( 'jobsFiling service listening on port ' + portNum );
-});
+
+function getDirLocation(dataJson) 
+{
+   var dir = '';
+   var divider = '/';
+   var fileBaseDir = dataJson.settings.fileBaseServ;
+
+   if (dataJson.reqData.isLocal) {
+      divider = '\\';
+      fileBaseDir = dataJson.settings.fileBaseLocl;
+   }
+
+   dir = fileBaseDir + divider + dataJson.reqData.appName + divider + dataJson.settings.jobsDir;
+
+   // If not listing app, add more sub folder..
+   if (!dataJson.reqData.isListingApp) dir = dir + divider + dataJson.settings.jobAidDir + divider + dataJson.reqData.projDir;
+
+
+   return dir;
+};
+
+// ---------------------------------------------
