@@ -1,7 +1,7 @@
 function JobAidPage() { };
 
 JobAidPage.options = {
-	'title': 'Job Aid',
+	'title': 'Job Aids',
 	'term': 'form_title_jobAid',
 	'cssClasses': ['divJobAidPage'],
 	'zIndex': 1600
@@ -13,24 +13,9 @@ JobAidPage.sheetFullTag;
 JobAidPage.contentBodyTag;
 JobAidPage.divAvailablePacksTag;
 JobAidPage.divDownloadedPacksTag;
+JobAidPage.contentPageTag;
 
 JobAidPage.serverManifestsData = [];
-/*
-JobAidPage.availableVersions = [
-	{code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false },
-	{code:"EN_LOW" , language:"English", projDir:"EN_LOW", size:"74MB", noMedia:true },
-	{code:"AM" , language:"Amharic", projDir:"AM", size:"455MB", noMedia:false },
-	{code:"AM_LOW" , language:"Amharic", projDir:"AM_LOW", size:"74MB", noMedia:true },
-	{code:"OM" , language:"Oromo", projDir:"OM", size:"396MB", noMedia:false },
-	{code:"OM_LOW" , language:"Oromo", projDir:"OM_LOW", size:"74MB", noMedia:true },
-	{code:"SID" , language:"Sidama", projDir:"SID", size:"581MB", noMedia:false },
-	{code:"SID_LOW" , language:"Sidama", projDir:"SID_LOW", size:"74MB", noMedia:true }
-];  
-   
-JobAidPage.downloadedVersions = [
-	{code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false }
-];  
-*/
 
 // ------------------
 
@@ -102,8 +87,10 @@ JobAidPage.itemDownload = function (projDir, key)
 
 JobAidPage.fileContentDialogOpen = async function(projDir) 
 {
-	var divDialogTag = JobAidPage.contentBodyTag.find('div.divFileContentDisplay');  // Content Tag..
-	var divMainContentTag = divDialogTag.find('div.divMainContent');
+	// JobAidPage.contentPageTag
+	var divDialogTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, {'title': 'JobAid Content - ' + projDir, 'term': '', 'cssClasses': ['divJobAidContentPage'] });
+
+	var divMainContentTag = divDialogTag.find('.contentBody');
 
 	var projDirStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
 	//console.log( projDirStatus );
@@ -114,17 +101,11 @@ JobAidPage.fileContentDialogOpen = async function(projDir)
 
 		// Display the content..
 		JobAidPage.populateFileContent(divMainContentTag, processData);
-	
-		// Add close event
-		divDialogTag.find('div.close').off('click').click(function () {
-			// TODO: $('.scrim').hide();
-			divDialogTag.hide();
-		});
-	
-		divDialogTag.show();
-		// TODO: $('.scrim').show();
 	}
 	else MsgManager.msgAreaShowErr( 'No project data available.' );
+
+
+	TranslationManager.translatePage();
 };
 
 
@@ -438,99 +419,79 @@ JobAidPage.getProjCardTag = function (projDir) {
 	return $('div.jobAidItem[projDir=' + projDir + ']');
 };
 
+// ---------------------------------------------------
+// --- CREATE IT'S OWN CLASS??
 
-JobAidPage.populateFileContent = function(divMainContentTag, processData) {
+JobAidPage.populateFileContent = function(divMainContentTag, processData) 
+{
 	divMainContentTag.html('');
 
-	var urlArr = Object.keys( processData );
-	var valArr = Object.values(processData);
-
-	if (valArr && valArr.length) {
-		var colNames = Object.keys(valArr[0]);  // Take 1st row to get colNames
-		//var removalCols = ['curr', 'total', 'name', 'reqDate'];
-		var removalCols = ['curr', 'total', 'url', 'reqDate'];
-		// remove columns: 'curr', total, name, reqData
-
-		colNames = colNames.filter(col => removalCols.indexOf(col) === -1);
-
-		var divTableTag = JobAidPage.divTablePopulate(colNames, valArr, urlArr);
-
-		divMainContentTag.append(divTableTag);
-
-		divTableTag.find('td').scrollLeft();
-	}
-};
-
-
-JobAidPage.divTablePopulate = function(colNames, arrData, urlArr) {
-	var tableTag = $('<table class="contentTable"><tbody></tbody></table>');
+	var tableTag = $( JobAidPage.contentPage_tableTag );
 	var tbodyTag = tableTag.find('tbody');
+	divMainContentTag.append( tableTag );
 
-	// 1. Header Rows      
-	var rowHeaderTag = $('<tr style="background-color: darkgray; color: #555; font-weight: 500;"></tr>');
-	tbodyTag.append(rowHeaderTag);
-
-	rowHeaderTag.append('<td>name</td>');
-
-	for (var p = 0; p < colNames.length; p++) {
-		var colName = colNames[p];
-
-		var tdTag = $('<td></td>').append(colName);
-
-		if (colName === 'size') tdTag.css('width', '90px');
-		else if (colName === 'downloaded') tdTag.css('width', '90px');
-
-		rowHeaderTag.append(tdTag);
+	for ( var url in processData )
+	{
+		var fileItem = processData[url];
+		fileItem.url = url;
+		
+		JobAidPage.populateFileItemInfo(fileItem, tbodyTag);
 	}
-
-
-	// 2. Body Rows.
-	for (var i = arrData.length - 1; i >= 0; i--) {
-		var rowData = arrData[i]; // arrary of column
-		var url = urlArr[i];
-
-		var rowTag = $('<tr></tr>');
-		tbodyTag.append(rowTag);
-
-		var downloadedVal = false;
-
-
-		// URL column Populate
-		var tdUrlTag = $('<td></td>');
-		rowTag.append( tdUrlTag );
-
-		JobAidPage.setUrlCol( url, tdUrlTag );
-
-
-		// Rest of the columns populate
-		for (var p = 0; p < colNames.length; p++) 
-		{
-			var colName = colNames[p];
-
-			var colVal_full = rowData[colName];
-			var colVal_short = colVal_full;
-
-			var tdTag = $('<td></td>');
-
-			if (colName === 'size') {
-				tdTag.css('width', '90px');
-				colVal_short = Util.formatFileSizeMB( colVal_short );
-			}
-			else if (colName === 'downloaded') {
-				tdTag.css('width', '90px');
-				if (colVal_full == true) downloadedVal = true;
-			}
-
-			if (colVal_full !== undefined) tdTag.append(colVal_short).attr('title', colName + ': ' + colVal_full);
-
-			rowTag.append(tdTag);
-		}
-
-		if (!downloadedVal) rowTag.css('background-color', 'tomato');
-	}
-
-	return tableTag;
 };
+
+
+JobAidPage.populateFileItemInfo = function(fileItem, tbodyTag)
+{
+	var row1Tag = $( JobAidPage.contentPage_row1Tag );
+	var row2Tag = $( JobAidPage.contentPage_row2Tag );
+
+	// Row 1 - populate data in tags..
+	JobAidPage.setUrlCol( fileItem.url, row1Tag.find( 'div.divFileNameVal' ) );
+
+	// Row 2 - date, size
+	var dateFormatted = UtilDate.formatDate( Util.getStr(fileItem.date), "yyyy/MM/dd HH:mm:ss" );
+	row2Tag.find( 'div.divFileCachingTimeVal' ).append(dateFormatted).attr('title', 'date: ' + fileItem.date);
+
+	var sizeFormatted = Util.formatFileSizeMB( fileItem.size );
+	row2Tag.find( 'div.divFileContentLengthVal' ).append(sizeFormatted).attr('title', 'size: ' + fileItem.size);
+
+
+	tbodyTag.append( row1Tag );
+	tbodyTag.append( row2Tag );
+};
+
+
+JobAidPage.contentPage_tableTag = `<table class="jobFileContentTable"><tbody></tbody></table>`;
+
+JobAidPage.contentPage_row1Tag = `
+<tr class="trJobFileR1">
+	<td colspan="4">
+		<div class="jfTitle">File Name</div>
+		<div class="divFileNameVal jfVal"></div>
+	</td>
+</tr>`;
+
+JobAidPage.contentPage_row2Tag = `
+<tr class="trJobFileR2">
+	<td>
+		<div class="jfTitle">Folder</div>
+		<div class="divFileFolderVal jfVal"></div>
+	</td>
+	<td>
+		<div class="jfTitle">Content-Type</div>
+		<div class="divFileContentTypeVal jfVal"></div>
+	</td>
+	<td>
+		<div class="jfTitle">Caching time</div>
+		<div class="divFileCachingTimeVal jfVal"></div>
+	</td>
+	<td>
+		<div class="jfTitle">Content-Length</div>
+		<div class="divFileContentLengthVal jfVal"></div>
+	</td>
+</tr>`;
+
+
 
 JobAidPage.setUrlCol = function(colVal_full, tdTag) 
 {
@@ -540,7 +501,7 @@ JobAidPage.setUrlCol = function(colVal_full, tdTag)
 		var lastIdx = strArr.length - 1;
 		var colVal_short = strArr[lastIdx];
 	
-		var displayName = Util.shortenFileName( colVal_short, 20 );
+		var displayName = Util.shortenFileName( colVal_short, 40 );
 
 		tdTag.append(displayName).attr('title',  'name: ' + colVal_short ); //colVal_full);
 	
@@ -763,3 +724,83 @@ JobAidPage.divFileContentTag = `
 	</div>
 </div>
 `;
+
+
+
+// ----------------------------------------
+
+JobAidPage.divTablePopulate_BACK = function(colNames, arrData, urlArr) {
+	var tableTag = $('<table class="contentTable"><tbody></tbody></table>');
+	var tbodyTag = tableTag.find('tbody');
+
+	// 1. Header Rows      
+	var rowHeaderTag = $('<tr style="background-color: darkgray; color: #555; font-weight: 500;"></tr>');
+	tbodyTag.append(rowHeaderTag);
+
+	rowHeaderTag.append('<td>name</td>');
+
+	for (var p = 0; p < colNames.length; p++) {
+		var colName = colNames[p];
+
+		if ( colName === 'downloaded' ) colName = 'down';
+
+		var tdTag = $('<td></td>').append(colName);
+
+		if (colName === 'size') tdTag.css('width', '70px');
+		else if (colName === 'down') tdTag.css('width', '50px').attr( 'title', 'downloaded' );
+
+		rowHeaderTag.append(tdTag);
+	}
+
+
+	// 2. Body Rows.
+	for (var i = arrData.length - 1; i >= 0; i--) {
+		var rowData = arrData[i]; // arrary of column
+		var url = urlArr[i];
+
+		var rowTag = $('<tr></tr>');
+		tbodyTag.append(rowTag);
+
+		var downloadedVal = false;
+
+
+		// URL column Populate
+		var tdUrlTag = $('<td></td>');
+		rowTag.append( tdUrlTag );
+
+		JobAidPage.setUrlCol( url, tdUrlTag );
+
+
+		// Rest of the columns populate
+		for (var p = 0; p < colNames.length; p++) 
+		{
+			var colName = colNames[p];
+
+			var colVal_full = rowData[colName];
+			var colVal_short = colVal_full;
+
+			var tdTag = $('<td></td>');
+
+			if (colName === 'size') {
+				tdTag.css('width', '70px');
+				colVal_short = Util.formatFileSizeMB( colVal_short );
+			}
+			else if (colName === 'downloaded') {
+				tdTag.css('width', '50px');
+				if (colVal_full == true) downloadedVal = true;
+			}
+			else if ( colName === 'date' )
+			{
+				colVal_short = UtilDate.formatDate( Util.getStr(colVal_short), "MMM dd, yy, HH:mm" );
+			}
+
+			if (colVal_full !== undefined) tdTag.append(colVal_short).attr('title', colName + ': ' + colVal_full);
+
+			rowTag.append(tdTag);
+		}
+
+		if (!downloadedVal) rowTag.css('background-color', 'tomato');
+	}
+
+	return tableTag;
+};
