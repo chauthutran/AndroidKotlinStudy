@@ -50,7 +50,7 @@ JobAidPage.render = function () {
 				items: items,
 				callback: function (key, options) 
 				{
-					if ( ['Download', 'Download update', 'Download w/o media', 'Download with media', 'Download media'].indexOf( key ) >= 0 ) JobAidPage.itemDownload(projDir, key);
+					if ( ['Download', 'Download app update', 'Download w/o media', 'Download with media', 'Download media'].indexOf( key ) >= 0 ) JobAidPage.itemDownload(projDir, key);
 					else if (key === 'See content') JobAidPage.fileContentDialogOpen(projDir);
 					else if (key === 'Delete') JobAidPage.itemDelete(projDir);
 					else if (key === 'Open') JobAidPage.itemOpen(projDir);
@@ -75,10 +75,10 @@ JobAidPage.itemOpen = function (projDir)
 
 JobAidPage.itemDownload = function (projDir, key) 
 {
-	// if (key === 'Download' || 'Download update' || 'Download w/o media' || 'Download with media' )
+	// if (key === 'Download' || 'Download app update' || 'Download media update' || 'Download w/o media' || 'Download with media' )
 	var downloadOption = 'all';
-	if ( key === 'Download w/o media' ) downloadOption = 'woMedia';	// Need to flag the proj about this...  <-- INFO?  outside of process?
-	else if ( key === 'Download media' ) downloadOption = 'addMedia';  // Should not clear out existing download info..
+	if ( [ 'Download w/o media', 'Download app update' ].indexOf( key ) >= 0 ) downloadOption = 'woMedia';	// Need to flag the proj about this...  <-- INFO?  outside of process?
+	else if ( [ 'Download media', 'Download media update' ].indexOf( key ) >= 0 ) downloadOption = 'addMedia';  // Should not clear out existing download info..
 	
 	// TODO: be able to pass the media options..  <-- only media, with media, without media
 	if (projDir) JobAidHelper.runTimeCache_JobAid({ projDir: projDir, target: 'jobAidPage', downloadOption: downloadOption });
@@ -132,13 +132,26 @@ JobAidPage.itemDelete = function (projDir)
 
 // =========================================
 
-JobAidPage.getManifestJobAidInfo = function (list) {
+JobAidPage.getManifestJobAidInfo = function (list) 
+{
 	var manifestsData = [];
 
-	try {
-		if (Util.isTypeArray(list)) {
-			list.forEach(item => {
-				if (Util.isTypeObject(item.jobAidInfo)) manifestsData.push(item.jobAidInfo);
+	try 
+	{
+		if (Util.isTypeArray(list)) 
+		{
+			list.forEach(item => 
+			{
+				if (Util.isTypeObject(item.jobAidInfo)) 
+				{
+					var jobAidManifest = item.jobAidInfo;
+
+					// If 'appBuildDate' is not available, and 'buildDate' exists, use that instead.
+					if ( !jobAidManifest.appBuildDate && jobAidManifest.buildDate ) jobAidManifest.appBuildDate = jobAidManifest.buildDate;
+					// What about media?  also use 'buildDate'?  No, not for now.					
+
+					manifestsData.push(jobAidManifest);
+				}
 			});
 		}
 	}
@@ -173,7 +186,7 @@ JobAidPage.populateSectionLists = function (contentBodyTag, callBack) {
 	// STEP 1. Get Server Manifests
 	divAvailablePacksTag.append(loadingImageStr);
 
-	JobAidHelper.getServerManifestsRun(function (results) {
+	JobAidPage.getServerManifestsRun(function (results) {
 		divAvailablePacksTag.html(''); // Clear loading Img
 
 		var list = results.list;
@@ -282,9 +295,13 @@ JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 
 	itemTag.find('.divTitle').append(titleStrongTag);
 
-	itemTag.find('.divBuildDate').append('<strong>Release date: </strong>' + UtilDate.formatDate( Util.getStr(itemData.buildDate), "MMM dd, yyyy" ) );
+	itemTag.find('.divBuildDate').append('<strong>Release date: </strong>' + UtilDate.formatDate( Util.getStr(itemData.appBuildDate), "MMM dd, yyyy" ) );
 
-	var divDownloadInfoTag = itemTag.find('.divDownloadInfo').html('');
+	var divDownloadInfoTag = itemTag.find('.divDownloadInfo').html('<span class="downloadInfo"></span>');
+	var spanDownloadInfoTag = divDownloadInfoTag.find( 'span.downloadInfo' );
+	var spanAppDownloadStatusTag = $( '<span class="appDownloadStatus downloadStatus"></span>' ).hide();
+	divDownloadInfoTag.append( spanAppDownloadStatusTag );
+
 	var divDownloadFilesTag = itemTag.find('.divDownloadFiles').html('<span><strong>Files</strong>: </span>').hide();
 	var divMediaStatusTag = itemTag.find( '.divMediaStatus').html('<span><strong>Media</strong>(mp3/mp4): </span>').hide();
 
@@ -297,7 +314,7 @@ JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 		}
 		else menus.push('Download');
 
-		divDownloadInfoTag.append('<span class="downloadInfo"><strong>Download size: </strong>' + Util.getStr(itemData.size) + '</span> <span class="downloadStatus"></span>' );	
+		spanDownloadInfoTag.html( '<strong>Download size: </strong>' + Util.getStr(itemData.size) );	
 	}
 	// Downloaded Case - 'open' in iFrame case, 'delete' case.
 	else if (statusType === 'downloaded') 
@@ -328,11 +345,12 @@ JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 			}
 		}
 
-		divDownloadInfoTag.append('<span class="downloadInfo"><strong>Downloaded: </strong>' +  UtilDate.formatDate( downloadDate, "MMM dd, yyyy" ) + '</span> <span class="downloadStatus"></span>' );	
+		spanDownloadInfoTag.html( '<strong>Downloaded: </strong>' +  UtilDate.formatDate( downloadDate, "MMM dd, yyyy" ) );	
 
 		divDownloadFilesTag.show().append( fileCountDownloaded + '/' + fileCountAll + ' | ' + Util.formatFileSizeMB( totalSize ) );
-		divMediaStatusTag.show().append( mediaStr );	
-
+		divMediaStatusTag.show().append( mediaStr );
+		var spanMediaDownloadStatusTag = $('<span class="mediaDownloadStatus downloadStatus"></span>').hide();
+		divMediaStatusTag.append( spanMediaDownloadStatusTag );
 
 		// 2. Setup for match found things...
 		var matchData = JobAidPage.matchInServerList(itemData, JobAidPage.serverManifestsData);
@@ -342,12 +360,16 @@ JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 			// Remove from available side - when we add this on 'downloaded' side
 			JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir="' + itemData.projDir + '"]').remove();
 
-			if (matchData.newerDate) 
+			if (matchData.appNewerDate) 
 			{
-				menus.push('Download updates');
+				menus.push('Download app update');
+				spanAppDownloadStatusTag.show().text( '[App update available]' );
+			}
 
-				var updateSpanTag = $('<span class="" style="margin-left: 14px; color: blue;">[update available]</span>');
-				itemTag.find('span.downloadInfo').append(updateSpanTag);
+			if (matchData.mediaNewerDate) 
+			{
+				menus.push('Download media update');
+				spanMediaDownloadStatusTag.show().text( '[Media update available]' );
 			}
 		}
 
@@ -361,12 +383,18 @@ JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 // ------------------------------------
 
 JobAidPage.matchInServerList = function (item, serverManifestsData) {
-	var matchData = { matchProj: false, newerDate: false };
+	var matchData = { matchProj: false, appNewerDate: false, mediaNewerDate: false };
 
 	serverManifestsData.forEach(srvItem => {
-		if (srvItem.projDir === item.projDir) {
+		if (srvItem.projDir === item.projDir) 
+		{
 			matchData.matchProj = true;
-			matchData.newerDate = (srvItem.buildDate > item.buildDate);
+
+			if ( srvItem.appBuildDate && item.appBuildDate && srvItem.appBuildDate > item.appBuildDate ) matchData.appNewerDate = true;
+			else if ( item.appBuildDate && !srvItem.appBuildDate ) matchData.appNewerDate = true;
+
+			if ( srvItem.mediaBuildDate && item.mediaBuildDate && srvItem.mediaBuildDate > item.mediaBuildDate ) matchData.mediaNewerDate = true;
+			else if ( item.mediaBuildDate && !srvItem.mediaBuildDate ) matchData.mediaNewerDate = true;
 		}
 	});
 
@@ -460,39 +488,6 @@ JobAidPage.populateFileItemInfo = function(fileItem, tbodyTag)
 	tbodyTag.append( row2Tag );
 };
 
-
-JobAidPage.contentPage_tableTag = `<table class="jobFileContentTable"><tbody></tbody></table>`;
-
-JobAidPage.contentPage_row1Tag = `
-<tr class="trJobFileR1">
-	<td colspan="4">
-		<div class="jfTitle">File Name</div>
-		<div class="divFileNameVal jfVal"></div>
-	</td>
-</tr>`;
-
-JobAidPage.contentPage_row2Tag = `
-<tr class="trJobFileR2">
-	<td>
-		<div class="jfTitle">Folder</div>
-		<div class="divFileFolderVal jfVal"></div>
-	</td>
-	<td>
-		<div class="jfTitle">Content-Type</div>
-		<div class="divFileContentTypeVal jfVal"></div>
-	</td>
-	<td>
-		<div class="jfTitle">Caching time</div>
-		<div class="divFileCachingTimeVal jfVal"></div>
-	</td>
-	<td>
-		<div class="jfTitle">Content-Length</div>
-		<div class="divFileContentLengthVal jfVal"></div>
-	</td>
-</tr>`;
-
-
-
 JobAidPage.setUrlCol = function(colVal_full, tdTag) 
 {
 	if (colVal_full !== undefined)
@@ -550,8 +545,15 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 	var projDir = msgData.options.projDir;
 	var projCardTag = JobAidPage.getProjCardTag(projDir); // $( 'div.card[projDir=' + msgData.options.projDir + ']' );
 
-	if (projCardTag.length > 0) {
-		var spanTag = projCardTag.find('span.downloadStatus');
+	if (projCardTag.length > 0) 
+	{
+		var spanTag;  // var spanTag = projCardTag.find('span.downloadStatus');
+		var downloadOption = msgData.options.downloadOption;
+
+		if ( !downloadOption || downloadOption === 'all' ) spanTag = projCardTag.find('span.appDownloadStatus,span.mediaDownloadStatus').show();
+		else if ( downloadOption === 'woMedia' ) spanTag = projCardTag.find('span.appDownloadStatus').show();
+		else if ( downloadOption === 'addMedia' ) spanTag = projCardTag.find('span.mediaDownloadStatus').show();
+
 
 		var prc = msgData.process;
 
@@ -676,6 +678,38 @@ JobAidPage.projProcessDataUpdate = function (projDir, url, updateJson)
 
 // ------------------------------------
 
+JobAidPage.getServerManifestsRun = function( callBack )
+{
+	var options = { projDir: '', isListingApp: false, isLocal: true, appName: 'pwa-dev' };
+	options.isLocal = WsCallManager.checkLocalDevCase( window.location.origin );
+
+	var requestUrl = (options.isLocal) ? 'http://localhost:8383/manifests' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsManifests')
+	requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
+
+	var optionsStr = JSON.stringify( options );
+
+	$.ajax({
+		url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
+		type: "GET",
+		dataType: "json",
+		success: function (response) 
+		{
+
+			// TODO: 
+
+			// console.log( 'success: ' );  console.log( response );
+			if ( callBack ) callBack( response );
+		},
+		error: function ( error ) {
+			console.log( 'error: ' );
+			console.log( error );
+		},
+		complete: function () { }			
+	});
+};
+
+// ------------------------------------
+
 JobAidPage.templateSections = `
    <div class="sectionTitle_jobAid">Downloaded packs</div>
    <div class="divDownloadedPacks">
@@ -689,7 +723,7 @@ JobAidPage.templateSections = `
 JobAidPage.templateItem_body = `
    <div class="card__container">
       <card__support_visuals class="card__support_visuals" style="padding-left: 4px;"><img src="images/JobAidicons.png"></card__support_visuals>
-      <card__content class="card__content" style="padding-left: 4px;">
+      <card__content class="card__content jaCardContent">
          <div class="card__row divTitle"></div>
          <div class="card__row divBuildDate"></div>
          <div class="card__row divDownloadInfo"></div>
@@ -724,6 +758,39 @@ JobAidPage.divFileContentTag = `
 	</div>
 </div>
 `;
+
+// ---------------------------------
+// --- Content Page Related
+
+JobAidPage.contentPage_tableTag = `<table class="jobFileContentTable"><tbody></tbody></table>`;
+
+JobAidPage.contentPage_row1Tag = `
+<tr class="trJobFileR1">
+	<td colspan="4">
+		<div class="jfTitle">File Name</div>
+		<div class="divFileNameVal jfVal"></div>
+	</td>
+</tr>`;
+
+JobAidPage.contentPage_row2Tag = `
+<tr class="trJobFileR2">
+	<td>
+		<div class="jfTitle">Folder</div>
+		<div class="divFileFolderVal jfVal"></div>
+	</td>
+	<td>
+		<div class="jfTitle">Content-Type</div>
+		<div class="divFileContentTypeVal jfVal"></div>
+	</td>
+	<td>
+		<div class="jfTitle">Caching time</div>
+		<div class="divFileCachingTimeVal jfVal"></div>
+	</td>
+	<td>
+		<div class="jfTitle">Content-Length</div>
+		<div class="divFileContentLengthVal jfVal"></div>
+	</td>
+</tr>`;
 
 
 

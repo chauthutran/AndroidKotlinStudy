@@ -194,34 +194,6 @@ JobAidHelper.deleteCacheStorage = async function()
 	return caches.delete( JobAidHelper.jobAid_jobTest2 );
 };
 
-
-JobAidHelper.getServerManifestsRun = function( callBack )
-{
-	var options = { projDir: '', isListingApp: false, isLocal: true, appName: 'pwa-dev' };
-	options.isLocal = WsCallManager.checkLocalDevCase( window.location.origin );
-
-	var requestUrl = (options.isLocal) ? 'http://localhost:8383/manifests' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsManifests')
-	requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
-
-	var optionsStr = JSON.stringify( options );
-
-	$.ajax({
-		url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
-		type: "GET",
-		dataType: "json",
-		success: function (response) 
-		{
-			// console.log( 'success: ' );  console.log( response );
-			if ( callBack ) callBack( response );
-		},
-		error: function ( error ) {
-			console.log( 'error: ' );
-			console.log( error );
-		},
-		complete: function () { }			
-	});
-};
-
 JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // returnFunc )
 {
 	if ( ConnManagerNew.isAppMode_Online() ) 
