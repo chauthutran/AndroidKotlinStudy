@@ -473,6 +473,9 @@ function cwsRender()
 		if ( $( '#mddtp-picker__date' ).is(':visible') ) $( '#mddtp-picker__date' ).hide();
 		if ( $( '.inputFieldYear' ).is(':visible') ) $( '.inputFieldYear' ).hide();
 		if ( $( '.scrim' ).is(':visible') ) $('.scrim').hide();
+		FormUtil.emptySheetBottomTag(); // SheetBottom div hiding()
+		FormUtil.unblockPage();	// scrim unblock - just in case - same as .scrim hide
+
 
 		// hide navBar items
 		me.Nav1Tag.hide();
