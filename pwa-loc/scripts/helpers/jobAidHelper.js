@@ -549,6 +549,17 @@ JobAidHelper.handleMsgAction = function( action )
 			$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { action: thisAction }, '*');  // pass single action rather than 'actions'
 		});
 	}
+	else if ( action.name === 'submitActivities' ) 
+	{
+		// { name: 'submitActivities', data: { requestActivities: [ { }, { } ] }, callBackEval... } 
+		// Due to callBack, call iframe directly..
+		JobAidHelper.submitActivities( action.data, function( resultArr ) 
+		{
+			$( 'div.clientListRerender' ).click(); // refresh the clientList..
+			var thisAction = { callBackEval: action.callBackEval, data: { resultArr: resultArr } };
+			$('iframe.jobAidIFrame')[0].contentWindow.postMessage( { action: thisAction }, '*');
+		});
+	}
 	else if ( action.name === 'WFARunEval' )
 	{
 		// { name: 'WFARunEval', WFARunEval: [ 
@@ -655,4 +666,30 @@ JobAidHelper.submitActivity = function( data, callBack )
 		console.log( activity );
 		if ( callBack ) callBack( client, activity );
 	});	
+};
+
+
+JobAidHelper.submitActivities = function( data, callBack )
+{
+	var resultJson = []; // This is array of resultJson
+
+	if ( data.requestActivities )
+	{
+		Util.callAfterEach( 0, data.requestActivities, resultJson, function( reqActivity, idx, nextCall ) {
+			// each item calling..
+			JobAidHelper.submitActivity( reqActivity, function( client, activity ) {
+				resultJson.push( { reqActivity: reqActivity, client: client, activity: activity } );
+				nextCall();
+			});
+		}, 
+		function( idx, resultJson ) 
+		{
+			// Finish the call
+			callBack( resultJson );
+		});
+	}
+	else 
+	{
+		callBack( resultJson );
+	}
 };
