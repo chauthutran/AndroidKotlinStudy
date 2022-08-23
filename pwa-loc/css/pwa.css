@@ -112,6 +112,10 @@
   color: gray;
 }
 
+.jfVal {
+  display: inline-block;
+}
+
 /* ================================ */
 
 .btnBack {

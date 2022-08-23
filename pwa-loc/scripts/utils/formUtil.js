@@ -42,6 +42,8 @@ FormUtil.blockPage = function (scrimTag, runFunc) {
 	scrimTag.show();
 
 	if (runFunc) runFunc(scrimTag);
+
+	return scrimTag;
 };
 
 FormUtil.unblockPage = function (scrimTag) {
@@ -78,11 +80,12 @@ FormUtil.remove_3ButtonDiv = function () {
 // --------------
 
 FormUtil.genTagByTemplate = function (tag, template, runFunc) {
-	tag.html(template);
+	tag.html('').append( template );
 	TranslationManager.translatePage();
 	tag.show();
 
 	runFunc(tag); // Add event methods or anything related to the created template tag things.
+	//return tag;
 };
 
 // ==========================================

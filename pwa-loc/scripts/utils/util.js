@@ -1205,6 +1205,22 @@ Util.strCutEnd = function (input, endCutLength) {
 	return input.substr(0, input.length - endCutLength);
 };
 
+Util.getFileExtension = function (input, option) {
+	if (!option) option = {};
+	var extName = '';
+
+	if (option.upper) input = input.toUpperCase();
+	else if (option.lower) input = input.toLowerCase();
+
+	var strArr = input.split('.');
+	if ( strArr.length > 1 )
+	{
+		var lastIdx = strArr.length - 1;
+		extName = strArr[lastIdx];	
+	}
+
+	return extName;
+};
 
 Util.clearList = function (selector) {
 	selector.children().remove();

@@ -51,7 +51,7 @@ JobAidPage.render = function () {
 				callback: function (key, options) 
 				{
 					if ( ['Download', 'Download app update', 'Download w/o media', 'Download with media', 'Download media'].indexOf( key ) >= 0 ) JobAidPage.itemDownload(projDir, key);
-					else if (key === 'See content') JobAidPage.fileContentDialogOpen(projDir);
+					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
 					else if (key === 'Delete') JobAidPage.itemDelete(projDir);
 					else if (key === 'Open') JobAidPage.itemOpen(projDir);
 				}
@@ -83,29 +83,6 @@ JobAidPage.itemDownload = function (projDir, key)
 	// TODO: be able to pass the media options..  <-- only media, with media, without media
 	if (projDir) JobAidHelper.runTimeCache_JobAid({ projDir: projDir, target: 'jobAidPage', downloadOption: downloadOption });
 	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
-};
-
-JobAidPage.fileContentDialogOpen = async function(projDir) 
-{
-	// JobAidPage.contentPageTag
-	var divDialogTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, {'title': 'JobAid Content - ' + projDir, 'term': '', 'cssClasses': ['divJobAidContentPage'] });
-
-	var divMainContentTag = divDialogTag.find('.contentBody');
-
-	var projDirStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
-	//console.log( projDirStatus );
-
-	if ( projDirStatus && projDirStatus.process )
-	{
-		var processData = projDirStatus.process;
-
-		// Display the content..
-		JobAidPage.populateFileContent(divMainContentTag, processData);
-	}
-	else MsgManager.msgAreaShowErr( 'No project data available.' );
-
-
-	TranslationManager.translatePage();
 };
 
 
@@ -172,6 +149,7 @@ JobAidPage.setUpPageContentLayout = function (contentBodyTag, divFileContentTag)
 // TODO: this only gets called once on page 'render' time..  NOT in each item move..
 //		- We need to add same tag
 
+// 'Available' - from Server Manifest Data, 'Downloaded' - from cached manifest.json files
 JobAidPage.populateSectionLists = function (contentBodyTag, callBack) {
 	var divAvailablePacksTag = contentBodyTag.find('div.divAvailablePacks'); //.html( '' );
 	var divDownloadedPacksTag = contentBodyTag.find('div.divDownloadedPacks'); //.html( '' );
@@ -278,19 +256,15 @@ JobAidPage.updateSectionLists = function (projDir, statusType) {
 JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 	var menus = [];
 
-	// type = 'available' vs 'downloaded'
-	// itemData = {code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false };
-	// status, buildDate,       
+	// type = 'available' vs 'downloaded'  // itemData = {code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false };
 	itemTag.off('click'); // reset previous click if exists.
-
-
 	itemTag.attr('data-language', itemData.code);
 	itemTag.attr('projDir', itemData.projDir);
 	itemTag.attr('statusType', statusType);
 
 
 	var titleStrongTag = $('<strong></strong>').append(itemData.title + ' [' + Util.getStr(itemData.language) + ']');
-	if (itemData.noMedia) titleStrongTag.append(' [WITHOUT MEDIA]');
+	// if (itemData.noMedia) titleStrongTag.append(' [WITHOUT MEDIA]');
 
 
 	itemTag.find('.divTitle').append(titleStrongTag);
@@ -327,23 +301,23 @@ JobAidPage.populateItem = function (itemData, itemTag, statusType) {
 		var fileCountDownloaded = 0;
 		var mediaStr = '<span>exists</span>';
 
-		var projStatus = PersisDataLSManager.getJobFilingProjDirStatus( itemData.projDir );
-		if ( projStatus )
+
+		// From Extra info for thie 'projDir', update info..
+		var projStatus = JobAidPage.getProjStatus_PersisStorage(itemData.projDir);
+		if ( projStatus.infoCollect )
 		{
-			if ( projStatus.downloadOption === 'woMedia' )
+			totalSize = projStatus.infoCollect.totalSize;
+			fileCountAll = projStatus.infoCollect.fileCountAll;
+			fileCountDownloaded = projStatus.infoCollect.fileCountDownloaded;
+			downloadDate = Util.getStr( projStatus.infoCollect.downloadDate );
+
+			if ( projStatus.infoCollect.mediaDownloaded ) 
 			{
 				menus.push( 'Download media' );
-				mediaStr = '<span>pending</span>';
-			}
-
-			if ( projStatus.infoCollect )
-			{
-				totalSize = projStatus.infoCollect.totalSize;
-				fileCountAll = projStatus.infoCollect.fileCountAll;
-				fileCountDownloaded = projStatus.infoCollect.fileCountDownloaded;
-				downloadDate = Util.getStr( projStatus.infoCollect.downloadDate );
+				mediaStr = '<span>pending</span>';	
 			}
 		}
+
 
 		spanDownloadInfoTag.html( '<strong>Downloaded: </strong>' +  UtilDate.formatDate( downloadDate, "MMM dd, yyyy" ) );	
 
@@ -447,95 +421,6 @@ JobAidPage.getProjCardTag = function (projDir) {
 	return $('div.jobAidItem[projDir=' + projDir + ']');
 };
 
-// ---------------------------------------------------
-// --- CREATE IT'S OWN CLASS??
-
-JobAidPage.populateFileContent = function(divMainContentTag, processData) 
-{
-	divMainContentTag.html('');
-
-	var tableTag = $( JobAidPage.contentPage_tableTag );
-	var tbodyTag = tableTag.find('tbody');
-	divMainContentTag.append( tableTag );
-
-	for ( var url in processData )
-	{
-		var fileItem = processData[url];
-		fileItem.url = url;
-		
-		JobAidPage.populateFileItemInfo(fileItem, tbodyTag);
-	}
-};
-
-
-JobAidPage.populateFileItemInfo = function(fileItem, tbodyTag)
-{
-	var row1Tag = $( JobAidPage.contentPage_row1Tag );
-	var row2Tag = $( JobAidPage.contentPage_row2Tag );
-
-	// Row 1 - populate data in tags..
-	JobAidPage.setUrlCol( fileItem.url, row1Tag.find( 'div.divFileNameVal' ) );
-
-	// Row 2 - date, size
-	var dateFormatted = UtilDate.formatDate( Util.getStr(fileItem.date), "yyyy/MM/dd HH:mm:ss" );
-	row2Tag.find( 'div.divFileCachingTimeVal' ).append(dateFormatted).attr('title', 'date: ' + fileItem.date);
-
-	var sizeFormatted = Util.formatFileSizeMB( fileItem.size );
-	row2Tag.find( 'div.divFileContentLengthVal' ).append(sizeFormatted).attr('title', 'size: ' + fileItem.size);
-
-
-	tbodyTag.append( row1Tag );
-	tbodyTag.append( row2Tag );
-};
-
-JobAidPage.setUrlCol = function(colVal_full, tdTag) 
-{
-	if (colVal_full !== undefined)
-	{
-		var strArr = colVal_full.split('/');
-		var lastIdx = strArr.length - 1;
-		var colVal_short = strArr[lastIdx];
-	
-		var displayName = Util.shortenFileName( colVal_short, 40 );
-
-		tdTag.append(displayName).attr('title',  'name: ' + colVal_short ); //colVal_full);
-	
-	
-		var isAudio = Util.endsWith_Arr(colVal_short, JobAidHelper.EXTS_AUDIO, { upper: true });
-		var isVideo = Util.endsWith_Arr(colVal_short, JobAidHelper.EXTS_VIDEO, { upper: true });
-	
-		if (isAudio || isVideo) 
-		{
-			colVal_full = colVal_full.replace('/jobs/', '');
-	
-			tdTag.css('cursor', 'pointer').css('color', (isAudio) ? 'cadetblue' : 'blue');
-			tdTag.attr('play_type', (isAudio) ? 'audio' : 'video').attr('play_full', colVal_full);
-	
-			tdTag.click(function () 
-			{
-				var divPopupVideoTag = $('#divPopupVideo');
-				var divMainContentTag = divPopupVideoTag.find('div.divMainContent');
-				divMainContentTag.html('');
-	
-				var thisTag = $(this);
-				var play_full = thisTag.attr('play_full');
-				var play_type = thisTag.attr('play_type');
-	
-				if (play_type === 'audio') divMainContentTag.append('<audio controls><source src="' + play_full + '" >Your browser does not support the audio element.</audio>');
-				else if (play_type === 'video') divMainContentTag.append('<video src="' + play_full + '" preload="auto" controls="" style="width: 100%; height: 100%;"></video>');
-	
-				// Add close event
-				divPopupVideoTag.find('div.close').off('click').click(function () {
-					divPopupVideoTag.hide();
-				});
-	
-				divPopupVideoTag.show();
-			});
-		}
-	}
-};
-
-
 // -------------------------------------------------
 // --- Download Msg Progress Updates ---
 
@@ -547,39 +432,48 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 
 	if (projCardTag.length > 0) 
 	{
-		var spanTag;  // var spanTag = projCardTag.find('span.downloadStatus');
 		var downloadOption = msgData.options.downloadOption;
+		var mediaDownloadCase = false;
 
-		if ( !downloadOption || downloadOption === 'all' ) spanTag = projCardTag.find('span.appDownloadStatus,span.mediaDownloadStatus').show();
-		else if ( downloadOption === 'woMedia' ) spanTag = projCardTag.find('span.appDownloadStatus').show();
-		else if ( downloadOption === 'addMedia' ) spanTag = projCardTag.find('span.mediaDownloadStatus').show();
+		// Get the right tag
+		var spanDownloadStatusTag;  // var spanDownloadStatusTag = projCardTag.find('span.downloadStatus');
+		if ( !downloadOption || downloadOption === 'all' ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus,span.mediaDownloadStatus').show();
+		else if ( downloadOption === 'woMedia' ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus').show();
+		else if ( downloadOption === 'addMedia' ) spanDownloadStatusTag = projCardTag.find('span.mediaDownloadStatus').show();
+
+		if ( !downloadOption || downloadOption === 'all' || downloadOption === 'addMedia' ) mediaDownloadCase = true; 
 
 
 		var prc = msgData.process;
 
-		if (prc.name && prc.total && prc.total > 0 && prc.curr) {
+		if (prc.name && prc.total && prc.total > 0 && prc.curr) 
+		{
 			var url = prc.name;
 
-			// console.log( prc );
 			// update the downloaded status on storage..
 			JobAidPage.projProcessDataUpdate(projDir, url, { date: new Date().toISOString(), downloaded: true });
 
 
-			if (prc.curr < prc.total) {
-				spanTag.html(`<strong>Processing:<strong> ${prc.curr} of ${prc.total} [${url.split('.').at(-1)}]`);
+			if (prc.curr < prc.total) 
+			{
+				spanDownloadStatusTag.html(`<strong>Processing:<strong> ${prc.curr} of ${prc.total} [${url.split('.').at(-1)}]`);
 				if (prc.curr > 5) projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
 				projCardTag.css('opacity', 1);
 			}
-			else {
+			else 
+			{
+				// === DOWNLOAD 'FINISH' OPERATION STEPS ===
 
-				// Calculate the files size here and place it on 'persisData'
-				await JobAidPage.updateFilesInfo(projDir);
-
-				spanTag.html('<strong>Download completed!</strong>');
+				spanDownloadStatusTag.html('<strong>Download completed!</strong>');
 				projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
 				projCardTag.css('opacity', 1);
 
-
+				// Calculate the files size here and place it on 'persisData'
+				var spanCalTag = $( '<span class="spanCalTag">Calculating size of files</span>' );
+				spanDownloadStatusTag.append( spanCalTag );
+				await JobAidPage.updateProjStatus_PersisStorage(projDir, mediaDownloadCase);
+				spanCalTag.text( 'Calculation finished.' );
+				
 				// We need to refresh the list...
 				JobAidPage.updateSectionLists(projDir, projCardTag.attr('statusType'));
 			}
@@ -587,13 +481,15 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 	}
 };
 
-JobAidPage.updateFilesInfo = async function(projDir)
+// Called when download is finished.
+JobAidPage.updateProjStatus_PersisStorage = async function(projDir, mediaDownloadCase)
 {
 	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
 
 	if ( projStatus.process )
 	{
-		projStatus.infoCollect = { totalSize: 0, fileCountAll: 0, fileCountDownloaded: 0, downloadDate: new Date().toISOString() };  // Diff from data from manifest..
+		if ( !projStatus.infoCollect ) projStatus.infoCollect = {}; // totalSize: 0, fileCountAll: 0, fileCountDownloaded: 0, downloadDate: new Date().toISOString() };
+		projStatus.infoCollect.downloadDate = new Date().toISOString();
 
 		// 1. File size - individual ones calculate & save.  Total size calc.
 		try {
@@ -607,9 +503,21 @@ JobAidPage.updateFilesInfo = async function(projDir)
 
 		projStatus.infoCollect.fileCountAll = valObjArr.length;
 		projStatus.infoCollect.fileCountDownloaded = valObjArr.filter( valObj => valObj.downloaded === true ).length;
+		if ( mediaDownloadCase === true ) projStatus.infoCollect.mediaDownloaded = true;
 
 		PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);		
 	}
+};
+
+JobAidPage.getProjStatus_PersisStorage = function(projDir)
+{
+	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
+
+	if ( !projStatus ) projStatus = {};
+	if ( !projStatus.process ) projStatus.process = {};
+	if ( !projStatus.infoCollect ) projStatus.infoCollect = {};
+
+	return projStatus;
 };
 
 
@@ -791,83 +699,3 @@ JobAidPage.contentPage_row2Tag = `
 		<div class="divFileContentLengthVal jfVal"></div>
 	</td>
 </tr>`;
-
-
-
-// ----------------------------------------
-
-JobAidPage.divTablePopulate_BACK = function(colNames, arrData, urlArr) {
-	var tableTag = $('<table class="contentTable"><tbody></tbody></table>');
-	var tbodyTag = tableTag.find('tbody');
-
-	// 1. Header Rows      
-	var rowHeaderTag = $('<tr style="background-color: darkgray; color: #555; font-weight: 500;"></tr>');
-	tbodyTag.append(rowHeaderTag);
-
-	rowHeaderTag.append('<td>name</td>');
-
-	for (var p = 0; p < colNames.length; p++) {
-		var colName = colNames[p];
-
-		if ( colName === 'downloaded' ) colName = 'down';
-
-		var tdTag = $('<td></td>').append(colName);
-
-		if (colName === 'size') tdTag.css('width', '70px');
-		else if (colName === 'down') tdTag.css('width', '50px').attr( 'title', 'downloaded' );
-
-		rowHeaderTag.append(tdTag);
-	}
-
-
-	// 2. Body Rows.
-	for (var i = arrData.length - 1; i >= 0; i--) {
-		var rowData = arrData[i]; // arrary of column
-		var url = urlArr[i];
-
-		var rowTag = $('<tr></tr>');
-		tbodyTag.append(rowTag);
-
-		var downloadedVal = false;
-
-
-		// URL column Populate
-		var tdUrlTag = $('<td></td>');
-		rowTag.append( tdUrlTag );
-
-		JobAidPage.setUrlCol( url, tdUrlTag );
-
-
-		// Rest of the columns populate
-		for (var p = 0; p < colNames.length; p++) 
-		{
-			var colName = colNames[p];
-
-			var colVal_full = rowData[colName];
-			var colVal_short = colVal_full;
-
-			var tdTag = $('<td></td>');
-
-			if (colName === 'size') {
-				tdTag.css('width', '70px');
-				colVal_short = Util.formatFileSizeMB( colVal_short );
-			}
-			else if (colName === 'downloaded') {
-				tdTag.css('width', '50px');
-				if (colVal_full == true) downloadedVal = true;
-			}
-			else if ( colName === 'date' )
-			{
-				colVal_short = UtilDate.formatDate( Util.getStr(colVal_short), "MMM dd, yy, HH:mm" );
-			}
-
-			if (colVal_full !== undefined) tdTag.append(colVal_short).attr('title', colName + ': ' + colVal_full);
-
-			rowTag.append(tdTag);
-		}
-
-		if (!downloadedVal) rowTag.css('background-color', 'tomato');
-	}
-
-	return tableTag;
-};

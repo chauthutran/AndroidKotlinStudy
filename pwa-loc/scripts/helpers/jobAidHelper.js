@@ -17,6 +17,9 @@ JobAidHelper.NAME_jobListingApp = 'jobListingApp';
 
 JobAidHelper.EXTS_VIDEO = [ '.webm', '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.ogg', '.mp4', '.m4p', '.m4v', '.avi', '.wmv', '.mov', '.qt', '.flv', '.swf', '.avchd'  ];  // upper case when comparing
 JobAidHelper.EXTS_AUDIO = [ '.abc', '.flp', '.ec3', '.mp3', '.flac' ];  // upper case when comparing
+JobAidHelper.EXTS_IMAGE = [ '.tif', '.tiff', '.bmp', '.jpg', '.jpeg', '.gif', '.ico', '.png', '.eps', '.svg' ];
+JobAidHelper.EXTS_TEXT = [ '.txt', '.css', '.scss', '.map', '.md', '.pdf' ];
+JobAidHelper.EXTS_APPLICATION = [ '.js', '.html', '.htm', '.json', '.xml', '.bat' ];
 
 JobAidHelper.cacheRequestList = [];
 JobAidHelper.cacheProcessedData = {};
