@@ -18,8 +18,10 @@ JobAidHelper.NAME_jobListingApp = 'jobListingApp';
 JobAidHelper.EXTS_VIDEO = [ '.webm', '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.ogg', '.mp4', '.m4p', '.m4v', '.avi', '.wmv', '.mov', '.qt', '.flv', '.swf', '.avchd'  ];  // upper case when comparing
 JobAidHelper.EXTS_AUDIO = [ '.abc', '.flp', '.ec3', '.mp3', '.flac' ];  // upper case when comparing
 JobAidHelper.EXTS_IMAGE = [ '.tif', '.tiff', '.bmp', '.jpg', '.jpeg', '.gif', '.ico', '.png', '.eps', '.svg' ];
-JobAidHelper.EXTS_TEXT = [ '.txt', '.css', '.scss', '.map', '.md', '.pdf' ];
-JobAidHelper.EXTS_APPLICATION = [ '.js', '.html', '.htm', '.json', '.xml', '.bat' ];
+JobAidHelper.EXTS_TEXT = [ '.txt', '.css', '.scss', '.md', '.pdf' ];
+JobAidHelper.EXTS_APPLICATION = [ '.js', '.html', '.htm', '.json', '.xml', '.bat', '.map' ];
+
+//JobAidHelper.MANIFEST_FILES = [ ];
 
 JobAidHelper.cacheRequestList = [];
 JobAidHelper.cacheProcessedData = {};
@@ -233,7 +235,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 			dataType: "json",
 			success: function (response) 
 			{
-				// 1. Filter list, Sort List - New JobAid 'downloadOption' ('woMedia', 'addMedia')
+				// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
 				var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 
 				// 2. Save the list info on localStorage (PersisManager) by 'projDir' name - Does not remove existing data.
@@ -276,14 +278,14 @@ JobAidHelper.sort_filter_files = function( list, options )
 	try
 	{
 		// 1. FILTERING
-		// 1A. New JobAid Filtering with 'downloadOption' - 'woMedia', 'addMedia'
+		// 1A. New JobAid Filtering with 'downloadOption' - 'appOnly', 'mediaOnly'
 		if ( options.downloadOption && options.downloadOption !== 'all' && options.projDir )
 		{
 			// Filter with fodler name..
 			var folderName = '/' + options.projDir + '/media/';
 
-			if ( options.downloadOption === 'addMedia' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) >= 0 );
-			else if ( options.downloadOption === 'woMedia' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) === -1 );
+			if ( options.downloadOption === 'mediaOnly' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) >= 0 );
+			else if ( options.downloadOption === 'appOnly' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) === -1 );
 		}
 		// 1B. Existing Filtering Options..
 		else if ( options.audioOnly ) listFiltered = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
@@ -308,12 +310,14 @@ JobAidHelper.sort_filter_files = function( list, options )
 		// Remove audio/video type file names
 		var noMediaList = Util.cloneJson( listFiltered.filter( item => 
 			( !Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) 
-			&& !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) ) 
+			&& !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) 
+			) 
 			) );
 
 		// Add audio/video type file names at the end, audio 1st.
 		var audioList = listFiltered.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
 		var videoList = listFiltered.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) );
+
 
 
 		if ( mediaFirst ) // large file types download 1st
