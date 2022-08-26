@@ -300,6 +300,9 @@ App.checkDeviceMinSpec = function( info )
 // [JOB_AID]    
 window.addEventListener('message', function ( event ) {
 	if ( event.data.from === 'jobAidIFrame' ) JobAidHelper.msgHandle( event.data );
+
+	// Have App stay active if 'message' is received
+	SessionManager.cwsRenderObj._manageInputSwipe.updateLogoutTimer();
 });
 
 // ======================================

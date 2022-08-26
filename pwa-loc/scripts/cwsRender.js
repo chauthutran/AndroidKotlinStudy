@@ -60,9 +60,6 @@ function cwsRender()
 		me.loadSavedUserName();		
 
 		me.loginObj.render(); // Open Log Form
-	
-		// This probably gets used for menu swipe?
-		me._manageInputSwipe = inputMonitor( me );
 
 		// Translate terms setup
 		if ( me._translateEnable ) me.loadLangTermsAndTranslatePage();
@@ -90,6 +87,9 @@ function cwsRender()
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
 		me.statisticsObj = new Statistics( me );
+		
+		// This probably gets used for menu swipe?
+		me._manageInputSwipe = new inputMonitor( me );
 	};
 	// =============================================
 

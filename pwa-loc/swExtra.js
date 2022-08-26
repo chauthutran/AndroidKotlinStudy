@@ -1,3 +1,7 @@
+self.importScripts("./offline-service-worker.js");
+//self.importScripts('https://matomo.solidlines.io/offline-service-worker.js');
+matomoAnalytics.initialize( { queueLimit: 10000, timeLimit: 86400*14 } );
+
 self.addEventListener('message', (event) => 
 {
   // NOTE: More explain about 'event.waitUntil': https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil

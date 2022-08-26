@@ -41,7 +41,8 @@ ConfigManager.coolDownTime = '90000'; // 90 seconds - default.  Could be updated
 ConfigManager.staticData = {
 	soundEffects: false //Util.isMobi()
 	, autoComplete: true
-	, logoutDelay: 30 // Will be overwritten by settings > sessionTimeout
+	, logoutDelay: 30 // Will be overwritten by settings > sessionTimeout  --> will set 'logoutDelayMs'
+	, logoutDelayMs: 1800000 // 30 * 60000
 };
 
 ConfigManager.default_SettingPaging = {
@@ -1219,7 +1220,14 @@ ConfigManager.applyDefaults = function (configJson, defaults) {
 	ConfigManager.applyDefault_actionQueueActivity(configJson, defaults.action_queueActivity_Template);
 
 	// NEW
-	if (configJson.settings.sessionTimeout) ConfigManager.staticData.logoutDelay = configJson.settings.sessionTimeout;
+	if (configJson.settings.sessionTimeout) {
+		var newDelayNum = Number( configJson.settings.sessionTimeout );
+		if ( newDelayNum && newDelayNum > 0 )
+		{
+			ConfigManager.staticData.logoutDelay = newDelayNum;
+			ConfigManager.staticData.logoutDelayMs = newDelayNum * Util.MS_MIN;	
+		}
+	}
 };
 
 
