@@ -175,6 +175,8 @@ ClientDataManager.removeTempClient_ifEmptyActs = function (client) {
 
 
 ClientDataManager.removeClient = function (client, option) {
+	var removed = false;
+
 	try {
 		if (!option) option = {};
 
@@ -193,10 +195,14 @@ ClientDataManager.removeClient = function (client, option) {
 			// Remove all clientCards of this id.
 			$('div.card.client[itemid="' + client._id + '"]').remove();
 		}
+
+		removed = true;
 	}
 	catch (errMsg) {
 		console.log('Error in ClientDataManager.removeClient, errMsg: ' + errMsg);
 	}
+
+	return removed;
 };
 
 ClientDataManager.removeClientsAll = function () {
@@ -220,7 +226,7 @@ ClientDataManager.removeClientsByIdArr = function (clientIdsArr) {
 		for (var i = 0; i < clientIdsArr.length; i++) {
 			var client = ClientDataManager.getClientById(clientIdsArr[i]);
 
-			ClientDataManager.removeClient(client);
+			if ( client ) ClientDataManager.removeClient(client);
 		}
 	}
 	catch (errMsg) {
