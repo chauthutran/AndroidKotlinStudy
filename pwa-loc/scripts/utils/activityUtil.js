@@ -654,7 +654,34 @@ ActivityUtil.getTagText = function (entryTag) {
 
 	return displayValue;
 }
+
 // ===========================================================
+
+// For unknown reseaon, there are some issues with date (capturedLoc) being in literal string.  Fix that.
+ActivityUtil.payloadActDates = function(payload)
+{
+	if ( payload && payload.captureValues && payload.captureValues.date )
+	{
+		ActivityUtil.fixActDates(payload.captureValues.date);
+	}
+};
+
+ActivityUtil.fixActDates = function(actDate)
+{
+  if ( actDate )
+  {
+	 for ( var prop in actDate )
+	 {
+		var dateStr = actDate[ prop ];
+
+		if ( dateStr.length > 30 )
+		{
+		  try {  actDate[ prop ] =  UtilDate.formatDate( dateStr );  }
+		  catch(errMsg) { }  
+		}
+	 }
+  } 
+};
 
 
 // Not yet used..

@@ -568,6 +568,10 @@ ActivityDataManager.createNewPayloadActivity = function (actionUrl, blockId, for
 		if (!client) client = ClientDataManager.createClient_forActivityPayload(activityJson);
 
 
+		// NEW: fix date if any date (capturedLoc) has long literal string date value
+		ActivityUtil.fixActDates(activityJson.date);
+
+
 		// TODO: When adding, check for 'c_reg' activity not yet synced case.  If so, add new activity on bottom..
 		// Better, yet, always add new activity to after unsynced activity postion on main activity List.
 		ActivityDataManager.insertActivitiesToClient([activityJson], client, { 'addToTop': true, 'newPayloadCase': true });

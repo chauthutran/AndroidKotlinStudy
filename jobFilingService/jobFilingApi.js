@@ -53,8 +53,7 @@ app.get('/list', (req, res) =>
 {
    // reqData = { 'isLocal': localCase, 'appName': appName, 'isListingApp': true, projDir: 'proj1' };
    var reqData = JSON.parse(req.query.optionsStr);
-   dataJson = { reqData: reqData, settings: settings };
-
+   var dataJson = getDataJson( reqData, settings );
    var dir = getDirLocation(dataJson);
 
    fileNameList.walk(dir, dataJson, function (err, results) {
@@ -107,8 +106,7 @@ app.get('/manifestsInMemory', (req, res) =>
 
 function manifestDataCollect( reqData, callBack )
 {
-   dataJson = { reqData: reqData, settings: settings };
-
+   var dataJson = getDataJson( reqData, settings );
    var dir = getDirLocation(dataJson); //console.log( dir ); // only show console if local - or by request?
 
    manifestsCollect.collect(dir, dataJson, function (results, topManifest) 
@@ -118,6 +116,31 @@ function manifestDataCollect( reqData, callBack )
 
       callBack( mem_manifestResp );
    });
+};
+
+
+// --------------------------------------------------
+// ---- Util Methods
+
+function getDataJson( reqData, settings )
+{
+   var settingsCopy = Util_getJsonDeepCopy( settings );
+
+   try 
+   {
+      if ( reqData && reqData.settingsOverride )   
+      {
+         for ( var prop in reqData.settingsOverride )
+         {
+            settingsCopy[prop] = reqData.settingsOverride[prop];
+         }
+      }   
+   }
+   catch (errMsg) {
+      console.log('ERROR in getDataJson, errMsg: ' + errMsg);
+   }
+   
+   return { reqData: reqData, settings: settingsCopy };
 };
 
 
@@ -139,6 +162,22 @@ function getDirLocation(dataJson)
 
 
    return dir;
+};
+
+
+function Util_getJsonDeepCopy(jsonObj) {
+	var newJsonObj;
+
+	if (jsonObj) {
+		try {
+			newJsonObj = JSON.parse(JSON.stringify(jsonObj));
+		}
+		catch (errMsg) {
+			console.log('ERROR in Util_getJsonDeepCopy, errMsg: ' + errMsg);
+		}
+	}
+
+	return newJsonObj;
 };
 
 // ---------------------------------------------

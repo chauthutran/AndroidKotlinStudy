@@ -37,11 +37,23 @@ class ManifestsCollect
 				{
 					try
 					{
-						var manifestFile_wtPath = path.resolve( file_wtPath, 'manifest.json' );
+						var projFiles = fs.readdirSync( file_wtPath );
 	
-						var dataStr = fs.readFileSync( manifestFile_wtPath, { encoding:'utf8', flag:'r' } );
+						for ( var i = 0; i < projFiles.length; i++ )
+						{
+							var projFileName = projFiles[i];
+
+							if ( projFileName === 'manifest.json' )
+							{
+								var manifestFile_wtPath = path.resolve( file_wtPath, 'manifest.json' );
 	
-						results.push( JSON.parse( dataStr ) );	
+								var dataStr = fs.readFileSync( manifestFile_wtPath, { encoding:'utf8', flag:'r' } );
+			
+								results.push( JSON.parse( dataStr ) );	
+
+								break;
+							}
+						}
 					}
 					catch( errMsg )  {  console.log( errMsg );  }
 				}

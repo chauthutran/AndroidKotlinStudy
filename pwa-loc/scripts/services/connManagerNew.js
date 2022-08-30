@@ -26,6 +26,8 @@ ConnManagerNew.statusInfo = {
 	}
 };
 
+ConnManagerNew.tempDisableAvailableCheck = false; // Used on JobAid to not check available checks
+
 ConnManagerNew.efficiency = {
 	'Immediate_wsAvailCheck': true  // After network Stable become online (from offline), try the ws available check immedicatley..
 	, 'Immediate_OneCheckOnline': false  // If there is any one online signal, consider it as online stable
@@ -146,7 +148,8 @@ ConnManagerNew.networkCurrentRecheck = function () {
 
 // CHECK #2 - SERVER AVAILABLE CHECK
 ConnManagerNew.checkNSet_ServerAvailable = function (callBack) {
-	if (ConnManagerNew.statusInfo.networkConn.online_Stable) {
+	if (ConnManagerNew.statusInfo.networkConn.online_Stable && !ConnManagerNew.tempDisableAvailableCheck ) 
+	{
 		ConnManagerNew.serverAvailable(function (bServerAvailableNew) {
 			ConnManagerNew.changeServerAvailableIfDiff(bServerAvailableNew, ConnManagerNew.statusInfo);
 

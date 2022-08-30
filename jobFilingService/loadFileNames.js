@@ -35,11 +35,8 @@ class FileNameList
 				{
 					if (stat && stat.isDirectory()) 
 					{
-						console.log( file );
-
 						if ( self.isListingApp_jobAidFoler( dataJson, file ) ) 
 						{ 
-							console.log( 'skipCase: ' + file );  
 							next(); 
 						}
 						else

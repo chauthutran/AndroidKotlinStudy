@@ -4,7 +4,11 @@ JobAidPage.options = {
 	'title': 'Job Aids',
 	'term': 'form_title_jobAid',
 	'cssClasses': ['divJobAidPage'],
-	'zIndex': 1600
+	'zIndex': 1600,
+	'onBackClick': function() {
+		ConnManagerNew.tempDisableAvailableCheck = false;
+		console.log( 'tempDisableAvailableCheck set to false - in case the download never finished' );
+	}
 };
 
 JobAidPage.rootPath = '/jobs/jobAid/';
@@ -22,7 +26,8 @@ JobAidPage.itemJsonInMem = {};  // Temporary stored data. each proj uses this by
 
 // ------------------
 
-JobAidPage.render = function () {
+JobAidPage.render = function () 
+{
 	JobAidPage.sheetFullTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, JobAidPage.options);  // .options.preCall
 
 	JobAidPage.contentBodyTag = JobAidPage.sheetFullTag.find('.contentBody');
@@ -77,14 +82,7 @@ JobAidPage.itemOpen = function (projDir)
 	$('#divJobAid').html('').show().append(`<iframe class="jobAidIFrame" src="${srcStr}" style="${styleStr}">iframe not compatible..</iframe>`);
 };
 
-/*
-			var srcStr = JobAidPage.rootPath + itemData.projDir + '/index.html';
-			var styleStr = 'width:100%; height: 100%; overflow:auto; border:none;';
-
-			$('#divJobAid').html('').show().append(`<iframe class="jobAidIFrame" src="${srcStr}" style="${styleStr}">iframe not compatible..</iframe>`);
-*/
-
-JobAidPage.itemDownload = function (projDir, key, buildDate) 
+JobAidPage.itemDownload = function (projDir, key, itemJsonInMem) 
 {
 	if (projDir) 
 	{
@@ -95,34 +93,38 @@ JobAidPage.itemDownload = function (projDir, key, buildDate)
 		if ( key === 'Download w/o media' )
 		{
 			downloadOption = 'appOnly';
-			if ( buildDate.appBuildDate ) buildDateOption.appBuildDate = buildDate.appBuildDate;
+			if ( itemJsonInMem.appBuildDate ) buildDateOption.appBuildDate = itemJsonInMem.appBuildDate;
 		} 
 		else if ( key === 'Download app update' )
 		{
 			downloadOption = 'appOnly';
-			if ( buildDate.updateAppBuildDate ) buildDateOption.updateAppBuildDate = buildDate.updateAppBuildDate;
+			if ( itemJsonInMem.updateAppBuildDate ) buildDateOption.updateAppBuildDate = itemJsonInMem.updateAppBuildDate;
 		}
 		else if ( key === 'Download media' )
 		{
 			downloadOption = 'mediaOnly';
-			if ( buildDate.mediaBuildDate ) buildDateOption.mediaBuildDate = buildDate.mediaBuildDate;
+			if ( itemJsonInMem.mediaBuildDate ) buildDateOption.mediaBuildDate = itemJsonInMem.mediaBuildDate;
 		} 
 		else if ( key === 'Download media update' )
 		{
 			downloadOption = 'mediaOnly';
-			if ( buildDate.updateMediaBuildDate ) buildDateOption.updateMediaBuildDate = buildDate.updateMediaBuildDate;
+			if ( itemJsonInMem.updateMediaBuildDate ) buildDateOption.updateMediaBuildDate = itemJsonInMem.updateMediaBuildDate;
 		}
 		else
 		{
 			downloadOption = 'all';
-			if ( buildDate.appBuildDate ) buildDateOption.appBuildDate = buildDate.appBuildDate;
-			if ( buildDate.mediaBuildDate ) buildDateOption.mediaBuildDate = buildDate.mediaBuildDate;	
+			if ( itemJsonInMem.appBuildDate ) buildDateOption.appBuildDate = itemJsonInMem.appBuildDate;
+			if ( itemJsonInMem.mediaBuildDate ) buildDateOption.mediaBuildDate = itemJsonInMem.mediaBuildDate;	
 		}
 
+		var optionJson = { projDir: projDir, target: 'jobAidPage', downloadOption: downloadOption, buildDateOption: buildDateOption };
+		if ( itemJsonInMem.outerMediaFoler ) optionJson.outerMediaFoler = itemJsonInMem.outerMediaFoler;
 
-		// TODO: be able to pass the media options..  <-- only media, with media, without media
-		JobAidHelper.runTimeCache_JobAid({ projDir: projDir, target: 'jobAidPage', downloadOption: downloadOption, buildDateOption: buildDateOption });
 
+		// #1. AVAILABILITY TEMP SET
+		ConnManagerNew.tempDisableAvailableCheck = true; 
+
+		JobAidHelper.runTimeCache_JobAid( optionJson );
 	}
 	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
 };
@@ -334,12 +336,12 @@ JobAidPage.itemPopulate = function (itemData, itemTag, statusType) {
 	else
 	{
 		// reset 'itemData' for this projDir
-		JobAidPage.itemJsonInMem[ itemData.projDir ] = {};
-		var itemJsonInMem = JobAidPage.itemJsonInMem[ itemData.projDir ];
+		var itemJsonInMem = Util.cloneJson( itemData );
+		JobAidPage.itemJsonInMem[ itemData.projDir ] = itemJsonInMem;
+		
 		itemJsonInMem.statusType = statusType;
-
-		if ( itemData.appBuildDate ) itemJsonInMem.appBuildDate = itemData.appBuildDate;
-		if ( itemData.mediaBuildDate ) itemJsonInMem.mediaBuildDate = itemData.mediaBuildDate;
+		//if ( itemData.appBuildDate ) itemJsonInMem.appBuildDate = itemData.appBuildDate;
+		//if ( itemData.mediaBuildDate ) itemJsonInMem.mediaBuildDate = itemData.mediaBuildDate;
 		
 
 		// type = 'available' vs 'downloaded'  // itemData = {code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false };
@@ -560,6 +562,9 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 			else 
 			{
 				// === DOWNLOAD 'FINISH' OPERATION STEPS ===
+				// #2. AVAILABILITY TEMP SET
+				ConnManagerNew.tempDisableAvailableCheck = false; 
+
 
 				spanDownloadStatusTag.html('<strong>Download completed!</strong>');
 				projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
@@ -707,6 +712,9 @@ JobAidPage.getServerManifestsRun = function( callBack )
 		var requestUrl = (options.isLocal) ? 'http://localhost:8383/manifests' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsManifests')
 		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
 	
+		// NEW: jobAid settingsOverride
+		if ( ConfigManager.getJobAidSetting().settingsOverride ) options.settingsOverride = ConfigManager.getJobAidSetting().settingsOverride;
+
 		var optionsStr = JSON.stringify( options );
 	
 		$.ajax({
@@ -715,10 +723,6 @@ JobAidPage.getServerManifestsRun = function( callBack )
 			dataType: "json",
 			success: function (response) 
 			{
-	
-				// TODO: 
-	
-				// console.log( 'success: ' );  console.log( response );
 				if ( callBack ) callBack( response );
 			},
 			error: function ( error ) {

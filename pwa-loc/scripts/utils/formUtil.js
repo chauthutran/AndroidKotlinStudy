@@ -195,7 +195,11 @@ FormUtil.sheetFullSetup = function (template, options) {
 
 	// 2. Set backButton - with title and class identifications
 	var btnBackTag = sheetFullTag.find('img.btnBack').addClass(cssClasses);
-	btnBackTag.off('click').click(function () { sheetFullTag.remove(); });
+	btnBackTag.off('click').click(function () 
+	{ 
+		sheetFullTag.remove(); 
+		if ( options.onBackClick ) options.onBackClick();
+	});
 
 
 	// 3. NEW: PREVIEW STYLE CHANGES <-- NOTE: WHAT IS THIS?
