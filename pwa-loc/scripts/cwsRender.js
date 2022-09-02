@@ -438,6 +438,8 @@ function cwsRender()
 		me.clearMenuPlaceholders();
 		Menu.navDrawerDivTag.empty();
 
+		$( '.btnBack' ).click();  // Cloase all sheetFull pages..
+
 		//  Do we need to do this?
 		me.hideActiveSession_UIcontent(); // should be placed in 'hidePageDiv'?
 
