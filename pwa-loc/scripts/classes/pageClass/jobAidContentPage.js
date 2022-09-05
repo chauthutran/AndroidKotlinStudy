@@ -86,7 +86,7 @@ JobAidContentPage.getFileName_FolderPath = function(url, projDir)
 
 	try
 	{
-		var projDirRoot = '/jobs/jobAid/' + projDir;
+		var projDirRoot = JobAidHelper.rootDir_jobAid + projDir;
 
 		var folderPath = url.replace( projDirRoot, '' );  // remove the name as well.
 	

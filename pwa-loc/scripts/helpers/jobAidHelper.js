@@ -9,6 +9,10 @@ JobAidHelper.jobAid_startPage = 'index1.html';
 
 JobAidHelper.jobAid_startPagePath = 'jobs/' + JobAidHelper.jobAid_startPage;
 
+JobAidHelper.rootDir = '/jobs/';
+JobAidHelper.rootDir_jobAid = '/jobs/jobAid/';
+
+
 JobAidHelper.jobAid_CACHE_URLS2 = 'CACHE_URLS2';
 JobAidHelper.jobAid_CACHE_DELETE = 'CACHE_DELETE';
 JobAidHelper.jobAid_jobTest2 = 'jobTest2';
@@ -77,10 +81,6 @@ JobAidHelper.deleteCacheKeys = async function( partialPath )
 	return deletedArr;
 };
 
-
-// JobAidHelper.deleteCacheKeys( '/jobs/jobAid/OM_LOW/' ).then( function( deletedArr ) {  console.log( deletedArr );  });
-
-
 // ---------------------------------------------------
 // ---- New Pending Implementations -----
 
@@ -122,7 +122,7 @@ JobAidHelper.getCachedDataInfo = function( projDir, callBack )
 			{ 
 				var url = JobAidHelper.modifyUrlFunc( request.url );
 
-				if ( url.indexOf( '/jobs/jobAid/' + projDir ) === 0 )
+				if ( url.indexOf( JobAidHelper.rootDir_jobAid + projDir ) === 0 )
 				{
 					var itemJson = { url: url };
 					// Check the storage and add additional info
@@ -141,7 +141,7 @@ JobAidHelper.getCachedDataInfo = function( projDir, callBack )
 JobAidHelper.modifyUrlFunc = function( url ) 
 {
   if ( url ) {
-	 var jobStrIdx = url.indexOf( '/jobs/' );
+	 var jobStrIdx = url.indexOf( JobAidHelper.rootDir );
 	 if ( jobStrIdx >= 0 ) url = url.substr( jobStrIdx );  
   }
 
@@ -282,14 +282,14 @@ JobAidHelper.sort_filter_files = function( list, options )
 	try
 	{
 		// 1. FILTERING
-		// 1A. New JobAid Filtering with 'downloadOption' - 'appOnly', 'mediaOnly'
+		// 1A. New JobAid Filtering with 'downloadOption' - 'appOnly', 'appOnly_Update', 'mediaOnly', 'mediaOnly_Update'
 		if ( options.downloadOption && options.downloadOption !== 'all' && options.projDir )
 		{
 			// Filter with fodler name..
-			var folderName = '/' + options.projDir + '/media/';
+			var mediaFolderName = '/' + options.projDir + '/media/';
 
-			if ( options.downloadOption === 'mediaOnly' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) >= 0 );
-			else if ( options.downloadOption === 'appOnly' ) listFiltered = list.filter( fileName => fileName.indexOf( folderName ) === -1 );
+			if ( options.downloadOption.indexOf( 'mediaOnly' ) === 0 ) listFiltered = list.filter( fileName => fileName.indexOf( mediaFolderName ) >= 0 );
+			else if ( options.downloadOption.indexOf( 'appOnly' ) === 0 ) listFiltered = list.filter( fileName => fileName.indexOf( mediaFolderName ) === -1 );
 		}
 		// 1B. Existing Filtering Options..
 		else if ( options.audioOnly ) listFiltered = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
