@@ -37,47 +37,46 @@ JobAidPage.render = function ()
 	JobAidPage.setUpPageContentLayout( JobAidPage.contentBodyTag, JobAidPage.divFileContentTag );
 
 	
-	JobAidPage.divAvailablePacksTag = contentBodyTag.find('div.divAvailablePacks'); //.html( '' );
-	JobAidPage.divDownloadedPacksTag = contentBodyTag.find('div.divDownloadedPacks'); //.html( '' );
+	JobAidPage.divAvailablePacksTag = JobAidPage.contentBodyTag.find('div.divAvailablePacks'); //.html( '' );
+	JobAidPage.divDownloadedPacksTag = JobAidPage.contentBodyTag.find('div.divDownloadedPacks'); //.html( '' );
 
 	
 	// Populate 'Available' & 'Downloaded' sections List
 	JobAidPage.populateSectionLists( function () {
-		TranslationManager.translatePage();
+		//TranslationManager.translatePage();
+
+		/*
+		// Item Right UI 3 dot Context Menu - select event.
+		$.contextMenu({
+			selector: 'div.jobContextMenu',
+			trigger: 'left',
+			build: function ($triggerElement, e) 
+			{
+				var jobAidItemTag = $triggerElement.closest('div.jobAidItem');
+
+				var projDir = jobAidItemTag.attr('projDir');
+
+				var menusStr = jobAidItemTag.attr('menus');
+				var menusArr = menusStr.split( ';' );
+
+				var items = {};
+				menusArr.forEach( menuStr => {  items[ menuStr ] = { name: menuStr };  });
+
+				return {
+					items: items,
+					callback: function (key, options) 
+					{
+						if ( ['Download', 'Download w/o media', 'Download with media', 'Download media', 'Download app update'
+						, 'Download media update' ].indexOf( key ) >= 0 ) JobAidItem.itemDownload(projDir, key );
+						else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
+						else if (key === 'Delete') JobAidItem.itemDelete(projDir);
+						else if (key === 'Open') JobAidItem.itemOpen(projDir);
+					}
+				};
+			}
+		});
+		*/		
 	});
-
-
-	// Item Right UI 3 dot Context Menu - select event.
-	$.contextMenu({
-		selector: 'div.jobContextMenu',
-		trigger: 'left',
-		build: function ($triggerElement, e) 
-		{
-			var jobAidItemTag = $triggerElement.closest('div.jobAidItem');
-
-			var projDir = jobAidItemTag.attr('projDir');
-
-			var menusStr = jobAidItemTag.attr('menus');
-			var menusArr = menusStr.split( ';' );
-
-			var items = {};
-			menusArr.forEach( menuStr => {  items[ menuStr ] = { name: menuStr };  });
-
-
-			return {
-				items: items,
-				callback: function (key, options) 
-				{
-					if ( ['Download', 'Download w/o media', 'Download with media', 'Download media', 'Download app update'
-					 , 'Download media update' ].indexOf( key ) >= 0 ) JobAidItem.itemDownload(projDir, key );
-					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
-					else if (key === 'Delete') JobAidItem.itemDelete(projDir);
-					else if (key === 'Open') JobAidItem.itemOpen(projDir);
-				}
-			};
-		}
-	});
-
 };
 
 
@@ -105,7 +104,7 @@ JobAidPage.populateSectionLists = function ( callBack )
 
 
 		// STEP 2. Get Cached Manifests & display/list them
-		JobAidPage.downloadedManifestList = JobAidPage.retrieve_DownloadedManifestList( JobAidPage.divDownloadedPacksTag );
+		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList( JobAidPage.divDownloadedPacksTag );
 		JobAidPage.populateDownloadedItems( JobAidPage.divDownloadedPacksTag, JobAidPage.downloadedManifestList );
 		
 		if (callBack) callBack();
@@ -611,20 +610,16 @@ JobAidItem.itemDelete = function (projDir)
 {
 	var itemData = Util.getFromList(JobAidPage.availableManifestList, projDir, 'projDir');
 
-	var result = confirm('Are you sure you want to delete this, "' + itemData.projDir + '"?');
+	var result = confirm('Are you sure you want to delete this, "' + projDir + '"?');
 
 	if (result) 
 	{
-		JobAidHelper.deleteCacheKeys(JobAidHelper.rootDir_jobAid + itemData.projDir + '/').then(function (deletedArr) 
+		JobAidHelper.deleteCacheKeys(JobAidHelper.rootDir_jobAid + projDir + '/').then(function (deletedArr) 
 		{
 			// Delete on localStorage 'persisData'
-			PersisDataLSManager.deleteJobFilingProjDir(itemData.projDir);
+			PersisDataLSManager.deleteJobFilingProjDir( projDir );
 
-			JobAidPage.populateSectionLists( function () {
-				TranslationManager.translatePage();
-			});
-
-			// JobAidPage.updateSectionLists(itemData.projDir, 'downloaded_delete');
+			JobAidPage.populateSectionLists( () => TranslationManager.translatePage() );  // JobAidPage.updateSectionLists(itemData.projDir, 'downloaded_delete');
 
 			MsgManager.msgAreaShow( 'The pack has been deleted' );
 		});
@@ -640,12 +635,14 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 	if ( !itemData.projDir ) MsgManager.msgAreaShowErr( 'FAILED to populate item - NO "projDir"' );
 	else
 	{
+		var projDir = itemData.projDir;
+
 		// reset 'itemData' for this projDir		
 
 		// type = 'available' vs 'downloaded'  // itemData = {code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false };
 		itemTag.off('click'); // reset previous click if exists.
 		itemTag.attr('data-language', itemData.code);
-		itemTag.attr('projDir', itemData.projDir);
+		itemTag.attr('projDir', projDir);
 		itemTag.attr('statusType', statusType);
 	
 	
