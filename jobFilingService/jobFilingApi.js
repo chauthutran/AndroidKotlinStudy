@@ -58,10 +58,25 @@ app.get('/list', (req, res) =>
 
    fileNameList.walk(dir, dataJson, function (err, results) {
       if (err) throw err;
-
       // console.log( results ); // only show console if local - or by request?
+      
+      // NEW: if outerMediaFoler: 'folderName' is used, walk that folder as well..
+      if ( reqData.outerMediaFoler )
+      {
+         var mediaDir = getDirLocation(dataJson, reqData.outerMediaFoler );
 
-      res.json({ list: results });
+         fileNameList.walk(mediaDir, dataJson, function (err, results_media) {
+            if (err) throw err;
+
+            results = results.concat(results_media);
+
+            res.json({ list: results });
+         });      
+      }
+      else
+      {
+         res.json({ list: results });
+      }
    });
 
 });
@@ -144,7 +159,7 @@ function getDataJson( reqData, settings )
 };
 
 
-function getDirLocation(dataJson) 
+function getDirLocation(dataJson, outerMediaFoler ) 
 {
    var dir = '';
    var divider = '/';
@@ -155,11 +170,18 @@ function getDirLocation(dataJson)
       fileBaseDir = dataJson.settings.fileBaseLocl;
    }
 
+   // By default, this is 'jobs' folder - which 'listingApp' files exists.
    dir = fileBaseDir + divider + dataJson.reqData.appName + divider + dataJson.settings.jobsDir;
 
-   // If not listing app, add more sub folder..
-   if (!dataJson.reqData.isListingApp) dir = dir + divider + dataJson.settings.jobAidDir + divider + dataJson.reqData.projDir;
-
+   // If not listing app, add more sub folder - for projDir location.
+   if ( outerMediaFoler )
+   {
+      dir = dir + divider + dataJson.settings.jobAidDir + divider + outerMediaFoler;
+   }
+   else if (!dataJson.reqData.isListingApp) 
+   {
+      dir = dir + divider + dataJson.settings.jobAidDir + divider + dataJson.reqData.projDir;
+   }
 
    return dir;
 };

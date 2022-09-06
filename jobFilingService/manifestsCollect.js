@@ -14,12 +14,13 @@ class ManifestsCollect
 		var topManifest = {};
 		var results = [];  // {};
 
-		var files = fs.readdirSync( dir );
+		var topLvl_files = fs.readdirSync( dir );
 		
-		files.forEach( fileName => 
+		topLvl_files.forEach( fileName => 
 		{
 			var file_wtPath = path.resolve( dir, fileName );
 		
+			// #1. Top level (overall) manifest file
 			if ( fileName === 'manifest.json' ) 
 			{
 				try
@@ -29,34 +30,15 @@ class ManifestsCollect
 				}
 				catch( errMsg )  {  console.log( errMsg );  }
 			} 
-			else
-			{			
-				var stat = fs.statSync( file_wtPath );
-
-				if ( stat && stat.isDirectory() ) 
+			// #2. Out of folder (prefered) manifest file - changed from each folder manifest file
+			else if ( fileName.indexOf( '_manifest.json' ) > 0 )
+			{
+				try
 				{
-					try
-					{
-						var projFiles = fs.readdirSync( file_wtPath );
-	
-						for ( var i = 0; i < projFiles.length; i++ )
-						{
-							var projFileName = projFiles[i];
-
-							if ( projFileName === 'manifest.json' )
-							{
-								var manifestFile_wtPath = path.resolve( file_wtPath, 'manifest.json' );
-	
-								var dataStr = fs.readFileSync( manifestFile_wtPath, { encoding:'utf8', flag:'r' } );
-			
-								results.push( JSON.parse( dataStr ) );	
-
-								break;
-							}
-						}
-					}
-					catch( errMsg )  {  console.log( errMsg );  }
+					var dataStr = fs.readFileSync( file_wtPath, { encoding:'utf8', flag:'r' } );
+					results.push( JSON.parse( dataStr ) );	
 				}
+				catch( errMsg )  {  console.log( errMsg );  }
 			}
 		});
 
@@ -65,3 +47,4 @@ class ManifestsCollect
 };
   
 module.exports = { ManifestsCollect };
+
