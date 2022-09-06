@@ -43,40 +43,40 @@ JobAidPage.render = function ()
 	
 	// Populate 'Available' & 'Downloaded' sections List
 	JobAidPage.populateSectionLists( function () {
-		//TranslationManager.translatePage();
-
-		/*
-		// Item Right UI 3 dot Context Menu - select event.
-		$.contextMenu({
-			selector: 'div.jobContextMenu',
-			trigger: 'left',
-			build: function ($triggerElement, e) 
-			{
-				var jobAidItemTag = $triggerElement.closest('div.jobAidItem');
-
-				var projDir = jobAidItemTag.attr('projDir');
-
-				var menusStr = jobAidItemTag.attr('menus');
-				var menusArr = menusStr.split( ';' );
-
-				var items = {};
-				menusArr.forEach( menuStr => {  items[ menuStr ] = { name: menuStr };  });
-
-				return {
-					items: items,
-					callback: function (key, options) 
-					{
-						if ( ['Download', 'Download w/o media', 'Download with media', 'Download media', 'Download app update'
-						, 'Download media update' ].indexOf( key ) >= 0 ) JobAidItem.itemDownload(projDir, key );
-						else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
-						else if (key === 'Delete') JobAidItem.itemDelete(projDir);
-						else if (key === 'Open') JobAidItem.itemOpen(projDir);
-					}
-				};
-			}
-		});
-		*/		
+		TranslationManager.translatePage();
 	});
+
+
+	// Item Right UI 3 dot Context Menu - select event.
+	$.contextMenu({
+		selector: 'div.jobContextMenu',
+		trigger: 'left',
+		build: function ($triggerElement, e) 
+		{
+			var jobAidItemTag = $triggerElement.closest('div.jobAidItem');
+
+			var projDir = jobAidItemTag.attr('projDir');
+
+			var menusStr = jobAidItemTag.attr('menus');
+			var menusArr = menusStr.split( ';' );
+
+			var items = {};
+			menusArr.forEach( menuStr => {  items[ menuStr ] = { name: menuStr };  });
+
+			return {
+				items: items,
+				callback: function (key, options) 
+				{
+					if ( ['Download', 'Download w/o media', 'Download with media', 'Download media', 'Download app update'
+					, 'Download media update' ].indexOf( key ) >= 0 ) JobAidItem.itemDownload(projDir, key );
+					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
+					else if (key === 'Delete') JobAidItem.itemDelete(projDir);
+					else if (key === 'Open') JobAidItem.itemOpen(projDir);
+				}
+			};
+		}
+	});
+
 };
 
 
@@ -97,14 +97,18 @@ JobAidPage.populateSectionLists = function ( callBack )
 
 
 	// STEP 1. Get Server Manifests
-	JobAidManifest.retrieve_AvailableManifestList( JobAidPage.divAvailablePacksTag, function ( availableManifestList ) 
+	JobAidManifest.retrieve_AvailableManifestList( function() 
+	{
+		JobAidPage.divAvailablePacksTag.html('').append(JobAidPage.loadingImageStr);  // Loading Image with clearing
+	}, 
+	function ( availableManifestList ) 
 	{
 		JobAidPage.availableManifestList = availableManifestList;
 		JobAidPage.populateAvailableItems( JobAidPage.divAvailablePacksTag, availableManifestList );
 
 
 		// STEP 2. Get Cached Manifests & display/list them
-		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList( JobAidPage.divDownloadedPacksTag );
+		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
 		JobAidPage.populateDownloadedItems( JobAidPage.divDownloadedPacksTag, JobAidPage.downloadedManifestList );
 		
 		if (callBack) callBack();
@@ -300,9 +304,9 @@ JobAidPage.divFileContentTag = `
 
 // Retrieve manifest list in server
 // JobAidPage.getServerManifestsRun <-- OLD
-JobAidManifest.retrieve_AvailableManifestList = function( divAvailablePacksTag, callBack ) 
+JobAidManifest.retrieve_AvailableManifestList = function( preCallBack, callBack ) 
 {
-	divAvailablePacksTag.html('').append(JobAidPage.loadingImageStr);  // Loading Image with clearing
+	if ( preCallBack ) preCallBack();
 
 	if ( ConnManagerNew.isAppMode_Online() )
 	{
@@ -328,27 +332,25 @@ JobAidManifest.retrieve_AvailableManifestList = function( divAvailablePacksTag, 
 			error: function ( error ) {
 				console.log( 'error: ' );
 				console.log( error );
-				MsgManager.msgAreaShowErr( 'FAILED on retrieve_AvailableManifestList' );			
+				MsgManager.msgAreaShowErr( 'FAILED on retrieve_AvailableManifestList' );
+				if ( callBack ) callBack( [] );
 			},
-			complete: function () { 
-				divAvailablePacksTag.html('');
-			}			
+			complete: function () { }			
 		});
 	}
 	else
 	{
-		divAvailablePacksTag.html('');
 		if ( callBack ) callBack( [] );
 	}
 };
 
 // Retrieve manifest list (downloaded) in local storage
 // JobAidPage.getDeviceCache_Manifests <-- OLD
-JobAidManifest.retrieve_DownloadedManifestList = function( divDownloadedPacksTag ) 
+JobAidManifest.retrieve_DownloadedManifestList = function() 
 {
 	var manifestList = [];
 
-	divDownloadedPacksTag.html('').append(JobAidPage.loadingImageStr);  // Loading Image with clearing
+	//if ( preCallBack ) preCallBack();
 
 	try 
 	{
@@ -378,8 +380,6 @@ JobAidManifest.retrieve_DownloadedManifestList = function( divDownloadedPacksTag
 	catch (errMsg) {
 		console.log('ERROR in JobAidPage.retrieve_DownloadedManifestList, ' + errMsg);
 	}
-
-	divDownloadedPacksTag.html('');
 
 	return manifestList;
 };
