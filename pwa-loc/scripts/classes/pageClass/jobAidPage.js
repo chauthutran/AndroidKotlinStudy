@@ -1,4 +1,8 @@
 function JobAidPage() { };
+function JobAidItem() { };
+function JobAidManifest() { };
+
+// ----------------------------------
 
 JobAidPage.options = {
 	'title': 'Job Aids',
@@ -11,7 +15,6 @@ JobAidPage.options = {
 	}
 };
 
-JobAidPage.rootPath = '/jobs/jobAid/';
 
 JobAidPage.sheetFullTag;
 JobAidPage.contentBodyTag;
@@ -19,10 +22,9 @@ JobAidPage.divAvailablePacksTag;
 JobAidPage.divDownloadedPacksTag;
 JobAidPage.contentPageTag;
 
-JobAidPage.serverManifestsData = [];
+JobAidPage.availableManifestList = [];
 
-JobAidPage.itemJsonInMem = {};  // Temporary stored data. each proj uses this by being added under as sub prop.
-									// Gets assigned/reset each time on itemPopulate.
+JobAidPage.loadingImageStr = '<img class="pin_pw_loading" src="images/loading_big_blue.gif" style="margin: 10px;"/>';
 
 // ------------------
 
@@ -34,11 +36,18 @@ JobAidPage.render = function ()
 
 	JobAidPage.setUpPageContentLayout( JobAidPage.contentBodyTag, JobAidPage.divFileContentTag );
 
-	JobAidPage.populateSectionLists(JobAidPage.contentBodyTag, function () {
+	
+	JobAidPage.divAvailablePacksTag = JobAidPage.contentBodyTag.find('div.divAvailablePacks'); //.html( '' );
+	JobAidPage.divDownloadedPacksTag = JobAidPage.contentBodyTag.find('div.divDownloadedPacks'); //.html( '' );
+
+	
+	// Populate 'Available' & 'Downloaded' sections List
+	JobAidPage.populateSectionLists( function () {
 		TranslationManager.translatePage();
 	});
 
 
+	// Item Right UI 3 dot Context Menu - select event.
 	$.contextMenu({
 		selector: 'div.jobContextMenu',
 		trigger: 'left',
@@ -54,15 +63,15 @@ JobAidPage.render = function ()
 			var items = {};
 			menusArr.forEach( menuStr => {  items[ menuStr ] = { name: menuStr };  });
 
-
 			return {
 				items: items,
 				callback: function (key, options) 
 				{
-					if ( ['Download', 'Download w/o media', 'Download with media', 'Download media', 'Download app update', 'Download media update' ].indexOf( key ) >= 0 ) JobAidPage.itemDownload(projDir, key, JobAidPage.itemJsonInMem[ projDir ] );
+					if ( ['Download', 'Download w/o media', 'Download with media', 'Download media', 'Download app update'
+					, 'Download media update' ].indexOf( key ) >= 0 ) JobAidItem.itemDownload(projDir, key );
 					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
-					else if (key === 'Delete') JobAidPage.itemDelete(projDir);
-					else if (key === 'Open') JobAidPage.itemOpen(projDir);
+					else if (key === 'Delete') JobAidItem.itemDelete(projDir);
+					else if (key === 'Open') JobAidItem.itemOpen(projDir);
 				}
 			};
 		}
@@ -70,146 +79,6 @@ JobAidPage.render = function ()
 
 };
 
-// ------------------
-// --- EVENTS
-
-JobAidPage.itemOpen = function (projDir) 
-{
-	// Open JobAid iFrame Click - Up in iFrame Click Setup..
-	var srcStr = JobAidPage.rootPath + projDir + '/index.html';
-	var styleStr = 'width:100%; height: 100%; overflow:auto; border:none;';
-
-	$('#divJobAid').html('').show().append(`<iframe class="jobAidIFrame" src="${srcStr}" style="${styleStr}">iframe not compatible..</iframe>`);
-};
-
-JobAidPage.itemDownload = function (projDir, key, itemJsonInMem) 
-{
-	if (projDir) 
-	{
-		var downloadOption = ''; // 'all';
-		var buildDateOption = {};
-
-
-		if ( key === 'Download w/o media' )
-		{
-			downloadOption = 'appOnly';
-			if ( itemJsonInMem.appBuildDate ) buildDateOption.appBuildDate = itemJsonInMem.appBuildDate;
-		} 
-		else if ( key === 'Download app update' )
-		{
-			downloadOption = 'appOnly';
-			if ( itemJsonInMem.updateAppBuildDate ) buildDateOption.updateAppBuildDate = itemJsonInMem.updateAppBuildDate;
-		}
-		else if ( key === 'Download media' )
-		{
-			downloadOption = 'mediaOnly';
-			if ( itemJsonInMem.mediaBuildDate ) buildDateOption.mediaBuildDate = itemJsonInMem.mediaBuildDate;
-		} 
-		else if ( key === 'Download media update' )
-		{
-			downloadOption = 'mediaOnly';
-			if ( itemJsonInMem.updateMediaBuildDate ) buildDateOption.updateMediaBuildDate = itemJsonInMem.updateMediaBuildDate;
-		}
-		else
-		{
-			downloadOption = 'all';
-			if ( itemJsonInMem.appBuildDate ) buildDateOption.appBuildDate = itemJsonInMem.appBuildDate;
-			if ( itemJsonInMem.mediaBuildDate ) buildDateOption.mediaBuildDate = itemJsonInMem.mediaBuildDate;	
-		}
-
-		var optionJson = { projDir: projDir, target: 'jobAidPage', downloadOption: downloadOption, buildDateOption: buildDateOption };
-		if ( itemJsonInMem.outerMediaFoler ) optionJson.outerMediaFoler = itemJsonInMem.outerMediaFoler;
-
-
-		// #1. AVAILABILITY TEMP SET
-		ConnManagerNew.tempDisableAvailableCheck = true; 
-
-		JobAidHelper.runTimeCache_JobAid( optionJson );
-	}
-	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
-};
-
-
-JobAidPage.itemDelete = function (projDir) 
-{
-	var itemData = Util.getFromList(JobAidPage.serverManifestsData, projDir, 'projDir');
-
-	var result = confirm('Are you sure you want to delete this, "' + itemData.projDir + '"?');
-
-	if (result) 
-	{
-		JobAidHelper.deleteCacheKeys(JobAidPage.rootPath + itemData.projDir + '/').then(function (deletedArr) 
-		{
-			// Delete on localStorage 'persisData'
-			PersisDataLSManager.deleteJobFilingProjDir(itemData.projDir);
-
-			JobAidPage.populateSectionLists(JobAidPage.contentBodyTag, function () {
-				TranslationManager.translatePage();
-			});
-
-			// JobAidPage.updateSectionLists(itemData.projDir, 'downloaded_delete');
-
-			MsgManager.msgAreaShow( 'The pack has been deleted' );
-		});
-	}
-};
-
-
-// =========================================
-
-JobAidPage.getManifestJobAidInfo = function (list, option) 
-{
-	if ( !option ) option = {};
-
-	var manifestsData = [];
-
-	try 
-	{
-		if (Util.isTypeArray(list)) 
-		{
-			list.forEach(item => 
-			{
-				if (Util.isTypeObject(item.jobAidInfo)) 
-				{
-					var jobAidManifest = item.jobAidInfo;
-
-					// If 'appBuildDate' is not available, and 'buildDate' exists, use that instead.
-					if ( !jobAidManifest.appBuildDate && jobAidManifest.buildDate ) jobAidManifest.appBuildDate = jobAidManifest.buildDate;
-					// What about media?  also use 'buildDate'?  No, not for now.					
-
-
-					// #1. If persisStorage has this data, use that data instead!!!
-					if ( jobAidManifest.projDir && option.mergeWithPersisStorageData )
-					{
-						var projStatus = JobAidPage.getProjStatus_PersisStorage( jobAidManifest.projDir );
-						var infoColl = projStatus.infoCollect;
-						if ( infoColl )
-						{
-							if ( infoColl.appBuildDate ) jobAidManifest.appBuildDate = infoColl.appBuildDate;
-							if ( infoColl.mediaBuildDate ) jobAidManifest.mediaBuildDate = infoColl.mediaBuildDate;
-							if ( infoColl.buildDate ) jobAidManifest.buildDate = infoColl.buildDate;
-							// TODO: We can also add 'fileCount', 'fileSize' here..
-						}
-					}
-
-					manifestsData.push(jobAidManifest);
-				}
-			});
-		}
-	}
-	catch (errMsg) {
-		console.log('ERROR in JobAidPage.getManifestJobAidInfo, ' + errMsg);
-	}
-
-	return manifestsData;
-};
-
-
-// ===================================================
-// ======= infoCollect Management Related!!  (projStatus.infoCollect)
-
-JobAidPage.infoCollect_update = function() { };
-JobAidPage.infoCollect_downloadSet = function() { };  // some clearing of matching 'buildDate'
 
 // ===================================================
 
@@ -219,298 +88,60 @@ JobAidPage.setUpPageContentLayout = function (contentBodyTag, divFileContentTag)
 };
 
 
-// TODO: this only gets called once on page 'render' time..  NOT in each item move..
-//		- We need to add same tag
-
 // 'Available' - from Server Manifest Data, 'Downloaded' - from cached manifest.json files
-JobAidPage.populateSectionLists = function (contentBodyTag, callBack) {
-	var divAvailablePacksTag = contentBodyTag.find('div.divAvailablePacks'); //.html( '' );
-	var divDownloadedPacksTag = contentBodyTag.find('div.divDownloadedPacks'); //.html( '' );
+JobAidPage.populateSectionLists = function ( callBack ) 
+{
+	// STEP 0. Clear the list html:
+	JobAidPage.divAvailablePacksTag.html( '' );
+	JobAidPage.divDownloadedPacksTag.html( '' );
 
-	JobAidPage.divAvailablePacksTag = divAvailablePacksTag;
-	JobAidPage.divDownloadedPacksTag = divDownloadedPacksTag;
-
-
-	// populate with data
-	var loadingImageStr = '<img class="pin_pw_loading" src="images/loading_big_blue.gif" style="margin: 10px;"/>';
 
 	// STEP 1. Get Server Manifests
-	divAvailablePacksTag.append(loadingImageStr);
-
-	JobAidPage.getServerManifestsRun(function (results) {
-		divAvailablePacksTag.html(''); // Clear loading Img
-
-		var list = results.list;
-		JobAidPage.serverManifestsData = JobAidPage.getManifestJobAidInfo(list);
-
-		// List All server manifest list - Available Packs
-		JobAidPage.serverManifestsData.forEach(function (item) {
-			var itemTag = $(JobAidPage.templateItem);
-			JobAidPage.itemPopulate(item, itemTag, 'available');
-			divAvailablePacksTag.append(itemTag);
-		});
+	JobAidManifest.retrieve_AvailableManifestList( function() 
+	{
+		JobAidPage.divAvailablePacksTag.html('').append(JobAidPage.loadingImageStr);  // Loading Image with clearing
+	}, 
+	function ( availableManifestList ) 
+	{
+		JobAidPage.availableManifestList = availableManifestList;
+		JobAidPage.populateAvailableItems( JobAidPage.divAvailablePacksTag, availableManifestList );
 
 
 		// STEP 2. Get Cached Manifests & display/list them
-		divDownloadedPacksTag.append(loadingImageStr);
-
-		JobAidPage.getDeviceCache_Manifests(function (urlList) {
-			var result = { arr: [], obj: {} };
-
-			JobAidPage.performRetrieve_ManifestJsons(urlList, 0, result, function (result) 
-			{
-				divDownloadedPacksTag.html('');
-
-				var manifests = JobAidPage.getManifestJobAidInfo(result.arr, { mergeWithPersisStorageData: true } );
-
-				// Cached Item display
-				manifests.forEach(function (item) 
-				{
-					var itemTag = $(JobAidPage.templateItem);
-					JobAidPage.itemPopulate(item, itemTag, 'downloaded');
-					divDownloadedPacksTag.append(itemTag);
-				});
-
-				if (callBack) callBack();
-			});
-		});
+		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
+		JobAidPage.populateDownloadedItems( JobAidPage.divDownloadedPacksTag, JobAidPage.downloadedManifestList );
+		
+		if (callBack) callBack();
 	});
 };
 
 
-// On 'available' download finish --> remove it from 'available' &
-// we will need to refresh the cache list?  Or just add to the cached list??...
-// OBSOLTE..
-JobAidPage.updateSectionLists = function (projDir, statusType) {
+JobAidPage.populateAvailableItems = function( divAvailablePacksTag, manifestList )
+{
+	divAvailablePacksTag.html(''); // Clear loading Img
 
-	// TODO: 'item' is old data, thus, need to be updated...  + need to append with persis data..
-	var item = Util.getFromList(JobAidPage.serverManifestsData, projDir, 'projDir');
-
-	if (!item) alert('Not found the item, ' + projDir);
-	else {
-		if (statusType === 'available') 
-		{
-			// Fresh Download case: 'available' -> 'downloaded'
-			JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
-
-			var itemTag = $(JobAidPage.templateItem);
-			JobAidPage.itemPopulate(item, itemTag, 'downloaded');
-			JobAidPage.divDownloadedPacksTag.append(itemTag);
-		}
-		else if (statusType === 'downloaded') 
-		{
-			// Download Update Caes: Reload with fresh status.
-
-			var itemTag = JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']').html('').append(JobAidPage.templateItem_body);
-
-			JobAidPage.itemPopulate(item, itemTag, 'downloaded');
-			JobAidPage.divDownloadedPacksTag.append(itemTag);
-		}
-		else if (statusType === 'downloaded_delete') 
-		{
-			JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
-
-			// Also, Just In CASE, if there is available one, remove it as well
-			JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
-
-			// Add to the cached..
-			var itemTag = $(JobAidPage.templateItem);
-			JobAidPage.itemPopulate(item, itemTag, 'available');
-			JobAidPage.divAvailablePacksTag.append(itemTag);
-		}
-		else {
-			alert('itemCard statusType not known, ' + statusType);
-		}
-	}
-
-	TranslationManager.translatePage();
-};
-
-
-// -------------------------------------
-
-JobAidPage.itemPopulate = function (itemData, itemTag, statusType) {
-	var menus = [];
-
-	if ( !itemData.projDir ) MsgManager.msgAreaShowErr( 'FAILED to populate item - NO "projDir"' );
-	else
+	// List All server manifest list - Available Packs
+	manifestList.forEach(function (item) 
 	{
-		// reset 'itemData' for this projDir
-		var itemJsonInMem = Util.cloneJson( itemData );
-		JobAidPage.itemJsonInMem[ itemData.projDir ] = itemJsonInMem;
-		
-		itemJsonInMem.statusType = statusType;
-		//if ( itemData.appBuildDate ) itemJsonInMem.appBuildDate = itemData.appBuildDate;
-		//if ( itemData.mediaBuildDate ) itemJsonInMem.mediaBuildDate = itemData.mediaBuildDate;
-		
-
-		// type = 'available' vs 'downloaded'  // itemData = {code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false };
-		itemTag.off('click'); // reset previous click if exists.
-		itemTag.attr('data-language', itemData.code);
-		itemTag.attr('projDir', itemData.projDir);
-		itemTag.attr('statusType', statusType);
-	
-	
-		var titleStrongTag = $('<strong></strong>').append(itemData.title + ' [' + Util.getStr(itemData.language) + ']');
-		// if (itemData.noMedia) titleStrongTag.append(' [WITHOUT MEDIA]');
-	
-	
-		itemTag.find('.divTitle').append(titleStrongTag);
-	
-		itemTag.find('.divBuildDate').append('<strong>Release date: </strong>' + UtilDate.formatDate( Util.getStr(itemData.appBuildDate), "MMM dd, yyyy" ) );
-	
-		var divDownloadInfoTag = itemTag.find('.divDownloadInfo').html('<span class="downloadInfo"></span>');
-		var spanDownloadInfoTag = divDownloadInfoTag.find( 'span.downloadInfo' );
-		var spanAppDownloadStatusTag = $( '<span class="appDownloadStatus downloadStatus"></span>' ).hide();
-		divDownloadInfoTag.append( spanAppDownloadStatusTag );
-	
-		var divDownloadFilesTag = itemTag.find('.divDownloadFiles').html('<span><strong>Files</strong>: </span>').hide();
-		var divMediaStatusTag = itemTag.find( '.divMediaStatus').html('<span><strong>Media</strong>(mp3/mp4): </span>').hide();
-	
-		if (statusType === 'available') 
-		{
-			// CHANGED: ALWAYS ASSUME THERE IS MEDIA IN ALL PACKAGE.
-			//if ( itemData.noMedia === false ) // display both types
-			menus.push('Download w/o media');
-			menus.push('Download with media');
-			//}
-			//else menus.push('Download');
-	
-			spanDownloadInfoTag.html( '<strong>Download size: </strong>' + Util.getStr(itemData.size) );	
-		}
-		// Downloaded Case - 'open' in iFrame case, 'delete' case.
-		else if (statusType === 'downloaded') 
-		{
-			menus.push( 'Open')
-			menus.push('See content'); 
-	
-			var downloadDate = '';
-			var totalSize = 0;
-			var fileCountAll = 0;
-			var fileCountDownloaded = 0;
-			var mediaStr = ''; //<span>exists</span>';
-	 
-	
-			// From Extra info for thie 'projDir', update info..
-			var projStatus = JobAidPage.getProjStatus_PersisStorage(itemData.projDir);
-			if ( projStatus.infoCollect )
-			{
-				totalSize = projStatus.infoCollect.totalSize;
-				fileCountAll = projStatus.infoCollect.fileCountAll;
-				fileCountDownloaded = projStatus.infoCollect.fileCountDownloaded;
-
-				downloadDate = Util.getStr( projStatus.infoCollect.downloadDate );
-	
-				if ( projStatus.infoCollect.mediaDownloaded ) 
-				{
-					mediaStr = '<span>exists</span>';	
-				}
-				else 
-				{
-					menus.push( 'Download media' );
-					mediaStr = '<span>pending</span>';	
-				}
-			}
-	
-	
-			spanDownloadInfoTag.html( '<strong>Downloaded: </strong>' +  UtilDate.formatDate( downloadDate, "MMM dd, yyyy" ) );	
-	
-			divDownloadFilesTag.show().append( fileCountDownloaded + '/' + fileCountAll + ' | ' + Util.formatFileSizeMB( totalSize ) );
-			divMediaStatusTag.show().append( mediaStr );
-			var spanMediaDownloadStatusTag = $('<span class="mediaDownloadStatus downloadStatus"></span>').hide();
-			divMediaStatusTag.append( spanMediaDownloadStatusTag );
-	
-			// 2. Setup for match found things...
-			var matchData = JobAidPage.matchInServerList(itemData, JobAidPage.serverManifestsData);
-	
-			if (matchData.matchProj) 
-			{
-				// Remove from available side - when we add this on 'downloaded' side
-				JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir="' + itemData.projDir + '"]').remove();
-	
-				if (matchData.appNewerDate) 
-				{
-					menus.push('Download app update');
-					spanAppDownloadStatusTag.show().text( '[App update available]' );
-					itemJsonInMem.updateAppBuildDate = matchData.appNewerDate;
-				}
-	
-				if (matchData.mediaNewerDate) 
-				{
-					menus.push('Download media update');
-					spanMediaDownloadStatusTag.show().text( '[Media update available]' );
-					itemJsonInMem.updateMediaBuildDate = matchData.mediaNewerDate;
-				}
-			}
-	
-			menus.push('Delete');
-		}
-	
-		var menusStr = menus.join(';');
-		itemTag.attr('menus', menusStr);
-	}
-};
-
-// ------------------------------------
-
-JobAidPage.matchInServerList = function (item, serverManifestsData) {
-	var matchData = { matchProj: false, appNewerDate: '', mediaNewerDate: '' };
-
-	serverManifestsData.forEach(srvItem => {
-		if (srvItem.projDir === item.projDir) 
-		{
-			matchData.matchProj = true;
-
-			if ( srvItem.appBuildDate && item.appBuildDate && srvItem.appBuildDate > item.appBuildDate ) matchData.appNewerDate = srvItem.appBuildDate;
-			else if ( !item.appBuildDate && srvItem.appBuildDate ) matchData.appNewerDate = srvItem.appBuildDate;
-
-			if ( srvItem.mediaBuildDate && item.mediaBuildDate && srvItem.mediaBuildDate > item.mediaBuildDate ) matchData.mediaNewerDate = srvItem.mediaBuildDate;
-			else if ( !item.mediaBuildDate && srvItem.mediaBuildDate ) matchData.mediaNewerDate = srvItem.mediaBuildDate;
-		}
-	});
-
-	return matchData;
-};
-
-
-JobAidPage.getDeviceCache_Manifests = function (callBack) {
-	JobAidHelper.getCacheKeys(function (keys) {
-		var urlList = [];
-
-		if (Util.isTypeArray(keys)) {
-			keys.forEach(request => {
-				var url = JobAidHelper.modifyUrlFunc(request.url);
-				if (url.indexOf('/manifest.json') > 0) urlList.push(url);
-			});
-		}
-
-		callBack(urlList);
+		var itemTag = $(JobAidPage.templateItem);
+		JobAidItem.itemPopulate(item, itemTag, 'available');
+		divAvailablePacksTag.append(itemTag);
 	});
 };
 
 
-JobAidPage.performRetrieve_ManifestJsons = function (urlList, i, result, finishCallBack) {
-	try {
-		if (i >= urlList.length) finishCallBack(result);
-		else {
-			var url = urlList[i];
+JobAidPage.populateDownloadedItems = function( divDownloadedPacksTag, manifestList )
+{
+	divDownloadedPacksTag.html(''); // Clear loading Img
 
-			RESTCallManager.performGet(url, {}, function (success, returnJson) {
-				if (success && returnJson) {
-					result.arr.push(returnJson);
-					result.obj[url] = returnJson;
-				}
-
-				JobAidPage.performRetrieve_ManifestJsons(urlList, i + 1, result, finishCallBack); // regardless of success/fail, add to the count.
-			});
-		}
-	}
-	catch (errMsg) {
-		console.log('ERROR in JobAidPage.performRetrieve_ManifestJsons, ' + errMsg);
-		finishCallBack(result);
-	}
+	// Stored/Downloaded items (in manifest) populate
+	manifestList.forEach(function (item) 
+	{
+		var itemTag = $(JobAidPage.templateItem);
+		JobAidItem.itemPopulate(item, itemTag, 'downloaded');
+		divDownloadedPacksTag.append(itemTag);
+	});
 };
-
 
 // ------------------------------------
 
@@ -530,17 +161,13 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 	if (projCardTag.length > 0) 
 	{
 		var downloadOption = msgData.options.downloadOption;
-		var buildDateOption = msgData.options.buildDateOption;
-		
-		var mediaDownloadCase = false;
+
 
 		// Get the right tag
 		var spanDownloadStatusTag;  // var spanDownloadStatusTag = projCardTag.find('span.downloadStatus');
 		if ( !downloadOption || downloadOption === 'all' ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus,span.mediaDownloadStatus').show();
-		else if ( downloadOption === 'appOnly' ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus').show();
-		else if ( downloadOption === 'mediaOnly' ) spanDownloadStatusTag = projCardTag.find('span.mediaDownloadStatus').show();
-
-		if ( !downloadOption || downloadOption === 'all' || downloadOption === 'mediaOnly' ) mediaDownloadCase = true; 
+		else if ( downloadOption.indexOf( 'appOnly' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus').show();
+		else if ( downloadOption.indexOf( 'mediaOnly' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.mediaDownloadStatus').show();
 
 
 		var prc = msgData.process;
@@ -573,12 +200,12 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 				// Calculate the files size here and place it on 'persisData'
 				var spanCalTag = $( '<span class="spanCalTag">Calculating size of files</span>' );
 				spanDownloadStatusTag.append( spanCalTag );
-				await JobAidPage.onDownloaded_updateInPersisStorage(projDir, mediaDownloadCase, buildDateOption);
+				await JobAidManifest.setManifest_InStrg(projDir, downloadOption);
 				spanCalTag.text( 'Calculation finished.' );
 				
 				// We need to refresh the list...
 				// JobAidPage.updateSectionLists(projDir, projCardTag.attr('statusType'));
-				JobAidPage.populateSectionLists(JobAidPage.contentBodyTag, function () {
+				JobAidPage.populateSectionLists( function () {
 					TranslationManager.translatePage();
 				});				
 			}
@@ -586,104 +213,25 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 	}
 };
 
-// Called when download is finished.
-JobAidPage.onDownloaded_updateInPersisStorage = async function(projDir, mediaDownloadCase, buildDateOption)
-{
-	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
-
-	if ( projStatus.process )
-	{
-		if ( !projStatus.infoCollect ) projStatus.infoCollect = {}; // totalSize: 0, fileCountAll: 0, fileCountDownloaded: 0, downloadDate: new Date().toISOString() };
-		projStatus.infoCollect.downloadDate = new Date().toISOString();
-
-		// 1. File size - individual ones calculate & save.  Total size calc.
-		try {
-			projStatus.infoCollect.totalSize = await JobAidPage.projProcessData_calcFileSize(projDir, projStatus.process);
-		}
-		catch( errMsg ) { console.log( 'ERROR in JobAidPage.projProcessData_calcFileSize, ' + errMsg ); };
-	
-	
-		// 2. File count - total vs downloaded.
-		var valObjArr = Object.values( projStatus.process );
-
-		projStatus.infoCollect.fileCountAll = valObjArr.length;
-		projStatus.infoCollect.fileCountDownloaded = valObjArr.filter( valObj => valObj.downloaded === true ).length;
-		if ( mediaDownloadCase === true ) projStatus.infoCollect.mediaDownloaded = true;
-
-
-		// 3. buildDate update
-		if ( buildDateOption )
-		{
-			if ( buildDateOption.appBuildDate ) projStatus.infoCollect.appBuildDate = buildDateOption.appBuildDate;
-			if ( buildDateOption.updateAppBuildDate ) projStatus.infoCollect.appBuildDate = buildDateOption.updateAppBuildDate;
-			if ( buildDateOption.mediaBuildDate ) projStatus.infoCollect.mediaBuildDate = buildDateOption.mediaBuildDate;
-			if ( buildDateOption.updateMediaBuildDate ) projStatus.infoCollect.mediaBuildDate = buildDateOption.updateMediaBuildDate;
-		}
-
-
-		PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);		
-	}
-};
-
+/*
 JobAidPage.getProjStatus_PersisStorage = function(projDir)
 {
 	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
 
 	if ( !projStatus ) projStatus = {};
 	if ( !projStatus.process ) projStatus.process = {};
-	if ( !projStatus.infoCollect ) projStatus.infoCollect = {};
+	if ( !projStatus.manifestJson ) projStatus.manifestJson = {};
 
-	return projStatus;
+	return Util.cloneJson( projStatus );
 };
-
-
-JobAidPage.projProcessData_calcFileSize = async function (projDir, process) //projStatus) 
-{
-	//var tempJson = {};
-	var totalSize = 0;
-	var cacheKeyJson = await JobAidHelper.getCacheKeys_async();
-	var keys = cacheKeyJson.keys;
-	var cache = cacheKeyJson.cache;
-
-	// JobAidHelper.getCacheKeys(function (keys, cache) {
-	var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
-
-	if (keys && keys.length > 0) 
-	{
-		for ( var i = 0; i < keys.length; i++ )
-		{
-			var request = keys[i];
-
-			var url = JobAidHelper.modifyUrlFunc(request.url);
-
-			// If the file is within 'projDir', get size
-			if (url.indexOf('jobs/jobAid/' + projDir) >= 0) 
-			{
-				var itemJson = { url: url };
-				// Check the storage and add additional info
-				JobAidHelper.setExtraStatusInfo(itemJson, statusFullJson);
-
-				var response = await cache.match(request);
-				var myBlob = await response.clone().blob();
-				var size = myBlob.size;   // tempJson[url] = size;
-
-				totalSize += size;
-
-				// update to jobData -- // JobAidPage.projProcessDataUpdate(projDir, url, { size: size });	
-				if ( process[url] )  Util.mergeJson( process[url], { size: size } );
-			}
-		}
-	}
-
-	return totalSize;
-	//return tempJson;
-};
+*/
 
 
 JobAidPage.projProcessDataUpdate = function (projDir, url, updateJson) 
 {
 	try {
-		if (projDir && url && updateJson) {
+		if (projDir && url && updateJson)
+		{
 			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
 
 			if (projStatus.process && projStatus.process[url]) {
@@ -697,45 +245,6 @@ JobAidPage.projProcessDataUpdate = function (projDir, url, updateJson)
 	}
 	catch (errMsg) {
 		console.log('ERROR in JobAidHelper.projProcessDataUpdate, ' + errMsg);
-	}
-};
-
-// ------------------------------------
-
-JobAidPage.getServerManifestsRun = function( callBack )
-{
-	if ( ConnManagerNew.isAppMode_Online() )
-	{
-		var options = { projDir: '', isListingApp: false, isLocal: true, appName: 'pwa-dev' };
-		options.isLocal = WsCallManager.checkLocalDevCase( window.location.origin );
-	
-		var requestUrl = (options.isLocal) ? 'http://localhost:8383/manifests' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsManifests')
-		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
-	
-		// NEW: jobAid settingsOverride
-		if ( ConfigManager.getJobAidSetting().settingsOverride ) options.settingsOverride = ConfigManager.getJobAidSetting().settingsOverride;
-
-		var optionsStr = JSON.stringify( options );
-	
-		$.ajax({
-			url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
-			type: "GET",
-			dataType: "json",
-			success: function (response) 
-			{
-				if ( callBack ) callBack( response );
-			},
-			error: function ( error ) {
-				console.log( 'error: ' );
-				console.log( error );
-				MsgManager.msgAreaShowErr( 'FAILED on getServerManifestsRun' );			
-			},
-			complete: function () { }			
-		});
-	}
-	else
-	{
-		if ( callBack ) callBack( { list: [] } );
 	}
 };
 
@@ -790,35 +299,523 @@ JobAidPage.divFileContentTag = `
 </div>
 `;
 
-// ---------------------------------
-// --- Content Page Related
+// ====================================================
+// ==== JobAidManifest Related =============
 
-JobAidPage.contentPage_tableTag = `<table class="jobFileContentTable"><tbody></tbody></table>`;
+// Retrieve manifest list in server
+// JobAidPage.getServerManifestsRun <-- OLD
+JobAidManifest.retrieve_AvailableManifestList = function( preCallBack, callBack ) 
+{
+	if ( preCallBack ) preCallBack();
 
-JobAidPage.contentPage_row1Tag = `
-<tr class="trJobFileR1">
-	<td colspan="4">
-		<div class="jfTitle">File Name</div>
-		<div class="divFileNameVal jfVal"></div>
-	</td>
-</tr>`;
+	if ( ConnManagerNew.isAppMode_Online() )
+	{
+		var options = { projDir: '', isListingApp: false, isLocal: true, appName: 'pwa-dev' };
+		options.isLocal = WsCallManager.checkLocalDevCase( window.location.origin );
+	
+		var requestUrl = (options.isLocal) ? 'http://localhost:8383/manifests' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsManifests')
+		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
+	
+		// NEW: jobAid settingsOverride
+		//if ( ConfigManager.getJobAidSetting().settingsOverride ) options.settingsOverride = ConfigManager.getJobAidSetting().settingsOverride;
 
-JobAidPage.contentPage_row2Tag = `
-<tr class="trJobFileR2">
-	<td>
-		<div class="jfTitle">Folder</div>
-		<div class="divFileFolderVal jfVal"></div>
-	</td>
-	<td>
-		<div class="jfTitle">Content-Type</div>
-		<div class="divFileContentTypeVal jfVal"></div>
-	</td>
-	<td>
-		<div class="jfTitle">Caching time</div>
-		<div class="divFileCachingTimeVal jfVal"></div>
-	</td>
-	<td>
-		<div class="jfTitle">Content-Length</div>
-		<div class="divFileContentLengthVal jfVal"></div>
-	</td>
-</tr>`;
+		var optionsStr = JSON.stringify( options );
+	
+		$.ajax({
+			url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
+			type: "GET",
+			dataType: "json",
+			success: function (response) 
+			{
+				if ( callBack ) callBack( JobAidManifest.getAvailable_ManifestJobAidData( response.list ) );
+			},
+			error: function ( error ) {
+				console.log( 'error: ' );
+				console.log( error );
+				MsgManager.msgAreaShowErr( 'FAILED on retrieve_AvailableManifestList' );
+				if ( callBack ) callBack( [] );
+			},
+			complete: function () { }			
+		});
+	}
+	else
+	{
+		if ( callBack ) callBack( [] );
+	}
+};
+
+// Retrieve manifest list (downloaded) in local storage
+// JobAidPage.getDeviceCache_Manifests <-- OLD
+JobAidManifest.retrieve_DownloadedManifestList = function() 
+{
+	var manifestList = [];
+
+	//if ( preCallBack ) preCallBack();
+
+	try 
+	{
+		// Not from Cache, but from Storage..
+		var jobFilingStatusJson = PersisDataLSManager.getJobFilingStatus();
+			
+		if ( jobFilingStatusJson )
+		{
+			for ( var prop in jobFilingStatusJson )
+			{
+				if ( prop !== 'jobListingApp' )
+				{
+					var projStatus = jobFilingStatusJson[ prop ];
+
+					// NOTE: We could save the Storage data from here?  Or retrieve everytime?
+					var manifestJson = projStatus.manifestJson;
+					if ( manifestJson ) 
+					{
+						if ( !manifestList.appBuildDate && manifestList.buildDate ) manifestList.appBuildDate = manifestList.buildDate;
+
+						manifestList.push( manifestJson );
+					}
+				}
+			}
+		}
+	}
+	catch (errMsg) {
+		console.log('ERROR in JobAidPage.retrieve_DownloadedManifestList, ' + errMsg);
+	}
+
+	return manifestList;
+};
+
+// ------------
+
+// JobAidPage.getManifestJobAidInfo  <-- OLD
+JobAidManifest.getAvailable_ManifestJobAidData = function( list )
+{
+	var manifestList = [];
+
+	try 
+	{
+		if ( Util.isTypeArray( list ) ) 
+		{
+			list.forEach(item => 
+			{
+				if (Util.isTypeObject(item.jobAidInfo)) 
+				{
+					var jobAidManifest = item.jobAidInfo;
+
+					// If 'appBuildDate' is not available, and 'buildDate' exists, use that instead.
+					if ( !jobAidManifest.appBuildDate && jobAidManifest.buildDate ) jobAidManifest.appBuildDate = jobAidManifest.buildDate;
+					// What about media?  also use 'buildDate'?  No, not for now.					
+
+					manifestList.push(jobAidManifest);
+				}
+			});
+		}
+	}
+	catch (errMsg) {
+		console.log('ERROR in JobAidPage.getAvailable_ManifestJobAidData, ' + errMsg);
+	}
+	
+	return manifestList;
+};
+
+// ---------------------------
+
+// Called when download is finished.
+//  - New Download Case --> Simply save the manifest info?  + additional calculate info
+//  - On media download or Updates cases --> 
+JobAidManifest.setManifest_InStrg = async function(projDir, downloadOption)
+{
+	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
+	if ( !projStatus.manifestJson ) projStatus.manifestJson = {};
+
+	// Manifest set or update - in Storage..
+	if ( !projStatus.manifestJsonTemp ) alert( 'ERROR, manifestJsonTemp is not available for this proj, ' + projDir );
+	else
+	{
+		projStatus.manifestJson.downloadedDate = new Date().toISOString();
+
+		var mediaDownloadCase = ( !downloadOption || downloadOption === 'all' || downloadOption.indexOf( 'mediaOnly' ) === 0 ) ? true: false;	
+		if ( mediaDownloadCase ) projStatus.manifestJson.mediaDownloaded = true;  // Flag proj if they have media on proj downloaded or not.
+
+
+		var freshDownload = ( !downloadOption || downloadOption === 'all' || downloadOption === 'appOnly' ) ? true: false;
+		if ( freshDownload )
+		{
+			// Get it from available one?  put it on temp and get it from temp..
+			projStatus.manifestJson = Util.cloneJson( projStatus.manifestJsonTemp );
+			delete projStatus.manifestJsonTemp;
+		}
+		else
+		{
+			// For updates, simply copy
+			if ( downloadOption === 'appOnly_Update' ) projStatus.manifestJson.appBuildDate = projStatus.manifestJsonTemp.appBuildDate;
+			else if ( downloadOption === 'mediaOnly_Update' ) projStatus.manifestJson.mediaBuildDate = projStatus.manifestJsonTemp.mediaBuildDate;
+		}
+
+
+		// More update - size, etc..
+		if ( projStatus.process )
+		{
+			// TODO: Total Size should be between 'app' vs 'media' vs 'all'
+			projStatus.manifestJson.totalSize = await JobAidManifest.projProcessData_calcFileSize(projDir, projStatus.process);
+
+		
+			// 2. File count - total vs downloaded.
+			var valObjArr = Object.values( projStatus.process );
+
+			projStatus.manifestJson.fileCountAll = valObjArr.length;
+			projStatus.manifestJson.fileCountDownloaded = valObjArr.filter( valObj => valObj.downloaded === true ).length;
+		}
+
+		PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
+	}
+};
+
+
+JobAidManifest.setManifestTemp_InStrg = function( availableManifestList, projDir )
+{
+	var manifestJson;
+
+	if ( projDir )
+	{
+		var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
+		
+		manifestJson = Util.getFromList( availableManifestList, projDir, 'projDir' );
+		projStatus.manifestJsonTemp = Util.cloneJson( manifestJson );
+		
+		PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
+	}
+
+	if ( !manifestJson ) MsgManager.msgAreaShowErr( 'No projDir, ' + projDir + ', in AvailableManifest.' );
+};
+
+
+JobAidManifest.projProcessData_calcFileSize = async function ( projDir, projProcess )
+{
+	// 1. File size calculate - individual ones calculate & save.  Total size calc.
+	//		- Should only calculate if needed --> Process it if has downloaded & does not have 'size' & exists in cache..				
+	var totalSize = 0;
+
+	try 
+	{
+		var cacheKeyJson = await JobAidHelper.getCacheKeys_async();
+		var keys = cacheKeyJson.keys;
+		var cache = cacheKeyJson.cache;  //var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
+
+		// Calculate size
+		for( var urlProp in projProcess )
+		{
+			var item = projProcess[urlProp];
+
+			// Condition: has projDir url, downloaded, and no size set, calculate size..
+			if ( item.downloaded && !item.size )
+			{
+				var request = JobAidManifest.getCacheKeyRequest( urlProp, keys );
+
+				if ( request )
+				{
+					var response = await cache.match( request );
+					var myBlob = await response.clone().blob();
+					var size = myBlob.size;
+		
+		
+					Util.mergeJson( item, { size: size } );	
+				}
+			}
+
+			totalSize += item.size;
+		}
+	}
+	catch( errMsg ) { console.log( 'ERROR in JobAidManifest.projProcessData_calcFileSize, ' + errMsg ); };
+
+	// Updating in Storage (Persis) is done from outside of this method
+	return totalSize;
+};
+
+
+JobAidManifest.getCacheKeyRequest = function ( url, keys )
+{
+	var requestFound;
+
+	for ( var i = 0; i < keys.length; i++ )
+	{
+		var request = keys[i];
+
+		if ( request.url.indexOf( url ) >= 0 )
+		{
+			requestFound = request;
+			break;
+		}
+	}
+
+	return requestFound;
+};
+
+// ======================================================
+// ==== JobAidItem Related =============
+
+// ------------------
+// --- EVENTS
+
+JobAidItem.itemOpen = function (projDir) 
+{
+	// Open JobAid iFrame Click - Up in iFrame Click Setup..
+	var srcStr = JobAidHelper.rootDir_jobAid + projDir + '/index.html';
+	var styleStr = 'width:100%; height: 100%; overflow:auto; border:none;';
+
+	$('#divJobAid').html('').show().append(`<iframe class="jobAidIFrame" src="${srcStr}" style="${styleStr}">iframe not compatible..</iframe>`);
+};
+
+JobAidItem.itemDownload = function (projDir, key) 
+{
+	if (projDir) 
+	{
+		JobAidManifest.setManifestTemp_InStrg( JobAidPage.availableManifestList, projDir );
+
+		var downloadOption = ''; // 'all';
+
+		if ( key === 'Download w/o media' )
+		{
+			downloadOption = 'appOnly';
+		} 
+		else if ( key === 'Download app update' )
+		{
+			downloadOption = 'appOnly_Update';
+		}
+		else if ( key === 'Download media' )
+		{
+			downloadOption = 'mediaOnly';
+		} 
+		else if ( key === 'Download media update' )
+		{
+			downloadOption = 'mediaOnly_Update';
+		}
+		else
+		{
+			downloadOption = 'all';
+		}
+
+		var optionJson = { projDir: projDir, target: 'jobAidPage', downloadOption: downloadOption };
+
+
+		// #1. AVAILABILITY TEMP SET
+		ConnManagerNew.tempDisableAvailableCheck = true; 
+
+		JobAidHelper.runTimeCache_JobAid( optionJson );
+	}
+	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
+};
+
+
+JobAidItem.itemDelete = function (projDir) 
+{
+	var itemData = Util.getFromList(JobAidPage.availableManifestList, projDir, 'projDir');
+
+	var result = confirm('Are you sure you want to delete this, "' + projDir + '"?');
+
+	if (result) 
+	{
+		JobAidHelper.deleteCacheKeys(JobAidHelper.rootDir_jobAid + projDir + '/').then(function (deletedArr) 
+		{
+			// Delete on localStorage 'persisData'
+			PersisDataLSManager.deleteJobFilingProjDir( projDir );
+
+			JobAidPage.populateSectionLists( () => TranslationManager.translatePage() );  // JobAidPage.updateSectionLists(itemData.projDir, 'downloaded_delete');
+
+			MsgManager.msgAreaShow( 'The pack has been deleted' );
+		});
+	}
+};
+
+// -------------------
+
+JobAidItem.itemPopulate = function (itemData, itemTag, statusType) 
+{
+	var menus = [];
+
+	if ( !itemData.projDir ) MsgManager.msgAreaShowErr( 'FAILED to populate item - NO "projDir"' );
+	else
+	{
+		var projDir = itemData.projDir;
+
+		// reset 'itemData' for this projDir		
+
+		// type = 'available' vs 'downloaded'  // itemData = {code:"EN" , language:"English", projDir:"EN", size:"455MB", noMedia:false };
+		itemTag.off('click'); // reset previous click if exists.
+		itemTag.attr('data-language', itemData.code);
+		itemTag.attr('projDir', projDir);
+		itemTag.attr('statusType', statusType);
+	
+	
+		var titleStrongTag = $('<strong></strong>').append(itemData.title + ' [' + Util.getStr(itemData.language) + ']');
+		// if (itemData.noMedia) titleStrongTag.append(' [WITHOUT MEDIA]');
+	
+	
+		itemTag.find('.divTitle').append(titleStrongTag);
+	
+		itemTag.find('.divBuildDate').append('<strong>Release date: </strong>' + UtilDate.formatDate( Util.getStr(itemData.appBuildDate), "MMM dd, yyyy" ) );
+	
+		var divDownloadInfoTag = itemTag.find('.divDownloadInfo').html('<span class="downloadInfo"></span>');
+		var spanDownloadInfoTag = divDownloadInfoTag.find( 'span.downloadInfo' );
+		var spanAppDownloadStatusTag = $( '<span class="appDownloadStatus downloadStatus"></span>' ).hide();
+		divDownloadInfoTag.append( spanAppDownloadStatusTag );
+	
+		var divDownloadFilesTag = itemTag.find('.divDownloadFiles').html('<span><strong>Files</strong>: </span>').hide();
+		var divMediaStatusTag = itemTag.find( '.divMediaStatus').html('<span><strong>Media</strong>(mp3/mp4): </span>').hide();
+	
+		if (statusType === 'available') 
+		{
+			// CHANGED: ALWAYS ASSUME THERE IS MEDIA IN ALL PACKAGE.  //if ( itemData.noMedia === false ) // display both types
+			menus.push('Download w/o media');
+			menus.push('Download with media');
+	
+			spanDownloadInfoTag.html( '<strong>Download size: </strong>' + Util.getStr(itemData.size) );	
+		}
+		// Downloaded Case - 'open' in iFrame case, 'delete' case.
+		else if (statusType === 'downloaded') 
+		{
+			menus.push( 'Open' );
+			menus.push( 'See content' ); 
+			menus.push('Delete');
+	
+			var downloadedData = JobAidItem.itemPopulate_getDownloadedData(projDir);
+
+			if ( !downloadedData.mediaDownloaded ) menus.push( 'Download media' );
+	
+	
+			spanDownloadInfoTag.html( '<strong>Downloaded: </strong>' +  UtilDate.formatDate( downloadedData.downloadedDate, "MMM dd, yyyy" ) );	
+	
+			divDownloadFilesTag.show().append( downloadedData.fileCountDownloaded + '/' + downloadedData.fileCountAll + ' | ' + Util.formatFileSizeMB( downloadedData.totalSize ) );
+			divMediaStatusTag.show().append( downloadedData.mediaStr );
+			var spanMediaDownloadStatusTag = $('<span class="mediaDownloadStatus downloadStatus"></span>').hide();
+			divMediaStatusTag.append( spanMediaDownloadStatusTag );
+
+			
+			// 2. Setup for 'updates' by date comparison
+			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, spanMediaDownloadStatusTag );			
+		}
+	
+
+		var menusStr = menus.join(';');
+		itemTag.attr('menus', menusStr);
+	}
+};
+
+
+JobAidItem.itemPopulate_getDownloadedData = function(projDir)
+{
+	var downloadedData = { downloadedDate: '', totalSize: 0, fileCountAll: 0, fileCountDownloaded: 0, mediaStr: '', mediaDownloaded: false };
+
+	// From Extra info for thie 'projDir', update info..
+	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
+	var manifestJson = projStatus.manifestJson;
+
+	if ( manifestJson )
+	{
+		downloadedData.manifestJson = manifestJson;
+
+		downloadedData.totalSize = manifestJson.totalSize;
+		downloadedData.fileCountAll = manifestJson.fileCountAll;
+		downloadedData.fileCountDownloaded = manifestJson.fileCountDownloaded;
+		downloadedData.downloadedDate = Util.getStr( manifestJson.downloadedDate );
+		downloadedData.mediaDownloaded = manifestJson.mediaDownloaded;
+
+		if ( manifestJson.mediaDownloaded ) downloadedData.mediaStr = '<span>exists</span>';	
+		else downloadedData.mediaStr = '<span>pending</span>';	
+	}
+
+	return downloadedData;
+};
+
+JobAidItem.itemPopulate_setUpdateStatus = function( itemData, menus, spanMediaDownloadStatusTag )
+{
+	var matchData = JobAidItem.matchInServerList(itemData, JobAidPage.availableManifestList);
+	
+	if (matchData.matchProj) 
+	{
+		// Remove from available side - when we add this on 'downloaded' side
+		JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir="' + itemData.projDir + '"]').remove();
+
+		if (matchData.appNewerDate) 
+		{
+			menus.push('Download app update');
+			spanAppDownloadStatusTag.show().text( '[App update available]' );
+		}
+
+		if (matchData.mediaNewerDate) 
+		{
+			menus.push('Download media update');
+			spanMediaDownloadStatusTag.show().text( '[Media update available]' );
+		}
+	}
+};
+
+
+JobAidItem.matchInServerList = function (item, serverManifestsData) 
+{
+	var matchData = { matchProj: false, appNewerDate: '', mediaNewerDate: '' };
+
+	serverManifestsData.forEach(srvItem => {
+		if (srvItem.projDir === item.projDir) 
+		{
+			matchData.matchProj = true;
+
+			if ( srvItem.appBuildDate && item.appBuildDate && srvItem.appBuildDate > item.appBuildDate ) matchData.appNewerDate = srvItem.appBuildDate;
+			else if ( !item.appBuildDate && srvItem.appBuildDate ) matchData.appNewerDate = srvItem.appBuildDate;
+
+			if ( srvItem.mediaBuildDate && item.mediaBuildDate && srvItem.mediaBuildDate > item.mediaBuildDate ) matchData.mediaNewerDate = srvItem.mediaBuildDate;
+			else if ( !item.mediaBuildDate && srvItem.mediaBuildDate ) matchData.mediaNewerDate = srvItem.mediaBuildDate;
+		}
+	});
+
+	return matchData;
+};
+
+// ===================================================
+// OBSOLTE..
+
+// On 'available' download finish --> remove it from 'available' &
+// we will need to refresh the cache list?  Or just add to the cached list??...
+JobAidPage.updateSectionLists = function (projDir, statusType) {
+
+	// TODO: 'item' is old data, thus, need to be updated...  + need to append with persis data..
+	var item = Util.getFromList(JobAidPage.availableManifestList, projDir, 'projDir');
+
+	if (!item) alert('Not found the item, ' + projDir);
+	else {
+		if (statusType === 'available') 
+		{
+			// Fresh Download case: 'available' -> 'downloaded'
+			JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
+
+			var itemTag = $(JobAidPage.templateItem);
+			JobAidItem.itemPopulate(item, itemTag, 'downloaded');
+			JobAidPage.divDownloadedPacksTag.append(itemTag);
+		}
+		else if (statusType === 'downloaded') 
+		{
+			// Download Update Caes: Reload with fresh status.
+
+			var itemTag = JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']').html('').append(JobAidPage.templateItem_body);
+
+			JobAidItem.itemPopulate(item, itemTag, 'downloaded');
+			JobAidPage.divDownloadedPacksTag.append(itemTag);
+		}
+		else if (statusType === 'downloaded_delete') 
+		{
+			JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
+
+			// Also, Just In CASE, if there is available one, remove it as well
+			JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
+
+			// Add to the cached..
+			var itemTag = $(JobAidPage.templateItem);
+			JobAidItem.itemPopulate(item, itemTag, 'available');
+			JobAidPage.divAvailablePacksTag.append(itemTag);
+		}
+		else {
+			alert('itemCard statusType not known, ' + statusType);
+		}
+	}
+
+	TranslationManager.translatePage();
+};
