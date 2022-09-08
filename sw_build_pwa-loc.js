@@ -18,9 +18,16 @@ generateSW({
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/fonts\.googleapis\.com.*/,
-      handler: 'StaleWhileRevalidate',
+      handler: 'CacheFirst',
       options: {
         cacheName: 'googleFonts'
+      }
+    },
+    {
+      urlPattern: /^https:\/\/matomo\.solidlines\.io\/matomo\.js/,
+      handler: 'CacheFirst',
+      options: {
+        cacheName: 'matomo'
       }
     }
     ,{

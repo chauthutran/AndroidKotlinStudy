@@ -304,6 +304,7 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
 
     // NEW: Temp: Fix activity date
     ActivityUtil.payloadActDates(payloadJson);
+    payloadJson.submitDTStr = new Date().toString();  // Literal date with GMT+000 for saving local datetime & UTC.
 
     
     // OLD: For 'mongo' sourceType, do not need to send userName & password in payload.
