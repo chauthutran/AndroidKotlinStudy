@@ -29,8 +29,8 @@ generateSW({
       options: {
         cacheName: 'matomo'
       }
-    }
-    ,{
+    },
+    {
       urlPattern: /\/jobs\//,
       handler: 'CacheOnly',
       options: {

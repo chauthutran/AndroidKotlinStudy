@@ -23,7 +23,7 @@
     "s_cleanUp": "del /s /q pwa-stage\\*.map && del pwa-stage\\workbox-* && rmdir /s /q pwa-stage\\scss",
     "s_setFiles": "xcopy stageFiles\\stage_manifest.json pwa-stage\\manifest.json /Y && xcopy stageFiles\\stage-icons pwa-stage\\images\\icons /E/H/C/I/Y",
     "s_swZipFolder": "node sw_build_pwa-stage.js && tar.exe cf pwa-stage.zip pwa-stage && RMDIR /Q /S pwa-stage",
-    "sBuild": "npm run s_copyDev && npm run s_cleanUp npm run s_setFiles && npm run s_swZipFolder",
+    "sBuild": "npm run s_copyDev && npm run s_cleanUp && npm run s_setFiles && npm run s_swZipFolder",
 
     "w_copyDev": "xcopy pwa-loc wfa /E/H/C/I/Y",
     "w_cleanUp": "del /s /q wfa\\*.map && del wfa\\workbox-* && rmdir /s /q wfa\\scss",
