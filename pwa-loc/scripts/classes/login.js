@@ -70,6 +70,10 @@ function Login() {
 		TranslationManager.translatePage();
 
 		//MsgManager.msgAreaShowOpt( 'Testing Notification Msg', { cssClasses: 'notifCBlue', hideTimeMs: 900000, styleArr: [ { name: 'background-color', value: '#50A3C6' } ] } );
+
+		_paq.push(['trackEvent', 'WFA', 'Login']);
+		// _paq.push(['trackEvent', 'WFA', 'Network_On_Off']);
+
 	};
 
 	// =============================================
