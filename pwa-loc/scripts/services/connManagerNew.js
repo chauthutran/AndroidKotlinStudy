@@ -226,10 +226,13 @@ ConnManagerNew.runWhenSwitchedToOnline = function () {
 	// 3. Send Google Anlytics Offline cached ones.
 	GAnalytics.offlineCacheSend();
 
+	// 4. Send matomo analytics - for firing all the offline queue to be sent (NEW)
+	_paq.push(['trackEvent', 'WFA', 'Network_Online']);
+
+
 	// 4. 'backgroundUpdateWhenOnline' enabled, perform app Update in background.
 	// if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) {	SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
 	// SYNC ALL (ONLINE) Does call NewAppFile with delayed reload.
-
 };
 
 

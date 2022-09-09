@@ -7,6 +7,8 @@ function AppUtil() {}
 // Set this before refreshing, thus, sw state event not display the update message.
 AppUtil.appReloading = false;  
 
+AppUtil.MATOMO_URL = 'https://matomo.solidlines.io';
+
 // ==== Methods ======================
 
 AppUtil.appReloadWtMsg = function( optionalMsg )
@@ -46,4 +48,19 @@ AppUtil.getDiffSize = function( inputVal, dividNum, endingStr )
 AppUtil.getStorageGBStr = function( storage )
 {	
 	return AppUtil.getDiffSize( storage, 1000000000 );
+};
+
+
+AppUtil.matomoTrackRequest = function()
+{
+	var _paq = window._paq = window._paq || [];
+	_paq.push(['trackPageView']);
+	_paq.push(['enableLinkTracking']);
+	(function() {
+	  var u= AppUtil.MATOMO_URL + '/';
+	  _paq.push(['setTrackerUrl', u+'matomo.php']);
+	  _paq.push(['setSiteId', 4]);
+	  var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+	  g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+	})();
 };
