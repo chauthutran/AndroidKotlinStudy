@@ -416,9 +416,10 @@ function ChatApp(username) {
 		});
 
 		// // // Log-out button
-		// me.btnChatBackBtnTag.click(function() {
-		// 	me.socket.emit("disconnect");
-		// }); 
+		me.btnChatBackBtnTag.click(function() {
+			// me.socket.emit("disconnect");
+			me.chatDivTag.hide();
+		}); 
 
 		// me.logoutBtnTag.click(function() {
 		//     const leaveRoom = confirm('Are you sure you want to log-out ?');
