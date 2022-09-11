@@ -456,7 +456,7 @@ JobAidManifest.setManifest_InStrg = async function(projDir, downloadOption)
 		if ( projStatus.process )
 		{
 			// TODO: Total Size should be between 'app' vs 'media' vs 'all'
-			projStatus.manifestJson.totalSize = await JobAidManifest.projProcessData_calcFileSize(projDir, projStatus.process);
+			projStatus.manifestJson.totalSize = await JobAidManifest.projProcessData_calcFileSize( projStatus.process);
 
 		
 			// 2. File count - total vs downloaded.
@@ -489,7 +489,7 @@ JobAidManifest.setManifestTemp_InStrg = function( availableManifestList, projDir
 };
 
 
-JobAidManifest.projProcessData_calcFileSize = async function ( projDir, projProcess )
+JobAidManifest.projProcessData_calcFileSize = async function ( projProcess )
 {
 	// 1. File size calculate - individual ones calculate & save.  Total size calc.
 	//		- Should only calculate if needed --> Process it if has downloaded & does not have 'size' & exists in cache..				

@@ -17,11 +17,73 @@ JobAidContentPage.fileContentDialogOpen = async function(projDir)
 
 		// Display the content..
 		JobAidContentPage.populateFileContent(divMainContentTag, processData, projDir);
+
+
+		// Missing file size <-- We could calculate this when we open up the file..
+		JobAidContentPage.calcMissingFileSize( processData, function( urlProp, size, item ) 
+		{
+			Util.mergeJson( item, { size: size } );
+
+			PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projDirStatus);
+
+			// display on each item...  item in 'urlProp'..
+			if ( size ) sizeFormatted = Util.formatFileSizeMB( size );
+			else sizeFormatted = '[N/A]';
+
+			var row2Tag = divMainContentTag.find( '.trJobFileR2[url="' + urlProp + '"]' );
+			row2Tag.find( 'div.divFileContentLengthVal' ).html('').append(sizeFormatted).attr('title', 'size: ' + size);		
+		});
 	}
 	else MsgManager.msgAreaShowErr( 'No project data available.' );
 
 
 	TranslationManager.translatePage();
+};
+
+
+JobAidContentPage.calcMissingFileSize = async function ( projProcess, callBack )
+{
+	// 1. File size calculate - individual ones calculate & save.  Total size calc.
+	//		- Should only calculate if needed --> Process it if has downloaded & does not have 'size' & exists in cache..				
+	//var totalSize = 0;
+
+	try 
+	{
+		JobAidHelper.getCacheKeys_async().then( cacheKeyJson => 
+		{
+			var keys = cacheKeyJson.keys;
+			var cache = cacheKeyJson.cache;  //var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
+	
+			// Calculate size
+			for( var urlProp in projProcess )
+			{
+				var item = projProcess[urlProp];
+	
+				// Condition: has projDir url, downloaded, and no size set, calculate size..
+				if ( item.downloaded && !item.size )
+				{
+					var request = JobAidManifest.getCacheKeyRequest( urlProp, keys );
+	
+					if ( request )
+					{
+						// NOTE: We may display 'calculating...' animation on the 'size' location..  at here.
+
+						cache.match( request ).then( response => response.clone().blob().then( myBlob => 
+						{
+							var size = myBlob.size;
+							if ( callBack ) callBack( urlProp, size, item );
+						}));
+					}
+				}
+	
+				//totalSize += item.size;
+			}
+		});
+	}
+	catch( errMsg ) { console.log( 'ERROR in JobAidManifest.projProcessData_calcFileSize, ' + errMsg ); };
+
+	// Updating in Storage (Persis) is done from outside of this method
+	//return totalSize;
 };
 
 
@@ -133,8 +195,8 @@ JobAidContentPage.getContentType = function( fileName, fileType )
 
 JobAidContentPage.populateFileItemInfo = function(fileItem, tbodyTag)
 {
-	var row1Tag = $( JobAidContentPage.contentPage_row1Tag );
-	var row2Tag = $( JobAidContentPage.contentPage_row2Tag );
+	var row1Tag = $( JobAidContentPage.contentPage_row1Tag ).attr( 'url', fileItem.url );
+	var row2Tag = $( JobAidContentPage.contentPage_row2Tag ).attr( 'url', fileItem.url );
 	var fileNameTag = row1Tag.find( 'div.divFileNameVal' );
 
 	// Row 1 - populate data in tags..
