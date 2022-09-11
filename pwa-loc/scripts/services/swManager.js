@@ -94,7 +94,7 @@ SwManager.createInstallAndStateChangeEvents = function (swRegObj) //, callBack )
 	{
 		SwManager.swInstallObj = swRegObj.installing;
 
-		// NEW - if 
+		// [NEW] - if 1st time running SW reg, do not show appUpdate Downloading (since it is just caching for offline usage), and also do not reload after this is done.
 		if ( !SwManager.newRegistration ) SwManager.appUpdateUI_DownloadingNewFiles_wtMsg(); // Show 'New App Update' message
 		
 		// sw state changes 1-4 (ref: SwManager.installStateProgress )
