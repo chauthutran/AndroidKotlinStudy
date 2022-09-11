@@ -203,6 +203,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 {
 	if ( ConnManagerNew.isAppMode_Online() ) 
 	{
+		// ===================================
+		// STEP 0: RETRIEVE ALL THE FILE LISTS for the proj item.
+
 		if ( !options ) options = {};
 		$('.divJobFileLoading').remove();
 
@@ -239,6 +242,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 			dataType: "json",
 			success: function (response) 
 			{
+				// ===================================
+				// STEP 1: SET LOCAL STORAGE - about these file listings (reset to download false & file size empty..)
+				
 				// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
 				var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 
@@ -248,6 +254,10 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 				if ( newFileList.length <= 0 ) $( '.spanJobFilingMsg' ).text( 'Empty process list.' );
 				else
 				{				
+
+					// ===================================
+					// STEP 2: CALLING SERVICE WORKER - TO START CACHING THE FILES IN FILE LISTS.
+					
 					// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
 					//    However, since we do not want anyone to access jobs folder directly, but only through cache
 					//		We need to have service worker Read & Cache it.

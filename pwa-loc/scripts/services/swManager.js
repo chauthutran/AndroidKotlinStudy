@@ -88,37 +88,22 @@ SwManager.createInstallAndStateChangeEvents = function (swRegObj) //, callBack )
 	if (!swRegObj.active) { SwManager.newRegistration = true; SwManager.registrationState = 'sw: new install'; }
 	else { SwManager.newRegistration = false; SwManager.registrationState = 'sw: existing'; }
 
+
 	// SW update change event 
-	swRegObj.onupdatefound = () => {
+	swRegObj.onupdatefound = () => 
+	{
 		SwManager.swInstallObj = swRegObj.installing;
 
-		SwManager.appUpdateUI_DownloadingNewFiles_wtMsg(); // Top Left Dot blinking.. + Msg show 3 seconds
-
+		// NEW - if 
+		if ( !SwManager.newRegistration ) SwManager.appUpdateUI_DownloadingNewFiles_wtMsg(); // Show 'New App Update' message
+		
 		// sw state changes 1-4 (ref: SwManager.installStateProgress )
-		SwManager.swInstallObj.onstatechange = () => {
+		SwManager.swInstallObj.onstatechange = () => 
+		{
 			SwManager.registrationUpdates = true;
 			console.log(SwManager._swStage2 + 'state: ' + SwManager.swInstallObj.state);
 
-			switch (SwManager.swInstallObj.state) {
-				case 'installing':
-					// SW installing (1) - applying changes
-					//console.log( SwManager._swStage2 + '1. installing!' );                    
-					break; // do nothing
-
-				case 'installed':
-					// SW installed (2) - changes applied
-					//console.log( SwManager._swStage2 + '2. installed!' );
-					SwManager.appUpdateUI_Downloaded_NewFiles();
-					break;
-
-				case 'activating':
-					// SW activating (3) - starting up 
-					break; // do nothing
-
-				case 'activated':
-					// SW activated (4) - start up completed: ready
-					break;
-			}
+			//switch (SwManager.swInstallObj.state) { case 'installing': break;  'installed', 'activating', 'activated': }
 		};
 	};
 
@@ -144,8 +129,9 @@ SwManager.createInstallAndStateChangeEvents = function (swRegObj) //, callBack )
 
 			if (!SwManager.swUpdateOption) SwManager.swUpdateOption = {};
 
-			// 'About page' app update uses above '_EventCallBack'
-			var delayReload = (SwManager.swUpdateOption.delayReload) ? true : false;
+
+			// If 1st time use(fresh), or intentional no reload update (during the app usage case), do not reload
+			var delayReload = (SwManager.swUpdateOption.delayReload || SwManager.newRegistration ) ? true : false;
 			if (!delayReload && SwManager.checkSecondsOverAfterLogin(SwManager._afterLogin_updateSecondsOver)) delayReload = true; // If over 5 seconds after login, do not reload app for update apply - delay it. 
 
 			// For Already logged in, simply delay it --> which the logOut will perform the update.
@@ -310,7 +296,7 @@ SwManager.listFilesInCache = function (cacheKey) {
 // --------------------------------------
 
 SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function () {
-	var dotPlusingTag = `<div class="lv-dots lv-mid sd" ><div></div><div></div><div></div><div></div></div>`;
+	//var dotPlusingTag = `<div class="lv-dots lv-mid sd" ><div></div><div></div><div></div><div></div></div>`;
 
 	var newUpdateMsg = 'New App Updates Downloading';
 	console.log(SwManager._swStage2 + newUpdateMsg);
@@ -319,8 +305,9 @@ SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function () {
 	msgTag.attr('noticeId', 'downloading').find('.tdMsg').css('padding', '');
 };
 
-SwManager.appUpdateUI_Downloaded_NewFiles = function () {
+
+//SwManager.appUpdateUI_Downloaded_NewFiles = function () {
 	//clearInterval(SwManager.interval_newAppFileDownloading);
 	//$('.appUpdateStatusDiv').hide();
-};
+//};
 
