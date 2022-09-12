@@ -769,10 +769,10 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 				});
 			}
 			else {
-				var payload = ActivityDataManager.activityPayload_ConvertForWsSubmit(activityJson_Orig);
+				var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit(activityJson_Orig);
 
 				// NOTE: We need to add app timeout, from 'request'... and throw error...
-				WsCallManager.wsActionCall(activityJson_Orig.processing.url, payload, undefined, function (success, responseJson) {
+				WsCallManager.wsActionCall(activityJson_Orig.processing.url, payloadJson, undefined, function (success, responseJson) {
 					SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
 				});
 			}

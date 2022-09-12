@@ -49,7 +49,7 @@ JobAidContentPage.calcMissingFileSize = async function ( projProcess, callBack )
 
 	try 
 	{
-		JobAidHelper.getCacheKeys_async().then( cacheKeyJson => 
+		JobAidHelper.getCacheKeys_async().then( async function( cacheKeyJson )		
 		{
 			var keys = cacheKeyJson.keys;
 			var cache = cacheKeyJson.cache;  //var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
@@ -68,11 +68,12 @@ JobAidContentPage.calcMissingFileSize = async function ( projProcess, callBack )
 					{
 						// NOTE: We may display 'calculating...' animation on the 'size' location..  at here.
 
-						cache.match( request ).then( response => response.clone().blob().then( myBlob => 
-						{
-							var size = myBlob.size;
-							if ( callBack ) callBack( urlProp, size, item );
-						}));
+						var response = await cache.match( request );
+						var myBlob = await response.clone().blob();
+						var size = myBlob.size;
+						if ( callBack ) callBack( urlProp, size, item );
+
+						//cache.match( request ).then( response => response.clone().blob().then( myBlob => 
 					}
 				}
 	

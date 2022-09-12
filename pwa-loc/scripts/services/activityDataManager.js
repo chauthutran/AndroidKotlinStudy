@@ -594,7 +594,7 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function (activityJson,
 	var payloadJson = {
 		"appVersion": _version,  //ActivityDataManager.wsSubmit_AppVersionStr,
 		"payload": undefined,
-		"historyData": activityJson.processing.historyData //ActivityDataManager.getHistoryData( activityJson.processing.history )
+		"historyData": ActivityDataManager.getHistoryShortenData( activityJson.processing.historyData ) // gets a copy of it with shortened msg.
 	};
 
 
@@ -623,6 +623,37 @@ ActivityDataManager.activityPayload_ConvertForWsSubmit = function (activityJson,
 
 	return payloadJson;
 };
+
+
+ActivityDataManager.getHistoryShortenData = function( historyData )
+{
+	var historyShortenData = [];
+	
+	if ( historyData )
+	{
+		historyShortenData = Util.cloneJson( historyData );
+
+		try
+		{
+			for (var i = 0; i < historyShortenData.length; i++) 
+			{
+				var item = historyShortenData[i];
+	
+				if ( item.msg && item.msg.length > 30 )
+				{
+					item.msg = item.msg.substr( 0, 30 );
+				}
+			}
+		}
+		catch( errMsg )
+		{
+			console.log( 'ERROR in ActivityDataManager.getHistoryShortenData, ' + errMsg );
+		}
+	}
+
+	return historyShortenData;
+};
+
 
 // NOTE: CHANGE this 'getHistoryData' to be more of placed/stored data under 'processing'.
 //      NEW CONdition:
