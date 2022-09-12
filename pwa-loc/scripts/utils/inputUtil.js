@@ -16,8 +16,6 @@ InputUtil.inputMonLogoutTimer;
 
 InputUtil.updateLogoutTimer = function() {
 
-	console.log( 'InputUtil.updateLogoutTimer CALLED' );
-
 	if (InputUtil.inputMonLogoutTimer) clearInterval(InputUtil.inputMonLogoutTimer);
 
 	if (SessionManager.getLoginStatus()) {
