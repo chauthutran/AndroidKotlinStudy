@@ -187,7 +187,7 @@ SwManager.checkNewAppFile_OnlyOnline = function (runFunction, option) {
 		if (!option.noMinTimeSkip && SwManager.lastAppFileUpdateDt && UtilDate.getTimeSince(SwManager.lastAppFileUpdateDt, Util.MS_MIN) < 1) checkTooClose = true;
 
 		// NEW: Check last check dateTime and compare..
-		if (checkTooClose) console.log(SwManager._swStage1 + option.checkTypeTitle + ' --> Too Frequent Checks, SKIPPED.');
+		if (checkTooClose) console.log(SwManager._swStage1 + option.checkTypeTitle + ' --> Too Short/Quick App Update Checks (1 Min), Check SKIPPED.');
 		else {
 			SwManager.lastAppFileUpdateDt = new Date().toISOString();
 			console.log(SwManager._swStage1 + option.checkTypeTitle + ' --> UPDATES CHECKING..');

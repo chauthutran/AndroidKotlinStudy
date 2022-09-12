@@ -10,10 +10,33 @@
 
 	 3. do something with interface/object at end of touchend ( touchEnd() )
 */
+function InputUtil() {};
+
+InputUtil.inputMonLogoutTimer;
+
+InputUtil.updateLogoutTimer = function() {
+
+	console.log( 'InputUtil.updateLogoutTimer CALLED' );
+
+	if (InputUtil.inputMonLogoutTimer) clearInterval(InputUtil.inputMonLogoutTimer);
+
+	if (SessionManager.getLoginStatus()) {
+		var logOutDelayMin = ConfigManager.staticData.logoutDelay;
+		var logOutDelayMs = ConfigManager.staticData.logoutDelayMs;
+
+		InputUtil.inputMonLogoutTimer = setTimeout(function () {
+			if (SessionManager.getLoginStatus()) {
+				console.log('Auto LogOut performed due to inactivity of ' + logOutDelayMin + ' minutes.');
+				SessionManager.cwsRenderObj.logOutProcess();
+			}
+		}, logOutDelayMs);
+	}
+};
+
+// =========================================
 
 function inputMonitor(cwsRenderObj) {
 	var me = this;
-	me.inputMonLogoutTimer;
 
 	if (Util.isMobi()) {
 		document.addEventListener("touchstart", me.touchStart, false);
@@ -21,7 +44,7 @@ function inputMonitor(cwsRenderObj) {
 		document.addEventListener("touchend", me.touchEnd, false);
 	}
 	else {
-		document.addEventListener("click", me.updateLogoutTimer, false);
+		document.addEventListener("click", InputUtil.updateLogoutTimer, false);
 	}
 
 
@@ -64,24 +87,9 @@ function inputMonitor(cwsRenderObj) {
 
 		me.setFocusRelegatorInitialState();
 
-		me.updateLogoutTimer();
+		InputUtil.updateLogoutTimer();
 	};
 
-	me.updateLogoutTimer = function() {
-		if (me.inputMonLogoutTimer) clearInterval(me.inputMonLogoutTimer);
-
-		if (SessionManager.getLoginStatus()) {
-			var logOutDelayMin = ConfigManager.staticData.logoutDelay;
-			var logOutDelayMs = ConfigManager.staticData.logoutDelayMs;
-
-			me.inputMonLogoutTimer = setTimeout(function () {
-				if (SessionManager.getLoginStatus()) {
-					console.log('Auto LogOut performed due to inactivity of ' + logOutDelayMin + ' minutes.');
-					SessionManager.cwsRenderObj.logOutProcess();
-				}
-			}, logOutDelayMs);
-		}
-	}
 
 	me.touchMove = function(e) {
 
@@ -102,20 +110,6 @@ function inputMonitor(cwsRenderObj) {
 		else {
 			me.moveNavDrawer(); // navDrawer is target object
 		}
-		/*else  // IGNORE UP+DOWN INPUT SWIPE FOR NOW (NB: DO NOT REMOVE CODE)
-		{
-			 if (diffY > 0)  // sliding vertically
-			 {
-				  console.log("swiping up");  // swiping up
-			 } 
-			 else 
-			 {
-				  console.log("swiping down"); // swiping down
-			 }
-		}*/
-
-		//e.preventDefault();
-
 	};
 
 	me.touchEnd = function(e) {
@@ -159,29 +153,8 @@ function inputMonitor(cwsRenderObj) {
 		//console.log( $( e.touches[0].target ) );
 
 		// listPage (containing redeemList) is currently visible
-		if ($('div.listDiv').is(':visible')) //div.floatListMenuSubIcons
-		{
-		}
-		else {
-			listItemDragEnabled = false;
-		}
-
-		/*
-		if ( !listItemDragEnabled && $( 'div.floatListMenuSubIcons' ).is( ':visible' ) ) //div.floatListMenuSubIcons
-		{
-			 $( 'div.floatListMenuIcon' ).css('zIndex',1);
-
-			 if ( ! $( e.touches[0].target ).hasClass( 'floatListMenuIcon' ) )
-			 {
-				  $( 'div.floatListMenuIcon' ).click();
-			 }
-			 else
-			 {
-				  e.stopPropagation();
-			 }
-
-		}
-		*/
+		if ($('div.listDiv').is(':visible')) {}
+		else { listItemDragEnabled = false; }
 
 		if (listItemDragEnabled && initialX >= dragXoffsetLimit) {
 			startTagRedeemListItem = $(e.touches[0].target).hasClass('dragSelector') || ($(e.touches[0].target).is('HTML') && $(e.touches[0].target).hasClass('bg-color'));
@@ -190,14 +163,12 @@ function inputMonitor(cwsRenderObj) {
 				touchStartTargetTag = $(e.touches[0].target).closest('a');
 				touchStartTargetWidth = $(touchStartTargetTag).width();
 			}
-
 		}
 
 		if ($('#navDrawerDiv').hasClass('transitionSmooth')) {
 			$('#navDrawerDiv').removeClass('transitionSmooth');
 			$('#navDrawerDiv').addClass('transitionRapid');
 		}
-
 	}
 
 	me.setFocusRelegatorInitialState = function () {
@@ -208,10 +179,6 @@ function inputMonitor(cwsRenderObj) {
 				$('div.scrim').css('zIndex', ($('#navDrawerDiv').css('zIndex') - 1));
 			}
 		}
-		/*else
-		{
-			 $( 'div.scrim' ).css( 'opacity', 0);
-		}*/
 	}
 
 	me.initialiseListItemVars = function () {

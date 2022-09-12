@@ -568,8 +568,12 @@ ActivityDataManager.createNewPayloadActivity = function (actionUrl, blockId, for
 		if (!client) client = ClientDataManager.createClient_forActivityPayload(activityJson);
 
 
-		// NEW: fix date if any date (capturedLoc) has long literal string date value
+		// NEW: fix date if any date (capturedLoc) has long literal string date value - [22-08]
 		ActivityUtil.fixActDates(activityJson.date);
+
+
+		// NEW: If the new activity is voucher issuing with older date than existing, change 'c_upd' trans type - [22-09]
+		ClientDataManager.olderVoucherActivity_Modify( client, activityJson, 'c_upd', 'c_upd_old' );
 
 
 		// TODO: When adding, check for 'c_reg' activity not yet synced case.  If so, add new activity on bottom..

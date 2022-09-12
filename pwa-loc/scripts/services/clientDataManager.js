@@ -698,8 +698,10 @@ ClientDataManager.setClientDateLocal = function (client) {
 //      - Due to backdated new voucher need to be considered 'latestActiveVoucher' - What we want. 
 
 // Get last voucher data by issued activity captured date.
-ClientDataManager.getLastVoucherData = function (client) {
+ClientDataManager.getLastVoucherData = function (client, option)
+{
 	var lastVoucherData;
+	if ( !option ) option = {};
 
 	var voucherDataList = ClientDataManager.getVoucherDataList(client);
 
@@ -712,7 +714,7 @@ ClientDataManager.getLastVoucherData = function (client) {
 			if (vcList.length > 0) override_Vc = vcList[vcList.length - 1];
 		}
 
-		if (override_Vc) lastVoucherData = override_Vc;
+		if (!option.noOverride && override_Vc) lastVoucherData = override_Vc;
 		else lastVoucherData = voucherDataList[voucherDataList.length - 1];
 	}
 
@@ -780,13 +782,14 @@ ClientDataManager.getVoucherDataList = function (client, overrideDateName) {
 
 
 		if (voucherCodes.length > 0) {
-			var filteredActivities = ClientDataManager.getActivities_EP_Filtered(client);   // client.activities
+			//var activities = ClientDataManager.getActivities_EP_Filtered(client);   // NOTE: External Partner should use normal activity list for last voucher.
+			var activities = client.activities;
 
 			// 1. Organize data by voucherCode ->  { voucherCode, createdDateStr/v_issDateStr, activities([]) }
 			for (var i = 0; i < voucherCodes.length; i++) {
 				var voucherCode = voucherCodes[i];
 
-				var voucherData = ActivityDataManager.getVoucherActivitiesData(filteredActivities, voucherCode);
+				var voucherData = ActivityDataManager.getVoucherActivitiesData(activities, voucherCode);
 				if (voucherData.activities.length > 0) voucherDataList.push(voucherData);
 			}
 
@@ -969,4 +972,44 @@ ClientDataManager.hasUsedActivities = function ( client ) {
 	}
 
 	return hasUsedAct;
+};
+
+// 'typeFrom': 'c_upd', 'typeTo': 'c_upd_old'
+ClientDataManager.olderVoucherActivity_Modify = function ( client, activityPayload, typeFrom, typeTo ) 
+{
+	var isOlder = false;
+
+	try 
+	{
+		// Check if the activity has 
+		if ( activityPayload )
+		{
+			if ( ActivityDataManager.hasActivityTransMatch( activityPayload, [ { 'type': 'v_iss' } ] ) )
+			{
+				// 2 CHECKS: Activity Date is backdated (from today), Exists Voucher Issued in later date.
+				//  - For Now, Only check the later dated voucher existing.
+				var currVoucherDate = activityPayload.date.capturedLoc;
+
+				if ( currVoucherDate )
+				{
+					var lastVoucherData = ClientDataManager.getLastVoucherData( client, { noOverride: true } );
+					
+					if ( lastVoucherData && lastVoucherData.v_issDateStr && lastVoucherData.v_issDateStr > currVoucherDate ) isOlder = true;
+				}
+
+				if ( isOlder )
+				{
+					var transArr_cUpd = activityPayload.transactions.filter( trans => trans.type === typeFrom ); //'c_upd' );		
+					transArr_cUpd.forEach( trans => {
+						trans.type = typeTo; //'c_upd_old';
+					});
+				}
+			}			
+		}
+	}
+	catch (errMsg) {
+		console.log('ERROR in ClientDataManager.isOlderVoucherActivity, ' + errMsg);
+	}
+
+	return isOlder;
 };
