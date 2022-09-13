@@ -1,3 +1,7 @@
+@font-face{
+  font-family: text-security-disc;
+  src: url("text-security-disc.woff");
+}
 
 .iframeDiv
 {
@@ -228,6 +232,9 @@
 }
 
 .pin_pw {
+  -webkit-text-security: disc;
+  -moz-text-security: disc;
+  font-family: text-security-disc;
   background-color: white;
 }
 
@@ -237,6 +244,18 @@
   margin: 5px 1px 3px 0px;
   border: 1px solid #aae6f7;
 }
+
+/* 2. logo greyscale for offline/online */
+.logoOffline {
+  -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+  filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
+  opacity: 0.6;
+}
+
+.loginPinDiv {
+  -webkit-text-security: disc;
+}
+
 
 .modalSymbol{
   background: #FFF;
@@ -415,25 +434,6 @@ input.loginUserPinNumeric:focus
     opacity: 0;
   }
 }
-
-/* 2. logo greyscale for offline/online */
-.logoOffline {
-  -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
-  filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
-  opacity: 0.6;
-}
-
-
-.loginPinDiv {
-  -webkit-text-security: disc;
-}
-
-/*.logoOnline {
-  -webkit-filter: grayscale(0);
-  filter: grayscale(0);
-  transition: all 1s ease;
-}*/
-
 
 /* 3. animated CWS logo spin*/
 .cwsLogoRotateY{

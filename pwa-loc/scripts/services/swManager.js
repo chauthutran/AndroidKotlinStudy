@@ -161,7 +161,7 @@ SwManager.createInstallAndStateChangeEvents = function (swRegObj) //, callBack )
 			else if (msgData.msg) MsgManager.msgAreaShow(msgData.msg);
 
 			// Have App stay active if 'message' is received
-			SessionManager.cwsRenderObj._manageInputSwipe.updateLogoutTimer();
+			InputUtil.updateLogoutTimer();
 
 		}
 	});
