@@ -691,7 +691,7 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 
 			
 			// 2. Setup for 'updates' by date comparison
-			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, spanMediaDownloadStatusTag );			
+			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, spanAppDownloadStatusTag, spanMediaDownloadStatusTag );			
 		}
 	
 
@@ -726,7 +726,7 @@ JobAidItem.itemPopulate_getDownloadedData = function(projDir)
 	return downloadedData;
 };
 
-JobAidItem.itemPopulate_setUpdateStatus = function( itemData, menus, spanMediaDownloadStatusTag )
+JobAidItem.itemPopulate_setUpdateStatus = function( itemData, menus, spanAppDownloadStatusTag, spanMediaDownloadStatusTag )
 {
 	var matchData = JobAidItem.matchInServerList(itemData, JobAidPage.availableManifestList);
 	
