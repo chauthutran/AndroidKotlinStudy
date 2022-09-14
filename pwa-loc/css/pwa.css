@@ -41,7 +41,7 @@
   width: 100%; 
   background-color: beige;
   padding: 3px;  
-  font-size: 14px;
+  font-size: 13px;
   height: fit-content;
 }
 
@@ -50,13 +50,14 @@
   margin-left: 10px;
   background-color: lightgray;
   padding: 4px;  
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .switchVc {
   width: fit-content; 
   background-color: #FEFEFE;
   padding-right: 24px;
+  font-size: 13px;
 }
 
 /* ===== Job Aid Releated =========================== */

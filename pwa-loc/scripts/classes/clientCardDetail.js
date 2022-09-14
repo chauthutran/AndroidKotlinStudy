@@ -242,7 +242,7 @@ function ClientCardDetail(clientId) {
 			divLatestVoucherTag = $('<div class="lastVoucherInfoDiv"></div>');
 			activityListDivTag.prepend(divLatestVoucherTag);
 
-			var voucherCodeDivTag = $('<div style="display: inline-block;"><span>Current Voucher:</span> <span class="spanLastVc"></span> <span class="spanLastVcDate" style="color: gray; font-size: 13px;"></span></div>');
+			var voucherCodeDivTag = $('<div style="display: inline-block;"><span term="clientDetail_currVoucher">Voucher:</span> <span class="spanLastVc"></span> <span class="spanLastVcDate" style="color: gray; font-size: 13px;"></span></div>');
 
 			voucherCodeDivTag.find('span.spanLastVc').text(lastVoucherData.voucherCode).attr('title', 'Issued: ' + lastVoucherData.v_issDateStr);
 			voucherCodeDivTag.find('span.spanLastVcDate').text(' [' + UtilDate.formatDateTimeStr(lastVoucherData.v_issDateStr, 'MMM d') + ']');
@@ -260,7 +260,7 @@ function ClientCardDetail(clientId) {
 
 		if (voucherDataList.length > 1) {
 			// Insert into divLatestVoucher - to add dropdown..
-			var selectDivTag = $('<div class="overrideLastVoucherDiv"><span>Override:</span> <select class="switchVc"></select></div>');
+			var selectDivTag = $('<div class="overrideLastVoucherDiv"><span term="clientDetail_switchVC">Switch:</span> <select class="switchVc"></select></div>');
 			var selectTag = selectDivTag.find('select');
 			divLatestVoucherTag.append(selectDivTag);
 
