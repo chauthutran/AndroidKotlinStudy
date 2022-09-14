@@ -191,6 +191,30 @@ function ClientCardDetail(clientId) {
 		}
 
 
+		// Temp Client Removal Option
+		var removeTempClientBtn = sheetFullTag.find('.removeTempClient').hide();
+		if ( ClientDataManager.isTempClientCaseById(clientId) )
+		{
+			removeTempClientBtn.show().click(function () 
+			{
+				var result = confirm("Are you sure you want to delete this temp client?");
+				if (result) 
+				{
+					var clientJson = ClientDataManager.getClientById(clientId);
+					if (clientJson) 
+					{
+						if ( ClientDataManager.removeClient(clientJson) )
+						{
+							ClientDataManager.saveCurrent_ClientsStore(() => {
+								MsgManager.msgAreaShow( 'Removed The Temp Client' );
+							});	
+						}
+					}
+				}
+			});
+		}
+
+
 		// -----------------------------------------
 		// Click on one of the tab on start        
 		var openUp_tabRel = (option && option.openTabRel) ? option.openTabRel : 'tab_clientDetails';
@@ -486,6 +510,15 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 				</card__cta>
 				<div class="clientRerender" style="float: left; width: 1px; height: 1px;"></div>
 			</div>
+
+			<div class="divClientModBtns" style="">
+				<div class="button warning button-full_width removeTempClient"
+				style="display:none; height: 12px; min-height: 12px !important; background-color: whitesmoke; border: solid 1px silver;">
+					<div class="button__container">
+						<div class="button-label" style="line-height: 12px; color: tomato; font-size: 8px;">Remove Temp Client</div>
+					</div>
+				</div>
+			</div> 
 
 			<div class="tab_fs">
 				<ul class="tab_fs__head" style="background-color: #fff;">

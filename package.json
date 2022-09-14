@@ -4,9 +4,10 @@
   "description": "WorkForceApp PWA service worker build",
   "author": "James Chang",
   "scripts": {
+    "cssMinTest": "css-minify -f .\\pwa-loc\\css\\style.css",
+
     "localDev": "del pwa-loc\\workbox-* && node sw_build_pwa-loc.js && xcopy pwa-loc deploy\\pwa-dev /E/H/C/I/Y",
     "localDevTomcat": "del pwa-loc\\workbox-* && node sw_build_pwa-loc.js && xcopy pwa-loc C:\\Work\\tomcat8\\webapps\\pwa-dev /E/H/C/I/Y",
-
     "todoNote": "We can go with reusing localDev folder?  hard to reuse since we need to delete them..",
 
     "d_copyDev": "xcopy pwa-loc pwa-dev /E/H/C/I/Y",
@@ -36,6 +37,7 @@
     "todoScript": "Should use karma start to pass/fail before devBuild & tBuild!!!"
   },
   "dependencies": {
+    "css-minify": "^2.0.0",
     "karma": "^5.1.0",
     "karma-chrome-launcher": "^3.1.0",
     "karma-cli": "^2.0.0",
@@ -50,7 +52,6 @@
     "workbox-window": "^6.3.0"
   },
   "devDependencies": {
-    "workbox-build": "^6.3.0",
     "karma": "^5.1.0",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.0.2",
@@ -58,6 +59,7 @@
     "karma-qunit": "^4.1.1",
     "karma-requirejs": "^1.1.0",
     "qunit": "^2.10.0",
-    "qunitjs": "^2.4.1"
+    "qunitjs": "^2.4.1",
+    "workbox-build": "^6.3.0"
   }
 }
