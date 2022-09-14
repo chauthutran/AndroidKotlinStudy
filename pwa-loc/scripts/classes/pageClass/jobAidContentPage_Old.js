@@ -91,11 +91,10 @@ JobAidContentPage.calcMissingFileSize = async function ( projProcess, callBack )
 JobAidContentPage.populateFileContent = function(divMainContentTag, processData, projDir) 
 {
 	divMainContentTag.html('');
-	
-	divMainContentTag.append( JobAidContentPage.contentPage_headers );
 
-	let dataListTag = $( JobAidContentPage.contentPage_dataList );
-	divMainContentTag.append( dataListTag );
+	var tableTag = $( JobAidContentPage.contentPage_tableTag );
+	var tbodyTag = tableTag.find('tbody');
+	divMainContentTag.append( tableTag );
 
 
 	// TODO: wants to sort by video 1st, audio 2nd, img 3rd, others..
@@ -139,7 +138,7 @@ JobAidContentPage.populateFileContent = function(divMainContentTag, processData,
 	{
 		var fileItem = totalItems[i];
 
-		JobAidContentPage.populateFileItemInfo(fileItem, dataListTag);
+		JobAidContentPage.populateFileItemInfo(fileItem, tbodyTag);
 	}
 };
 
@@ -195,51 +194,60 @@ JobAidContentPage.getContentType = function( fileName, fileType )
 };
 
 
-JobAidContentPage.populateFileItemInfo = function( fileItem, dataListTag )
+JobAidContentPage.populateFileItemInfo = function(fileItem, tbodyTag)
 {
-	let dataItemTag = $( JobAidContentPage.contentPage_dataItem );
-	dataListTag.append( dataItemTag );
-	
-	JobAidContentPage.populateFileName_Preview( fileItem, dataItemTag.find(".fileName") );
+	var row1Tag = $( JobAidContentPage.contentPage_row1Tag ).attr( 'url', fileItem.url );
+	var row2Tag = $( JobAidContentPage.contentPage_row2Tag ).attr( 'url', fileItem.url );
+	var fileNameTag = row1Tag.find( 'div.divFileNameVal' );
+
+	// Row 1 - populate data in tags..
+	JobAidContentPage.populateFileName_Preview( fileItem, fileNameTag );
 
 
-	dataItemTag.find(".folder").html( fileItem.folderPath );
-	dataItemTag.find(".contentType").append( fileItem.contentType );
+	// Downloaded status effect
+	if ( fileItem.downloaded !== true )
+	{
+		row1Tag.css( 'background-color', 'lightpink' );
+		row2Tag.css( 'background-color', 'lightpink' );
+		fileNameTag.append( '<span style="margin-left: 10px;"><strong>[NOT DOWNLOADED]</strong></span>' );
+	}
 
-	// Caching Time	
+	// Row 2 - folder, date, size
+	// folder
+	row2Tag.find( 'div.divFileFolderVal' ).append(fileItem.folderPath);
+
+	// content-type
+	row2Tag.find( 'div.divFileContentTypeVal' ).append(fileItem.contentType);
+
+	// date	
 	var dateFormatted = '';
 	if ( fileItem.date ) dateFormatted = UtilDate.formatDate( Util.getStr(fileItem.date), "yyyy/MM/dd HH:mm:ss" );
 	else dateFormatted = '[N/A]'
-	dataItemTag.find(".cachingTime").append( dateFormatted).attr('title', 'date: ' + fileItem.date);
+	row2Tag.find( 'div.divFileCachingTimeVal' ).append(dateFormatted).attr('title', 'date: ' + fileItem.date);
 
 	// size
 	var sizeFormatted = '';
 	if ( fileItem.size ) sizeFormatted = Util.formatFileSizeMB( fileItem.size );
 	else sizeFormatted = '[N/A]';
-	dataItemTag.find(".contentLength").append( sizeFormatted ).attr("title", "size:" + fileItem.size);
+	row2Tag.find( 'div.divFileContentLengthVal' ).append(sizeFormatted).attr('title', 'size: ' + fileItem.size);
+	
+
+	tbodyTag.append( row1Tag );
+	tbodyTag.append( row2Tag );
 };
 
 JobAidContentPage.populateFileName_Preview = function(fileItem, fileNameTag) 
 {
 	if (fileItem !== undefined)
 	{
-		// let shortName = fileItem.name;
-		// const fileNameLeng = shortName.length;
-		// if( fileNameLeng > 35 )
-		// {
-		// 	shortName = shortName.substring( 0, 15 ) + " ... " + shortName.substring( fileNameLeng - 15, fileNameLeng );
-		// }
+		var displayName = Util.shortenFileName( fileItem.name, 40 );
 
-		fileNameTag.attr("title", "name:" + fileItem.name);
-		fileNameTag.attr("play_full", fileItem.url);
-		fileNameTag.attr("play_type", fileItem.fileType);
-		fileNameTag.html( fileItem.name );
+		fileNameTag.append(displayName).attr('title',  'name: ' + fileItem.name ); //.url);
+	
 
-		if ( fileItem.downloaded !== true )
-		{
-			fileNameTag.append( '<span style="margin-left: 10px;"><strong>[NOT DOWNLOADED]</strong></span>' );
-		}
-		
+		fileNameTag.css('cursor', 'pointer');
+		fileNameTag.attr('play_type', fileItem.fileType).attr('play_full', fileItem.url);
+
 		fileNameTag.click(function () 
 		{	
 			var thisTag = $(this);
@@ -291,55 +299,34 @@ JobAidContentPage.populateFilePreviewBottomTag = function()
 
 JobAidContentPage.contentPage_tableTag = `<table class="jobFileContentTable"><tbody></tbody></table>`;
 
-JobAidContentPage.contentPage_headers = `
-<div class="list-downloaded-headers">
-	<div class="list-r">
-		<div class="list-r_secc">
-			<div class="list-r_secc_title">File Name</div>
-		</div>
-		<div class="list-r_secc">
-			<div class="list-r_secc_title">Folder</div>
-		</div>
-		<div class="list-r_secc">
-			<div class="list-r_secc_title">Content-Type</div>
-		</div>
-		<div class="list-r_secc">
-			<div class="list-r_secc_title">Caching time</div>
-		</div>
-		<div class="list-r_secc">
-			<div class="list-r_secc_title">Content-Length</div>
-		</div>
-	</div>
-</div>`;
+JobAidContentPage.contentPage_row1Tag = `
+<tr class="trJobFileR1">
+	<td colspan="4">
+		<div class="jfTitle">File Name</div>
+		<div class="divFileNameVal jfVal"></div>
+	</td>
+</tr>`;
 
-JobAidContentPage.contentPage_dataList = `
-	<div class="list-downloaded"></div>
-`;
+JobAidContentPage.contentPage_row2Tag = `
+<tr class="trJobFileR2">
+	<td>
+		<div class="jfTitle">Folder</div>
+		<div class="divFileFolderVal jfVal"></div>
+	</td>
+	<td>
+		<div class="jfTitle">Content-Type</div>
+		<div class="divFileContentTypeVal jfVal"></div>
+	</td>
+	<td>
+		<div class="jfTitle">Caching time</div>
+		<div class="divFileCachingTimeVal jfVal"></div>
+	</td>
+	<td>
+		<div class="jfTitle">Content-Length</div>
+		<div class="divFileContentLengthVal jfVal"></div>
+	</td>
+</tr>`;
 
-JobAidContentPage.contentPage_dataItem = `
-<div class="list-r">
-	<div class="list-r_secc">
-		<div class="list-r_secc_title">File Name</div>
-		<div class="list-r_secc_cnt fileName" title="" play_type="" play_full="" style="cursor: pointer;"></div>
-	</div>
-	<div class="list-r_secc">
-		<div class="list-r_secc_title">Folder</div>
-		<div class="list-r_secc_cnt folder">/</div>
-	</div>
-	<div class="list-r_secc">
-		<div class="list-r_secc_title">Content-Type</div>
-		<div class="list-r_secc_cnt contentType"></div>
-	</div>
-	<div class="list-r_secc">
-		<div class="list-r_secc_title">Caching time</div>
-		<div class="list-r_secc_cnt cachingTime"></div>
-	</div>
-	<div class="list-r_secc">
-		<div class="list-r_secc_title">Content-Length</div>
-		<div class="list-r_secc_cnt contentLength" title=""></div>
-	</div>
-</div>
-`;
 
 JobAidContentPage.filePreviewTag = `
 <div class="sheet_bottom-btn3 divFilePreview" style="display: block; max-height: 50%;">
