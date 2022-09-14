@@ -30,8 +30,8 @@ JobAidContentPage.fileContentDialogOpen = async function(projDir)
 			if ( size ) sizeFormatted = Util.formatFileSizeMB( size );
 			else sizeFormatted = '[N/A]';
 
-			var row2Tag = divMainContentTag.find( '.trJobFileR2[url="' + urlProp + '"]' );
-			row2Tag.find( 'div.divFileContentLengthVal' ).html('').append(sizeFormatted).attr('title', 'size: ' + size);		
+			var dataItemTag = divMainContentTag.find( '.list-r[url="' + urlProp + '"]' );
+			dataItemTag.find( 'div.contentLength' ).html('').append(sizeFormatted).attr('title', 'size: ' + size);		
 		});
 	}
 	else MsgManager.msgAreaShowErr( 'No project data available.' );
@@ -197,7 +197,7 @@ JobAidContentPage.getContentType = function( fileName, fileType )
 
 JobAidContentPage.populateFileItemInfo = function( fileItem, dataListTag )
 {
-	let dataItemTag = $( JobAidContentPage.contentPage_dataItem );
+	let dataItemTag = $( JobAidContentPage.contentPage_dataItem ).attr( 'url', fileItem.url );
 	dataListTag.append( dataItemTag );
 	
 	JobAidContentPage.populateFileName_Preview( fileItem, dataItemTag.find(".fileName") );
