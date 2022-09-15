@@ -167,20 +167,7 @@ function settingsApp(cwsRender) {
 
 
 		$('#settingsInfo_newLangTermsDownload').click(function () {
-			var btnDownloadTag = $(this);
-			//var langSelVal = me.settingsInfo_langSelectTag.val();
-			//var loadingTag = FormUtil.generateLoadingTag(  btnDownloadTag );
-			//$("#imgSettingLangTermRotate").addClass("rot_l_anim");
-			// FormUtil.showProgressBar();
-
-			TranslationManager.loadLangTerms_NSetUpData(true, function (allLangTerms) {
-				if (allLangTerms) {
-					me.populateLangList_Show(TranslationManager.getLangList(), TranslationManager.getLangCode());
-
-					// Translate current page
-					TranslationManager.translatePage();
-				}
-			});
+			TranslationManager.loadLangTerms_NSetUpData( true );
 		});
 	}
 
@@ -222,29 +209,6 @@ function settingsApp(cwsRender) {
 		}
 	}
 
-
-	// Called from cwsRender class on 'render'
-	me.populateLangList_Show = function (languageList, defaultLangCode) {
-		Util.populateSelect(me.settingsInfo_langSelectTag, "Language", languageList);
-
-		if (defaultLangCode) {
-			me.setLanguageDropdownFromCode(languageList, defaultLangCode)
-		}
-
-		//$( '#settingsInfo_userLanguage_Name' ).html( me.getListNameFromID( languageList, defaultLangCode ) );
-
-		$('#settingsInfo_userLanguage_Update').val(TranslationManager.translateText('Refresh date', 'settingsInfo_userLanguage_Update') + ': ' + PersisDataLSManager.getLangLastDateTime());
-
-		$('#settingsInfo_DivLangSelect').show();
-	}
-
-	me.setLanguageDropdownFromCode = function (languageList, langCode) {
-		$.each(languageList, function (i, item) {
-			if (item.id == langCode) {
-				Util.setSelectDefaultByName(me.settingsInfo_langSelectTag, item.name);
-			}
-		});
-	}
 
 	me.getListNameFromID = function (arrList, idVal) {
 		for (i = 0; i < arrList.length; i++) {

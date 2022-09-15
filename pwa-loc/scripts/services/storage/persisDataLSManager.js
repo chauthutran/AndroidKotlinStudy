@@ -12,8 +12,9 @@ PersisDataLSManager.KEY_JOB_FILING_STATUS = "jobFilingStatus";
 // --- keys of object prop
 PersisDataLSManager.KEY_TRANSLATION = "translation"; 
 PersisDataLSManager.KEY_LANG_TERMS = "langTerms"; 
-PersisDataLSManager.KEY_LANG_CODE = "langCode"; 
-PersisDataLSManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
+PersisDataLSManager.KEY_LANG_CODE = "langCode";
+PersisDataLSManager.KEY_LANG_LASTTRYDT = "langLastTryDT";
+PersisDataLSManager.KEY_LANG_lastRetrievedDateTime = "lastRetrievedDateTime";
 
 // ----------------------------------------------------
 
@@ -196,6 +197,18 @@ PersisDataLSManager.setLangLastDateTime = function( dateObj )
 {
     var langLastDateTimeStr = Util.formatDate( dateObj );
     PersisDataLSManager.updatePropertyValue( PersisDataLSManager.KEY_TRANSLATION, PersisDataLSManager.KEY_LANG_LASTTRYDT, langLastDateTimeStr );
+};
+
+
+PersisDataLSManager.getLangLastRetrievedDateTime = function()
+{
+    var lastRetrievedDateTime = PersisDataLSManager.getPropertyValue( PersisDataLSManager.KEY_TRANSLATION, PersisDataLSManager.KEY_LANG_lastRetrievedDateTime );
+    return ( lastRetrievedDateTime ) ? lastRetrievedDateTime : "";
+};
+
+PersisDataLSManager.setLangLastRetrievedDateTime = function( lastRetrievedDateTime )
+{
+    PersisDataLSManager.updatePropertyValue( PersisDataLSManager.KEY_TRANSLATION, PersisDataLSManager.KEY_LANG_lastRetrievedDateTime, lastRetrievedDateTime );
 };
 
 

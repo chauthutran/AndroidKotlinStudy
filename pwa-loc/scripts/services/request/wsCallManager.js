@@ -163,15 +163,12 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
     var requestOption = { 'userName': userName, 'password': password };
 
     if ( AppInfoLSManager.getConfigVersioningEnable() === true ) {
-        requestOption.configVersioningEnable = true;
-        requestOption.configVersion = AppInfoLSManager.getConfigVersion();
-
+        requestOption.configVersioningEnable = true;   //requestOption.configVersion = AppInfoLSManager.getConfigVersion();
         var loginPrevData = AppInfoLSManager.getLoginPrevData();
         if ( loginPrevData.retrievedDateTime ) requestOption.loginPrevData = loginPrevData;
     } 
-    //requestOption.getOuChildren = 'Y';  // OLD - OBSOLETE
 
-	WsCallManager.requestPostDws( '/PWA.loginCheck', requestOption, loadingTag, function( success, returnJson )
+    WsCallManager.requestPostDws( '/PWA.loginCheck', requestOption, loadingTag, function( success, returnJson )
 	{
 		if ( success )
 		{

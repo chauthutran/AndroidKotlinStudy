@@ -175,3 +175,27 @@ SettingsStatic.requestUpdate_FixOperations = function( fixOperationList, userNam
     else returnFunc();
 };
 
+
+// -------------------------
+// --- Language Related
+//SettingsStatic.settingsInfo_langSelectTag = $('#settingsInfo_langSelect');
+
+// Called from cwsRender class on 'render'
+SettingsStatic.populateLangList_Show = function (languageList, defaultLangCode) 
+{
+    Util.populateSelect( $('#settingsInfo_langSelect'), "Language", languageList);
+
+    if (defaultLangCode) SettingsStatic.setLanguageDropdownFromCode(languageList, defaultLangCode);
+
+    $('#settingsInfo_userLanguage_Update').val(TranslationManager.translateText('Refresh date', 'settingsInfo_userLanguage_Update') + ': ' + PersisDataLSManager.getLangLastDateTime());
+
+    $('#settingsInfo_DivLangSelect').show();
+};
+
+SettingsStatic.setLanguageDropdownFromCode = function (languageList, langCode) {
+    $.each(languageList, function (i, item) {
+        if (item.id == langCode) {
+            Util.setSelectDefaultByName( $('#settingsInfo_langSelect'), item.name);
+        }
+    });
+};

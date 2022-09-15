@@ -539,7 +539,7 @@ function Login() {
 					// Save values in 'AppInfoLS' after online login
 					AppInfoLSManager.saveConfigSourceType(configJson.sourceType);  // For Availability Check Usage, store 'sourceType'
 					AppInfoLSManager.setConfigVersioningEnable(ConfigManager.getSettings().configVersioningEnable); // Used on login request
-					AppInfoLSManager.setConfigVersion(configJson.version);
+					//AppInfoLSManager.setConfigVersion(configJson.version);
 
 					var loginPrevData = { 
 						retrievedDateTime: configJson.retrievedDateTime,
@@ -552,6 +552,10 @@ function Login() {
 
 					AppInfoLSManager.setLoginPrevData(loginPrevData);
 
+
+					// Check the translation - if there is any new updated translations.  If so, retrieve & save & use it.
+					TranslationManager.loadLangTerms_NSetUpData( true );
+					
 
 					me.retrieveStatisticPage((fileName, statPageData) => { me.saveStatisticPage(fileName, statPageData); });
 

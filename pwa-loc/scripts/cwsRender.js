@@ -62,8 +62,8 @@ function cwsRender()
 		me.loginObj.render(); // Open Log Form
 
 		// Translate terms setup
-		if ( me._translateEnable ) me.loadLangTermsAndTranslatePage();
-
+		if ( me._translateEnable ) TranslationManager.loadLangTerms_NSetUpData( false );
+		
 		//me.afterRender();
 	}
 
@@ -325,25 +325,6 @@ function cwsRender()
 			me.loginObj.regetDCDconfig();
 		}  
 	}
-
-	// --------------------------------------------------------
-	// ----------- Translate langTerm retrieval and do lang change -------------
-	
-	me.loadLangTermsAndTranslatePage = function()
-	{
-		TranslationManager.loadLangTerms_NSetUpData( false, function( allLangTerms ) 
-		{
-			if ( allLangTerms )
-			{
-				// Enable the language switch dropdown
-				me.settingsApp.populateLangList_Show( TranslationManager.getLangList(), TranslationManager.getLangCode() );
-
-				// Translate current page
-				TranslationManager.translatePage();
-			}
-		});
-	};
-
 
 	// ----------------------------------------------
 	// ----------- Render called method -------------

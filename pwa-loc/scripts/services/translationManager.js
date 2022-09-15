@@ -84,16 +84,22 @@ TranslationManager.setCurrLangTerms_After = function( currLangcode )
 
 // Retrieve All Languages Term.
 // MAIN METHOD 1.   --- USED TO BE: 'retrieveAllLangTerm'
-TranslationManager.loadLangTerms_NSetUpData = function( forceDownload, returnFunc )
+TranslationManager.loadLangTerms_NSetUpData = function( forceDownload )
 {
 	TranslationManager.loadLangTerms( forceDownload, function( allLangTerms ) 
 	{
-		TranslationManager.allLangTerms = allLangTerms;
-		TranslationManager.langList = TranslationManager.pullOut_LanguageList( allLangTerms );
-		
-		TranslationManager.setCurrLangTerms();
-
-		returnFunc( allLangTerms );
+		if ( allLangTerms && allLangTerms.languages )
+		{
+			TranslationManager.allLangTerms = allLangTerms;
+			TranslationManager.langList = TranslationManager.pullOut_LanguageList( allLangTerms );
+			
+			TranslationManager.setCurrLangTerms();
+	
+			SettingsStatic.populateLangList_Show(TranslationManager.getLangList(), TranslationManager.getLangCode());
+	
+			// Translate current page
+			TranslationManager.translatePage();	
+		}
 	});
 };
 
@@ -111,30 +117,41 @@ TranslationManager.loadLangTerms = function( forceDownload, returnFunc )
 	{
 		$( "#imgSettingLangTermRotate" ).addClass( "rot_l_anim" );
 
-		TranslationManager.downloadLangTerms( function( allLangTerms_downloaded )
+		var lastRetrievedDateTime = PersisDataLSManager.getLangLastRetrievedDateTime();
+
+		TranslationManager.downloadLangTerms( lastRetrievedDateTime, function( allLangTerms_downloaded )
 		{
 			$( "#imgSettingLangTermRotate" ).removeClass( "rot_l_anim" );
+
 			PersisDataLSManager.setLangLastDateTime( new Date() );
+			var lastDateTime = PersisDataLSManager.getLangLastDateTime();
+			var langUpdateStr = TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + lastDateTime;
+			$( '#settingsInfo_userLanguage_Update' ).val( langUpdateStr );
 
-			$( '#settingsInfo_userLanguage_Update' ).val( TranslationManager.translateText( 'Refresh date', 'settingsInfo_userLanguage_Update' ) + ': ' + PersisDataLSManager.getLangLastDateTime() );
+			if ( allLangTerms_downloaded.languages )
+			{
+				PersisDataLSManager.updateLangTerms( allLangTerms_downloaded );
+	
+				PersisDataLSManager.setLangLastRetrievedDateTime( allLangTerms_downloaded.lastRetrievedDateTime );
 
-			if ( allLangTerms_downloaded ) PersisDataLSManager.updateLangTerms( allLangTerms_downloaded );
+				// NOTE: For Refresh the cache: https://www.psi-connect.org/connectTranslation/api/retrieveTranslations?project=234823	
+				//		- dev also calls 'www....connectTransation' for now.
+				returnFunc( allLangTerms_downloaded );
+			}
+			else 
+			{
+				if ( allLangTerms_downloaded.failedCase ) console.log( 'LangTerm no new version - ' + allLangTerms_downloaded.msg );
 
-
-			// CHECK:
-			// ?? This does not select the language by default?  Or does it populate the language by default?
-
-			// Ways to refresh the cache of translation..
-			// https://www.psi-connect.org/connectTranslation/api/retrieveTranslations?project=234823
-
-			returnFunc( allLangTerms_downloaded );
+				allLangTerms_downloaded = ( allLangTerms_stored ) ? allLangTerms_stored: undefined;
+				returnFunc( allLangTerms_downloaded );
+			}
 		});
 	}
 };
 
 
 // Retrieve it from ws and put it on local storage or local store location
-TranslationManager.downloadLangTerms = function( returnFunc )
+TranslationManager.downloadLangTerms = function( lastRetrievedDateTime, returnFunc )
 {
 	// 'PWA.langTerms' get language terms from memory/cache..
 	// To get refreshed one, call 'PWA.dailyCache'
@@ -142,6 +159,8 @@ TranslationManager.downloadLangTerms = function( returnFunc )
 	var queryLoc = '/PWA.langTerms' //?lang=' + lang;  // '/api/langTerms' for all lang..
 	var options = {};
 	var loadingTag = undefined;
+
+	if ( lastRetrievedDateTime ) queryLoc = Util.setUrlParam(queryLoc, 'lastRetrievedDateTime', lastRetrievedDateTime);
 
 	// Do silently?  translate it afterwards?  <-- how do we do this?
 	// config should also note all the 'term' into tags..

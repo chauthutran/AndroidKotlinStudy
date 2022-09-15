@@ -376,6 +376,7 @@ AppInfoLSManager.setConfigVersioningEnable = function( enable )
     if ( enable ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE, enable );
 };
 
+/*
 // -----------------------------
 AppInfoLSManager.getConfigVersion = function()
 {
@@ -386,6 +387,7 @@ AppInfoLSManager.setConfigVersion = function( version )
 {
     if ( version ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSION, version );
 };
+*/
 
 // -----------------------------
 AppInfoLSManager.getLoginPrevData = function()
