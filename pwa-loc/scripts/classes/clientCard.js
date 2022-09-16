@@ -191,7 +191,7 @@ function ClientCard(clientId, options) {
 					displaySettings = view.displaySettings;
 				}
 
-				// preRunEval string set only if there is 'displayBase/Settings'
+				// preRunEval string set only if there is 'displayBase/Settings'  <-- this condition was removed in 'activityList'
 				if (hasViewDisplayData && view.preRunEval) preRunEvalStr = Util.getEvalStr(view.preRunEval);
 			}
 

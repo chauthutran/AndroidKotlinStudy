@@ -182,7 +182,8 @@ function ActivityCard( activityId, activityCardDivTag, options )
         try
         {
             var activitySettings = ConfigManager.getActivityTypeConfig( activity );
-
+            var preRunEvalStr = '';
+            
             // Choose to use generic display (Base/Settings) or activity display ones (if available).
             var displayBase = '';
             var displaySettings = [];
@@ -211,13 +212,15 @@ function ActivityCard( activityId, activityCardDivTag, options )
                         hasViewDisplayData = true;
                         displaySettings = view.displaySettings;
                     }
+
+                    if ( view.preRunEval ) preRunEvalStr = Util.getEvalStr(view.preRunEval);
                 }
             }
 
             InfoDataManager.setINFOdata( 'activity', activity );
             InfoDataManager.setINFOclientByActivity( activity );
     
-            FormUtil.setCardContentDisplay( divActivityContentTag, displayBase, displaySettings, Templates.cardContentDivTag );
+            FormUtil.setCardContentDisplay( divActivityContentTag, displayBase, displaySettings, Templates.cardContentDivTag, preRunEvalStr );
         }
         catch ( errMsg )
         {

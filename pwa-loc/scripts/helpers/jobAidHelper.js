@@ -242,32 +242,38 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 			dataType: "json",
 			success: function (response) 
 			{
-				// ===================================
-				// STEP 1: SET LOCAL STORAGE - about these file listings (reset to download false & file size empty..)
-				
-				// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
-				var newFileList = JobAidHelper.sort_filter_files( response.list, options );
-
-				// 2. Save the list info on localStorage (PersisManager) by 'projDir' name - Does not remove existing data.
-				JobAidHelper.filingContent_setUp( newFileList, options );
-
-				if ( newFileList.length <= 0 ) $( '.spanJobFilingMsg' ).text( 'Empty process list.' );
+				if ( response.errMsg ) MsgManager.msgAreaShowErr( response.errMsg );
 				else
-				{				
-
+				{
 					// ===================================
-					// STEP 2: CALLING SERVICE WORKER - TO START CACHING THE FILES IN FILE LISTS.
+					// STEP 1: SET LOCAL STORAGE - about these file listings (reset to download false & file size empty..)
 					
-					// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
-					//    However, since we do not want anyone to access jobs folder directly, but only through cache
-					//		We need to have service worker Read & Cache it.
-					//		And once it is on cache (only allowed ones), we can read however we want afterwards (without going through service worker)
-					SwManager.swRegObj.active.postMessage({
-						'type': JobAidHelper.jobAid_CACHE_URLS2
-						, 'cacheName': JobAidHelper.jobAid_jobTest2
-						, 'options': options
-						, 'payload': newFileList
-					});
+					// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
+					var newFileList = JobAidHelper.sort_filter_files( response.list, options );
+
+					// 2. Save the list info on localStorage (PersisManager) by 'projDir' name - Does not remove existing data.
+					JobAidHelper.filingContent_setUp( newFileList, options );
+
+					if ( newFileList.length <= 0 ) {
+						$( '.spanJobFilingMsg' ).text( 'Empty process list.' );
+						MsgManager.msgAreaShowErr( 'Empty process list.' );
+					}
+					else
+					{				
+						// ===================================
+						// STEP 2: CALLING SERVICE WORKER - TO START CACHING THE FILES IN FILE LISTS.
+						
+						// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
+						//    However, since we do not want anyone to access jobs folder directly, but only through cache
+						//		We need to have service worker Read & Cache it.
+						//		And once it is on cache (only allowed ones), we can read however we want afterwards (without going through service worker)
+						SwManager.swRegObj.active.postMessage({
+							'type': JobAidHelper.jobAid_CACHE_URLS2
+							, 'cacheName': JobAidHelper.jobAid_jobTest2
+							, 'options': options
+							, 'payload': newFileList
+						});
+					}
 				}
 			},
 			error: function ( error ) {
