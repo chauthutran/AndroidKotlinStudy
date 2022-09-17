@@ -142,10 +142,16 @@
 
 .list-downloaded-headers .sortable{
   float: right;
-  margin-top: 10px;
+  margin-top: 4px; /*10px; */
   cursor: pointer;
-  width: 20px;
-  height: 20px;
+  opacity: 0.5;
+  /*width: 20px;
+  height: 20px;*/
+}
+
+.sortable_default {
+	width: 12px;
+	height: 12px;
 }
 
 .list-downloaded-headers .list-r {

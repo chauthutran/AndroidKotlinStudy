@@ -179,15 +179,18 @@ JobAidContentPage.sortDataList = function( sortFieldTag )
 	JobAidContentPage.populateFileItemList( sortedItems );
 
 	// Update "Sort" icon for headers
-	JobAidContentPage.divMainContentTag.find( ".headers .sortable" ).attr("src", "../images/sort_icon.svg");
+	JobAidContentPage.divMainContentTag.find( ".headers .sortable" ).attr("src", "../images/sort_icon.svg").addClass( 'sortable_default' );
+
 	if( order == "asc" ) {
 		sortFieldTag.attr("order", "desc");
 		sortFieldTag.attr("src", "../images/arrow_drop_up.svg");
+		sortFieldTag.removeClass( 'sortable_default' );
 	}
 	else
 	{
 		sortFieldTag.attr("order", "asc");
 		sortFieldTag.attr("src", "../images/arrow_drop_down.svg");
+		sortFieldTag.removeClass( 'sortable_default' );
 	}
 }
 
@@ -344,24 +347,24 @@ JobAidContentPage.contentPage_headers = `
 	<div class="list-r">
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">File Name
-				<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="name">
+				<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="name">
 			</div>
 		</div>
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">Folder
-			<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="folder"></div>
+			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="folder"></div>
 		</div>
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">Content-Type
-			<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="contentType"></div>
+			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="contentType"></div>
 		</div>
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">Caching time
-			<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="date"></div>
+			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="date"></div>
 		</div>
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">Content-Length
-			<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="size"></div>
+			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="size"></div>
 		</div>
 	</div>
 </div>`;
