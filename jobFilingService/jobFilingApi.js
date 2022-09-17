@@ -51,34 +51,44 @@ app.listen(PORT, function () {
 
 app.get('/list', (req, res) => 
 {
-   // reqData = { 'isLocal': localCase, 'appName': appName, 'isListingApp': true, projDir: 'proj1' };
-   var reqData = JSON.parse(req.query.optionsStr);
-   var dataJson = getDataJson( reqData, settings );
-   var dir = getDirLocation(dataJson);
+   try
+   {      
+      // reqData = { 'isLocal': localCase, 'appName': appName, 'isListingApp': true, projDir: 'proj1' };
+      var reqData = JSON.parse(req.query.optionsStr);
+      var dataJson = getDataJson( reqData, settings );
+      var dir = getDirLocation(dataJson);
 
-   fileNameList.walk(dir, dataJson, function (err, results) {
-      if (err) throw err;
-      // console.log( results ); // only show console if local - or by request?
-      
-      // NEW: if outerMediaFoler: 'folderName' is used, walk that folder as well..
-      if ( reqData.outerMediaFoler )
+      fileNameList.walk(dir, dataJson, function (errMsg, results) 
       {
-         var mediaDir = getDirLocation(dataJson, reqData.outerMediaFoler );
+         if (errMsg) res.json({ list: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
+         else
+         {               
+            // NEW: if outerMediaFoler: 'folderName' is used, walk that folder as well..
+            if ( reqData.outerMediaFoler )
+            {
+               var mediaDir = getDirLocation(dataJson, reqData.outerMediaFoler );
 
-         fileNameList.walk(mediaDir, dataJson, function (err, results_media) {
-            if (err) throw err;
+               fileNameList.walk(mediaDir, dataJson, function (errMsg, results_media) {
+                  if (errMsg) res.json({ list: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
+                  else
+                  { 
+                     results = results.concat(results_media);
+                     res.json({ list: results });
+                  }
+               });      
+            }
+            else
+            {
+               res.json({ list: results });
+            }
+         }
 
-            results = results.concat(results_media);
-
-            res.json({ list: results });
-         });      
-      }
-      else
-      {
-         res.json({ list: results });
-      }
-   });
-
+      });
+   }
+   catch( errMsg )
+   {
+      res.json({ list: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
+   }
 });
 
 
@@ -202,4 +212,18 @@ function Util_getJsonDeepCopy(jsonObj) {
 	return newJsonObj;
 };
 
+
+function Util_formatErrMsg(inputStr) 
+{
+   var outputMsg = inputStr;
+
+   try
+   {
+      outputMsg = outputMsg.replace( settings.fileBaseLocl, '' );
+      outputMsg = outputMsg.replace( settings.fileBaseServ, '' );
+   }
+   catch ( errMsg ) { }
+
+   return outputMsg;
+};
 // ---------------------------------------------
