@@ -2,12 +2,15 @@ function JobAidContentPage() { };
 
 // ------------------
 
+JobAidContentPage.divMainContentTag;
+JobAidContentPage.ITEM_LIST = [];
+
 
 JobAidContentPage.fileContentDialogOpen = async function(projDir) 
 {
 	var divDialogTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, {'title': 'JobAid Content - ' + projDir, 'term': '', 'cssClasses': ['divJobAidContentPage'] });
 
-	var divMainContentTag = divDialogTag.find('.contentBody');
+	JobAidContentPage.divMainContentTag = divDialogTag.find('.contentBody');
 
 	var projDirStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
 
@@ -16,7 +19,7 @@ JobAidContentPage.fileContentDialogOpen = async function(projDir)
 		var processData = projDirStatus.process;
 
 		// Display the content..
-		JobAidContentPage.populateFileContent(divMainContentTag, processData, projDir);
+		JobAidContentPage.populateFileContent(processData, projDir);
 
 
 		// Missing file size <-- We could calculate this when we open up the file..
@@ -30,7 +33,7 @@ JobAidContentPage.fileContentDialogOpen = async function(projDir)
 			if ( size ) sizeFormatted = Util.formatFileSizeMB( size );
 			else sizeFormatted = '[N/A]';
 
-			var dataItemTag = divMainContentTag.find( '.list-r[url="' + urlProp + '"]' );
+			var dataItemTag = JobAidContentPage.divMainContentTag.find( '.list-r[url="' + urlProp + '"]' );
 			dataItemTag.find( 'div.contentLength' ).html('').append(sizeFormatted).attr('title', 'size: ' + size);		
 		});
 	}
@@ -88,14 +91,15 @@ JobAidContentPage.calcMissingFileSize = async function ( projProcess, callBack )
 };
 
 
-JobAidContentPage.populateFileContent = function(divMainContentTag, processData, projDir) 
+JobAidContentPage.populateFileContent = function( processData, projDir) 
 {
-	divMainContentTag.html('');
+	JobAidContentPage.divMainContentTag.html('');
 	
-	divMainContentTag.append( JobAidContentPage.contentPage_headers );
+	const headerTag = $( JobAidContentPage.contentPage_headers );
+	JobAidContentPage.divMainContentTag.append( headerTag );
 
 	let dataListTag = $( JobAidContentPage.contentPage_dataList );
-	divMainContentTag.append( dataListTag );
+	JobAidContentPage.divMainContentTag.append( dataListTag );
 
 
 	// TODO: wants to sort by video 1st, audio 2nd, img 3rd, others..
@@ -132,16 +136,60 @@ JobAidContentPage.populateFileContent = function(divMainContentTag, processData,
 	Util.mergeArrays( totalItems, items_text );
 	Util.mergeArrays( totalItems, items_application );
 	Util.mergeArrays( totalItems, items_other );
-
+	JobAidContentPage.ITEM_LIST = totalItems;
 
 	// Populate
-	for ( var i = 0; i < totalItems.length; i++ )
-	{
-		var fileItem = totalItems[i];
+	JobAidContentPage.populateFileItemList( JobAidContentPage.ITEM_LIST );
 
+	JobAidContentPage.setUp_Events_SortColumns( headerTag );
+
+	// for ( var i = 0; i < JobAidContentPage.ITEM_LIST.length; i++ )
+	// {
+	// 	var fileItem = JobAidContentPage.ITEM_LIST[i];
+
+	// 	JobAidContentPage.populateFileItemInfo(fileItem, dataListTag);
+	// }
+};
+
+JobAidContentPage.setUp_Events_SortColumns = function( headerTag )
+{
+	headerTag.find(".sortable").off('click').click(function (e) {
+		JobAidContentPage.sortDataList( $(this) );
+	});
+}
+
+JobAidContentPage.populateFileItemList = function( itemList )
+{
+	let dataListTag = JobAidContentPage.divMainContentTag.find(".dataList");
+	dataListTag.html("");
+
+	for ( var i = 0; i < itemList.length; i++ )
+	{
+		var fileItem = itemList[i];
 		JobAidContentPage.populateFileItemInfo(fileItem, dataListTag);
 	}
-};
+}
+
+JobAidContentPage.sortDataList = function( sortFieldTag )
+{
+	const sortField = sortFieldTag.attr("sortField");
+	const order = sortFieldTag.attr("order");
+
+	const sortedItems = Util.sortByKey(JobAidContentPage.ITEM_LIST, sortField, undefined, order );
+	JobAidContentPage.populateFileItemList( sortedItems );
+
+	// Update "Sort" icon for headers
+	JobAidContentPage.divMainContentTag.find( ".headers .sortable" ).attr("src", "../images/sort_icon.svg");
+	if( order == "asc" ) {
+		sortFieldTag.attr("order", "desc");
+		sortFieldTag.attr("src", "../images/arrow_drop_up.svg");
+	}
+	else
+	{
+		sortFieldTag.attr("order", "asc");
+		sortFieldTag.attr("src", "../images/arrow_drop_down.svg");
+	}
+}
 
 
 JobAidContentPage.getFileName_FolderPath = function(url, projDir)
@@ -292,28 +340,34 @@ JobAidContentPage.populateFilePreviewBottomTag = function()
 JobAidContentPage.contentPage_tableTag = `<table class="jobFileContentTable"><tbody></tbody></table>`;
 
 JobAidContentPage.contentPage_headers = `
-<div class="list-downloaded-headers">
+<div class="list-downloaded-headers headers">
 	<div class="list-r">
 		<div class="list-r_secc">
-			<div class="list-r_secc_title">File Name</div>
+			<div class="list-r_secc_title">File Name
+				<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="name">
+			</div>
 		</div>
 		<div class="list-r_secc">
-			<div class="list-r_secc_title">Folder</div>
+			<div class="list-r_secc_title">Folder
+			<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="folder"></div>
 		</div>
 		<div class="list-r_secc">
-			<div class="list-r_secc_title">Content-Type</div>
+			<div class="list-r_secc_title">Content-Type
+			<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="contentType"></div>
 		</div>
 		<div class="list-r_secc">
-			<div class="list-r_secc_title">Caching time</div>
+			<div class="list-r_secc_title">Caching time
+			<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="date"></div>
 		</div>
 		<div class="list-r_secc">
-			<div class="list-r_secc_title">Content-Length</div>
+			<div class="list-r_secc_title">Content-Length
+			<img class="sortable" src="../images/sort_icon.svg" order="asc" sortField="size"></div>
 		</div>
 	</div>
 </div>`;
 
 JobAidContentPage.contentPage_dataList = `
-	<div class="list-downloaded"></div>
+	<div class="list-downloaded dataList"></div>
 `;
 
 JobAidContentPage.contentPage_dataItem = `
