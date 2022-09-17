@@ -140,6 +140,14 @@
 	background-color: #FFF;
 }
 
+.list-downloaded-headers .sortable{
+  float: right;
+  margin-top: 10px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+
 .list-downloaded-headers .list-r {
 	clear: both;
 	width: 100%;
