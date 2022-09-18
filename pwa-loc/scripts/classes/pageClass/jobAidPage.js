@@ -431,40 +431,46 @@ JobAidManifest.setManifest_InStrg = async function(projDir, downloadOption)
 	if ( !projStatus.manifestJsonTemp ) alert( 'ERROR, manifestJsonTemp is not available for this proj, ' + projDir );
 	else
 	{
-		projStatus.manifestJson.downloadedDate = new Date().toISOString();
-
-		var mediaDownloadCase = ( !downloadOption || downloadOption === 'all' || downloadOption.indexOf( 'mediaOnly' ) === 0 ) ? true: false;	
-		if ( mediaDownloadCase ) projStatus.manifestJson.mediaDownloaded = true;  // Flag proj if they have media on proj downloaded or not.
-
-
-		var freshDownload = ( !downloadOption || downloadOption === 'all' || downloadOption === 'appOnly' ) ? true: false;
-		if ( freshDownload )
+		try
 		{
-			// Get it from available one?  put it on temp and get it from temp..
-			projStatus.manifestJson = Util.cloneJson( projStatus.manifestJsonTemp );
-			delete projStatus.manifestJsonTemp;
+			// Fresh download case vs update case 
+			var freshDownload = ( !downloadOption || downloadOption === 'all' || downloadOption === 'appOnly' ) ? true: false;
+			if ( freshDownload )
+			{
+				// Get it from available one?  put it on temp and get it from temp..
+				projStatus.manifestJson = Util.cloneJson( projStatus.manifestJsonTemp );
+				delete projStatus.manifestJsonTemp;
+			}
+			else
+			{
+				// For updates, simply copy
+				if ( downloadOption === 'appOnly_Update' ) projStatus.manifestJson.appBuildDate = projStatus.manifestJsonTemp.appBuildDate;
+				else if ( downloadOption === 'mediaOnly_Update' ) projStatus.manifestJson.mediaBuildDate = projStatus.manifestJsonTemp.mediaBuildDate;
+			}
+
+
+			// downloadedDate, mediaDownloadedCase
+			projStatus.manifestJson.downloadedDate = new Date().toISOString();
+			var mediaDownloadCase = ( !downloadOption || downloadOption === 'all' || downloadOption.indexOf( 'mediaOnly' ) === 0 ) ? true: false;	
+			if ( mediaDownloadCase ) projStatus.manifestJson.mediaDownloaded = true;  // Flag proj if they have media on proj downloaded or not.
+
+
+			// More update - size, etc..
+			if ( projStatus.process )
+			{
+				// TODO: Total Size should be between 'app' vs 'media' vs 'all'
+				projStatus.manifestJson.totalSize = await JobAidManifest.projProcessData_calcFileSize( projStatus.process);
+
+			
+				// 2. File count - total vs downloaded.
+				var valObjArr = Object.values( projStatus.process );
+
+				projStatus.manifestJson.fileCountAll = valObjArr.length;
+				projStatus.manifestJson.fileCountDownloaded = valObjArr.filter( valObj => valObj.downloaded === true ).length;
+			}
+
 		}
-		else
-		{
-			// For updates, simply copy
-			if ( downloadOption === 'appOnly_Update' ) projStatus.manifestJson.appBuildDate = projStatus.manifestJsonTemp.appBuildDate;
-			else if ( downloadOption === 'mediaOnly_Update' ) projStatus.manifestJson.mediaBuildDate = projStatus.manifestJsonTemp.mediaBuildDate;
-		}
-
-
-		// More update - size, etc..
-		if ( projStatus.process )
-		{
-			// TODO: Total Size should be between 'app' vs 'media' vs 'all'
-			projStatus.manifestJson.totalSize = await JobAidManifest.projProcessData_calcFileSize( projStatus.process);
-
-		
-			// 2. File count - total vs downloaded.
-			var valObjArr = Object.values( projStatus.process );
-
-			projStatus.manifestJson.fileCountAll = valObjArr.length;
-			projStatus.manifestJson.fileCountDownloaded = valObjArr.filter( valObj => valObj.downloaded === true ).length;
-		}
+		catch( errMsg ) {  console.log( 'ERROR in JobAidManifest.setManifest_InStrg, ' + errMsg );  }
 
 		PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
 	}
@@ -791,7 +797,7 @@ JobAidPage.updateSectionLists = function (projDir, statusType) {
 			JobAidItem.itemPopulate(item, itemTag, 'downloaded');
 			JobAidPage.divDownloadedPacksTag.append(itemTag);
 		}
-		else if (statusType === 'downloaded') 
+		else if (statusType === 'downloaded')
 		{
 			// Download Update Caes: Reload with fresh status.
 
