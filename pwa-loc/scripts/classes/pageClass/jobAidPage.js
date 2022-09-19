@@ -681,11 +681,11 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 		{
 			menus.push( 'Open' );
 			menus.push( 'See content' ); 
-			menus.push('Delete');
+			menus.push( 'Delete' );
 	
 			var downloadedData = JobAidItem.itemPopulate_getDownloadedData(projDir);
-
-			if ( !downloadedData.mediaDownloaded ) menus.push( 'Download media' );
+			var mediaDownloaded = downloadedData.mediaDownloaded;
+			if ( !mediaDownloaded ) menus.push( 'Download media' );
 	
 	
 			spanDownloadInfoTag.html( '<strong>Downloaded: </strong>' +  UtilDate.formatDate( downloadedData.downloadedDate, "MMM dd, yyyy" ) );	
@@ -697,7 +697,7 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 
 			
 			// 2. Setup for 'updates' by date comparison
-			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, spanAppDownloadStatusTag, spanMediaDownloadStatusTag );			
+			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, mediaDownloaded, spanAppDownloadStatusTag, spanMediaDownloadStatusTag );
 		}
 	
 
@@ -732,7 +732,7 @@ JobAidItem.itemPopulate_getDownloadedData = function(projDir)
 	return downloadedData;
 };
 
-JobAidItem.itemPopulate_setUpdateStatus = function( itemData, menus, spanAppDownloadStatusTag, spanMediaDownloadStatusTag )
+JobAidItem.itemPopulate_setUpdateStatus = function( itemData, menus, mediaDownloaded, spanAppDownloadStatusTag, spanMediaDownloadStatusTag )
 {
 	var matchData = JobAidItem.matchInServerList(itemData, JobAidPage.availableManifestList);
 	
@@ -747,7 +747,7 @@ JobAidItem.itemPopulate_setUpdateStatus = function( itemData, menus, spanAppDown
 			spanAppDownloadStatusTag.show().text( '[App update available]' );
 		}
 
-		if (matchData.mediaNewerDate) 
+		if (matchData.mediaNewerDate && mediaDownloaded ) 
 		{
 			menus.push('Download media update');
 			spanMediaDownloadStatusTag.show().text( '[Media update available]' );
