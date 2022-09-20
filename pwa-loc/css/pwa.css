@@ -315,6 +315,29 @@
 	}
 }
 
+/* ------------- */
+
+.emptyList {
+  padding: 20px;
+  font-style: italic;
+  margin: auto;
+  width: 50%;
+}
+
+.emptyList .msg{
+  border: 1px solid #4E4E4E;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+
+.emptyList .img {
+  margin: auto;
+  width: 50%;
+  padding-top: 20px;
+  padding-left: 150px;
+}
+
 /* ================================ */
 
 .btnBack {
