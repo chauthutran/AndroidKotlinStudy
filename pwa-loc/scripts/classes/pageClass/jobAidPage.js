@@ -42,14 +42,7 @@ JobAidPage.render = function ()
 
 	
 	// Populate 'Available' & 'Downloaded' sections List
-	JobAidPage.populateSectionLists( false, function () {
-  
-		const downloadedItemNo = JobAidPage.divDownloadedPacksTag.find(".jobAidItem").length;
-		if( downloadedItemNo == 0 )
-		{
-			JobAidPage.divDownloadedPacksTag.append( JobAidPage.divEmptyMsgTag );
-		}
-
+	JobAidPage.populateSectionLists( function () {
 		TranslationManager.translatePage();
 	});
 
@@ -84,32 +77,8 @@ JobAidPage.render = function ()
 		}
 	});
 
-	// Set up events
-	JobAidPage.setUpPackEvents();
 };
 
-JobAidPage.setUpPackEvents = function()
-{
-	JobAidPage.contentBodyTag.find("#removeAllDownloaded").off("click").on("click", function (e) {
-		// JobAidPage.contentBodyTag.find(".jobAidItem ").each( function(){
-		// 	JobAidItem.itemDelete(projDir);			
-		// });
-	});
-
-	JobAidPage.contentBodyTag.find("#collapseDownloadedPacks").off("click").on("click", function (e) {
-		JobAidPage.contentBodyTag.find(".divDownloadedPacks").toggle("fast");
-	});
-
-	JobAidPage.contentBodyTag.find("#refreshAvailablePacks").off("click").on("click", function (e) {
-		JobAidPage.populateSectionLists(true, function () {
-			TranslationManager.translatePage();
-		});
-	});
-
-	JobAidPage.contentBodyTag.find("#collapseAvailablePacks").off("click").on("click", function (e) {
-		JobAidPage.contentBodyTag.find(".divDownloadedPacks").toggle("fast");
-	});
-}
 
 // ===================================================
 
@@ -120,58 +89,27 @@ JobAidPage.setUpPageContentLayout = function (contentBodyTag, divFileContentTag)
 
 
 // 'Available' - from Server Manifest Data, 'Downloaded' - from cached manifest.json files
-JobAidPage.populateSectionLists = function ( refreshAvailableOnly, callBack ) 
+JobAidPage.populateSectionLists = function ( callBack ) 
 {
 	// STEP 0. Clear the list html:
 	JobAidPage.divAvailablePacksTag.html( '' );
-	if( !refreshAvailableOnly )
-	{
-		JobAidPage.divDownloadedPacksTag.html( '' );
-	}
+	JobAidPage.divDownloadedPacksTag.html( '' );
+
 
 	// STEP 1. Get Server Manifests
 	JobAidManifest.retrieve_AvailableManifestList( function() 
 	{
 		JobAidPage.divAvailablePacksTag.html('').append(JobAidPage.loadingImageStr);  // Loading Image with clearing
-		if( !refreshAvailableOnly )
-		{	
-			JobAidPage.divDownloadedPacksTag.html( '' ).append(JobAidPage.loadingImageStr);
-		}
 	}, 
 	function ( availableManifestList ) 
 	{
 		JobAidPage.availableManifestList = availableManifestList;
-		//JobAidPage.populateAvailableItems( JobAidPage.divAvailablePacksTag, availableManifestList );
-
-
-		// Get Cached Manifests
-		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
-
-		// Populate "uninstall" list
-		const downloadedProjDirList = JobAidPage.downloadedManifestList.map(function(a) {return a.projDir;});
-		var uninstallList = [];
-		for( var i=0; i<availableManifestList.length; i++ )
-		{
-			const item = availableManifestList[i];
-			if( downloadedProjDirList.indexOf( item.projDir ) < 0 )
-			{
-				uninstallList.push( item );
-			}
-		
-		}
-		JobAidPage.populateAvailableItems( JobAidPage.divAvailablePacksTag, uninstallList );
-
-		// Populate "downloaded" list
-		if( !refreshAvailableOnly )
-		{
-			// STEP 2. Get Cached Manifests & display/list them
-			JobAidPage.populateDownloadedItems( JobAidPage.divDownloadedPacksTag, JobAidPage.downloadedManifestList );
-		}
+		JobAidPage.populateAvailableItems( JobAidPage.divAvailablePacksTag, availableManifestList );
 
 
 		// STEP 2. Get Cached Manifests & display/list them
-		//JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
-		//JobAidPage.populateDownloadedItems( JobAidPage.divDownloadedPacksTag, JobAidPage.downloadedManifestList );
+		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
+		JobAidPage.populateDownloadedItems( JobAidPage.divDownloadedPacksTag, JobAidPage.downloadedManifestList );
 		
 		if (callBack) callBack();
 	});
@@ -267,7 +205,7 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 				
 				// We need to refresh the list...
 				// JobAidPage.updateSectionLists(projDir, projCardTag.attr('statusType'));
-				JobAidPage.populateSectionLists(false, function () {
+				JobAidPage.populateSectionLists( function () {
 					TranslationManager.translatePage();
 				});				
 			}
@@ -313,34 +251,13 @@ JobAidPage.projProcessDataUpdate = function (projDir, url, updateJson)
 // ------------------------------------
 
 JobAidPage.templateSections = `
-	<div class="sectionTitle_jobAid">
-		<div style="display: flex;">
-			<img style="width: 20px; height: 20px;" src="../images/download.svg">
-			<div style="white-space: nowrap;">Downloaded packs</div>
-		</div>
+   <div class="sectionTitle_jobAid">Downloaded packs</div>
+   <div class="divDownloadedPacks">
+   </div>
 
-		<div class="actions">
-			<img src="../images/trash_red.svg" id="removeAllDownloaded" style="visibility: hidden;">
-			<img src="../images/arrow_up_circle.svg" id="collapseDownloadedPacks">
-		</div>
-	</div>
-
-    <div class="divDownloadedPacks">
-    </div>
-
-    <div class="sectionTitle_jobAid">
-		<div style="display: flex;">
-			<img src="../images/available_packs.svg">
-			<div style="white-space: nowrap;">Packs available for download</div>
-		</div>
-
-		<div class="actions">
-			<img src="../images/sync_pending.png" id="refreshAvailablePacks">
-			<img src="../images/arrow_up_circle.svg" id="collapseAvailablePacks">
-		</div>
-	</div>
-
-   <div class="divAvailablePacks"></div>
+   <div class="sectionTitle_jobAid">Packs available for download</div>
+   <div class="divAvailablePacks">
+   </div>
 `;
 
 JobAidPage.templateItem_body = `
@@ -380,18 +297,6 @@ JobAidPage.divFileContentTag = `
 		</div>
 	</div>
 </div>
-`;
-
-
-JobAidPage.divEmptyMsgTag = `
-	<div class="emptyList">
-		<div class="msg">
-			No App has been downloaded yet. Please choose the language(s) of the Apps available for download.
-		</div>
-		<div class="img">
-			<img src="../images/arrow_down1.svg">
-		</div>
-	</div>
 `;
 
 // ====================================================
@@ -709,6 +614,8 @@ JobAidItem.itemDownload = function (projDir, key)
 
 JobAidItem.itemDelete = function (projDir) 
 {
+	var itemData = Util.getFromList(JobAidPage.availableManifestList, projDir, 'projDir');
+
 	var result = confirm('Are you sure you want to delete this, "' + projDir + '"?');
 
 	if (result) 
@@ -718,14 +625,12 @@ JobAidItem.itemDelete = function (projDir)
 			// Delete on localStorage 'persisData'
 			PersisDataLSManager.deleteJobFilingProjDir( projDir );
 
-			JobAidPage.populateSectionLists(false, () => TranslationManager.translatePage() );  // JobAidPage.updateSectionLists(itemData.projDir, 'downloaded_delete');
+			JobAidPage.populateSectionLists( () => TranslationManager.translatePage() );  // JobAidPage.updateSectionLists(itemData.projDir, 'downloaded_delete');
 
 			MsgManager.msgAreaShow( 'The pack has been deleted' );
 		});
 	}
 };
-
-
 
 // -------------------
 
