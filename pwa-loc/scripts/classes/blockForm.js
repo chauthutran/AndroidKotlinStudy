@@ -15,7 +15,7 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 	me.actionJson = actionJson;
 	me.payloadConfigSelection = (actionJson) ? actionJson.payloadConfig : undefined;
 
-	me.formDef_fieldsArr;   // formDef (from config) which is array of fields
+	me.formDef_fieldsArr;   // formId (from config) which is array of fields
 	me.fieldDefsJson = {};  // fieldDef (from config) by Id..
 
 	me.evalFunctionsToProcess;
@@ -32,13 +32,13 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 
 	// NOTE: render() should do - clear previous tags, and create tags newly.
 	//	- All the tag html should be placed on top as tagTemplate (See 'blockList.js' as example )
-	me.render = function (formDef, blockTag, passedData) {
+	me.render = function (formId, blockTag, passedData) {
 
 		// TODO:
 		// 		ADD FORM FIELDS ARRAY COMBINING HERE!!
 
 		// 1. Set formDefinition variables (from Config)
-		var formDef_fieldsArr = FormUtil.getObjFromDefinition(formDef, ConfigManager.getConfigJson().definitionForms);
+		var formDef_fieldsArr = FormUtil.getObjFromDefinition(formId, ConfigManager.getConfigJson().definitionForms);
 		formDef_fieldsArr = ConfigManager.filterList_ByCountryFilter(formDef_fieldsArr);
 		me.formDef_fieldsArr = formDef_fieldsArr;
 
@@ -47,13 +47,12 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 
 
 		if (formDef_fieldsArr !== undefined) {
-			var formDivSecTag = $('<div class="formDivSec"></div>');
+			var formDivSecTag = $('<div class="formDivSec" formId="' + formId + '"></div>');
 			var autoComplete = ConfigManager.staticData.autoComplete;
 			var formTag = $('<form autocomplete="' + autoComplete + '"></form>');
 
 			formDivSecTag.append(formTag);
 			blockTag.append(formDivSecTag);
-
 
 			// STEP #1. Generate input tags by defitnion.
 			// NOTE: JAMES: STOPPED WORKING AT HERE <--- ADDED 'groupId' on return 'formFieldGroups'
