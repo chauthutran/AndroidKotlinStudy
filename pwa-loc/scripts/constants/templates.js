@@ -584,7 +584,7 @@ Templates.sheetFullFrame = `
         <img src="images/arrow_back.svg" class="btnBack mouseDown">
         <span class="sheetTopTitle" mark="templateSheetFull" term="term_newClient" style="vertical-align: super;">New Client</span>
       </div>
-      <div style="width: 100px; display: flex">
+      <div class="sheetRightDiv" style="width: 100px; display: flex">
         <div class="syncIcon mouseDown" title="SyncAll" style="width: 45px; opacity: 0.0; cursor: pointer;">-</div>
         <div class="onOfflineIcon mouseDown" title="Network" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
       </div>

@@ -32,6 +32,12 @@ JobAidPage.render = function ()
 {
 	JobAidPage.sheetFullTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, JobAidPage.options);  // .options.preCall
 
+	// Adjustment for JobAid 'sheetFull'
+	JobAidPage.sheetFullTag.find( 'div.sheet-title' ).css( 'width', 'calc(100vw - 50px)' );
+	JobAidPage.sheetFullTag.find( 'div.sheetRightDiv' ).css( 'width', '50px' );
+	JobAidPage.sheetFullTag.find( 'div.syncIcon' ).hide();
+
+
 	JobAidPage.contentBodyTag = JobAidPage.sheetFullTag.find('.contentBody');
 
 	JobAidPage.setUpPageContentLayout( JobAidPage.contentBodyTag, JobAidPage.divFileContentTag );
@@ -107,7 +113,7 @@ JobAidPage.setUpPackEvents = function()
 	});
 
 	JobAidPage.contentBodyTag.find("#collapseAvailablePacks").off("click").on("click", function (e) {
-		JobAidPage.contentBodyTag.find(".divDownloadedPacks").toggle("fast");
+		JobAidPage.contentBodyTag.find(".divAvailablePacks").toggle("fast");
 	});
 }
 
@@ -385,7 +391,7 @@ JobAidPage.divFileContentTag = `
 
 JobAidPage.divEmptyMsgTag = `
 	<div class="emptyList">
-		<div class="msg">
+		<div class="msg" style="background-color: ghostwhite;">
 			No App has been downloaded yet. Please choose the language(s) of the Apps available for download.
 		</div>
 		<div class="img">
