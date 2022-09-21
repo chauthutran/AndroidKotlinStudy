@@ -407,10 +407,15 @@ function cwsRender()
 
 		me.logOutUI();
 
+		
+		// JobAid iFrame close
+		me.jobAid_iFrameClose( 'WFA logging out due to 30 min inactivity' );
+
+
 		SwManager.checkAppUpdate( '[AppUpdateCheck] - logOutProcess', { noMinTimeSkip: true } );
 				
 		SwManager.refreshForNewAppFile_IfAvailable();  // even on offline
-	}
+	};
 
 	me.logOutUI = function()
 	{
@@ -427,6 +432,22 @@ function cwsRender()
 		me.loginObj.openForm();  // includes 'hidePageDiv' which called .btnBack for hiding fullscreen overlay ones
 	};
 
+	me.jobAid_iFrameClose = function( alertMsg )
+	{
+		try
+		{
+			// JobAid iFrame close
+			if ( $( '#divJobAid' ).find( 'iframe' ).length > 0 ) 
+			{ 
+				alert( alertMsg ); 
+				$( '#divJobAid' ).html( '' ).hide(); 
+			}
+		}
+		catch( errMsg )
+		{
+			console.log( 'ERROR in cwsRender.jobAid_iFrameClose, ' + errMsg );
+		}
+	};
 
 	// NOTE: Not the way to do.  Should organize all these in one and hide it...
 	me.hideActiveSession_UIcontent = function()
