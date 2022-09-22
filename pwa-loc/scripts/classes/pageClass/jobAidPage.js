@@ -250,7 +250,7 @@ JobAidPage.jobFilingUpdate = async function (msgData) {
 
 			if (prc.curr < prc.total) 
 			{
-				spanDownloadStatusTag.html(`<strong>Processing:<strong> ${prc.curr} of ${prc.total} [${url.split('.').at(-1)}]`);
+				spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr} of ${prc.total} [${url.split('.').at(-1)}]`);
 				if (prc.curr > 5) projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
 				projCardTag.css('opacity', 1);
 			}
