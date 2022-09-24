@@ -16,12 +16,11 @@ self.addEventListener('message', (event) => {
 				var totalCount = reqList.length;
 				var doneCount = 0;
 
-				for (var i = 0; i < reqList.length; i++) //reqList.forEach( reqUrl => {
+				if (options.syncType === 'sync') 
 				{
-					var reqUrl = reqList[i];
-
-					if (options.syncType === 'sync') 
+					for (var i = 0; i < reqList.length; i++) 
 					{
+						var reqUrl = reqList[i];
 						try
 						{
 							await cache.add(reqUrl);
@@ -38,8 +37,11 @@ self.addEventListener('message', (event) => {
 							event.source.postMessage(returnMsgStr);
 						}
 					}
-					else 
-					{
+				}
+				else 
+				{
+					reqList.forEach( reqUrl => {
+						// Instead of 'cache.add', we could use 'fetch' with is the equalivent one.  Also, the default timeout should be 300 seconds for this..
 						cache.add(reqUrl).then(() => {
 							doneCount++;
 							var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
@@ -51,8 +53,8 @@ self.addEventListener('message', (event) => {
 							var returnMsgStr = JSON.stringify({ type: 'jobFiling', error: true, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
 							event.source.postMessage(returnMsgStr);
 						});
-					}
-				} //);
+					});
+				}
 			}
 		}
 
