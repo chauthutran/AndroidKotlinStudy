@@ -1,5 +1,5 @@
 self.importScripts("./swMotamoOffline.js");
-//self.importScripts('https://matomo.solidlines.io/offline-service-worker.js');
+//self.importScripts('https://matomo.psi-mis.org/offline-service-worker.js');
 matomoAnalytics.initialize( { queueLimit: 10000, timeLimit: 86400*14 } );
 
 self.addEventListener('message', (event) => 

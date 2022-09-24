@@ -2054,10 +2054,14 @@ Util.shortenFileName = function (fileName, shortenLength )
 };
 
 // option: { unit:'MB', decimal:2, upUnit: true }
-Util.formatFileSizeMB = function( val ) //, option )
+Util.formatFileSizeMB = function( val, option )
 {
 	var resultStr = '';
-	var divide = 1000000.0;  //if ( !option ) option = {};
+	var divide = 1000000.0;  //MB
+	if ( !option ) option = {};
+	var decimal = ( option.decimal ) ? option.decimal: 1;
+	var minWidth = ( option.minWidth ) ? option.minWidth: false;
+	var disableMin = ( option.disableMin ) ? option.disableMin: false;
 
 	try
 	{
@@ -2067,12 +2071,17 @@ Util.formatFileSizeMB = function( val ) //, option )
 		if ( calVal >= 1000 )
 		{
 			calVal = calVal / 1000.0;
-			resultStr = calVal.toFixed( 2 ) + ' GB';
+
+			if ( decimal == 0 && calVal < 10 && minWidth ) resultStr = calVal.toFixed( 1 ) + ' GB';
+			else resultStr = calVal.toFixed( decimal ) + ' GB';
 		}
 		else 
 		{
-			if ( calVal < 0.01 ) calVal = 0.01;  // set min express val.			
-			resultStr = calVal.toFixed( 2 ) + ' MB';
+			if ( !disableMin && calVal < 0.01 ) resultStr = '0.01 MB';  // set min express val.			
+			else {
+				if ( decimal == 0 && calVal < 10 && minWidth ) resultStr = calVal.toFixed( 1 ) + ' MB';
+				else resultStr = calVal.toFixed( decimal ) + ' MB';
+			}
 		}
 	}
 	catch ( errMsg ) 

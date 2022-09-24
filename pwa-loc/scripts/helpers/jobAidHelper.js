@@ -228,6 +228,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 
 		// NOTE: For filtering video/audio or audio/video only files, we could do on below nodeJS, but for now, simply filter it with method.
 		// var payload = { 'isLocal': localCase, 'appName': appName, 'isListingApp': options.isListingApp, 'btnParentTag': btnParentTag, 'projDir': options.projDir };
+
+		// NOTE: 'Media' files list retrieving does not send the 'media' folder info.  We get entire listing and filter by path info by 'sort_filter_files'
+
 		var optionsStr = JSON.stringify( options );
 
 		if ( jobAidBtnParentTag ) jobAidBtnParentTag.append( 
@@ -302,10 +305,10 @@ JobAidHelper.sort_filter_files = function( list, options )
 		if ( options.downloadOption && options.downloadOption !== 'all' && options.projDir )
 		{
 			// Filter with fodler name..
-			var mediaFolderName = '/' + options.projDir + '/media/';
+			// var mediaFolderName = '/' + options.projDir + '/media/';		// TODO: Need to change if outside folder option!!!
 
-			if ( options.downloadOption.indexOf( 'mediaOnly' ) === 0 ) listFiltered = list.filter( fileName => fileName.indexOf( mediaFolderName ) >= 0 );
-			else if ( options.downloadOption.indexOf( 'appOnly' ) === 0 ) listFiltered = list.filter( fileName => fileName.indexOf( mediaFolderName ) === -1 );
+			if ( options.downloadOption.indexOf( 'mediaOnly' ) === 0 ) listFiltered = list.filter( fileName => JobAidHelper.isMediaFolderFile( options, fileName ) );
+			else if ( options.downloadOption.indexOf( 'appOnly' ) === 0 ) listFiltered = list.filter( fileName => !JobAidHelper.isMediaFolderFile( options, fileName ) );
 		}
 		// 1B. Existing Filtering Options..
 		else if ( options.audioOnly ) listFiltered = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
@@ -363,6 +366,18 @@ JobAidHelper.sort_filter_files = function( list, options )
 	return newList;
 };
 
+JobAidHelper.isMediaFolderFile = function( options, url )
+{
+	var mediaFolderName = '/' + options.projDir + '/media/';
+
+	return ( url.indexOf( mediaFolderName ) >= 0 ) ? true: false;
+};
+
+JobAidHelper.fileType = function( options, url )
+{
+	return JobAidHelper.isMediaFolderFile( options, url ) ? 'media': 'app';
+};
+
 
 JobAidHelper.filingContent_setUp = function( newFileList, options )
 {
@@ -383,9 +398,10 @@ JobAidHelper.filingContent_setUp = function( newFileList, options )
 
 			newFileList.forEach( fileName => {			
 				// if ( !projStatus.content[ fileName ] ) projStatus.content[ fileName ] = { size: '', date: '', downloaded: 'Not Downloaded' };
-				projStatus.process[ fileName ] = { size: '', reqDate: new Date().toISOString(), downloaded: false };
+				projStatus.process[ fileName ] = { size: '', reqDate: new Date().toISOString(), downloaded: false, fileType: JobAidHelper.fileType( options, fileName ) };
+				
 			});
-
+			
 			// if 'delete' happens, we need to remove this..
 			
 			PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );

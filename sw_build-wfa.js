@@ -24,7 +24,7 @@ generateSW({
       }
     },
     {
-      urlPattern: /^https:\/\/matomo\.solidlines\.io\/matomo\.js/,
+      urlPattern: /^https:\/\/matomo\.psi-mis\.org\/matomo\.js/,
       handler: 'CacheFirst',
       options: {
         cacheName: 'matomo'

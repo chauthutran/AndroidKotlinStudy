@@ -7,7 +7,7 @@ function AppUtil() {}
 // Set this before refreshing, thus, sw state event not display the update message.
 AppUtil.appReloading = false;  
 
-AppUtil.MATOMO_URL = 'https://matomo.solidlines.io';
+AppUtil.MATOMO_URL = 'https://matomo.psi-mis.org';
 
 // ==== Methods ======================
 
