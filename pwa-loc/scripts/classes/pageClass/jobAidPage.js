@@ -79,10 +79,6 @@ JobAidPage.render_AdjustSheetFull = function( sheetFullTag )
 
 		var spanJobAidDevInfoTag = $( '<span class="spanJobAidDevInfo" style="margin-left: 8px; line-height: 12px; font-size: 12px; color: silver;"></span>' );
 
-		spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;">network: </span>');
-		var spanNetworkTag = $( '<span class="spanJobAidNetworkInfo" style=""></span>');
-		spanJobAidDevInfoTag.append( spanNetworkTag );
-
 		spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;">syncType: </span>');
 		var syncTypeTag = $( '<select class="syncType" style="width: 65px; color: white; font-size: 12px;"><option value="async">async</option><option value="sync">sync</option></select>');
 		syncTypeTag.val( JobAidPage.syncType );
@@ -92,35 +88,9 @@ JobAidPage.render_AdjustSheetFull = function( sheetFullTag )
 			MsgManager.msgAreaShow( 'SyncType changed to ' + JobAidPage.syncType );
 		});
 
-		//var spanOtherTag = $( '<span class="spanJobAidOtherInfo" style=""></span>');
 		spanJobAidDevInfoTag.append( syncTypeTag );
 
 		sheetFullTag.find( 'div.sheet-title' ).append( spanJobAidDevInfoTag );
-
-
-		// TODO: setInterval to update?  Have it's own span?
-		if ( navigator.connection ) 
-		{
-			if ( navigator.onLine ) NetworkHelper.performLatency( function(avg) 
-			{ 
-				spanNetworkTag.text( avg + ' mbs' );  
-			});
-
-			spanNetworkTag.click( function() {
-				if ( navigator.onLine ) NetworkHelper.performLatency( function(avg) 
-				{ 
-					spanNetworkTag.text( avg + ' mbs' );  
-				});
-			});
-
-			/*
-			setInterval( function() {
-				// navigator.connection.downlink + ' mbs'
-				if ( navigator.onLine ) NetworkHelper.testLatency( function(avg) { spanNetworkTag.text( avg + ' mbs' );  });
-				else {  spanNetworkTag.text( '--- mbs' );  } 
-			}, 5000 );
-			*/
-		}
 	}
 };
 
