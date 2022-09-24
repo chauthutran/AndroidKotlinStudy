@@ -23,7 +23,7 @@ JobAidHelper.EXTS_VIDEO = [ '.webm', '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.
 JobAidHelper.EXTS_AUDIO = [ '.abc', '.flp', '.ec3', '.mp3', '.flac' ];  // upper case when comparing
 JobAidHelper.EXTS_IMAGE = [ '.tif', '.tiff', '.bmp', '.jpg', '.jpeg', '.gif', '.ico', '.png', '.eps', '.svg' ];
 JobAidHelper.EXTS_TEXT = [ '.txt', '.css', '.scss', '.md', '.pdf' ];
-JobAidHelper.EXTS_APPLICATION = [ '.js', '.html', '.htm', '.json', '.xml', '.bat', '.map' ];
+JobAidHelper.EXTS_APP = [ '.js', '.map' ]; // '.html', '.htm', '.json', '.xml', '.bat',
 
 //JobAidHelper.MANIFEST_FILES = [ ];
 
@@ -255,7 +255,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 					var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 
 					// 2. Save the list info on localStorage (PersisManager) by 'projDir' name - Does not remove existing data.
-					JobAidHelper.filingContent_setUp( newFileList, options );
+					JobAidHelper.filingContent_setUp( newFileList, response.results, options );
 
 					if ( newFileList.length <= 0 ) {
 						$( '.spanJobFilingMsg' ).text( 'Empty process list.' );
@@ -331,27 +331,30 @@ JobAidHelper.sort_filter_files = function( list, options )
 		var mediaFirst = ( ConfigManager.getJobAidSetting().downloadOrder === "mediaFirst" );
 
 		// Remove audio/video type file names
-		var noMediaList = Util.cloneJson( listFiltered.filter( item => 
+		var otherList = Util.cloneJson( listFiltered.filter( item => 
 			( !Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) 
 			&& !Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) 
+			&& !Util.endsWith_Arr( item, JobAidHelper.EXTS_APP, { upper: true } ) 
 			) 
 			) );
 
 		// Add audio/video type file names at the end, audio 1st.
 		var audioList = listFiltered.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
 		var videoList = listFiltered.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_VIDEO, { upper: true } ) );
-
+		var appList = listFiltered.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_APP, { upper: true } ) );
 
 
 		if ( mediaFirst ) // large file types download 1st
 		{
+			Util.mergeArrays( newList, appList );
 			Util.mergeArrays( newList, videoList );
 			Util.mergeArrays( newList, audioList );
-			Util.mergeArrays( newList, noMediaList );
+			Util.mergeArrays( newList, otherList );
 		}
 		else // Media Last
 		{				
-			Util.mergeArrays( newList, noMediaList );
+			Util.mergeArrays( newList, appList );
+			Util.mergeArrays( newList, otherList );
 			Util.mergeArrays( newList, audioList );
 			Util.mergeArrays( newList, videoList );
 		}	
@@ -379,7 +382,7 @@ JobAidHelper.fileType = function( options, url )
 };
 
 
-JobAidHelper.filingContent_setUp = function( newFileList, options )
+JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 {
 	try
 	{
@@ -396,9 +399,17 @@ JobAidHelper.filingContent_setUp = function( newFileList, options )
 			projStatus.downloadOption = options.downloadOption;
 
 
-			newFileList.forEach( fileName => {			
-				// if ( !projStatus.content[ fileName ] ) projStatus.content[ fileName ] = { size: '', date: '', downloaded: 'Not Downloaded' };
-				projStatus.process[ fileName ] = { size: '', reqDate: new Date().toISOString(), downloaded: false, fileType: JobAidHelper.fileType( options, fileName ) };
+			newFileList.forEach( fileName => 
+			{	
+				var size = '';
+
+				if ( results )  // If 'results' exists (which has 'size'), use it to get 'size' info.
+				{
+					var fileItem = Util.getFromList( results, fileName, 'filePath' );
+					if ( fileItem ) size = fileItem.size;
+				}
+
+				projStatus.process[ fileName ] = { size: size, reqDate: new Date().toISOString(), downloaded: false, fileType: JobAidHelper.fileType( options, fileName ) };
 				
 			});
 			

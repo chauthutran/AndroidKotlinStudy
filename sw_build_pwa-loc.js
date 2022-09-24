@@ -31,6 +31,10 @@ generateSW({
       }
     },
     {
+      urlPattern: /\/images\/px\.gif/,
+      handler: 'NetworkOnly'
+    },
+    {
       urlPattern: /\/jobs\//,
       handler: 'CacheOnly',
       options: {
