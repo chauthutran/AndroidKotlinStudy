@@ -60,7 +60,7 @@ app.get('/list', (req, res) =>
 
       fileNameList.walk(dir, dataJson, function (errMsg, results) 
       {
-         if (errMsg) res.json({ list: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
+         if (errMsg) res.json({ list: [], results: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
          else
          {               
             // NEW: if outerMediaFoler: 'folderName' is used, walk that folder as well..
@@ -68,18 +68,26 @@ app.get('/list', (req, res) =>
             {
                var mediaDir = getDirLocation(dataJson, reqData.outerMediaFoler );
 
-               fileNameList.walk(mediaDir, dataJson, function (errMsg, results_media) {
-                  if (errMsg) res.json({ list: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
+               fileNameList.walk(mediaDir, dataJson, function (errMsg, results_media) 
+               {
+                  if (errMsg) res.json({ list: [], results: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
                   else
                   { 
                      results = results.concat(results_media);
-                     res.json({ list: results });
+                     results.sort((a,b) => b.size - a.size);
+                     var list = results.map( item => item.filePath );
+
+                     res.json({ list: list, results: results });
                   }
                });      
             }
             else
             {
-               res.json({ list: results });
+               // order the list by size..
+               results.sort((a,b) => b.size - a.size);
+               var list = results.map( item => item.filePath );
+
+               res.json({ list: list, results: results });
             }
          }
 
@@ -87,7 +95,7 @@ app.get('/list', (req, res) =>
    }
    catch( errMsg )
    {
-      res.json({ list: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
+      res.json({ list: [], results: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
    }
 });
 

@@ -50,7 +50,8 @@ class FileNameList
 					else 
 					{
 						var filePath = file.split( dataJson.reqData.appName )[1].split("\\").join("/");
-						results.push( filePath );
+						results.push( { filePath: filePath, size: stat.size } );
+						
 						next();
 					}
 				});
