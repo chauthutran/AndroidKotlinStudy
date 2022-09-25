@@ -85,7 +85,7 @@ JobAidPage.render_AdjustSheetFull = function( sheetFullTag )
 
 		syncTypeTag.change( function() {
 			JobAidPage.syncType = $( this ).val();
-			MsgManager.msgAreaShow( 'SyncType changed to ' + JobAidPage.syncType );
+			MsgManager.msgAreaShowOpt( 'SyncType changed to ' + JobAidPage.syncType, { hideTimeMs: 1000 } );
 		});
 
 		spanJobAidDevInfoTag.append( syncTypeTag );
@@ -791,7 +791,7 @@ JobAidItem.itemDelete = function (projDir)
 
 			JobAidPage.populateSectionLists(false, () => TranslationManager.translatePage() );  // JobAidPage.updateSectionLists(itemData.projDir, 'downloaded_delete');
 
-			MsgManager.msgAreaShow( 'The pack has been deleted' );
+			MsgManager.msgAreaShowOpt( 'The pack has been deleted', { hideTimeMs: 1000 } );
 		});
 	}
 };

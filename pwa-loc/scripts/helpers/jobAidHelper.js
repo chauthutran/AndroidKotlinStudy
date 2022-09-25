@@ -476,13 +476,10 @@ JobAidHelper.JobFilingProgress = function( msgData )
 				else 
 				{
 					// Run the storage update..
-
-
-
 					divJobFileLoadingTag.find('img').remove();
 					spanJobFilingMsgTag.text('Processing all done.');
 		
-					MsgManager.msgAreaShow('Job Aid Filing Finished.');	
+					MsgManager.msgAreaShowOpt('Job Aid Filing Finished.', { hideTimeMs: 2000 });	
 
 					// If option has 'runEval_AfterFinish' prop, execute it here.            
 					settingsApp.jobAidFilesPopulate( $( '.divMainContent' ) );
