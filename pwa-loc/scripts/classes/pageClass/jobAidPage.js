@@ -364,14 +364,20 @@ JobAidPage.getFilesStatusJson = function ( projDir )
 					if ( item.fileType === 'media' )
 					{
 						filesStatusJson.mediaCountTotal++;
-						if ( item.downloaded ) filesStatusJson.mediaCountDownloaded++;
-						if ( item.size ) filesStatusJson.mediaSizeDownloaded += item.size;
+						if ( item.downloaded === true ) 
+						{
+							filesStatusJson.mediaCountDownloaded++;
+							if ( item.size ) filesStatusJson.mediaSizeDownloaded += item.size;	
+						}						
 					}
 					else if ( item.fileType === 'app' )
 					{
 						filesStatusJson.appCountTotal++;
-						if ( item.downloaded ) filesStatusJson.appCountDownloaded++;
-						if ( item.size ) filesStatusJson.appSizeDownloaded += item.size;
+						if ( item.downloaded === true ) 
+						{
+							filesStatusJson.appCountDownloaded++;
+							if ( item.size ) filesStatusJson.appSizeDownloaded += item.size;
+						}
 					}
 				}
 			}

@@ -22,6 +22,7 @@ JobAidContentPage.fileContentDialogOpen = async function(projDir)
 		JobAidContentPage.populateFileContent(processData, projDir);
 
 
+		/*  -- Do not need anymore due to service providing the size.
 		// Missing file size <-- We could calculate this when we open up the file..
 		JobAidContentPage.calcMissingFileSize( processData, function( urlProp, size, item ) 
 		{
@@ -36,6 +37,7 @@ JobAidContentPage.fileContentDialogOpen = async function(projDir)
 			var dataItemTag = JobAidContentPage.divMainContentTag.find( '.list-r[url="' + urlProp + '"]' );
 			dataItemTag.find( 'div.contentLength' ).html('').append(sizeFormatted).attr('title', 'size: ' + size);		
 		});
+		*/
 	}
 	else MsgManager.msgAreaShowErr( 'No project data available.' );
 
@@ -114,22 +116,28 @@ JobAidContentPage.populateFileContent = function( processData, projDir)
 		var dataJson = JobAidContentPage.getFileName_FolderPath(url, projDir);
 		fileItem.name = dataJson.name;
 		fileItem.folderPath = dataJson.folderPath;
-		fileItem.fileType = JobAidContentPage.getFileType( fileItem.name );
-		fileItem.contentType = JobAidContentPage.getContentType( fileItem.name, fileItem.fileType );
+		fileItem.fileType2 = JobAidContentPage.getfileType2( fileItem.name ); // fileType is already in use for 'app' vs 'media'
+		fileItem.contentType = JobAidContentPage.getContentType( fileItem.name, fileItem.fileType2 );
+		fileItem.size2 = ( fileItem.downloaded && fileItem.size ) ? fileItem.size: 0;  // set size as 0 if not downloaded..
 
 		itemArr.push( fileItem );
 	}
 
+
 	// Order by type & size.
-	var items_video = Util.sortByKey_Reverse( itemArr.filter( item => item.fileType === 'video' ), 'size' );
-	var items_audio = Util.sortByKey_Reverse( itemArr.filter( item => item.fileType === 'audio' ), 'size' );
-	var items_image = Util.sortByKey_Reverse( itemArr.filter( item => item.fileType === 'image' ), 'size' );
-	var items_text = Util.sortByKey_Reverse( itemArr.filter( item => item.fileType === 'text' ), 'size' );
-	var items_application = Util.sortByKey_Reverse( itemArr.filter( item => item.fileType === 'application' ), 'size' );
-	var items_other = Util.sortByKey_Reverse( itemArr.filter( item => item.fileType === 'other' ), 'size' );
+	var items_notDwn = Util.sortByKey_Reverse( itemArr.filter( item => item.downloaded !== true ), 'size' );
+
+	var itemArrDwn = itemArr.filter( item => item.downloaded === true );
+	var items_video = Util.sortByKey_Reverse( itemArrDwn.filter( item => item.fileType2 === 'video' ), 'size' );
+	var items_audio = Util.sortByKey_Reverse( itemArrDwn.filter( item => item.fileType2 === 'audio' ), 'size' );
+	var items_image = Util.sortByKey_Reverse( itemArrDwn.filter( item => item.fileType2 === 'image' ), 'size' );
+	var items_text = Util.sortByKey_Reverse( itemArrDwn.filter( item => item.fileType2 === 'text' ), 'size' );
+	var items_application = Util.sortByKey_Reverse( itemArrDwn.filter( item => item.fileType2 === 'application' ), 'size' );
+	var items_other = Util.sortByKey_Reverse( itemArrDwn.filter( item => item.fileType2 === 'other' ), 'size' );
 
 	// Combine
 	var totalItems = [];
+	Util.mergeArrays( totalItems, items_notDwn );
 	Util.mergeArrays( totalItems, items_video );
 	Util.mergeArrays( totalItems, items_audio );
 	Util.mergeArrays( totalItems, items_image );
@@ -142,13 +150,6 @@ JobAidContentPage.populateFileContent = function( processData, projDir)
 	JobAidContentPage.populateFileItemList( JobAidContentPage.ITEM_LIST );
 
 	JobAidContentPage.setUp_Events_SortColumns( headerTag );
-
-	// for ( var i = 0; i < JobAidContentPage.ITEM_LIST.length; i++ )
-	// {
-	// 	var fileItem = JobAidContentPage.ITEM_LIST[i];
-
-	// 	JobAidContentPage.populateFileItemInfo(fileItem, dataListTag);
-	// }
 };
 
 JobAidContentPage.setUp_Events_SortColumns = function( headerTag )
@@ -162,12 +163,10 @@ JobAidContentPage.populateFileItemList = function( itemList )
 {
 	let dataListTag = JobAidContentPage.divMainContentTag.find(".dataList");
 	dataListTag.html("");
-
-	for ( var i = 0; i < itemList.length; i++ )
-	{
-		var fileItem = itemList[i];
-		JobAidContentPage.populateFileItemInfo(fileItem, dataListTag);
-	}
+	
+	itemList.forEach(item => {
+		JobAidContentPage.populateFileItemInfo(item, dataListTag);		
+	});
 }
 
 JobAidContentPage.sortDataList = function( sortFieldTag )
@@ -219,7 +218,7 @@ JobAidContentPage.getFileName_FolderPath = function(url, projDir)
 	return dataJson;
 };
 
-JobAidContentPage.getFileType = function( fileName )
+JobAidContentPage.getfileType2 = function( fileName )
 {
 	var type = '';
 
@@ -234,13 +233,13 @@ JobAidContentPage.getFileType = function( fileName )
 };
 
 
-JobAidContentPage.getContentType = function( fileName, fileType )
+JobAidContentPage.getContentType = function( fileName, fileType2 )
 {
 	var contentType = '';
 
 	var extName = Util.getFileExtension(fileName, { lower: true });
 
-	contentType = fileType + '/' + extName;
+	contentType = fileType2 + '/' + extName;
 
 	return contentType;
 };
@@ -250,7 +249,9 @@ JobAidContentPage.populateFileItemInfo = function( fileItem, dataListTag )
 {
 	let dataItemTag = $( JobAidContentPage.contentPage_dataItem ).attr( 'url', fileItem.url );
 	dataListTag.append( dataItemTag );
-	
+	if ( fileItem.downloaded !== true ) dataItemTag.addClass( 'jobAidNotDownloaded' );
+
+
 	JobAidContentPage.populateFileName_Preview( fileItem, dataItemTag.find(".fileName") );
 
 
@@ -265,7 +266,8 @@ JobAidContentPage.populateFileItemInfo = function( fileItem, dataListTag )
 
 	// size
 	var sizeFormatted = '';
-	if ( fileItem.size ) sizeFormatted = Util.formatFileSizeMB( fileItem.size );
+	if ( fileItem.downloaded !== true ) sizeFormatted = '[Not downloaded]';
+	else if ( fileItem.size ) sizeFormatted = Util.formatFileSizeMB( fileItem.size );
 	else sizeFormatted = '[N/A]';
 	dataItemTag.find(".contentLength").append( sizeFormatted ).attr("title", "size:" + fileItem.size);
 };
@@ -283,28 +285,26 @@ JobAidContentPage.populateFileName_Preview = function(fileItem, fileNameTag)
 
 		fileNameTag.attr("title", "name:" + fileItem.name);
 		fileNameTag.attr("play_full", fileItem.url);
-		fileNameTag.attr("play_type", fileItem.fileType);
+		fileNameTag.attr("play_type", fileItem.fileType2);
 		fileNameTag.html( fileItem.name );
 
-		if ( fileItem.downloaded !== true )
+		if ( fileItem.downloaded === true )
 		{
-			fileNameTag.append( '<span style="margin-left: 10px;"><strong>[NOT DOWNLOADED]</strong></span>' );
+			fileNameTag.click(function () 
+			{	
+				var thisTag = $(this);
+				var play_full = thisTag.attr('play_full');
+				var play_type = thisTag.attr('play_type');
+	
+				var divFilePreviewTag = JobAidContentPage.populateFilePreviewBottomTag();
+				var mainContentTag = divFilePreviewTag.find( 'div.mainContent' );
+	
+				if (play_type === 'audio') mainContentTag.append('<audio controls><source src="' + play_full + '" >Your browser does not support the audio element.</audio>');
+				else if (play_type === 'video') mainContentTag.append('<video src="' + play_full + '" preload="auto" controls="" style="width: 100%; height: 100%;"></video>');
+				else if (play_type === 'image') mainContentTag.append('<img src="' + play_full + '" style="width: 100%; height: 100%;"/>');
+				else mainContentTag.append('<div style="color: gray; font-size: 17px;">PREVIEW NOT AVAILABLE</div>');
+			});	
 		}
-		
-		fileNameTag.click(function () 
-		{	
-			var thisTag = $(this);
-			var play_full = thisTag.attr('play_full');
-			var play_type = thisTag.attr('play_type');
-
-			var divFilePreviewTag = JobAidContentPage.populateFilePreviewBottomTag();
-			var mainContentTag = divFilePreviewTag.find( 'div.mainContent' );
-
-			if (play_type === 'audio') mainContentTag.append('<audio controls><source src="' + play_full + '" >Your browser does not support the audio element.</audio>');
-			else if (play_type === 'video') mainContentTag.append('<video src="' + play_full + '" preload="auto" controls="" style="width: 100%; height: 100%;"></video>');
-			else if (play_type === 'image') mainContentTag.append('<img src="' + play_full + '" style="width: 100%; height: 100%;"/>');
-			else mainContentTag.append('<div style="color: gray; font-size: 17px;">PREVIEW NOT AVAILABLE</div>');
-		});
 	}
 };
 
@@ -364,7 +364,7 @@ JobAidContentPage.contentPage_headers = `
 		</div>
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">Content-Length
-			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="size"></div>
+			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="size2"></div>
 		</div>
 	</div>
 </div>`;

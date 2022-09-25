@@ -2077,7 +2077,7 @@ Util.formatFileSizeMB = function( val, option )
 		}
 		else 
 		{
-			if ( !disableMin && calVal < 0.01 ) resultStr = '0.01 MB';  // set min express val.			
+			if ( !disableMin && calVal < 0.05 ) resultStr = '0.1 MB';  // set min express val.			
 			else {
 				if ( decimal == 0 && calVal < 10 && minWidth ) resultStr = calVal.toFixed( 1 ) + ' MB';
 				else resultStr = calVal.toFixed( decimal ) + ' MB';

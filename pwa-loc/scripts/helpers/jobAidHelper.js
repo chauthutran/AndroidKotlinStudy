@@ -23,6 +23,7 @@ JobAidHelper.EXTS_VIDEO = [ '.webm', '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.
 JobAidHelper.EXTS_AUDIO = [ '.abc', '.flp', '.ec3', '.mp3', '.flac' ];  // upper case when comparing
 JobAidHelper.EXTS_IMAGE = [ '.tif', '.tiff', '.bmp', '.jpg', '.jpeg', '.gif', '.ico', '.png', '.eps', '.svg' ];
 JobAidHelper.EXTS_TEXT = [ '.txt', '.css', '.scss', '.md', '.pdf' ];
+JobAidHelper.EXTS_APPLICATION = [ '.js', '.map', '.html', '.htm', '.json', '.xml', '.bat' ];
 JobAidHelper.EXTS_APP = [ '.js', '.map' ]; // '.html', '.htm', '.json', '.xml', '.bat',
 
 //JobAidHelper.MANIFEST_FILES = [ ];

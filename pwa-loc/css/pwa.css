@@ -77,8 +77,6 @@
 	cursor: unset !important;
 }
 
-;
-
 .card_jobAid {
 	width: 100%;
 	height: 100%;
@@ -147,6 +145,11 @@
 }
 
 /* Content Part */
+
+.jobAidNotDownloaded {
+	background-color: tomato !important;
+	opacity: 0.5;
+}
 
 .list-downloaded-headers {
 	width: 100%;
