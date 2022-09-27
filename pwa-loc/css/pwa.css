@@ -282,6 +282,10 @@
 	.list-downloaded .list-r .list-r_secc .list-r_secc_title {
 		display: none;
 	}
+
+  .sort-dropdown {
+    display: none;
+  }
 }
 
 .list-downloaded .list-r .list-r_secc .list-r_secc_cnt {
@@ -330,9 +334,16 @@
 }
 
 @media only screen and (max-width: 869px) {
-	.list-downloaded {
+	/* .list-downloaded {
 		top: 50px;
-	}
+	} */
+
+  .sort-dropdown {
+    display: flex;
+    margin-left: 15px;
+    background-color: #c9c7c7;
+    margin-right: 18px;
+  }
 }
 
 /* ------------- */

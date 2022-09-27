@@ -343,6 +343,21 @@ JobAidContentPage.populateFilePreviewBottomTag = function()
 JobAidContentPage.contentPage_tableTag = `<table class="jobFileContentTable"><tbody></tbody></table>`;
 
 JobAidContentPage.contentPage_headers = `
+<div class="sort-dropdown">
+	
+	<select class="sortOpt">
+		<option value="name">Name</option>
+		<option value="folder">Folder</option>
+		<option value="contentType">Content-Type</option>
+		<option value="date">Caching time</option>
+		<option value="size">Content-Length</option>
+	</select>
+
+	<svg class="sortBtn" order="asc" width="20" height="20" style="padding: 0px 20px; cursor: pointer;" viewBox="0 0 24 24" fill="#000" xmlns="http://www.w3.org/2000/svg">
+		<path d="M7.62497 2V21.0951L5.87888 19.349C5.73243 19.2026 5.49407 19.2026 5.34763 19.349C5.20118 19.4954 5.20118 19.7324 5.34763 19.8789L7.73435 22.2656C7.88081 22.4121 8.11783 22.4121 8.26429 22.2656L10.651 19.8789C10.7975 19.7324 10.7975 19.4954 10.651 19.349C10.5046 19.2026 10.2675 19.2026 10.1211 19.349L8.37497 21.0951V2H7.62497ZM16 2C15.904 2 15.8089 2.03615 15.7356 2.10937L13.3489 4.49609C13.2025 4.64254 13.2025 4.87959 13.3489 5.02604C13.4953 5.17249 13.7324 5.17249 13.8789 5.02604L15.625 3.27995V22.375H16.375V3.27995L18.1211 5.02604C18.2675 5.17249 18.5059 5.17249 18.6523 5.02604C18.7988 4.87959 18.7988 4.64254 18.6523 4.49609L16.2656 2.10937C16.1924 2.03615 16.0959 2 16 2Z" class="c_50"></path>
+	</svg>
+</div>
+
 <div class="list-downloaded-headers headers">
 	<div class="list-r">
 		<div class="list-r_secc">
