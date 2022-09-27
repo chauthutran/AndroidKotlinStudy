@@ -97,8 +97,7 @@ JobAidContentPage.populateFileContent = function( processData, projDir)
 {
 	JobAidContentPage.divMainContentTag.html('');
 	
-	const headerTag = $( JobAidContentPage.contentPage_headers );
-	JobAidContentPage.divMainContentTag.append( headerTag );
+	JobAidContentPage.divMainContentTag.append( $( JobAidContentPage.contentPage_headers ) );
 
 	let dataListTag = $( JobAidContentPage.contentPage_dataList );
 	JobAidContentPage.divMainContentTag.append( dataListTag );
@@ -116,7 +115,7 @@ JobAidContentPage.populateFileContent = function( processData, projDir)
 		var dataJson = JobAidContentPage.getFileName_FolderPath(url, projDir);
 		fileItem.name = dataJson.name;
 		fileItem.folderPath = dataJson.folderPath;
-		fileItem.fileType2 = JobAidContentPage.getfileType2( fileItem.name ); // fileType is already in use for 'app' vs 'media'
+		fileItem.fileType2 = JobAidContentPage.getFileType2( fileItem.name ); // fileType is already in use for 'app' vs 'media'
 		fileItem.contentType = JobAidContentPage.getContentType( fileItem.name, fileItem.fileType2 );
 		fileItem.size2 = ( fileItem.downloaded && fileItem.size ) ? fileItem.size: 0;  // set size as 0 if not downloaded..
 
@@ -149,13 +148,29 @@ JobAidContentPage.populateFileContent = function( processData, projDir)
 	// Populate
 	JobAidContentPage.populateFileItemList( JobAidContentPage.ITEM_LIST );
 
-	JobAidContentPage.setUp_Events_SortColumns( headerTag );
+	JobAidContentPage.setUp_Events_SortColumns();
 };
 
-JobAidContentPage.setUp_Events_SortColumns = function( headerTag )
+JobAidContentPage.setUp_Events_SortColumns = function()
 {
-	headerTag.find(".sortable").off('click').click(function (e) {
-		JobAidContentPage.sortDataList( $(this) );
+	let tableHeaderTag = JobAidContentPage.divMainContentTag.find(".headers");
+	tableHeaderTag.find(".sortable").off('click').click(function (e) {
+		const sortField = $(this).attr("sortField");
+		const order = $(this).attr("order");
+		JobAidContentPage.sortDataList( sortField, order, true );
+	});
+
+	JobAidContentPage.divMainContentTag.find(".sortOpt").change(function(){
+		const sortField = $(this).val();
+		const order = JobAidContentPage.divMainContentTag.find(".sortBtn").attr("order");
+		JobAidContentPage.sortDataList( sortField, order, false );
+	});
+
+	
+	JobAidContentPage.divMainContentTag.find(".sortBtn").click(function(){
+		const sortField = JobAidContentPage.divMainContentTag.find(".sortOpt").val();
+		const order =  $(this).attr("order");
+		JobAidContentPage.sortDataList( sortField, order, true );
 	});
 }
 
@@ -169,10 +184,10 @@ JobAidContentPage.populateFileItemList = function( itemList )
 	});
 }
 
-JobAidContentPage.sortDataList = function( sortFieldTag )
+JobAidContentPage.sortDataList = function( sortField, order, isOrderChanged )
 {
-	const sortField = sortFieldTag.attr("sortField");
-	const order = sortFieldTag.attr("order");
+	// const sortField = sortFieldTag.attr("sortField");
+	// const order = sortFieldTag.attr("order");
 
 	const sortedItems = Util.sortByKey(JobAidContentPage.ITEM_LIST, sortField, undefined, order );
 	JobAidContentPage.populateFileItemList( sortedItems );
@@ -180,16 +195,35 @@ JobAidContentPage.sortDataList = function( sortFieldTag )
 	// Update "Sort" icon for headers
 	JobAidContentPage.divMainContentTag.find( ".headers .sortable" ).attr("src", "../images/sort_icon.svg").addClass( 'sortable_default' );
 
+	
+	var sortFieldTableColTag = JobAidContentPage.divMainContentTag.find(".sortable[order='" + order + "'][sortField='" + sortField + "']");
+	let sortOptTag = JobAidContentPage.divMainContentTag.find(".sortOpt");
+	let sortBtnTag = JobAidContentPage.divMainContentTag.find(".sortBtn");
+	sortOptTag.val(sortField);
+
 	if( order == "asc" ) {
-		sortFieldTag.attr("order", "desc");
-		sortFieldTag.attr("src", "../images/arrow_drop_up.svg");
-		sortFieldTag.removeClass( 'sortable_default' );
+
+		sortFieldTableColTag.attr("order", "desc");
+		sortFieldTableColTag.attr("src", "../images/arrow_drop_up.svg");
+		sortFieldTableColTag.removeClass( 'sortable_default' );
+
+		if( isOrderChanged )
+		{
+			sortBtnTag.attr("order", "desc");
+			// sortBtnTag.attr("src", "../images/arrow_drop_up.svg");
+		}
 	}
 	else
 	{
-		sortFieldTag.attr("order", "asc");
-		sortFieldTag.attr("src", "../images/arrow_drop_down.svg");
-		sortFieldTag.removeClass( 'sortable_default' );
+		sortFieldTableColTag.attr("order", "asc");
+		sortFieldTableColTag.attr("src", "../images/arrow_drop_down.svg");
+		sortFieldTableColTag.removeClass( 'sortable_default' );
+
+		if( isOrderChanged )
+		{
+			sortBtnTag.attr("order", "asc");
+			// sortBtnTag.attr("src", "../images/arrow_drop_down.svg");
+		}
 	}
 }
 
@@ -218,7 +252,7 @@ JobAidContentPage.getFileName_FolderPath = function(url, projDir)
 	return dataJson;
 };
 
-JobAidContentPage.getfileType2 = function( fileName )
+JobAidContentPage.getFileType2 = function( fileName )
 {
 	var type = '';
 
