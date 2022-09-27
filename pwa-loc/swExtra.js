@@ -1,11 +1,18 @@
+// Matomo offline
 self.importScripts("./swMotamoOffline.js");
-//self.importScripts('https://matomo.psi-mis.org/offline-service-worker.js');
 matomoAnalytics.initialize({ queueLimit: 10000, timeLimit: 86400 * 14 });
 
+
+// Message Listening --> Currently, for JobAid File Caching Operation.
 self.addEventListener('message', (event) => {
 	// NOTE: More explain about 'event.waitUntil': https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil
-	event.waitUntil(async function () {
-		if (event.data && event.data.cacheName) {
+	event.waitUntil(async function () 
+	{
+		// NOTE: For 'JobAid' file caching (cache.add/cache.put), we need to do these on 'service worker' level
+		//		Since we have made these url (pattern) as 'CacheOnly'.
+		//		Due to 'CacheOnly' strategy, the url can only be reached by 'service worker' or on WFA App service worker 'install' time.
+		if (event.data && event.data.cacheName) 
+		{
 			if (event.data.type === 'CACHE_URLS2' && event.data.payload) {
 				var cacheName = event.data.cacheName;
 				var reqList = event.data.payload;
@@ -23,10 +30,21 @@ self.addEventListener('message', (event) => {
 						var reqUrl = reqList[i];
 						try
 						{
-							await cache.add(reqUrl);
-							doneCount++;
-							var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
-							event.source.postMessage(returnMsgStr);	
+							var response = await fetch(reqUrl);
+							
+							if (response.ok)  // Status in the range 200-299)
+							{
+								await cache.put(reqUrl, response);
+
+								doneCount++;
+								console.log( '[' + doneCount + '] Cache Put: ' + reqUrl );
+								var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
+								event.source.postMessage(returnMsgStr);	
+							}
+							else {
+								console.log( 'Bad Response, reqUrl: ' + reqUrl );
+								throw "bad response status";
+							}
 						}
 						catch ( error )
 						{
@@ -41,18 +59,36 @@ self.addEventListener('message', (event) => {
 				else 
 				{
 					reqList.forEach( reqUrl => {
+
+						// TODO: Use 'cache.put' instead - https://developer.mozilla.org/en-US/docs/Web/API/Cache/add
 						// Instead of 'cache.add', we could use 'fetch' with is the equalivent one.  Also, the default timeout should be 300 seconds for this..
-						cache.add(reqUrl).then(() => {
-							doneCount++;
-							var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
-							event.source.postMessage(returnMsgStr);
+
+						fetch(reqUrl).then((response) => 
+						{
+							if (response.ok)  // Status in the range 200-299)
+							{
+								cache.put(reqUrl, response);  // return 
+								console.log( '[' + doneCount + '] Cache Put: ' + reqUrl );
+
+								doneCount++;
+								var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
+								event.source.postMessage(returnMsgStr);	
+							}
+							else {
+								console.log( 'Bad Response, reqUrl: ' + reqUrl );
+
+								throw new TypeError("bad response status");
+							}
 						}).catch((error) => {
 							doneCount++;
-							console.log( 'caching error catch, url: ' + reqUrl );
+							console.log( '[' + doneCount + '] Caching Error, reqUrl: ' + reqUrl );
 							console.log( error );
 							var returnMsgStr = JSON.stringify({ type: 'jobFiling', error: true, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
 							event.source.postMessage(returnMsgStr);
 						});
+
+						// cache.add(reqUrl).then(() => {
+
 					});
 				}
 			}

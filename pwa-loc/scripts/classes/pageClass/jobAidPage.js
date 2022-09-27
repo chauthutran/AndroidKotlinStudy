@@ -667,7 +667,7 @@ JobAidManifest.setManifestTemp_InStrg = function( availableManifestList, projDir
 	if ( projDir )
 	{
 		var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
-		
+
 		manifestJson = Util.getFromList( availableManifestList, projDir, 'projDir' );
 		projStatus.manifestJsonTemp = Util.cloneJson( manifestJson );
 		
@@ -790,15 +790,16 @@ JobAidItem.itemDelete = function (projDir)
 
 	if (result) 
 	{
-		JobAidHelper.deleteCacheKeys(JobAidHelper.rootDir_jobAid + projDir + '/').then(function (deletedArr) 
-		{
+
+		//JobAidHelper.deleteCacheKeys(JobAidHelper.rootDir_jobAid + projDir + '/').then(function (deletedArr) 
+		//{
 			// Delete on localStorage 'persisData'
 			PersisDataLSManager.deleteJobFilingProjDir( projDir );
 
 			JobAidPage.populateSectionLists(false, () => TranslationManager.translatePage() );  // JobAidPage.updateSectionLists(itemData.projDir, 'downloaded_delete');
 
 			MsgManager.msgAreaShowOpt( 'The pack has been deleted', { hideTimeMs: 1000 } );
-		});
+		//});
 	}
 };
 
@@ -955,55 +956,3 @@ JobAidItem.matchInServerList = function (item, serverManifestsData)
 
 	return matchData;
 };
-
-// ===================================================
-// OBSOLTE..
-
-/*
-// On 'available' download finish --> remove it from 'available' &
-// we will need to refresh the cache list?  Or just add to the cached list??...
-JobAidPage.updateSectionLists = function (projDir, statusType) {
-
-	// TODO: 'item' is old data, thus, need to be updated...  + need to append with persis data..
-	var item = Util.getFromList(JobAidPage.availableManifestList, projDir, 'projDir');
-
-	if (!item) alert('Not found the item, ' + projDir);
-	else {
-		if (statusType === 'available') 
-		{
-			// Fresh Download case: 'available' -> 'downloaded'
-			JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
-
-			var itemTag = $(JobAidPage.templateItem);
-			JobAidItem.itemPopulate(item, itemTag, 'downloaded');
-			JobAidPage.divDownloadedPacksTag.append(itemTag);
-		}
-		else if (statusType === 'downloaded')
-		{
-			// Download Update Caes: Reload with fresh status.
-
-			var itemTag = JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']').html('').append(JobAidPage.templateItem_body);
-
-			JobAidItem.itemPopulate(item, itemTag, 'downloaded');
-			JobAidPage.divDownloadedPacksTag.append(itemTag);
-		}
-		else if (statusType === 'downloaded_delete') 
-		{
-			JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
-
-			// Also, Just In CASE, if there is available one, remove it as well
-			JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
-
-			// Add to the cached..
-			var itemTag = $(JobAidPage.templateItem);
-			JobAidItem.itemPopulate(item, itemTag, 'available');
-			JobAidPage.divAvailablePacksTag.append(itemTag);
-		}
-		else {
-			alert('itemCard statusType not known, ' + statusType);
-		}
-	}
-
-	TranslationManager.translatePage();
-};
-*/

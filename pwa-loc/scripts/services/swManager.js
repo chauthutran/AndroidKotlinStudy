@@ -311,3 +311,68 @@ SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function () {
 	//$('.appUpdateStatusDiv').hide();
 //};
 
+// ==========================================
+
+SwManager.jobAidCacheFiles = async function ( eventData ) 
+{
+	// 'event' param should be 'caching data json'
+	if (eventData && eventData.cacheName) 
+	{
+		if (eventData.type === 'CACHE_URLS2' && eventData.payload) {
+			var cacheName = eventData.cacheName;
+			var reqList = eventData.payload;
+			var options = (eventData.options) ? eventData.options : {};
+
+			var cache = await caches.open(cacheName);
+
+			var totalCount = reqList.length;
+			var doneCount = 0;
+
+			if (options.syncType === 'sync') 
+			{
+				for (var i = 0; i < reqList.length; i++) 
+				{
+					var reqUrl = reqList[i];
+					try
+					{
+						await cache.add(reqUrl);
+						doneCount++;
+						var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
+						//event.source.postMessage(returnMsgStr);	
+						console.log( returnMsgStr );
+					}
+					catch ( error )
+					{
+						doneCount++;
+						console.log( 'caching error try/catch, url: ' + reqUrl );
+						console.log( error );
+						var returnMsgStr = JSON.stringify({ type: 'jobFiling', error: true, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
+						//event.source.postMessage(returnMsgStr);
+						MsgManager.msgAreaShowErr( returnMsgStr );
+					}
+				}
+			}
+			else 
+			{
+				reqList.forEach( reqUrl => {
+
+					// TODO: Use 'cache.put' instead - https://developer.mozilla.org/en-US/docs/Web/API/Cache/add
+					// Instead of 'cache.add', we could use 'fetch' with is the equalivent one.  Also, the default timeout should be 300 seconds for this..
+					cache.add(reqUrl).then(() => {
+						doneCount++;
+						var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
+						//event.source.postMessage(returnMsgStr);
+						console.log( returnMsgStr );
+					}).catch((error) => {
+						doneCount++;
+						console.log( 'caching error catch, url: ' + reqUrl );
+						console.log( error );
+						var returnMsgStr = JSON.stringify({ type: 'jobFiling', error: true, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
+						MsgManager.msgAreaShowErr( returnMsgStr );
+						//event.source.postMessage(returnMsgStr);
+					});
+				});
+			}
+		}
+	}
+};

@@ -271,6 +271,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 						//    However, since we do not want anyone to access jobs folder directly, but only through cache
 						//		We need to have service worker Read & Cache it.
 						//		And once it is on cache (only allowed ones), we can read however we want afterwards (without going through service worker)
+
+						// Due to 'CacheOnly' strategy, we can only cache it on 'service worker' level or 'install' stage of service worker.
+						//		- 	SwManager.jobAidCacheFiles();
 						SwManager.swRegObj.active.postMessage({
 							'type': JobAidHelper.jobAid_CACHE_URLS2
 							, 'cacheName': JobAidHelper.jobAid_jobTest2
