@@ -67,6 +67,8 @@ self.addEventListener('message', (event) => {
 						{
 							if (response.ok)  // Status in the range 200-299)
 							{
+								//if ( reqUrl.indexOf( 'logo192.png' ) >= 0 ) throw new Error('Something went wrong');
+
 								cache.put(reqUrl, response);  // return 
 								console.log( '[' + doneCount + '] Cache Put: ' + reqUrl );
 

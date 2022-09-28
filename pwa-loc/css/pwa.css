@@ -68,6 +68,17 @@
 
 /* ===== Job Aid Releated =========================== */
 
+.jobAidDevSelect {
+	width: 57px; 
+	color: white; 
+	font-size: 12px;
+}
+
+.jobAidDevSelect option {
+	background-color: #4E4E4E;
+}
+
+
 .jobAidItem {
 	border-bottom: 1px solid #e0e0e0;
 }

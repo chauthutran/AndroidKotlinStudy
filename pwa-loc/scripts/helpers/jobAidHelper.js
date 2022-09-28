@@ -200,7 +200,7 @@ JobAidHelper.deleteCacheStorage = async function()
 	return caches.delete( JobAidHelper.jobAid_jobTest2 );
 };
 
-JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // returnFunc )
+JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFileList_Override )
 {
 	if ( ConnManagerNew.isAppMode_Online() ) 
 	{
@@ -240,60 +240,72 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag ) // re
 				<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>
 			</div>` );
 
-		$.ajax({
-			url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
-			type: "GET",
-			dataType: "json",
-			success: function (response) 
-			{
-				if ( response.errMsg ) MsgManager.msgAreaShowErr( response.errMsg );
-				else
+
+		if ( newFileList_Override )
+		{
+			JobAidHelper.swFileListCaching( newFileList_Override, options );
+		}
+		else
+		{
+			$.ajax({
+				url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
+				type: "GET",
+				dataType: "json",
+				success: function (response) 
 				{
-					// ===================================
-					// STEP 1: SET LOCAL STORAGE - about these file listings (reset to download false & file size empty..)
-					
-					// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
-					var newFileList = JobAidHelper.sort_filter_files( response.list, options );
-
-					// 2. Save the list info on localStorage (PersisManager) by 'projDir' name - Does not remove existing data.
-					JobAidHelper.filingContent_setUp( newFileList, response.results, options );
-
-					if ( newFileList.length <= 0 ) {
-						$( '.spanJobFilingMsg' ).text( 'Empty process list.' );
-						MsgManager.msgAreaShowErr( 'Empty process list.' );
-					}
+					if ( response.errMsg ) MsgManager.msgAreaShowErr( response.errMsg );
 					else
-					{				
-						// ===================================
-						// STEP 2: CALLING SERVICE WORKER - TO START CACHING THE FILES IN FILE LISTS.
-						
-						// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
-						//    However, since we do not want anyone to access jobs folder directly, but only through cache
-						//		We need to have service worker Read & Cache it.
-						//		And once it is on cache (only allowed ones), we can read however we want afterwards (without going through service worker)
-
-						// Due to 'CacheOnly' strategy, we can only cache it on 'service worker' level or 'install' stage of service worker.
-						//		- 	SwManager.jobAidCacheFiles();
-						SwManager.swRegObj.active.postMessage({
-							'type': JobAidHelper.jobAid_CACHE_URLS2
-							, 'cacheName': JobAidHelper.jobAid_jobTest2
-							, 'options': options
-							, 'payload': newFileList
-						});
+					{
+						// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
+						var newFileList = JobAidHelper.sort_filter_files( response.list, options );
+	
+						// 2. Save the list info on localStorage (PersisManager) by 'projDir' name - Does not remove existing data.
+						JobAidHelper.filingContent_setUp( newFileList, response.results, options );
+	
+						// 3. Submit to Service Worker - the file caching (due to 'CacheOnly' strategy, we need to send to service worker for this)
+						JobAidHelper.swFileListCaching( newFileList, options );
 					}
-				}
-			},
-			error: function ( error ) {
-				$( '.spanJobFilingMsg' ).text( 'Failed - ' + error );
-				console.log( error );
-				MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
-			},
-			complete: function () {
-				$( '.divJobFileLoading' ).find( 'img' ).remove();
-			}			
-		});
+				},
+				error: function ( error ) {
+					$( '.spanJobFilingMsg' ).text( 'Failed - ' + error );
+					console.log( error );
+					MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
+				},
+				complete: function () {
+					$( '.divJobFileLoading' ).find( 'img' ).remove();
+				}			
+			});
+		}
 	}
 	else MsgManager.msgAreaShowErr( 'Offline - JobAid Filing is only available in online mode.' );
+};
+
+
+JobAidHelper.swFileListCaching = function( newFileList, options ) 
+{
+	if ( newFileList.length <= 0 ) {
+		$( '.spanJobFilingMsg' ).text( 'Empty process list.' );
+		MsgManager.msgAreaShowErr( 'Empty process list.' );
+	}
+	else
+	{				
+		// ===================================
+		// STEP 2: CALLING SERVICE WORKER - TO START CACHING THE FILES IN FILE LISTS.
+		
+		// NOTE: We can do 'caches.open' & read data directly rather than do 'postMessage' to service worker.
+		//    However, since we do not want anyone to access jobs folder directly, but only through cache
+		//		We need to have service worker Read & Cache it.
+		//		And once it is on cache (only allowed ones), we can read however we want afterwards (without going through service worker)
+
+		// Due to 'CacheOnly' strategy, we can only cache it on 'service worker' level or 'install' stage of service worker.
+		//		- 	SwManager.jobAidCacheFiles();
+		SwManager.swRegObj.active.postMessage({
+			'type': JobAidHelper.jobAid_CACHE_URLS2
+			, 'cacheName': JobAidHelper.jobAid_jobTest2
+			, 'options': options
+			, 'payload': newFileList
+		});
+	}
 };
 
 
@@ -413,6 +425,7 @@ JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 					if ( fileItem ) size = fileItem.size;
 				}
 
+				// fileType - decided by folder name
 				projStatus.process[ fileName ] = { size: size, reqDate: new Date().toISOString(), downloaded: false, fileType: JobAidHelper.fileType( options, fileName ) };
 				
 			});
