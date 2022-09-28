@@ -37,19 +37,19 @@ self.addEventListener('message', (event) => {
 								await cache.put(reqUrl, response);
 
 								doneCount++;
-								console.log( '[' + doneCount + '] Cache Put: ' + reqUrl );
+								//console.log( '[' + doneCount + '] Cache Put: ' + reqUrl );
 								var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
 								event.source.postMessage(returnMsgStr);	
 							}
 							else {
-								console.log( 'Bad Response, reqUrl: ' + reqUrl );
-								throw "bad response status";
+								//console.log( 'Bad Response, reqUrl: ' + reqUrl );
+								throw new Error("bad response status");
 							}
 						}
 						catch ( error )
 						{
 							doneCount++;
-							console.log( 'caching error try/catch, url: ' + reqUrl );
+							console.log( '[' + doneCount + '] Try/Catch Error, reqUrl: ' + reqUrl );
 							console.log( error );
 							var returnMsgStr = JSON.stringify({ type: 'jobFiling', error: true, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
 							event.source.postMessage(returnMsgStr);
@@ -70,16 +70,14 @@ self.addEventListener('message', (event) => {
 								//if ( reqUrl.indexOf( 'logo192.png' ) >= 0 ) throw new Error('Something went wrong');
 
 								cache.put(reqUrl, response);  // return 
-								console.log( '[' + doneCount + '] Cache Put: ' + reqUrl );
+								//console.log( '[' + doneCount + '] Cache Put: ' + reqUrl );
 
 								doneCount++;
 								var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
 								event.source.postMessage(returnMsgStr);	
 							}
 							else {
-								console.log( 'Bad Response, reqUrl: ' + reqUrl );
-
-								throw new TypeError("bad response status");
+								throw new Error("bad response status");
 							}
 						}).catch((error) => {
 							doneCount++;
