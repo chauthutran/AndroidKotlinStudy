@@ -1,6 +1,7 @@
 function JobAidPage() { };
 function JobAidItem() { };
 function JobAidManifest() { };
+function JobAidCaching() { };
 
 // ----------------------------------
 
@@ -15,13 +16,13 @@ JobAidPage.options = {
 	}
 };
 
-JobAidPage.devInfo = '';
-
 JobAidPage.availableManifestList = [];
 
 JobAidPage.syncType = 'async';	// will be overwritten by config setting
 JobAidPage.removeCache; // will set as 'Y' / 'N'
-
+JobAidPage.autoRetry;
+JobAidPage.autoRetryTimeOutIDs = {};
+JobAidPage.autoRetry_MinTimeOut = 5;
 // -------------
 
 JobAidPage.sheetFullTag;
@@ -74,45 +75,92 @@ JobAidPage.render_AdjustSheetFull = function( sheetFullTag )
 	sheetFullTag.find( 'div.syncIcon' ).hide();
 
 	// JobAidDevInfo mode..
-	if ( ConfigManager.getJobAidSetting().devInfo === '1' )
+	if ( ConfigManager.getJobAidSetting().devInfo === '1' ) JobAidPage.devOptionSelects_Setup( sheetFullTag.find( 'div.sheet-title' ), ['syncType', 'removeCache', 'autoRetry' ] );
+};
+
+
+JobAidPage.devOptionSelects_Setup = function( sheetTitleDivTag, propArr )
+{
+	var spanJobAidDevInfoTag = $( '<span class="spanJobAidDevInfo" style="margin-left: 8px; line-height: 12px; font-size: 12px; color: silver;"></span>' );
+	sheetTitleDivTag.append( spanJobAidDevInfoTag );
+
+
+	propArr.forEach( propName => 
 	{
-		JobAidPage.devInfo = ConfigManager.getJobAidSetting().devInfo;
-		var spanJobAidDevInfoTag = $( '<span class="spanJobAidDevInfo" style="margin-left: 8px; line-height: 12px; font-size: 12px; color: silver;"></span>' );
+		var selectOpts = [];
 
-		// 'syncType' set
-		// Always set to 'async' on page load
-		JobAidPage.syncType = ( ConfigManager.getJobAidSetting().syncType === "sync" ) ? 'sync' : 'async';
+		if ( propName === 'syncType' )
+		{
+			JobAidPage.syncType = ( ConfigManager.getJobAidSetting().syncType === "sync" ) ? 'sync' : 'async';
+			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download, use async or sync type request">syncType: </span>');
+			selectOpts = [ { value: 'async', name: 'async' }, { value: 'sync', name: 'sync' } ];
+		}
+		else if ( propName === 'removeCache' )
+		{
+			JobAidPage.removeCache = ( ConfigManager.getJobAidSetting().removeCacheOnDelete === true ) ? 'Y': 'N';
+			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On pack delete, remove cache">removeCache: </span>');
+			selectOpts = [ { value: 'N', name: 'No' }, { value: 'Y', name: 'Yes' } ];
+		}
+		else if ( propName === 'autoRetry' )
+		{
+			JobAidPage.autoRetry = ( !ConfigManager.getJobAidSetting().autoRetry ) ? '' : ConfigManager.getJobAidSetting().autoRetry;
+			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download haulting 30 sec or more, automatically">autoRetry: </span>');
+			selectOpts = [ { value: '', name: 'No' }, { value: 30, name: '30 sec' }, { value: 60, name: '60 sec' }, { value: 90, name: '90 sec' }, { value: 120, name: '120 sec' } ];	
+		}
 
-		spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download, use async or sync type request">syncType: </span>');
-		var syncTypeTag = $( '<select class="syncType jobAidDevSelect"><option value="async">async</option><option value="sync">sync</option></select>');
-		syncTypeTag.val( JobAidPage.syncType );
+		JobAidPage.devOptionSelect( spanJobAidDevInfoTag, propName, selectOpts );
+	});
+		
 
-		syncTypeTag.change( function() {
-			JobAidPage.syncType = $( this ).val();
-			MsgManager.msgAreaShowOpt( 'SyncType set to ' + JobAidPage.syncType, { hideTimeMs: 1000 } );
-		});
+	/*
+	// Always set to 'async' on page load
+	JobAidPage.syncType = ( ConfigManager.getJobAidSetting().syncType === "sync" ) ? 'sync' : 'async';
 
-		spanJobAidDevInfoTag.append( syncTypeTag );
+	spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download, use async or sync type request">syncType: </span>');
+	var syncTypeTag = $( '<select class="syncType jobAidDevSelect"><option value="async">async</option><option value="sync">sync</option></select>');
+	syncTypeTag.val( JobAidPage.syncType );
+
+	syncTypeTag.change( function() {
+		JobAidPage.syncType = $( this ).val();
+		MsgManager.msgAreaShowOpt( 'SyncType set to ' + JobAidPage.syncType, { hideTimeMs: 1000 } );
+	});
+
+	spanJobAidDevInfoTag.append( syncTypeTag );
+
+	// 'removeCache' set
+	JobAidPage.removeCache = ( ConfigManager.getJobAidSetting().removeCacheOnDelete === true ) ? 'Y': 'N';
+
+	spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On pack delete, remove cache">removeCache: </span>');
+	var removeCacheTag = $( '<select class="removeCache jobAidDevSelect" style="width: 45px;"><option value="N">No</option><option value="Y">Yes</option></select>');
+	removeCacheTag.val( JobAidPage.removeCache );
+
+	removeCacheTag.change( function() {
+		JobAidPage.removeCache = $( this ).val();
+		MsgManager.msgAreaShowOpt( 'RemoveCache set to "' + JobAidPage.removeCache + '"', { hideTimeMs: 1000 } );
+	});
+
+	spanJobAidDevInfoTag.append( removeCacheTag );
+	*/
+
+};
 
 
-		// 'removeCache' set
-		JobAidPage.removeCache = ( ConfigManager.getJobAidSetting().removeCacheOnDelete === true ) ? 'Y': 'N';
-
-		spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On pack delete, remove cache">removeCache: </span>');
-		var removeCacheTag = $( '<select class="removeCache jobAidDevSelect" style="width: 45px;"><option value="N">No</option><option value="Y">Yes</option></select>');
-		removeCacheTag.val( JobAidPage.removeCache );
-
-		removeCacheTag.change( function() {
-			JobAidPage.removeCache = $( this ).val();
-			MsgManager.msgAreaShowOpt( 'RemoveCache set to "' + JobAidPage.removeCache + '"', { hideTimeMs: 1000 } );
-		});
-
-		spanJobAidDevInfoTag.append( removeCacheTag );
+// prop: 'syncType', options: [ { value: 'sync', name: 'sync' }, { value: 'async', name: 'async' } ], 
+JobAidPage.devOptionSelect = function( spanJobAidDevInfoTag, prop, options )
+{
+	var propTag = $( '<select class="' + prop + ' jobAidDevSelect"></select>');
+	options.forEach( item => {
+		propTag.append( '<option value="' + item.value + '">' + item.name + '</option>' );
+	});
+	propTag.val( JobAidPage[prop] );
 
 
-		// Append the 'devInfo' span tag to title part
-		sheetFullTag.find( 'div.sheet-title' ).append( spanJobAidDevInfoTag );
-	}
+	propTag.change( function() {
+		JobAidPage[prop] = $( this ).val();
+		MsgManager.msgAreaShowOpt( prop + ' set to ' + JobAidPage[prop], { hideTimeMs: 1000 } );
+	});
+
+	spanJobAidDevInfoTag.append( propTag );
 };
 
 
@@ -139,7 +187,7 @@ JobAidPage.render_ContextMenuSetup = function()
 				callback: function (key, options) 
 				{
 					if ( ['Download', 'Download w/o media', 'Download with media', 'Download media', 'Download app update'
-					, 'Download media update', 'ReAttempt App Download', 'ReAttempt Media Download' ].indexOf( key ) >= 0 ) JobAidItem.itemDownload(projDir, key );
+					, 'Download media update', 'ReAttempt App Download', 'ReAttempt Media Download' ].indexOf( key ) >= 0 ) JobAidItem.itemDownload(projDir, JobAidItem.keyToDownloadOption( key ) );
 					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
 					else if (key === 'Delete') JobAidItem.itemDelete(projDir);
 					else if (key === 'Open') JobAidItem.itemOpen(projDir);
@@ -274,136 +322,6 @@ JobAidPage.getSpanStatusTags_ByDownloadOption = function( projDir, downloadOptio
 	else if ( downloadOption.indexOf( 'mediaOnly' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.mediaDownloadStatus').show();
 
 	return spanDownloadStatusTag;
-};
-
-// -------------------------------------------------
-// --- Download Msg Progress Updates ---
-
-JobAidPage.jobFilingUpdate = async function (msgData) 
-{
-	// msgData: { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options }    
-	var prc = msgData.process;
-	var error = msgData.error;
-	var isDownloaded = ( error ) ? false: true;
-
-	if ( error )
-	{
-		var fileUrl = ( prc && prc.name ) ? prc.name: '';
-		MsgManager.msgAreaShowErr( 'Failed in file download: ' + fileUrl );
-	}
-
-	var projDir = msgData.options.projDir;
-	var projCardTag = JobAidPage.getProjCardTag(projDir); // $( 'div.card[projDir=' + msgData.options.projDir + ']' );
-
-	if (projCardTag.length > 0) 
-	{
-		var downloadOption = msgData.options.downloadOption;
-
-		var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
-
-		if (prc.name && prc.total && prc.total > 0 && prc.curr) 
-		{
-			var url = prc.name;
-
-			projCardTag.css('opacity', 1);
-
-			// ** Update the downloaded status on storage..  <-- Mark this 
-			if ( isDownloaded ) JobAidPage.projProcessDataUpdate(projDir, url, { date: new Date().toISOString(), downloaded: true } );
-
-
-			// Still in process VS 'Finished'
-			if (prc.curr < prc.total) 
-			{
-				spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr}/${prc.total} [${url.split('.').at(-1)}]`);
-				if (prc.curr > 5) projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
-			}
-			else 
-			{
-				// === DOWNLOAD 'FINISH' OPERATION STEPS ===
-				// #2. AVAILABILITY TEMP SET
-				ConnManagerNew.tempDisableAvailableCheck = false; 
-
-
-				spanDownloadStatusTag.html('<strong>Download completed!</strong>');
-				projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
-
-				await JobAidManifest.setManifest_InStrg(projDir, downloadOption);
-
-				
-				// Refresh the sections & list...
-				JobAidPage.populateSectionLists(false, function () {
-					TranslationManager.translatePage();
-				});				
-			}
-		}
-	}
-};
-
-
-JobAidPage.projProcessDataUpdate = function (projDir, url, updateJson) 
-{
-	try {
-		if (projDir && url && updateJson)
-		{
-			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
-
-			if (projStatus.process && projStatus.process[url]) {
-				var item = projStatus.process[url];
-
-				Util.mergeJson(item, updateJson);
-
-				PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
-			}
-		}
-	}
-	catch (errMsg) {
-		console.log('ERROR in JobAidPage.projProcessDataUpdate, ' + errMsg);
-	}
-};
-
-
-JobAidPage.getFilesStatusJson = function ( projDir ) 
-{
-	var filesStatusJson = { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded: 0 };
-
-	try {
-		if ( projDir )
-		{
-			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
-
-			if (projStatus.process) 
-			{
-				for( var prop in projStatus.process )
-				{
-					var item = projStatus.process[ prop ];
-
-					if ( item.fileType === 'media' )
-					{
-						filesStatusJson.mediaCountTotal++;
-						if ( item.downloaded === true ) 
-						{
-							filesStatusJson.mediaCountDownloaded++;
-							if ( item.size ) filesStatusJson.mediaSizeDownloaded += item.size;	
-						}						
-					}
-					else if ( item.fileType === 'app' )
-					{
-						filesStatusJson.appCountTotal++;
-						if ( item.downloaded === true ) 
-						{
-							filesStatusJson.appCountDownloaded++;
-							if ( item.size ) filesStatusJson.appSizeDownloaded += item.size;
-						}
-					}
-				}
-			}
-		}
-	}
-	catch (errMsg) {
-		console.log('ERROR in JobAidPage.getFilesStatusJson, ' + errMsg);
-	}
-
-	return filesStatusJson;
 };
 
 // ------------------------------------
@@ -758,6 +676,7 @@ JobAidManifest.getCacheKeyRequest = function ( url, keys )
 	return requestFound;
 };
 
+
 // ======================================================
 // ==== JobAidItem Related =============
 
@@ -773,23 +692,33 @@ JobAidItem.itemOpen = function (projDir)
 	$('#divJobAid').html('').show().append(`<iframe class="jobAidIFrame" src="${srcStr}" style="${styleStr}">iframe not compatible..</iframe>`);
 };
 
-JobAidItem.itemDownload = function (projDir, key) 
+
+JobAidItem.keyToDownloadOption = function ( key ) 
+{
+	var downloadOption = '';
+
+	if ( key === 'Download w/o media' ) downloadOption = 'appOnly';
+	else if ( key === 'Download app update' ) downloadOption = 'appOnly_Update';
+	else if ( key === 'Download media' ) downloadOption = 'mediaOnly';
+	else if ( key === 'Download media update' ) downloadOption = 'mediaOnly_Update';
+	else if ( key === 'ReAttempt App Download' ) downloadOption = 'appOnly_ReAttempt';
+	else if ( key === 'ReAttempt Media Download' ) downloadOption = 'mediaOnly_ReAttempt';
+	else downloadOption = 'all';
+
+	return downloadOption;
+};
+
+JobAidItem.itemDownload = function (projDir, downloadOption) 
 {
 	if (projDir) 
 	{
 		// ?? <-- How does this work when partial reAttempt goes..
 		JobAidManifest.setManifestTemp_InStrg( JobAidPage.availableManifestList, projDir );
 
-		var downloadOption = ''; // 'all';
 		var reAttemptCaseType = ''
 
-		if ( key === 'Download w/o media' ) downloadOption = 'appOnly';
-		else if ( key === 'Download app update' ) downloadOption = 'appOnly_Update';
-		else if ( key === 'Download media' ) downloadOption = 'mediaOnly';
-		else if ( key === 'Download media update' ) downloadOption = 'mediaOnly_Update';
-		else if ( key === 'ReAttempt App Download' ) {  downloadOption = 'appOnly_ReAttempt'; reAttemptCaseType = 'app'; }
-		else if ( key === 'ReAttempt Media Download' ) {  downloadOption = 'mediaOnly_ReAttempt'; reAttemptCaseType = 'media'; }
-		else downloadOption = 'all';
+		if ( downloadOption === 'ReAttempt App Download' ) reAttemptCaseType = 'app';
+		else if ( downloadOption === 'ReAttempt Media Download' ) reAttemptCaseType = 'media';
 
 
 		var optionJson = { projDir: projDir, target: 'jobAidPage', downloadOption: downloadOption, syncType: JobAidPage.syncType };
@@ -905,7 +834,7 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 			if ( !mediaDownloaded ) menus.push( 'Download media' );
 	
 
-			var filesStatusJson = JobAidPage.getFilesStatusJson( projDir ); // { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded };
+			var filesStatusJson = JobAidItem.getFilesStatusJson( projDir ); // { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded };
 
 			JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.appCountDownloaded, filesStatusJson.appCountTotal, filesStatusJson.appSizeDownloaded );
 			JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.mediaCountDownloaded, filesStatusJson.mediaCountTotal, filesStatusJson.mediaSizeDownloaded );
@@ -918,6 +847,51 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 		var menusStr = menus.join(';');
 		itemTag.attr('menus', menusStr);
 	}
+};
+
+
+JobAidItem.getFilesStatusJson = function ( projDir ) 
+{
+	var filesStatusJson = { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded: 0 };
+
+	try {
+		if ( projDir )
+		{
+			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
+
+			if (projStatus.process) 
+			{
+				for( var prop in projStatus.process )
+				{
+					var item = projStatus.process[ prop ];
+
+					if ( item.fileType === 'media' )
+					{
+						filesStatusJson.mediaCountTotal++;
+						if ( item.downloaded === true ) 
+						{
+							filesStatusJson.mediaCountDownloaded++;
+							if ( item.size ) filesStatusJson.mediaSizeDownloaded += item.size;	
+						}						
+					}
+					else if ( item.fileType === 'app' )
+					{
+						filesStatusJson.appCountTotal++;
+						if ( item.downloaded === true ) 
+						{
+							filesStatusJson.appCountDownloaded++;
+							if ( item.size ) filesStatusJson.appSizeDownloaded += item.size;
+						}
+					}
+				}
+			}
+		}
+	}
+	catch (errMsg) {
+		console.log('ERROR in JobAidItem.getFilesStatusJson, ' + errMsg);
+	}
+
+	return filesStatusJson;
 };
 
 
@@ -1005,4 +979,117 @@ JobAidItem.matchInServerList = function (item, serverManifestsData)
 	});
 
 	return matchData;
+};
+
+
+// ======================================================
+// ==== JobAidCaching Related =============
+
+JobAidCaching.jobFilingUpdate = async function (msgData) 
+{
+	// msgData: { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options }    
+	var prc = msgData.process;
+	var error = msgData.error;
+	var isDownloaded = ( error ) ? false: true;
+
+	if ( error )
+	{
+		var fileUrl = ( prc && prc.name ) ? prc.name: '';
+		MsgManager.msgAreaShowErr( 'Failed in file download: ' + fileUrl );
+	}
+
+	var projDir = msgData.options.projDir;
+	var downloadOption = msgData.options.downloadOption;	
+	var projCardTag = JobAidPage.getProjCardTag(projDir); // $( 'div.card[projDir=' + msgData.options.projDir + ']' );
+
+
+	// Set auto Retry for this processing
+	if ( JobAidPage.autoRetry && JobAidPage.autoRetry > JobAidPage.autoRetry_MinTimeOut )
+	{
+		var processKey = projDir + '_' + downloadOption;
+
+		// Remove previous timeout set..
+		if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) clearTimeout( JobAidPage.autoRetryTimeOutIDs[processKey] );
+
+		if ( prc.total && prc.curr && prc.curr < prc.total ) 
+		{
+			JobAidPage.autoRetryTimeOutIDs[processKey] = setTimeout( function() { JobAidCaching.triggerReTry(projDir, downloadOption); }, JobAidPage.autoRetry * 1000 );
+		}
+
+		// TODO: Later, make the limit of how many autoRetries are permitted..
+	}
+
+
+
+	if (projCardTag.length > 0) 
+	{
+		var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
+
+		if (prc.name && prc.total && prc.total > 0 && prc.curr) 
+		{
+			var url = prc.name;
+
+			projCardTag.css('opacity', 1);
+
+			// ** Update the downloaded status on storage..  <-- Mark this 
+			if ( isDownloaded ) JobAidCaching.projProcessDataUpdate(projDir, url, { date: new Date().toISOString(), downloaded: true } );
+
+
+			// Still in process VS 'Finished'
+			if (prc.curr < prc.total) 
+			{
+				spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr}/${prc.total} [${url.split('.').at(-1)}]`);
+				if (prc.curr > 5) projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
+			}
+			else 
+			{
+				// === DOWNLOAD 'FINISH' OPERATION STEPS ===
+				// #2. AVAILABILITY TEMP SET
+				ConnManagerNew.tempDisableAvailableCheck = false; 
+
+
+				spanDownloadStatusTag.html('<strong>Download completed!</strong>');
+				projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
+
+				await JobAidManifest.setManifest_InStrg(projDir, downloadOption);
+
+				
+				// Refresh the sections & list...
+				JobAidPage.populateSectionLists(false, function () {
+					TranslationManager.translatePage();
+				});				
+			}
+		}
+	}
+};
+
+
+JobAidCaching.triggerReTry = function( projDir, downloadOption )
+{
+	MsgManager.msgAreaShowErr( 'Download ' + projDir + ' RETRIED due to ' + JobAidPage.autoRetry + ' sec haulting.' );	
+	console.log( 'JobAidCaching.triggerReTry CALLED, ' + new Date().toString() );
+
+	JobAidItem.itemDownload(projDir, downloadOption);
+};
+
+
+JobAidCaching.projProcessDataUpdate = function (projDir, url, updateJson) 
+{
+	try {
+		if (projDir && url && updateJson)
+		{
+			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
+
+			if (projStatus.process && projStatus.process[url]) {
+				var item = projStatus.process[url];
+
+				Util.mergeJson(item, updateJson);
+
+				PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
+			}
+		}
+	}
+	catch (errMsg) {
+		console.log('ERROR in JobAidCaching.projProcessDataUpdate, ' + errMsg);
+	}
 };

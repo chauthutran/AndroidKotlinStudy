@@ -156,7 +156,7 @@ SwManager.createInstallAndStateChangeEvents = function (swRegObj) //, callBack )
 
 			if (!msgData.options) msgData.options = {};
 
-			if (msgData.type === 'jobFiling' && msgData.options.target === 'jobAidPage') JobAidPage.jobFilingUpdate(msgData);
+			if (msgData.type === 'jobFiling' && msgData.options.target === 'jobAidPage') JobAidCaching.jobFilingUpdate(msgData);
 			if (msgData.type === 'jobFiling') JobAidHelper.JobFilingProgress(msgData); // JobAidHelper.JobFilingFinish( msgData.msg );
 			else if (msgData.msg) MsgManager.msgAreaShow(msgData.msg);
 
