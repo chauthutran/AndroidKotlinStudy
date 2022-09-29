@@ -82,51 +82,20 @@ ConsoleCustomLog.addEvents = function (divMainContentTag, divDialogTag) {
 
 		var inputCommandTag = divDialogTag.find('.inputLogRunCommand');
 
-		if (caseStr === 'custom') {
-			inputCommandTag.val('');
-		}
-		else if (caseStr === 'loadSampleData') {
-			inputCommandTag.val('DevHelper.loadSampleData(20);');
-		}
-		else if (caseStr === 'removeSampleData') {
-			inputCommandTag.val('DevHelper.removeSampleData();');
-		}
-		else if (caseStr === 'listClientData') {
-			inputCommandTag.val('JSON.stringify( ClientDataManager.getClientList() );');
-		}
-
+		if (caseStr === 'custom') inputCommandTag.val('');
+		else if (caseStr === 'devMode') inputCommandTag.val('DevHelper.setDevMode( true );');
+		else if (caseStr === 'debugLog') inputCommandTag.val('DevHelper.setDebugConsoleMode();');
+		
 		else if (caseStr === 'overrideSyncLastDwDate') {
 			var lastDwDateStr = AppInfoManager.getSyncLastDownloadInfo();
-
 			inputCommandTag.val('AppInfoManager.updateSyncLastDownloadInfo( "' + lastDwDateStr + '" );');
 		}
-		else if (caseStr === 'showOtherUsefulCommands') {
-			console.log('1. ClientDataManager.getClientById( "-----" );');
-			console.log('2. ClientDataManager.getClientByActivityId( "------" );');
-			inputCommandTag.val('/* Commands shown on above log area. */');
-		}
-		else if (caseStr === 'devMode') {
-			inputCommandTag.val('DevHelper.setDevMode( true );');
-		}
-		else if (caseStr === 'serverLinkOff') {
-			inputCommandTag.val('WsCallManager.setWsTarget_NoServer(); ConnManagerNew.checkNSet_ServerAvailable();');
-		}
-		else if (caseStr === 'serverLinkOn') {
-			inputCommandTag.val('WsCallManager.setWsTarget(); ConnManagerNew.checkNSet_ServerAvailable();');
-		}
 
-		else if (caseStr === 'serverAvailableCheck') {
-			inputCommandTag.val('ConnManagerNew.checkNSet_ServerAvailable();');
-		}
-		else if (caseStr === 'disableConnCheck') {
-			inputCommandTag.val('clearInterval( ScheduleManager.timerID_serverAvilableCheck );');
-		}
-		else if (caseStr === 'reEnableConnCheck') {
-			inputCommandTag.val('ScheduleManager.schedule_serverStatus_Check( false );');
-		}
-		else if (caseStr === 'clearLogs') {
-			inputCommandTag.val('ConsoleCustomLog.clearLogs();');
-		}
+		else if (caseStr === 'loadSampleData') inputCommandTag.val('DevHelper.loadSampleData(20);');
+		else if (caseStr === 'removeSampleData') inputCommandTag.val('DevHelper.removeSampleData();');
+		else if (caseStr === 'listClientData') inputCommandTag.val('JSON.stringify( ClientDataManager.getClientList() );');
+
+		else if (caseStr === 'clearLogs') inputCommandTag.val('ConsoleCustomLog.clearLogs();');
 	});
 
 

@@ -129,6 +129,23 @@ DevHelper.setDevMode = function( bDev )
     }
 };
 
+
+// Called by setting log
+DevHelper.setDebugConsoleMode = function()
+{
+    // ALERT HERE TO GET CONFIRMATION..
+    var accessCode = Util.trim( prompt( 'Debug console access code:' ) );
+    if( accessCode === Constants.debugConsolePwd )
+    {   
+        MsgManager.msgAreaShow( 'Debug console mode set.' );
+                
+        DevHelper.debugConsoleMode = true;
+        ConsoleCustomLog.debugConsoleStart();
+    }
+    else MsgManager.msgAreaShow( 'Wrong access code.', 'ERROR' );
+};
+
+
 DevHelper.checkNStartDebugConsole = function()
 {
     if ( Util.getParameterByName("debug") === Constants.debugConsolePwd ) 

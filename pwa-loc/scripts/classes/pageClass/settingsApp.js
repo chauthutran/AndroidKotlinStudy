@@ -448,26 +448,6 @@ function settingsApp(cwsRender) {
 				FormUtil.openDivPopupArea($('#divPopupArea'), function (divMainContentTag) {
 					divMainContentTag.attr('style', 'overflow: scroll;height: 85%; margin-top: 10px; background-color: #eee;padding: 7px;');
 
-					/*
-					// Delete 'Queue' button
-					var btn_vcQueueClearTag = $( '<button class="vcQueueClear cbtn">Clear All JobAid Files</button>' );
-
-					// Add the buttons div - also, will be removed each call of 'FormUtil.openDivPopupArea'
-					var divExtraSecTag = $( '<div class="divExtraSec" style="margin-bottom: 5px;"></div>' );
-					divExtraSecTag.append( btn_vcQueueClearTag );
-					divExtraSecTag.insertBefore( divMainContentTag );
-
-				   
-					btn_vcQueueClearTag.click( function() 
-					{
-						 var reply = confirm( 'This will clear all voucherCode in queue.  Do you want to continue?' );
-		 
-						 if ( reply === true )
-						 {                            
-						 }
-					});
-					*/
-
 					// ---------------
 					divMainContentTag.append('<div class="infoLine" style="opacity: 0;">- </div>');
 					divMainContentTag.append('<div class="infoLine">------------------------</div>');
