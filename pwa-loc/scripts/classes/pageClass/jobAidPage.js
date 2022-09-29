@@ -105,43 +105,11 @@ JobAidPage.devOptionSelects_Setup = function( sheetTitleDivTag, propArr )
 		{
 			JobAidPage.autoRetry = ( !ConfigManager.getJobAidSetting().autoRetry ) ? '' : ConfigManager.getJobAidSetting().autoRetry;
 			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download haulting 30 sec or more, automatically">autoRetry: </span>');
-			selectOpts = [ { value: '', name: 'No' }, { value: 30, name: '30 sec' }, { value: 60, name: '60 sec' }, { value: 90, name: '90 sec' }, { value: 120, name: '120 sec' } ];	
+			selectOpts = ( ConfigManager.getJobAidSetting().autoRetryOptions ) ? ConfigManager.getJobAidSetting().autoRetryOptions: [];
 		}
 
 		JobAidPage.devOptionSelect( spanJobAidDevInfoTag, propName, selectOpts );
 	});
-		
-
-	/*
-	// Always set to 'async' on page load
-	JobAidPage.syncType = ( ConfigManager.getJobAidSetting().syncType === "sync" ) ? 'sync' : 'async';
-
-	spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download, use async or sync type request">syncType: </span>');
-	var syncTypeTag = $( '<select class="syncType jobAidDevSelect"><option value="async">async</option><option value="sync">sync</option></select>');
-	syncTypeTag.val( JobAidPage.syncType );
-
-	syncTypeTag.change( function() {
-		JobAidPage.syncType = $( this ).val();
-		MsgManager.msgAreaShowOpt( 'SyncType set to ' + JobAidPage.syncType, { hideTimeMs: 1000 } );
-	});
-
-	spanJobAidDevInfoTag.append( syncTypeTag );
-
-	// 'removeCache' set
-	JobAidPage.removeCache = ( ConfigManager.getJobAidSetting().removeCacheOnDelete === true ) ? 'Y': 'N';
-
-	spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On pack delete, remove cache">removeCache: </span>');
-	var removeCacheTag = $( '<select class="removeCache jobAidDevSelect" style="width: 45px;"><option value="N">No</option><option value="Y">Yes</option></select>');
-	removeCacheTag.val( JobAidPage.removeCache );
-
-	removeCacheTag.change( function() {
-		JobAidPage.removeCache = $( this ).val();
-		MsgManager.msgAreaShowOpt( 'RemoveCache set to "' + JobAidPage.removeCache + '"', { hideTimeMs: 1000 } );
-	});
-
-	spanJobAidDevInfoTag.append( removeCacheTag );
-	*/
-
 };
 
 
@@ -155,9 +123,14 @@ JobAidPage.devOptionSelect = function( spanJobAidDevInfoTag, prop, options )
 	propTag.val( JobAidPage[prop] );
 
 
-	propTag.change( function() {
+	propTag.change( function() {		
 		JobAidPage[prop] = $( this ).val();
 		MsgManager.msgAreaShowOpt( prop + ' set to ' + JobAidPage[prop], { hideTimeMs: 1000 } );
+
+		// When 'autoRetry' is changed, remove existing timeouts.
+		if ( prop === 'autoRetry' ) {
+			for ( var toId in JobAidPage.autoRetryTimeOutIDs ) {  clearTimeout( JobAidPage.autoRetryTimeOutIDs[toId] );  }
+		}
 	});
 
 	spanJobAidDevInfoTag.append( propTag );
