@@ -229,17 +229,14 @@ ConsoleCustomLog.contentHtml = `
 		<select class="selLogRunCommandCase"
 			style="display: unset; width: unset; border: solid 1px #ccc; font-size: 0.75rem;">
 			<option value="custom">Custom</option>
+			<option value="devMode">devMode</option>
+			<option value="debugLog">devMode</option>
+
+			<option value="overrideSyncLastDwDate">Override syncLastDwDate</option>
+
 			<option value="loadSampleData">Load SampData</option>
 			<option value="removeSampleData">Remove SampData</option>
-			<option value="listClientData">List ClientData</option>
-			<option value="overrideSyncLastDwDate">Override syncLastDwDate</option>
-			<option value="showOtherUsefulCommands">Show Other Commands</option>
-			<option value="devMode">devMode</option>
-			<option value="serverLinkOff">Set ServerLink Off</option>
-			<option value="serverLinkOn">Set ServerLink On</option>
-			<option value="serverAvailableCheck">Server AvailCheck</option>
-			<option value="disableConnCheck">Disable ConnCheck</option>
-			<option value="reEnableConnCheck">ReEnable ConnCheck</option>
+
 			<option value="clearLogs">Clear Logs</option>
 		</select>
 		<input class="inputLogRunCommand" style="width: 50%; border: solid 1px #ccc; font-size: 0.75rem;" />
