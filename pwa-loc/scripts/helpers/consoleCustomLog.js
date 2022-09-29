@@ -84,7 +84,7 @@ ConsoleCustomLog.addEvents = function (divMainContentTag, divDialogTag) {
 
 		if (caseStr === 'custom') inputCommandTag.val('');
 		else if (caseStr === 'devMode') inputCommandTag.val('DevHelper.setDevMode( true );');
-		else if (caseStr === 'debugLog') inputCommandTag.val('DevHelper.setDebugConsoleMode();');
+		else if (caseStr === 'debugConsole') inputCommandTag.val('DevHelper.setDebugConsoleMode();');
 		
 		else if (caseStr === 'overrideSyncLastDwDate') {
 			var lastDwDateStr = AppInfoManager.getSyncLastDownloadInfo();
@@ -230,7 +230,7 @@ ConsoleCustomLog.contentHtml = `
 			style="display: unset; width: unset; border: solid 1px #ccc; font-size: 0.75rem;">
 			<option value="custom">Custom</option>
 			<option value="devMode">devMode</option>
-			<option value="debugLog">devMode</option>
+			<option value="debugConsole">debugConsole</option>
 
 			<option value="overrideSyncLastDwDate">Override syncLastDwDate</option>
 
