@@ -3,6 +3,20 @@
 	src: url("text-security-disc.woff");
 }
 
+/* Scroll Bar 
+::-webkit-scrollbar {
+	width: 4px;
+	background: #f7ece1;
+}
+
+::-webkit-scrollbar-thumb {
+	background: darkblue;
+	border-radius: calc(4px / 2);
+}
+*/
+
+
+/* IFrame JobAid */
 .iframeDiv {
 	position: fixed;
 	height: 100vh;

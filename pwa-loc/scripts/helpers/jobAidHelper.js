@@ -256,6 +256,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 					if ( response.errMsg ) MsgManager.msgAreaShowErr( response.errMsg );
 					else
 					{
+						var projDir = options.projDir;
+						var downloadOption = options.downloadOption;
+						
 						// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
 						var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 	
@@ -263,10 +266,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 						JobAidHelper.filingContent_setUp( newFileList, response.results, options );
 	
 						// 3. On download (in available list), refresh the count - only available on New One.  + Download Start Message Dispaly..
-						if ( options.downloadOption && options.downloadOption.indexOf( '_fromAvailable' ) > 0 ) {
-							JobAidItem.itemRepopulate( options.projDir );
-							JobAidPage.getSpanStatusTags_ByDownloadOption( options.projDir, options.downloadOption ).html( '<strong>Downloading 1st file...</strong>' );
-						}
+						if ( downloadOption && ( downloadOption.indexOf( '_fromAvailable' ) > 0 || downloadOption === 'mediaOnly' ) ) JobAidItem.itemRepopulate( projDir );
+						JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption ).html( '<strong>Downloading 1st file...</strong>' );
+
 
 						// 4. Submit to Service Worker - the file caching (due to 'CacheOnly' strategy, we need to send to service worker for this)
 						JobAidHelper.swFileListCaching( newFileList, options );

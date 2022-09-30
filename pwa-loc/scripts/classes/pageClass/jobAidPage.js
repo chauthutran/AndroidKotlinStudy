@@ -51,13 +51,7 @@ JobAidPage.render = function ()
 
 	
 	// Populate 'Available' & 'Downloaded' sections List
-	JobAidPage.populateSectionLists( false, function () 
-	{  
-		const downloadedItemNo = JobAidPage.divDownloadedPacksTag.find(".jobAidItem").length;
-		if( downloadedItemNo == 0 ) JobAidPage.divDownloadedPacksTag.append( JobAidPage.divEmptyMsgTag );
-		TranslationManager.translatePage();
-	});
-
+	JobAidPage.populateSectionLists( false, function() {  TranslationManager.translatePage();  });
 
 	// Package Item 3 dot Context Menu List & Click Setup
 	JobAidPage.render_ContextMenuSetup();
@@ -202,7 +196,6 @@ JobAidPage.populateSectionLists = function ( refreshAvailableOnly, callBack )
 {
 	// Reload without setting html back..  How?
 
-
 	// STEP 0. Clear the list html:
 	JobAidPage.divAvailablePacksTag.hide( 'fast' ).html( '' );
 	JobAidPage.divDownloadedPacksTag.hide( 'fast' ).html( '' );
@@ -241,10 +234,6 @@ JobAidPage.populateSectionLists = function ( refreshAvailableOnly, callBack )
 		// STEP 2. Get Cached Manifests & display/list them
 		JobAidPage.populateDownloadedItems( JobAidPage.divDownloadedPacksTag, JobAidPage.downloadedManifestList );
 
-
-		// STEP 2. Get Cached Manifests & display/list them
-		//JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
-		//JobAidPage.populateDownloadedItems( JobAidPage.divDownloadedPacksTag, JobAidPage.downloadedManifestList );
 		
 		if (callBack) callBack();
 	});
@@ -276,6 +265,9 @@ JobAidPage.populateDownloadedItems = function( divDownloadedPacksTag, manifestLi
 		JobAidItem.itemPopulate(item, itemTag, 'downloaded');
 		divDownloadedPacksTag.append(itemTag);
 	});
+
+	// EmptyMsg in download.
+	if ( manifestList.length == 0 ) divDownloadedPacksTag.append( JobAidPage.divEmptyMsgTag );	
 };
 
 // ------------------------------------
@@ -291,11 +283,12 @@ JobAidPage.getSpanStatusTags_ByDownloadOption = function( projDir, downloadOptio
 
 	var spanDownloadStatusTag;  // var spanDownloadStatusTag = projCardTag.find('span.downloadStatus');
 
-	if ( !downloadOption || downloadOption.indexOf( 'all' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus,span.mediaDownloadStatus').show();
-	else if ( downloadOption.indexOf( 'appOnly' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus').show();
-	else if ( downloadOption.indexOf( 'mediaOnly' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.mediaDownloadStatus').show();
+	if ( !downloadOption || downloadOption.indexOf( 'all' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus,span.mediaDownloadStatus');
+	else if ( downloadOption.indexOf( 'appOnly' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus');
+	else if ( downloadOption.indexOf( 'mediaOnly' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.mediaDownloadStatus');
+	else spanDownloadStatusTag = projCardTag.find('span.downloadStatus');
 
-	return spanDownloadStatusTag;
+	return spanDownloadStatusTag.first().show();
 };
 
 // ------------------------------------
@@ -348,6 +341,7 @@ JobAidPage.updateItem_ItemSection = function (projDir, statusType)
 	}
 	else if (statusType === 'downloaded_delete' ) 
 	{
+		Util.RemoveFromArrayAll( JobAidPage.downloadedManifestList, 'projDir', projDir );
 		JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
 
 		if ( JobAidPage.divDownloadedPacksTag.find(".jobAidItem").length === 0 )
@@ -357,8 +351,6 @@ JobAidPage.updateItem_ItemSection = function (projDir, statusType)
 			divEmptyMsgTag.show( 'fast' );
 			TranslationManager.translatePage();	
 		}
-
-		Util.RemoveFromArrayAll( JobAidPage.downloadedManifestList, 'projDir', projDir );
 
 
 		// Also, Just In CASE, if there is available one, remove it as well
@@ -864,7 +856,6 @@ JobAidItem.itemDelete = async function (projDir)
 		}
 
 		JobAidPage.updateItem_ItemSection(projDir, 'downloaded_delete');
-		//JobAidPage.populateSectionLists(false, () => TranslationManager.translatePage() );  
 
 		MsgManager.msgAreaShowOpt( 'The pack has been deleted', { hideTimeMs: 1000 } );
 	}
@@ -911,8 +902,8 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 			{
 				var filesStatusJson = JobAidItem.getFilesStatusJson( projDir ); // { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded };
 				
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.appCountDownloaded, filesStatusJson.appCountTotal, filesStatusJson.appSizeDownloaded );
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.mediaCountDownloaded, filesStatusJson.mediaCountTotal, filesStatusJson.mediaSizeDownloaded );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType );
 
 				divReleaseInfoTag.hide();
 				divDownloadInfoTag.hide();
@@ -1004,20 +995,27 @@ JobAidItem.getFilesStatusJson = function ( projDir )
 
 JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate, info, statusType ) // dCount, tCount, size )
 {
-	var releaseDate = UtilDate.formatDate( Util.getStr(buildDate), "MMM dd, yy" );	
-	divInfoTag.find( '.spanDate' ).html( releaseDate );
-
-	var dSizeStr = Util.formatFileSizeMB( info.sizeDownloaded, { decimal: 0, minWidth: true, disableMin: true } ).replace( ' MB', '' );
-	var tSizeStr = Util.formatFileSizeMB( info.sizeTotal, { decimal: 0, minWidth: true, disableMin: true } );
-
-	divInfoTag.find( '.spanFiles').html( '<span class="dCount">' + info.countDownloaded + '</span>' + '/' + info.countTotal + ' | ' + dSizeStr + '/' + tSizeStr );
-
-	// On 'downloaded', if the count is not full, mark it red.
-	if ( dCount < tCount && statusType === 'downloaded' )
+	try
 	{
-		divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
-		if ( typeName === 'app' ) menus.push('ReAttempt App Download');
-		else if ( typeName === 'media' ) menus.push('ReAttempt Media Download');
+		var releaseDate = UtilDate.formatDate( Util.getStr(buildDate), "MMM dd, yy" );	
+		divInfoTag.find( '.spanDate' ).html( releaseDate );
+	
+		var dSizeStr = Util.formatFileSizeMB( info.sizeDownloaded, { decimal: 0, minWidth: true, disableMin: true } ).replace( ' MB', '' );
+		var tSizeStr = Util.formatFileSizeMB( info.sizeTotal, { decimal: 0, minWidth: true, disableMin: true } );
+	
+		divInfoTag.find( '.spanFiles').html( '<span class="dCount">' + info.countDownloaded + '</span>' + '/' + info.countTotal + ' | ' + dSizeStr + '/' + tSizeStr );
+	
+		// On 'downloaded', if the count is not full, mark it red.
+		if ( info.countDownloaded < info.countTotal && statusType === 'downloaded' )
+		{
+			divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
+			if ( typeName === 'app' ) menus.push('ReAttempt App Download');
+			else if ( typeName === 'media' ) menus.push('ReAttempt Media Download');
+		}	
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in JobAidItem.infoRowTagPopulate, ' + errMsg );
 	}
 };
 
@@ -1140,7 +1138,6 @@ JobAidCaching.jobFilingUpdate = async function (msgData)
 				
 				// Move the item accordingly
 				JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
-				// JobAidPage.populateSectionLists(false, function () { TranslationManager.translatePage(); });				
 			}
 		}
 	}
