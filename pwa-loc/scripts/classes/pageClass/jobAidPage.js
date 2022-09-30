@@ -724,10 +724,16 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 		JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override );
 
 
-		// NEW:  If the item downloading is in 'available', update the tag with data.
+		// NEW: UPDATE ITEM STATUS on each download starting..
+		// 	-  If the item downloading is in 'available', update the tag with data.
 		var availableItemTag = JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir="' + projDir + '"]');
 		var availableItem = Util.getFromList( JobAidPage.availableManifestList, projDir, 'projDir' );
+
+		var downloadedItemTag = JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir="' + projDir + '"]');
+		var downloadedItem = Util.getFromList( JobAidPage.downloadedManifestList, projDir, 'projDir' );
+
 		if ( availableItem && availableItemTag.length > 0 ) JobAidItem.itemPopulate(availableItem, availableItemTag, 'available');
+		if ( downloadedItem && downloadedItemTag.length > 0 ) JobAidItem.itemPopulate(downloadedItem, downloadedItemTag, 'downloaded');
 
 	}
 	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
