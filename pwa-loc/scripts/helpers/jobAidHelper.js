@@ -262,7 +262,13 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 						// 2. Save the list info on localStorage (PersisManager) by 'projDir' name - Does not remove existing data.
 						JobAidHelper.filingContent_setUp( newFileList, response.results, options );
 	
-						// 3. Submit to Service Worker - the file caching (due to 'CacheOnly' strategy, we need to send to service worker for this)
+						// 3. On download (in available list), refresh the count - only available on New One.  + Download Start Message Dispaly..
+						if ( options.downloadOption && options.downloadOption.indexOf( '_fromAvailable' ) > 0 ) {
+							JobAidItem.itemRepopulate( options.projDir );
+							JobAidPage.getSpanStatusTags_ByDownloadOption( options.projDir, options.downloadOption ).html( '<strong>Downloading 1st file...</strong>' );
+						}
+
+						// 4. Submit to Service Worker - the file caching (due to 'CacheOnly' strategy, we need to send to service worker for this)
 						JobAidHelper.swFileListCaching( newFileList, options );
 					}
 				},
@@ -318,7 +324,7 @@ JobAidHelper.sort_filter_files = function( list, options )
 	{
 		// 1. FILTERING
 		// 1A. New JobAid Filtering with 'downloadOption' - 'appOnly', 'appOnly_Update', 'mediaOnly', 'mediaOnly_Update'
-		if ( options.downloadOption && options.downloadOption !== 'all' && options.projDir )
+		if ( options.downloadOption && options.downloadOption.indexOf( 'all' ) !== 0 && options.projDir )
 		{
 			// Filter with fodler name..
 			// var mediaFolderName = '/' + options.projDir + '/media/';		// TODO: Need to change if outside folder option!!!
