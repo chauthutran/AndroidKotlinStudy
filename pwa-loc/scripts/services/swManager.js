@@ -150,8 +150,13 @@ SwManager.createInstallAndStateChangeEvents = function (swRegObj) //, callBack )
 	});
 
 
-	navigator.serviceWorker.addEventListener('message', event => {
-		if (event.data) {
+	navigator.serviceWorker.addEventListener('message', event => 
+	{
+		if (event.data) 
+		{
+			// Have App stay active if 'message' is received
+			InputUtil.updateLogoutTimer();
+
 			var msgData = JSON.parse(event.data);
 
 			if (!msgData.options) msgData.options = {};
@@ -159,10 +164,6 @@ SwManager.createInstallAndStateChangeEvents = function (swRegObj) //, callBack )
 			if (msgData.type === 'jobFiling' && msgData.options.target === 'jobAidPage') JobAidCaching.jobFilingUpdate(msgData);
 			if (msgData.type === 'jobFiling') JobAidHelper.JobFilingProgress(msgData); // JobAidHelper.JobFilingFinish( msgData.msg );
 			else if (msgData.msg) MsgManager.msgAreaShow(msgData.msg);
-
-			// Have App stay active if 'message' is received
-			InputUtil.updateLogoutTimer();
-
 		}
 	});
 
@@ -313,6 +314,7 @@ SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function () {
 
 // ==========================================
 
+// LATER: TODO: When we move the download in WFA App from service worker - with 'CacheFirst'
 SwManager.jobAidCacheFiles = async function ( eventData ) 
 {
 	// 'event' param should be 'caching data json'

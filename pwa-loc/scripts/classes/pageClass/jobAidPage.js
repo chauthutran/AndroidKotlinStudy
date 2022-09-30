@@ -671,8 +671,8 @@ JobAidItem.keyToDownloadOption = function ( key )
 	var downloadOption = '';
 
 	if ( key === 'Download w/o media' ) downloadOption = 'appOnly';
-	else if ( key === 'Download app update' ) downloadOption = 'appOnly_Update';
 	else if ( key === 'Download media' ) downloadOption = 'mediaOnly';
+	else if ( key === 'Download app update' ) downloadOption = 'appOnly_Update';
 	else if ( key === 'Download media update' ) downloadOption = 'mediaOnly_Update';
 	else if ( key === 'ReAttempt App Download' ) downloadOption = 'appOnly_ReAttempt';
 	else if ( key === 'ReAttempt Media Download' ) downloadOption = 'mediaOnly_ReAttempt';
@@ -681,8 +681,10 @@ JobAidItem.keyToDownloadOption = function ( key )
 	return downloadOption;
 };
 
-JobAidItem.itemDownload = function (projDir, downloadOption) 
+JobAidItem.itemDownload = function (projDir, downloadOption, option ) 
 {
+	if ( !option ) option = {};
+
 	if (projDir) 
 	{
 		// ?? <-- How does this work when partial reAttempt goes..
@@ -690,8 +692,17 @@ JobAidItem.itemDownload = function (projDir, downloadOption)
 
 		var reAttemptCaseType = ''
 
-		if ( downloadOption === 'ReAttempt App Download' ) reAttemptCaseType = 'app';
-		else if ( downloadOption === 'ReAttempt Media Download' ) reAttemptCaseType = 'media';
+		if ( option.retry )
+		{
+			if ( downloadOption === 'all' ) reAttemptCaseType = 'all';
+			else if ( downloadOption.indexOf( 'appOnly' ) === 0 ) reAttemptCaseType = 'app';
+			else if ( downloadOption.indexOf( 'mediaOnly' ) === 0 ) reAttemptCaseType = 'media';
+		}
+		else
+		{
+			if ( downloadOption === 'appOnly_ReAttempt' ) reAttemptCaseType = 'app';
+			else if ( downloadOption === 'mediaOnly_ReAttempt' ) reAttemptCaseType = 'media';	
+		}
 
 
 		var optionJson = { projDir: projDir, target: 'jobAidPage', downloadOption: downloadOption, syncType: JobAidPage.syncType };
@@ -728,7 +739,7 @@ JobAidItem.getReAttemptList = function( projDir, fileType )
 		{
 			var item = projStatus.process[prop];
 
-			if ( !item.downloaded && item.fileType === fileType )
+			if ( !item.downloaded && ( fileType === 'all' || item.fileType === fileType ) )
 			{
 				fileUrlList.push( prop );
 			}
@@ -1042,7 +1053,7 @@ JobAidCaching.triggerReTry = function( projDir, downloadOption )
 	MsgManager.msgAreaShowErr( 'Download ' + projDir + ' RETRIED due to ' + JobAidPage.autoRetry + ' sec haulting.' );	
 	console.log( 'JobAidCaching.triggerReTry CALLED, ' + new Date().toString() );
 
-	JobAidItem.itemDownload(projDir, downloadOption);
+	JobAidItem.itemDownload(projDir, downloadOption, { retry: true } );
 };
 
 
