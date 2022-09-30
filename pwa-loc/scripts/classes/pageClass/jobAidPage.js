@@ -159,7 +159,7 @@ JobAidPage.render_ContextMenuSetup = function()
 				items: items,
 				callback: function (key, options) 
 				{
-					if ( ['Download', 'Download w/o media', 'Download with media', 'Download media', 'Download app update'
+					if ( ['Download', 'Download w/o media', 'Download with media', 'ReAttempt Download w/o media', 'ReAttempt Download with media', 'Download media', 'Download app update'
 					, 'Download media update', 'ReAttempt App Download', 'ReAttempt Media Download' ].indexOf( key ) >= 0 ) JobAidItem.itemDownload(projDir, JobAidItem.keyToDownloadOption( key ) );
 					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
 					else if (key === 'Delete') JobAidItem.itemDelete(projDir);
@@ -676,6 +676,8 @@ JobAidItem.keyToDownloadOption = function ( key )
 	else if ( key === 'Download media update' ) downloadOption = 'mediaOnly_Update';
 	else if ( key === 'ReAttempt App Download' ) downloadOption = 'appOnly_ReAttempt';
 	else if ( key === 'ReAttempt Media Download' ) downloadOption = 'mediaOnly_ReAttempt';
+	else if ( key === 'ReAttempt Download w/o media' ) downloadOption = 'appOnly_ReAttempt';
+	else if ( key === 'ReAttempt Download with media' ) downloadOption = 'all_ReAttempt';
 	else downloadOption = 'all';
 
 	return downloadOption;
@@ -701,7 +703,8 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 		else
 		{
 			if ( downloadOption === 'appOnly_ReAttempt' ) reAttemptCaseType = 'app';
-			else if ( downloadOption === 'mediaOnly_ReAttempt' ) reAttemptCaseType = 'media';	
+			else if ( downloadOption === 'mediaOnly_ReAttempt' ) reAttemptCaseType = 'media';
+			else if ( downloadOption === 'all_ReAttempt' ) reAttemptCaseType = 'all';
 		}
 
 
@@ -719,6 +722,12 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 
 		// Submit for file listing/caching
 		JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override );
+
+
+		// NEW:  If the item downloading is in 'available', update the tag with data.
+		var availableItemTag = JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir="' + projDir + '"]');
+		var availableItem = Util.getFromList( JobAidPage.availableManifestList, projDir, 'projDir' );
+		if ( availableItem && availableItemTag.length > 0 ) JobAidItem.itemPopulate(availableItem, availableItemTag, 'available');
 
 	}
 	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
@@ -782,6 +791,7 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 	else
 	{
 		var projDir = itemData.projDir;
+		var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
 
 		// reset 'itemData' for this projDir		
 
@@ -805,13 +815,28 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 	
 			var divDownloadInfoTag = itemTag.find('.divDownloadInfo').show();
 			var spanDownloadInfoTag = divDownloadInfoTag.find( 'span.downloadInfo' ).html( '<strong>Download size: </strong>' + Util.getStr(itemData.size) );	
+
+
+			if ( projStatus.manifestJsonTemp ) // If there is a download info, set available data update.. and hide existing 2 rows for avaiable
+			{
+				var filesStatusJson = JobAidItem.getFilesStatusJson( projDir ); // { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded };
+				
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.appCountDownloaded, filesStatusJson.appCountTotal, filesStatusJson.appSizeDownloaded );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.mediaCountDownloaded, filesStatusJson.mediaCountTotal, filesStatusJson.mediaSizeDownloaded );
+
+				divReleaseInfoTag.hide();
+				divDownloadInfoTag.hide();
+
+				// Need to change the menu?  Or add 'reDownload'?
+				if ( projStatus.downloadOption === 'appOnly' ) menus.push('ReAttempt Download w/o media');  // <-- which were last download for this?
+				else if ( projStatus.downloadOption === 'all' ) menus.push('ReAttempt Download with media');	
+			}
 		}
 		// Downloaded Case - 'open' in iFrame case, 'delete' case.
 		else if (statusType === 'downloaded') 
 		{
-			var downloadedData = JobAidItem.itemPopulate_getDownloadedData(projDir);
-			var mediaDownloaded = downloadedData.mediaDownloaded;
-
+			var mediaDownloaded = ( projStatus.manifestJson && projStatus.manifestJson.mediaDownloaded ) ? true: false;
+			
 			menus.push( 'Open' );
 			menus.push( 'See content' ); 
 			menus.push( 'Delete' );	
@@ -895,7 +920,7 @@ JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate
 	}
 };
 
-
+/*
 JobAidItem.itemPopulate_getDownloadedData = function(projDir)
 {
 	var downloadedData = { downloadedDate: '', totalSize: 0, fileCountAll: 0, fileCountDownloaded: 0, mediaStr: '', mediaDownloaded: false };
@@ -920,6 +945,7 @@ JobAidItem.itemPopulate_getDownloadedData = function(projDir)
 
 	return downloadedData;
 };
+*/
 
 JobAidItem.itemPopulate_setUpdateStatus = function( itemData, menus, mediaDownloaded, spanAppDownloadStatusTag, spanMediaDownloadStatusTag )
 {
