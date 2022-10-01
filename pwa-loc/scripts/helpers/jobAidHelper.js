@@ -259,6 +259,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 						var projDir = options.projDir;
 						var downloadOption = options.downloadOption;
 						
+
 						// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
 						var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 	
@@ -331,8 +332,8 @@ JobAidHelper.sort_filter_files = function( list, options )
 			// Filter with fodler name..
 			// var mediaFolderName = '/' + options.projDir + '/media/';		// TODO: Need to change if outside folder option!!!
 
-			if ( options.downloadOption.indexOf( 'mediaOnly' ) === 0 ) listFiltered = list.filter( fileName => JobAidHelper.isMediaFolderFile( options, fileName ) );
-			else if ( options.downloadOption.indexOf( 'appOnly' ) === 0 ) listFiltered = list.filter( fileName => !JobAidHelper.isMediaFolderFile( options, fileName ) );
+			if ( options.downloadOption.indexOf( 'mediaOnly' ) === 0 ) listFiltered = list.filter( fileName => JobAidHelper.isMediaFolderFile( options.projDir, fileName ) );
+			else if ( options.downloadOption.indexOf( 'appOnly' ) === 0 ) listFiltered = list.filter( fileName => !JobAidHelper.isMediaFolderFile( options.projDir, fileName ) );
 		}
 		// 1B. Existing Filtering Options..
 		else if ( options.audioOnly ) listFiltered = list.filter( item => Util.endsWith_Arr( item, JobAidHelper.EXTS_AUDIO, { upper: true } ) );
@@ -393,16 +394,16 @@ JobAidHelper.sort_filter_files = function( list, options )
 	return newList;
 };
 
-JobAidHelper.isMediaFolderFile = function( options, url )
+JobAidHelper.isMediaFolderFile = function( projDir, url )
 {
-	var mediaFolderName = '/' + options.projDir + '/media/';
+	var mediaFolderName = '/' + projDir + '/media/';
 
 	return ( url.indexOf( mediaFolderName ) >= 0 ) ? true: false;
 };
 
-JobAidHelper.fileType = function( options, url )
+JobAidHelper.fileType = function( projDir, url )
 {
-	return JobAidHelper.isMediaFolderFile( options, url ) ? 'media': 'app';
+	return JobAidHelper.isMediaFolderFile( projDir, url ) ? 'media': 'app';
 };
 
 
@@ -410,6 +411,7 @@ JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 {
 	try
 	{
+		var fileTotalInfo = { appCountTotal: 0, appSizeTotal: 0, mediaCountTotal: 0, mediaSizeTotal: 0 };
 		var projDir = options.projDir;
 		// Setup the 'localStorage' with 'ProjDir' <-- setup with empty content list.
 		//		- However, if already existing ones are there, we should not empty it out?..
@@ -422,7 +424,7 @@ JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 			if ( !projStatus.process ) projStatus.process = {};
 			projStatus.downloadOption = options.downloadOption;
 
-
+			// 1. From 'newFileList', add the item(file) info on 'process' - with size & fileType.
 			newFileList.forEach( fileName => 
 			{	
 				var size = '';
@@ -434,16 +436,36 @@ JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 				}
 
 				// fileType - decided by folder name
-				projStatus.process[ fileName ] = { size: size, reqDate: new Date().toISOString(), downloaded: false, fileType: JobAidHelper.fileType( options, fileName ) };
+				projStatus.process[ fileName ] = { size: size, reqDate: new Date().toISOString(), downloaded: false, fileType: JobAidHelper.fileType( projDir, fileName ) };
 				
 			});
 			
-			// if 'delete' happens, we need to remove this..
-			
+			// 2. file info - count & size total
+			if ( results ) 
+			{				
+				results.forEach( fileItem => 
+				{	
+					var fileType = JobAidHelper.fileType( projDir, fileItem.filePath );
+
+					if ( fileType === 'app' )
+					{
+						fileTotalInfo.appCountTotal++;
+						fileTotalInfo.appSizeTotal += fileItem.size;
+					}
+					else if ( fileType === 'media' )
+					{
+						fileTotalInfo.mediaCountTotal++;
+						fileTotalInfo.mediaSizeTotal += fileItem.size;
+					}
+				});
+			}			
+			projStatus.fileTotalInfo = fileTotalInfo;
+
+			// 3. Save 'projStatus' in local storage - persisStorage
 			PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
+			
 
-
-			// Set the list.
+			// Set the list. - USE THIS??
 			JobAidHelper.cacheRequestList = newFileList;
 			JobAidHelper.cacheProcessedData = {};
 		}
@@ -452,6 +474,8 @@ JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 	{
 		console.log( 'ERROR in JobAidHelper.filingContent_setUp, ' + errMsg );
 	}
+
+	return fileTotalInfo;
 };
 
 

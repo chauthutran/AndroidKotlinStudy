@@ -283,12 +283,12 @@ JobAidPage.getSpanStatusTags_ByDownloadOption = function( projDir, downloadOptio
 
 	var spanDownloadStatusTag;  // var spanDownloadStatusTag = projCardTag.find('span.downloadStatus');
 
-	if ( !downloadOption || downloadOption.indexOf( 'all' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus,span.mediaDownloadStatus');
+	if ( !downloadOption || downloadOption.indexOf( 'all' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus' ); //,span.mediaDownloadStatus');
 	else if ( downloadOption.indexOf( 'appOnly' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.appDownloadStatus');
 	else if ( downloadOption.indexOf( 'mediaOnly' ) === 0 ) spanDownloadStatusTag = projCardTag.find('span.mediaDownloadStatus');
 	else spanDownloadStatusTag = projCardTag.find('span.downloadStatus');
 
-	return spanDownloadStatusTag.first().show();
+	return spanDownloadStatusTag.show(); // .first()
 };
 
 // ------------------------------------
@@ -628,7 +628,7 @@ JobAidManifest.setManifest_InStrg = async function(projDir, downloadOption)
 			else if ( downloadOption.indexOf( 'mediaOnly' ) === 0 ) projStatus.manifestJson.mediaDownloadedDate = downloadedDateStr;
 
 			var mediaDownloadCase = ( !downloadOption || downloadOption.indexOf( 'all' ) === 0 || downloadOption.indexOf( 'mediaOnly' ) === 0 ) ? true: false;	
-			if ( mediaDownloadCase ) projStatus.manifestJson.mediaDownloaded = true;  // Flag proj if they have media on proj downloaded or not.
+			if ( mediaDownloadCase ) projStatus.mediaDownloaded = true;  // Flag proj if they have media on proj downloaded or not.
 
 		}
 		catch( errMsg ) {  console.log( 'ERROR in JobAidManifest.setManifest_InStrg, ' + errMsg );  }
@@ -902,8 +902,8 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 			{
 				var filesStatusJson = JobAidItem.getFilesStatusJson( projDir ); // { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded };
 				
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType );
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, undefined );
 
 				divReleaseInfoTag.hide();
 				divDownloadInfoTag.hide();
@@ -919,7 +919,7 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 		// Downloaded Case - 'open' in iFrame case, 'delete' case.
 		else if (statusType === 'downloaded') 
 		{
-			var mediaDownloaded = ( projStatus.manifestJson && projStatus.manifestJson.mediaDownloaded ) ? true: false;
+			var mediaDownloaded = projStatus.mediaDownloaded;
 			
 			menus.push( 'Open' );
 			menus.push( 'See content' ); 
@@ -929,8 +929,8 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 
 			var filesStatusJson = JobAidItem.getFilesStatusJson( projDir );
 
-			JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType );
-			JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType );
+			JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined );
+			JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, mediaDownloaded );
 			
 			// 2. Setup for 'updates' by date comparison
 			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, mediaDownloaded, itemTag.find('span.appDownloadStatus').show(), itemTag.find('span.mediaDownloadStatus').show() );
@@ -955,6 +955,15 @@ JobAidItem.getFilesStatusJson = function ( projDir )
 		{
 			var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
 
+			// For total, get it from 'fileTotalInfo' - which is not filterd by 'app/media' downloadOption
+			if ( projStatus.fileTotalInfo )
+			{
+				app.countTotal = projStatus.fileTotalInfo.appCountTotal;
+				app.sizeTotal = projStatus.fileTotalInfo.appSizeTotal;
+				media.countTotal = projStatus.fileTotalInfo.mediaCountTotal;
+				media.sizeTotal = projStatus.fileTotalInfo.mediaSizeTotal;
+			}
+
 			if (projStatus.process) 
 			{
 				for( var prop in projStatus.process )
@@ -963,8 +972,8 @@ JobAidItem.getFilesStatusJson = function ( projDir )
 
 					if ( item.fileType === 'media' )
 					{
-						filesStatusJson.media.countTotal++;
-						filesStatusJson.media.sizeTotal += item.size;
+						//filesStatusJson.media.countTotal++;
+						//filesStatusJson.media.sizeTotal += item.size;
 						if ( item.downloaded === true ) 
 						{
 							filesStatusJson.media.countDownloaded++;
@@ -973,8 +982,8 @@ JobAidItem.getFilesStatusJson = function ( projDir )
 					}
 					else if ( item.fileType === 'app' )
 					{
-						filesStatusJson.app.countTotal++;
-						filesStatusJson.app.sizeTotal += item.size;
+						//filesStatusJson.app.countTotal++;
+						//filesStatusJson.app.sizeTotal += item.size;
 						if ( item.downloaded === true ) 
 						{
 							filesStatusJson.app.countDownloaded++;
@@ -993,7 +1002,7 @@ JobAidItem.getFilesStatusJson = function ( projDir )
 };
 
 
-JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate, info, statusType ) // dCount, tCount, size )
+JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate, info, statusType, mediaDownloaded ) // dCount, tCount, size )
 {
 	try
 	{
@@ -1008,9 +1017,14 @@ JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate
 		// On 'downloaded', if the count is not full, mark it red.
 		if ( info.countDownloaded < info.countTotal && statusType === 'downloaded' )
 		{
-			divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
-			if ( typeName === 'app' ) menus.push('ReAttempt App Download');
-			else if ( typeName === 'media' ) menus.push('ReAttempt Media Download');
+			if ( typeName === 'app' ) {
+				menus.push('ReAttempt App Download');
+				divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
+			}
+			else if ( typeName === 'media' && mediaDownloaded ) {
+				menus.push('ReAttempt Media Download');
+				divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
+			}
 		}	
 	}
 	catch ( errMsg )
@@ -1146,8 +1160,7 @@ JobAidCaching.jobFilingUpdate = async function (msgData)
 
 JobAidCaching.triggerReTry = function( projDir, downloadOption )
 {
-	MsgManager.msgAreaShowErr( 'Download ' + projDir + ' RETRIED due to ' + JobAidPage.autoRetry + ' sec haulting.' );	
-	console.log( 'JobAidCaching.triggerReTry CALLED, ' + new Date().toString() );
+	MsgManager.msgAreaShowErr( 'Retrying the download of "' + projDir + '", after ' + JobAidPage.autoRetry + ' sec of no change.', undefined, 1000 ); // after 10 sec, hide msg
 
 	JobAidItem.itemDownload(projDir, downloadOption, { retry: true } );
 };

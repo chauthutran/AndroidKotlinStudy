@@ -84,7 +84,7 @@ MsgManager.msgAreaShowOpt = function (msg, options ) {
 };
 
 MsgManager.msgAreaShowErr = function (msg, optClasses, hideTimeMs) {
-	if ( !hideTimeMs ) hideTimeMs = 30000;  // Set hiding time to be 30 seconds in default for error case.
+	if ( !hideTimeMs ) hideTimeMs = 20000;  // Set hiding time to be 30 seconds in default for error case.
 	return MsgManager.msgAreaShow(msg, 'ERROR', optClasses, hideTimeMs);
 };
 
