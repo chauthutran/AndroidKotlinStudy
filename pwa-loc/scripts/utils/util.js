@@ -289,6 +289,19 @@ Util.RemoveFromArray = function (list, propertyName, value) {
 };
 
 
+Util.RemoveValInArray = function (list, value) {
+	var index;
+
+	if (list && value !== undefined) 
+	{		
+		var index = list.indexOf( value );
+		if ( index >= 0 ) list.splice( index, 1 );
+	}
+
+	return index;
+};
+
+
 Util.getFromListByName = function (list, name) {
 	var item;
 

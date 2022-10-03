@@ -912,7 +912,7 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 				if ( projStatus.downloadOption )
 				{
 					if ( projStatus.downloadOption.indexOf( 'appOnly' ) === 0 ) menus.push('ReAttempt Download w/o media');  // <-- which were last download for this?
-					else if ( projStatus.downloadOption.indexOf( 'all' ) === 0 ) menus.push('ReAttempt Download with media');		
+					else if ( projStatus.downloadOption.indexOf( 'all' ) === 0 ) menus.push('ReAttempt Download with media');
 				}
 			}
 		}
@@ -1014,16 +1014,34 @@ JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate
 	
 		divInfoTag.find( '.spanFiles').html( '<span class="dCount">' + info.countDownloaded + '</span>' + '/' + info.countTotal + ' | ' + dSizeStr + '/' + tSizeStr );
 	
-		// On 'downloaded', if the count is not full, mark it red.
-		if ( info.countDownloaded < info.countTotal && statusType === 'downloaded' )
+
+		// If not '0', but in between 0 ~ total, display as 'Red'?
+		//		- What about various 'statusType'?
+
+		// We need to add 'downloadProgress' logic --> which version it was downloading...
+
+		// If the count is not full, and over 0, add 'ReAttempt'
+		// 
+		if ( info.countDownloaded > 0 && info.countDownloaded < info.countTotal )
 		{
-			if ( typeName === 'app' ) {
-				menus.push('ReAttempt App Download');
-				divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
+			if ( typeName === 'app' ) 
+			{
+				if ( info.countDownloaded > 0 ) divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
+
+				if ( statusType === 'downoladed' ) menus.push('ReAttempt App Download');
+				// NOTE: 'available' case is dealt outside.. - by looking at downloadOption, 'ReAttempt Download w/o media', etc..
+				// TODO: Does this replace 'download App update'?  Do we remove that link?
 			}
-			else if ( typeName === 'media' && mediaDownloaded ) {
-				menus.push('ReAttempt Media Download');
-				divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
+			else if ( typeName === 'media' )  
+			{
+				// if 'mediaDownloaded' is set to false, but count is over 0, display as red.
+				// mediaDownloaded ||
+				if ( info.countDownloaded > 0 ) divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
+
+				if ( statusType === 'downloaded' ) {
+					menus.push('ReAttempt Media Download');
+					if ( menus.indexOf( 'Download media' ) >= 0 ) Util.RemoveValInArray(menus, 'Download media');
+				}
 			}
 		}	
 	}
