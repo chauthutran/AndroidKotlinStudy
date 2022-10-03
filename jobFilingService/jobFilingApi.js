@@ -34,8 +34,8 @@ const settings = {
 
 // -------------------------------------
 // --- Memory Variable
-var mem_manifestResp;
-var mem_buildDate;
+var MEM_manifestResp = undefined;  // Set it as undefined for false case..
+var MEM_jobFiles = {}; // Each 'projDir' gets added under this.
 
 // -------------------------------------
 
@@ -53,12 +53,12 @@ app.get('/list', (req, res) =>
 {
    try
    {      
-      // reqData = { 'isLocal': localCase, 'appName': appName, 'isListingApp': true, projDir: 'proj1' };
+      // reqData = { 'isLocal': localCase, 'appName': 'pwa-dev', 'isListingApp': true, projDir: 'EN' };
       var reqData = JSON.parse(req.query.optionsStr);
       var dataJson = getDataJson( reqData, settings );
       var dir = getDirLocation(dataJson);
 
-      fileNameList.walk(dir, dataJson, function (errMsg, results) 
+      fileNameList.filesListing(dir, dataJson, MEM_jobFiles, function (errMsg, results, info) 
       {
          if (errMsg) res.json({ list: [], results: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
          else
@@ -68,7 +68,8 @@ app.get('/list', (req, res) =>
             {
                var mediaDir = getDirLocation(dataJson, reqData.outerMediaFoler );
 
-               fileNameList.walk(mediaDir, dataJson, function (errMsg, results_media) 
+               // For 'MEM_jobFiles', we need to change 'projDir' for this case?  --> or set as 'projDir_media'?
+               fileNameList.filesListing(mediaDir, dataJson, MEM_jobFiles, function (errMsg, results_media, info) 
                {
                   if (errMsg) res.json({ list: [], results: [], errMsg: Util_formatErrMsg( errMsg.toString() ) });
                   else
@@ -77,7 +78,7 @@ app.get('/list', (req, res) =>
                      results.sort((a,b) => b.size - a.size);
                      var list = results.map( item => item.filePath );
 
-                     res.json({ list: list, results: results });
+                     res.json({ list: list, results: results, info: info });
                   }
                });      
             }
@@ -87,7 +88,7 @@ app.get('/list', (req, res) =>
                results.sort((a,b) => b.size - a.size);
                var list = results.map( item => item.filePath );
 
-               res.json({ list: list, results: results });
+               res.json({ list: list, results: results, info: info });
             }
          }
 
@@ -100,26 +101,74 @@ app.get('/list', (req, res) =>
 });
 
 
+app.get('/jobFilesInMemory', (req, res) => 
+{
+   try
+   {
+      if ( MEM_jobFiles )
+      {
+         var projDir = req.query.projDir;
+
+         if ( !projDir ) res.json( MEM_jobFiles );
+         else 
+         {
+            if ( MEM_jobFiles[projDir] ) res.json( MEM_jobFiles[projDir] );
+            else res.json( { ERROR_NOTE: 'projDir "' + projDir + '" data in memory' } );   
+         }
+      }
+      else res.json( { ERROR_NOTE: 'Nothing in memory' } );   
+   }
+   catch( errMsg )
+   {
+      console.log('ERROR in jobFilesInMemory, errMsg: ' + errMsg);
+      res.json( { ERROR_NOTE: 'ERROR while processing, ' + errMsg } );   
+   }   
+});
+
+
+app.get('/jobFilesClear', (req, res) => 
+{
+   try
+   {
+      if ( MEM_jobFiles )
+      {
+         var projDir = req.query.projDir;
+
+         if ( !projDir ) MEM_jobFiles = {};
+         else MEM_jobFiles[projDir] = {};
+      }
+      else res.json( { ERROR_NOTE: 'Nothing in memory' } );   
+   }
+   catch( errMsg )
+   {
+      console.log('ERROR in jobFilesClear, errMsg: ' + errMsg);
+      res.json( { ERROR_NOTE: 'ERROR while processing, ' + errMsg } );   
+   }  
+});
+
+
+// ----------------------------------
+
 app.get('/manifests', (req, res) => 
 {
    // Use existing one.
-   if ( mem_manifestResp ) res.json( mem_manifestResp );      
+   if ( MEM_manifestResp ) res.json( MEM_manifestResp );      
    else 
    {
       // reqData = { 'isLocal': localCase, 'appName': appName, 'isListingApp': true, projDir: 'proj1' };
       var reqData = JSON.parse(req.query.optionsStr);
 
-      manifestDataCollect( reqData, function( mem_manifestResp ) {
-         res.json( mem_manifestResp );
+      manifestDataCollect( reqData, function( MEM_manifestResp ) {
+         res.json( MEM_manifestResp );
       });
    }
 });
 
 app.get('/manifestsReload', (req, res) => 
 {
-   if ( mem_manifestResp )
+   if ( MEM_manifestResp )
    {
-      manifestDataCollect( mem_manifestResp.reqData, function( mem_manifestResp_new ) {
+      manifestDataCollect( MEM_manifestResp.reqData, function( mem_manifestResp_new ) {
          res.json( mem_manifestResp_new );
       });      
    }
@@ -128,9 +177,9 @@ app.get('/manifestsReload', (req, res) =>
 
 app.get('/manifestsInMemory', (req, res) => 
 {
-   if ( mem_manifestResp )
+   if ( MEM_manifestResp )
    {
-      res.json( mem_manifestResp );      
+      res.json( MEM_manifestResp );      
    }
    else res.json( { ERROR_NOTE: 'Nothing in memory' } );
 });
@@ -145,9 +194,9 @@ function manifestDataCollect( reqData, callBack )
    manifestsCollect.collect(dir, dataJson, function (results, topManifest) 
    {   
       // save to memory
-      mem_manifestResp = { topManifest: topManifest, list: results, reqData: reqData };
+      MEM_manifestResp = { topManifest: topManifest, list: results, reqData: reqData };
 
-      callBack( mem_manifestResp );
+      callBack( MEM_manifestResp );
    });
 };
 
