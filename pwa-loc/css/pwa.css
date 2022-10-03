@@ -2987,3 +2987,552 @@ input.nosubmit {
 
 /* CHAT CSS */
 /* ================================================= */
+
+/* ================================================= */
+/* ===== REPORT Releated =========================== */
+
+#reportreportPageHeader {
+    height: auto;
+    width: 100%;
+}
+
+#reportPageHeader p {
+    font-size: 12px;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+#reportPageHeader {
+    margin: 0;
+    padding: 8px;
+}
+
+.report-content {
+    width: calc(100vw - 32px);
+    height: 100%;
+}
+
+.report-content p {
+    padding: 0 0 8px;
+    margin: 0;
+}
+
+.report-content p span {
+    margin-right: 200px;
+}
+
+.report-content #tableA {
+    border-collapse: collapse;
+    border: 2px solid #000;
+}
+
+.report-content #tableA thead {
+    background-color: #000;
+    color: #fff;
+}
+
+.report-content #tableA thead tr th:nth-child(2n) {
+    border-left: 1px solid #FFF;
+    border-right: 1px solid #FFF;
+}
+
+.report-content #tableA thead tr .title {
+    font-size: 12px;
+    text-align: center;
+}
+
+.report-content #tableA thead tr .subtitle {
+    width: auto;
+    height: 90px;
+    vertical-align: bottom;
+    padding-bottom: 8px;
+    font-size: 10px;
+}
+
+.report-content #tableA thead tr .subtitle .vertical {
+    display: block;
+    margin: auto 0;
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    max-width: 15px;
+}
+
+.report-content #tableA tbody tr {
+    border: 1px solid;
+}
+
+.report-content #tableA tbody tr td {
+    min-width: 20px;
+    height: 30px;
+    border: 1px solid #000;
+    text-align: center;
+}
+
+.report-content #tableA tbody tr th {
+    min-width: 20px;
+    border: 1px solid #FFF;
+}
+
+.report-content #tableA tbody tr .nvcr {
+    border-right: 1px solid #000;
+}
+
+.report-content #tableA tbody tr .ctyp1 {
+    width: 100px;
+}
+
+.report-content #tableB {
+    border-collapse: collapse;
+    border: 2px solid #000;
+}
+
+.report-content #tableB thead {
+    background-color: #000;
+    color: #fff;
+}
+
+.report-content #tableB thead tr th:nth-child(2n) {
+    border-left: 1px solid #FFF;
+    border-right: 1px solid #FFF;
+}
+
+.report-content #tableB thead tr th .vertical {
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    margin-top: 150px;
+}
+
+.report-content #tableB thead tr .title {
+    font-size: 12px;
+    text-align: center;
+}
+
+.report-content #tableB thead tr .subtitle {
+    width: auto;
+    height: 90px;
+    vertical-align: bottom;
+    padding-bottom: 8px;
+    font-size: 10px;
+}
+
+.report-content #tableB thead tr .subtitle .vertical {
+    display: block;
+    margin: auto 0;
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    max-width: 15px;
+}
+
+.report-content #tableB thead tr .date {
+    min-width: 80px;
+}
+
+.report-content #tableB thead tr .comments {
+    min-width: 200px;
+}
+
+.report-content #tableB tbody tr {
+    border: 1px solid;
+}
+
+.report-content #tableB tbody tr td {
+    min-width: 20px;
+    height: 30px;
+    border: 1px solid #000;
+    text-align: center;
+}
+
+.report-content #tableB tbody tr th {
+    min-width: 20px;
+    border: 1px solid #FFF;
+}
+
+.report-content #tableB tbody tr .nvcr {
+    border-right: 1px solid #000;
+}
+
+.report-content #tableB tbody tr .ctyp1 {
+    width: 100px;
+}
+
+.report-content .card1 {
+    float: left;
+    padding: 8px;
+    margin: 16px 8px 0 0;
+    border: 3px solid #000;
+}
+
+.report-content .card1 table {
+    border: 1px solid #FFF;
+}
+
+.report-content .card1 table tbody tr {
+    border: 1px solid;
+}
+
+.report-content .card1 table tbody tr td {
+    border: 1px solid #FFF;
+    text-align: left;
+    padding: 0 8px 0 0;
+    font-size: 10px;
+    height: 20px;
+}
+
+.report-content .card1 .title {
+    width: 100%;
+    height: auto;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.report-content .card1 .cont {
+    float: left;
+    margin-right: 8px;
+}
+
+.report-content .card2,
+.report-content .card3,
+.report-content .card4,
+.report-content .card5,
+.report-content .card6 {
+    float: left;
+    padding: 8px;
+    margin: 16px 8px 0 0;
+}
+
+.report-content .card2 p,
+.report-content .card3 p,
+.report-content .card4 p,
+.report-content .card5 p,
+.report-content .card6 p {
+    text-align: left;
+    padding: 0 8px 0 0;
+    font-size: 10px;
+}
+
+.report-content .card2 .title,
+.report-content .card3 .title,
+.report-content .card4 .title,
+.report-content .card5 .title,
+.report-content .card6 .title {
+    width: 100%;
+    height: auto;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.report-content .card2 {
+    width: 15%;
+}
+
+.report-content .card3 {
+    width: 23%;
+}
+
+.report-content .card4 {
+    width: 18%;
+}
+
+.report-content .card5 {
+    width: 18%;
+}
+
+.report-content .card6 {
+    width: 15%;
+}
+
+#reportPageFooter {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 8px 0;
+    font-size: 12px;
+}
+
+
+.report-header-2
+{
+  float: left;
+}
+ 
+@media print {
+     
+	.report-header-2
+	{
+	  float: none;
+	}
+
+  #reportPageHeader {
+    height: auto;
+    width: 100%;
+  }
+  #reportPageHeader p {
+    font-size: 12px;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Rubik", sans-serif;
+    font-style: normal !important;
+    height: auto !important;
+  }
+  
+  #reportPageHeader {
+    margin: 0;
+    padding: 8px;
+  }
+  .report-content {
+    height: auto !important;
+	width: auto !important;
+	padding: 0px !important;
+  }
+  .report-content p {
+    padding: 0 0 8px;
+    margin: 0;
+  }
+  .report-content p span {
+    margin-right: 200px;
+  }
+  .report-content #tableA {
+    border-collapse: collapse;
+    border: 2px solid #000;
+  }
+  .report-content #tableA thead {
+    background-color: #000;
+    color: #fff;
+  }
+  .report-content #tableA thead tr th:nth-child(2n) {
+    border-left: 1px solid #FFF;
+    border-right: 1px solid #FFF;
+  }
+  .report-content #tableA thead tr .title {
+    font-size: 12px;
+    text-align: center;
+  }
+  .report-content #tableA thead tr .subtitle {
+    width: auto;
+    height: 90px;
+    vertical-align: bottom;
+    padding-bottom: 8px;
+    font-size: 10px;
+  }
+
+  .report-content #tableA tbody tr {
+    border: 1px solid;
+  }
+  .report-content #tableA tbody tr td {
+    min-width: 20px;
+    height: 30px;
+    border: 1px solid #000;
+    text-align: center;
+  }
+  .report-content #tableA tbody tr th {
+    min-width: 20px;
+    border: 1px solid #FFF;
+  }
+  .report-content #tableA tbody tr .nvcr {
+    border-right: 1px solid #000;
+  }
+  .report-content #tableA tbody tr .ctyp1 {
+    width: 100px;
+  }
+  .report-content #tableB {
+    border-collapse: collapse;
+    border: 2px solid #000;
+  }
+  .report-content #tableB thead {
+    background-color: #000;
+    color: #fff;
+  }
+  .report-content #tableB thead tr th:nth-child(2n) {
+    border-left: 1px solid #FFF;
+    border-right: 1px solid #FFF;
+  }
+  .report-content #tableB thead tr th .vertical {
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    margin-top: 150px;
+  }
+  .report-content #tableB thead tr .title {
+    font-size: 12px;
+    text-align: center;
+  }
+  .report-content #tableB thead tr .subtitle {
+    width: auto;
+    height: 90px;
+    vertical-align: bottom;
+    padding-bottom: 8px;
+    font-size: 10px;
+  }
+  .report-content #tableB thead tr .subtitle .vertical {
+    display: block;
+    margin: auto 0;
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    max-width: 15px;
+  }
+  .report-content #tableB thead tr .date {
+    min-width: 80px;
+  }
+  .report-content #tableB thead tr .comments {
+    min-width: 200px;
+  }
+  .report-content #tableB tbody tr {
+    border: 1px solid;
+  }
+  .report-content #tableB tbody tr td {
+    min-width: 20px;
+    height: 30px;
+    border: 1px solid #000;
+    text-align: center;
+  }
+  .report-content #tableB tbody tr th {
+    min-width: 20px;
+    border: 1px solid #FFF;
+  }
+  .report-content #tableB tbody tr .nvcr {
+    border-right: 1px solid #000;
+  }
+  .report-content #tableB tbody tr .ctyp1 {
+    width: 100px;
+  }
+  .report-content .card1 {
+    float: none;
+  }
+  .report-content .card1 table {
+    border: 1px solid #FFF;
+  }
+  .report-content .card1 table tbody tr {
+    border: 1px solid;
+  }
+  .report-content .card1 table tbody tr td {
+    border: 1px solid #FFF;
+    text-align: left;
+    padding: 0 8px 0 0;
+    font-size: 10px;
+    height: 20px;
+  }
+  .report-content .card1 .title {
+    width: auto;
+    height: auto;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .report-content .card1 .cont {
+    float: left;
+    margin-right: 8px;
+  }
+  .report-content .card2, .report-content .card3, .report-content .card4, .report-content .card5, .report-content .card6 {
+    float: left;
+    padding: 8px;
+    margin: 16px 8px 0 0;
+  }
+  .report-content .card2 p, .report-content .card3 p, .report-content .card4 p, .report-content .card5 p, .report-content .card6 p {
+    text-align: left;
+    padding: 0 8px 0 0;
+    font-size: 10px;
+  }
+  .report-content .card2 .title, .report-content .card3 .title, .report-content .card4 .title, .report-content .card5 .title, .report-content .card6 .title {
+    width: auto;
+    height: auto;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .report-content .card2 {
+    width: 15%;
+  }
+  .report-content .card3 {
+    width: 23%;
+  }
+  .report-content .card4 {
+    width: 18%;
+  }
+  .report-content .card5 {
+    width: 18%;
+  }
+  .report-content .card6 {
+    width: 15%;
+  }
+  #reportPageFooter {
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 8px 0;
+    font-size: 12px;
+  }
+  
+  .sheet-title {
+    display: none;
+  }
+  
+     
+     .contentBody {
+         height: auto !important;
+     }
+  
+  
+   .sheet_full-fs{
+   position: inherit !important;
+   }
+  
+  
+  
+   .sheet-title
+   {
+  display: none !important;
+   }
+   
+   
+  .Nav1{
+  display: none !important;
+  
+  }
+  
+  
+  .Nav2{
+  display: none !important;
+  
+  }
+  
+  .wapper_card {
+    height: auto !important;
+  }
+  
+  .sheet_full-fs{
+    height: auto;
+        width: auto;
+  }
+  
+
+	.report-content #tableA thead tr .subtitle {
+		padding-bottom: 25px !important;
+	}
+
+	.report-content #tableA tbody tr td
+	{
+		white-space: nowrap;
+		font-size: 10px;
+	}
+	
+	
+	.report-content #tableB tbody tr td
+	{
+		white-space: nowrap;
+		font-size: 10px;
+	}
+
+} 
+
+/* END - REPORT Releated */
+/* ================================================= */

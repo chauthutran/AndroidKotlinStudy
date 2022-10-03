@@ -18,7 +18,6 @@ ReportPage.options = {
 
 ReportPage.sheetFullTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, ReportPage.options);  // .options.preCall
 ReportPage.contentBodyTag;
-// ReportPage.table1;
 
 
 // -----------------------------------------------------------
@@ -108,7 +107,7 @@ ReportPage.populateData = function()
                     // Create the content of a page for the table
                     var contentTag = $("<div style='page-break-after:always;padding-botton: 20px;'>" + ReportPage[tableId + "_template"] + "</div>" );
                     // ReportPage.contentBodyTag.find(`#${tableId}_content`).append( contentTag );
-                    ReportPage.contentBodyTag.find(".wrapper").append( contentTag );
+                    ReportPage.contentBodyTag.find(".report-content").append( contentTag );
 
                     // Populate Cards
                     ReportPage.populateCards( reportConfig, contentTag );
@@ -147,71 +146,6 @@ ReportPage.populateData = function()
                     tableRowData[tableId].rowIdx = endRow;
                 }
             }
-
-
-            // for( var k=0; k<tableIds.length; k++ )
-            // {
-            //     const tableId = tableIds[k];
-            //     var tableConfig = tableData[tableId];
-                
-            //     var listData = eval( Util.getEvalStr( tableConfig.list ) );
-
-            //     var colDataConfig = tableConfig.colData;
-            //     var maxRow = tableConfig.maxRow;
-            //     var colNo = Object.keys( colDataConfig ).length;
-            //     let rowIdx = 0;
-                
-            //     var tableTag;
-            //     for( var i=0; i< listData.length; i++ )
-            //     {
-            //         if( rowIdx == 0 || rowIdx == maxRow )
-            //         {
-            //             rowIdx = 0;
-            //             // Create the content of a page for the table
-            //             var contentTag = $("<div style='page-break-after:always;padding-botton: 20px;'>" + ReportPage[tableId + "_template"] + "</div>" );
-            //             ReportPage.contentBodyTag.find(`#${tableId}_content`).append( contentTag );
-
-            //             // Populate Cards
-            //             ReportPage.populateCards( reportConfig, contentTag );
-            //             // Get table tbody for appending data list
-            //             tableTag = contentTag.find("#" + tableId).find("tbody");
-            //         }
-            //         rowIdx ++;
-
-            //         var rowTag = $("<tr></tr>");
-            //         for( var j=0; j< colNo; j++ )
-            //         {
-            //             const colIdx = j + 1;
-            //             var colIdxConfig = colDataConfig["col" + colIdx];
-            //             var colEvalStr = Util.getEvalStr( colIdxConfig );
-            //             var colTag = $("<td></td>");
-            //             rowTag.append( colTag );
-                        
-            //             try { 
-            //                 var value = eval( evalStr + " var item = listData[i]; " +  Util.getEvalStr( colEvalStr ) ); 
-            //                 colTag.html( value );
-            //             }
-            //             catch( errMsg ) { console.log( 'ReportPage col' + j + ' ERROR, ' + errMsg ); }		
-            //         }
-        
-            //         tableTag.append( rowTag );
-            //     }
-
-            //     // Populate 'empty' rows if needed
-            //     if( rowIdx < maxRow)
-            //     {
-            //         for( var i=rowIdx + 1; i<=maxRow; i++ )
-            //         {
-            //             var rowTag = $("<tr></tr>");
-            //             for( var j=0; j<colNo; j++ )
-            //             {
-            //                 rowTag.append("<td></td>");
-            //             }
-            //             tableTag.append( rowTag );
-            //         }
-            //     }
-            // }
-           
         }
     }
 }
@@ -310,11 +244,11 @@ ReportPage.populateCards = function( reportConfig, contentTag )
 // -----------------------------------------------------------
 
 ReportPage.templateReport = `
-<div id="pageHeader" style="border-bottom: 1px solid #ddd;  padding: 0px 0px 4px; margin: 0px;">
+<div id="reportPageHeader" style="border-bottom: 1px solid #ddd;  padding: 0px 0px 4px; margin: 0px;">
     <p>Voluntary Medical Male Circumcision (VMMC) Register</p>
 </div>
 
-<div id="pageFooter" style="border-top: 1px solid #ddd; padding: 8px 0px 4px; margin: 0px;">
+<div id="reportPageFooter" style="border-top: 1px solid #ddd; padding: 8px 0px 4px; margin: 0px;">
     <p
         style="color: #666; width: 70%; margin: 0; padding-bottom: 0px; text-align: let; font-family: 'Rubik', sans-serif; font-style: normal; font-size: .65em; float: left;">
         VMMC</p>
@@ -322,15 +256,15 @@ ReportPage.templateReport = `
     Página {{page}} de {{pages}}</p>
 </div>
 
-<div class="wrapper">
-    <div id="table1_content"> </div>
-    <div id="table2_content"> </div>
+<div class="report-content">
+    <div id="tableA_content"> </div>
+    <div id="tableB_content"> </div>
 </div>
 `;
 
-ReportPage.table1_template = ` 
+ReportPage.tableA_template = ` 
 <p>1. Month: <span></span> 2. Year: <span></span></p>
-<table id="table1" style="width: 100%;" border="none" cellpadding="1">
+<table id="tableA" style="width: 100%;" border="none" cellpadding="1">
      <thead>
          <tr>
              <th class="title">
@@ -437,9 +371,9 @@ ReportPage.table1_template = `
  <div style="page-break-before: always;"></div>
 `;
 
-ReportPage.table2_template = ` 
+ReportPage.tableB_template = ` 
 <p class="report-header-2" style="width: 100%;">1. Month: <span></span> 2. Year: <span></span></p>
-<table id="table2" style="width: 100%;" border="none" cellpadding="1">
+<table id="tableB" style="width: 100%;" border="none" cellpadding="1">
     <thead>
         <tr>
             <th class="title">
