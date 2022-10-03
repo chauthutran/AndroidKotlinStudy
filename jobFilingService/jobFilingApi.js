@@ -184,6 +184,25 @@ app.get('/manifestsInMemory', (req, res) =>
    else res.json( { ERROR_NOTE: 'Nothing in memory' } );
 });
 
+app.get('/manifestsClear', (req, res) => 
+{
+   try
+   {
+      if ( MEM_manifestResp )
+      {
+         MEM_manifestResp = undefined;
+         res.json( { NOTE: 'Cleared in memory' } );   
+      }
+      else res.json( { ERROR_NOTE: 'Nothing in memory' } );   
+   }
+   catch( errMsg )
+   {
+      console.log('ERROR in manifestsClear, errMsg: ' + errMsg);
+      res.json( { ERROR_NOTE: 'ERROR while processing, ' + errMsg } );   
+   }  
+});
+
+
 // ---------------------------------------------
 
 function manifestDataCollect( reqData, callBack )
