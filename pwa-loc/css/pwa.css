@@ -3067,6 +3067,7 @@ input.nosubmit {
     height: 30px;
     border: 1px solid #000;
     text-align: center;
+	 font-size: 11px;
 }
 
 .report-content #tableA tbody tr th {
@@ -3276,6 +3277,7 @@ input.nosubmit {
     text-transform: uppercase;
   }
   
+  /*
   html,
   body {
     margin: 0;
@@ -3284,7 +3286,8 @@ input.nosubmit {
     font-style: normal !important;
     height: auto !important;
   }
-  
+  */
+
   #reportPageHeader {
     margin: 0;
     padding: 8px;
@@ -3476,12 +3479,12 @@ input.nosubmit {
     display: none;
   }
   
-     
-     .contentBody {
-         height: auto !important;
-     }
-  
-  
+
+	.contentBody {
+		height: auto !important;
+	}
+
+
    .sheet_full-fs{
    position: inherit !important;
    }
