@@ -129,16 +129,12 @@ PersisDataLSManager.removeProperty = function( mainKey, subKey )
     // Get persisData_LS from localStorage if any. If not, use default persisData_LS
     var persisData_LS = PersisDataLSManager.persisData_LS;
 
-    if ( persisData_LS[mainKey] )
+    if ( persisData_LS[mainKey] && persisData_LS[mainKey][subKey] )
     {
-        Util.tryCatchContinue( function() 
-        {
-            delete persisData_LS[mainKey][subKey];
+        delete persisData_LS[mainKey][subKey];
 
-            // Update the 'persisData_LS' data
-            PersisDataLSManager.savePersisData( persisData_LS );  
-
-        }, 'PersisDataLSManager.removeProperty' );
+        // Update the 'persisData_LS' data
+        PersisDataLSManager.savePersisData( persisData_LS );  
     }
 };
 

@@ -142,7 +142,7 @@ JobAidPage.render_ContextMenuSetup = function()
 			var jobAidItemTag = $triggerElement.closest('div.jobAidItem');
 
 			var projDir = jobAidItemTag.attr('projDir');
-
+			var inProcessDownloadOption = jobAidItemTag.attr( 'inProcessDownloadOption' );
 			var menusStr = jobAidItemTag.attr('menus');
 			var menusArr = menusStr.split( ';' );
 
@@ -155,10 +155,15 @@ JobAidPage.render_ContextMenuSetup = function()
 				{
 					if ( ['Download', 'Download w/o media', 'Download with media', 'ReAttempt Download w/o media', 'ReAttempt Download with media'
 					, 'Download media', 'Download app update', 'Download media update', 'ReAttempt App Download', 'ReAttempt Media Download' 
-						].indexOf( key ) >= 0 ) JobAidItem.itemDownload(projDir, JobAidItem.keyToDownloadOption( key ) );
+						].indexOf( key ) >= 0 ) 
+					{
+						jobAidItemTag.attr( 'downloadKey', key );
+						JobAidItem.itemDownload(projDir, JobAidItem.keyToDownloadOption( key ) );
+					}
 					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
 					else if (key === 'Delete') JobAidItem.itemDelete(projDir);
 					else if (key === 'Open') JobAidItem.itemOpen(projDir);
+					else if (key === 'Cancel current download') JobAidCaching.cancelProjCaching(projDir, inProcessDownloadOption);
 				}
 			};
 		}
@@ -358,6 +363,10 @@ JobAidPage.updateItem_ItemSection = function (projDir, statusType)
 
 		if ( availableItem )
 		{
+			// TODO: 
+			//		- If 'persisData' has this one, we can clear it at here...
+			PersisDataLSManager.deleteJobFilingProjDir( projDir );			
+
 			// Add to the cached..
 			var itemTag = $(JobAidPage.templateItem).hide();
 			JobAidItem.itemPopulate(availableItem, itemTag, 'available');
@@ -795,16 +804,15 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 		JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override );
 
 
-		// At 'retry', repopulate the item, for updating the downloaded count
-		if ( option.retry ) JobAidItem.itemRepopulate( projDir );
-
+		// At 'retry', repopulate the item, for updating the downloaded count - this is done on 'runTimeCache_JobAid'
+		//if ( option.retry ) JobAidItem.itemRepopulate( projDir );
 	}
 	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
 	
 };
 
 
-JobAidItem.itemRepopulate = function( projDir )
+JobAidItem.itemRepopulate = function( projDir, option )
 {
 	// NEW: UPDATE ITEM STATUS on each download starting..
 	// 	-  If the item downloading is in 'available', update the tag with data.
@@ -814,8 +822,8 @@ JobAidItem.itemRepopulate = function( projDir )
 	var availableItem = Util.getFromList( JobAidPage.availableManifestList, projDir, 'projDir' );
 	var downloadedItem = Util.getFromList( JobAidPage.downloadedManifestList, projDir, 'projDir' );
 
-	if ( availableItem && availableItemTag.length > 0 ) JobAidItem.itemPopulate(availableItem, availableItemTag, 'available');
-	if ( downloadedItem && downloadedItemTag.length > 0 ) JobAidItem.itemPopulate(downloadedItem, downloadedItemTag, 'downloaded');
+	if ( availableItem && availableItemTag.length > 0 ) JobAidItem.itemPopulate(availableItem, availableItemTag, 'available', option);
+	if ( downloadedItem && downloadedItemTag.length > 0 ) JobAidItem.itemPopulate(downloadedItem, downloadedItemTag, 'downloaded', option);
 
 };
 
@@ -867,9 +875,10 @@ JobAidItem.itemDelete = async function (projDir)
 
 // -------------------
 
-JobAidItem.itemPopulate = function (itemData, itemTag, statusType) 
+JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option ) 
 {
 	var menus = [];
+	if ( !option ) option = {};
 
 	if ( !itemData.projDir ) MsgManager.msgAreaShowErr( 'FAILED to populate item - NO "projDir"' );
 	else
@@ -884,12 +893,18 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType)
 		itemTag.attr('data-language', itemData.code);
 		itemTag.attr('projDir', projDir);
 		itemTag.attr('statusType', statusType);
-		itemTag.find( 'downloadStatus' ).hide();
+		itemTag.find( 'span.downloadStatus,span.appDownloadStatus,span.mediaDownloadStatus' ).html('').hide();
 	
 		var titleStrongTag = $('<strong></strong>').append(itemData.title + ' [' + Util.getStr(itemData.language) + ']');
 		itemTag.find('.divTitle').html(titleStrongTag);
 	
-	
+
+		// While 'download' is in progress, below 3 data are populated..
+		if ( option.downloadInProgress ) menus.push( 'Cancel current download' );  // also itemTag.attr( 'downloadKey' ) has the download name (key);
+		if ( option.spanDownloadStatusTag ) option.spanDownloadStatusTag.html( '' ).hide(); // duplicating as above 3 reset/hide?
+		if ( option.downloadOption ) itemTag.attr('inProcessDownloadOption', option.downloadOption);
+
+
 		if (statusType === 'available') 
 		{
 			// CHANGED: ALWAYS ASSUME THERE IS MEDIA IN ALL PACKAGE.  //if ( itemData.noMedia === false ) // display both types
@@ -1115,9 +1130,11 @@ JobAidCaching.jobFilingUpdate = async function (msgData)
 
 	if ( aborted )
 	{
+		console.log( 'Aborted in jobFilingUpdate' );
+
 		MsgManager.msgAreaShowErr( 'Aborted the download: ' + projDir, undefined, 5000 );
 
-		// TODO: Should update the status of item.  without making status change?
+		// Item abort call will handle the itemRePopulate + cancel the autoRetry
 	}
 	else
 	{
@@ -1193,6 +1210,8 @@ JobAidCaching.jobFilingUpdate = async function (msgData)
 
 JobAidCaching.triggerReTry = function( projDir, downloadOption )
 {
+	console.log( 'retry called' );
+
 	MsgManager.msgAreaShowErr( 'Retrying the download of "' + projDir + '", after ' + JobAidPage.autoRetry + ' sec of no change.', undefined, 1000 ); // after 10 sec, hide msg
 
 	JobAidItem.itemDownload(projDir, downloadOption, { retry: true } );
@@ -1221,13 +1240,30 @@ JobAidCaching.projProcessDataUpdate = function (projDir, url, updateJson)
 };
 
 
-JobAidCaching.cancelProjCaching = function ( projDir ) 
+JobAidCaching.cancelProjCaching = function ( projDir, downloadOption ) 
 {
+	// 1. Send the cancel call to service worker
 	SwManager.swRegObj.active.postMessage({
 		'type': JobAidHelper.jobAid_CACHE_URLS2 + '_CANCEL'
 		, 'cacheName': JobAidHelper.jobAid_jobTest2
 		, 'options': { projDir: projDir }
 	});
+
+	// 2. Cancel the autoRetry timeout  - // var processKey = projDir + '_' + Util.getStr(downloadOption); // if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) clearTimeout( JobAidPage.autoRetryTimeOutIDs[processKey] );
+	// Cancel all type of download for this projDir..
+	for( var prop in JobAidPage.autoRetryTimeOutIDs )
+	{
+		if ( prop.indexOf( projDir + '_' ) === 0 )
+		{
+			clearTimeout( JobAidPage.autoRetryTimeOutIDs[prop] );
+		}
+	}
+
+	// 3. AVAILABILITY TEMP SET
+	ConnManagerNew.tempDisableAvailableCheck = false; 
+
+	// 4. Repopulate the item - with a bit of timeout delay?
+	setTimeout( function() {  JobAidItem.itemRepopulate( projDir );  }, 400 );		
 };
 
 // ===================================================

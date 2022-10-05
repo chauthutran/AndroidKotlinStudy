@@ -240,9 +240,15 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 				<span class="spanJobFilingMsg" style="color: gray; font-size: 14px;">Retrieving Files...</span>
 			</div>` );
 
+		var projDir = options.projDir;
+		var downloadOption = options.downloadOption;
 
+		// retry/reAttempt newFileList
 		if ( newFileList_Override )
 		{
+			var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption ).html( '<strong>Downloading 1st file...</strong>' );
+			JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption, spanDownloadStatusTag: spanDownloadStatusTag } );
+
 			JobAidHelper.swFileListCaching( newFileList_Override, options );
 		}
 		else
@@ -256,10 +262,6 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 					if ( response.errMsg ) MsgManager.msgAreaShowErr( response.errMsg );
 					else
 					{
-						var projDir = options.projDir;
-						var downloadOption = options.downloadOption;
-						
-
 						// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
 						var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 	
@@ -267,9 +269,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 						JobAidHelper.filingContent_setUp( newFileList, response.results, options );
 	
 						// 3. On download (in available list), refresh the count - only available on New One.  + Download Start Message Dispaly..
-						if ( downloadOption && ( downloadOption.indexOf( '_fromAvailable' ) > 0 || downloadOption === 'mediaOnly' ) ) JobAidItem.itemRepopulate( projDir );
-						JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption ).html( '<strong>Downloading 1st file...</strong>' );
-
+						var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption ).html( '<strong>Downloading 1st file...</strong>' );
+						//if ( downloadOption && ( downloadOption.indexOf( '_fromAvailable' ) > 0 || downloadOption === 'mediaOnly' ) ) 
+						JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption, spanDownloadStatusTag: spanDownloadStatusTag } );
 
 						// 4. Submit to Service Worker - the file caching (due to 'CacheOnly' strategy, we need to send to service worker for this)
 						JobAidHelper.swFileListCaching( newFileList, options );

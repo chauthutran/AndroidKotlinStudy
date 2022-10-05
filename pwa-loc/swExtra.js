@@ -26,12 +26,17 @@ self.addEventListener('message', (event) =>
 
 			if (event.data.type === 'CACHE_URLS2_CANCEL' ) 
 			{
+				console.log( 'service worker CACHE_URLS2_CANCEL ' );
+
 				// Cancel the request operations
 				if ( projDir && SwHelper.fetchControllers[projDir] ) 
 				{
+					console.log( 'service worker cancel called: ' + projDir );
+
 					SwHelper.fetchControllers[projDir].abort();
+					//event.source.postMessage( JSON.stringify({ type: 'jobFiling', aborted: true, options: options }) );
 					delete SwHelper.fetchControllers[projDir];
-					event.source.postMessage( JSON.stringify({ type: 'jobFiling', aborted: true }) );
+					//					setTimeout( function() {  }, 400 );
 				}				
 			}
 			else if (event.data.type === 'CACHE_URLS2' && event.data.payload) 
@@ -46,15 +51,18 @@ self.addEventListener('message', (event) =>
 
 				var fetchOption = {};
 
-				// For cacneling the fetch, add this 'controller' on fetch
-				if (projDir) {
+				// Cacneling the fetch, add this 'controller' on fetch
+				if ( projDir ) 
+				{
 					SwHelper.fetchControllers[projDir] = new AbortController();
 					fetchOption.signal = SwHelper.fetchControllers[projDir].signal;
 				}
 
 
-				if (options.syncType === 'sync') {
-					for (var i = 0; i < reqList.length; i++) {
+				if (options.syncType === 'sync') 
+				{
+					for (var i = 0; i < reqList.length; i++) 
+					{
 						var reqUrl = reqList[i];
 						try {
 							var response = await fetch( reqUrl, fetchOption );
@@ -73,38 +81,39 @@ self.addEventListener('message', (event) =>
 								throw new Error("bad response status");
 							}
 						}
-						catch (error) {
-							doneCount++;
-							console.log('[' + doneCount + '] Try/Catch Error, reqUrl: ' + reqUrl);
-							console.log(error);
-
+						catch (error) 
+						{
 							if ( error.name === 'AbortError' )
 							{
-								var returnMsgStr = JSON.stringify({ type: 'jobFiling', aborted: true });
-								event.source.postMessage(returnMsgStr);	
+								//console.log('AbortError in sync catch');
+								//var returnMsgStr = JSON.stringify({ type: 'jobFiling', aborted: true, options: options });
+								//event.source.postMessage(returnMsgStr);	
 								break;
 							}
 							else
 							{
+								doneCount++;
+								console.log('[' + doneCount + '] Try/Catch Error, reqUrl: ' + reqUrl);
+								console.log(error);
+	
 								var returnMsgStr = JSON.stringify({ type: 'jobFiling', error: true, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
 								event.source.postMessage(returnMsgStr);	
 							}
 						}
 					}
 				}
-				else {
-					reqList.forEach(reqUrl => {
-
-						// TODO: Use 'cache.put' instead - https://developer.mozilla.org/en-US/docs/Web/API/Cache/add
-						// Instead of 'cache.add', we could use 'fetch' with is the equalivent one.  Also, the default timeout should be 300 seconds for this..
-
+				else 
+				{
+					reqList.forEach(reqUrl => 
+					{
+						// Use 'cache.put' instead of 'cache.add'.  (300 sec timeout)  // cache.add(reqUrl).then(() => {});
 						fetch(reqUrl, fetchOption ).then((response) => {
 							if (response.ok && response.status === 200)  // Status in the range 200-299)
 							{
 								//if ( reqUrl.indexOf( 'logo192.png' ) >= 0 ) throw new Error('Something went wrong');
 
 								cache.put(reqUrl, response.clone());  // return 
-								console.log('[' + doneCount + '] Cache Put: ' + reqUrl);
+								//console.log('[' + doneCount + '] Cache Put: ' + reqUrl);
 
 								doneCount++;
 								var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
@@ -115,25 +124,23 @@ self.addEventListener('message', (event) =>
 							else {
 								throw new Error("bad response status");
 							}
-						}).catch((error) => {
-							doneCount++;
-							console.log('[' + doneCount + '] Caching Error, reqUrl: ' + reqUrl);
-							console.log(error);
-
+						}).catch((error) => 
+						{
 							if ( error.name === 'AbortError' )
 							{
-								var returnMsgStr = JSON.stringify({ type: 'jobFiling', aborted: true });
-								event.source.postMessage(returnMsgStr);	
+								//var returnMsgStr = JSON.stringify({ type: 'jobFiling', aborted: true, options: options });
+								//event.source.postMessage(returnMsgStr);	
 							}
 							else
-							{							
+							{						
+								doneCount++;
+								console.log('[' + doneCount + '] Caching Error, reqUrl: ' + reqUrl);
+								console.log(error);
+	
 								var returnMsgStr = JSON.stringify({ type: 'jobFiling', error: true, process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
 								event.source.postMessage(returnMsgStr);
 							}
 						});
-
-						// cache.add(reqUrl).then(() => {
-
 					});
 				}
 			}
