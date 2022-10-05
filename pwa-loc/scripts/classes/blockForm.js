@@ -239,7 +239,10 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 				MsgManager.msgAreaShow('field "' + fieldDef.id + '" config controlType not proper.', 'ERROR');
 			}
 
-			if (divInputFieldTag) {
+			if (divInputFieldTag) 
+			{
+				if ( fieldDef.tagAttributes ) me.addTagAtrributes( divInputFieldTag, fieldDef.tagAttributes );
+
 				var entryTag = divInputFieldTag.find('.dataValue');
 
 				if (divInputFieldTag !== undefined && entryTag.length > 0) // LABEL don't have "dataValue" clazz
@@ -273,6 +276,19 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 		return divInputFieldTag;
 	};
 
+	me.addTagAtrributes = function( divInputFieldTag, tagAttributes )
+	{
+		if ( tagAttributes && Util.isTypeObject( tagAttributes ) )
+		{
+			for( var prop in tagAttributes )
+			{
+				if ( [ 'id', 'name', 'type', 'class' ].indexOf( prop ) === -1 )
+				{
+					divInputFieldTag.attr( prop, tagAttributes[prop] );
+				}
+			};
+		}
+	};
 
 	me.createScanQR = function (divInputFieldTag, entryTag) {
 		var QRiconTag = $('<img src="images/qr.svg" class="qrButton" >');
@@ -1642,20 +1658,29 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 		//   'form' tag is right below 'formDivSecTag' always.
 		var entryTags = formTag.find('select[name="' + tagId + '"]');
 
-		if (entryTags.length > 0) {
-			entryTags.each(function () {
+		// 'INFO.form' to provide on evaluation - 'evalActions'
+		InfoDataManager.setINFOdata('form', formTag );
+		InfoDataManager.setINFOdata('formTag', formTag );
+
+		if (entryTags.length > 0) 
+		{
+			entryTags.each(function () 
+			{
 				var entryTag = $(this);
 				var options = entryTag.attr('options');
 
-				if (options) {
+				if (options) 
+				{
 					// Get and resolve options
 					var optionList = FormUtil.getObjFromDefinition(options, ConfigManager.getConfigJson().definitionOptions);
 
-					if (optionList && Util.isTypeArray(optionList)) {
+					if (optionList && Util.isTypeArray(optionList)) 
+					{
 						var preValue = entryTag.val();
 
-						// limitCases arry filter...
-						var optionListNew = me.filterOptionsByLimitCases(optionList, formTag);
+						// limitCases & evalActions filter...
+						var optionListNew = me.filterOptionsByLimitCases( optionList, formTag );
+						optionListNew = me.filterOptionsByEvalActions( optionListNew, formTag );
 
 						Util.decodeURI_ItemList(optionListNew, 'defaultName');  // <-- why this?  	
 
@@ -1672,6 +1697,80 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 		}
 	};
 
+	// ----------------------------
+
+	// NEW: Option Filer <-- But only works on rendering...  When field values are changed, does this 
+	//		TODO: get called?
+	me.filterOptionsByEvalActions = function (optionList, formTag) 
+	{
+		var newOptionList = [];
+
+		optionList.forEach(optionObj => 
+		{
+			try 
+			{
+				if (optionObj.evalActions) 
+				{	
+					var showOptionCase = false;
+
+					for (var i = 0; i < optionObj.evalActions.length; i++) 
+					{						
+						var evalAction = optionObj.evalActions[i];
+						var evalActionDef = FormUtil.getObjFromDefinition(evalAction, ConfigManager.getConfigJson().definitionEvalActions);
+
+						var showCase = me.checkOption_evalAction( evalActionDef, formTag );
+
+						if (showCase) 
+						{
+							showOptionCase = true;
+							break;
+						}
+					}
+
+					if (showOptionCase) newOptionList.push(optionObj);
+				}
+				else {
+					newOptionList.push(optionObj);
+				}
+			}
+			catch (errMsg) {
+				console.log('ERROR in BlockForm.filterOptionsByLimitCases(), errMsg: ' + errMsg);
+			}
+		});
+
+		return newOptionList;
+	};
+	
+	me.checkOption_evalAction = function (evalAction, formTag) 
+	{
+		var passCase = true;
+
+		try 
+		{
+			if (evalAction && ConfigManager.checkByCountryFilter(evalAction.countryFilter)) 
+			{
+				if ( evalAction.optionShowHide )
+				{
+					// Handle array into string joining
+					var evalConditionStr = Util.getEvalStr(evalAction.optionShowHide);
+
+					if (evalConditionStr) 
+					{
+						var form = formTag; 						
+						var evalVal = eval(evalConditionStr);
+						if ( evalVal === false ) passCase = false;
+					}
+				}
+			}
+		}
+		catch (errMsg) {
+			console.log('ERROR in BlockForm.checkOption_evalAction, ' + errMsg);
+		}
+
+		return passCase;			
+	};
+
+	// ------------------------
 
 	me.filterOptionsByLimitCases = function (optionList, formTag) {
 		var newOptionList = [];
@@ -1768,7 +1867,7 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 		}
 
 		return result;
-	}
+	};
 
 
 	me.conditionVarIdToVal = function (evalCondition, tagVal, formDivSecTag, formFull_IdList) {

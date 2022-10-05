@@ -87,7 +87,7 @@ function ClientCardDetail(clientId) {
 		var clientProfileBlockId = ConfigManager.getClientDef().clientProfileBlock;  // Get client Profile Block defition from config.
 		sheetFullTag.find('.tab_fs li[rel=tab_clientDetails]').click(function () {
 			me.clearTimeout_1stTabClick();
-			clientDetailsTabTag.html('');
+			clientDetailsTabTag.html('').show();
 
 			var passedData = me.getPassedData_FromClientDetail(clientId);
 			FormUtil.renderBlockByBlockId(clientProfileBlockId, SessionManager.cwsRenderObj, clientDetailsTabTag, passedData);
@@ -99,11 +99,14 @@ function ClientCardDetail(clientId) {
 		// #2. Client Activities
 		var activityTabBodyDivTag = sheetFullTag.find('[tabButtonId=tab_clientActivities]');
 		sheetFullTag.find('.tab_fs li[rel=tab_clientActivities]').click(function () {
+
+			clientDetailsTabTag.hide();  // Somehow, clientDetails page gets called with some delay..
+
 			var activityTabTag = $(this);
 
 			me.clearTimeout_1stTabClick();
 
-			activityTabBodyDivTag.html('<div class="activityList tabContentList"></div>');
+			activityTabBodyDivTag.html('<div class="activityList tabContentList"></div>').show();
 			var activityListDivTag = activityTabBodyDivTag.find('.activityList');
 
 			var clientJson = ClientDataManager.getClientById(clientId); // for changed client data?
@@ -226,7 +229,9 @@ function ClientCardDetail(clientId) {
 			// But wants to not display the selection dropdown when size is mobile..        
 			defaultTab.attr('openingClick', 'Y').click();
 
-			me.timedOut1stTabOpen = setTimeout(function () { defaultTab.attr('openingClick', ''); }, 400);   // Cancel this if other click is applied..
+			me.timedOut1stTabOpen = setTimeout( function () { 
+				defaultTab.attr('openingClick', ''); 
+			}, 400);   // Cancel this if other click is applied..
 		}
 	};
 
