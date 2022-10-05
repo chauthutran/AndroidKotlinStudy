@@ -1109,71 +1109,82 @@ JobAidCaching.jobFilingUpdate = async function (msgData)
 	// msgData: { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options }    
 	var prc = msgData.process;
 	var error = msgData.error;
+	var aborted = msgData.aborted;
 	var isDownloaded = ( error ) ? false: true;
+	var projDir = ( msgData.options.projDir ) ? msgData.options.projDir : '';
 
-	if ( error )
+	if ( aborted )
 	{
-		var fileUrl = ( prc && prc.name ) ? prc.name: '';
-		MsgManager.msgAreaShowErr( 'Failed in file download: ' + fileUrl );
+		MsgManager.msgAreaShowErr( 'Aborted the download: ' + projDir, undefined, 5000 );
+
+		// TODO: Should update the status of item.  without making status change?
 	}
-
-	var projDir = msgData.options.projDir;
-	var downloadOption = msgData.options.downloadOption;	
-	var projCardTag = JobAidPage.getProjCardTag(projDir); // $( 'div.card[projDir=' + msgData.options.projDir + ']' );
-
-
-	// Set auto Retry for this processing
-	if ( JobAidPage.autoRetry && JobAidPage.autoRetry > JobAidPage.autoRetry_MinTimeOut )
+	else
 	{
-		var processKey = projDir + '_' + downloadOption;
-
-		// Remove previous timeout set..
-		if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) clearTimeout( JobAidPage.autoRetryTimeOutIDs[processKey] );
-
-		if ( prc.total && prc.curr && prc.curr < prc.total ) 
+		// NEW: On error, show the message, but still process count, since we like to progress/finish the download even on 'error'.
+		if ( error )
 		{
-			JobAidPage.autoRetryTimeOutIDs[processKey] = setTimeout( function() { JobAidCaching.triggerReTry(projDir, downloadOption); }, JobAidPage.autoRetry * 1000 );
+			var fileUrl = ( prc && prc.name ) ? prc.name: '';
+			MsgManager.msgAreaShowErr( 'Failed in file download: ' + fileUrl, undefined, 10000 );
+		}
+		
+		var downloadOption = msgData.options.downloadOption;	
+		var projCardTag = JobAidPage.getProjCardTag(projDir); // $( 'div.card[projDir=' + msgData.options.projDir + ']' );
+
+
+		// Set auto Retry for this processing
+		if ( JobAidPage.autoRetry && JobAidPage.autoRetry > JobAidPage.autoRetry_MinTimeOut )
+		{
+			var processKey = projDir + '_' + downloadOption;
+
+			// Remove previous timeout set..
+			if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) clearTimeout( JobAidPage.autoRetryTimeOutIDs[processKey] );
+
+			if ( prc.total && prc.curr && prc.curr < prc.total ) 
+			{
+				JobAidPage.autoRetryTimeOutIDs[processKey] = setTimeout( function() { JobAidCaching.triggerReTry(projDir, downloadOption); }, JobAidPage.autoRetry * 1000 );
+			}
+
+			// TODO: Later, make the limit of how many autoRetries are permitted..
 		}
 
-		// TODO: Later, make the limit of how many autoRetries are permitted..
-	}
 
-
-	if (projCardTag.length > 0) 
-	{
-		var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
-
-		if (prc.name && prc.total && prc.total > 0 && prc.curr) 
+		if (projCardTag.length > 0) 
 		{
-			var url = prc.name;
+			var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
 
-			projCardTag.css('opacity', 1);
-
-			// ** Update the downloaded status on storage..  <-- Mark this 
-			if ( isDownloaded ) JobAidCaching.projProcessDataUpdate(projDir, url, { date: new Date().toISOString(), downloaded: true } );
-
-
-			// Still in process VS 'Finished'
-			if (prc.curr < prc.total) 
+			if (prc.name && prc.total && prc.total > 0 && prc.curr) 
 			{
-				spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr}/${prc.total} [${url.split('.').at(-1)}]`);
-				if (prc.curr > 5) projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
-			}
-			else 
-			{
-				// === DOWNLOAD 'FINISH' OPERATION STEPS ===
-				// #2. AVAILABILITY TEMP SET
-				ConnManagerNew.tempDisableAvailableCheck = false; 
+				var url = prc.name;
+
+				projCardTag.css('opacity', 1);
+
+				// ** Update the downloaded status on storage..  <-- Mark this 
+				if ( isDownloaded ) JobAidCaching.projProcessDataUpdate(projDir, url, { date: new Date().toISOString(), downloaded: true } );
 
 
-				spanDownloadStatusTag.html('<strong>Download completed!</strong>');
-				projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
+				// Still in process VS 'Finished'
+				if (prc.curr < prc.total) 
+				{
+					spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr}/${prc.total} [${url.split('.').at(-1)}]`);
+					if (prc.curr > 5) projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
+				}
+				else 
+				{
+					// === DOWNLOAD 'FINISH' OPERATION STEPS ===
+					// #2. AVAILABILITY TEMP SET
+					ConnManagerNew.tempDisableAvailableCheck = false; 
 
-				await JobAidManifest.setManifest_InStrg(projDir, downloadOption);
 
-				
-				// Move the item accordingly
-				JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
+					spanDownloadStatusTag.html('<strong>Download completed!</strong>');
+					projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
+
+					await JobAidManifest.setManifest_InStrg(projDir, downloadOption);
+
+					
+					// Move the item accordingly
+					JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
+				}
 			}
 		}
 	}
@@ -1207,6 +1218,16 @@ JobAidCaching.projProcessDataUpdate = function (projDir, url, updateJson)
 	catch (errMsg) {
 		console.log('ERROR in JobAidCaching.projProcessDataUpdate, ' + errMsg);
 	}
+};
+
+
+JobAidCaching.cancelProjCaching = function ( projDir ) 
+{
+	SwManager.swRegObj.active.postMessage({
+		'type': JobAidHelper.jobAid_CACHE_URLS2 + '_CANCEL'
+		, 'cacheName': JobAidHelper.jobAid_jobTest2
+		, 'options': { projDir: projDir }
+	});
 };
 
 // ===================================================
