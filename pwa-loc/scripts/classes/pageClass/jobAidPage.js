@@ -324,10 +324,13 @@ JobAidPage.updateItem_ItemSection = function (projDir, statusType)
 		JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
 		JobAidPage.divDownloadedPacksTag.find( 'div.emptyList' ).hide( 'fast' ); //.remove();
 
+		// If 'somehow', the downloaded has this projDir, remove it.
+
+
 		var itemTag = $(JobAidPage.templateItem).hide();
 		JobAidItem.itemPopulate(availableItem, itemTag, 'downloaded');
 		JobAidPage.divDownloadedPacksTag.append(itemTag);
-		itemTag.show( 'fast' );
+		itemTag.show( 'fast' );		
 
 		JobAidPage.downloadedManifestList.push( availableItem );		
 	}
@@ -597,13 +600,15 @@ JobAidManifest.getAvailable_ManifestJobAidData = function( list )
 // Called when download is finished.
 //  - New Download Case --> Simply save the manifest info?  + additional calculate info
 //  - On media download or Updates cases --> 
-JobAidManifest.setManifest_InStrg = async function(projDir, downloadOption)
+JobAidManifest.setManifest_InStrg = function(projDir, downloadOption)
 {
+	var setSuccess = false;
+
 	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
 	if ( !projStatus.manifestJson ) projStatus.manifestJson = {};
 
 	// Manifest set or update - in Storage..
-	if ( !projStatus.manifestJsonTemp ) alert( 'ERROR, manifestJsonTemp is not available for this proj, ' + projDir );
+	if ( !projStatus.manifestJsonTemp ) MsgManager.msgAreaShowErr( 'ERROR, no manifestJsonTemp to move: ' + projDir );
 	else
 	{
 		try
@@ -643,11 +648,14 @@ JobAidManifest.setManifest_InStrg = async function(projDir, downloadOption)
 			var mediaDownloadCase = ( !downloadOption || downloadOption.indexOf( 'all' ) === 0 || downloadOption.indexOf( 'mediaOnly' ) === 0 ) ? true: false;	
 			if ( mediaDownloadCase ) projStatus.mediaDownloaded = true;  // Flag proj if they have media on proj downloaded or not.
 
+			setSuccess = true;
 		}
 		catch( errMsg ) {  console.log( 'ERROR in JobAidManifest.setManifest_InStrg, ' + errMsg );  }
 
 		PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
 	}
+
+	return setSuccess;
 };
 
 
@@ -800,9 +808,15 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 
 		var newFileList_Override = ( reAttemptCaseType ) ? JobAidItem.getReAttemptList( projDir, reAttemptCaseType ): undefined;
 
-		// Submit for file listing/caching
-		JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override );
-
+		if ( newFileList_Override && newFileList_Override.length === 0 ) {
+			MsgManager.msgAreaShow( 'Download Retry Cancelled - empty retry list.' );
+			JobAidItem.itemRepopulate( projDir );
+		}
+		else
+		{
+			// Submit for file listing/caching
+			JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override );			
+		}
 
 		// At 'retry', repopulate the item, for updating the downloaded count - this is done on 'runTimeCache_JobAid'
 		//if ( option.retry ) JobAidItem.itemRepopulate( projDir );
@@ -1119,7 +1133,7 @@ JobAidItem.matchInServerList = function (item, serverManifestsData)
 // ======================================================
 // ==== JobAidCaching Related =============
 
-JobAidCaching.jobFilingUpdate = async function (msgData) 
+JobAidCaching.jobFilingUpdate = function (msgData) 
 {
 	// msgData: { type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options }    
 	var prc = msgData.process;
@@ -1147,22 +1161,15 @@ JobAidCaching.jobFilingUpdate = async function (msgData)
 		
 		var downloadOption = msgData.options.downloadOption;	
 		var projCardTag = JobAidPage.getProjCardTag(projDir); // $( 'div.card[projDir=' + msgData.options.projDir + ']' );
-
+		var processKey = projDir + '_' + downloadOption;
 
 		// Set auto Retry for this processing
 		if ( JobAidPage.autoRetry && JobAidPage.autoRetry > JobAidPage.autoRetry_MinTimeOut )
 		{
-			var processKey = projDir + '_' + downloadOption;
-
 			// Remove previous timeout set..
-			if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) clearTimeout( JobAidPage.autoRetryTimeOutIDs[processKey] );
+			if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) JobAidCaching.clearAutoRetryByProcessKey( processKey );
 
-			if ( prc.total && prc.curr && prc.curr < prc.total ) 
-			{
-				JobAidPage.autoRetryTimeOutIDs[processKey] = setTimeout( function() { JobAidCaching.triggerReTry(projDir, downloadOption); }, JobAidPage.autoRetry * 1000 );
-			}
-
-			// TODO: Later, make the limit of how many autoRetries are permitted..
+			if ( prc.total && prc.curr && prc.curr < prc.total ) JobAidCaching.setAutoRetryByProcessKey( processKey, projDir, downloadOption );
 		}
 
 
@@ -1196,11 +1203,23 @@ JobAidCaching.jobFilingUpdate = async function (msgData)
 					spanDownloadStatusTag.html('<strong>Download completed!</strong>');
 					projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
 
-					await JobAidManifest.setManifest_InStrg(projDir, downloadOption);
 
+					// NEW - Once the download is finished, remove all?  original & retries?
+					// Remove previous timeout set..
+					if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) JobAidCaching.clearAutoRetryByProcessKey( processKey );
+					JobAidCaching.cancelProjCaching( projDir );	// if retry or other were being processed, clear it out..
 					
-					// Move the item accordingly
-					JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
+
+					// =-------------------------------------------------------
+					// TODO: We need to make sure only one updates are allowed
+					//		- block other updates going in parallel
+					// =-------------------------------------------------------
+
+					if ( JobAidManifest.setManifest_InStrg(projDir, downloadOption) )
+					{
+						// Move the item accordingly
+						JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
+					}					
 				}
 			}
 		}
@@ -1249,21 +1268,64 @@ JobAidCaching.cancelProjCaching = function ( projDir, downloadOption )
 		, 'options': { projDir: projDir }
 	});
 
-	// 2. Cancel the autoRetry timeout  - // var processKey = projDir + '_' + Util.getStr(downloadOption); // if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) clearTimeout( JobAidPage.autoRetryTimeOutIDs[processKey] );
 	// Cancel all type of download for this projDir..
-	for( var prop in JobAidPage.autoRetryTimeOutIDs )
-	{
-		if ( prop.indexOf( projDir + '_' ) === 0 )
-		{
-			clearTimeout( JobAidPage.autoRetryTimeOutIDs[prop] );
-		}
-	}
+	JobAidCaching.clearAutoRetryByProj( projDir );
 
 	// 3. AVAILABILITY TEMP SET
 	ConnManagerNew.tempDisableAvailableCheck = false; 
 
 	// 4. Repopulate the item - with a bit of timeout delay?
 	setTimeout( function() {  JobAidItem.itemRepopulate( projDir );  }, 400 );		
+};
+
+JobAidCaching.clearAutoRetryByProj = function ( projDir ) 
+{
+	for( var prop in JobAidPage.autoRetryTimeOutIDs )
+	{
+		if ( prop.indexOf( projDir + '_' ) === 0 )
+		{
+			try
+			{
+				clearTimeout( JobAidPage.autoRetryTimeOutIDs[prop] );
+			}
+			catch( errMsg ) { console.log( 'ERROR in JobAidCaching.clearAutoRetryByProj, ' + errMsg ); }
+		}
+	}
+};
+
+JobAidCaching.clearAutoRetryAll = function () 
+{
+	for ( var prop in JobAidPage.autoRetryTimeOutIDs ) 
+	{  
+		try
+		{
+			clearTimeout( JobAidPage.autoRetryTimeOutIDs[prop] );  
+		}
+		catch( errMsg ) { console.log( 'ERROR in JobAidCaching.clearAutoRetryAll, ' + errMsg ); }
+	}
+};
+
+
+JobAidCaching.clearAutoRetryByProcessKey = function ( processKey ) 
+{
+	if ( processKey )
+	{
+		try
+		{
+			clearTimeout( JobAidPage.autoRetryTimeOutIDs[processKey] );
+		}
+		catch( errMsg ) { console.log( 'ERROR in JobAidCaching.clearAutoRetryByProcessKey, ' + errMsg ); }
+	}
+};
+
+
+JobAidCaching.setAutoRetryByProcessKey = function ( processKey, projDir, downloadOption ) 
+{
+	try
+	{
+		JobAidPage.autoRetryTimeOutIDs[processKey] = setTimeout( function() { JobAidCaching.triggerReTry(projDir, downloadOption); }, JobAidPage.autoRetry * 1000 );
+	}
+	catch( errMsg ) { console.log( 'ERROR in JobAidCaching.setAutoRetryByProcessKey, ' + errMsg ); }
 };
 
 // ===================================================

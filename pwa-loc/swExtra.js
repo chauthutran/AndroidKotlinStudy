@@ -26,8 +26,6 @@ self.addEventListener('message', (event) =>
 
 			if (event.data.type === 'CACHE_URLS2_CANCEL' ) 
 			{
-				console.log( 'service worker CACHE_URLS2_CANCEL ' );
-
 				// Cancel the request operations
 				if ( projDir && SwHelper.fetchControllers[projDir] ) 
 				{
@@ -37,7 +35,11 @@ self.addEventListener('message', (event) =>
 					//event.source.postMessage( JSON.stringify({ type: 'jobFiling', aborted: true, options: options }) );
 					delete SwHelper.fetchControllers[projDir];
 					//					setTimeout( function() {  }, 400 );
-				}				
+				}
+				else
+				{
+					console.log( 'service worker - NOTHING TO CANCEL ' );
+				}
 			}
 			else if (event.data.type === 'CACHE_URLS2' && event.data.payload) 
 			{
