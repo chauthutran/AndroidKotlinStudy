@@ -1,22 +1,16 @@
 
 function ReportPage() { };
 
-
-
 // -----------------------------------------------------------
 
 ReportPage.options = {
 	'title': 'Report',
 	'term': 'form_title_report',
 	'cssClasses': ['divReportPage'],
-	'zIndex': 1600,
-	'onBackClick': function() {
-		ConnManagerNew.tempDisableAvailableCheck = false;
-		console.log( 'tempDisableAvailableCheck set to false - in case the download never finished' );
-	}
+	'zIndex': 1600
 };
 
-ReportPage.sheetFullTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, ReportPage.options);  // .options.preCall
+ReportPage.sheetFullTag; // = FormUtil.sheetFullSetup(Templates.sheetFullFrame, ReportPage.options);  // .options.preCall
 ReportPage.contentBodyTag;
 ReportPage.dataList = [];
 

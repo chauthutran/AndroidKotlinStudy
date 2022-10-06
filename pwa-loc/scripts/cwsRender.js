@@ -217,7 +217,7 @@ function cwsRender()
 			{ 
 				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
 
-				if ( ConfigManager.getJobAidSetting().newDesign ) ReportPage.render();
+				ReportPage.render();
 			}
 			else if ( areaId === Menu.menuJson_HNQIS_RDQA.id ) {  }
 			else if ( areaId === 'aboutPage') me.aboutApp.render();
