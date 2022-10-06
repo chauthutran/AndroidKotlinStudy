@@ -18,7 +18,7 @@ ReportPage.options = {
 
 ReportPage.sheetFullTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, ReportPage.options);  // .options.preCall
 ReportPage.contentBodyTag;
-
+ReportPage.dataList = [];
 
 // -----------------------------------------------------------
 
@@ -29,145 +29,241 @@ ReportPage.render = function()
 
     
     ReportPage.contentBodyTag.append(ReportPage.templateReport);
+    ReportPage.setupEvents();
+
+    // Populate data in report
     ReportPage.populateData();
+}
+
+ReportPage.setupEvents = function()
+{
+    // For INPUT Date fields
+    var fromDateTag = ReportPage.contentBodyTag.find(".fromDate");
+    var toDateTag = ReportPage.contentBodyTag.find(".toDate");
+
+    
+    // Populate "today" date
+    var today = Util.dateStr("D");
+    ReportPage.contentBodyTag.find(".fromDate").val(today);
+    ReportPage.contentBodyTag.find(".toDate").val(today);
+
+
+    // Set up Events
+    ReportPage.contentBodyTag.find(".customFromDateBtn").off('click').click(function (e) {
+        FormUtil.mdDatePicker2(e, fromDateTag, 'YYYY-MM-DD');
+    });
+
+    ReportPage.contentBodyTag.find(".customEndDateBtn").off('click').click(function (e) {
+        FormUtil.mdDatePicker2(e, toDateTag, 'YYYY-MM-DD');
+        ReportPage.checkValidDateRange();
+    });
+
+    ReportPage.contentBodyTag.find(".btnCustomPeriodRun").off('click').click(function(){
+        if( ReportPage.checkValidDateRange() )
+        {
+            ReportPage.populateData();
+        }
+    });
+}
+
+ReportPage.checkValidDateRange = function()
+{
+    var fromDate = ReportPage.contentBodyTag.find(".fromDate").val();
+    var toDate = ReportPage.contentBodyTag.find(".toDate").val();
+
+    const valid = ( fromDate <= toDate ) ? true : false;
+    if( !valid )
+    {
+        alert("The date range is invalid. Please choose again.");
+    } 
+
+    return valid;
 }
 
 ReportPage.populateData = function()
 {
-    let reportConfig = ConfigManager.getConfigJson().definitionReportColumns;
-    if( reportConfig != undefined )
-    {
-        reportConfig = reportConfig.report;
-        var evalStr = Util.getEvalStr( reportConfig.eval );
+    var loadingTag = ReportPage.contentBodyTag.find(".loading");
+    var reportTag = ReportPage.contentBodyTag.find(".report-content");
 
-        // Populate 'tableData'
-        var tableData = reportConfig.tableData;
-        if( tableData )
+    loadingTag.show();
+    reportTag.hide("fast");
+
+    setTimeout(function() {
+        let reportConfig = ConfigManager.getConfigJson().definitionReportColumns;
+        if( reportConfig != undefined )
         {
-            const tableIds = Object.keys(tableData).sort();
-            
-            // Resolve table data
-            let tableRowData = {};
-            for( var k=0; k<tableIds.length; k++ )
+            reportConfig = reportConfig.report;
+    
+            // Populate 'tableData'
+            var tableData = reportConfig.tableData;
+            if( tableData )
             {
-                const tableId = tableIds[k];
-                var tableConfig = tableData[tableId];
+                const tableIds = Object.keys(tableData).sort();
                 
-                var listData = eval( Util.getEvalStr( tableConfig.list ) );
-                var colDataConfig = tableConfig.colData;
-                colDataConfig = ( colDataConfig == undefined ) ? [] : colDataConfig;
-                var colNo = Object.keys( colDataConfig ).length;
-
-                // Get column values
-                var data = [];
-                for( var i=0; i< listData.length; i++ )
-                {
-                    data[i] = [];
-                    for( var j=0; j<colNo; j++ )
-                    {
-                        try { 
-                            const colIdx = j + 1;
-                            var colConfig = colDataConfig["col" + colIdx];
-                            if( colConfig )
-                            {
-                                var value = eval( evalStr + " var item = listData[i]; " + Util.getEvalStr( colConfig ) ); 
-                                data[i][j] = value;
-                            }
-                            else
-                            {
-                                data[i][j] = "";
-                            }  
-                        }
-                        catch( errMsg ) { 
-                            data[i][j] = "*** ERROR";
-                            console.log( 'ReportPage col' + j + ' ERROR, ' + errMsg ); 
-                        }	
-                    }
-                }
-
-                tableRowData[tableId] = {
-                    data: data,
-                    maxRow: tableConfig.maxRow,
-                    rowIdx: 0,
-                    colNo: colNo
-                }
-            }
-
-            // Populate data
-            while( ReportPage.checkToStopPopulateData( tableRowData ) )
-            {
-                for( var k=0; k<tableIds.length; k++ )
-                {
-                    const tableId = tableIds[k];
-                    const listData = tableRowData[tableId];
-                    const maxRow = listData.maxRow;
-                    const data = listData.data;
-                    const rowIdx = listData.rowIdx;
-
-                    // Create the content of a page for the table
-                    var contentTag = $("<div style='page-break-after:always;padding-botton: 20px;'>" + ReportPage[tableId + "_template"] + "</div>" );
-                    // ReportPage.contentBodyTag.find(`#${tableId}_content`).append( contentTag );
-                    ReportPage.contentBodyTag.find(".report-content").append( contentTag );
-
-                    // Populate Cards
-                    ReportPage.populateCards( reportConfig, contentTag );
+                // Resolve table data
+                const tableRowData = ReportPage.resolveTableData( reportConfig, tableData );
+                ReportPage.populateHTMLReport( tableIds, tableRowData );
+                ReportPage.populatePrintReport( tableIds, tableRowData );
                 
-                    // Get table tbody for appending data list
-                    let tableTag = contentTag.find("#" + tableId).find("tbody");
-                    
-                    let endRow = rowIdx + maxRow;
-                    endRow = ( endRow > data.length ) ? data.length : endRow;
-                    for( var i=rowIdx; i<endRow; i++ )
-                    {
-                        var rowTag = $("<tr></tr>");
-                        var colData = data[rowIdx];
-                        for( var j=0; j<colData.length; j++ )
-                        {
-                            rowTag.append( `<td>${colData[j]}</td>` );
-                        }
-
-                        tableTag.append( rowTag );
-                    }
-
-                    if( endRow == data.length && maxRow > ( endRow - rowIdx ) )
-                    {
-                        for( var i=(endRow - rowIdx); i<maxRow; i++ )
-                        {
-                            var rowTag = $("<tr></tr>");
-                            for( var j=0; j<listData.colNo; j++ )
-                            {
-                                rowTag.append("<td></td>");
-                            }
-                            tableTag.append( rowTag );
-                        }
-                    }
-
-                    // Update the current rowIdx
-                    tableRowData[tableId].rowIdx = endRow;
-                }
+                // Populate Cards
+                ReportPage.populateCards( reportConfig, ReportPage.contentBodyTag );
+    
+                // Populate report Month and Year 
+                ReportPage.populateReportDate();
             }
         }
-    }
+    
+        loadingTag.hide();
+        reportTag.show("fast");
+    }, 300);
+
+    
 }
 
-ReportPage.checkToStopPopulateData = function( tableRowData )
+ReportPage.resolveTableData = function( reportConfig, tableData )
 {
-    var flag = false;
-    const tableIds = Object.keys( tableRowData );
-    for( var i=0; i<tableIds.length; i++ )
+    let tableRowData = {};
+            
+    const fromDate = ReportPage.contentBodyTag.find(".fromDate").val(); 
+    const toDate = ReportPage.contentBodyTag.find(".toDate").val(); 
+
+    // Resolve table data  
+    var evalStr = Util.getEvalStr( reportConfig.eval );
+    const tableIds = Object.keys(tableData).sort()
+    for( var k=0; k<tableIds.length; k++ )
     {
-        const tableId = tableIds[i];
-        const rowIdx = tableRowData[tableId].rowIdx;
-        const rowLeng = tableRowData[tableId].data.length;
-        if( rowIdx < rowLeng )
+        const tableId = tableIds[k];
+        var tableConfig = tableData[tableId];
+        
+        var listData = eval( Util.getEvalStr( tableConfig.list ) );
+        var colDataConfig = tableConfig.colData;
+        colDataConfig = ( colDataConfig == undefined ) ? [] : colDataConfig;
+        var colNo = Object.keys( colDataConfig ).length;
+
+        // Get column values
+        var data = [];
+        for( var i=0; i< listData.length; i++ )
         {
-            flag = true;
-            break;
+            var dateFilterVal = eval( evalStr + " var item = listData[i]; " + Util.getEvalStr(reportConfig.dateFilter) );
+            if( dateFilterVal >= fromDate && dateFilterVal <= toDate )
+            {
+
+                data[i] = [];
+                for( var j=0; j<colNo; j++ )
+                {
+                    try { 
+                        const colIdx = j + 1;
+                        var colConfig = colDataConfig["col" + colIdx];
+                        if( colConfig )
+                        {
+                            var value = eval( evalStr + " var item = listData[i]; " + Util.getEvalStr( colConfig ) ); 
+                            data[i][j] = value;
+                        }
+                        else
+                        {
+                            data[i][j] = "";
+                        }  
+                    }
+                    catch( errMsg ) { 
+                        data[i][j] = "*** ERROR";
+                        console.log( 'ReportPage col' + j + ' ERROR, ' + errMsg ); 
+                    }	
+                }
+            }
+
+            tableRowData[tableId] = {
+                data: data,
+                maxRow: tableConfig.maxRow,
+                rowIdx: 0,
+                colNo: colNo
+            }
         }
     }
 
-    return flag;
+    return tableRowData;
+}
 
+ReportPage.populateHTMLReport = function( tableIds, tableRowData )
+{
+    for( var k=0; k<tableIds.length; k++ )
+    {
+        const tableId = tableIds[k];
+        const data = tableRowData[tableId].data;
+
+        var contentTag = $("<div style='padding-botton: 20px;'>" + ReportPage[tableId + "_template"] + "</div>" );
+        ReportPage.contentBodyTag.find(`[name="${tableId}_content"]`).html("");
+        ReportPage.contentBodyTag.find(`[name="${tableId}_content"]`).append( contentTag );
+
+        // Get table tbody for appending data list
+        let tableTag = contentTag.find(`[name="${tableId}"`).find("tbody");
+        for( var i=0; i<data.length; i++ )
+        {
+            var rowTag = $("<tr></tr>");
+            var colData = data[i];
+            for( var j=0; j<colData.length; j++ )
+            {
+                rowTag.append( `<td>${colData[j]}</td>` );
+            }
+
+            tableTag.append( rowTag );
+        }
+    }
+    
+}
+
+ReportPage.populatePrintReport = function( tableIds, tableRowData )
+{
+    ReportPage.contentBodyTag.find(".for-print").html("");
+
+    // Populate data
+    do
+    {
+        for( var k=0; k<tableIds.length; k++ )
+        {
+            const tableId = tableIds[k];
+            const listData = tableRowData[tableId];
+            const maxRow = listData.maxRow;
+            const data = listData.data;
+            const rowIdx = listData.rowIdx;
+
+            // Create the content of a page for the table
+            var contentTag = $("<div style='page-break-after:always;padding-botton: 20px;'>" + ReportPage[tableId + "_template"] + "</div>" );
+            ReportPage.contentBodyTag.find(".for-print").append( contentTag );
+
+            // Get table tbody for appending data list
+            let tableTag = contentTag.find(`[name="${tableId}"`).find("tbody");
+            
+            let endRow = rowIdx + maxRow;
+            endRow = ( endRow > data.length ) ? data.length : endRow;
+            for( var i=rowIdx; i<endRow; i++ )
+            {
+                var rowTag = $("<tr></tr>");
+                var colData = data[rowIdx];
+                for( var j=0; j<colData.length; j++ )
+                {
+                    rowTag.append( `<td>${colData[j]}</td>` );
+                }
+
+                tableTag.append( rowTag );
+            }
+
+            if( endRow == data.length && maxRow > ( endRow - rowIdx ) )
+            {
+                for( var i=(endRow - rowIdx); i<maxRow; i++ )
+                {
+                    var rowTag = $("<tr></tr>");
+                    for( var j=0; j<listData.colNo; j++ )
+                    {
+                        rowTag.append("<td></td>");
+                    }
+                    tableTag.append( rowTag );
+                }
+            }
+
+            // Update the current rowIdx
+            tableRowData[tableId].rowIdx = endRow;
+        }
+    } while( ReportPage.checkToStopPopulateData( tableRowData ) )
 }
 
 ReportPage.populateCards = function( reportConfig, contentTag )
@@ -183,7 +279,7 @@ ReportPage.populateCards = function( reportConfig, contentTag )
             const cardId = cardIds[k];
             var cardConfig = cardData[cardId];
             
-            var cardTag = contentTag.find("#" + cardId);
+            var cardTag = contentTag.find(`[name="${cardId}"`);
             if( cardTag.length > 0 )
             {
                 cardTag.find(".title").html(cardConfig.title);
@@ -240,10 +336,53 @@ ReportPage.populateCards = function( reportConfig, contentTag )
     }
 }
 
+ReportPage.populateReportDate = function()
+{
+    // ReportPage.contentBodyTag.find(".month").html();
+    // ReportPage.contentBodyTag.find(".year").html();
+}
+
+
+ReportPage.checkToStopPopulateData = function( tableRowData )
+{
+    var flag = false;
+    const tableIds = Object.keys( tableRowData );
+    for( var i=0; i<tableIds.length; i++ )
+    {
+        const tableId = tableIds[i];
+        const rowIdx = tableRowData[tableId].rowIdx;
+        const rowLeng = tableRowData[tableId].data.length;
+        if( rowIdx < rowLeng )
+        {
+            flag = true;
+            break;
+        }
+    }
+
+    return flag;
+
+}
 
 // -----------------------------------------------------------
+// <div class="no-print report-filter-container"> 
+//     <span>From</span> <input class="report-filter-field fromDate"> 
+//     <span style="margin-left: 10px;">To</span> <input class="report-filter-field toDate">
+// </div>
 
 ReportPage.templateReport = `
+<div class="no-print report-filter-container" >
+    <span>From</span>
+    <input class="report-filter-field fromDate" placeholder="YYYY-MM-DD" readonly />
+    <button class="customFromDateBtn dateButton2 mouseDown"><img src="images/i_date.svg" class="imgCalendarInput"></button>
+    
+    <span style="margin-left: 10px;">To</span>
+    <input class="report-filter-field toDate" placeholder="YYYY-MM-DD" readonly />
+    <button class="customEndDateBtn dateButton2 mouseDown"><img src="images/i_date.svg" class="imgCalendarInput"></button>
+    
+    <button class="btnCustomPeriodRun cbtn c_cfb" style="margin-right: 20px;">Run</button>
+</div>
+
+
 <div id="reportPageHeader" style="border-bottom: 1px solid #ddd;  padding: 0px 0px 4px; margin: 0px;">
     <p>Voluntary Medical Male Circumcision (VMMC) Register</p>
 </div>
@@ -256,15 +395,20 @@ ReportPage.templateReport = `
     Página {{page}} de {{pages}}</p>
 </div>
 
+<div style="text-align: center; display: none;" class="loading no-print">
+    <img src="../images/loading_big_black.gif" style=" width: 50px;">
+</div>
+
 <div class="report-content">
-    <div id="tableA_content"> </div>
-    <div id="tableB_content"> </div>
+    <div class="for-print"></div>
+    <div name="tableA_content" class="no-print"> </div>
+    <div name="tableB_content" class="no-print"> </div>
 </div>
 `;
 
 ReportPage.tableA_template = ` 
-<p>1. Month: <span></span> 2. Year: <span></span></p>
-<table id="tableA" style="width: 100%;" border="none" cellpadding="1">
+<p>1. Month: <span class="month"></span> 2. Year: <span class="year"></span></p>
+<table name="tableA" style="width: 100%;" border="none" cellpadding="1">
      <thead>
          <tr>
              <th class="title">
@@ -362,7 +506,7 @@ ReportPage.tableA_template = `
 
  </table>
 
- <div class="card1" id="card1" style="page-break-inside: avoid; width: 25%;">
+ <div class="card1" name="card1" style="page-break-inside: avoid; width: 25%;">
      <div class="title"></div>
      <table cellpadding="2">
          <tbody> </tbody>
@@ -372,8 +516,8 @@ ReportPage.tableA_template = `
 `;
 
 ReportPage.tableB_template = ` 
-<p class="report-header-2" style="width: 100%;">1. Month: <span></span> 2. Year: <span></span></p>
-<table id="tableB" style="width: 100%;" border="none" cellpadding="1">
+<p class="report-header-2" style="width: 100%;">1. Month: <span class="month"></span> 2. Year: <span class="year"></span></p>
+<table name="tableB" style="width: 100%;" border="none" cellpadding="1">
     <thead>
         <tr>
             <th class="title">
@@ -502,18 +646,18 @@ ReportPage.tableB_template = `
 </table>
 
 
-<div class="card2" id="card2" style="page-break-inside: avoid;">
+<div class="card2" name="card2" style="page-break-inside: avoid;">
     <p class="title"></p>
 </div>
-<div class="card3" id="card3" style="page-break-inside: avoid;">
+<div class="card3" name="card3" style="page-break-inside: avoid;">
     <p class="title"></p>
 </div>
-<div class="card4" id="card4" style="page-break-inside: avoid;">
+<div class="card4" name="card4" style="page-break-inside: avoid;">
     <p class="title"></p>
 </div>
-<div class="card5" id="card5" style="page-break-inside: avoid;">
+<div class="card5" name="card5" style="page-break-inside: avoid;">
     <p class="title"></p>
 </div>
-<div class="card6" id="card6" style="page-break-inside: avoid;">
+<div class="card6" name="card6" style="page-break-inside: avoid;">
     <p class="title"></p>
 </div>`;

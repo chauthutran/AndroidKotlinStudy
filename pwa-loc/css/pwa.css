@@ -2988,8 +2988,19 @@ input.nosubmit {
 /* CHAT CSS */
 /* ================================================= */
 
+
+
 /* ================================================= */
 /* ===== REPORT Releated =========================== */
+
+
+.no-print {
+	display: block;
+}
+
+.for-print {
+	display: none;
+}
 
 #reportreportPageHeader {
     height: auto;
@@ -3021,27 +3032,33 @@ input.nosubmit {
     margin-right: 200px;
 }
 
-.report-content #tableA {
+.report-content [name='tableA'] {
     border-collapse: collapse;
     border: 2px solid #000;
 }
 
-.report-content #tableA thead {
+.report-content [name='tableA'] thead {
     background-color: #000;
     color: #fff;
 }
 
-.report-content #tableA thead tr th:nth-child(2n) {
+.report-content [name='tableA'] thead tr th:nth-child(2n) {
     border-left: 1px solid #FFF;
     border-right: 1px solid #FFF;
 }
 
-.report-content #tableA thead tr .title {
+.report-content [name='tableA'] thead tr .title {
     font-size: 12px;
     text-align: center;
 }
+/* 
+.report-content th {
+	top: 0;
+    background-color: #000;
+    border: 2px solid #000;
+} */
 
-.report-content #tableA thead tr .subtitle {
+.report-content [name='tableA'] thead tr .subtitle {
     width: auto;
     height: 90px;
     vertical-align: bottom;
@@ -3049,7 +3066,7 @@ input.nosubmit {
     font-size: 10px;
 }
 
-.report-content #tableA thead tr .subtitle .vertical {
+.report-content [name='tableA'] thead tr .subtitle .vertical {
     display: block;
     margin: auto 0;
     -webkit-transform: rotate(-90deg);
@@ -3058,59 +3075,58 @@ input.nosubmit {
     max-width: 15px;
 }
 
-.report-content #tableA tbody tr {
+.report-content [name='tableA'] tbody tr {
     border: 1px solid;
 }
 
-.report-content #tableA tbody tr td {
+.report-content [name='tableA'] tbody tr td {
     min-width: 20px;
     height: 30px;
     border: 1px solid #000;
     text-align: center;
-	 font-size: 11px;
 }
 
-.report-content #tableA tbody tr th {
+.report-content [name='tableA'] tbody tr th {
     min-width: 20px;
     border: 1px solid #FFF;
 }
 
-.report-content #tableA tbody tr .nvcr {
+.report-content [name='tableA'] tbody tr .nvcr {
     border-right: 1px solid #000;
 }
 
-.report-content #tableA tbody tr .ctyp1 {
+.report-content [name='tableA'] tbody tr .ctyp1 {
     width: 100px;
 }
 
-.report-content #tableB {
+.report-content [name='tableB'] {
     border-collapse: collapse;
     border: 2px solid #000;
 }
 
-.report-content #tableB thead {
+.report-content [name='tableB'] thead {
     background-color: #000;
     color: #fff;
 }
 
-.report-content #tableB thead tr th:nth-child(2n) {
+.report-content [name='tableB'] thead tr th:nth-child(2n) {
     border-left: 1px solid #FFF;
     border-right: 1px solid #FFF;
 }
 
-.report-content #tableB thead tr th .vertical {
+.report-content [name='tableB'] thead tr th .vertical {
     -webkit-transform: rotate(-90deg);
     transform: rotate(-90deg);
     white-space: nowrap;
     margin-top: 150px;
 }
 
-.report-content #tableB thead tr .title {
+.report-content [name='tableB'] thead tr .title {
     font-size: 12px;
     text-align: center;
 }
 
-.report-content #tableB thead tr .subtitle {
+.report-content [name='tableB'] thead tr .subtitle {
     width: auto;
     height: 90px;
     vertical-align: bottom;
@@ -3118,7 +3134,7 @@ input.nosubmit {
     font-size: 10px;
 }
 
-.report-content #tableB thead tr .subtitle .vertical {
+.report-content [name='tableB'] thead tr .subtitle .vertical {
     display: block;
     margin: auto 0;
     -webkit-transform: rotate(-90deg);
@@ -3127,36 +3143,35 @@ input.nosubmit {
     max-width: 15px;
 }
 
-.report-content #tableB thead tr .date {
+.report-content [name='tableB'] thead tr .date {
     min-width: 80px;
 }
 
-.report-content #tableB thead tr .comments {
+.report-content [name='tableB'] thead tr .comments {
     min-width: 200px;
 }
 
-.report-content #tableB tbody tr {
+.report-content [name='tableB'] tbody tr {
     border: 1px solid;
 }
 
-.report-content #tableB tbody tr td {
+.report-content [name='tableB'] tbody tr td {
     min-width: 20px;
     height: 30px;
     border: 1px solid #000;
     text-align: center;
-	 font-size: 11px;
 }
 
-.report-content #tableB tbody tr th {
+.report-content [name='tableB'] tbody tr th {
     min-width: 20px;
     border: 1px solid #FFF;
 }
 
-.report-content #tableB tbody tr .nvcr {
+.report-content [name='tableB'] tbody tr .nvcr {
     border-right: 1px solid #000;
 }
 
-.report-content #tableB tbody tr .ctyp1 {
+.report-content [name='tableB'] tbody tr .ctyp1 {
     width: 100px;
 }
 
@@ -3260,6 +3275,26 @@ input.nosubmit {
 {
   float: left;
 }
+
+.report-filter-container
+{
+	display: inline-flex;
+    background-color: #dedede;
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #c9c6c6;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+
+.report-filter-field
+{
+	border: 1px solid #b7b0b0 !important;
+    border-radius: 3px !important;
+    margin: 0px 5px !important;
+    padding: 3px !important;
+}
  
 @media print {
      
@@ -3278,7 +3313,6 @@ input.nosubmit {
     text-transform: uppercase;
   }
   
-  /* THIS SHOULD BE REMOVED? */
   html,
   body {
     margin: 0;
@@ -3287,8 +3321,7 @@ input.nosubmit {
     font-style: normal !important;
     height: auto !important;
   }
-
-
+  
   #reportPageHeader {
     margin: 0;
     padding: 8px;
@@ -3305,23 +3338,23 @@ input.nosubmit {
   .report-content p span {
     margin-right: 200px;
   }
-  .report-content #tableA {
+  .report-content [name='tableA'] {
     border-collapse: collapse;
     border: 2px solid #000;
   }
-  .report-content #tableA thead {
+  .report-content [name='tableA'] thead {
     background-color: #000;
     color: #fff;
   }
-  .report-content #tableA thead tr th:nth-child(2n) {
+  .report-content [name='tableA'] thead tr th:nth-child(2n) {
     border-left: 1px solid #FFF;
     border-right: 1px solid #FFF;
   }
-  .report-content #tableA thead tr .title {
+  .report-content [name='tableA'] thead tr .title {
     font-size: 12px;
     text-align: center;
   }
-  .report-content #tableA thead tr .subtitle {
+  .report-content [name='tableA'] thead tr .subtitle {
     width: auto;
     height: 90px;
     vertical-align: bottom;
@@ -3329,55 +3362,55 @@ input.nosubmit {
     font-size: 10px;
   }
 
-  .report-content #tableA tbody tr {
+  .report-content [name='tableA'] tbody tr {
     border: 1px solid;
   }
-  .report-content #tableA tbody tr td {
+  .report-content [name='tableA'] tbody tr td {
     min-width: 20px;
     height: 30px;
     border: 1px solid #000;
     text-align: center;
   }
-  .report-content #tableA tbody tr th {
+  .report-content [name='tableA'] tbody tr th {
     min-width: 20px;
     border: 1px solid #FFF;
   }
-  .report-content #tableA tbody tr .nvcr {
+  .report-content [name='tableA'] tbody tr .nvcr {
     border-right: 1px solid #000;
   }
-  .report-content #tableA tbody tr .ctyp1 {
+  .report-content [name='tableA'] tbody tr .ctyp1 {
     width: 100px;
   }
-  .report-content #tableB {
+  .report-content [name='tableB'] {
     border-collapse: collapse;
     border: 2px solid #000;
   }
-  .report-content #tableB thead {
+  .report-content [name='tableB'] thead {
     background-color: #000;
     color: #fff;
   }
-  .report-content #tableB thead tr th:nth-child(2n) {
+  .report-content [name='tableB'] thead tr th:nth-child(2n) {
     border-left: 1px solid #FFF;
     border-right: 1px solid #FFF;
   }
-  .report-content #tableB thead tr th .vertical {
+  .report-content [name='tableB'] thead tr th .vertical {
     -webkit-transform: rotate(-90deg);
     transform: rotate(-90deg);
     white-space: nowrap;
     margin-top: 150px;
   }
-  .report-content #tableB thead tr .title {
+  .report-content [name='tableB'] thead tr .title {
     font-size: 12px;
     text-align: center;
   }
-  .report-content #tableB thead tr .subtitle {
+  .report-content [name='tableB'] thead tr .subtitle {
     width: auto;
     height: 90px;
     vertical-align: bottom;
     padding-bottom: 8px;
     font-size: 10px;
   }
-  .report-content #tableB thead tr .subtitle .vertical {
+  .report-content [name='tableB'] thead tr .subtitle .vertical {
     display: block;
     margin: auto 0;
     -webkit-transform: rotate(-90deg);
@@ -3385,30 +3418,29 @@ input.nosubmit {
     white-space: nowrap;
     max-width: 15px;
   }
-  .report-content #tableB thead tr .date {
+  .report-content [name='tableB'] thead tr .date {
     min-width: 80px;
   }
-  .report-content #tableB thead tr .comments {
+  .report-content [name='tableB'] thead tr .comments {
     min-width: 200px;
   }
-  .report-content #tableB tbody tr {
+  .report-content [name='tableB'] tbody tr {
     border: 1px solid;
   }
-  .report-content #tableB tbody tr td {
+  .report-content [name='tableB'] tbody tr td {
     min-width: 20px;
     height: 30px;
     border: 1px solid #000;
     text-align: center;
-	 font-size: 11px;
   }
-  .report-content #tableB tbody tr th {
+  .report-content [name='tableB'] tbody tr th {
     min-width: 20px;
     border: 1px solid #FFF;
   }
-  .report-content #tableB tbody tr .nvcr {
+  .report-content [name='tableB'] tbody tr .nvcr {
     border-right: 1px solid #000;
   }
-  .report-content #tableB tbody tr .ctyp1 {
+  .report-content [name='tableB'] tbody tr .ctyp1 {
     width: 100px;
   }
   .report-content .card1 {
@@ -3481,12 +3513,12 @@ input.nosubmit {
     display: none;
   }
   
-
-	.contentBody {
-		height: auto !important;
-	}
-
-
+     
+     .contentBody {
+         height: auto !important;
+     }
+  
+  
    .sheet_full-fs{
    position: inherit !important;
    }
@@ -3520,23 +3552,30 @@ input.nosubmit {
   }
   
 
-	.report-content #tableA thead tr .subtitle {
+	.report-content [name='tableA'] thead tr .subtitle {
 		padding-bottom: 25px !important;
 	}
 
-	.report-content #tableA tbody tr td
+	.report-content [name='tableA'] tbody tr td
 	{
 		white-space: nowrap;
 		font-size: 10px;
 	}
 	
 	
-	.report-content #tableB tbody tr td
+	.report-content [name='tableB'] tbody tr td
 	{
 		white-space: nowrap;
 		font-size: 10px;
 	}
 
+	.no-print {
+		display: none;
+	}
+
+	.for-print {
+		display: block;
+	}
 } 
 
 /* END - REPORT Releated */
