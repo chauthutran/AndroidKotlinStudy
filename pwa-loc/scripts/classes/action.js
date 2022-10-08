@@ -398,7 +398,7 @@ function Action( cwsRenderObj, blockObj )
 								statusActionsCalled = true;
 								var dataPass_Status = {};
 								
-								// NEW:
+								// NEW: 
 								INFO.blockPassingData = wsReplyData;
 
 								// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
