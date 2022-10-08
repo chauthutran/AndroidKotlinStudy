@@ -407,7 +407,7 @@ function Action( cwsRenderObj, blockObj )
 
 									// NEW: Clear this after the usage?
 									INFO.blockPassingData = undefined;
-								} );
+								});
 
 							}
 						}
