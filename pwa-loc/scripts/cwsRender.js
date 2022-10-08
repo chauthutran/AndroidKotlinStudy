@@ -177,7 +177,12 @@ function cwsRender()
 			, 'statisticsPage'
 			, 'jobAids'
 			, 'chat'
+			, 'report'
 			, 'hnqis_rdqaPage' ].indexOf( areaId ) < 0 ) me.resetPageDivContent();
+
+		// <-- TODO: This should be fixed...  All the ones should not reset div contents..
+		//		Only the selective ones / by demand should be 'resetPageDivContent'  <-- BUT WHICH ONES?
+
 
 		me.hideAreaRelatedParts();
 
