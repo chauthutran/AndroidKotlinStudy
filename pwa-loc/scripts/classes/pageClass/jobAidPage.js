@@ -23,6 +23,9 @@ JobAidPage.removeCache; // will set as 'Y' / 'N'
 JobAidPage.autoRetry;
 JobAidPage.autoRetryTimeOutIDs = {};
 JobAidPage.autoRetry_MinTimeOut = 5;
+JobAidPage.cancel_DelReq = '';
+JobAidPage.inProcess_ReAttempt = 'Y';
+
 // -------------
 
 JobAidPage.sheetFullTag;
@@ -69,7 +72,7 @@ JobAidPage.render_AdjustSheetFull = function( sheetFullTag )
 	sheetFullTag.find( 'div.syncIcon' ).hide();
 
 	// JobAidDevInfo mode..
-	if ( ConfigManager.getJobAidSetting().devInfo === '1' ) JobAidPage.devOptionSelects_Setup( sheetFullTag.find( 'div.sheet-title' ), ['syncType', 'removeCache', 'autoRetry' ] );
+	if ( ConfigManager.getJobAidSetting().devInfo === '1' ) JobAidPage.devOptionSelects_Setup( sheetFullTag.find( 'div.sheet-title' ), ['syncType', 'removeCache', 'autoRetry', 'cancel_DelReq', 'inProcess_ReAttempt' ] );
 };
 
 
@@ -101,6 +104,17 @@ JobAidPage.devOptionSelects_Setup = function( sheetTitleDivTag, propArr )
 			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download haulting 30 sec or more, automatically">autoRetry: </span>');
 			selectOpts = ( ConfigManager.getJobAidSetting().autoRetryOptions ) ? ConfigManager.getJobAidSetting().autoRetryOptions: [];
 		}
+		else if ( propName === 'cancel_DelReq' )
+		{
+			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="Cancel download deletes pending requests">cancel_DelReq: </span>');
+			selectOpts = [ { name: 'No', value: '' }, { name: 'Yes', value: 'Y' } ];
+		}
+		else if ( propName === 'inProcess_ReAttempt' )
+		{
+			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="During download process, ReAttempt is allowed">inPrc_ReAtpt: </span>');
+			selectOpts = [ { name: 'Yes', value: 'Y' }, { name: 'No', value: '' } ];
+		}		
+
 
 		JobAidPage.devOptionSelect( spanJobAidDevInfoTag, propName, selectOpts );
 	});
@@ -807,6 +821,8 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 
 
 		var newFileList_Override = ( reAttemptCaseType ) ? JobAidItem.getReAttemptList( projDir, reAttemptCaseType ): undefined;
+		var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
+
 
 		if ( newFileList_Override && newFileList_Override.length === 0 ) {
 			MsgManager.msgAreaShow( 'Download Retry Cancelled - empty retry list.' );
@@ -815,7 +831,7 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 		else
 		{
 			// Submit for file listing/caching
-			JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override );			
+			JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override, spanDownloadStatusTag );			
 		}
 
 		// At 'retry', repopulate the item, for updating the downloaded count - this is done on 'runTimeCache_JobAid'

@@ -200,7 +200,7 @@ JobAidHelper.deleteCacheStorage = async function()
 	return caches.delete( JobAidHelper.jobAid_jobTest2 );
 };
 
-JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFileList_Override )
+JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFileList_Override, spanDownloadStatusTag )
 {
 	if ( ConnManagerNew.isAppMode_Online() ) 
 	{
@@ -246,13 +246,15 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 		// retry/reAttempt newFileList
 		if ( newFileList_Override )
 		{
-			var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption ).html( '<strong>Downloading 1st file...</strong>' );
-			JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption, spanDownloadStatusTag: spanDownloadStatusTag } );
+			JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption } );
+			if ( spanDownloadStatusTag ) spanDownloadStatusTag.html( '<strong>Started files downloading...</strong>' );
 
 			JobAidHelper.swFileListCaching( newFileList_Override, options );
 		}
 		else
 		{
+			if ( spanDownloadStatusTag ) spanDownloadStatusTag.html( '<strong>Retrieving file listing...</strong>' );
+
 			$.ajax({
 				url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
 				type: "GET",
@@ -269,18 +271,18 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 						JobAidHelper.filingContent_setUp( newFileList, response.results, options );
 	
 						// 3. On download (in available list), refresh the count - only available on New One.  + Download Start Message Dispaly..
-						var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption ).html( '<strong>Downloading 1st file...</strong>' );
 						//if ( downloadOption && ( downloadOption.indexOf( '_fromAvailable' ) > 0 || downloadOption === 'mediaOnly' ) ) 
-						JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption, spanDownloadStatusTag: spanDownloadStatusTag } );
+						JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption } );
+						if ( spanDownloadStatusTag ) spanDownloadStatusTag.html( '<strong>Started files downloading...</strong>' );
 
 						// 4. Submit to Service Worker - the file caching (due to 'CacheOnly' strategy, we need to send to service worker for this)
 						JobAidHelper.swFileListCaching( newFileList, options );
 					}
 				},
 				error: function ( error ) {
+					if ( spanDownloadStatusTag ) spanDownloadStatusTag.html( '<strong>Retrieving file listing FAILED</strong>' );
 					$( '.spanJobFilingMsg' ).text( 'Failed - ' + error );
-					console.log( error );
-					MsgManager.msgAreaShowErr('Failed to perform the jobFiling..');
+					MsgManager.msgAreaShowErr('FAILED on downloading files listing');
 				},
 				complete: function () {
 					$( '.divJobFileLoading' ).find( 'img' ).remove();
