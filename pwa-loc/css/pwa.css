@@ -373,7 +373,7 @@
 
 /* ------------- */
 
-.emptyList {
+.jaEmptyList {
   padding: 15px;
   padding-bottom: 11px;
   font-style: italic;
@@ -382,14 +382,14 @@
   max-width: 400px;
 }
 
-.emptyList .msg{
+.jaEmptyList .msg{
   border: 1px solid #4E4E4E;
   border-radius: 10px;
   padding: 15px;
 }
 
 
-.emptyList .img {
+.jaEmptyList .img {
   /*margin: auto;
   width: 50%;*/
   padding-top: 10px;
@@ -401,6 +401,12 @@
 .btnBack {
 	cursor: pointer;
 }
+
+.emptyList {
+	padding: 15px;
+	padding-bottom: 11px;
+	font-style: italic;
+ }
 
 .statsTableSpanSpecialCase {
 	position: relative;

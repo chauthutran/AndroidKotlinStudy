@@ -47,25 +47,37 @@ function ClientRelationshipList(clientId, _relationshipTabTag, blockDefId) {
 	// ----------------------------------------------------------------------------------------
 	// Render methods
 
-	me.renderRelationshipList = function (listTag, relationships, blockDefJson) {
+	me.renderRelationshipList = function (listTag, relationships, blockDefJson) 
+	{
 		// Render list of client relationship
-		if (relationships) {
-			relationships.forEach(rel => {
-				INFO.relationship = rel;
-				var targetClientJson = ClientDataManager.getClientById(rel.clientId);
-				INFO.relTargetClient = targetClientJson;
-
-				var itemCardObj = new ItemCard(targetClientJson, listTag, blockDefJson, {}, () => {
-					INFO.client = ClientDataManager.getClientById(me.clientId);
+		if ( !relationships || relationships.length === 0 ) 
+		{
+			listTag.append( `<div class="item emptyList">
+				<div term="${Util.termName_listEmpty}">List is empty.</div>
+			</div>` );
+		}
+		else
+		{
+			relationships.forEach(rel => 
+			{
+				try
+				{
 					INFO.relationship = rel;
-					//INFO.relationship.client = itemJson;
-
-					console.log('--- itemCard callback ----');
-					console.log(INFO.client);
-					console.log(INFO.relationship);
-				});
-				itemCardObj.render();
-			});
+					var targetClientJson = ClientDataManager.getClientById(rel.clientId);
+					INFO.relTargetClient = targetClientJson;
+	
+					var itemCardObj = new ItemCard(targetClientJson, listTag, blockDefJson, {}, () => 
+					{
+						INFO.client = ClientDataManager.getClientById(me.clientId);
+						INFO.relationship = rel;
+					});
+					itemCardObj.render();	
+				}
+				catch( errMsg )
+				{
+					console.log( 'ERROR in ClientRelationshipList.renderRelationshipList, ' + errMsg );
+				}
+			});		
 		}
 	};
 

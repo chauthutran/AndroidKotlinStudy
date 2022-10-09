@@ -322,7 +322,7 @@ JobAidPage.updateItem_ItemSection = function (projDir, statusType)
 	{
 		// Fresh Download case: 'available' -> 'downloaded'
 		JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
-		JobAidPage.divDownloadedPacksTag.find( 'div.emptyList' ).hide( 'fast' ); //.remove();
+		JobAidPage.divDownloadedPacksTag.find( 'div.jaEmptyList' ).hide( 'fast' ); //.remove();
 
 		// If 'somehow', the downloaded has this projDir, remove it.
 
@@ -463,7 +463,7 @@ JobAidPage.divFileContentTag = `
 
 
 JobAidPage.divEmptyMsgTag = `
-	<div class="emptyList">
+	<div class="jaEmptyList">
 		<div class="msg" style="background-color: ghostwhite;">
 			No App has been downloaded yet. Please choose the language(s) of the Apps available for download.
 		</div>
