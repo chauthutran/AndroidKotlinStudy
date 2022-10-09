@@ -19,8 +19,11 @@ function ActivityCardDetail( activityId, isRestore )
 		if (DevHelper.devMode) me.setUpActivityDetailTabDev(me.cardSheetFullTag, me.activityId);
 
 		// create tab click events
-		FormUtil.setUpEntryTabClick(me.cardSheetFullTag.find('.tab_fs'));
-
+		FormUtil.setUpEntryTabClick(me.cardSheetFullTag.find('.tab_fs'), undefined, undefined, function( contentTag, selLiTag ) 
+		{
+			me.tabClickProcess( contentTag, selLiTag );
+		});
+		
 		// ADD TEST/DUMMY VALUE
 		me.cardSheetFullTag.find('.activity').attr('itemid', me.activityId)
 
@@ -87,18 +90,8 @@ function ActivityCardDetail( activityId, isRestore )
 		if ( activityJson )
 		{			
 			// TAB #2. Payload Preview
-			var payloadTabTag = sheetFullTag.find( '[tabButtonId=tab_previewPayload]' );
-			sheetFullTag.find( '.tab_fs li[rel=tab_previewPayload]' ).click( function() 
-			{
-				payloadTabTag.html( '' );
-
-				// depending on the click, render it?
-				var payloadDataDivTag = me.populatePayloadDataDiv( payloadTabTag, activityJson );
-
-				// Set up "activityEditBtn"
-				me.setUpActivityEditBtn( payloadTabTag, activityJson );
-				// SetUp Edit Button + info tags Div
-			});
+			// var payloadTabTag = sheetFullTag.find( '[tabButtonId=tab_previewPayload]' );
+			// sheetFullTag.find( '.tab_fs li[rel=tab_previewPayload]' ).click( function() 
 
 			
 			// TAB #3. Sync History
@@ -151,6 +144,38 @@ function ActivityCardDetail( activityId, isRestore )
 			}
 		}
 	};
+
+	
+	// ---------------------------------------------
+	
+	me.tabClickProcess = function( contentTag, selLiTag )
+	{
+		var clientJson = ClientDataManager.getClientByActivityId(activityId);
+		var activityJson = ActivityDataManager.getActivityById(activityId);
+		var sheetFullTag = me.cardSheetFullTag;
+		var tabButtonId = contentTag.attr( 'tabbuttonid' );  // tab_clientActivities
+
+
+		if ( activityJson )
+		{
+			if ( tabButtonId === 'tab_previewPayload' )
+			{			
+				// TAB #2. Payload Preview
+				var payloadTabTag = sheetFullTag.find( '[tabButtonId=tab_previewPayload]' );
+								
+				payloadTabTag.html( '' );
+	
+				// depending on the click, render it?
+				var payloadDataDivTag = me.populatePayloadDataDiv( payloadTabTag, activityJson );
+
+				// Set up "activityEditBtn"
+				me.setUpActivityEditBtn( payloadTabTag, activityJson );
+				// SetUp Edit Button + info tags Div
+			}
+		}
+	};
+
+	// ---------------------------------------------
 
 
 	me.populatePayloadDataDiv = function( payloadTabTag, activityJson )

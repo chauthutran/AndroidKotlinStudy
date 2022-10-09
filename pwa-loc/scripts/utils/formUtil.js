@@ -1030,7 +1030,7 @@ FormUtil.setForReloading = function (liTag) {
 };
 
 
-FormUtil.setUpEntryTabClick = function (tag, targetOff, eventName) {
+FormUtil.setUpEntryTabClick = function (tag, targetOff, eventName, openingTabCallBack ) {
 	// tag at here is 'blockTag' in mainTab.  li is tab buttons.
 	tag.find('li').on('click', function (e) {
 		e.stopPropagation();
@@ -1040,7 +1040,13 @@ FormUtil.setUpEntryTabClick = function (tag, targetOff, eventName) {
 		var Primary = selLiTag.hasClass('primary');
 		var Secondary = selLiTag.hasClass('secondary');
 		var ulOptionsPopup = selLiTag.find('ul');
+		var openingClick = false;
 
+		/*
+		if (selLiTag.attr('openingClick') === 'Y') {
+			openingClick = true;
+			selLiTag.attr('openingClick', '');
+		}*/
 
 		// If portrait mode small screen, (which has fullTab on click dropdown show)
 		//   - On Small Screen Case, Show the dropdown (collapsed tab list)
@@ -1051,7 +1057,7 @@ FormUtil.setUpEntryTabClick = function (tag, targetOff, eventName) {
 			// If dropdown is shown, hide it.
 			if (ulOptionsPopup.is(':visible')) {
 				ulOptionsPopup.css('display', 'none');
-				selLiTag.find('li').css('display', 'none');
+				selLiTag.find('li').css('display', 'none');	
 			}
 			else {
 				// TODO: or reloading..  do not show the dropdown..
@@ -1097,6 +1103,8 @@ FormUtil.setUpEntryTabClick = function (tag, targetOff, eventName) {
 
 			if (!activeTab.hasClass('active')) activeTab.addClass('active');
 			activeTab.fadeIn(); //show();
+
+			if ( openingTabCallBack ) openingTabCallBack( activeTab, selLiTag );
 
 		}
 

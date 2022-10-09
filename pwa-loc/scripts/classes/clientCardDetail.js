@@ -7,14 +7,17 @@ function ClientCardDetail(clientId) {
 	me.clientId = clientId;
 	me.actionObj;
 	me.cardSheetFullTag;
-	me.timedOut1stTabOpen;
+	me.option;
+
+	me.relationshipListObj;
+	//me.timedOut1stTabOpen;
 
 	// ===============================================
 	// === Initialize Related ========================
 
 	me.initialize = function () {
 		me.actionObj = new Action(SessionManager.cwsRenderObj, {});
-		var preCall = undefined;
+		// var preCall = undefined;
 		var clientJson = ClientDataManager.getClientById(me.clientId);
 
 		var bExternalPartner = ConfigManager.externalPartner();
@@ -23,26 +26,24 @@ function ClientCardDetail(clientId) {
 		if (bExternalPartner ) {
 			INFO.clientLimitedAccess = clientJson;  // This gets used on 'ClientDataManager' activity/voucher list filtering, Client Profile Edit Button show/hide, ClientDataManager.getVoucherDataList uses this
 			INFO.clientCreator = ClientDataManager.checkClientCreator(clientJson, SessionManager.sessionData.login_UserName);
-
-			preCall = function (sheetFullTag) {
-				sheetFullTag.find('li[rel=tab_relationships]').remove();
-				sheetFullTag.find('div[tabButtonId=tab_relationships]').remove();
-			};
 		}
-		// Optional 'clientRelationshipTab' removal - set in config.
-		else if (ConfigManager.getHideClientRelationshipTab()) {
-			preCall = function (sheetFullTag) {
-				sheetFullTag.find('li[rel=tab_relationships]').remove();
-				sheetFullTag.find('div[tabButtonId=tab_relationships]').remove();
-			};
-		}
-
 
 		// sheetFull Initialize / populate template
-		me.cardSheetFullTag = FormUtil.sheetFullSetup(ClientCardDetail.cardFullScreen, { title: 'Client Detail', term: '', cssClasses: ['clientDetail'], preCall: preCall });
+		me.cardSheetFullTag = FormUtil.sheetFullSetup(ClientCardDetail.cardFullScreen, { title: 'Client Detail', term: '', cssClasses: ['clientDetail'], preCall: function(sheetFullTag) 
+		{
+			// If user is 'External Partner' role or the country config has hide client RelationshipTab, hide it.
+			if ( bExternalPartner || ConfigManager.getHideClientRelationshipTab() )
+			{
+				sheetFullTag.find('li[rel=tab_relationships]').remove();
+				sheetFullTag.find('div[tabButtonId=tab_relationships]').remove();
+			}
+		}});
 
 		// create tab click events
-		FormUtil.setUpEntryTabClick(me.cardSheetFullTag.find('.tab_fs'));
+		FormUtil.setUpEntryTabClick(me.cardSheetFullTag.find('.tab_fs'), undefined, undefined, function( contentTag, selLiTag ) 
+		{
+			me.tabClickProcess( contentTag, selLiTag );
+		});
 
 		// ADD TEST/DUMMY VALUE
 		me.cardSheetFullTag.find('.client').attr('itemid', me.clientId)
@@ -72,6 +73,8 @@ function ClientCardDetail(clientId) {
 		clientCard.setClientCardTag(clientCardTag);
 		clientCard.render();
 
+		me.option = option;
+
 		// set tabs contents
 		me.setFullPreviewTabContent(me.clientId, me.cardSheetFullTag, option);
 
@@ -80,31 +83,97 @@ function ClientCardDetail(clientId) {
 
 	// ----------------------------------------------------
 
-	me.setFullPreviewTabContent = function (clientId, sheetFullTag, option) {
+	me.setFullPreviewTabContent = function (clientId, sheetFullTag, option) 
+	{
+		// #3. Relationship
+		var relationshipTabTag = sheetFullTag.find('[tabButtonId=tab_relationships]');
+		me.relationshipListObj = new ClientRelationshipList(clientId, relationshipTabTag, 'clientRelationTab');
 
-		// #1. Client Details 
-		var clientDetailsTabTag = sheetFullTag.find('[tabButtonId=tab_clientDetails]');
-		var clientProfileBlockId = ConfigManager.getClientDef().clientProfileBlock;  // Get client Profile Block defition from config.
-		sheetFullTag.find('.tab_fs li[rel=tab_clientDetails]').click(function () {
-			me.clearTimeout_1stTabClick();
+
+		// DevMode Related
+		if (DevHelper.devMode && SessionManager.isTestLoginCountry()) 
+		{
+			// #4. Payload TreeView
+			sheetFullTag.find('li.primary[rel="tab_previewPayload"]').attr('style', '');
+			sheetFullTag.find('li.secondary[rel="tab_previewPayload"]').removeClass('tabHide');
+
+			// #5. Dev (Optional)
+			sheetFullTag.find('li.primary[rel="tab_optionalDev"]').attr('style', '');
+			sheetFullTag.find('li.secondary[rel="tab_optionalDev"]').removeClass('tabHide');
+		}
+
+
+		// Temp Client Removal Option
+		var removeTempClientBtn = sheetFullTag.find('.removeTempClient').hide();
+		if ( ClientDataManager.isTempClientCaseById(clientId) )
+		{
+			removeTempClientBtn.show().click(function () 
+			{
+				var result = confirm("Are you sure you want to delete this temp client?");
+				if (result) 
+				{
+					var clientJson = ClientDataManager.getClientById(clientId);
+					if (clientJson) 
+					{
+						if ( ClientDataManager.removeClient(clientJson) )
+						{
+							ClientDataManager.saveCurrent_ClientsStore(() => {
+								MsgManager.msgAreaShow( 'Removed The Temp Client' );
+							});	
+						}
+					}
+				}
+			});
+		}
+
+
+		// -----------------------------------------
+		// Click on one of the tab on Start/Opening of detailTab
+		var openUp_tabRel = (option && option.openTabRel) ? option.openTabRel : 'tab_clientDetails';
+
+		if (openUp_tabRel) 
+		{
+			var defaultTab = sheetFullTag.find('.tab_fs li.primary[rel=' + openUp_tabRel + ']');
+			var contentTag = sheetFullTag.find('[tabButtonId=' + openUp_tabRel + ']');
+			
+			me.tabClickProcess( contentTag, defaultTab );
+		}
+	};
+
+	
+	// ---------------------------------------------
+	
+	me.tabClickProcess = function( contentTag, selLiTag )
+	{
+		var clientId = me.clientId; 
+		var sheetFullTag = me.cardSheetFullTag;
+		var option = me.option;
+
+		var tabButtonId = contentTag.attr( 'tabbuttonid' );  // tab_clientActivities
+		// var blockId = contentTag.attr( 'blockid' );  // tab_clientActivities
+
+		if ( tabButtonId === 'tab_clientDetails' )
+		{
+			// #1. Client Details 
+			var clientDetailsTabTag = sheetFullTag.find('[tabButtonId=tab_clientDetails]');
+			var clientProfileBlockId = ConfigManager.getClientDef().clientProfileBlock;  // Get client Profile Block defition from config.
+	
 			clientDetailsTabTag.html('').show();
 
 			var passedData = me.getPassedData_FromClientDetail(clientId);
 			FormUtil.renderBlockByBlockId(clientProfileBlockId, SessionManager.cwsRenderObj, clientDetailsTabTag, passedData);
 
-			clientDetailsTabTag.find('div.block').css('width', '98% !important');
-		});
+			clientDetailsTabTag.find('div.block').css('width', '98% !important');			
+		}
+		else if ( tabButtonId === 'tab_clientActivities' )
+		{
+			var activityTabTag = selLiTag;
 
+			// #2. Client Activities
+			var activityTabBodyDivTag = sheetFullTag.find('[tabButtonId=tab_clientActivities]');
 
-		// #2. Client Activities
-		var activityTabBodyDivTag = sheetFullTag.find('[tabButtonId=tab_clientActivities]');
-		sheetFullTag.find('.tab_fs li[rel=tab_clientActivities]').click(function () {
-
+			var clientDetailsTabTag = sheetFullTag.find('[tabButtonId=tab_clientDetails]');
 			clientDetailsTabTag.hide();  // Somehow, clientDetails page gets called with some delay..
-
-			var activityTabTag = $(this);
-
-			me.clearTimeout_1stTabClick();
 
 			activityTabBodyDivTag.html('<div class="activityList tabContentList"></div>').show();
 			var activityListDivTag = activityTabBodyDivTag.find('.activityList');
@@ -150,91 +219,31 @@ function ClientCardDetail(clientId) {
 			}
 
 			TranslationManager.translatePage();
-		});
-
-
-		// #3. Relationship
-		var relationshipTabTag = sheetFullTag.find('[tabButtonId=tab_relationships]');
-		var relationshipListObj = new ClientRelationshipList(clientId, relationshipTabTag, 'clientRelationTab');
-		sheetFullTag.find('.tab_fs li[rel=tab_relationships]').click(function () {
-			me.clearTimeout_1stTabClick();
-
-			relationshipListObj.render();  // Rendering logic could be replaced with 'itemCardList' definition on 'clientDef'
-		});
-
-
-		if (DevHelper.devMode && SessionManager.isTestLoginCountry()) {
-			// #4. Payload TreeView
-			sheetFullTag.find('li.primary[rel="tab_previewPayload"]').attr('style', '');
-			sheetFullTag.find('li.secondary[rel="tab_previewPayload"]').removeClass('tabHide');
-
-			sheetFullTag.find('.tab_fs li[rel=tab_previewPayload]').click(function () {
-				me.clearTimeout_1stTabClick();
-
-				var jv_payload = new JSONViewer();
-				sheetFullTag.find('[tabButtonId=tab_previewPayload]').find(".payloadData").append(jv_payload.getContainer());
-				jv_payload.showJSON(ClientDataManager.getClientById(clientId), -1, 1);
-			});
-
-
-			// #5. Dev (Optional)
-			sheetFullTag.find('li.primary[rel="tab_optionalDev"]').attr('style', '');
-			sheetFullTag.find('li.secondary[rel="tab_optionalDev"]').removeClass('tabHide');
-
-			var devTabTag = sheetFullTag.find('[tabButtonId=tab_optionalDev]');
-			sheetFullTag.find('.tab_fs li[rel=tab_optionalDev]').click(function () {
-				me.clearTimeout_1stTabClick();
-
-				// A. Client Activity Request Add
-				me.setUpClientActivityRequestAdd(clientId, devTabTag, sheetFullTag);
-
-				// B. TextArea for get clientJson
-				me.setUpClientJsonEdit(clientId, devTabTag, sheetFullTag);
-			});
 		}
-
-
-		// Temp Client Removal Option
-		var removeTempClientBtn = sheetFullTag.find('.removeTempClient').hide();
-		if ( ClientDataManager.isTempClientCaseById(clientId) )
+		else if ( tabButtonId === 'tab_relationships' )
 		{
-			removeTempClientBtn.show().click(function () 
-			{
-				var result = confirm("Are you sure you want to delete this temp client?");
-				if (result) 
-				{
-					var clientJson = ClientDataManager.getClientById(clientId);
-					if (clientJson) 
-					{
-						if ( ClientDataManager.removeClient(clientJson) )
-						{
-							ClientDataManager.saveCurrent_ClientsStore(() => {
-								MsgManager.msgAreaShow( 'Removed The Temp Client' );
-							});	
-						}
-					}
-				}
-			});
+			me.relationshipListObj.render();  // Rendering logic could be replaced with 'itemCardList' definition on 'clientDef'
+		}
+		else if ( tabButtonId === 'tab_previewPayload' )
+		{
+			var jv_payload = new JSONViewer();
+			sheetFullTag.find('[tabButtonId=tab_previewPayload]').find(".payloadData").append(jv_payload.getContainer());
+			jv_payload.showJSON(ClientDataManager.getClientById(clientId), -1, 1);
+		}
+		else if ( tabButtonId === 'tab_optionalDev' )
+		{
+			var devTabTag = sheetFullTag.find('[tabButtonId=tab_optionalDev]');
+			
+			// A. Client Activity Request Add
+			me.setUpClientActivityRequestAdd(clientId, devTabTag, sheetFullTag);
+
+			// B. TextArea for get clientJson
+			me.setUpClientJsonEdit(clientId, devTabTag, sheetFullTag);
 		}
 
-
-		// -----------------------------------------
-		// Click on one of the tab on start        
-		var openUp_tabRel = (option && option.openTabRel) ? option.openTabRel : 'tab_clientDetails';
-
-		if (openUp_tabRel) {
-			// Default click 'Client'
-			var defaultTab = sheetFullTag.find('.tab_fs li[rel=' + openUp_tabRel + ']');
-			// var defaultTab = sheetFullTag.find( '.tab_fs li[rel=tab_clientDetails]' ).first();
-			// But wants to not display the selection dropdown when size is mobile..        
-			defaultTab.attr('openingClick', 'Y').click();
-
-			me.timedOut1stTabOpen = setTimeout( function () { 
-				defaultTab.attr('openingClick', ''); 
-			}, 400);   // Cancel this if other click is applied..
-		}
 	};
 
+	// ---------------------------------------------
 
 	// TODO: However, we need to close this whenever other blocks are rendered (when activityList is removed..)
 	me.displayLatestVoucherInfo = function (clientJson, activityListDivTag) {
@@ -289,14 +298,14 @@ function ClientCardDetail(clientId) {
 		}
 	};
 
-
+	/*
 	me.clearTimeout_1stTabClick = function () {
 		if (me.timedOut1stTabOpen) {
 			clearTimeout(me.timedOut1stTabOpen);
 			me.timedOut1stTabOpen = undefined;
 		}
 	};
-
+	*/
 
 	me.disableFavItems = function (activityListDivTag, favListArr) {
 		activityListDivTag.find('div.favIcon[favId]').each(function () {
