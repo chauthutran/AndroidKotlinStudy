@@ -19,12 +19,12 @@ JobAidPage.options = {
 JobAidPage.availableManifestList = [];
 
 JobAidPage.syncType = 'async';	// will be overwritten by config setting
-JobAidPage.removeCache; // will set as 'Y' / 'N'
+JobAidPage.onDel_onDel_removeCache; // will set as 'Y' / 'N'
 JobAidPage.autoRetry;
 JobAidPage.autoRetryTimeOutIDs = {};
 JobAidPage.autoRetry_MinTimeOut = 5;
-JobAidPage.cancel_DelReq = '';
-JobAidPage.inProcess_ReAttempt = 'Y';
+JobAidPage.retry_clearReq = '';
+JobAidPage.inProcess_ReAttempt = ''; //Y';
 
 // -------------
 
@@ -72,7 +72,7 @@ JobAidPage.render_AdjustSheetFull = function( sheetFullTag )
 	sheetFullTag.find( 'div.syncIcon' ).hide();
 
 	// JobAidDevInfo mode..
-	if ( ConfigManager.getJobAidSetting().devInfo === '1' ) JobAidPage.devOptionSelects_Setup( sheetFullTag.find( 'div.sheet-title' ), ['syncType', 'removeCache', 'autoRetry', 'cancel_DelReq', 'inProcess_ReAttempt' ] );
+	if ( ConfigManager.getJobAidSetting().devInfo === '1' ) JobAidPage.devOptionSelects_Setup( sheetFullTag.find( 'div.sheet-title' ), ['syncType', 'onDel_removeCache', 'autoRetry', 'retry_clearReq'] ); //, 'inProcess_ReAttempt' ] );
 };
 
 
@@ -92,10 +92,10 @@ JobAidPage.devOptionSelects_Setup = function( sheetTitleDivTag, propArr )
 			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download, use async or sync type request">syncType: </span>');
 			selectOpts = [ { value: 'async', name: 'async' }, { value: 'sync', name: 'sync' } ];
 		}
-		else if ( propName === 'removeCache' )
+		else if ( propName === 'onDel_removeCache' )
 		{
-			JobAidPage.removeCache = ( ConfigManager.getJobAidSetting().removeCacheOnDelete === true ) ? 'Y': 'N';
-			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On pack delete, remove cache">removeCache: </span>');
+			JobAidPage.onDel_removeCache = ( ConfigManager.getJobAidSetting().removeCacheOnDelete === true ) ? 'Y': 'N';
+			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On pack delete, remove cache">onDel_removeCache: </span>');
 			selectOpts = [ { value: 'N', name: 'No' }, { value: 'Y', name: 'Yes' } ];
 		}
 		else if ( propName === 'autoRetry' )
@@ -104,17 +104,20 @@ JobAidPage.devOptionSelects_Setup = function( sheetTitleDivTag, propArr )
 			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download haulting 30 sec or more, automatically">autoRetry: </span>');
 			selectOpts = ( ConfigManager.getJobAidSetting().autoRetryOptions ) ? ConfigManager.getJobAidSetting().autoRetryOptions: [];
 		}
-		else if ( propName === 'cancel_DelReq' )
+		else if ( propName === 'retry_clearReq' )
 		{
-			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="Cancel download deletes pending requests">cancel_DelReq: </span>');
+			JobAidPage.retry_clearReq = '';
+			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="Retry will clear/cancel the existing requests">retry_clearReq: </span>');
 			selectOpts = [ { name: 'No', value: '' }, { name: 'Yes', value: 'Y' } ];
 		}
+
+		/*
 		else if ( propName === 'inProcess_ReAttempt' )
 		{
 			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="During download process, ReAttempt is allowed">inPrc_ReAtpt: </span>');
 			selectOpts = [ { name: 'Yes', value: 'Y' }, { name: 'No', value: '' } ];
 		}		
-
+		*/
 
 		JobAidPage.devOptionSelect( spanJobAidDevInfoTag, propName, selectOpts );
 	});
@@ -813,6 +816,9 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 			else if ( downloadOption.indexOf( 'all_ReAttempt' ) === 0 ) reAttemptCaseType = 'all';
 		}
 
+		// Dev Option - reAttempt / retry will cancel all existing request..
+		if ( JobAidPage.retry_clearReq === 'Y' && reAttemptCaseType ) JobAidCaching.cancelProjCaching( projDir );
+
 
 		var optionJson = { projDir: projDir, target: 'jobAidPage', downloadOption: downloadOption, syncType: JobAidPage.syncType };
 
@@ -892,7 +898,7 @@ JobAidItem.itemDelete = async function (projDir)
 		PersisDataLSManager.deleteJobFilingProjDir( projDir );
 
 		// Optional 'removeCacheOnDelete' - delete from cache
-		if ( JobAidPage.removeCache === 'Y' )
+		if ( JobAidPage.onDel_removeCache === 'Y' )
 		{
 			await JobAidHelper.deleteCacheKeys( JobAidHelper.rootDir_jobAid + projDir + '/' );
 		}
@@ -951,14 +957,14 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option )
 			{
 				var filesStatusJson = JobAidItem.getFilesStatusJson( projDir ); // { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded };
 				
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined );
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, undefined );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, option );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, undefined, option );
 
 				divReleaseInfoTag.hide();
 				divDownloadInfoTag.hide();
 
-				// Need to change the menu?  Or add 'reDownload'?
-				if ( projStatus.downloadOption )
+				// Only if the download is not in progress, allow 'ReAttempt'
+				if ( projStatus.downloadOption && ( JobAidPage.inProcess_ReAttempt === 'Y' || !option.downloadInProgress ) )
 				{
 					if ( projStatus.downloadOption.indexOf( 'appOnly' ) === 0 ) menus.push('ReAttempt Download w/o media');  // <-- which were last download for this?
 					else if ( projStatus.downloadOption.indexOf( 'all' ) === 0 ) menus.push('ReAttempt Download with media');
@@ -978,8 +984,8 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option )
 
 			var filesStatusJson = JobAidItem.getFilesStatusJson( projDir );
 
-			JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined );
-			JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, mediaDownloaded );
+			JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, option );
+			JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, mediaDownloaded, option );
 			
 			// 2. Setup for 'updates' by date comparison
 			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, mediaDownloaded, itemTag.find('span.appDownloadStatus').show(), itemTag.find('span.mediaDownloadStatus').show() );
@@ -1077,7 +1083,7 @@ JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate
 			{
 				if ( info.countDownloaded > 0 ) divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
 
-				if ( statusType === 'downoladed' ) menus.push('ReAttempt App Download');
+				if ( statusType === 'downoladed' && ( JobAidPage.inProcess_ReAttempt === 'Y' || !option.downloadInProgress ) ) menus.push('ReAttempt App Download');
 				// NOTE: 'available' case is dealt outside.. - by looking at downloadOption, 'ReAttempt Download w/o media', etc..
 				// TODO: Does this replace 'download App update'?  Do we remove that link?
 			}
@@ -1088,7 +1094,7 @@ JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate
 				if ( info.countDownloaded > 0 ) divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
 
 				if ( statusType === 'downloaded' ) {
-					menus.push('ReAttempt Media Download');
+					if ( JobAidPage.inProcess_ReAttempt === 'Y' || !option.downloadInProgress ) menus.push('ReAttempt Media Download');
 					if ( menus.indexOf( 'Download media' ) >= 0 ) Util.RemoveValInArray(menus, 'Download media');
 				}
 			}
@@ -1275,8 +1281,10 @@ JobAidCaching.projProcessDataUpdate = function (projDir, url, updateJson)
 };
 
 
-JobAidCaching.cancelProjCaching = function ( projDir, downloadOption ) 
+JobAidCaching.cancelProjCaching = function ( projDir, option ) 
 {
+	if ( !option ) option = {};
+
 	// 1. Send the cancel call to service worker
 	SwManager.swRegObj.active.postMessage({
 		'type': JobAidHelper.jobAid_CACHE_URLS2 + '_CANCEL'
