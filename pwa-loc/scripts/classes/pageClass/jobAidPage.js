@@ -19,7 +19,7 @@ JobAidPage.options = {
 JobAidPage.availableManifestList = [];
 
 JobAidPage.syncType = 'async';	// will be overwritten by config setting
-JobAidPage.onDel_onDel_removeCache; // will set as 'Y' / 'N'
+JobAidPage.onDel_onDel_rmCache; // will set as 'Y' / 'N'
 JobAidPage.autoRetry;
 JobAidPage.autoRetryTimeOutIDs = {};
 JobAidPage.autoRetry_MinTimeOut = 5;
@@ -72,7 +72,7 @@ JobAidPage.render_AdjustSheetFull = function( sheetFullTag )
 	sheetFullTag.find( 'div.syncIcon' ).hide();
 
 	// JobAidDevInfo mode..
-	if ( ConfigManager.getJobAidSetting().devInfo === '1' ) JobAidPage.devOptionSelects_Setup( sheetFullTag.find( 'div.sheet-title' ), ['syncType', 'onDel_removeCache', 'autoRetry', 'retry_clearReq'] ); //, 'inProcess_ReAttempt' ] );
+	if ( ConfigManager.getJobAidSetting().devInfo === '1' ) JobAidPage.devOptionSelects_Setup( sheetFullTag.find( 'div.sheet-title' ), ['syncType', 'onDel_rmCache', 'autoRetry', 'retry_clearReq'] ); //, 'inProcess_ReAttempt' ] );
 };
 
 
@@ -92,10 +92,10 @@ JobAidPage.devOptionSelects_Setup = function( sheetTitleDivTag, propArr )
 			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On download, use async or sync type request">syncType: </span>');
 			selectOpts = [ { value: 'async', name: 'async' }, { value: 'sync', name: 'sync' } ];
 		}
-		else if ( propName === 'onDel_removeCache' )
+		else if ( propName === 'onDel_rmCache' )
 		{
-			JobAidPage.onDel_removeCache = ( ConfigManager.getJobAidSetting().removeCacheOnDelete === true ) ? 'Y': 'N';
-			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On pack delete, remove cache">onDel_removeCache: </span>');
+			JobAidPage.onDel_rmCache = ( ConfigManager.getJobAidSetting().removeCacheOnDelete === true ) ? 'Y': 'N';
+			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="On pack delete, remove cache">onDel_rmCache: </span>');
 			selectOpts = [ { value: 'N', name: 'No' }, { value: 'Y', name: 'Yes' } ];
 		}
 		else if ( propName === 'autoRetry' )
@@ -171,7 +171,7 @@ JobAidPage.render_ContextMenuSetup = function()
 				callback: function (key, options) 
 				{
 					if ( ['Download', 'Download w/o media', 'Download with media', 'ReAttempt Download w/o media', 'ReAttempt Download with media'
-					, 'Download media', 'Download app update', 'Download media update', 'ReAttempt App Download', 'ReAttempt Media Download' 
+					, 'Download media', 'ReAttempt the Download', 'Download app update', 'Download media update', 'ReAttempt App Download', 'ReAttempt Media Download' 
 						].indexOf( key ) >= 0 ) 
 					{
 						jobAidItemTag.attr( 'downloadKey', key );
@@ -781,6 +781,7 @@ JobAidItem.keyToDownloadOption = function ( key )
 	else if ( key === 'ReAttempt Download w/o media' ) downloadOption = 'appOnly_ReAttempt_fromAvailable';
 	else if ( key === 'ReAttempt Download with media' ) downloadOption = 'all_ReAttempt_fromAvailable';
 
+	else if ( key === 'ReAttempt the Download' ) downloadOption = 'all_ReAttempt';  // downloaded menu option, when media was not downloaded from available.
 	else if ( key === 'Download media' ) downloadOption = 'mediaOnly';  // downloaded menu option, when media was not downloaded from available.
 
 	else if ( key === 'Download app update' ) downloadOption = 'appOnly_Update';
@@ -898,7 +899,7 @@ JobAidItem.itemDelete = async function (projDir)
 		PersisDataLSManager.deleteJobFilingProjDir( projDir );
 
 		// Optional 'removeCacheOnDelete' - delete from cache
-		if ( JobAidPage.onDel_removeCache === 'Y' )
+		if ( JobAidPage.onDel_rmCache === 'Y' )
 		{
 			await JobAidHelper.deleteCacheKeys( JobAidHelper.rootDir_jobAid + projDir + '/' );
 		}
@@ -1057,7 +1058,7 @@ JobAidItem.getFilesStatusJson = function ( projDir )
 };
 
 
-JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate, info, statusType, mediaDownloaded ) // dCount, tCount, size )
+JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate, info, statusType, mediaDownloaded, option ) // dCount, tCount, size )
 {
 	try
 	{
@@ -1072,31 +1073,16 @@ JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate
 
 		// If not '0', but in between 0 ~ total, display as 'Red'?
 		//		- What about various 'statusType'?
-
-		// We need to add 'downloadProgress' logic --> which version it was downloading...
-
-		// If the count is not full, and over 0, add 'ReAttempt'
-		// 
 		if ( info.countDownloaded > 0 && info.countDownloaded < info.countTotal )
 		{
-			if ( typeName === 'app' ) 
-			{
-				if ( info.countDownloaded > 0 ) divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
+			divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
 
-				if ( statusType === 'downoladed' && ( JobAidPage.inProcess_ReAttempt === 'Y' || !option.downloadInProgress ) ) menus.push('ReAttempt App Download');
-				// NOTE: 'available' case is dealt outside.. - by looking at downloadOption, 'ReAttempt Download w/o media', etc..
-				// TODO: Does this replace 'download App update'?  Do we remove that link?
-			}
-			else if ( typeName === 'media' )  
+			if ( statusType === 'downloaded' )
 			{
-				// if 'mediaDownloaded' is set to false, but count is over 0, display as red.
-				// mediaDownloaded ||
-				if ( info.countDownloaded > 0 ) divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
+				// JobAidPage.inProcess_ReAttempt === 'Y'
+				if ( !option.downloadInProgress && menus.indexOf( 'ReAttempt the Download' ) === -1 ) menus.push('ReAttempt the Download');			
 
-				if ( statusType === 'downloaded' ) {
-					if ( JobAidPage.inProcess_ReAttempt === 'Y' || !option.downloadInProgress ) menus.push('ReAttempt Media Download');
-					if ( menus.indexOf( 'Download media' ) >= 0 ) Util.RemoveValInArray(menus, 'Download media');
-				}
+				if ( typeName === 'media' && menus.indexOf( 'Download media' ) >= 0 ) Util.RemoveValInArray(menus, 'Download media');	
 			}
 		}	
 	}
