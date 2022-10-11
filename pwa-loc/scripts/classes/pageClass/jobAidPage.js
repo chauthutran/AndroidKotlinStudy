@@ -958,14 +958,14 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option )
 			{
 				var filesStatusJson = JobAidItem.getFilesStatusJson( projDir ); // { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded };
 				
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, option );
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, undefined, option );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, option, projStatus.downloadOption );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, undefined, option, projStatus.downloadOption );
 
 				divReleaseInfoTag.hide();
 				divDownloadInfoTag.hide();
 
 				// Only if the download is not in progress, allow 'ReAttempt'
-				if ( projStatus.downloadOption && ( JobAidPage.inProcess_ReAttempt === 'Y' || !option.downloadInProgress ) )
+				if ( projStatus.downloadOption && !option.downloadInProgress ) // ( JobAidPage.inProcess_ReAttempt === 'Y'
 				{
 					if ( projStatus.downloadOption.indexOf( 'appOnly' ) === 0 ) menus.push('ReAttempt Download w/o media');  // <-- which were last download for this?
 					else if ( projStatus.downloadOption.indexOf( 'all' ) === 0 ) menus.push('ReAttempt Download with media');
@@ -985,8 +985,8 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option )
 
 			var filesStatusJson = JobAidItem.getFilesStatusJson( projDir );
 
-			JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, option );
-			JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, mediaDownloaded, option );
+			JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, option, projStatus.downloadOption );
+			JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, mediaDownloaded, option, projStatus.downloadOption );
 			
 			// 2. Setup for 'updates' by date comparison
 			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, mediaDownloaded, itemTag.find('span.appDownloadStatus').show(), itemTag.find('span.mediaDownloadStatus').show() );
@@ -1058,7 +1058,7 @@ JobAidItem.getFilesStatusJson = function ( projDir )
 };
 
 
-JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate, info, statusType, mediaDownloaded, option ) // dCount, tCount, size )
+JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate, info, statusType, mediaDownloaded, option, projStatusDownloadOption ) // dCount, tCount, size )
 {
 	try
 	{
@@ -1078,9 +1078,17 @@ JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate
 			divInfoTag.find( '.dCount' ).css( 'color', 'red' ).css( 'font-weight', 'bold' );
 
 			if ( statusType === 'downloaded' )
-			{
-				// JobAidPage.inProcess_ReAttempt === 'Y'
-				if ( !option.downloadInProgress && menus.indexOf( 'ReAttempt the Download' ) === -1 ) menus.push('ReAttempt the Download');			
+			{				
+				if ( !option.downloadInProgress )  // JobAidPage.inProcess_ReAttempt === 'Y'
+				{
+					if ( typeName === 'app' && projStatusDownloadOption.indexOf( 'appOnly' ) === 0 )
+ menus.push('ReAttempt App Download');
+					else if ( typeName === 'media' && projStatusDownloadOption.indexOf( 'mediaOnly' ) === 0 ) menus.push('ReAttempt Media Download');
+					else
+					{
+						if ( menus.indexOf( 'ReAttempt the Download' ) === -1 ) menus.push('ReAttempt the Download');
+					}
+				} 
 
 				if ( typeName === 'media' && menus.indexOf( 'Download media' ) >= 0 ) Util.RemoveValInArray(menus, 'Download media');	
 			}
