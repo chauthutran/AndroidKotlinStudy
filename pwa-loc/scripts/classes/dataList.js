@@ -286,6 +286,9 @@ function DataList( cwsRenderObj, blockObj )
 
         me.setupEvents_GroupByHeader( groupDivTag.find( '.imgGrpByIcon' ), groupDivTag.find( '.searchResultTable' ) );
 
+        // NEW: if 'opened' is set to 'false', hide it by clicking toggle
+        if ( groupDataConfig.opened === 'false' ) groupDivTag.find( '.imggroupByExpanded' ).click();
+
         return groupDivTag;
     };
 

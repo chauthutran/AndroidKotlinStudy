@@ -136,13 +136,14 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
 
         // Get column values
         var data = [];
+        let idx = -1;
         for( var i=0; i< listData.length; i++ )
         {
             var dateFilterVal = eval( evalStr + " var item = listData[i]; " + Util.getEvalStr(reportConfig.dateFilter) );
             if( dateFilterVal >= fromDate && dateFilterVal <= toDate )
             {
-
-                data[i] = [];
+                idx++;
+                data[idx] = [];
                 for( var j=0; j<colNo; j++ )
                 {
                     try { 
@@ -151,15 +152,15 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
                         if( colConfig )
                         {
                             var value = eval( evalStr + " var item = listData[i]; " + Util.getEvalStr( colConfig ) ); 
-                            data[i][j] = value;
+                            data[idx][j] = value;
                         }
                         else
                         {
-                            data[i][j] = "";
+                            data[idx][j] = "";
                         }  
                     }
                     catch( errMsg ) { 
-                        data[i][j] = "*** ERROR";
+                        data[idx][j] = "*** ERROR";
                         console.log( 'ReportPage col' + j + ' ERROR, ' + errMsg ); 
                     }	
                 }

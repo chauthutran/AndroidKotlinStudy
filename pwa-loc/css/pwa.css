@@ -15,6 +15,12 @@
 }
 */
 
+/* Dhis2 searchResult groupBy */
+.imgGrpByIcon
+{
+	cursor: pointer;
+}
+
 
 /* IFrame JobAid */
 .iframeDiv {
