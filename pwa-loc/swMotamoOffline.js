@@ -78,6 +78,11 @@ var matomoAnalytics = {initialize: function (options) {
                         init.body = init.body.replace('&idsite=', '&cdo=' + secondsQueuedAgo + '&idsite=');
                     }
 
+
+                    // TEMP FIX: Handle the old address - replace with new.
+                    if ( cursor.value.url.indexOf( 'matomo.solidlines.io' ) >= 0 ) cursor.value.url = cursor.value.url.replace( 'matomo.solidlines.io', 'matomo.psi-mis.org' );
+
+                    
                     fetch(cursor.value.url, init).then(function (response) {
                         console.log('server response', response);
                         if (response.status < 400) {
@@ -127,6 +132,7 @@ var matomoAnalytics = {initialize: function (options) {
                             || event.request.url.includes('/piwik.php'));
         let isTrackerRequest = event.request.url.endsWith('/matomo.js')
                             || event.request.url.endsWith('/piwik.js');
+
 
         if (isTrackerRequest) {
             if (isOnline) {

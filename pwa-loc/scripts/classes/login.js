@@ -73,7 +73,6 @@ function Login() {
 
 		// Matomo Submit - Temp Disable
 		if ( ConnManagerNew.isAppMode_Online ) MatomoHelper.processQueueList();
-		//_paq.push(['trackEvent', 'WFA', 'Login']);
 
 	};
 
