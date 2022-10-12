@@ -239,18 +239,25 @@ function ActivityListView(cwsRenderObj, activityList, viewListNames) {
 		// If dataFilter does not exists, the entire data into the 
 		if (!viewDef.dataFilterEval) Util.appendArray(filteredData, mainList);
 		else {
-			var dataFilterEval = Util.getEvalStr(viewDef.dataFilterEval);  // Handle array into string joining
+			var preRunEval = (viewDef.preRunEval) ? Util.getEvalStr(viewDef.preRunEval) : undefined;
+			var dataFilterEval = (viewDef.dataFilterEval) ? Util.getEvalStr(viewDef.dataFilterEval) : undefined;
 
 			mainList.forEach(activity => {
 				InfoDataManager.setINFOdata('activity', activity);
 				InfoDataManager.setINFOclientByActivity(activity);
+
+				// 'preRunEval' - if exists, run eval <-- for definitions eval..
+				try {
+					if (preRunEval) eval(Util.getEvalStr(preRunEval));
+				} catch (errMsg) { console.log('ClilentListView.viewFilterData, preRunEval, ' + errMsg); }
+
 
 				try {
 					var returnVal = false;
 					// inputVal = Util.getEvalStr( dataFilterEval );  // Handle array into string joining
 					if (dataFilterEval) returnVal = eval(dataFilterEval);
 					if (returnVal === true) filteredData.push(activity);
-				} catch (errMsg) { console.log('ActivityListView.viewFilterData, ' + errMsg); }
+				} catch (errMsg) { console.log('ActivityListView.viewFilterData, dataFilterEval: ' + errMsg); }
 			});
 		}
 
