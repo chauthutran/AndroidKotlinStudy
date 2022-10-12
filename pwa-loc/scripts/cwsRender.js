@@ -170,22 +170,8 @@ function cwsRender()
 		// Clear blockPayload remember data.
 		SessionManager.clearWSBlockFormsJson();
 
-		// Dynamic area(render/listing) has pageDivTag/Nav2 show, so we can hide them.
-		//  Others does not, since they are the overlay of existing ones..
-		if ( [ 'aboutPage'
-			, 'settingsPage'
-			, 'statisticsPage'
-			, 'jobAids'
-			, 'chat'
-			, 'report'
-			, 'hnqis_rdqaPage' ].indexOf( areaId ) < 0 ) me.resetPageDivContent();
-
-		// <-- TODO: This should be fixed...  All the ones should not reset div contents..
-		//		Only the selective ones / by demand should be 'resetPageDivContent'  <-- BUT WHICH ONES?
-
-
+		// Hide Area Related?
 		me.hideAreaRelatedParts();
-
 
 		if ( areaId )
 		{
@@ -193,10 +179,10 @@ function cwsRender()
 			GAnalytics.setSendPageView( '/' + areaId );
 			GAnalytics.setEvent( 'AreaOpen', areaId, 'menu clicked', 1 );
 
-			if ( areaId === 'logOut' ) me.logOutProcess();
-			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
+			if ( areaId === 'logOut' ) { me.resetPageDivContent();  me.logOutProcess(); }
+			else if ( areaId === 'aboutPage') me.aboutApp.render();
 			else if ( areaId === 'settingsPage') me.settingsApp.render();
-			// [JOB_AID]
+			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
 			else if ( areaId === Menu.menuJson_JobAids.id ) 
 			{ 
 				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
@@ -225,9 +211,12 @@ function cwsRender()
 				ReportPage.render();
 			}
 			else if ( areaId === Menu.menuJson_HNQIS_RDQA.id ) {  }
-			else if ( areaId === 'aboutPage') me.aboutApp.render();
 			else
 			{
+				// Dynamic area ones reset/hide main divTag before rendering..  // me.pageDivTag.empty();  me.Nav2Tag.hide();	
+				me.resetPageDivContent();
+
+
 				if ( !me.pageDivTag.is( ':visible' ) ) me.pageDivTag.show();
 
 				var selectedArea = Util.getFromList( ConfigManager.getAllAreaList(), areaId, "id" );
