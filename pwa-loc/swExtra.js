@@ -29,17 +29,12 @@ self.addEventListener('message', (event) =>
 				// Cancel the request operations
 				if ( projDir && SwHelper.fetchControllers[projDir] ) 
 				{
-					console.log( 'service worker cancel called: ' + projDir );
-
 					SwHelper.fetchControllers[projDir].abort();
 					//event.source.postMessage( JSON.stringify({ type: 'jobFiling', aborted: true, options: options }) );
-					delete SwHelper.fetchControllers[projDir];
-					//					setTimeout( function() {  }, 400 );
+					delete SwHelper.fetchControllers[projDir];  // setTimeout( function() {  }, 400 );
 				}
-				else
-				{
-					console.log( 'service worker - NOTHING TO CANCEL ' );
-				}
+
+				// else console.log( 'service worker - NOTHING TO CANCEL ' );
 			}
 			else if (event.data.type === 'CACHE_URLS2' && event.data.payload) 
 			{

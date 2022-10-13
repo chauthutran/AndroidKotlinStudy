@@ -457,7 +457,7 @@ JobAidPage.templateItem_body = `
 `;
 
 JobAidPage.templateItem = `
-   <div class="card jobAidItem smartStart" data-language="" projdir="" style="opacity: 1;display: inline-block; height: unset;" downloaded="Y">
+   <div class="card jobAidItem smartStart" data-language="" projdir="" style="opacity: 1;display: inline-block; height: unset;">
    ${JobAidPage.templateItem_body}
    </div>
 `;
@@ -1161,10 +1161,7 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 	if ( aborted )
 	{
 		console.log( 'Aborted in jobFilingUpdate' );
-
 		MsgManager.msgAreaShowErr( 'Aborted the download: ' + projDir, undefined, 5000 );
-
-		// Item abort call will handle the itemRePopulate + cancel the autoRetry
 	}
 	else
 	{
@@ -1211,35 +1208,34 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 				}
 				else 
 				{
-					// === DOWNLOAD 'FINISH' OPERATION STEPS ===
-					// #2. AVAILABILITY TEMP SET
-					ConnManagerNew.tempDisableAvailableCheck = false; 
-
-
 					spanDownloadStatusTag.html('<strong>Download completed!</strong>');
-					projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
-
-
-					// NEW - Once the download is finished, remove all?  original & retries?
-					// Remove previous timeout set..
-					if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) JobAidCaching.clearAutoRetryByProcessKey( processKey );
-					JobAidCaching.cancelProjCaching( projDir );	// if retry or other were being processed, clear it out..
-					
-
-					// =-------------------------------------------------------
-					// TODO: We need to make sure only one updates are allowed
-					//		- block other updates going in parallel
-					// =-------------------------------------------------------
-
-					if ( JobAidManifest.setManifest_InStrg(projDir, downloadOption) )
-					{
-						// Move the item accordingly
-						JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
-					}					
+					JobAidCaching.downloadFinishStep( projDir, downloadOption );				
 				}
 			}
 		}
 	}
+};
+
+
+JobAidCaching.downloadFinishStep = function( projDir, downloadOption )
+{
+	var processKey = projDir + '_' + downloadOption;
+
+	// === DOWNLOAD 'FINISH' OPERATION STEPS ===
+	// #2. AVAILABILITY TEMP SET
+	ConnManagerNew.tempDisableAvailableCheck = false; 
+
+
+	// Remove previous timeout set..
+	if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) JobAidCaching.clearAutoRetryByProcessKey( processKey );
+	JobAidCaching.cancelProjCaching( projDir );	// if retry or other were being processed, clear it out..
+
+
+	if ( JobAidManifest.setManifest_InStrg(projDir, downloadOption) )
+	{
+		// Move the item accordingly
+		JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
+	}	
 };
 
 
@@ -1281,7 +1277,7 @@ JobAidCaching.cancelProjCaching = function ( projDir, option )
 
 	// 1. Send the cancel call to service worker
 	SwManager.swRegObj.active.postMessage({
-		'type': JobAidHelper.jobAid_CACHE_URLS2 + '_CANCEL'
+		'type': JobAidHelper.jobAid_CACHE_URLS2_CANCEL
 		, 'cacheName': JobAidHelper.jobAid_jobTest2
 		, 'options': { projDir: projDir }
 	});

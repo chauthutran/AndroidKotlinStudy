@@ -14,6 +14,7 @@ JobAidHelper.rootDir_jobAid = '/jobs/jobAid/';
 
 
 JobAidHelper.jobAid_CACHE_URLS2 = 'CACHE_URLS2';
+JobAidHelper.jobAid_CACHE_URLS2_CANCEL = 'CACHE_URLS2_CANCEL';
 JobAidHelper.jobAid_CACHE_DELETE = 'CACHE_DELETE';
 JobAidHelper.jobAid_jobTest2 = 'jobTest2';
 
@@ -27,9 +28,8 @@ JobAidHelper.EXTS_APPLICATION = [ '.js', '.map', '.html', '.htm', '.json', '.xml
 JobAidHelper.EXTS_APP = [ '.js', '.map' ]; // '.html', '.htm', '.json', '.xml', '.bat',
 
 //JobAidHelper.MANIFEST_FILES = [ ];
-
-JobAidHelper.cacheRequestList = [];
-JobAidHelper.cacheProcessedData = {};
+//JobAidHelper.cacheRequestList = [];
+//JobAidHelper.cacheProcessedData = {};
 
 // =========================
 
@@ -268,15 +268,17 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 						var newFileList = JobAidHelper.sort_filter_files( response.list, options );
 	
 						// 2. Save the list info on localStorage (PersisManager) by 'projDir' name - Does not remove existing data.
-						JobAidHelper.filingContent_setUp( newFileList, response.results, options );
+						var modifiedList = JobAidHelper.filingContent_setUp( newFileList, response.results, options );
 	
 						// 3. On download (in available list), refresh the count - only available on New One.  + Download Start Message Dispaly..
-						//if ( downloadOption && ( downloadOption.indexOf( '_fromAvailable' ) > 0 || downloadOption === 'mediaOnly' ) ) 
-						JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption } );
-						if ( spanDownloadStatusTag ) spanDownloadStatusTag.html( '<strong>Started files downloading...</strong>' );
+						if ( downloadOption ) // Only for New JobAid Version
+						{
+							JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption } );
+							if ( spanDownloadStatusTag ) spanDownloadStatusTag.html( '<strong>Started files downloading...</strong>' );	
+						}
 
 						// 4. Submit to Service Worker - the file caching (due to 'CacheOnly' strategy, we need to send to service worker for this)
-						JobAidHelper.swFileListCaching( newFileList, options );
+						JobAidHelper.swFileListCaching( modifiedList, options );
 					}
 				},
 				error: function ( error ) {
@@ -297,8 +299,18 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 JobAidHelper.swFileListCaching = function( newFileList, options ) 
 {
 	if ( newFileList.length <= 0 ) {
-		$( '.spanJobFilingMsg' ).text( 'Empty process list.' );
-		MsgManager.msgAreaShowErr( 'Empty process list.' );
+		$( '.spanJobFilingMsg' ).text( 'Finished - Empty process list.' );
+		MsgManager.msgAreaShow( 'Finished - Empty process list.' );
+
+		// New JobAid Version, Call finished processing..
+		var downloadOption = options.downloadOption;
+		var projDir = options.projDir;
+		if ( downloadOption )
+		{
+			var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
+			spanDownloadStatusTag.html('<strong>Download completed!</strong>');
+			JobAidCaching.downloadFinishStep( projDir, downloadOption );		
+		}
 	}
 	else
 	{				
@@ -413,6 +425,8 @@ JobAidHelper.fileType = function( projDir, url )
 
 JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 {
+	var modifiedList = [];
+
 	try
 	{
 		var fileTotalInfo = { appCountTotal: 0, appSizeTotal: 0, mediaCountTotal: 0, mediaSizeTotal: 0 };
@@ -439,8 +453,27 @@ JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 					if ( fileItem ) size = fileItem.size;
 				}
 
-				// fileType - decided by folder name
-				projStatus.process[ fileName ] = { size: size, reqDate: new Date().toISOString(), downloaded: false, fileType: JobAidHelper.fileType( projDir, fileName ) };
+				// TODO: Make this optional?
+				var matchingExistingFile = false;
+
+				// If same 'fileName' already was downloaded, compare the size.  Skip the download reset for those matching files.
+				if ( options.downloadOption && size )
+				{
+					var existingFileItem = projStatus.process[ fileName ];
+
+					if ( existingFileItem && existingFileItem.downloaded && existingFileItem.size === size )
+					{
+						matchingExistingFile = true;
+					}
+				}
+
+				// If no exact matching file already downloaded, set it as list to download.
+				if ( !matchingExistingFile ) 
+				{
+					projStatus.process[ fileName ] = { size: size, reqDate: new Date().toISOString(), downloaded: false, fileType: JobAidHelper.fileType( projDir, fileName ) };
+					
+					modifiedList.push( fileName );
+				}
 				
 			});
 			
@@ -463,15 +496,12 @@ JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 					}
 				});
 			}			
+
 			projStatus.fileTotalInfo = fileTotalInfo;
+
 
 			// 3. Save 'projStatus' in local storage - persisStorage
 			PersisDataLSManager.updateJobFilingProjDirStatus( projDir, projStatus );
-			
-
-			// Set the list. - USE THIS??
-			JobAidHelper.cacheRequestList = newFileList;
-			JobAidHelper.cacheProcessedData = {};
 		}
 	}
 	catch( errMsg )
@@ -479,7 +509,7 @@ JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 		console.log( 'ERROR in JobAidHelper.filingContent_setUp, ' + errMsg );
 	}
 
-	return fileTotalInfo;
+	return modifiedList;
 };
 
 
