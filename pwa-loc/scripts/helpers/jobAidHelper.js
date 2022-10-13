@@ -298,9 +298,9 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 
 JobAidHelper.swFileListCaching = function( newFileList, options ) 
 {
-	if ( newFileList.length <= 0 ) {
+	if ( newFileList.length <= 0 ) 
+	{
 		$( '.spanJobFilingMsg' ).text( 'Finished - Empty process list.' );
-		MsgManager.msgAreaShow( 'Finished - Empty process list.' );
 
 		// New JobAid Version, Call finished processing..
 		var downloadOption = options.downloadOption;
@@ -308,8 +308,7 @@ JobAidHelper.swFileListCaching = function( newFileList, options )
 		if ( downloadOption )
 		{
 			var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
-			spanDownloadStatusTag.html('<strong>Download completed!</strong>');
-			JobAidCaching.downloadFinishStep( projDir, downloadOption );		
+			JobAidCaching.downloadFinishStep( projDir, downloadOption, spanDownloadStatusTag );		
 		}
 	}
 	else

@@ -45,7 +45,7 @@ JobAidContentPage.fileContentDialogOpen = async function(projDir)
 	TranslationManager.translatePage();
 };
 
-
+/*
 JobAidContentPage.calcMissingFileSize = async function ( projProcess, callBack )
 {
 	// 1. File size calculate - individual ones calculate & save.  Total size calc.
@@ -91,6 +91,7 @@ JobAidContentPage.calcMissingFileSize = async function ( projProcess, callBack )
 	// Updating in Storage (Persis) is done from outside of this method
 	//return totalSize;
 };
+*/
 
 
 JobAidContentPage.populateFileContent = function( processData, projDir) 

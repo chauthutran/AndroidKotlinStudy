@@ -32,6 +32,8 @@ self.addEventListener('message', (event) =>
 					try  { await SwHelper.fetchControllers[projDir].abort();  }
 					catch( errMsg ) {  console.log( 'ERROR in SwExtra abort operation' );  }
 
+					//SwHelper.fetchControllers[projDir].abort().catch
+
 					//event.source.postMessage( JSON.stringify({ type: 'jobFiling', aborted: true, options: options }) );
 					delete SwHelper.fetchControllers[projDir];  // setTimeout( function() {  }, 400 );
 				}
@@ -106,19 +108,23 @@ self.addEventListener('message', (event) =>
 					reqList.forEach(reqUrl => 
 					{
 						// Use 'cache.put' instead of 'cache.add'.  (300 sec timeout)  // cache.add(reqUrl).then(() => {});
-						fetch(reqUrl, fetchOption ).then((response) => {
+						fetch(reqUrl, fetchOption ).then((response) => 
+						{
 							if (response.ok && response.status === 200)  // Status in the range 200-299)
 							{
 								//if ( reqUrl.indexOf( 'logo192.png' ) >= 0 ) throw new Error('Something went wrong');
+								var resClone = response.clone();
 
-								cache.put(reqUrl, response.clone());  // return 
-								//console.log('[' + doneCount + '] Cache Put: ' + reqUrl);
-
-								doneCount++;
-								var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
-								event.source.postMessage(returnMsgStr);
-
-								return response;
+								return cache.put( reqUrl, resClone ).then( () => 
+								{
+									doneCount++;
+									var returnMsgStr = JSON.stringify({ type: 'jobFiling', process: { total: totalCount, curr: doneCount, name: reqUrl }, options: options });
+									event.source.postMessage(returnMsgStr);
+	
+									return resClone;
+								}).catch(() => {
+									throw new Error("failed on cache.put");
+								});
 							}
 							else {
 								throw new Error("bad response status");

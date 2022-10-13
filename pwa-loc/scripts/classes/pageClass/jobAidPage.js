@@ -37,7 +37,8 @@ JobAidPage.divAvailablePacksTag;
 JobAidPage.divDownloadedPacksTag;
 JobAidPage.contentPageTag;
 
-JobAidPage.loadingImageStr = '<img class="pin_pw_loading" src="images/loading_big_blue.gif" style="margin: 10px;"/>';
+JobAidPage.loadingImageStr = '<img src="images/loading_big_blue.gif" style="margin: 10px;"/>';
+JobAidPage.loadingImageSmallStr = '<img src="images/loading_big_black.gif" style="margin-left: 10px; width: 13px;"/>';
 
 // ------------------
 
@@ -705,7 +706,7 @@ JobAidManifest.setManifestTemp_InStrg = function( availableManifestList, projDir
 	if ( !manifestJson ) MsgManager.msgAreaShowErr( 'No projDir, ' + projDir + ', in AvailableManifest.' );
 };
 
-
+/*
 JobAidManifest.projProcessData_calcFileSize = async function ( projProcess )
 {
 	// 1. File size calculate - individual ones calculate & save.  Total size calc.
@@ -746,6 +747,7 @@ JobAidManifest.projProcessData_calcFileSize = async function ( projProcess )
 	// Updating in Storage (Persis) is done from outside of this method
 	return totalSize;
 };
+*/
 
 
 JobAidManifest.getCacheKeyRequest = function ( url, keys )
@@ -840,20 +842,12 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 
 		var newFileList_Override = ( reAttemptCaseType ) ? JobAidItem.getReAttemptList( projDir, reAttemptCaseType ): undefined;
 		var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
+		//if ( newFileList_Override && newFileList_Override.length === 0 ) { MsgManager.msgAreaShow( 'Download Retry Cancelled - empty retry list.' );	JobAidItem.itemRepopulate( projDir );
 
 
-		if ( newFileList_Override && newFileList_Override.length === 0 ) {
-			MsgManager.msgAreaShow( 'Download Retry Cancelled - empty retry list.' );
-			JobAidItem.itemRepopulate( projDir );
-		}
-		else
-		{
-			// Submit for file listing/caching
-			JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override, spanDownloadStatusTag );			
-		}
+		// Submit for file listing/caching
+		JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override, spanDownloadStatusTag );
 
-		// At 'retry', repopulate the item, for updating the downloaded count - this is done on 'runTimeCache_JobAid'
-		//if ( option.retry ) JobAidItem.itemRepopulate( projDir );
 	}
 	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
 	
@@ -1240,10 +1234,7 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 				else 
 				{
 					var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
-					spanDownloadStatusTag.html('<strong>Download completed!</strong>');
-					MsgManager.msgAreaShow( 'Download completed on "' + projDir + '"' );
-
-					JobAidCaching.downloadFinishStep( projDir, downloadOption );
+					JobAidCaching.downloadFinishStep( projDir, downloadOption, spanDownloadStatusTag );
 				}
 			}
 		}
@@ -1251,29 +1242,66 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 };
 
 
-JobAidCaching.downloadFinishStep = function( projDir, downloadOption )
+// === DOWNLOAD 'FINISH' OPERATION STEPS ===
+JobAidCaching.downloadFinishStep = function( projDir, downloadOption, spanDownloadStatusTag )
 {
 	var processKey = projDir + '_' + downloadOption;
 
-	// === DOWNLOAD 'FINISH' OPERATION STEPS ===
-	// #2. AVAILABILITY TEMP SET
-	ConnManagerNew.tempDisableAvailableCheck = false; 
+	var loadingImgTag = $( JobAidPage.loadingImageSmallStr );
+	var finishMsgTag = $( '<strong>Finishing... Confirming files with cache files</strong>' );
+	spanDownloadStatusTag.html('').append( finishMsgTag ).append( loadingImgTag );
 
+	// AVAILABILITY TEMP SET
+	ConnManagerNew.tempDisableAvailableCheck = false; 
 
 	// Remove previous timeout set..
 	if ( JobAidPage.autoRetryTimeOutIDs[processKey] ) JobAidCaching.clearAutoRetryByProcessKey( processKey );
-	JobAidCaching.cancelProjCaching( projDir );	// if retry or other were being processed, clear it out..
+	JobAidCaching.cancelProjCaching( projDir, { itemRepopulateNot: true } );	// if retry or other were being processed, clear it out..
 
 
-	// When finished, update the 'manifest' data in storage, move item to diff section, refresh the render/display
-	if ( JobAidManifest.setManifest_InStrg(projDir, downloadOption) )
+	// NEW: mark 'cacheChecked', and if not exists, set 'downloaded': true to 'false';
+	JobAidCaching.confirmDownload_wtCache(projDir).then( () => 
 	{
-		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
+		// When finished, update the 'manifest' data in storage, move item to diff section, refresh the render/display
+		if ( JobAidManifest.setManifest_InStrg(projDir, downloadOption) )
+		{
+			JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
 
-		JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
-	}	
+			JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
+		}	
+
+		MsgManager.msgAreaShow( 'Download finished on "' + projDir + '"' );
+	});	
 };
 
+
+// Mark 'cacheChecked': true/false
+JobAidCaching.confirmDownload_wtCache = async function(projDir)
+{
+	var projStatus = PersisDataLSManager.getJobFilingProjDirStatus(projDir);
+	var projProcess = projStatus.process;
+
+	var cacheKeyJson = await JobAidHelper.getCacheKeys_async();
+	var keys = cacheKeyJson.keys;   //var cache = cacheKeyJson.cache;
+
+	// Go through downloaded file info on 'process' in storage, if the file is not in cache, mark it not downloaded..
+	for( var urlProp in projProcess )
+	{
+		var projItem = projProcess[urlProp];
+
+		if ( projItem.downloaded && !projItem.cacheChecked )
+		{
+			var request = JobAidManifest.getCacheKeyRequest( urlProp, keys );
+
+			// NOTE: Probably No Need ==> Check the 'request' with --> var response = await cache.match( request );
+
+			if ( request ) projItem.cacheChecked = true;
+			else projItem.downloaded = false;
+		}
+	}
+
+	PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
+};
 
 JobAidCaching.triggerReTry = function( projDir, downloadOption )
 {
@@ -1307,8 +1335,10 @@ JobAidCaching.projProcessDataUpdate = function (projDir, url, updateJson)
 };
 
 
-JobAidCaching.cancelProjCaching = function ( projDir ) 
+JobAidCaching.cancelProjCaching = function ( projDir, option ) 
 {
+	if ( !option ) option = {};
+
 	// 1. Send the cancel call to service worker
 	SwManager.swRegObj.active.postMessage({
 		'type': JobAidHelper.jobAid_CACHE_URLS2_CANCEL
@@ -1324,7 +1354,7 @@ JobAidCaching.cancelProjCaching = function ( projDir )
 
 	// 4. Repopulate the item - with a bit of timeout delay?
 	//setTimeout( function() {  JobAidItem.itemRepopulate( projDir );  }, 400 );		
-	JobAidItem.itemRepopulate( projDir );
+	if ( !option.itemRepopulateNot ) JobAidItem.itemRepopulate( projDir );
 };
 
 JobAidCaching.clearAutoRetryByProj = function ( projDir ) 
