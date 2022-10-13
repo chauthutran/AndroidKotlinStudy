@@ -16,6 +16,9 @@ JobAidPage.options = {
 	}
 };
 
+JobAidPage.MENU_cancel = 'Cancel current download';
+
+
 JobAidPage.availableManifestList = [];
 
 JobAidPage.syncType = 'async';	// will be overwritten by config setting
@@ -150,6 +153,10 @@ JobAidPage.devOptionSelect = function( spanJobAidDevInfoTag, prop, options )
 
 JobAidPage.render_ContextMenuSetup = function()
 {
+	var download_menuItems = ['Download', 'Download w/o media', 'Download with media', 'ReAttempt Download w/o media', 'ReAttempt Download with media'
+	, 'Download media', 'ReAttempt the Download', 'Download app update', 'Download media update', 'ReAttempt App Download', 'ReAttempt Media Download' 
+		];
+
 	// Item Right UI 3 dot Context Menu - select event.
 	$.contextMenu({
 		selector: 'div.jobContextMenu',
@@ -159,28 +166,33 @@ JobAidPage.render_ContextMenuSetup = function()
 			var jobAidItemTag = $triggerElement.closest('div.jobAidItem');
 
 			var projDir = jobAidItemTag.attr('projDir');
-			var inProcessDownloadOption = jobAidItemTag.attr( 'inProcessDownloadOption' );
+			var downloadInProgress = jobAidItemTag.attr( 'downloadInProgress' );
 			var menusStr = jobAidItemTag.attr('menus');
 			var menusArr = menusStr.split( ';' );
 
 			var items = {};
-			menusArr.forEach( menuStr => {  items[ menuStr ] = { name: menuStr };  });
+			menusArr.forEach( menuStr => {  
+				var menuItem = { name: menuStr };
+
+				if ( downloadInProgress && download_menuItems.indexOf( menuStr ) >= 0 ) menuItem.disabled = function(key, opt) { return !this.data('Disabled');  };
+				
+				items[ menuStr ] = menuItem;
+			});
 
 			return {
 				items: items,
 				callback: function (key, options) 
 				{
-					if ( ['Download', 'Download w/o media', 'Download with media', 'ReAttempt Download w/o media', 'ReAttempt Download with media'
-					, 'Download media', 'ReAttempt the Download', 'Download app update', 'Download media update', 'ReAttempt App Download', 'ReAttempt Media Download' 
-						].indexOf( key ) >= 0 ) 
+					if ( download_menuItems.indexOf( key ) >= 0 ) 
 					{
-						jobAidItemTag.attr( 'downloadKey', key );
+						// if ( downloadInProgress ) MsgManager.msgAreaShowErr( 'Another download already in progress, ' + downloadInProgress );  // or use Alert( .. );
+						//jobAidItemTag.attr( 'downloadKey', key );
 						JobAidItem.itemDownload(projDir, JobAidItem.keyToDownloadOption( key ) );
 					}
 					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
 					else if (key === 'Delete') JobAidItem.itemDelete(projDir);
 					else if (key === 'Open') JobAidItem.itemOpen(projDir);
-					else if (key === 'Cancel current download') JobAidCaching.cancelProjCaching(projDir, inProcessDownloadOption);
+					else if (key === JobAidPage.MENU_cancel) JobAidCaching.cancelProjCaching(projDir);
 				}
 			};
 		}
@@ -331,36 +343,34 @@ JobAidPage.download_statusType = function (downloadOption)
 JobAidPage.updateItem_ItemSection = function (projDir, statusType) 
 {
 
+	// We should get the 'item' from 
+
 	// TODO: 'item' is old data, thus, need to be updated...  + need to append with persis data..
-	var availableItem = Util.getFromList(JobAidPage.availableManifestList, projDir, 'projDir');
+	//var availableItem = Util.getFromList(JobAidPage.availableManifestList, projDir, 'projDir');
 	var downloadedItem = Util.getFromList(JobAidPage.downloadedManifestList, projDir, 'projDir');
 
-	if (statusType === 'available_downloaded' && availableItem) 
+	if (statusType === 'available_downloaded' && downloadedItem) 
 	{
 		// Fresh Download case: 'available' -> 'downloaded'
 		JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
 		JobAidPage.divDownloadedPacksTag.find( 'div.jaEmptyList' ).hide( 'fast' ); //.remove();
 
-		// If 'somehow', the downloaded has this projDir, remove it.
-
-
 		var itemTag = $(JobAidPage.templateItem).hide();
-		JobAidItem.itemPopulate(availableItem, itemTag, 'downloaded');
+		JobAidItem.itemPopulate(downloadedItem, itemTag, 'downloaded');
 		JobAidPage.divDownloadedPacksTag.append(itemTag);
 		itemTag.show( 'fast' );		
-
-		JobAidPage.downloadedManifestList.push( availableItem );		
+		//JobAidPage.downloadedManifestList.push( availableItem );		
 	}
-	else if (statusType === 'download_updated' && availableItem)
+	else if (statusType === 'download_updated' && downloadedItem)
 	{
 		// Download Update Caes: Reload with fresh status.
 		var itemTag = JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']');
 		itemTag.html( '' ).append( JobAidPage.templateItem_body );
 
-		JobAidItem.itemPopulate(availableItem, itemTag, 'downloaded');
+		JobAidItem.itemPopulate(downloadedItem, itemTag, 'downloaded');
 
 		Util.RemoveFromArrayAll( JobAidPage.downloadedManifestList, 'projDir', projDir );
-		JobAidPage.downloadedManifestList.push( availableItem );		
+		JobAidPage.downloadedManifestList.push( downloadedItem );		
 
 		//JobAidPage.divDownloadedPacksTag.append(itemTag);
 	}
@@ -369,6 +379,7 @@ JobAidPage.updateItem_ItemSection = function (projDir, statusType)
 		Util.RemoveFromArrayAll( JobAidPage.downloadedManifestList, 'projDir', projDir );
 		JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
 
+		// Empty list big msg sign show if downloaded section is emtpy after removing this item.
 		if ( JobAidPage.divDownloadedPacksTag.find(".jobAidItem").length === 0 )
 		{
 			var divEmptyMsgTag = $( JobAidPage.divEmptyMsgTag ).hide();
@@ -378,13 +389,13 @@ JobAidPage.updateItem_ItemSection = function (projDir, statusType)
 		}
 
 
-		// Also, Just In CASE, if there is available one, remove it as well
+		// Just In CASE, if there is same item on available one, remove it before adding to the list.
 		JobAidPage.divAvailablePacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
 
+		// Add the item to available section
+		var availableItem = Util.getFromList(JobAidPage.availableManifestList, projDir, 'projDir');
 		if ( availableItem )
 		{
-			// TODO: 
-			//		- If 'persisData' has this one, we can clear it at here...
 			PersisDataLSManager.deleteJobFilingProjDir( projDir );			
 
 			// Add to the cached..
@@ -457,7 +468,7 @@ JobAidPage.templateItem_body = `
 `;
 
 JobAidPage.templateItem = `
-   <div class="card jobAidItem smartStart" data-language="" projdir="" style="opacity: 1;display: inline-block; height: unset;">
+   <div class="card jobAidItem smartStart" data-language="" projdir="" style="display: inline-block; height: unset;">
    ${JobAidPage.templateItem_body}
    </div>
 `;
@@ -849,7 +860,7 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 };
 
 
-JobAidItem.itemRepopulate = function( projDir, option )
+JobAidItem.itemRepopulate = function( projDir, inProcessOption )
 {
 	// NEW: UPDATE ITEM STATUS on each download starting..
 	// 	-  If the item downloading is in 'available', update the tag with data.
@@ -859,8 +870,8 @@ JobAidItem.itemRepopulate = function( projDir, option )
 	var availableItem = Util.getFromList( JobAidPage.availableManifestList, projDir, 'projDir' );
 	var downloadedItem = Util.getFromList( JobAidPage.downloadedManifestList, projDir, 'projDir' );
 
-	if ( availableItem && availableItemTag.length > 0 ) JobAidItem.itemPopulate(availableItem, availableItemTag, 'available', option);
-	if ( downloadedItem && downloadedItemTag.length > 0 ) JobAidItem.itemPopulate(downloadedItem, downloadedItemTag, 'downloaded', option);
+	if ( availableItem && availableItemTag.length > 0 ) JobAidItem.itemPopulate(availableItem, availableItemTag, 'available', inProcessOption);
+	if ( downloadedItem && downloadedItemTag.length > 0 ) JobAidItem.itemPopulate(downloadedItem, downloadedItemTag, 'downloaded', inProcessOption);
 
 };
 
@@ -912,10 +923,10 @@ JobAidItem.itemDelete = async function (projDir)
 
 // -------------------
 
-JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option ) 
+JobAidItem.itemPopulate = function (itemData, itemTag, statusType, inProcessOption ) 
 {
 	var menus = [];
-	if ( !option ) option = {};
+	if ( !inProcessOption ) inProcessOption = {};
 
 	if ( !itemData.projDir ) MsgManager.msgAreaShowErr( 'FAILED to populate item - NO "projDir"' );
 	else
@@ -930,16 +941,20 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option )
 		itemTag.attr('data-language', itemData.code);
 		itemTag.attr('projDir', projDir);
 		itemTag.attr('statusType', statusType);
+		itemTag.attr('downloadInProgress', '');
 		itemTag.find( 'span.downloadStatus,span.appDownloadStatus,span.mediaDownloadStatus' ).html('').hide();
-	
+		
+
 		var titleStrongTag = $('<strong></strong>').append(itemData.title + ' [' + Util.getStr(itemData.language) + ']');
 		itemTag.find('.divTitle').html(titleStrongTag);
 	
 
 		// While 'download' is in progress, below 3 data are populated..
-		if ( option.downloadInProgress ) menus.push( 'Cancel current download' );  // also itemTag.attr( 'downloadKey' ) has the download name (key);
-		if ( option.spanDownloadStatusTag ) option.spanDownloadStatusTag.html( '' ).hide(); // duplicating as above 3 reset/hide?
-		if ( option.downloadOption ) itemTag.attr('inProcessDownloadOption', option.downloadOption);
+		if ( inProcessOption.downloadInProgress )
+		{
+			menus.push( JobAidPage.MENU_cancel );
+			itemTag.attr('downloadInProgress', inProcessOption.downloadInProgress);
+		}
 
 
 		if (statusType === 'available') 
@@ -958,14 +973,14 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option )
 			{
 				var filesStatusJson = JobAidItem.getFilesStatusJson( projDir ); // { appCountTotal: 0, appCountDownloaded: 0, appSizeDownloaded: 0, mediaCountTotal: 0, mediaCountDownloaded: 0, mediaSizeDownloaded };
 				
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, option, projStatus.downloadOption );
-				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, undefined, option, projStatus.downloadOption );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, inProcessOption, projStatus.downloadOption );
+				JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, undefined, inProcessOption, projStatus.downloadOption );
 
 				divReleaseInfoTag.hide();
 				divDownloadInfoTag.hide();
 
 				// Only if the download is not in progress, allow 'ReAttempt'
-				if ( projStatus.downloadOption && !option.downloadInProgress ) // ( JobAidPage.inProcess_ReAttempt === 'Y'
+				if ( projStatus.downloadOption && !inProcessOption.downloadInProgress ) // ( JobAidPage.inProcess_ReAttempt === 'Y'
 				{
 					if ( projStatus.downloadOption.indexOf( 'appOnly' ) === 0 ) menus.push('ReAttempt Download w/o media');  // <-- which were last download for this?
 					else if ( projStatus.downloadOption.indexOf( 'all' ) === 0 ) menus.push('ReAttempt Download with media');
@@ -985,8 +1000,8 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option )
 
 			var filesStatusJson = JobAidItem.getFilesStatusJson( projDir );
 
-			JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, option, projStatus.downloadOption );
-			JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, mediaDownloaded, option, projStatus.downloadOption );
+			JobAidItem.infoRowTagPopulate( itemTag.find( '.divAppInfo' ).show(), menus, 'app', itemData.appBuildDate, filesStatusJson.app, statusType, undefined, inProcessOption, projStatus.downloadOption );
+			JobAidItem.infoRowTagPopulate( itemTag.find( '.divMediaInfo' ).show(), menus, 'media', itemData.mediaBuildDate, filesStatusJson.media, statusType, mediaDownloaded, inProcessOption, projStatus.downloadOption );
 			
 			// 2. Setup for 'updates' by date comparison
 			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, mediaDownloaded, itemTag.find('span.appDownloadStatus').show(), itemTag.find('span.mediaDownloadStatus').show() );
@@ -998,6 +1013,17 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, option )
 	}
 };
 
+JobAidItem.addToTagMenuAttr = function( itemTag, menuStr )
+{
+	var menusStr = itemTag.attr( 'menus' );
+	var menusArr = menusStr.split( ';' );
+
+	if ( menusArr.indexOf( menuStr ) === -1 ) 
+	{
+		menusArr.push( menuStr );
+		itemTag.attr('menus', menus.join(';') );
+	}
+};
 
 JobAidItem.getFilesStatusJson = function ( projDir ) 
 {
@@ -1058,7 +1084,7 @@ JobAidItem.getFilesStatusJson = function ( projDir )
 };
 
 
-JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate, info, statusType, mediaDownloaded, option, projStatusDownloadOption ) // dCount, tCount, size )
+JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate, info, statusType, mediaDownloaded, inProcessOption, projStatusDownloadOption ) // dCount, tCount, size )
 {
 	try
 	{
@@ -1079,7 +1105,7 @@ JobAidItem.infoRowTagPopulate = function( divInfoTag, menus, typeName, buildDate
 
 			if ( statusType === 'downloaded' )
 			{				
-				if ( !option.downloadInProgress )  // JobAidPage.inProcess_ReAttempt === 'Y'
+				if ( !inProcessOption.downloadInProgress )  // JobAidPage.inProcess_ReAttempt === 'Y'
 				{
 					if ( typeName === 'app' && projStatusDownloadOption.indexOf( 'appOnly' ) === 0 )
  menus.push('ReAttempt App Download');
@@ -1188,13 +1214,13 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 
 		if (projCardTag.length > 0) 
 		{
-			var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
+			var itemTag = JobAidPage.getProjCardTag(projDir);
 
 			if (prc.name && prc.total && prc.total > 0 && prc.curr) 
 			{
 				var url = prc.name;
 
-				projCardTag.css('opacity', 1);
+				//projCardTag.css('opacity', 1);
 
 				// ** Update the downloaded status on storage..  <-- Mark this 
 				if ( isDownloaded ) JobAidCaching.projProcessDataUpdate(projDir, url, { date: new Date().toISOString(), downloaded: true } );
@@ -1203,13 +1229,21 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 				// Still in process VS 'Finished'
 				if (prc.curr < prc.total) 
 				{
+					// In case the 'reload/refresh' of the section/item, keep the 'downloadInProgress' tag
+					var downloadInProgressAttr = itemTag.attr( 'downloadInProgress' );
+					if ( !downloadInProgressAttr ) JobAidItem.itemRepopulate( projDir, { downloadInProgress: downloadOption } );
+
+					// Populate the counter
+					var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
 					spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr}/${prc.total} [${url.split('.').at(-1)}]`);
-					if (prc.curr > 5) projCardTag.attr('downloaded', 'Y'); // Allows for 'click' to enter the proj
 				}
 				else 
 				{
+					var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
 					spanDownloadStatusTag.html('<strong>Download completed!</strong>');
-					JobAidCaching.downloadFinishStep( projDir, downloadOption );				
+					MsgManager.msgAreaShow( 'Download completed on "' + projDir + '"' );
+
+					JobAidCaching.downloadFinishStep( projDir, downloadOption );
 				}
 			}
 		}
@@ -1231,9 +1265,11 @@ JobAidCaching.downloadFinishStep = function( projDir, downloadOption )
 	JobAidCaching.cancelProjCaching( projDir );	// if retry or other were being processed, clear it out..
 
 
+	// When finished, update the 'manifest' data in storage, move item to diff section, refresh the render/display
 	if ( JobAidManifest.setManifest_InStrg(projDir, downloadOption) )
 	{
-		// Move the item accordingly
+		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
+
 		JobAidPage.updateItem_ItemSection(projDir, JobAidPage.download_statusType( downloadOption ) );
 	}	
 };
@@ -1271,15 +1307,13 @@ JobAidCaching.projProcessDataUpdate = function (projDir, url, updateJson)
 };
 
 
-JobAidCaching.cancelProjCaching = function ( projDir, option ) 
+JobAidCaching.cancelProjCaching = function ( projDir ) 
 {
-	if ( !option ) option = {};
-
 	// 1. Send the cancel call to service worker
 	SwManager.swRegObj.active.postMessage({
 		'type': JobAidHelper.jobAid_CACHE_URLS2_CANCEL
 		, 'cacheName': JobAidHelper.jobAid_jobTest2
-		, 'options': { projDir: projDir }
+		, 'options': { projDir: projDir, target: 'jobAidPage' }
 	});
 
 	// Cancel all type of download for this projDir..
@@ -1289,7 +1323,8 @@ JobAidCaching.cancelProjCaching = function ( projDir, option )
 	ConnManagerNew.tempDisableAvailableCheck = false; 
 
 	// 4. Repopulate the item - with a bit of timeout delay?
-	setTimeout( function() {  JobAidItem.itemRepopulate( projDir );  }, 400 );		
+	//setTimeout( function() {  JobAidItem.itemRepopulate( projDir );  }, 400 );		
+	JobAidItem.itemRepopulate( projDir );
 };
 
 JobAidCaching.clearAutoRetryByProj = function ( projDir ) 

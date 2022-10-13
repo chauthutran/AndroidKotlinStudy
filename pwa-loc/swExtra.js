@@ -29,7 +29,9 @@ self.addEventListener('message', (event) =>
 				// Cancel the request operations
 				if ( projDir && SwHelper.fetchControllers[projDir] ) 
 				{
-					SwHelper.fetchControllers[projDir].abort();
+					try  { await SwHelper.fetchControllers[projDir].abort();  }
+					catch( errMsg ) {  console.log( 'ERROR in SwExtra abort operation' );  }
+
 					//event.source.postMessage( JSON.stringify({ type: 'jobFiling', aborted: true, options: options }) );
 					delete SwHelper.fetchControllers[projDir];  // setTimeout( function() {  }, 400 );
 				}

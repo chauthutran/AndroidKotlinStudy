@@ -246,7 +246,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 		// retry/reAttempt newFileList
 		if ( newFileList_Override )
 		{
-			JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption } );
+			JobAidItem.itemRepopulate( projDir, { downloadInProgress: downloadOption } );
 			if ( spanDownloadStatusTag ) spanDownloadStatusTag.html( '<strong>Started files downloading...</strong>' );
 
 			JobAidHelper.swFileListCaching( newFileList_Override, options );
@@ -273,7 +273,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 						// 3. On download (in available list), refresh the count - only available on New One.  + Download Start Message Dispaly..
 						if ( downloadOption ) // Only for New JobAid Version
 						{
-							JobAidItem.itemRepopulate( projDir, { downloadInProgress: true, downloadOption: downloadOption } );
+							JobAidItem.itemRepopulate( projDir, { downloadInProgress: downloadOption } );
 							if ( spanDownloadStatusTag ) spanDownloadStatusTag.html( '<strong>Started files downloading...</strong>' );	
 						}
 
