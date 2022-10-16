@@ -80,7 +80,8 @@ var matomoAnalytics = {initialize: function (options) {
 
 
                     // TEMP FIX: Handle the old address - replace with new.
-                    if ( cursor.value.url.indexOf( 'matomo.solidlines.io' ) >= 0 ) cursor.value.url = cursor.value.url.replace( 'matomo.solidlines.io', 'matomo.psi-mis.org' );
+                    fixUrl_PSI( cursor.value ); 
+                    //if ( cursor.value.url.indexOf( 'matomo.solidlines.io' ) >= 0 ) cursor.value.url = cursor.value.url.replace( 'matomo.solidlines.io', 'matomo.psi-mis.org' );
 
                     
                     fetch(cursor.value.url, init).then(function (response) {
@@ -100,6 +101,11 @@ var matomoAnalytics = {initialize: function (options) {
                 }
             };
         });
+    }
+
+    function fixUrl_PSI( urlObj )
+    {
+        if ( urlObj.url && urlObj.url.indexOf( 'matomo.solidlines.io' ) >= 0 ) urlObj.url = urlObj.url.replace( 'matomo.solidlines.io', 'matomo.psi-mis.org' );
     }
 
     function limitQueueIfNeeded(queue)
@@ -125,8 +131,13 @@ var matomoAnalytics = {initialize: function (options) {
         }
     });
 
-    self.addEventListener('fetch', function (event)  {
+    self.addEventListener('fetch', function (event)  
+    {
         let isOnline = navigator.onLine;
+
+        // TEMP FIX: Handle the old address - replace with new.
+        fixUrl_PSI( event.request ); 
+
 
         let isTrackingRequest = (event.request.url.includes('/matomo.php')
                             || event.request.url.includes('/piwik.php'));

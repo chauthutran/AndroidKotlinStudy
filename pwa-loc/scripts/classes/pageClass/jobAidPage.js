@@ -161,7 +161,9 @@ JobAidPage.render_ContextMenuSetup = function()
 	// Item Right UI 3 dot Context Menu - select event.
 	$.contextMenu({
 		selector: 'div.jobContextMenu',
+		className: 'jobContextMenuItems',
 		trigger: 'left',
+		//events: { show: function(options) {  this.addClass( 'mouseDown' ); } },
 		build: function ($triggerElement, e) 
 		{
 			var jobAidItemTag = $triggerElement.closest('div.jobAidItem');
@@ -936,6 +938,7 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, inProcessOpti
 		itemTag.attr('projDir', projDir);
 		itemTag.attr('statusType', statusType);
 		itemTag.attr('downloadInProgress', '');
+		itemTag.attr('cancelRequested', '');
 		itemTag.find( 'span.downloadStatus,span.appDownloadStatus,span.mediaDownloadStatus' ).html('').hide();
 		
 
@@ -1223,13 +1226,19 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 				// Still in process VS 'Finished'
 				if (prc.curr < prc.total) 
 				{
-					// In case the 'reload/refresh' of the section/item, keep the 'downloadInProgress' tag
-					var downloadInProgressAttr = itemTag.attr( 'downloadInProgress' );
-					if ( !downloadInProgressAttr ) JobAidItem.itemRepopulate( projDir, { downloadInProgress: downloadOption } );
+					var cancelRequested = itemTag.attr( 'cancelRequested' );
 
-					// Populate the counter
-					var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
-					spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr}/${prc.total} [${url.split('.').at(-1)}]`);
+					if ( cancelRequested !== 'Y' )
+					{
+						// In case the 'reload/refresh' of the section/item, keep the 'downloadInProgress' tag
+						var downloadInProgressAttr = itemTag.attr( 'downloadInProgress' );
+						if ( !downloadInProgressAttr ) JobAidItem.itemRepopulate( projDir, { downloadInProgress: downloadOption } );	
+	
+						// Populate the counter
+						var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
+						spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr}/${prc.total} [${url.split('.').at(-1)}]`);
+					}
+					else console.log( 'REQ PROGRESS - continuing after cancel request.' );
 				}
 				else 
 				{
@@ -1346,15 +1355,21 @@ JobAidCaching.cancelProjCaching = function ( projDir, option )
 		, 'options': { projDir: projDir, target: 'jobAidPage' }
 	});
 
-	// Cancel all type of download for this projDir..
-	JobAidCaching.clearAutoRetryByProj( projDir );
 
+	// 2. Mark the item as 'cancelRequested' - for blocking any further progress..
+	JobAidPage.getProjCardTag(projDir).attr( 'cancelRequested', 'Y' );
+
+
+	// 3. Cancel all type of download for this projDir..
+	JobAidCaching.clearAutoRetryByProj( projDir );
 	// 3. AVAILABILITY TEMP SET
 	ConnManagerNew.tempDisableAvailableCheck = false; 
 
 	// 4. Repopulate the item - with a bit of timeout delay?
-	//setTimeout( function() {  JobAidItem.itemRepopulate( projDir );  }, 400 );		
-	if ( !option.itemRepopulateNot ) JobAidItem.itemRepopulate( projDir );
+	setTimeout( () => {
+		if ( !option.itemRepopulateNot ) JobAidItem.itemRepopulate( projDir );		
+	}, 500 );		
+	
 };
 
 JobAidCaching.clearAutoRetryByProj = function ( projDir ) 

@@ -57,6 +57,10 @@
 	background-color: #DAEAFE !important;
 }
 
+.jobContextMenuItems .context-menu-item:active {
+	background-color: #DAEAFE !important;
+}
+
 /*.card__content:hover {
   box-shadow: 0 0 5px #aae6f7;
 }*/
@@ -98,6 +102,12 @@
 	background-color: #4E4E4E;
 }
 
+.jobContextMenuItems
+{
+	line-height: 48px;
+	font-size: 18px;
+	border-bottom: 1px solid silver;
+}
 
 .jobAidItem {
 	border-bottom: 1px solid #e0e0e0;
