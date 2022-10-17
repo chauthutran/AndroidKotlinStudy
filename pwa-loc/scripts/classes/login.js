@@ -314,6 +314,11 @@ function Login() {
 			AppUtil.appReloadWtMsg();
 		});
 
+		$('.imgAppReload').off('click').click(() => {
+			AppUtil.appReloadWtMsg();
+		});
+
+		
 		if (WsCallManager.isLocalDevCase) {
 			var localSiteInfoTag = $('#localSiteInfo');
 			localSiteInfoTag.show();
@@ -813,8 +818,8 @@ Login.contentHtml = `
 							<input tabindex="4" class="onKeyboardOnOff pin_pw pin3" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 							<input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 						</div>
-						<div class="mouseDown" style="float: left;">
-							<button id="loginPinClear" class="cbtn" term="login_passwordClear">clear</button>
+						<div style="float: left;">
+							<button id="loginPinClear" class="cbtn mouseDown" term="login_passwordClear">clear</button>
 						</div>
 						<div style="float: left;">
 							<img class="pin_pw_loading" src="images/loading_small2.svg" style="display:none; width:30px; height:30px; margin-left:10px; margin-top:10px;" />
@@ -826,10 +831,11 @@ Login.contentHtml = `
 		</div>
 		<div id="divAppVersion" class="login_data__more" style="text-align: left;">
 			<div>
-				<label id="spanVersion" style="color: #999999; font-weight: 350;">Version #.#</label>&nbsp;
+				<label id="spanVersion" style="color: #999999; font-weight: 350;">Version #.#</label>
 				<label id="spanVerDate" style="margin-left: 7px; color: #999999; font-weight: 350;">[2020---]</label>
+				<img class="imgAppReload mouseDown" title="App reload" src="images/sync-n.svg" style="margin-left: 3px; cursor: pointer; vertical-align: top; margin-bottom: -4px; margin-top: -3px;">
 				<span id="spanLoginAppUpdate" term="login_updateApp"
-					style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top;">[UPDATE
+					style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[UPDATE
 					APP]</span>
 			</div>
 			<div id="loginVersionNote" style="margin-left: 7px; color: #999999;"></div>
