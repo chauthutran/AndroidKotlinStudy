@@ -408,10 +408,8 @@ function cwsRender()
 
 		me.logOutUI();
 
-		
-		// JobAid iFrame close
-		me.jobAid_iFrameClose( 'WFA logging out due to 30 min inactivity' );
-
+		// JobAid iFrame close if currently on open state
+		me.jobAid_iFrameClose_WtMsg();
 
 		SwManager.checkAppUpdate( '[AppUpdateCheck] - logOutProcess', { noMinTimeSkip: true } );
 				
@@ -433,13 +431,18 @@ function cwsRender()
 		me.loginObj.openForm();  // includes 'hidePageDiv' which called .btnBack for hiding fullscreen overlay ones
 	};
 
-	me.jobAid_iFrameClose = function( alertMsg )
+	me.jobAid_iFrameClose_WtMsg = function()
 	{
 		try
-		{
+		{			
 			// JobAid iFrame close
-			if ( $( '#divJobAid' ).find( 'iframe' ).length > 0 ) 
+			if ( $( '#divJobAid.iframeDiv' ).is( ':visible' ) ) 
 			{ 
+				var alertMsg = 'WFA logging out due to inactivity';
+
+				try {  alertMsg += ' of ' + ConfigManager.staticData.logoutDelay + ' min';  }
+				catch ( errMsg ) {  console.log( 'ERROR in jobAid_iFrameClose_WtMsg with msg string, ' + errMsg );  }
+				
 				alert( alertMsg ); 
 				$( '#divJobAid' ).html( '' ).hide(); 
 			}
