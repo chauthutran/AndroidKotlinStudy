@@ -18,7 +18,9 @@ InputUtil.updateLogoutTimer = function() {
 
 	if (InputUtil.inputMonLogoutTimer) clearInterval(InputUtil.inputMonLogoutTimer);
 
-	if (SessionManager.getLoginStatus()) {
+	if (SessionManager.getLoginStatus()) 
+	{
+		// NOTE: change check value - if 'jobAideLogoutDelay' exists, use that value instead..
 		var logOutDelayMin = ConfigManager.staticData.logoutDelay;
 		var logOutDelayMs = ConfigManager.staticData.logoutDelayMs;
 

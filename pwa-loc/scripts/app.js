@@ -301,8 +301,12 @@ App.checkDeviceMinSpec = function( info )
 window.addEventListener('message', function ( event ) 
 {
 	// Have App stay active if 'message' is received
+	// Start with jobAid logoutTimer (increased one)
+	// Look into the existing index1.html
+
 	InputUtil.updateLogoutTimer();
-		
+	
+	// NOTE: in below case, from jobAid, add another indicator to set 'jobAideTimeOut', which (within 'updateLogoutTimer') can be used if 'jobAideTimeOut' value is not empty.
 	if ( event.data.from === 'jobAidIFrame' ) JobAidHelper.msgHandle( event.data );
 });
 
