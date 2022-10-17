@@ -29,6 +29,8 @@ JobAidPage.autoRetry_MinTimeOut = 5;
 JobAidPage.retry_clearReq = '';
 JobAidPage.inProcess_ReAttempt = ''; //Y';
 
+JobAidPage.proj_lastActions = {};  // stores last actions of proj <-- when to reset?
+
 // -------------
 
 JobAidPage.sheetFullTag;
@@ -174,11 +176,10 @@ JobAidPage.render_ContextMenuSetup = function()
 			var menusArr = menusStr.split( ';' );
 
 			var items = {};
-			menusArr.forEach( menuStr => {  
+			menusArr.forEach( menuStr => 
+			{
 				var menuItem = { name: menuStr };
-
 				if ( downloadInProgress && download_menuItems.indexOf( menuStr ) >= 0 ) menuItem.disabled = function(key, opt) { return !this.data('Disabled');  };
-				
 				items[ menuStr ] = menuItem;
 			});
 
@@ -186,16 +187,20 @@ JobAidPage.render_ContextMenuSetup = function()
 				items: items,
 				callback: function (key, options) 
 				{
-					if ( download_menuItems.indexOf( key ) >= 0 ) 
-					{
-						// if ( downloadInProgress ) MsgManager.msgAreaShowErr( 'Another download already in progress, ' + downloadInProgress );  // or use Alert( .. );
-						//jobAidItemTag.attr( 'downloadKey', key );
+					if ( download_menuItems.indexOf( key ) >= 0 ) {
+						JobAidPage.proj_lastActions[projDir] = key;  // Record lastAction for proj - to be used on cancel situation / progress
 						JobAidItem.itemDownload(projDir, JobAidItem.keyToDownloadOption( key ) );
 					}
-					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
-					else if (key === 'Delete') JobAidItem.itemDelete(projDir);
 					else if (key === 'Open') JobAidItem.itemOpen(projDir);
-					else if (key === JobAidPage.MENU_cancel) JobAidCaching.cancelProjCaching(projDir);
+					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
+					else if (key === 'Delete') {
+						JobAidPage.proj_lastActions[projDir] = key;
+						JobAidItem.itemDelete(projDir);
+					}
+					else if (key === JobAidPage.MENU_cancel) {
+						JobAidPage.proj_lastActions[projDir] = key;
+						JobAidCaching.cancelProjCaching(projDir);
+					}
 				}
 			};
 		}
@@ -938,7 +943,7 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, inProcessOpti
 		itemTag.attr('projDir', projDir);
 		itemTag.attr('statusType', statusType);
 		itemTag.attr('downloadInProgress', '');
-		itemTag.attr('cancelRequested', '');
+		//itemTag.attr('cancelRequested', '');
 		itemTag.find( 'span.downloadStatus,span.appDownloadStatus,span.mediaDownloadStatus' ).html('').hide();
 		
 
@@ -1186,15 +1191,19 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 		console.log( 'Aborted in jobFilingUpdate' );
 		MsgManager.msgAreaShowErr( 'Aborted the download: ' + projDir, undefined, 5000 );
 	}
+	else if ( JobAidPage.proj_lastActions[projDir] === JobAidPage.MENU_cancel )
+	{
+		// If canceled action case, do not do anything..
+	}
 	else
 	{
-		// NEW: On error, show the message, but still process count, since we like to progress/finish the download even on 'error'.
-		if ( error )
+		if ( error ) // NEW: On error, show the message, but still process count, since we like to progress/finish the download even on 'error'.
 		{
+			// Error case during download 'progress'
 			var fileUrl = ( prc && prc.name ) ? prc.name: '';
-			MsgManager.msgAreaShowErr( 'Failed in file download: ' + fileUrl, undefined, 10000 );
+			MsgManager.msgAreaShowErr( 'Failed in file download: ' + fileUrl, undefined, 10000 );	
 		}
-		
+
 		var downloadOption = msgData.options.downloadOption;	
 		var projCardTag = JobAidPage.getProjCardTag(projDir); // $( 'div.card[projDir=' + msgData.options.projDir + ']' );
 		var processKey = projDir + '_' + downloadOption;
@@ -1217,30 +1226,21 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 			{
 				var url = prc.name;
 
-				//projCardTag.css('opacity', 1);
-
 				// ** Update the downloaded status on storage..  <-- Mark this 
 				if ( isDownloaded ) JobAidCaching.projProcessDataUpdate(projDir, url, { date: new Date().toISOString(), downloaded: true } );
-
 
 				// Still in process VS 'Finished'
 				if (prc.curr < prc.total) 
 				{
-					var cancelRequested = itemTag.attr( 'cancelRequested' );
+					// In case the 'reload/refresh' of the section/item, keep the 'downloadInProgress' tag
+					var downloadInProgressAttr = itemTag.attr( 'downloadInProgress' );  // Could use 'proj_lastActions' instead?
+					if ( !downloadInProgressAttr ) JobAidItem.itemRepopulate( projDir, { downloadInProgress: downloadOption } );	
 
-					if ( cancelRequested !== 'Y' )
-					{
-						// In case the 'reload/refresh' of the section/item, keep the 'downloadInProgress' tag
-						var downloadInProgressAttr = itemTag.attr( 'downloadInProgress' );
-						if ( !downloadInProgressAttr ) JobAidItem.itemRepopulate( projDir, { downloadInProgress: downloadOption } );	
-	
-						// Populate the counter
-						var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
-						spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr}/${prc.total} [${url.split('.').at(-1)}]`);
-					}
-					else console.log( 'REQ PROGRESS - continuing after cancel request.' );
+					// Populate the counter
+					var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
+					spanDownloadStatusTag.html(`<strong>Processed:<strong> ${prc.curr}/${prc.total} [${url.split('.').at(-1)}]`);
 				}
-				else 
+				else // 'FINISHED' download
 				{
 					var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
 					JobAidCaching.downloadFinishStep( projDir, downloadOption, spanDownloadStatusTag );
@@ -1355,10 +1355,8 @@ JobAidCaching.cancelProjCaching = function ( projDir, option )
 		, 'options': { projDir: projDir, target: 'jobAidPage' }
 	});
 
-
 	// 2. Mark the item as 'cancelRequested' - for blocking any further progress..
-	JobAidPage.getProjCardTag(projDir).attr( 'cancelRequested', 'Y' );
-
+	//JobAidPage.getProjCardTag(projDir).attr( 'cancelRequested', 'Y' );
 
 	// 3. Cancel all type of download for this projDir..
 	JobAidCaching.clearAutoRetryByProj( projDir );

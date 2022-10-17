@@ -57,10 +57,6 @@
 	background-color: #DAEAFE !important;
 }
 
-.jobContextMenuItems .context-menu-item:active {
-	background-color: #DAEAFE !important;
-}
-
 /*.card__content:hover {
   box-shadow: 0 0 5px #aae6f7;
 }*/
@@ -91,6 +87,20 @@
 }
 
 /* ===== Job Aid Releated =========================== */
+
+ul.jobContextMenuItems .context-menu-item:active {
+	background-color: #DAEAFE !important;
+}
+
+ul.jobContextMenuItems li.context-menu-item {
+	border-bottom: 1px solid #f0f0f0;
+}
+
+ul.jobContextMenuItems li.context-menu-item:last-child {
+	border: none;
+}
+
+/* ------ */
 
 .jobAidDevSelect {
 	width: 57px; 
