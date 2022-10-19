@@ -305,6 +305,10 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 			// 'syncUp' - NEW ACTIVITY - same as above ('synced')
 			// 'syncUp' - EXISTING ACTIVITY - override the status + history..
 
+			// NEW - correct DHIS2 orgUnit 'activeUser' uid -> to code
+			ActivityDataManager.adjustDownloadedActivity(dwActivity);
+
+
 			// 'appClientActivities' is the matching client (by downloaded client id)'s activities
 			// If the matching app client does not already hold the same activity (by id), proceed with ADD!!
 			var appClientActivity = Util.getFromList(appClientActivities, dwActivity.id, "id");
@@ -363,6 +367,93 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 
 	// Return the number of added ones.
 	return newActivities;
+};
+
+ActivityDataManager.adjustDownloadedActivity = function( dwActivity )
+{
+	try
+	{
+		if ( ConfigManager.isSourceTypeDhis2() )
+		{
+			// #1. we can also save it and get it from 'MzjA6i3SfBZ'
+			var ouCode_fromControlStr = ActivityDataManager.getOuCodeFromControlStr( dwActivity );
+
+			if ( ouCode_fromControlStr ) dwActivity.activeUser = ouCode_fromControlStr;
+			else
+			{
+				// #2. Get from 'id'
+				// date.capturedUTC: "2022-10-18T17:03:14.495",
+				var ouCode_fromActivityId = ActivityDataManager.getOuCodeFromActivityId( dwActivity );
+				if ( ouCode_fromActivityId ) dwActivity.activeUser = ouCode_fromActivityId;
+			}
+		}	
+	}
+	catch ( errMsg ) 
+	{
+		console.log( 'ERROR in ActivityDataManager.adjustDownloadedActivity, ' + errMsg );
+	}
+};
+
+ActivityDataManager.getOuCodeFromControlStr = function( dwActivity )
+{
+	var ouCode_fromControlStr;
+
+	try
+	{
+		var controlStr = ActivityDataManager.getTransDataValue(dwActivity.transaction, 'MzjA6i3SfBZ');	
+
+		if ( controlStr )
+		{
+			var ouStrArr = controlStr.split( ', ou:' );
+			if ( ouStrArr.length > 1 )
+			{
+				var ouStr = ouStrArr[1];
+
+				var ouStrCheckArr = ouStr.split( ',' );
+				if ( ouStrCheckArr.length > 1 ) ouStr = ouStrCheckArr[0];					
+
+				if ( ouStr ) ouCode_fromControlStr = ouStr;
+			}
+
+		}
+
+		if ( ouCode_fromControlStr ) console.log( 'ouCode from ouCode_fromControlStr, ' + ouCode_fromControlStr );
+	}
+	catch ( errMsg )	
+	{
+		console.log( 'ERROR in ActivityDataManager.getOuCodeFromControlStr, ' + errMsg );
+	}
+
+	return ouCode_fromControlStr;
+};
+
+ActivityDataManager.getOuCodeFromActivityId = function( dwActivity )
+{
+	var ouCode_fromActivityId;
+
+	try
+	{
+		var dateStr = dwActivity.date.capturedUTC;
+
+		if ( dateStr && dwActivity.id )
+		{
+			var yearMonthDateStr = Util.formatDate(dateStr, 'yyyyMM' );
+
+			var dateStrArr = dwActivity.id.split( '_' + yearMonthDateStr );
+
+			// Take 1st part of id by looking at '_YYYYMM' - "DO_TEST_IPC_20221018_170355341", get "DO_TEST_IPC"
+			if ( dateStrArr.length > 1 ) ouCode_fromActivityId = dateStrArr[0];
+		}
+
+		if ( ouCode_fromActivityId ) console.log( 'ouCode from ouCode_fromActivityId, ' + ouCode_fromActivityId );
+
+	}
+	catch ( errMsg )	
+	{
+		console.log( 'ERROR in ActivityDataManager.getOuCodeFromActivityId, ' + errMsg );
+	}
+
+	return ouCode_fromActivityId;
 };
 
 // --------------------------------------

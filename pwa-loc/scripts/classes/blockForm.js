@@ -38,7 +38,9 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 		// 		ADD FORM FIELDS ARRAY COMBINING HERE!!
 
 		// 1. Set formDefinition variables (from Config)
-		var formDef_fieldsArr = FormUtil.getObjFromDefinition(formId, ConfigManager.getConfigJson().definitionForms);
+		var formDef_fieldsArr_Temp = FormUtil.getObjFromDefinition(formId, ConfigManager.getConfigJson().definitionForms);
+		var formDef_fieldsArr = me.getFormFieldsDef( formDef_fieldsArr_Temp );
+
 		formDef_fieldsArr = ConfigManager.filterList_ByCountryFilter(formDef_fieldsArr);
 		me.formDef_fieldsArr = formDef_fieldsArr;
 
@@ -185,6 +187,20 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 				formGroupSectionTag.find('> div.section').hide();
 			}
 		});
+	};
+
+
+	me.getFormFieldsDef = function( formDef_fieldsArr_Temp )
+	{
+		var formDef_fieldsArr = [];
+
+		for ( var i = 0; i < formDef_fieldsArr_Temp.length; i++)
+		{
+			var formFieldDef = FormUtil.getObjFromDefinition(formDef_fieldsArr_Temp[i], ConfigManager.getConfigJson().definitionFormFields);
+			if ( formFieldDef ) 	formDef_fieldsArr.push( formFieldDef );		
+		}
+
+		return formDef_fieldsArr;
 	};
 
 
