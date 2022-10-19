@@ -846,14 +846,10 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 		// #1. AVAILABILITY TEMP SET
 		ConnManagerNew.tempDisableAvailableCheck = true; 
 
-
 		var newFileList_Override = ( reAttemptCaseType ) ? JobAidItem.getReAttemptList( projDir, reAttemptCaseType ): undefined;
-		var spanDownloadStatusTag = JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption );
-		//if ( newFileList_Override && newFileList_Override.length === 0 ) { MsgManager.msgAreaShow( 'Download Retry Cancelled - empty retry list.' );	JobAidItem.itemRepopulate( projDir );
-
 
 		// Submit for file listing/caching
-		JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override, spanDownloadStatusTag );
+		JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override );
 
 	}
 	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
