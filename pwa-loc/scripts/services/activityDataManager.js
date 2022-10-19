@@ -306,7 +306,7 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 			// 'syncUp' - EXISTING ACTIVITY - override the status + history..
 
 			// NEW - correct DHIS2 orgUnit 'activeUser' uid -> to code
-			ActivityDataManager.adjustDownloadedActivity(dwActivity);
+			if ( ConfigManager.isSourceTypeDhis2() ) ActivityDataManager.adjustDownloadedActivity(dwActivity);
 
 
 			// 'appClientActivities' is the matching client (by downloaded client id)'s activities
@@ -373,20 +373,19 @@ ActivityDataManager.adjustDownloadedActivity = function( dwActivity )
 {
 	try
 	{
-		if ( ConfigManager.isSourceTypeDhis2() )
+		if ( ConfigManager.isSourceTypeDhis2() && !dwActivity.activeUserConverted )
 		{
 			// #1. we can also save it and get it from 'MzjA6i3SfBZ'
-			var ouCode_fromControlStr = ActivityDataManager.getOuCodeFromControlStr( dwActivity );
+			//var ouCode_fromControlStr = ActivityDataManager.getOuCodeFromControlStr( dwActivity );
+			//if ( ouCode_fromControlStr ) dwActivity.activeUser = ouCode_fromControlStr;
 
-			if ( ouCode_fromControlStr ) dwActivity.activeUser = ouCode_fromControlStr;
-			else
-			{
-				// #2. Get from 'id'
-				// date.capturedUTC: "2022-10-18T17:03:14.495",
-				var ouCode_fromActivityId = ActivityDataManager.getOuCodeFromActivityId( dwActivity );
-				if ( ouCode_fromActivityId ) dwActivity.activeUser = ouCode_fromActivityId;
-			}
-		}	
+			// #2. Get from 'id'
+			// date.capturedUTC: "2022-10-18T17:03:14.495",
+			dwActivity.activeUserConverted = true;
+			
+			var ouCode_fromActivityId = ActivityDataManager.getOuCodeFromActivityId( dwActivity );
+			if ( ouCode_fromActivityId ) dwActivity.activeUser = ouCode_fromActivityId;
+		}
 	}
 	catch ( errMsg ) 
 	{
@@ -414,7 +413,6 @@ ActivityDataManager.getOuCodeFromControlStr = function( dwActivity )
 
 				if ( ouStr ) ouCode_fromControlStr = ouStr;
 			}
-
 		}
 
 		if ( ouCode_fromControlStr ) console.log( 'ouCode from ouCode_fromControlStr, ' + ouCode_fromControlStr );

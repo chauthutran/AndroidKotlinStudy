@@ -144,6 +144,9 @@ function cwsRender()
 
 			ActivityDataManager.regenActivityList_NIndexes();
 
+			// NEW --> on login, adjust data in DHIS2 version
+			if ( ConfigManager.isSourceTypeDhis2() ) ActivityDataManager.getActivityList().forEach( act => {  ActivityDataManager.adjustDownloadedActivity( act );  });
+
 			// Change the activities that did not complete -> 'Pending' to 'Failed', as app time out measure.
 			ActivityDataManager.updateActivitiesStatus_ProcessingToFailed( ActivityDataManager.getActivityList(), { saveData: false } );
 
