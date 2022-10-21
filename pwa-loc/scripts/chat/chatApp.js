@@ -109,6 +109,28 @@ function ChatApp(username) {
 			// Update the contact list status
 			me.users.forEach((user) => { me.setUserStatus(user); });
 
+		})
+		.fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			var errMsg = "";
+			if (XMLHttpRequest.status == 0) 
+			{
+				errMsg = ' Please check the connection to the chat server .';
+			} 
+			else if (XMLHttpRequest.status == 404) 
+			{
+				errMsg = 'Requested URL not found.';
+			} 
+			else if (XMLHttpRequest.status == 500) 
+			{
+				errMsg = 'Internel Server Error.';
+			}  
+			else 
+			{
+				errMsg = 'Unknow Error.\n' + XMLHttpRequest.responseText;
+			} 
+
+			MsgManager.notificationMessage ( errMsg, "notifRed", undefined, '', 'right', 'top' );
+			FormUtil.unblockPage();
 		});
 
 		// Init Chat form

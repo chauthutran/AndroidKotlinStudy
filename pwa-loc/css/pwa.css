@@ -273,7 +273,7 @@ ul.jobContextMenuItems li.context-menu-item:last-child {
 
 .list-downloaded {
 	position: absolute;
-	top: 80px;
+	top: 90px;
 	width: 100%;
 	height: 100%;
 	background-color: #FFF;
@@ -392,8 +392,23 @@ ul.jobContextMenuItems li.context-menu-item:last-child {
   .sort-dropdown {
     display: flex;
     margin-left: 15px;
-    background-color: #c9c7c7;
+    background-color: #AEB6BF;
     margin-right: 18px;
+    height: 38px;
+    font-weight: bold;
+  }
+
+  .sortBtn {
+	background-color: #D5DBDB; 
+	border-radius: 5px;
+	margin: 2px;    
+	height: 28px;
+  }
+  
+  .sortBtn:hover {
+	background-color: #F4F6F6;
+    border-radius: 5px;
+	margin: 2px;
   }
 }
 

@@ -187,8 +187,8 @@ JobAidContentPage.populateFileItemList = function( itemList )
 
 JobAidContentPage.sortDataList = function( sortField, order, isOrderChanged )
 {
-	// const sortField = sortFieldTag.attr("sortField");
-	// const order = sortFieldTag.attr("order");
+	MsgFormManager.displayBlock_byItem( $(".list-downloaded"));
+	
 
 	const sortedItems = Util.sortByKey(JobAidContentPage.ITEM_LIST, sortField, undefined, order );
 	JobAidContentPage.populateFileItemList( sortedItems );
@@ -226,6 +226,8 @@ JobAidContentPage.sortDataList = function( sortField, order, isOrderChanged )
 			// sortBtnTag.attr("src", "../images/arrow_drop_down.svg");
 		}
 	}
+
+	MsgFormManager.hideBlock( $(".list-downloaded"));
 }
 
 
@@ -380,7 +382,7 @@ JobAidContentPage.contentPage_tableTag = `<table class="jobFileContentTable"><tb
 JobAidContentPage.contentPage_headers = `
 <div class="sort-dropdown">
 	
-	<select class="sortOpt">
+	<select class="sortOpt" style="padding-left: 10px;font-weight: bold;">
 		<option value="name">Name</option>
 		<option value="folder">Folder</option>
 		<option value="contentType">Content-Type</option>
