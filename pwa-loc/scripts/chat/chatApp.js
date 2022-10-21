@@ -80,13 +80,9 @@ function ChatApp(username) {
 
 		// ------------------------
 
-		FormUtil.blockPage();
+		//FormUtil.blockPage();
 		me.chatViewTag.hide();
-		me.initChatMsgTag.show().html(`Loading ...`);
-
-		if (!me.curUser) {
-			me.initChatMsgTag.show().html("Loading ...");
-		}
+		me.initChatMsgTag.show().html(`Loading chat info ...`);
 
 		// Add Emoji in Emoji Dashboard
 		for (var i = 0; i < emojiCodes.length; i++) {
@@ -130,7 +126,9 @@ function ChatApp(username) {
 			} 
 
 			MsgManager.notificationMessage ( errMsg, "notifRed", undefined, '', 'right', 'top' );
-			FormUtil.unblockPage();
+			//FormUtil.unblockPage();
+			me.initChatMsgTag.show().html(`Failed to get chat info ...`);
+
 		});
 
 		// Init Chat form
@@ -203,7 +201,7 @@ function ChatApp(username) {
 			}
 
 			me.initChatMsgTag.show().html(`Welcome, ${me.curUser.fullName}`);
-			FormUtil.unblockPage();
+			//FormUtil.unblockPage();
 
 		});
 
@@ -237,7 +235,7 @@ function ChatApp(username) {
 			else {
 				console.log('Failed to connect to server');
 				me.initChatMsgTag.show().html(`Failed to connect to chat server. Please contact administrator.`);
-				FormUtil.unblockPage();
+				//FormUtil.unblockPage();
 			}
 		});
 
@@ -842,6 +840,8 @@ ChatApp.contentHtml = `
 					</ul>
 				</div>
 
+				<div class="chat" id="initChatMsg" style="height: 500px; font-size: 26px; text-align: center; padding-top: 80px;"></div>
+
 				<div class="chat" style="display: none;" id="chatView">
 					<div class="chat-header clearfix">
 						<div class="user-icon chat-with-icon"></div>
@@ -866,8 +866,6 @@ ChatApp.contentHtml = `
 
 						<div class="emoji-dashboard" style="display:none"><ul></ul></div>
 					</div>
-
-					<div class="chat" id="initChatMsg" style="height: 917px; font-size: 40px; text-align: center; padding: 100px 0;"></div>
 
 				</div>
 			</div>
