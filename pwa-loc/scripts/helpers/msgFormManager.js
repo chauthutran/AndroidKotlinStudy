@@ -54,6 +54,26 @@ MsgFormManager.showNQueue_Block = function( itemId, msgAndStyle, afterRun )
 // Actual showing..
 MsgFormManager.displayBlock_byItem = function( item )
 {
+    if ( !item ) item = {};
+    if ( !item.msgAndStyle ) item.msgAndStyle = {};
+
+    if ( !item.msgAndStyle.css )
+    {
+        item.msgAndStyle.css = {
+            fontSize:	'15px',
+            padding:	'10px',
+            margin:		0,
+            width:		'40%',
+            top:		'30%',
+            left:		'30%',
+            textAlign:	'center',
+            color:		'#333',
+            border:		'1px solid #aaa',
+            backgroundColor:'aliceblue',
+            cursor:		'wait'    
+        };
+    }
+
     //console.log( 'blockUI shown' );
     $.blockUI( item.msgAndStyle );  // var msgAndStyle = { message: msg, css: cssSetting };
 

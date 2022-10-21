@@ -20,78 +20,12 @@ JobAidContentPage.fileContentDialogOpen = async function(projDir)
 
 		// Display the content..
 		JobAidContentPage.populateFileContent(processData, projDir);
-
-
-		/*  -- Do not need anymore due to service providing the size.
-		// Missing file size <-- We could calculate this when we open up the file..
-		JobAidContentPage.calcMissingFileSize( processData, function( urlProp, size, item ) 
-		{
-			Util.mergeJson( item, { size: size } );
-
-			PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projDirStatus);
-
-			// display on each item...  item in 'urlProp'..
-			if ( size ) sizeFormatted = Util.formatFileSizeMB( size );
-			else sizeFormatted = '[N/A]';
-
-			var dataItemTag = JobAidContentPage.divMainContentTag.find( '.list-r[url="' + urlProp + '"]' );
-			dataItemTag.find( 'div.contentLength' ).html('').append(sizeFormatted).attr('title', 'size: ' + size);		
-		});
-		*/
 	}
 	else MsgManager.msgAreaShowErr( 'No project data available.' );
 
 
 	TranslationManager.translatePage();
 };
-
-/*
-JobAidContentPage.calcMissingFileSize = async function ( projProcess, callBack )
-{
-	// 1. File size calculate - individual ones calculate & save.  Total size calc.
-	//		- Should only calculate if needed --> Process it if has downloaded & does not have 'size' & exists in cache..				
-	//var totalSize = 0;
-
-	try 
-	{
-		JobAidHelper.getCacheKeys_async().then( async function( cacheKeyJson )		
-		{
-			var keys = cacheKeyJson.keys;
-			var cache = cacheKeyJson.cache;  //var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
-	
-			// Calculate size
-			for( var urlProp in projProcess )
-			{
-				var item = projProcess[urlProp];
-	
-				// Condition: has projDir url, downloaded, and no size set, calculate size..
-				if ( item.downloaded && !item.size )
-				{
-					var request = JobAidManifest.getCacheKeyRequest( urlProp, keys );
-	
-					if ( request )
-					{
-						// NOTE: We may display 'calculating...' animation on the 'size' location..  at here.
-
-						var response = await cache.match( request );
-						var myBlob = await response.clone().blob();
-						var size = myBlob.size;
-						if ( callBack ) callBack( urlProp, size, item );
-
-						//cache.match( request ).then( response => response.clone().blob().then( myBlob => 
-					}
-				}
-	
-				//totalSize += item.size;
-			}
-		});
-	}
-	catch( errMsg ) { console.log( 'ERROR in JobAidManifest.projProcessData_calcFileSize, ' + errMsg ); };
-
-	// Updating in Storage (Persis) is done from outside of this method
-	//return totalSize;
-};
-*/
 
 
 JobAidContentPage.populateFileContent = function( processData, projDir) 
@@ -187,48 +121,60 @@ JobAidContentPage.populateFileItemList = function( itemList )
 
 JobAidContentPage.sortDataList = function( sortField, order, isOrderChanged )
 {
-	MsgFormManager.displayBlock_byItem( $(".list-downloaded"));
+	// TODO: THE PROGRESS INTERACTION../UI.. ON HERE!!!!
+	MsgFormManager.displayBlock_byItem( { msgAndStyle: { message: 'Sorting in progress...' } } );
 	
-
-	const sortedItems = Util.sortByKey(JobAidContentPage.ITEM_LIST, sortField, undefined, order );
-	JobAidContentPage.populateFileItemList( sortedItems );
-
-	// Update "Sort" icon for headers
-	JobAidContentPage.divMainContentTag.find( ".headers .sortable" ).attr("src", "../images/sort_icon.svg").addClass( 'sortable_default' );
-
+	setTimeout( () => 
+	{  
+		try
+		{
+			const sortedItems = Util.sortByKey(JobAidContentPage.ITEM_LIST, sortField, undefined, order );
+			JobAidContentPage.populateFileItemList( sortedItems );
+		
+			// Update "Sort" icon for headers
+			JobAidContentPage.divMainContentTag.find( ".headers .sortable" ).attr("src", "../images/sort_icon.svg").addClass( 'sortable_default' );
+		
+			
+			var sortFieldTableColTag = JobAidContentPage.divMainContentTag.find(".sortable[order='" + order + "'][sortField='" + sortField + "']");
+			let sortOptTag = JobAidContentPage.divMainContentTag.find(".sortOpt");
+			let sortBtnTag = JobAidContentPage.divMainContentTag.find(".sortBtn");
+			sortOptTag.val(sortField);
+		
+			if( order == "asc" ) {
+		
+				sortFieldTableColTag.attr("order", "desc");
+				sortFieldTableColTag.attr("src", "../images/arrow_drop_up.svg");
+				sortFieldTableColTag.removeClass( 'sortable_default' );
+		
+				if( isOrderChanged )
+				{
+					sortBtnTag.attr("order", "desc");
+					// sortBtnTag.attr("src", "../images/arrow_drop_up.svg");
+				}
+			}
+			else
+			{
+				sortFieldTableColTag.attr("order", "asc");
+				sortFieldTableColTag.attr("src", "../images/arrow_drop_down.svg");
+				sortFieldTableColTag.removeClass( 'sortable_default' );
+		
+				if( isOrderChanged )
+				{
+					sortBtnTag.attr("order", "asc");
+					// sortBtnTag.attr("src", "../images/arrow_drop_down.svg");
+				}
+			}
+		}
+		catch ( errMsg ) 
+		{
+			console.log( 'ERROR in JobAidContentPage.sortDataList, ' + errMsg );
+		}
 	
-	var sortFieldTableColTag = JobAidContentPage.divMainContentTag.find(".sortable[order='" + order + "'][sortField='" + sortField + "']");
-	let sortOptTag = JobAidContentPage.divMainContentTag.find(".sortOpt");
-	let sortBtnTag = JobAidContentPage.divMainContentTag.find(".sortBtn");
-	sortOptTag.val(sortField);
+		setTimeout( () => {  MsgFormManager.hideBlock();  }, 400 );
 
-	if( order == "asc" ) {
+	}, 150 );
 
-		sortFieldTableColTag.attr("order", "desc");
-		sortFieldTableColTag.attr("src", "../images/arrow_drop_up.svg");
-		sortFieldTableColTag.removeClass( 'sortable_default' );
-
-		if( isOrderChanged )
-		{
-			sortBtnTag.attr("order", "desc");
-			// sortBtnTag.attr("src", "../images/arrow_drop_up.svg");
-		}
-	}
-	else
-	{
-		sortFieldTableColTag.attr("order", "asc");
-		sortFieldTableColTag.attr("src", "../images/arrow_drop_down.svg");
-		sortFieldTableColTag.removeClass( 'sortable_default' );
-
-		if( isOrderChanged )
-		{
-			sortBtnTag.attr("order", "asc");
-			// sortBtnTag.attr("src", "../images/arrow_drop_down.svg");
-		}
-	}
-
-	MsgFormManager.hideBlock( $(".list-downloaded"));
-}
+};
 
 
 JobAidContentPage.getFileName_FolderPath = function(url, projDir)
@@ -382,7 +328,7 @@ JobAidContentPage.contentPage_tableTag = `<table class="jobFileContentTable"><tb
 JobAidContentPage.contentPage_headers = `
 <div class="sort-dropdown">
 	
-	<select class="sortOpt" style="padding-left: 10px;font-weight: bold;">
+	<select class="sortOpt mouseDown" style="padding-left: 10px;font-weight: bold;">
 		<option value="name">Name</option>
 		<option value="folder">Folder</option>
 		<option value="contentType">Content-Type</option>
@@ -399,24 +345,24 @@ JobAidContentPage.contentPage_headers = `
 	<div class="list-r">
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">File Name
-				<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="name">
+				<img class="mouseDown sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="name">
 			</div>
 		</div>
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">Folder
-			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="folder"></div>
+			<img class="mouseDown sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="folder"></div>
 		</div>
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">Content-Type
-			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="contentType"></div>
+			<img class="mouseDown sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="contentType"></div>
 		</div>
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">Caching time
-			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="date"></div>
+			<img class="mouseDown sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="date"></div>
 		</div>
 		<div class="list-r_secc">
 			<div class="list-r_secc_title">Content-Length
-			<img class="sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="size2"></div>
+			<img class="mouseDown sortable sortable_default" src="../images/sort_icon.svg" order="asc" sortField="size2"></div>
 		</div>
 	</div>
 </div>`;

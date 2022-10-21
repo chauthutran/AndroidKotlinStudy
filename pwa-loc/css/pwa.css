@@ -213,16 +213,15 @@ ul.jobContextMenuItems li.context-menu-item:last-child {
 
 .list-downloaded-headers .sortable{
   float: right;
-  margin-top: 4px; /*10px; */
+  margin-top: 0px; /*10px; */
   cursor: pointer;
   opacity: 0.5;
-  /*width: 20px;
-  height: 20px;*/
 }
 
 .sortable_default {
-	width: 12px;
-	height: 12px;
+	margin-top: 7px !important; /*10px; */
+	width: 14px;
+	height: 14px;
 }
 
 .list-downloaded-headers .list-r {
