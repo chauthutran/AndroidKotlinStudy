@@ -456,7 +456,8 @@ JobAidHelper.filingContent_setUp = function( newFileList, results, options )
 				var matchingExistingFile = false;
 
 				// If same 'fileName' already was downloaded, compare the size.  Skip the download reset for those matching files.
-				if ( options.downloadOption && size )
+				// This is for already downloaded case, not new download from 'available'.
+				if ( options.downloadOption && options.downloadOption.indexOf( '_fromAvailable' ) === -1 && size )
 				{
 					var existingFileItem = projStatus.process[ fileName ];
 

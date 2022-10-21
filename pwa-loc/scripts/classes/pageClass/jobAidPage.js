@@ -117,14 +117,6 @@ JobAidPage.devOptionSelects_Setup = function( sheetTitleDivTag, propArr )
 			selectOpts = [ { name: 'No', value: '' }, { name: 'Yes', value: 'Y' } ];
 		}
 
-		/*
-		else if ( propName === 'inProcess_ReAttempt' )
-		{
-			spanJobAidDevInfoTag.append( '<span style="margin-left: 5px;" title="During download process, ReAttempt is allowed">inPrc_ReAtpt: </span>');
-			selectOpts = [ { name: 'Yes', value: 'Y' }, { name: 'No', value: '' } ];
-		}		
-		*/
-
 		JobAidPage.devOptionSelect( spanJobAidDevInfoTag, propName, selectOpts );
 	});
 };
