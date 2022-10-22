@@ -6,25 +6,31 @@ JobAidContentPage.divMainContentTag;
 JobAidContentPage.ITEM_LIST = [];
 
 
-JobAidContentPage.fileContentDialogOpen = async function(projDir) 
+JobAidContentPage.fileContentDialogOpen = function(projDir) 
 {
-	var divDialogTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, {'title': 'JobAid Content - ' + projDir, 'term': '', 'cssClasses': ['divJobAidContentPage'] });
-
-	JobAidContentPage.divMainContentTag = divDialogTag.find('.contentBody');
-
-	var projDirStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
-
-	if ( projDirStatus && projDirStatus.process )
+	try
 	{
-		var processData = projDirStatus.process;
+		var divDialogTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, {'title': 'JobAid Content - ' + projDir, 'term': '', 'cssClasses': ['divJobAidContentPage'] });
 
-		// Display the content..
-		JobAidContentPage.populateFileContent(processData, projDir);
+		JobAidContentPage.divMainContentTag = divDialogTag.find('.contentBody');
+	
+		var projDirStatus = PersisDataLSManager.getJobFilingProjDirStatus( projDir );
+	
+		if ( projDirStatus && projDirStatus.process )
+		{
+			var processData = projDirStatus.process;
+	
+			// Display the content..
+			JobAidContentPage.populateFileContent(processData, projDir);
+		}
+		else MsgManager.msgAreaShowErr( 'No project data available.' );
+	
+		TranslationManager.translatePage();	
 	}
-	else MsgManager.msgAreaShowErr( 'No project data available.' );
-
-
-	TranslationManager.translatePage();
+	catch( errMsg )
+	{
+		console.log( 'ERROR in JobAidContentPage.fileContentDialogOpen, ' + errMsg );
+	}
 };
 
 
@@ -170,7 +176,7 @@ JobAidContentPage.sortDataList = function( sortField, order, isOrderChanged )
 			console.log( 'ERROR in JobAidContentPage.sortDataList, ' + errMsg );
 		}
 	
-		setTimeout( () => {  MsgFormManager.hideBlock();  }, 400 );
+		setTimeout( () => {  MsgFormManager.hideBlock();  }, 200 );
 
 	}, 150 );
 

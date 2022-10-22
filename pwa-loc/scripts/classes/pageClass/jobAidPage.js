@@ -184,7 +184,15 @@ JobAidPage.render_ContextMenuSetup = function()
 						JobAidItem.itemDownload(projDir, JobAidItem.keyToDownloadOption( key ) );
 					}
 					else if (key === 'Open') JobAidItem.itemOpen(projDir);
-					else if (key === 'See content') JobAidContentPage.fileContentDialogOpen(projDir);
+					else if (key === 'See content') {
+
+						MsgFormManager.displayBlock_byItem( { msgAndStyle: { message: 'Opening...' } } );
+
+						setTimeout( () => { 
+							JobAidContentPage.fileContentDialogOpen(projDir);
+							MsgFormManager.hideBlock();
+						}, 200 );
+					}
 					else if (key === 'Delete') {
 						JobAidPage.proj_lastActions[projDir] = key;
 						JobAidItem.itemDelete(projDir);
@@ -226,7 +234,7 @@ JobAidPage.setUpPageContentLayout = function (contentBodyTag, divFileContentTag)
 
 
 // 'Available' - from Server Manifest Data, 'Downloaded' - from cached manifest.json files
-JobAidPage.populateSectionLists = function ( refreshAvailableOnly, callBack ) 
+JobAidPage.populateSectionLists = function ( refreshAvailableOnly, callBack )
 {
 	// Reload without setting html back..  How?
 
@@ -241,16 +249,17 @@ JobAidPage.populateSectionLists = function ( refreshAvailableOnly, callBack )
 		JobAidPage.divAvailablePacksTag.append(JobAidPage.loadingImageStr).show( 'fast' );  // Loading Image with clearing
 		JobAidPage.divDownloadedPacksTag.append(JobAidPage.loadingImageStr).show( 'fast' );
 
-	}, function ( availableManifestList ) 
+	}, function ( availableManifestList, type ) 
 	{
+		// Clear the loading image by clearing..
+		JobAidPage.divAvailablePacksTag.html('');
+		JobAidPage.divDownloadedPacksTag.html('');
+
 		JobAidPage.availableManifestList = availableManifestList;
-		//JobAidPage.populateAvailableItems( JobAidPage.divAvailablePacksTag, availableManifestList );
-
-		// Get Cached Manifests
-		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList();
+		JobAidPage.downloadedManifestList = JobAidManifest.retrieve_DownloadedManifestList(); // Get Cached Manifests
 
 
-		// Populate "uninstall" list
+		// Populate "uninstall" list - exists in 'downloaded' & also in 'available'  --> on displaying 'availalble', we need to skip these?
 		const downloadedProjDirList = JobAidPage.downloadedManifestList.map(function(a) {return a.projDir;});
 		var uninstallList = [];
 		for( var i=0; i<availableManifestList.length; i++ )
@@ -262,10 +271,18 @@ JobAidPage.populateSectionLists = function ( refreshAvailableOnly, callBack )
 			}
 		}
 
-		JobAidPage.populateAvailableItems( JobAidPage.divAvailablePacksTag, uninstallList );
 
-		// Populate "downloaded" list
-		// STEP 2. Get Cached Manifests & display/list them
+		// AVAILABLE SECTION POPUALTE / RENDER..
+		// NEW - type can be 'success', 'error', 'offline'
+		if ( type === 'offline' ) JobAidPage.packSection_emptyCaseMsg( JobAidPage.divAvailablePacksTag, 'available', 'Lists are not available on offline mode.' );
+		else if ( type === 'error' ) JobAidPage.packSection_emptyCaseMsg( JobAidPage.divAvailablePacksTag, 'available', 'Error occurred during available packs retrieval.  Please try again in later time.' );
+		else
+		{
+			JobAidPage.populateAvailableItems( JobAidPage.divAvailablePacksTag, uninstallList );
+		}
+
+
+		// DOWNLOADED SECTION POPULATE / RENDER  -  Get Cached Manifests & display/list them
 		JobAidPage.populateDownloadedItems( JobAidPage.divDownloadedPacksTag, JobAidPage.downloadedManifestList );
 
 		
@@ -301,7 +318,30 @@ JobAidPage.populateDownloadedItems = function( divDownloadedPacksTag, manifestLi
 	});
 
 	// EmptyMsg in download.
-	if ( manifestList.length == 0 ) divDownloadedPacksTag.append( JobAidPage.divEmptyMsgTag );	
+	if ( manifestList.length == 0 ) JobAidPage.packSection_emptyCaseMsg( divDownloadedPacksTag, 'downloaded' );
+	// divDownloadedPacksTag.append( JobAidPage.divEmptyMsgTag );	
+};
+
+// ------------------------------------
+
+
+JobAidPage.packSection_emptyCaseMsg = function( sectionDiv, sectionType, msgStr )
+{
+	var divEmptyMsgTag = $( JobAidPage.divEmptyMsgTag ).hide();
+
+	if ( msgStr ) divEmptyMsgTag.find( 'div.msg' ).html( '' ).append( msgStr );
+
+
+	//if ( sectionType === 'downloaded' )  {  }
+	if ( sectionType === 'available' )
+	{
+		divEmptyMsgTag.find( 'div.img' ).remove();
+	}
+
+	sectionDiv.append( divEmptyMsgTag );
+	divEmptyMsgTag.show( 'fast' );
+
+	TranslationManager.translatePage();	
 };
 
 // ------------------------------------
@@ -342,7 +382,6 @@ JobAidPage.download_statusType = function (downloadOption)
 // we will need to refresh the cache list?  Or just add to the cached list??...
 JobAidPage.updateItem_ItemSection = function (projDir, statusType) 
 {
-
 	// We should get the 'item' from 
 
 	// TODO: 'item' is old data, thus, need to be updated...  + need to append with persis data..
@@ -380,13 +419,7 @@ JobAidPage.updateItem_ItemSection = function (projDir, statusType)
 		JobAidPage.divDownloadedPacksTag.find('div.jobAidItem[projDir=' + projDir + ']').remove();
 
 		// Empty list big msg sign show if downloaded section is emtpy after removing this item.
-		if ( JobAidPage.divDownloadedPacksTag.find(".jobAidItem").length === 0 )
-		{
-			var divEmptyMsgTag = $( JobAidPage.divEmptyMsgTag ).hide();
-			JobAidPage.divDownloadedPacksTag.append( divEmptyMsgTag );
-			divEmptyMsgTag.show( 'fast' );
-			TranslationManager.translatePage();	
-		}
+		if ( JobAidPage.divDownloadedPacksTag.find(".jobAidItem").length === 0 ) JobAidPage.packSection_emptyCaseMsg( JobAidPage.divDownloadedPacksTag, 'downloaded' );
 
 
 		// Just In CASE, if there is same item on available one, remove it before adding to the list.
@@ -508,7 +541,12 @@ JobAidPage.divEmptyMsgTag = `
 // JobAidPage.getServerManifestsRun <-- OLD
 JobAidManifest.retrieve_AvailableManifestList = function( preCallBack, callBack ) 
 {
-	if ( preCallBack ) preCallBack();
+	if ( preCallBack ) 
+	{
+		try {  preCallBack();  }
+		catch ( errMsg ) {  console.log( 'ERROR in JobAidManifest.retrieve_AvailableManifestList preCallBack(), ' + errMsg );  }
+	}
+
 
 	if ( ConnManagerNew.isAppMode_Online() )
 	{
@@ -522,8 +560,7 @@ JobAidManifest.retrieve_AvailableManifestList = function( preCallBack, callBack 
 		var requestUrl = (options.isLocal) ? 'http://localhost:8383/manifests' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsManifests')
 		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
 	
-		// NEW: jobAid settingsOverride
-		//if ( ConfigManager.getJobAidSetting().settingsOverride ) options.settingsOverride = ConfigManager.getJobAidSetting().settingsOverride;
+		// NEW: jobAid settingsOverride  -   if ( ConfigManager.getJobAidSetting().settingsOverride ) options.settingsOverride = ConfigManager.getJobAidSetting().settingsOverride;
 
 		var optionsStr = JSON.stringify( options );
 	
@@ -533,20 +570,23 @@ JobAidManifest.retrieve_AvailableManifestList = function( preCallBack, callBack 
 			dataType: "json",
 			success: function (response) 
 			{
-				if ( callBack ) callBack( JobAidManifest.getAvailable_ManifestJobAidData( response.list ) );
+				if ( callBack ) callBack( JobAidManifest.getAvailable_ManifestJobAidData( response.list ), 'success' );
 			},
 			error: function ( error ) {
 				console.log( 'error: ' );
 				console.log( error );
 				MsgManager.msgAreaShowErr( 'FAILED on retrieve_AvailableManifestList' );
-				if ( callBack ) callBack( [] );
+
+				// Display here msg about 'Offline'
+
+				if ( callBack ) callBack( [], 'error' );
 			},
 			complete: function () { }			
 		});
 	}
 	else
 	{
-		if ( callBack ) callBack( [] );
+		if ( callBack ) callBack( [], 'offline' );
 	}
 };
 
@@ -704,49 +744,6 @@ JobAidManifest.setManifestTemp_InStrg = function( availableManifestList, projDir
 
 	if ( !manifestJson ) MsgManager.msgAreaShowErr( 'No projDir, ' + projDir + ', in AvailableManifest.' );
 };
-
-/*
-JobAidManifest.projProcessData_calcFileSize = async function ( projProcess )
-{
-	// 1. File size calculate - individual ones calculate & save.  Total size calc.
-	//		- Should only calculate if needed --> Process it if has downloaded & does not have 'size' & exists in cache..				
-	var totalSize = 0;
-
-	try 
-	{
-		var cacheKeyJson = await JobAidHelper.getCacheKeys_async();
-		var keys = cacheKeyJson.keys;
-		var cache = cacheKeyJson.cache;  //var statusFullJson = JobAidHelper.getJobFilingStatusIndexed();
-
-		// Calculate size
-		for( var urlProp in projProcess )
-		{
-			var item = projProcess[urlProp];
-
-			// Condition: has projDir url, downloaded, and no size set, calculate size..
-			if ( item.downloaded && !item.size )
-			{
-				var request = JobAidManifest.getCacheKeyRequest( urlProp, keys );
-
-				if ( request )
-				{
-					var response = await cache.match( request );
-					var myBlob = await response.clone().blob();
-					var size = myBlob.size;
-		
-					Util.mergeJson( item, { size: size } );	
-				}
-			}
-
-			totalSize += item.size;
-		}
-	}
-	catch( errMsg ) { console.log( 'ERROR in JobAidManifest.projProcessData_calcFileSize, ' + errMsg ); };
-
-	// Updating in Storage (Persis) is done from outside of this method
-	return totalSize;
-};
-*/
 
 
 JobAidManifest.getCacheKeyRequest = function ( url, keys )
