@@ -2,71 +2,95 @@
 // === Message with entire screen blocking
 function MatomoHelper() {};
 
-MatomoHelper.processQueueList = function () 
+MatomoHelper.enabled = true;
+MatomoHelper.prcCheckEnabled = false;
+MatomoHelper.processed = {};
+
+MatomoHelper.processQueueList = function ( sourceDesc ) 
 {
     if ( navigator.onLine )
     {
-        console.log( "[MatomoHelper] - processQueueList, getQueue" );
+        //console.log( "[MatomoHelper] - processQueueList, getQueue: " + Util.getStr( sourceDesc ) );
 
-        MatomoHelper.getQueue().then(function (queue) 
+        if ( MatomoHelper.enabled )
         {
-            console.log( "[MatomoHelper] - Queue Processing" );
-    
-            queue.openCursor().onsuccess = function(event) 
+            MatomoHelper.getQueue().then(function (queue) 
             {
-                var cursor = event.target.result;
-                if (cursor && navigator.onLine) 
+                //console.log( "[MatomoHelper] - Queue Processing" );
+        
+                queue.openCursor().onsuccess = function(event) 
                 {
-                    cursor.continue();
-
-                    try
+                    var cursor = event.target.result;
+                    if (cursor && navigator.onLine) 
                     {
-                        console.log("[MatomoHelper] - Cursor: " + cursor.key);
-        
-                        var queueId = cursor.value.id;
-                        var secondsQueuedAgo = ((Date.now() - cursor.value.created) / 1000);
-        
-                        
-                        // #1. Build/Modify new request info (header/method/body)
-                        var init = {
-                            headers: cursor.value.headers,
-                            method: cursor.value.method
-                        };
-                        if (cursor.value.body) init.body = cursor.value.body;
-        
-                        if (cursor.value.url.includes('?')) cursor.value.url += '&cdo=' + secondsQueuedAgo;
-                        else if (init.body) init.body = init.body.replace('&idsite=', '&cdo=' + secondsQueuedAgo + '&idsite=');
-        
-                        // Handle the old address - replace with new.
-                        if ( cursor.value.url.indexOf( 'matomo.solidlines.io' ) >= 0 ) cursor.value.url = cursor.value.url.replace( 'matomo.solidlines.io', 'matomo.psi-mis.org' );
+                        cursor.continue();
     
-
-                        // #2. Submit the rquest
-                        fetch(cursor.value.url, init).then(function (response) 
+                        try
                         {
-                            console.log('[MatomoHelper] - Fetch - server response', response);
-        
-                            // If success, remove from the queue
-                            if (response.status < 400)  MatomoHelper.getQueue().then(function (queue) {  queue.delete(queueId);  });
-        
-                        }).catch(function (error) {
-                            console.error('[MatomoHelper] - Fetch Failed:', error);
-                            // throw error
-                        });
+                            var queueId = cursor.value.id;
+                            var secondsQueuedAgo = ((Date.now() - cursor.value.created) / 1000);
+
+                            console.log("[MatomoHelper] - Cursor: " + cursor.key + ", " + queueId);
+            
+
+                            // #1. Build/Modify new request info (header/method/body)
+                            var init = {
+                                headers: cursor.value.headers,
+                                method: cursor.value.method
+                            };
+                            if (cursor.value.body) init.body = cursor.value.body;
+            
+                            if (cursor.value.url.includes('?')) cursor.value.url += '&cdo=' + secondsQueuedAgo + '&fromWFAHelper=Y';
+                            else if (init.body) init.body = init.body.replace('&idsite=', '&cdo=' + secondsQueuedAgo + '&fromWFAHelper=Y' + '&idsite=');
+            
+                            // Handle the old address - replace with new.
+                            MatomoHelper.fixUrl_PSI( cursor.value ); // 'matomo.solidlines.io' ==> 'matomo.psi-mis.org'
+                            
+    
+                            //if ( !MatomoHelper.processed[queueId] )
+                            //{
+                                //if ( MatomoHelper.prcCheckEnabled ) MatomoHelper.processed[queueId] = true;
+
+                                // #2. Submit the rquest
+                                fetch(cursor.value.url, init).then(function (response) 
+                                {
+                                    //console.log('[MatomoHelper] - Fetch - server response', response);
+                
+                                    // If success, remove from the queue
+                                    if (response.status < 400) { 
+                                        MatomoHelper.getQueue().then(function (queue) {  
+                                            queue.delete(queueId);  
+                                            //if ( MatomoHelper.prcCheckEnabled && MatomoHelper.processed[queueId] ) delete MatomoHelper.processed[queueId];
+                                        });
+                                    }
+                                    else {
+                                        //if ( MatomoHelper.prcCheckEnabled && MatomoHelper.processed[queueId] ) delete MatomoHelper.processed[queueId];
+                                    }                
+                                }).catch(function (error) {
+                                    console.error('[MatomoHelper] - Fetch Failed:', error);
+                                    //if ( MatomoHelper.prcCheckEnabled && MatomoHelper.processed[queueId] ) delete MatomoHelper.processed[queueId];
+                                    // throw error
+                                });
+                            //}
+                        }
+                        catch ( errMsg )
+                        {
+                            console.log( '[MatomoHelper] - ERROR in MatomoHelper.processQueueList' );
+                        }
                     }
-                    catch ( errMsg )
-                    {
-                        console.log( 'ERROR in MatomoHelper.processQueueList' );
+                    else {                  
+                        //console.log( "[MatomoHelper] - Finished Queue Processing" );
                     }
-                }
-                else {                  
-                    console.log( "[MatomoHelper] - Finished Queue Processing" );
-                }
-            };
-        });
+                };
+            });
+        }
     }
 };
 
+MatomoHelper.fixUrl_PSI = function( urlObj )
+{
+    if ( urlObj.url && urlObj.url.indexOf( 'matomo.solidlines.io' ) >= 0 ) urlObj.url = urlObj.url.replace( 'matomo.solidlines.io', 'matomo.psi-mis.org' );
+};
 
 MatomoHelper.getQueue = function()
 {

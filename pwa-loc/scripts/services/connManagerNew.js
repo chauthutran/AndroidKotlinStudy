@@ -227,7 +227,7 @@ ConnManagerNew.runWhenSwitchedToOnline = function () {
 	GAnalytics.offlineCacheSend();
 
 	// 4. Send Matomo analytics - for firing all the offline queue to be sent (NEW)
-	MatomoHelper.processQueueList();
+	MatomoHelper.processQueueList( 'From ConnManagerNew.runWhenSwitchedToOnline' );
 
 	// 4. 'backgroundUpdateWhenOnline' enabled, perform app Update in background.
 	// if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) {	SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 

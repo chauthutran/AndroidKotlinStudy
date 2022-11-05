@@ -7,6 +7,9 @@ var matomoAnalytics = {initialize: function (options) {
     var maxTimeLimit = options.timeLimit || (60 * 60 * 24); // in seconds...
     // same as configured in in tracking_requests_require_authentication_when_custom_timestamp_newer_than
 
+    var swMtmQueueProcessed = {}; // for duplicate checking
+    var mtmPrcCheckEnabled = false;
+
     function getQueue()
     {
         return new Promise(function(resolve, reject) {
@@ -36,8 +39,6 @@ var matomoAnalytics = {initialize: function (options) {
                 let transaction = db.transaction("requests", "readwrite");
                 let requests =transaction.objectStore("requests");
                 resolve(requests);
-
-
             };
         });
     }
@@ -57,11 +58,12 @@ var matomoAnalytics = {initialize: function (options) {
                         // too old
                         getQueue().then(function (queue) {
                             queue.delete(queueId);
+                            //if ( mtmPrcCheckEnabled && swMtmQueueProcessed[queueId] ) delete swMtmQueueProcessed[queueId];
                         });
                         return;
                     }
 
-                    console.log("Cursor " + cursor.key);
+                    console.log("Cursor " + cursor.key + ", " + queueId );
 
                     var init = {
                         headers: cursor.value.headers,
@@ -80,21 +82,32 @@ var matomoAnalytics = {initialize: function (options) {
 
 
                     // TEMP FIX: Handle the old address - replace with new.
-                    fixUrl_PSI( cursor.value ); 
-                    //if ( cursor.value.url.indexOf( 'matomo.solidlines.io' ) >= 0 ) cursor.value.url = cursor.value.url.replace( 'matomo.solidlines.io', 'matomo.psi-mis.org' );
+                    fixUrl_PSI( cursor.value ); // 'matomo.solidlines.io' ==> 'matomo.psi-mis.org'
 
-                    
-                    fetch(cursor.value.url, init).then(function (response) {
-                        console.log('server response', response);
-                        if (response.status < 400) {
-                            getQueue().then(function (queue) {
-                                queue.delete(queueId);
-                            });
-                        }
-                    }).catch(function (error) {
-                        console.error('Send to Server failed:', error);
-                        throw error
-                    })
+
+                    // NOTE: TODO: put this 'url' on cache and do not process it unless
+                    //  - Also, msg this to WFA App to be put on WFA cache as well..
+                    //if ( !swMtmQueueProcessed[queueId] ) // Fix duplicate issue, but 
+                    //{
+                        //if ( mtmPrcCheckEnabled ) swMtmQueueProcessed[queueId] = true;
+
+                        fetch(cursor.value.url, init).then(function (response) {
+                            //console.log('server response', respose);
+                            if (response.status < 400) {
+                                getQueue().then(function (queue) {
+                                    queue.delete(queueId);
+                                    //if ( mtmPrcCheckEnabled && swMtmQueueProcessed[queueId] ) delete swMtmQueueProcessed[queueId];
+                                });
+                            }
+                            else {
+                                //if ( mtmPrcCheckEnabled && swMtmQueueProcessed[queueId] ) delete swMtmQueueProcessed[queueId];
+                            }
+                        }).catch(function (error) {
+                            console.error('Send to Server failed:', error);
+                            //if ( mtmPrcCheckEnabled && swMtmQueueProcessed[queueId] ) delete swMtmQueueProcessed[queueId];
+                            throw error;
+                        })
+                    //}
                 }
                 else {
                     console.log("No more entries!");
@@ -125,67 +138,86 @@ var matomoAnalytics = {initialize: function (options) {
         }
     }
 
-    self.addEventListener('sync', function(event) {
+    self.addEventListener('sync', function(event) 
+    {
+        //console.log( '[swMotamo]: sync eventListener' );
+
         if (event.tag === 'matomoSync') {
             syncQueue();
         }
     });
 
+    // When WFA (JobAid) 'fetch' request is targetting/related to 'matomo', 
+    //   - If offline, add to the queue on indexedDB
+    //   - If online, process that one normally, but also process all the offline 'queued' ones at this chance.
     self.addEventListener('fetch', function (event)  
     {
-        let isOnline = navigator.onLine;
-
-        // TEMP FIX: Handle the old address - replace with new.
-        fixUrl_PSI( event.request ); 
-
+        //console.log( '[swMotamo]: fetch eventListener - only if the target url points to "matomo/piwik.php/.js' );
+        //console.log( '[swMotamo]: url: ' + event.request.url );
 
         let isTrackingRequest = (event.request.url.includes('/matomo.php')
                             || event.request.url.includes('/piwik.php'));
         let isTrackerRequest = event.request.url.endsWith('/matomo.js')
                             || event.request.url.endsWith('/piwik.js');
 
+        var isFromWFAMatomoHelper = ( event.request.url.indexOf( '&fromWFAHelper=Y' ) > -1 ) ? true: false;
 
-        if (isTrackerRequest) {
-            if (isOnline) {
-                syncQueue();
-            }
-            caches.open('matomo').then(function(cache) {
-                return cache.match(event.request).then(function (response) {
-                    return response || fetch(event.request).then(function(response) {
-                        cache.put(event.request, response.clone());
-                        return response;
+        // NOTE: 'index.html' has 'matomo.js' loading, which will call the 'syncQueue' on start of the app?
+        if ( !isFromWFAMatomoHelper && ( isTrackingRequest || isTrackerRequest ) )
+        {            
+            // TEMP FIX: Handle the old address - replace with new.
+            fixUrl_PSI( event.request ); 
+    
+            let isOnline = navigator.onLine;
+
+            if (isTrackerRequest) 
+            {
+                if (isOnline) {
+                    syncQueue();
+                }
+
+                caches.open('matomo').then(function(cache) {
+                    return cache.match(event.request).then(function (response) {
+                        return response || fetch(event.request).then(function(response) {
+                            cache.put(event.request, response.clone());
+                            return response;
+                        });
                     });
                 });
-            })
-        } else if (isTrackingRequest && isOnline) {
-            syncQueue();
-            event.respondWith(fetch(event.request));
-        } else if (isTrackingRequest && !isOnline) {
+            } 
+            else if (isTrackingRequest && isOnline) {
+                syncQueue();
+                event.respondWith(fetch(event.request));
+            } 
+            else if (isTrackingRequest && !isOnline) 
+            {    
+                var headers = {};
 
-            var headers = {};
-            for (const [header, value] of event.request.headers) {
-                headers[header] = value;
-            }
+                for (const [header, value] of event.request.headers) {
+                    headers[header] = value;
+                }
+    
+                let requestInfo = {
+                    url: event.request.url,
+                    referrer : event.request.referrer,
+                    method : event.request.method,
+                    referrerPolicy : event.request.referrerPolicy,
+                    headers : headers,
+                    created: Date.now()
+                };
 
-            let requestInfo = {
-                url: event.request.url,
-                referrer : event.request.referrer,
-                method : event.request.method,
-                referrerPolicy : event.request.referrerPolicy,
-                headers : headers,
-                created: Date.now()
-            };
-            event.request.text().then(function (postData) {
-                requestInfo.body = postData;
-
-                getQueue().then(function (queue) {
-                    queue.add(requestInfo);
-                    limitQueueIfNeeded(queue);
-
-                    return queue;
+                event.request.text().then(function (postData) {
+                    requestInfo.body = postData;
+    
+                    getQueue().then(function (queue) {
+                        queue.add(requestInfo);
+                        limitQueueIfNeeded(queue);
+    
+                        return queue;
+                    });
                 });
-            });
-
+    
+            }
         }
     });
 }

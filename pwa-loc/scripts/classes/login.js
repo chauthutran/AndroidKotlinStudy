@@ -70,10 +70,6 @@ function Login() {
 		TranslationManager.translatePage();
 
 		//MsgManager.msgAreaShowOpt( 'Testing Notification Msg', { cssClasses: 'notifCBlue', hideTimeMs: 900000, styleArr: [ { name: 'background-color', value: '#50A3C6' } ] } );
-
-		// Matomo Submit - Temp Disable
-		if ( ConnManagerNew.isAppMode_Online ) MatomoHelper.processQueueList();
-
 	};
 
 	// =============================================
@@ -407,7 +403,7 @@ function Login() {
 
 		// ONLINE vs OFFLINE HANDLING
 		// Also, if replica login server is not available, use offline process to login.
-		if (!ConnManagerNew.REPLICA_Available || ConnManagerNew.isAppMode_Offline()) {
+		if (!ConnManagerNew.REPLICA_Available || ConnManagerNew.isAppMode_Offline() ) {
 			me.loginOffline(userName, password, function (isSuccess, offlineUserData) {
 				SessionManager.Status_LogIn_InProcess = false;
 
@@ -427,6 +423,9 @@ function Login() {
 		}
 		else {
 			var loadingTag = FormUtil.generateLoadingTag(btnTag.find('.button-label'));
+
+			// TODO: !navigator.onLine  <-- login cancelled due to unstable internet/network.  Do you want to login as offline?
+
 
 			me.loginOnline(userName, password, loadingTag, function (isSuccess, loginData) {
 				SessionManager.Status_LogIn_InProcess = false;
@@ -451,6 +450,10 @@ function Login() {
 		// gAnalytics Event
 		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
 		//GAnalytics.setEvent = function(category, action, label, value = null) 
+
+		// Matomo Submit - Check current network status rather than stable one - ConnManagerNew.isAppMode_Online
+		if ( navigator.onLine ) MatomoHelper.processQueueList( 'From Login.loginSuccessProcess' );
+
 
 		// Load config and continue the CWS App process
 		if (!loginData.dcdConfig || loginData.dcdConfig.ERROR) MsgManager.msgAreaShow('<span term="msgNotif_loginSuccess_noConfig">Login Success, but country config not available.</span> <span>Msg: ' + loginData.dcdConfig.ERROR + '</span>', 'ERROR');
