@@ -20,6 +20,7 @@ function cwsRender()
 	me.registrationObj;
 	me.loginObj;
 	me.chatAppObj;
+	me.banmiPage;
 	//me.sessionObj; // NEW PROPOSAL
 
 
@@ -87,6 +88,7 @@ function cwsRender()
 		me.aboutApp = new aboutApp( me );
 		me.settingsApp = new settingsApp( me );
 		me.statisticsObj = new Statistics( me );
+		me.banmiPage = new BanmiPage( me );
 		
 		// This probably gets used for menu swipe?
 		me._manageInputSwipe = new inputMonitor( me );
@@ -184,6 +186,9 @@ function cwsRender()
 
 			if ( areaId === 'logOut' ) { me.resetPageDivContent();  me.logOutProcess(); }
 			else if ( areaId === 'aboutPage') me.aboutApp.render();
+			else if ( areaId === 'banmi') {
+				me.banmiPage.render();
+			}
 			else if ( areaId === 'settingsPage') me.settingsApp.render();
 			else if ( areaId === 'statisticsPage') me.statisticsObj.render();
 			else if ( areaId === Menu.menuJson_JobAids.id ) 

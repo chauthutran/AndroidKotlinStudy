@@ -16,6 +16,9 @@ Menu.menuJson_Statistics = { id: "statisticsPage", name: "Statistics", term: "me
 Menu.menuJson_Settings = { id: "settingsPage", name: "Settings", term: "menu_settings", icon: "settings", groupBefore: true, groupAfter: false };
 Menu.menuJson_About = { id: "aboutPage", name: "About", term: "menu_about", icon: "about", groupBefore: false, groupAfter: true };
 
+Menu.menuJson_Banmi = { id: "banmi", name: "Banmi", groupBefore: true, groupAfter: false };
+
+
 Menu.menuJson_MyDetails = { id: "myDetails", name: "My Details", term: "", icon: "settings", groupBefore: false, groupAfter: false };
 
 Menu.menuJson_LogOut = { id: "logOut", name: "Log out", term: "menu_logout", icon: "logout", groupBefore: false, groupAfter: true };
@@ -47,6 +50,7 @@ Menu.populateStandardMenuList = function( menuItems )
             $( '.jobAidFileListing' ).show();
         }
 
+
         if ( ConfigManager.getAreas().options.hnqisRdqa ) menuItems.push( Menu.menuJson_HNQIS_RDQA );    
         if ( ConfigManager.getAreas().options.chat ) menuItems.push( Menu.menuJson_Chat );    
 
@@ -57,6 +61,7 @@ Menu.populateStandardMenuList = function( menuItems )
     }
 
     
+    menuItems.push ( Menu.menuJson_Banmi );    
     menuItems.push ( Menu.menuJson_Statistics );    
     menuItems.push ( Menu.menuJson_Settings );
     menuItems.push ( Menu.menuJson_About );        
