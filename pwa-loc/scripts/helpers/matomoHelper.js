@@ -45,33 +45,30 @@ MatomoHelper.processQueueList = function ( sourceDesc )
             
                             // Handle the old address - replace with new.
                             MatomoHelper.fixUrl_PSI( cursor.value ); // 'matomo.solidlines.io' ==> 'matomo.psi-mis.org'
-                            
+                            MatomoHelper.fixUrl_CurrentTime( cursor.value );
     
-                            //if ( !MatomoHelper.processed[queueId] )
-                            //{
-                                //if ( MatomoHelper.prcCheckEnabled ) MatomoHelper.processed[queueId] = true;
+                            //if ( !MatomoHelper.processed[queueId] ) {  if ( MatomoHelper.prcCheckEnabled ) MatomoHelper.processed[queueId] = true;
 
-                                // #2. Submit the rquest
-                                fetch(cursor.value.url, init).then(function (response) 
-                                {
-                                    //console.log('[MatomoHelper] - Fetch - server response', response);
-                
-                                    // If success, remove from the queue
-                                    if (response.status < 400) { 
-                                        MatomoHelper.getQueue().then(function (queue) {  
-                                            queue.delete(queueId);  
-                                            //if ( MatomoHelper.prcCheckEnabled && MatomoHelper.processed[queueId] ) delete MatomoHelper.processed[queueId];
-                                        });
-                                    }
-                                    else {
+                            // #2. Submit the rquest
+                            fetch(cursor.value.url, init).then(function (response) 
+                            {
+                                //console.log('[MatomoHelper] - Fetch - server response', response);
+            
+                                // If success, remove from the queue
+                                if (response.status < 400) { 
+                                    MatomoHelper.getQueue().then(function (queue) {  
+                                        queue.delete(queueId);  
                                         //if ( MatomoHelper.prcCheckEnabled && MatomoHelper.processed[queueId] ) delete MatomoHelper.processed[queueId];
-                                    }                
-                                }).catch(function (error) {
-                                    console.error('[MatomoHelper] - Fetch Failed:', error);
+                                    });
+                                }
+                                else {
                                     //if ( MatomoHelper.prcCheckEnabled && MatomoHelper.processed[queueId] ) delete MatomoHelper.processed[queueId];
-                                    // throw error
-                                });
-                            //}
+                                }                
+                            }).catch(function (error) {
+                                console.error('[MatomoHelper] - Fetch Failed:', error);
+                                //if ( MatomoHelper.prcCheckEnabled && MatomoHelper.processed[queueId] ) delete MatomoHelper.processed[queueId];
+                                // throw error
+                            });
                         }
                         catch ( errMsg )
                         {
@@ -91,6 +88,22 @@ MatomoHelper.fixUrl_PSI = function( urlObj )
 {
     if ( urlObj.url && urlObj.url.indexOf( 'matomo.solidlines.io' ) >= 0 ) urlObj.url = urlObj.url.replace( 'matomo.solidlines.io', 'matomo.psi-mis.org' );
 };
+
+MatomoHelper.fixUrl_CurrentTime = function( urlObj )
+{
+    try
+    {
+        if ( urlObj.url && urlObj.created ) 
+        {
+            urlObj.url += '&cdt=' + Math.floor(urlObj.created / 1000);
+        }
+    }
+    catch( errMsg )
+    {
+        console.log( 'ERROR in fixUrl_CurrentTime, ' + errMsg );
+    }
+};
+
 
 MatomoHelper.getQueue = function()
 {
