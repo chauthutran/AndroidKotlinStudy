@@ -3341,9 +3341,48 @@ input.nosubmit {
     margin: 0px 5px !important;
     padding: 3px !important;
 }
- 
+
+.hdpg1, .hdpg2 {
+    border-collapse: collapse;
+    margin-bottom: 8px;
+}
+
+.hdpg1 tr, .hdpg2 tr {
+    height: 100px;
+    vertical-align: bottom;
+}
+
+.hdpg1 tr td, .hdpg2 tr td {
+    width: 20%;
+}
+
+.hdpg1 tr .lg_img, .hdpg2 tr .lg_img {
+    text-align: center;
+}
+
+.hdpg1 tr td, .hdpg2 tr td {
+    width: 20%;
+}
+
+.hdpg1 svg, .hdpg2 svg {
+    width: 78;
+    height: 100;
+    fill: none;
+}
+
+.hdpg1 tr .lg_img, .hdpg2 tr .lg_img {
+    text-align: center;
+}
+.hdpg1, .hdpg2 {
+    border-collapse: collapse;
+    margin-bottom: 8px;
+}
 @media print {
      
+	.list {
+		display: none;
+	}
+	
 	.report-header-2
 	{
 	  float: none;

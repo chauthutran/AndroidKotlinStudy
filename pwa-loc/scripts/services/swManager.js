@@ -302,7 +302,7 @@ SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function () {
 	var newUpdateMsg = 'New App Updates Downloading';
 	console.log(SwManager._swStage2 + newUpdateMsg);
 
-	var msgTag = MsgManager.msgAreaShowOpt('<span>' + newUpdateMsg + '</span>', { styleArr: [ { name: 'background-color', value: '#50A3C6' } ], hideTimeMs: 45000, tdMid: dotPlusingTag });
+	var msgTag = MsgManager.msgAreaShowOpt('<span>' + newUpdateMsg + '</span>', { styleArr: [ { name: 'background-color', value: '#50A3C6' } ], hideTimeMs: 45000 }); //, tdMid: dotPlusingTag });
 	msgTag.attr('noticeId', 'downloading').find('.tdMsg').css('padding', '');
 };
 
