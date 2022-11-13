@@ -261,7 +261,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 				dataType: "json",
 				success: function (response) 
 				{
-					if ( response.errMsg ) MsgManager.msgAreaShowErr( response.errMsg );
+					if ( response.errMsg ) MsgManager.msgAreaShowErrOpt( response.errMsg );
 					else
 					{
 						// 1. Filter list, Sort List - New JobAid 'downloadOption' ('appOnly', 'mediaOnly')
@@ -284,7 +284,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 				error: function ( error ) {
 					JobAidPage.getSpanStatusTags_ByDownloadOption( projDir, downloadOption ).html( '<strong>Retrieving file listing FAILED</strong>' );
 					$( '.spanJobFilingMsg' ).text( 'Failed - ' + error );
-					MsgManager.msgAreaShowErr('FAILED on downloading files listing');
+					MsgManager.msgAreaShowErrOpt('FAILED on downloading files listing');
 				},
 				complete: function () {
 					$( '.divJobFileLoading' ).find( 'img' ).remove();
@@ -292,7 +292,7 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 			});
 		}
 	}
-	else MsgManager.msgAreaShowErr( 'Offline - JobAid Filing is only available in online mode.' );
+	else MsgManager.msgAreaShowErrOpt( 'Offline - JobAid Filing is only available in online mode.' );
 };
 
 

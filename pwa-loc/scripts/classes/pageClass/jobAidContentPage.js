@@ -23,7 +23,7 @@ JobAidContentPage.fileContentDialogOpen = function(projDir)
 			// Display the content..
 			JobAidContentPage.populateFileContent(processData, projDir);
 		}
-		else MsgManager.msgAreaShowErr( 'No project data available.' );
+		else MsgManager.msgAreaShowErrOpt( 'No project data available.' );
 	
 		TranslationManager.translatePage();	
 	}

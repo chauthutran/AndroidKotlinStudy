@@ -296,8 +296,9 @@ SwManager.listFilesInCache = function (cacheKey) {
 
 // --------------------------------------
 
-SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function () {
-	//var dotPlusingTag = `<div class="lv-dots lv-mid sd" ><div></div><div></div><div></div><div></div></div>`;
+SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function () 
+{
+	var dotPlusingTag = `<div class="lv-dots lv-mid sd" ><div></div><div></div><div></div><div></div></div>`;
 
 	var newUpdateMsg = 'New App Updates Downloading';
 	console.log(SwManager._swStage2 + newUpdateMsg);
@@ -306,13 +307,4 @@ SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function () {
 	msgTag.attr('noticeId', 'downloading').find('.tdMsg').css('padding', '');
 };
 
-
-//SwManager.appUpdateUI_Downloaded_NewFiles = function () {
-	//clearInterval(SwManager.interval_newAppFileDownloading);
-	//$('.appUpdateStatusDiv').hide();
-//};
-
 // ==========================================
-
-// LATER: TODO: When we move the download in WFA App from service worker - with 'CacheFirst'
-// SwManager.jobAidCacheFiles = async function ( eventData ) 

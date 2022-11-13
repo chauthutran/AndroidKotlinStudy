@@ -165,7 +165,7 @@ Menu.populateMenuList = function( areaList, exeFunc )
 
             var menuLI = $( '<li class="mouseDown" areaId="' + area.id + '" />' ); // displayName="' + area.name + '"
 
-            menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
+            if ( area.icon ) menuLI.append( $( '<div class="navigation__items-icon" style="background-image: url(images/' + area.icon + '.svg)" ></div>' ) );
             menuLI.append( $( '<a ' + FormUtil.getTermAttr( area ) + ' class="pointer" >' + area.name + '</a>' ) );
 
             navItemsUL.append( menuLI );

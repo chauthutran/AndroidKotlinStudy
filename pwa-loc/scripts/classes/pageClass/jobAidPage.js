@@ -575,7 +575,7 @@ JobAidManifest.retrieve_AvailableManifestList = function( preCallBack, callBack 
 			error: function ( error ) {
 				console.log( 'error: ' );
 				console.log( error );
-				MsgManager.msgAreaShowErr( 'FAILED on retrieve_AvailableManifestList' );
+				MsgManager.msgAreaShowErrOpt( 'FAILED on retrieve_AvailableManifestList' );
 
 				// Display here msg about 'Offline'
 
@@ -676,7 +676,7 @@ JobAidManifest.setManifest_InStrg = function(projDir, downloadOption)
 	if ( !projStatus.manifestJson ) projStatus.manifestJson = {};
 
 	// Manifest set or update - in Storage..
-	if ( !projStatus.manifestJsonTemp ) MsgManager.msgAreaShowErr( 'ERROR, no manifestJsonTemp to move: ' + projDir );
+	if ( !projStatus.manifestJsonTemp ) MsgManager.msgAreaShowErrOpt( 'ERROR, no manifestJsonTemp to move: ' + projDir );
 	else
 	{
 		try
@@ -742,7 +742,7 @@ JobAidManifest.setManifestTemp_InStrg = function( availableManifestList, projDir
 		PersisDataLSManager.updateJobFilingProjDirStatus(projDir, projStatus);
 	}
 
-	if ( !manifestJson ) MsgManager.msgAreaShowErr( 'No projDir, ' + projDir + ', in AvailableManifest.' );
+	if ( !manifestJson ) MsgManager.msgAreaShowErrOpt( 'No projDir, ' + projDir + ', in AvailableManifest.' );
 };
 
 
@@ -841,7 +841,7 @@ JobAidItem.itemDownload = function (projDir, downloadOption, option )
 		JobAidHelper.runTimeCache_JobAid( optionJson, undefined, newFileList_Override );
 
 	}
-	else MsgManager.msgAreaShowErr( 'Download Failed - Not proper pack name.' );
+	else MsgManager.msgAreaShowErrOpt( 'Download Failed - Not proper pack name.' );
 	
 };
 
@@ -914,7 +914,7 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, inProcessOpti
 	var menus = [];
 	if ( !inProcessOption ) inProcessOption = {};
 
-	if ( !itemData.projDir ) MsgManager.msgAreaShowErr( 'FAILED to populate item - NO "projDir"' );
+	if ( !itemData.projDir ) MsgManager.msgAreaShowErrOpt( 'FAILED to populate item - NO "projDir"' );
 	else
 	{
 		var projDir = itemData.projDir;
@@ -1174,7 +1174,7 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 	if ( aborted )
 	{
 		console.log( 'Aborted in jobFilingUpdate' );
-		MsgManager.msgAreaShowErr( 'Aborted the download: ' + projDir, undefined, 5000 );
+		MsgManager.msgAreaShowErrOpt( 'Aborted the download: ' + projDir, { hideTimeMs: 5000 } );
 	}
 	else if ( JobAidPage.proj_lastActions[projDir] === JobAidPage.MENU_cancel )
 	{
@@ -1186,7 +1186,7 @@ JobAidCaching.jobFilingUpdate = function (msgData)
 		{
 			// Error case during download 'progress'
 			var fileUrl = ( prc && prc.name ) ? prc.name: '';
-			MsgManager.msgAreaShowErr( 'Failed in file download: ' + fileUrl, undefined, 10000 );	
+			MsgManager.msgAreaShowErrOpt( 'Failed in file download: ' + fileUrl, { hideTimeMs: 5000 } );	
 		}
 
 		var downloadOption = msgData.options.downloadOption;	
@@ -1301,7 +1301,7 @@ JobAidCaching.triggerReTry = function( projDir, downloadOption )
 {
 	console.log( 'retry called' );
 
-	MsgManager.msgAreaShowErr( 'Retrying the download of "' + projDir + '", after ' + JobAidPage.autoRetry + ' sec of no change.', undefined, 1000 ); // after 10 sec, hide msg
+	MsgManager.msgAreaShowErrOpt( 'Retrying the download of "' + projDir + '", after ' + JobAidPage.autoRetry + ' sec of no change.', { hideTimeMs: 5000 } ); // after 10 sec, hide msg
 
 	JobAidItem.itemDownload(projDir, downloadOption, { retry: true } );
 };

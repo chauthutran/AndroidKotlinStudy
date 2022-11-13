@@ -231,10 +231,11 @@ TranslationManager.translatePage = function( sectionTag )
 	}
 };
 
-// NOTE: Above logic should work!!!!  Apply to other single term translation...!!!
-// 	- Also, we can save the original text...  <-- put it on attribute...
-//
-//	** Better, yet, in 'origText', we can populate this when we generate page or form/block/terms..
+// Above 'translatePage' name does not serve enough since it also serve divSection translation.
+TranslationManager.translateInDivSection = function( sectionTag )
+{
+	TranslationManager.translatePage( sectionTag );
+};
 
 
 // Translate single text by current LangTerms.

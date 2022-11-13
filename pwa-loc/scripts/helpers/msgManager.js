@@ -52,7 +52,7 @@ MsgManager.initialSetup = function () {
 	}
 };
 
-
+// TODO: Should use 'msgAreaShowOpt' instead rather than calling this directly.
 MsgManager.msgAreaShow = function (msg, type, optClasses, hideTimeMs, options) {
 	var msgTag;
 
@@ -76,6 +76,11 @@ MsgManager.msgAreaShow = function (msg, type, optClasses, hideTimeMs, options) {
 	return msgTag;
 };
 
+// Obsolete - use 'msgAreaShowErrOpt' instead
+MsgManager.msgAreaShowErr = function (msg, optClasses, hideTimeMs) {
+	if ( !hideTimeMs ) hideTimeMs = 20000;  // Set hiding time to be 30 seconds in default for error case.
+	return MsgManager.msgAreaShow(msg, 'ERROR', optClasses, hideTimeMs);
+};
 
 // This 'options' can take 'type', 'optClasses' on top of normal options.
 // MsgManager.msgAreaShowOpt( msg, { cssClasses: 'notifBlue', hideTimeMs: 30000 } );
@@ -83,9 +88,10 @@ MsgManager.msgAreaShowOpt = function (msg, options ) {
 	return MsgManager.msgAreaShow(msg, undefined, undefined, undefined, options );
 };
 
-MsgManager.msgAreaShowErr = function (msg, optClasses, hideTimeMs) {
-	if ( !hideTimeMs ) hideTimeMs = 20000;  // Set hiding time to be 30 seconds in default for error case.
-	return MsgManager.msgAreaShow(msg, 'ERROR', optClasses, hideTimeMs);
+// NEW - error case with quick/easy options
+MsgManager.msgAreaShowErrOpt = function (msg, options ) {
+	// options.closeNextMarked = true <-- Should we make this default?  Closing the error msg when next msg shows.
+	return MsgManager.msgAreaShow(msg, 'ERROR', undefined, 20000, options ); // 20 sec, but can be overwritten by options.hideTimeMs
 };
 
 
@@ -143,10 +149,12 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	var disableAutoWidth = options.disableAutoWidth;
 	var tdMid = options.tdMid;
 	var closeOthers = options.closeOthers;
+	var closeNextMarked = options.closeNextMarked;
 
 	// ----------------
 
 	if ( closeOthers ) $( 'div.notifMsg' ).remove();
+	$( 'div.notifMsg.closeNextMarked' ).remove();
 
 	var unqID = Util.generateRandomId();
 
@@ -171,6 +179,7 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	// THE MAIN TAG - 'notiDiv'
 	var notifDiv = $('<div id="notif_' + unqID + '" class="notifMsg" style="' + optStyle + '">');
 	notifDiv.addClass(['notifBase', cssClasses, class_RoundType]);
+	if ( closeNextMarked ) notifDiv.addClass( 'closeNextMarked' );
 
 	if ( Util.isTypeArray( styleArr ) )
 	{
@@ -256,7 +265,7 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	}, hideTimeMs);
 
 
-	TranslationManager.translatePage(notifDiv);
+	TranslationManager.translateInDivSection( notifDiv );
 
 	return notifDiv;
 };

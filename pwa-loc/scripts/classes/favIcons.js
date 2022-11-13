@@ -159,7 +159,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
         catch( errMsg )
         {
             console.log( 'ERROR in FavIcons.render, ' + errMsg );
-            MsgManager.msgAreaShowErr( 'ERROR in FavIcons.render, ' + errMsg );
+            MsgManager.msgAreaShowErrOpt( 'ERROR in FavIcons.render, ' + errMsg );
         }
 
         return favListArr;

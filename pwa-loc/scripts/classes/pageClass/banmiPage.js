@@ -91,7 +91,7 @@ function BanmiPage(cwsRender) {
 			error: function ( error ) {
 				console.log( 'error: ' );
 				console.log( error );
-				MsgManager.msgAreaShowErr( 'FAILED on populateBamniPageData' );
+				MsgManager.msgAreaShowErrOpt( 'FAILED on populateBamniPageData' );
 
 				if ( callBack ) callBack( [], 'error' );
 			},

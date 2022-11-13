@@ -403,8 +403,10 @@ function Login() {
 
 		// ONLINE vs OFFLINE HANDLING
 		// Also, if replica login server is not available, use offline process to login.
-		if (!ConnManagerNew.REPLICA_Available || ConnManagerNew.isAppMode_Offline() ) {
-			me.loginOffline(userName, password, function (isSuccess, offlineUserData) {
+		if ( !ConnManagerNew.REPLICA_Available || ConnManagerNew.isAppMode_Offline() ) 
+		{
+			me.loginOffline(userName, password, function (isSuccess, offlineUserData) 
+			{
 				SessionManager.Status_LogIn_InProcess = false;
 
 				if (isSuccess) {
@@ -421,27 +423,33 @@ function Login() {
 				if (callAfterDone) callAfterDone(isSuccess);
 			});
 		}
-		else {
-			var loadingTag = FormUtil.generateLoadingTag(btnTag.find('.button-label'));
+		else 
+		{
+			if ( !navigator.onLine ) // Stable Online still, but currently connection lost case - not stable
+			{
+				MsgManager.msgAreaShowErrOpt( '<span term="login_msg_connectionTempOff">Network connection temporarily off detected</span>', { closeNextMarked: true } );
+				if (callAfterDone) callAfterDone( false );
+			}
+			else
+			{
+				var loadingTag = FormUtil.generateLoadingTag(btnTag.find('.button-label'));
 
-			// TODO: !navigator.onLine  <-- login cancelled due to unstable internet/network.  Do you want to login as offline?
-
-
-			me.loginOnline(userName, password, loadingTag, function (isSuccess, loginData) {
-				SessionManager.Status_LogIn_InProcess = false;
-
-				if (isSuccess) {
-					me.loginSuccessProcess(userName, password, loginData, function () {
-						VoucherCodeManager.setSettingData(ConfigManager.getVoucherCodeService(), function () {
-							VoucherCodeManager.refillQueue(userName, function () {
-								VoucherCodeManager.checkLowQueue_Msg();
+				me.loginOnline(userName, password, loadingTag, function (isSuccess, loginData) {
+					SessionManager.Status_LogIn_InProcess = false;
+	
+					if (isSuccess) {
+						me.loginSuccessProcess(userName, password, loginData, function () {
+							VoucherCodeManager.setSettingData(ConfigManager.getVoucherCodeService(), function () {
+								VoucherCodeManager.refillQueue(userName, function () {
+									VoucherCodeManager.checkLowQueue_Msg();
+								});
 							});
 						});
-					});
-				}
-
-				if (callAfterDone) callAfterDone(isSuccess);
-			});
+					}
+	
+					if (callAfterDone) callAfterDone(isSuccess);
+				});
+			}
 		}
 	};
 
