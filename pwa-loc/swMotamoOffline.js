@@ -58,6 +58,7 @@ var matomoAnalytics = {initialize: function (options) {
                         // too old
                         getQueue().then(function (queue) {
                             queue.delete(queueId);
+                            //if ( mtmPrcCheckEnabled && swMtmQueueProcessed[queueId] ) delete swMtmQueueProcessed[queueId];
                         });
                         return;
                     }
@@ -82,21 +83,31 @@ var matomoAnalytics = {initialize: function (options) {
 
                     // TEMP FIX: Handle the old address - replace with new.
                     fixUrl_PSI( cursor.value ); // 'matomo.solidlines.io' ==> 'matomo.psi-mis.org'
-                    fixUrl_CurrentTime( cursor.value ); // 'matomo.solidlines.io' ==> 'matomo.psi-mis.org'
 
 
-                    fetch(cursor.value.url, init).then(function (response) 
-                    {
-                        //console.log('server response', respose);
-                        if (response.status < 400) {
-                            getQueue().then(function (queue) {
-                                queue.delete(queueId);
-                            });
-                        }
-                    }).catch(function (error) {
-                        console.error('Send to Server failed:', error);
-                        throw error;
-                    });
+                    // NOTE: TODO: put this 'url' on cache and do not process it unless
+                    //  - Also, msg this to WFA App to be put on WFA cache as well..
+                    //if ( !swMtmQueueProcessed[queueId] ) // Fix duplicate issue, but 
+                    //{
+                        //if ( mtmPrcCheckEnabled ) swMtmQueueProcessed[queueId] = true;
+
+                        fetch(cursor.value.url, init).then(function (response) {
+                            //console.log('server response', respose);
+                            if (response.status < 400) {
+                                getQueue().then(function (queue) {
+                                    queue.delete(queueId);
+                                    //if ( mtmPrcCheckEnabled && swMtmQueueProcessed[queueId] ) delete swMtmQueueProcessed[queueId];
+                                });
+                            }
+                            else {
+                                //if ( mtmPrcCheckEnabled && swMtmQueueProcessed[queueId] ) delete swMtmQueueProcessed[queueId];
+                            }
+                        }).catch(function (error) {
+                            console.error('Send to Server failed:', error);
+                            //if ( mtmPrcCheckEnabled && swMtmQueueProcessed[queueId] ) delete swMtmQueueProcessed[queueId];
+                            throw error;
+                        })
+                    //}
                 }
                 else {
                     console.log("No more entries!");
@@ -108,24 +119,7 @@ var matomoAnalytics = {initialize: function (options) {
     function fixUrl_PSI( urlObj )
     {
         if ( urlObj.url && urlObj.url.indexOf( 'matomo.solidlines.io' ) >= 0 ) urlObj.url = urlObj.url.replace( 'matomo.solidlines.io', 'matomo.psi-mis.org' );
-    };
-
-
-    function fixUrl_CurrentTime( urlObj )
-    {
-        try
-        {
-            if ( urlObj.url && urlObj.created ) 
-            {
-                urlObj.url += '&cdt=' + Math.floor(urlObj.created / 1000);
-            }
-        }
-        catch( errMsg )
-        {
-            console.log( 'ERROR in fixUrl_CurrentTime, ' + errMsg );
-        }
-    };
-
+    }
 
     function limitQueueIfNeeded(queue)
     {
@@ -142,7 +136,7 @@ var matomoAnalytics = {initialize: function (options) {
                 }
             }
         }
-    };
+    }
 
     self.addEventListener('sync', function(event) 
     {

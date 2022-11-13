@@ -297,7 +297,7 @@ SwManager.listFilesInCache = function (cacheKey) {
 // --------------------------------------
 
 SwManager.appUpdateUI_DownloadingNewFiles_wtMsg = function () {
-	var dotPlusingTag = `<div class="lv-dots lv-mid sd" ><div></div><div></div><div></div><div></div></div>`;
+	//var dotPlusingTag = `<div class="lv-dots lv-mid sd" ><div></div><div></div><div></div><div></div></div>`;
 
 	var newUpdateMsg = 'New App Updates Downloading';
 	console.log(SwManager._swStage2 + newUpdateMsg);
