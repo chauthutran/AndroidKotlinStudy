@@ -213,13 +213,10 @@ JobAidHelper.runTimeCache_JobAid = function( options, jobAidBtnParentTag, newFil
 		var requestUrl;
 
 		options.isLocal = WsCallManager.checkLocalDevCase(window.location.origin);
-		options.appName = 'pwa-dev';
+		options.appName = WsCallManager.getAppName();
 		if ( options.isListingApp ) options.projDir = JobAidHelper.NAME_jobListingApp;
 
-		if ( WsCallManager.stageName === 'test' ) options.appName = 'pwa-test';
-		else if ( WsCallManager.stageName === 'stage' ) options.appName = 'pwa-stage';
-		else if ( WsCallManager.stageName === 'prod' ) options.appName = 'wfa';  // 'wfa' vs 'wfa-lac' <-- can use url determination
-
+		
 		requestUrl = (options.isLocal) ? 'http://localhost:8383/list' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsFiling');
 		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
 		

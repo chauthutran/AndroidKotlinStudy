@@ -550,13 +550,10 @@ JobAidManifest.retrieve_AvailableManifestList = function( preCallBack, callBack 
 
 	if ( ConnManagerNew.isAppMode_Online() )
 	{
-		var options = { projDir: '', isListingApp: false, isLocal: true, appName: 'pwa-dev' };
+		var options = { projDir: '', isListingApp: false, isLocal: true, appName: WsCallManager.getAppName() };
 		options.isLocal = WsCallManager.checkLocalDevCase( window.location.origin );
 	
-		if ( WsCallManager.stageName === 'test' ) options.appName = 'pwa-test';
-		else if ( WsCallManager.stageName === 'stage' ) options.appName = 'pwa-stage';
-		else if ( WsCallManager.stageName === 'prod' ) options.appName = 'wfa';  // 'wfa' vs 'wfa-lac' <-- can use url determination
-
+		
 		var requestUrl = (options.isLocal) ? 'http://localhost:8383/manifests' : WsCallManager.composeDwsWsFullUrl('/TTS.jobsManifests')
 		requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
 	

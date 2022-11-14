@@ -119,6 +119,17 @@ WsCallManager.getAppFolderName = function ( stageName )
     return appFolderName;
 };
 
+WsCallManager.getAppName = function ()
+{
+    var appName = 'pwa-dev';
+
+    if ( WsCallManager.stageName === 'test' ) appName = 'pwa-test';
+    else if ( WsCallManager.stageName === 'stage' ) appName = 'pwa-stage';
+    else if ( WsCallManager.stageName === 'prod' ) appName = 'wfa';  // 'wfa' vs 'wfa-lac' <-- can use url determination
+
+    return appName;
+};
+
 // ----------------------------------------------------
 // --- Override the target stage ------
 

@@ -69,6 +69,8 @@ function Login() {
 		// Translate the page..
 		TranslationManager.translatePage();
 
+		me.appVersionCheck();
+
 		//MsgManager.msgAreaShowOpt( 'Testing Notification Msg', { cssClasses: 'notifCBlue', hideTimeMs: 900000, styleArr: [ { name: 'background-color', value: '#50A3C6' } ] } );
 	};
 
@@ -387,6 +389,52 @@ function Login() {
 		$('#pass').val('');
 		$('.pin_pw').val('');
 		$('.pin_pw_loading').hide();
+	};
+
+	// ------------------------------------------
+
+	me.appVersionCheck = function()
+	{
+		if ( ConnManagerNew.isAppMode_Online() && navigator.onLine && _ver )
+		{
+			var requestUrl;
+			var options = {};
+
+			options.isLocal = WsCallManager.checkLocalDevCase(window.location.origin);
+			options.appName = WsCallManager.getAppName();
+	
+			requestUrl = (options.isLocal) ? 'http://localhost:8383/wfaAppVer' : WsCallManager.composeDwsWsFullUrl('/TTS.wfaAppVer');
+			requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
+	
+			var optionsStr = JSON.stringify( options );
+	
+			$.ajax({
+				url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
+				type: "GET",
+				dataType: "json",
+				success: function (response) 
+				{
+					if ( response && response.version )
+					{
+						// Check against current version - index.html '_ver' // var _ver = '1.3.11.56';
+						// 'response.version' - by reading manifest file.						
+
+						console.log( 'Login.appVersionCheck _ver: ' + _ver + ', response.ver: ' + response.version );
+
+						if ( response.version > _ver )
+						{
+							// Display the sepcial tag (*) with 'title' = new version, 1.3.11.56, available.
+							var spenNewVersionTag = $( '.spanNewVersion_notification' ).show();
+							spenNewVersionTag.attr( 'title', 'New version, ' + response.version + ', available' );
+						}
+					}
+				},
+				error: function ( errMsg ) {
+					console.log( 'ERROR in Login.appVersionCheck, ' + errMsg );
+				}
+			});
+	
+		}
 	};
 
 	// ------------------------------------------
@@ -844,7 +892,8 @@ Login.contentHtml = `
 			<div>
 				<label id="spanVersion" style="color: #999999; font-weight: 350;">Version #.#</label>
 				<label id="spanVerDate" style="margin-left: 7px; color: #999999; font-weight: 350;">[2020---]</label>
-				<img class="imgAppReload mouseDown" title="App reload" src="images/sync-n.svg" style="margin-left: 3px; cursor: pointer; vertical-align: top; margin-bottom: -4px; margin-top: -3px;">
+				<span class="spanNewVersion_notification" style="color:red; margin: 0px -4px 0px 1px; display: none;" title="New version available">*</span>
+				<img class="imgAppReload mouseDown" title="App reload" src="images/sync-n.svg" style="cursor: pointer; vertical-align: top; margin-bottom: -4px; margin-top: -3px;">
 				<span id="spanLoginAppUpdate" term="login_updateApp"
 					style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[UPDATE
 					APP]</span>
