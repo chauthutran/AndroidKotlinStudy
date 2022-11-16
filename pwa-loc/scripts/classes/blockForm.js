@@ -1510,16 +1510,22 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 
 				regxRules.push(regxRuleJson);
 			}
-			else if (ruleJson.dateRangeRule === 'usePickerDateRange' && fieldDef.dateRange) {
-				pickerDateRangeJson = {};
+			else if (ruleJson.dateRangeRule === 'usePickerDateRange')
+			{
+				var datePicker_dateRange = FormUtil.getDatePickerDateRange(fieldDef);
 
-				pickerDateRangeJson.dateFrom = fieldDef.dateRange.from;
-				pickerDateRangeJson.dateTo = fieldDef.dateRange.to;
+				if ( datePicker_dateRange )
+				{
+					pickerDateRangeJson = {};
 
-				pickerDateRangeJson.msg = ruleJson.msg;
-				pickerDateRangeJson.term = ruleJson.term;
-
-				otherRules.pickerDateRangeJson = pickerDateRangeJson;
+					pickerDateRangeJson.dateFrom = datePicker_dateRange.from;
+					pickerDateRangeJson.dateTo = datePicker_dateRange.to;
+	
+					pickerDateRangeJson.msg = ruleJson.msg;
+					pickerDateRangeJson.term = ruleJson.term;
+	
+					otherRules.pickerDateRangeJson = pickerDateRangeJson;	
+				}
 			}
 			else if (ruleJson.customEvalRuleId) {
 				if (!otherRules.customEvalRuleIds) otherRules.customEvalRuleIds = [];

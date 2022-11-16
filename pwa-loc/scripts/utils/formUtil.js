@@ -713,15 +713,17 @@ FormUtil.getDatePastFuture = function (formDefJson) {
 	var datePastFuture = { 'past': moment().add(-100, 'years'), 'future': moment().add(1, 'years') }; // Default Year setting..
 
 	try {
-		if (formDefJson) {
-			if (formDefJson.dateRange) {
+		if (formDefJson) 
+		{			
+			var datePicker_dateRange = FormUtil.getDatePickerDateRange(formDefJson);
+			if (datePicker_dateRange) {
 				// Maybe we should have individual 'type'..
 				//  'from': { 'type': 'year', 'value': '-1' }, 'to':  { 'type': 'day', 'value': '10' }
 				//  { type: 'fix', from: '[-1]-[0]-01', to: '' }
 				//  'from': { 'type': 'eval', 'value': 'moment([2010, 0, 31])' }, 'to':  { 'type': 'eval', 'value': 'moment([2025, 0, 31])' }
 
-				datePastFuture.past = FormUtil.getCustomDate(formDefJson.dateRange.from);
-				datePastFuture.future = FormUtil.getCustomDate(formDefJson.dateRange.to);
+				datePastFuture.past = FormUtil.getCustomDate(datePicker_dateRange.from);
+				datePastFuture.future = FormUtil.getCustomDate(datePicker_dateRange.to);
 			}
 			else if (formDefJson.yearRange) {
 				var yRange = formDefJson.yearRange;
@@ -736,6 +738,12 @@ FormUtil.getDatePastFuture = function (formDefJson) {
 	}
 
 	return datePastFuture;
+};
+
+FormUtil.getDatePickerDateRange = function (formDefJson) 
+{
+	// NEW: 'datePicker_dateRange' - same as 'dateRange', but newer and better naming
+	return ( formDefJson.datePicker_dateRange ) ? formDefJson.datePicker_dateRange : formDefJson.dateRange;
 };
 
 FormUtil.getCustomDate = function (customDateJson) {
