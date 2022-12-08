@@ -182,10 +182,16 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 	me.formGroupTitleDisplaySet = function (formDivSecTag) {
 		formDivSecTag.find('div.formGroupSection').each(function () {
 			var formGroupSectionTag = $(this);
+			// Due to tabbing click had delayed showing, most of the contents could be hidden at this point.
+			// Check 'style' display: none.
+			var notHiddenCount = 0;
 
-			if (formGroupSectionTag.find('div.fieldBlock :visible').length === 0) {
-				formGroupSectionTag.find('> div.section').hide();
-			}
+			formGroupSectionTag.find('div.fieldBlock').each( function() {
+				if ( $(this).css( 'display' ) !== 'none' ) notHiddenCount++;
+			});
+			
+			if ( notHiddenCount > 0 ) formGroupSectionTag.find('> div.section').show();
+			else formGroupSectionTag.find('> div.section').hide();
 		});
 	};
 
