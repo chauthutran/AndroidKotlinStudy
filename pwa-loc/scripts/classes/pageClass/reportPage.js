@@ -132,7 +132,7 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
         var listData = eval( Util.getEvalStr( tableConfig.list ) );
         var colDataConfig = tableConfig.colData;
         colDataConfig = ( colDataConfig == undefined ) ? [] : colDataConfig;
-        var colNo = Object.keys( colDataConfig ).length;
+        var colNo = Object.keys( colDataConfig ).length - 1;
 
         // Get column values
         var data = [];
@@ -144,6 +144,7 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
             {
                 idx++;
                 data[idx] = [];
+                data[idx]["id"] = eval( evalStr + " var item = listData[i]; " + colDataConfig["id"]);
                 for( var j=0; j<colNo; j++ )
                 {
                     try { 
@@ -180,6 +181,9 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
 
 ReportPage.populateHTMLReport = function( tableIds, tableRowData )
 {
+    let reportConfig = ConfigManager.getConfigJson().definitionReportColumns;
+    let hasDetails = ( reportConfig.report!= undefined && reportConfig.report.detailsData != undefined )
+
     for( var k=0; k<tableIds.length; k++ )
     {
         const tableId = tableIds[k];
@@ -200,15 +204,30 @@ ReportPage.populateHTMLReport = function( tableIds, tableRowData )
                 rowTag.append( `<td>${colData[j]}</td>` );
             }
 
+            if( hasDetails )
+            {
+                rowTag.css("cursor", "pointer");
+                ReportPage.setup_ShowClientDetails( rowTag, colData["id"] );
+            }
+            
+            
             tableTag.append( rowTag );
         }
     }
     
 }
 
+ReportPage.setup_ShowClientDetails = function(rowTag, id)
+{
+    rowTag.click( function(){
+        ReportPage.contentBodyTag.find("#reportPageDiv").hide();
+        ReportDetailsPage.render(id);
+    });
+}
+
 ReportPage.populatePrintReport = function( tableIds, tableRowData )
 {
-    ReportPage.contentBodyTag.find(".for-print").html("");
+    ReportPage.contentBodyTag.find("#reportPrintPageDiv").html("");
 
     // Populate data
     do
@@ -365,39 +384,43 @@ ReportPage.checkToStopPopulateData = function( tableRowData )
 // </div>
 
 ReportPage.templateReport = `
-<div class="no-print report-filter-container" >
-    <span>From</span>
-    <input class="report-filter-field fromDate" placeholder="YYYY-MM-DD" readonly />
-    <button class="customFromDateBtn dateButton2 mouseDown"><img src="images/i_date.svg" class="imgCalendarInput"></button>
-    
-    <span style="margin-left: 10px;">To</span>
-    <input class="report-filter-field toDate" placeholder="YYYY-MM-DD" readonly />
-    <button class="customEndDateBtn dateButton2 mouseDown"><img src="images/i_date.svg" class="imgCalendarInput"></button>
-    
-    <button class="btnCustomPeriodRun cbtn c_cfb" style="margin-right: 20px;">Run</button>
-</div>
+<div  id="reportPageDiv">
+    <div class="no-print report-filter-container">
+        <span>From</span>
+        <input class="report-filter-field fromDate" placeholder="YYYY-MM-DD" readonly />
+        <button class="customFromDateBtn dateButton2 mouseDown"><img src="images/i_date.svg" class="imgCalendarInput"></button>
+        
+        <span style="margin-left: 10px;">To</span>
+        <input class="report-filter-field toDate" placeholder="YYYY-MM-DD" readonly />
+        <button class="customEndDateBtn dateButton2 mouseDown"><img src="images/i_date.svg" class="imgCalendarInput"></button>
+        
+        <button class="btnCustomPeriodRun cbtn c_cfb" style="margin-right: 20px;">Run</button>
+    </div>
 
 
-<div id="reportPageHeader" style="border-bottom: 1px solid #ddd;  padding: 0px 0px 4px; margin: 0px;">
-    <p>Voluntary Medical Male Circumcision (VMMC) Register</p>
-</div>
+    <div id="reportPageHeader" style="border-bottom: 1px solid #ddd;  padding: 0px 0px 4px; margin: 0px;">
+        <p>Voluntary Medical Male Circumcision (VMMC) Register</p>
+    </div>
 
-<div id="reportPageFooter" style="border-top: 1px solid #ddd; padding: 8px 0px 4px; margin: 0px;">
-    <p
-        style="color: #666; width: 70%; margin: 0; padding-bottom: 0px; text-align: let; font-family: 'Rubik', sans-serif; font-style: normal; font-size: .65em; float: left;">
-        VMMC</p>
-    <p style="color: #666; margin: 0; padding-bottom: 0px; text-align: right; font-family: 'Rubik', sans-serif; font-style: normal; font-size: .65em">
-    Página {{page}} de {{pages}}</p>
-</div>
+    <div id="reportPageFooter" style="border-top: 1px solid #ddd; padding: 8px 0px 4px; margin: 0px;">
+        <p
+            style="color: #666; width: 70%; margin: 0; padding-bottom: 0px; text-align: let; font-family: 'Rubik', sans-serif; font-style: normal; font-size: .65em; float: left;">
+            VMMC</p>
+        <p style="color: #666; margin: 0; padding-bottom: 0px; text-align: right; font-family: 'Rubik', sans-serif; font-style: normal; font-size: .65em">
+        Página {{page}} de {{pages}}</p>
+    </div>
 
-<div style="text-align: center; display: none;" class="loading no-print">
-    <img src="../images/loading_big_black.gif" style=" width: 50px;">
-</div>
+    <div style="text-align: center; display: none;" class="loading no-print">
+        <img src="../images/loading_big_black.gif" style=" width: 50px;">
+    </div>
 
-<div class="report-content">
-    <div class="for-print"></div>
-    <div name="tableA_content" class="no-print"> </div>
-    <div name="tableB_content" class="no-print"> </div>
+    <div class="report-content">
+        <div class="for-print"  id="reportPrintPageDiv"></div>
+        <div class="no-print">
+            <div name="tableA_content" class="no-print"> </div>
+            <div name="tableB_content" class="no-print"> </div>
+        </div>
+    </div>
 </div>
 `;
 
@@ -606,7 +629,7 @@ ReportPage.tableA_template = `
          <tbody> </tbody>
      </table>
  </div>
- <div style="page-break-before: always;"></div>
+ <!-- <div style="page-break-before: always;"></div> -->
 `;
 
 ReportPage.tableB_template = ` 
