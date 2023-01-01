@@ -536,6 +536,9 @@ function Login() {
 
 				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.  For availableType 'v2' only.
 				ConnManagerNew.checkNSet_ServerAvailable();
+
+				// MsgFormManager.showFormMsg( 'testTemp', $( '<span term="">TEST ERROR FORM MSG HERE!!</span>' ) );  // A link to try again?
+
 			});
 		}
 	};

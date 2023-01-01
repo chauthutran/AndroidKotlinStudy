@@ -89,14 +89,68 @@ VoucherCodeManager.checkLowQueue_Msg = function()
 // MAIN #1. Called after online Login
 VoucherCodeManager.refillQueue = function( userName, callBack )
 { 
-   VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) {
+	if ( !callBack ) callBack = function() {};
 
-      // Fill the count
-      VoucherCodeManager.fillQueue( userName, fillCount, function( success, vcList ) {
-         if ( success ) console.log( 'VoucherCodes Downloaded. Filled Count: ' + vcList.length );
-         if ( callBack ) callBack();
-      });
-   });
+	try
+	{
+	   VoucherCodeManager.queueStatus( function( isLow, fillCount, currCount ) 
+	   {
+	   	var fillCountAll = fillCount;
+	   	var filledCount = 0;
+
+	      // Fill the count - 1st time
+	      VoucherCodeManager.fillQueue( userName, fillCount, function( success, vcList ) 
+	      {
+	         if ( fillCount <= vcList.length ) callBack( true );
+	         else 
+	         {
+	         	// 2nd time - regardless of 'success/fail'
+	         	fillCount = fillCount - vcList.length;
+					filledCount += vcList.length;
+
+			      VoucherCodeManager.fillQueue( userName, fillCount, function( success, vcList ) 
+			      {
+			         if ( fillCount <= vcList.length ) callBack( true );
+			         else 
+			         {
+			         	// 3nd time - regardless of 'success/fail'
+			         	fillCount = fillCount - vcList.length;
+							filledCount += vcList.length;
+			
+					      VoucherCodeManager.fillQueue( userName, fillCount, function( success, vcList ) 
+					      {
+					         if ( fillCount <= vcList.length ) callBack( true );
+					         else 
+					         {
+					         	filledCount += vcList.length;
+
+					         	var filledMsg = 'Filled ' + filledCount + ' of ' + fillCountAll;
+
+									var retryBtnTag = $( '<button class="cbtn" style="margin-top: 5px;">RETRY</button>' );
+									retryBtnTag.click( function() 
+									{ 
+										MsgFormManager.appUnblock( 'vcNotAllFilled' );										
+										VoucherCodeManager.refillQueue( userName ); 
+									});
+
+						         var errMsg = '<b>[Refill VoucherCode Queue]</b> not filled all: ' + filledMsg + '!!';
+						         var msgDivTag = $( '<div><span term="">' + errMsg + '</span></div>').append( retryBtnTag );
+
+									MsgFormManager.showFormMsg( 'vcNotAllFilled', msgDivTag );
+
+									MsgManager.msgAreaShowErrOpt( errMsg );
+
+					         	callBack( false );
+					         }
+			         	});
+			         }
+	         	});
+	         }
+	      });
+	   });
+   }
+   catch( errMsg ) { console.log( 'ERROR in VoucherCodeManager.refillQueue, ' + errMsg ); }
+
 };
 
 // Can be used on Offline/Online loggin
