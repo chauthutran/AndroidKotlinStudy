@@ -1,7 +1,7 @@
 {
-  "name": "WFA STAGE",
-  "short_name": "WFA STAGE",
-  "description": "WFA STAGE",  
+  "name": "WFA TRAIN",
+  "short_name": "WFA TRAIN",
+  "description": "WFA TRAIN",  
   "version": "1.3.0",
   "theme_color": "#000000",
   "display": "standalone",

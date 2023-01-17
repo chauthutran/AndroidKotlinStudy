@@ -26,6 +26,12 @@
     "s_swZipFolder": "node sw_build_pwa-stage.js && tar.exe cf pwa-stage.zip pwa-stage && RMDIR /Q /S pwa-stage",
     "sBuild": "npm run s_copyDev && npm run s_cleanUp && npm run s_setFiles && npm run s_swZipFolder",
 
+    "t_copyDev": "xcopy pwa-loc pwa-train /E/H/C/I/Y",
+    "t_cleanUp": "del /s /q pwa-train\\*.map && del pwa-train\\workbox-* && rmdir /s /q pwa-train\\scss",
+    "t_setFiles": "xcopy stageFiles\\train_manifest.json pwa-train\\manifest.json /Y && xcopy stageFiles\\train-icons pwa-train\\images\\icons /E/H/C/I/Y",
+    "t_swZipFolder": "node sw_build_pwa-train.js && tar.exe cf pwa-train.zip pwa-train && RMDIR /Q /S pwa-train",
+    "tBuild": "npm run t_copyDev && npm run t_cleanUp && npm run t_setFiles && npm run t_swZipFolder",
+
     "w_copyDev": "xcopy pwa-loc wfa /E/H/C/I/Y",
     "w_cleanUp": "del /s /q wfa\\*.map && del wfa\\workbox-* && rmdir /s /q wfa\\scss",
     "w_setFiles": "xcopy stageFiles\\wfa_manifest.json wfa\\manifest.json /Y && xcopy stageFiles\\wfa-icons wfa\\images\\icons /E/H/C/I/Y",
