@@ -1286,7 +1286,7 @@ ActivityDataManager.getTransDataValue = function (transList, transDVProp) {
 	transList.forEach(trans => {
 		var dvJson = trans.dataValues;
 
-		if (dvJson && dvJson[transDVProp]) value = dvJson[transDVProp];
+		if (dvJson && dvJson[transDVProp] !== undefined && dvJson[transDVProp] !== '' ) value = dvJson[transDVProp];
 	});
 
 	return value;
@@ -1298,7 +1298,7 @@ ActivityDataManager.getTransClientDetails = function (transList, transCDProp) {
 	transList.forEach(trans => {
 		var cdJson = trans.clientDetails;
 
-		if (cdJson && cdJson[transCDProp]) value = cdJson[transCDProp];
+		if (cdJson && cdJson[transCDProp] !== undefined && cdJson[transCDProp] !== '' ) value = cdJson[transCDProp];
 	});
 
 	return value;
@@ -1306,7 +1306,7 @@ ActivityDataManager.getTransClientDetails = function (transList, transCDProp) {
 
 // Name changed.  Keep below for backward compatibility
 ActivityDataManager.getLastTransDataValue = function (transList, transDVProp) {
-	ActivityDataManager.getTransDataValue(transList, transDVProp);
+	return ActivityDataManager.getTransDataValue(transList, transDVProp);
 };
 
 ActivityDataManager.getAllTrans = function (activityList) {
