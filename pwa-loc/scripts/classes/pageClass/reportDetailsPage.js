@@ -34,10 +34,8 @@ ReportDetailsPage.render = function( clientId )
 ReportDetailsPage.setupEvents = function()
 {
     ReportDetailsPage.sheetFullTag.find(".btnBack").click(function () {
-		ReportPage.contentBodyTag.find("#reportPageDiv").show();
-        // ReportPage.contentBodyTag.find("#reportPageHeader").removeClass("no-print").addClass("for-print");
-        // ReportPage.contentBodyTag.find("#reportPageFooter").removeClass("no-print").addClass("for-print");
-        ReportPage.contentBodyTag.find("#reportDetails").hide();
+		ReportDetailsListPage.contentBodyTag.find(".list").show();
+        ReportDetailsListPage.contentBodyTag.find("#reportDetails").hide();
     });
 }
 
@@ -49,9 +47,9 @@ ReportDetailsPage.resolveTableData = function()
     let reportConfig = ConfigManager.getConfigJson().definitionReportColumns;
     var evalStr = Util.getEvalStr( reportConfig.eval );
 
-    if( reportConfig != undefined && reportConfig.report.detailsData != undefined )
+    if( reportConfig != undefined && reportConfig.report2 != undefined && reportConfig.report2.detailsData != undefined )
     {
-        reportConfig = reportConfig.report.detailsData;
+        reportConfig = reportConfig.report2.detailsData;
         for( var key in reportConfig )
         {
             var value = eval( evalStr + " var item = ReportDetailsPage.clientData; " + Util.getEvalStr(reportConfig[key]) ); 
@@ -67,7 +65,7 @@ ReportDetailsPage.populateData = function()
     var loadingTag = ReportDetailsPage.contentBodyTag.find(".loading");
     var reportTag = ReportDetailsPage.contentBodyTag.find(".wrapper-client");
 
-    ReportPage.contentBodyTag.find("#reportDetails").show();
+    ReportDetailsListPage.contentBodyTag.find("#reportDetails").show();
 
     loadingTag.show();
     reportTag.hide("fast");
@@ -83,20 +81,23 @@ ReportDetailsPage.populateData = function()
         for( var key in data )
         {
             var value = data[key];
-            if( key == "clientNumber" )
+            if( value != undefined )
             {
-                let clientNumberRowTag = ReportDetailsPage.contentBodyTag.find("#clientNumber");
-                clientNumberRowTag.append(`<td class="title">VMMC Client Number:</td>`);
-                const cuic = value;
-                
-                for( var i=0; i<cuic.length; i++ )
+                if( key == "clientNumber" )
                 {
-                    clientNumberRowTag.append(`<td class='box'>${cuic[i]}</td>`);
+                    let clientNumberRowTag = ReportDetailsPage.contentBodyTag.find("#clientNumber");
+                    clientNumberRowTag.append(`<td class="title">VMMC Client Number:</td>`);
+                    const cuic = value;
+                    
+                    for( var i=0; i<cuic.length; i++ )
+                    {
+                        clientNumberRowTag.append(`<td class='box'>${cuic[i]}</td>`);
+                    }
                 }
-            }
-            else
-            {
-                ReportDetailsPage.contentBodyTag.find(`#${key}`).html(value);
+                else
+                {
+                    ReportDetailsPage.contentBodyTag.find(`#${key}`).html(value);
+                }
             }
         }
 

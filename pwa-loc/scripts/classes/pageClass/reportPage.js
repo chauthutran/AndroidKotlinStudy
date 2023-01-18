@@ -123,16 +123,17 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
 
     // Resolve table data  
     var evalStr = Util.getEvalStr( reportConfig.eval );
-    const tableIds = Object.keys(tableData).sort()
+    const tableIds = Object.keys(tableData).sort();
+    var listData = eval( Util.getEvalStr( evalStr + " " + reportConfig.dataList ) );
+
     for( var k=0; k<tableIds.length; k++ )
     {
         const tableId = tableIds[k];
         var tableConfig = tableData[tableId];
         
-        var listData = eval( Util.getEvalStr( tableConfig.list ) );
         var colDataConfig = tableConfig.colData;
         colDataConfig = ( colDataConfig == undefined ) ? [] : colDataConfig;
-        var colNo = Object.keys( colDataConfig ).length - 1;
+        var colNo = Object.keys( colDataConfig ).length;
 
         // Get column values
         var data = [];
@@ -144,7 +145,6 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
             {
                 idx++;
                 data[idx] = [];
-                data[idx]["id"] = eval( evalStr + " var item = listData[i]; " + colDataConfig["id"]);
                 for( var j=0; j<colNo; j++ )
                 {
                     try { 
@@ -169,7 +169,7 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
 
             tableRowData[tableId] = {
                 data: data,
-                maxRow: tableConfig.maxRow,
+                maxRow: reportConfig.maxRow,
                 rowIdx: 0,
                 colNo: colNo
             }
@@ -207,7 +207,6 @@ ReportPage.populateHTMLReport = function( tableIds, tableRowData )
             if( hasDetails )
             {
                 rowTag.css("cursor", "pointer");
-                ReportPage.setup_ShowClientDetails( rowTag, colData["id"] );
             }
             
             
@@ -215,14 +214,6 @@ ReportPage.populateHTMLReport = function( tableIds, tableRowData )
         }
     }
     
-}
-
-ReportPage.setup_ShowClientDetails = function(rowTag, id)
-{
-    rowTag.click( function(){
-        ReportPage.contentBodyTag.find("#reportPageDiv").hide();
-        ReportDetailsPage.render(id);
-    });
 }
 
 ReportPage.populatePrintReport = function( tableIds, tableRowData )

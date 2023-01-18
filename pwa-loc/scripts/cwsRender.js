@@ -218,6 +218,12 @@ function cwsRender()
 
 				ReportPage.render();
 			}
+			else if ( areaId === Menu.menuJson_Report2.id ) 
+			{ 
+				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
+
+				ReportDetailsListPage.render();
+			}
 			else if ( areaId === Menu.menuJson_HNQIS_RDQA.id ) {  }
 			else
 			{
