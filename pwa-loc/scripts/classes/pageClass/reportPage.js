@@ -166,13 +166,13 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
                     }	
                 }
             }
-
-            tableRowData[tableId] = {
-                data: data,
-                maxRow: reportConfig.maxRow,
-                rowIdx: 0,
-                colNo: colNo
-            }
+        }
+        
+        tableRowData[tableId] = {
+            data: data,
+            maxRow: reportConfig.maxRow,
+            rowIdx: 0,
+            colNo: colNo
         }
     }
 
