@@ -326,13 +326,49 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 
 	me.createStandardInputFieldTag = function (fieldDef, autoComplete) {
 		var divInputFieldTag = me.createInputFieldTag_Standard(fieldDef);
+		let tooltip = fieldDef.tooltip;
+		tooltip = ( tooltip != undefined ) ? tooltip : "";
 
-		var entryTag = $('<input name="' + fieldDef.id + '" type="text" autocomplete="' + autoComplete + '" class="dataValue displayValue" />');
+		var entryTag = $('<input name="' + fieldDef.id + '" firstMouseMove="false" type="text" title = "' + tooltip + '" autocomplete="' + autoComplete + '" class="dataValue displayValue" />');
 		me.addAttrUidDataGroup(entryTag, fieldDef);
+		me.setupEvent_Tooltip( entryTag );
 
 		divInputFieldTag.find('div.field__left').append(entryTag);
 
 		return divInputFieldTag;
+	}
+
+	me.setupEvent_Tooltip = function( entryTag )
+	{
+		var tooltipMsg = entryTag.attr("title");
+		if( tooltipMsg != "" )
+		{
+			var tooltipTag = new $.Zebra_Tooltips(entryTag);
+			tooltipTag.hide(entryTag, true);
+
+			entryTag.off('focus').focus(function(){
+				tooltipTag.show(entryTag, true);
+			});
+
+			entryTag.off('blur').blur(function(){
+				tooltipTag.hide(entryTag);
+			});
+
+			entryTag.mouseover(function(){
+				var firstMouseMove = eval( entryTag.attr("firstMouseMove") );
+				if( !firstMouseMove )
+				{
+					tooltipTag.hide(entryTag);
+					entryTag.attr("firstMouseMove", "true"); 
+				}
+			});
+
+			// entryTag.mousemove(function(){
+			// 	console.log("onmousemove");
+			// 	tooltipTag.hide(entryTag);
+			// });
+			
+		}
 	}
 
 	me.addAttrUidDataGroup = function (entryTag, fieldDef) {
