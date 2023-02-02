@@ -55,14 +55,9 @@ Menu.populateStandardMenuList = function( menuItems )
         if ( ConfigManager.getAreas().options.hnqisRdqa ) menuItems.push( Menu.menuJson_HNQIS_RDQA );    
         if ( ConfigManager.getAreas().options.chat ) menuItems.push( Menu.menuJson_Chat );    
 
-        if ( ConfigManager.getAreas().options.report ) {
-            menuItems.push( Menu.menuJson_Report );  
-        }
-
-        if ( ConfigManager.getAreas().options.report2 ) {
-            menuItems.push( Menu.menuJson_Report2 );  
-        }
-
+        // Alternative ?
+        if ( ConfigManager.getAreas().options.report ) menuItems.push( Menu.menuJson_Report );  
+        if ( ConfigManager.getAreas().options.report2 ) menuItems.push( Menu.menuJson_Report2 );  
 
         if ( ConfigManager.getAreas().options.bahmni ) menuItems.push( Menu.menuJson_Banmi );    
     }

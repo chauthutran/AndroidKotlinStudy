@@ -123,8 +123,10 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
 
     // Resolve table data  
     var evalStr = Util.getEvalStr( reportConfig.eval );
+    if ( evalStr ) eval( evalStr );
+    
     const tableIds = Object.keys(tableData).sort();
-    var listData = eval( Util.getEvalStr( evalStr + " " + reportConfig.dataList ) );
+    var listData = eval( Util.getEvalStr( reportConfig.dataList ) );
 
     for( var k=0; k<tableIds.length; k++ )
     {
@@ -140,7 +142,8 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
         let idx = -1;
         for( var i=0; i< listData.length; i++ )
         {
-            var dateFilterVal = eval( evalStr + " var item = listData[i]; " + Util.getEvalStr(reportConfig.dateFilter) );
+            var item = listData[i];
+            var dateFilterVal = eval( Util.getEvalStr( reportConfig.dateFilter ) );
             if( dateFilterVal >= fromDate && dateFilterVal <= toDate )
             {
                 idx++;
@@ -152,7 +155,7 @@ ReportPage.resolveTableData = function( reportConfig, tableData )
                         var colConfig = colDataConfig["col" + colIdx];
                         if( colConfig )
                         {
-                            var value = eval( evalStr + " var item = listData[i]; " + Util.getEvalStr( colConfig ) ); 
+                            var value = eval( Util.getEvalStr( colConfig ) ); 
                             data[idx][j] = value;
                         }
                         else
