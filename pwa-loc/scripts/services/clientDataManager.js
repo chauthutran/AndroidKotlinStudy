@@ -474,8 +474,13 @@ ClientDataManager.getDateStr_LastUpdated = function (clientJson) {
 
 	if (clientJson && clientJson.date) {
 		// NOTE: Temporary fix while we resolve 'updatedUTC' vs 'updatedOnMdbUTC' for client date 
-		if (clientJson.date.updatedOnMdbUTC) dateStr = clientJson.date.updatedOnMdbUTC;
-		else if (clientJson.date.updatedUTC) dateStr = clientJson.date.updatedUTC;
+		var dObj = clientJson.date;
+		if (dObj.updatedOnMdbUTC && dObj.updatedUTC)
+		{
+			dateStr = ( dObj.updatedUTC >= dObj.updatedOnMdbUTC ) ? dObj.updatedUTC: dObj.updatedOnMdbUTC;
+		}
+		else if (dObj.updatedOnMdbUTC) dateStr = dObj.updatedOnMdbUTC;
+		else if (dObj.updatedUTC) dateStr = dObj.updatedUTC;
 	}
 
 	return dateStr;
