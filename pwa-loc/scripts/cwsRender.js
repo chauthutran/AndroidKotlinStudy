@@ -116,18 +116,10 @@ function cwsRender()
 	};
 
 	// This or other classes use this to control the scrolling..
-	me.setAppTitle = function( clicked_areaId, displayText, termId )
+	me.replacePageTitle = function( displayText, termId )
 	{
 		// these items show up full-screen (sheet_full-fs)
-		if ( clicked_areaId !== 'statisticsPage' 
-			&& clicked_areaId !== 'settingsPage' 
-			&& clicked_areaId !== 'aboutPage' 
-			&& clicked_areaId !== 'jobAids'  // [JOB_AID]
-			&& clicked_areaId !== 'chat'  // [CHAT]
-         && clicked_areaId !== 'hnqis_rdqaPage' )
-		{
-			$( 'div.Nav__Title' ).html( '<span term=' + termId + '>' + displayText + '</span>' );
-		}
+		$( 'div.Nav__Title' ).html( '<span term=' + termId + '>' + displayText + '</span>' );
 	};
 	// =============================================
 
@@ -216,13 +208,13 @@ function cwsRender()
 			{ 
 				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
 
-				ReportPage.render();
+				ReportPage.render( areaId );
 			}
 			else if ( areaId === Menu.menuJson_Report2.id ) 
 			{ 
 				if ( $( '#loginFormDiv' ).is( ":visible" ) ) $( '#loginFormDiv' ).hide();
 
-				ReportDetailsListPage.render();
+				ReportDetailsListPage.render( areaId );
 			}
 			else if ( areaId === Menu.menuJson_HNQIS_RDQA.id ) {  }
 			else
@@ -269,7 +261,7 @@ function cwsRender()
 		{
 			// On each area render, clear out the pageDiv content (which represent area div)..
 			me.resetPageDivContent();
-			me.setAppTitle( undefined, favItem.name, favItem.term );
+			me.replacePageTitle( favItem.name, favItem.term );
 		}
 
 		var blockObj = FormUtil.renderBlockByBlockId( blockName, me, parentDiv, undefined, options );

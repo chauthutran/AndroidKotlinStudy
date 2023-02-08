@@ -16,8 +16,14 @@ ReportPage.dataList = [];
 
 // -----------------------------------------------------------
 
-ReportPage.render = function()
+ReportPage.render = function( menuId )
 {
+    var menu = Menu.getMenuById( menuId );
+    if ( menu ) {
+        ReportPage.options.title = menu.name;
+        ReportPage.options.term = menu.term;
+    }
+
     ReportPage.sheetFullTag = FormUtil.sheetFullSetup(Templates.sheetFullFrame, ReportPage.options);
 	ReportPage.contentBodyTag = ReportPage.sheetFullTag.find('.contentBody');
 

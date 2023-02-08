@@ -8,20 +8,15 @@ Menu.menuItems_Loaded = []; //varInfo = 'eRefWSDev3'; //'eRefWSDev3';	eRefWSStag
 //Menu.hnqisRdqa = false;
 
 // [JOB_AID]
-Menu.menuJson_Report = { id: "report", name: "Report", term: "menu_report", icon: "settings", groupBefore: false, groupAfter: false };
-Menu.menuJson_Report2 = { id: "report2", name: "Report 2", term: "menu_report_2", icon: "settings", groupBefore: false, groupAfter: false };
-Menu.menuJson_JobAids = { id: "jobAids", name: "Job Aids", term: "menu_jobAids", icon: "settings", groupBefore: true, groupAfter: false };
-Menu.menuJson_Chat = { id: "chat", name: "Chat", term: "menu_chat", icon: "settings", groupBefore: true, groupAfter: false };
-Menu.menuJson_HNQIS_RDQA = { id: "hnqis_rdqaPage", name: "HNQIS", term: "menu_hnqis_rdqa", icon: "statistics", groupBefore: true, groupAfter: false };
-Menu.menuJson_Statistics = { id: "statisticsPage", name: "Statistics", term: "menu_statistics", icon: "statistics", groupBefore: true, groupAfter: false };
-Menu.menuJson_Settings = { id: "settingsPage", name: "Settings", term: "menu_settings", icon: "settings", groupBefore: true, groupAfter: false };
-Menu.menuJson_About = { id: "aboutPage", name: "About", term: "menu_about", icon: "about", groupBefore: false, groupAfter: true };
-
-Menu.menuJson_Banmi = { id: "banmi", name: "bahmni", groupBefore: true, groupAfter: false };
-
-
-Menu.menuJson_MyDetails = { id: "myDetails", name: "My Details", term: "", icon: "settings", groupBefore: false, groupAfter: false };
-
+Menu.menuJson_Report = { id: "report", name: "Report", term: "menu_report", newLayer: true, icon: "settings", groupBefore: false, groupAfter: false };
+Menu.menuJson_Report2 = { id: "report2", name: "Report 2", term: "menu_report_2", newLayer: true, icon: "settings", groupBefore: false, groupAfter: false };
+Menu.menuJson_JobAids = { id: "jobAids", name: "Job Aids", term: "menu_jobAids", newLayer: true, icon: "settings", groupBefore: true, groupAfter: false };
+Menu.menuJson_Chat = { id: "chat", name: "Chat", term: "menu_chat", newLayer: true, icon: "settings", groupBefore: true, groupAfter: false };
+Menu.menuJson_HNQIS_RDQA = { id: "hnqis_rdqaPage", name: "HNQIS", term: "menu_hnqis_rdqa", newLayer: true, icon: "statistics", groupBefore: true, groupAfter: false };
+Menu.menuJson_Statistics = { id: "statisticsPage", name: "Statistics", term: "menu_statistics", newLayer: true, icon: "statistics", groupBefore: true, groupAfter: false };
+Menu.menuJson_Settings = { id: "settingsPage", name: "Settings", term: "menu_settings", newLayer: true, icon: "settings", groupBefore: true, groupAfter: false };
+Menu.menuJson_About = { id: "aboutPage", name: "About", term: "menu_about", icon: "about", newLayer: true, groupBefore: false, groupAfter: true };
+Menu.menuJson_Banmi = { id: "banmi", name: "bahmni", newLayer: true, groupBefore: true, groupAfter: false };
 Menu.menuJson_LogOut = { id: "logOut", name: "Log out", term: "menu_logout", icon: "logout", groupBefore: false, groupAfter: true };
 
 Menu.menuOpen_Click_Started = false;
@@ -71,6 +66,17 @@ Menu.populateStandardMenuList = function( menuItems )
     return menuItems;
 }
 
+Menu.getMenuById = function( menuId )
+{
+    var menu;
+
+    try {
+        menu = Util.getFromList( Menu.menuItems_Loaded, menuId );
+    } catch( errMsg ) {}
+
+    return menu;
+}
+
 // ========================================================
 Menu.navDrawerDivTag;
 Menu.navDrawerShowIconTag;
@@ -108,8 +114,11 @@ Menu.setupMenuTagClick = function( menuTag )
 
         var clicked_areaId = menuLiTag.attr( 'areaId' );
 
-        // TODO: RenderFullScreen <---
-        SessionManager.cwsRenderObj.setAppTitle( clicked_areaId, anchorTag.text(), anchorTag.attr( 'term' ) ); //$( this ).attr( 'displayName' ) 
+        var clickedMenu = Menu.getMenuById( clicked_areaId );
+
+        if ( clickedMenu && clickedMenu.newLayer ) {} // If new layer, do not replace the title of base layer
+        else SessionManager.cwsRenderObj.replacePageTitle( anchorTag.text(), anchorTag.attr( 'term' ) );
+
         SessionManager.cwsRenderObj.renderArea( clicked_areaId );
 
         return false;
@@ -128,6 +137,8 @@ Menu.hideMenuDiv = function()
 // TODO: THIS SHOULD BE MOVED TO MENU CLASS  <-- Populate Top Dynamic Menu Items..
 Menu.populateMenuList = function( areaList, exeFunc )
 {
+    Menu.menuItems_Loaded = areaList; // Set as global list - to use/reference it on click event
+
     var startMenuTag;
 
     // TODO: NEED TO BE PLACED IN HTML - No need to generate this everytime..

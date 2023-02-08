@@ -338,7 +338,6 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
 
                 if ( favItem.target )
                 {
-                    //SessionManager.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
                     SessionManager.cwsRenderObj.renderFavItemBlock( favItem.target.blockId, favItem.target.options
                         ,targetBlockContainerTag, favItem );
                         
@@ -516,7 +515,6 @@ FavIcons.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, t
 
             if ( favItem.target )
             {
-                //SessionManager.cwsRenderObj.setAppTitle( favItem.target.blockId, favItem.name, favItem.term );
                 var blockObj = SessionManager.cwsRenderObj.renderFavItemBlock( favItem.target.blockId, favItem.target.options
                     ,targetBlockContainerTag, favItem );
 
