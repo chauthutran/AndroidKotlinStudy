@@ -80,6 +80,36 @@ ReportPage.checkValidDateRange = function()
     return valid;
 }
 
+ReportPage.populateReportDate = function()
+{
+    const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    var reportDateInfo = {months: [], years: []};
+    const fromDate = ReportPage.contentBodyTag.find(".fromDate").val();
+    const toDate = ReportPage.contentBodyTag.find(".toDate").val();
+
+    const arrFromDate = fromDate.split("-");
+    const arrToDate = toDate.split("-");
+
+    const fromMonth = eval(arrFromDate[1]);
+    const fromYear = eval(arrFromDate[0]);
+    const toMonth = eval(arrToDate[1]);
+    const toYear = eval(arrToDate[0]);
+      
+    for(var i = fromYear; i <= toYear; i++) {
+        var startMon = ( i === fromYear ) ? parseInt(fromMonth) - 1 : 0;
+        var endMonth = i != toYear ? 11 : parseInt(toMonth) - 1;
+        for(var j = startMon; j <= endMonth; j = j > 12 ? j % 12 || 11 : j+1) {
+            reportDateInfo.months.push( MONTHS[j]);
+        }
+
+        reportDateInfo.years.push(i);
+    }
+
+    ReportPage.contentBodyTag.find("[name='dateMonth']").html( reportDateInfo.months.join(", ") );
+    ReportPage.contentBodyTag.find("[name='dateYear']").html( reportDateInfo.years.join(", ") );
+}
+
 ReportPage.populateData = function()
 {
     var loadingTag = ReportPage.contentBodyTag.find(".loading");
@@ -350,13 +380,6 @@ ReportPage.populateCards = function( reportConfig, contentTag )
     }
 }
 
-ReportPage.populateReportDate = function()
-{
-    // ReportPage.contentBodyTag.find(".month").html();
-    // ReportPage.contentBodyTag.find(".year").html();
-}
-
-
 ReportPage.checkToStopPopulateData = function( tableRowData )
 {
     var flag = false;
@@ -429,8 +452,8 @@ ReportPage.tableA_template = `
 <table class="hdpg1" style="width: 100%;" cellpadding="0">
     <tbody>
         <tr>
-            <td>1. Month:</td>
-            <td>2. Year:</td>
+            <td>1. Month: <span name="dateMonth"></span></td>
+            <td>2. Year: <span name="dateYear"></span></td>
             <td class="lg_img">
                 <svg width="78" height="100" viewBox="0 0 79 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9.13829 57.4973L0.755203 57.5084C0.755203 57.5084 3.78782 92.7487 39.4585 93.7452C57.741 93.9557 77.5234 78.2144 77.4848 57.8529H70.4762C70.4762 57.8529 68.4161 84.6379 40.7136 85.9764C26.4526 85.6723 10.573 77.7204 9.13829 57.4973Z" fill="white"></path>
@@ -638,8 +661,8 @@ ReportPage.tableB_template = `
 <table class="hdpg1" style="width: 100%;" cellpadding="0">
     <tbody>
         <tr>
-            <td>1. Month:</td>
-            <td>2. Year:</td>
+            <td>1. Month: <span name="dateMonth"></span></td>
+            <td>2. Year: <span name="dateYear"></span></td>
             <td class="lg_img">
                 <svg width="78" height="100" viewBox="0 0 79 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9.13829 57.4973L0.755203 57.5084C0.755203 57.5084 3.78782 92.7487 39.4585 93.7452C57.741 93.9557 77.5234 78.2144 77.4848 57.8529H70.4762C70.4762 57.8529 68.4161 84.6379 40.7136 85.9764C26.4526 85.6723 10.573 77.7204 9.13829 57.4973Z" fill="white"></path>
