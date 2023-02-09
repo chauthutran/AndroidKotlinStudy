@@ -802,6 +802,11 @@ SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_O
 	// Stop the Sync Icon rotation
 	FormUtil.rotateTag(syncIconTag, false);
 
+
+	// NEW!! <-- Under 'SyncManagerNew.syncUpResponseHandle', if 'fhir' resource type & has 'fhir' resource, 
+	//		do conversion...
+
+
 	// NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
 	// Based on response(success/fail), perform app/activity/client data change
 	SyncManagerNew.syncUpResponseHandle(activityJson_Orig, activityId, success, responseJson, function (success, errMsg, newStatus, extraData) {
@@ -838,123 +843,122 @@ SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_O
 
 SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, success, responseJson, callBack) {
 	var operationSuccess = false;
+	var errMsg = 'Error: ';
+	var errorStatus = false;
 
-	// 1. Check success
-	if (success && responseJson && responseJson.result && responseJson.result.client) {
-		var clientJson = ConfigManager.downloadedData_UidMapping(responseJson.result.client);
-
-		// #1. Check if current activity Id exists in 'result.client' activities..
-		if (clientJson.activities && Util.getFromList(clientJson.activities, activityId, "id")) {
-			operationSuccess = true;
-
-			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
-			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
-
-			// [NOTE: STILL USED?]
-			// If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
-			if (processingInfo.fixActivityCase) {
-				delete processingInfo.fixActivityCase;
-				SyncManagerNew.deleteFixActivityRecord(activityId);
+	try
+	{
+		if (success && responseJson )
+		{
+			if ( responseJson.fhir )
+			{
+				// Convert fhir into 'client' json
 			}
-
-
-			// TODO: If this was c_switchUser transaction activity case, and the 'oldUser' matches this user,
-			//  remove the user from database..
-			var removedClient_bySwitchUser = false;
-			var transSwitchUserList = activityJson_Orig.transactions.filter(trans => trans.type === 'c_switchUser');
-
-			if (transSwitchUserList.length > 0) {
-				var lastTrans_SwitchUser = transSwitchUserList[transSwitchUserList.length - 1];
-
-				if (lastTrans_SwitchUser.dataValues && lastTrans_SwitchUser.dataValues.oldUser === INFO.login_UserName) removedClient_bySwitchUser = true;
-				// NOT USED - confirm the case for deletion..
-				// if ( clientJson.clientDetails.activeUsers && clientJson.clientDetails.activeUsers.indexOf( INFO.login_UserName ) === -1 ) { } // Also, check for 'creditedUsers' array..
+			else if ( responseJson.result && responseJson.result.client) 
+			{
+				var clientJson = ConfigManager.downloadedData_UidMapping(responseJson.result.client);
+		
+				// #1. Check if current activity Id exists in 'result.client' activities..
+				if (clientJson.activities && Util.getFromList(clientJson.activities, activityId, "id")) {
+					operationSuccess = true;
+		
+					// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
+					var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
+		
+					// [NOTE: STILL USED?]
+					// If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
+					if (processingInfo.fixActivityCase) {
+						delete processingInfo.fixActivityCase;
+						SyncManagerNew.deleteFixActivityRecord(activityId);
+					}
+		
+		
+					// TODO: If this was c_switchUser transaction activity case, and the 'oldUser' matches this user,
+					//  remove the user from database..
+					var removedClient_bySwitchUser = false;
+					var transSwitchUserList = activityJson_Orig.transactions.filter(trans => trans.type === 'c_switchUser');
+		
+					if (transSwitchUserList.length > 0) {
+						var lastTrans_SwitchUser = transSwitchUserList[transSwitchUserList.length - 1];
+		
+						if (lastTrans_SwitchUser.dataValues && lastTrans_SwitchUser.dataValues.oldUser === INFO.login_UserName) removedClient_bySwitchUser = true;
+						// NOT USED - confirm the case for deletion..
+						// if ( clientJson.clientDetails.activeUsers && clientJson.clientDetails.activeUsers.indexOf( INFO.login_UserName ) === -1 ) { } // Also, check for 'creditedUsers' array..
+					}
+		
+					if (removedClient_bySwitchUser) {
+						// ## TODO: THIS WORKS?  The clientCard is removed automatically..  
+						ClientDataManager.removeClient(clientJson);
+		
+						var extraData = { removedClientId: clientJson._id };
+		
+						ClientDataManager.saveCurrent_ClientsStore(() => {
+							if (callBack) callBack(operationSuccess, undefined, Constants.status_submit, extraData);
+						});
+					}
+					else {
+						ClientDataManager.setActivityDateLocal_client(clientJson);
+		
+						// Removal of existing activity/client happends within 'mergeDownloadClients()'
+						ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
+							// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
+							ClientDataManager.saveCurrent_ClientsStore(() => {
+								if (callBack) callBack(operationSuccess, undefined, Constants.status_submit);
+							});
+						});
+					}
+				}
+				else throw 'No matching activity with id, ' + activityId + ', found on result.client.';
 			}
-
-			if (removedClient_bySwitchUser) {
-				// ## TODO: THIS WORKS?  The clientCard is removed automatically..  
-				ClientDataManager.removeClient(clientJson);
-
-				var extraData = { removedClientId: clientJson._id };
-
-				ClientDataManager.saveCurrent_ClientsStore(() => {
-					if (callBack) callBack(operationSuccess, undefined, Constants.status_submit, extraData);
-				});
-			}
-			else {
-				ClientDataManager.setActivityDateLocal_client(clientJson);
-
-				// Removal of existing activity/client happends within 'mergeDownloadClients()'
-				ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
-					// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
-					ClientDataManager.saveCurrent_ClientsStore(() => {
-						if (callBack) callBack(operationSuccess, undefined, Constants.status_submit);
-					});
-				});
-			}
+			else throw "'result' not exists in response json.";
 		}
-		else {
-			var errMsg = 'No matching activity with id, ' + activityId + ', found on result.client.';
-			var errStatusCode = 400;
-
-			// 'syncedUp' processing data                
-			var processingInfo = ActivityDataManager.createProcessingInfo_Other(Constants.status_failed, errStatusCode, 'ErrMsg: ' + errMsg);
-			ActivityDataManager.insertToProcessing(activityJson_Orig, processingInfo);
-
-			ClientDataManager.saveCurrent_ClientsStore(() => {
-				if (callBack) callBack(operationSuccess, errMsg, Constants.status_failed);
-			});
+		else
+		{
+			if (responseJson) {
+				try {
+					if (responseJson.errStatus) errStatusCode = responseJson.errStatus;
+	
+					if (responseJson.result) {
+						if (responseJson.result.operation) errMsg += ' [result.operation]: ' + responseJson.result.operation;
+						if (responseJson.result.errData) errMsg += ' [result.errData]: ' + Util.getJsonStr(responseJson.result.errData);
+					}
+					else if (responseJson.errMsg) errMsg += ' [errMsg]: ' + responseJson.errMsg;
+					else if (responseJson.errorMsg) errMsg += ' [errorMsg]: ' + responseJson.errorMsg;
+					else if (responseJson.report) errMsg += ' [report.msg]: ' + responseJson.report.msg;
+					else {
+						// TODO: Need to simplify this...
+						SyncManagerNew.cleanUpErrJson(responseJson);
+						errMsg += ' [else]: ' + Util.getJsonStr(responseJson);
+					}
+	
+					// TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
+					if (responseJson.subStatus === 'errorStop' || responseJson.subStatus === 'errorRepeatFail') errorStatus = true;
+	
+					// NEW!!
+					if (responseJson.subStatus === 'notificationStop') {
+						errorStatus = true; //console.log('[subStatus notificationStop]'); //console.log(responseJson);
+						activityJson_Orig.confirmClients = responseJson.confirmClients;
+					}
+				}
+				catch (errMsgCatched) {
+					errMsg += ' [errMsgCatched]: ' + Util.getJsonStr(responseJson) + 'errMsgCatched: ' + errMsgCatched;
+				}
+			}	
+			
+			throw errMsg;
 		}
 	}
-	else {
-		var errMsg = 'Error: ';
-		var errStatusCode = 400;
-		var newStatus = Constants.status_failed;
+	catch( errMsgCatched )
+	{
+		var newStatus = ( errorStatus ) ? Constants.status_error : Constants.status_failed;
 
-		if (responseJson) {
-			try {
-				if (responseJson.errStatus) errStatusCode = responseJson.errStatus;
-
-				if (responseJson.result) {
-					if (responseJson.result.operation) errMsg += ' [result.operation]: ' + responseJson.result.operation;
-					if (responseJson.result.errData) errMsg += ' [result.errData]: ' + Util.getJsonStr(responseJson.result.errData);
-				}
-				else if (responseJson.errMsg) errMsg += ' [errMsg]: ' + responseJson.errMsg;
-				else if (responseJson.errorMsg) errMsg += ' [errorMsg]: ' + responseJson.errorMsg;
-				else if (responseJson.report) errMsg += ' [report.msg]: ' + responseJson.report.msg;
-				else {
-					// TODO: Need to simplify this...
-					SyncManagerNew.cleanUpErrJson(responseJson);
-					errMsg += ' [else]: ' + Util.getJsonStr(responseJson);
-				}
-
-				// TODO: NOTE: Not enabled, yet.  Discuss with Susan 1st.
-				if (responseJson.subStatus === 'errorStop' || responseJson.subStatus === 'errorRepeatFail') newStatus = Constants.status_error;
-
-				// NEW!!
-				if (responseJson.subStatus === 'notificationStop') {
-					newStatus = Constants.status_error;
-					console.log('[subStatus notificationStop]');
-					console.log(responseJson);
-
-					// Need to save the clients 'confirmClients' somewhere...  save in activity..?
-					// Then, in open msg, we can present it with options...
-					activityJson_Orig.confirmClients = responseJson.confirmClients;
-				}
-			}
-			catch (errMsgCatched) {
-				errMsg += ' [errMsgCatched]: ' + Util.getJsonStr(responseJson) + 'errMsgCatched: ' + errMsgCatched;
-			}
-		}
-
-		// 'syncedUp' processing data                
-		var processingInfo = ActivityDataManager.createProcessingInfo_Other(newStatus, errStatusCode, errMsg);
+		var processingInfo = ActivityDataManager.createProcessingInfo_Other(newStatus, errStatusCode, errMsgCatched);
 		ActivityDataManager.insertToProcessing(activityJson_Orig, processingInfo);
 
 		ClientDataManager.saveCurrent_ClientsStore(() => {
 			// Add activityJson processing
-			if (callBack) callBack(operationSuccess, errMsg, newStatus);
-		});
+			if (callBack) callBack(operationSuccess, errMsgCatched, newStatus);
+		});		
 	}
 };
 

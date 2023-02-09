@@ -1254,7 +1254,7 @@ Util.unselectAllOption = function (listTag) {
 Util.valueEscape = function (input) {
 	//input.replaceAll( '\', '\\' );
 	//input = input.replace( "'", "\'" );
-	input = input.replace('"', '\"');
+	input = input.replace(/"/g, "\\\"");
 
 	return input;
 };
@@ -1262,7 +1262,7 @@ Util.valueEscape = function (input) {
 Util.valueUnescape = function (input) {
 	//input.replaceAll( '\', '\\' );
 	//input = input.replace( "\'", "'" );
-	input = input.replace('\"', '"');
+	input = input.replace(/\\\"/g, "\"");
 
 	return input;
 };
