@@ -555,6 +555,7 @@ ConfigManager.getSettingPaging = function () {
 };
 
 ConfigManager.getSettingsTermId = function (termName) {
+	var configJson = ConfigManager.getConfigJson();
 	var termId = '';
 
 	var settingsTerms = ConfigManager.getSettings().terms;
