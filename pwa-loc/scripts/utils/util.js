@@ -545,7 +545,7 @@ Util.checkConditionEval = function (evalCondition) {
 }
 
 
-Util.traverseEval = function (obj, INFO, iDepth, limit) {
+Util.traverseEval = function (obj, INFO, iDepth, limit, options ) {
 	if (iDepth === limit) {
 		throw 'Error in Util.traverseEval, Traverse depth limit has reached: ' + iDepth;
 	}
@@ -562,7 +562,11 @@ Util.traverseEval = function (obj, INFO, iDepth, limit) {
 					}
 					else if (Util.isTypeString(pArrItem)) {
 						try { prop[i] = eval(pArrItem); }
-						catch (errMsg) { throw 'Error in Util.traverseEval, arrayItem str eval: ' + errMsg; }
+						catch (errMsg) {  
+							var errMsgFull = 'Error in Util.traverseEval, arrayItem str eval: ' + errMsg;
+							if ( options && options.skipError ) console.log( errMsgFull );
+							else throw errMsgFull; 
+						}
 					}
 				});
 			}
@@ -571,7 +575,11 @@ Util.traverseEval = function (obj, INFO, iDepth, limit) {
 			}
 			else if (Util.isTypeString(prop)) {
 				try { obj[key] = eval(prop); }
-				catch (errMsg) { throw 'Error in Util.traverseEval, str eval: ' + errMsg; }
+				catch (errMsg) { 
+					var errMsgFull = 'Error in Util.traverseEval, str eval: ' + errMsg;
+					if ( options && options.skipError ) console.log( errMsgFull );
+					else throw errMsgFull; 
+				}			
 			}
 		});
 	}

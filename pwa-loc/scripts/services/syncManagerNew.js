@@ -845,10 +845,11 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 	var operationSuccess = false;
 	var errMsg = 'Error: ';
 	var errorStatus = false;
+	var errStatusCode = 400; 
 
 	try
 	{
-		if (success && responseJson )
+		if (success && responseJson && responseJson.status === Constants.ws_status_success )
 		{
 			if ( responseJson.fhir )
 			{
