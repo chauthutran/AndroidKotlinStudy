@@ -858,15 +858,9 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 				
 				var clientJson = FhirUtil.evalClientTemplate( responseJson.fhir );
 
-				// Above need to have proper activity...
-
-				// check the existing client (by id?) and replace/merge that client..
-
-				//ClientDataManager.setActivityDateLocal_client(clientJson);
-		
+				// TODO: check the existing client (by id?) and replace/merge that client..		
 
 				var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
-
 
 				// Removal of existing activity/client happends within 'mergeDownloadClients()'
 				ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
@@ -875,9 +869,6 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 						if (callBack) callBack(operationSuccess, undefined, Constants.status_submit);
 					});
 				});
-
-
-
 			}
 			else if ( responseJson.result && responseJson.result.client) 
 			{
