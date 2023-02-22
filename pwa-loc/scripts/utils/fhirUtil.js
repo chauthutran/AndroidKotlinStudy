@@ -271,14 +271,14 @@ FhirUtil.runEvalSample = function()
 };
 
 // REF From -->  PayloadTemplateHelper.evalPayloads = function( payloadList, INFO, defPayloadTemplates )
-FhirUtil.evalClientTemplate = function( fhir )
+FhirUtil.evalClientTemplate = function( fhirResp )
 {
 	var clientJson = {};
 
 	var defFhirConvert = ConfigManager.getConfigJson().definitionFhirConvert;
 
 	var INFO = InfoDataManager.getINFO();
-	INFO.fhir = fhir;
+	INFO.fhirResp = fhirResp;
 
 	eval( Util.getEvalStr( defFhirConvert.preEval ) );
 

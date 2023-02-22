@@ -849,28 +849,31 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 	try
 	{
-		if (success && responseJson && responseJson.status === Constants.ws_status_success )
+		if ( success && responseJson && responseJson.resourceType === 'Bundle' && responseJson.entry )
 		{
-			if ( responseJson.fhir )
-			{
-				// Convert fhir into 'client' json
-				// FhirUtil.runEvalSample();  var fhir = { Patient: { }, QuestionnaireResponses: [ {} ] };
-				
-				var clientJson = FhirUtil.evalClientTemplate( responseJson.fhir );
+			console.log( ' --- FHIR Bundle Case' );
+			
+			// Convert fhir into 'client' json
+			// FhirUtil.runEvalSample();  var fhir = { Patient: { }, QuestionnaireResponses: [ {} ] };
+			
+			var clientJson = FhirUtil.evalClientTemplate( responseJson );
 
-				// TODO: check the existing client (by id?) and replace/merge that client..		
+			// TODO: check the existing client (by id?) and replace/merge that client..		
 
-				var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
+			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
 
-				// Removal of existing activity/client happends within 'mergeDownloadClients()'
-				ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
-					// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
-					ClientDataManager.saveCurrent_ClientsStore(() => {
-						if (callBack) callBack(operationSuccess, undefined, Constants.status_submit);
-					});
+			// Removal of existing activity/client happends within 'mergeDownloadClients()'
+			ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
+				// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
+				ClientDataManager.saveCurrent_ClientsStore(() => {
+					if (callBack) callBack(operationSuccess, undefined, Constants.status_submit);
 				});
-			}
-			else if ( responseJson.result && responseJson.result.client) 
+			});
+
+		}  
+		else if ( success && responseJson && responseJson.status === Constants.ws_status_success )
+		{
+			if ( responseJson.result && responseJson.result.client) 
 			{
 				var clientJson = ConfigManager.downloadedData_UidMapping(responseJson.result.client);
 		
@@ -930,6 +933,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 		}
 		else
 		{
+			// Process error case with proper returned data
 			if (responseJson) {
 				try {
 					if (responseJson.errStatus) errStatusCode = responseJson.errStatus;
