@@ -14,6 +14,54 @@ FhirUtil.TransType_DataMap = {
 
 // ==== Methods ======================
 
+
+FhirUtil.convertResp_ClientList = function ( returnJson )
+{
+	var clientList = [];
+
+	var resourceList = [];
+
+	try
+	{
+		// 1. Get all resource into resourceList..
+		returnJson.response.entry.forEach( item => {
+			if ( item.resource ) {
+				if ( item.resource.entry ) item.resource.entry.forEach( subItem => {  if ( subItem.resource ) resourceList.push( subItem.resource );  });
+				else resourceList.push( item.resource );
+			}
+		});
+	
+	
+		// 2. Get 'Patient' List - Might need to perform double check for duplicate ones?
+		resourceList.forEach( item => {
+			if ( item.resourceType === 'Patient' ) clientList.push( { id: item.id, itemList: [ item ] } );
+		});
+	
+	
+		// 3. Get other resource from 'Patient'
+		resourceList.forEach( item => {
+			if ( item.resourceType === 'QuestionnaireResponse' ) 
+			{
+				try
+				{
+					var patientId = item.subject.reference.replace( 'Patient/', '' );
+					if ( patientId )
+					{
+						var clientJson = Util.getFromList(clientList, patientId, 'id');
+						if ( clientJson ) clientJson.itemList.push( item );	
+					}
+				}
+				catch (errMsg ) { console.log( 'ERROR in QuestionnaireResponse looping on convert.' ); }
+			}
+		});
+	}
+	catch (errMsg ) { console.log( 'ERROR in FhirUtil.convertResp_ClientList, ' + errMsg ); }
+
+	return clientList;
+};
+
+// ------------------------------
+
 FhirUtil.generateActivities_fmQR = function ( questRespArr ) 
 {
 	var activities = [];
@@ -54,7 +102,7 @@ FhirUtil.convertQR_Activity = function( qr )
 			act.activeUser = extJson.activeUser;
 			act.creditedUsers = [ extJson.activeUser ];
 
-			act.date = FhirUtil.getDateJson( qr.authored ); // need to get this from 'authored'
+			act.date = FhirUtil.getActDateJson( qr.authored ); // need to get this from 'authored'
 
 			act.transactions = [ FhirUtil.getTransFromItem( qr.item, extJson ) ];
 		}
@@ -157,7 +205,7 @@ FhirUtil.getExtensionVals = function( extension )
 	return extensionJson;
 };
 
-FhirUtil.getDateJson = function( authored )
+FhirUtil.getActDateJson = function( authored )
 {
 	var date = { };
 
@@ -169,19 +217,68 @@ FhirUtil.getDateJson = function( authored )
 		
 		date.createdLoc = dateLoc;
 		date.capturedLoc = dateLoc;
-		date.udpatedLoc = dateLoc;
+		date.updatedLoc = dateLoc;		// Use resource 'meta' lastUpdated to populate 'updated' date?
 		date.syncedLoc = dateLoc;
 
 		date.createdUTC = dateUTC;
 		date.capturedUTC = dateUTC;
-		date.udpatedUTC = dateUTC;
+		date.updatedUTC = dateUTC;
 		date.syncedUTC = dateUTC;
 	}
-	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getDateJson, ' + errMsg ); }
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getActDateJson, ' + errMsg ); }
 
 	return date;
 };
 
+FhirUtil.getClientDateJson = function( oldestDate, newestDate )
+{
+	var date = { };
+
+	try
+	{
+		if ( oldestDate )
+		{
+			var dateLoc = Util.formatDate( oldestDate );
+			var dateUTC = Util.formatDate( oldestDate.toUTCString() );
+	
+			date.createdLoc = dateLoc;	// Maybe we should set this as oldest date?  or save the initial date?  of questionnaire?
+			date.syncedLoc = dateLoc;
+			
+			date.createdUTC = dateUTC;
+			date.syncedUTC = dateUTC;
+		}
+
+		if ( newestDate )
+		{
+			var dateLoc = Util.formatDate( newestDate );
+			var dateUTC = Util.formatDate( newestDate.toUTCString() );
+	
+			date.updatedLoc = dateLoc;
+			date.updatedOnMdbLoc = dateLoc;
+
+			date.updatedUTC = dateUTC;
+			date.updatedOnMdbUTC = dateUTC;
+		}
+	}
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getClientDateJson, ' + errMsg ); }
+
+	return date;
+};
+
+FhirUtil.getClientDateByQRArr = function( questRespArr )
+{
+	var oldestDate;
+	var newestDate;
+	// check 'meta' "lastUpdated": "2023-02-23T09:58:07.070+00:00",
+
+	questRespArr.forEach( qr => {
+		var date = new Date( qr.meta.lastUpdated );
+		if ( !newestDate || newestDate < date ) newestDate = date;
+		if ( !oldestDate || oldestDate > date ) oldestDate = date;		
+	});
+
+	return FhirUtil.getClientDateJson( oldestDate, newestDate );
+};
 
 // --------------------------------
 

@@ -222,8 +222,10 @@ WsCallManager.serverAvailable = function( callBack )
                 // If  configManager configJson.souceType is available (after login), use it.  Otherwise (on not login), get localStorage data.                
                 var configJson = ConfigManager.getConfigJson();
                 var sourceType = ( configJson.sourceType ) ? configJson.sourceType : AppInfoLSManager.getConfigSourceType();
-                if ( sourceType !== 'mongo' ) sourceType = 'dhis2';
-                
+
+                if ( sourceType === ConfigManager.KEY_SourceType_Fhir ) sourceType = ConfigManager.KEY_SourceType_Mongo;
+                else if ( sourceType !== ConfigManager.KEY_SourceType_Mongo ) sourceType = ConfigManager.KEY_SourceType_Dhis2;
+
                 WsCallManager.dwsAvailabilityCheck( sourceType, callBack );   
             }
         }
@@ -265,18 +267,17 @@ WsCallManager.dwsAvailabilityCheck = function( sourceType, returnFunc )
         {
             if ( success && returnJson )
             {
-                if ( sourceType === 'mongo' )
+                if ( sourceType === ConfigManager.KEY_SourceType_Mongo )
                 {
                     bCheck = ( returnJson.MONGO && returnJson.MONGO.isAvailable );
-                    //console.log( bCheck + ' - availability mongo' );
                 }
-                else if ( sourceType === 'dhis2' )
+                else if ( sourceType === ConfigManager.KEY_SourceType_Dhis2 )
                 {
                     // Check both 'DHIS2' & 'LEGACY'
                     bCheck = ( returnJson.DHIS2 && returnJson.DHIS2.isAvailable 
                         && returnJson.LEGACY && returnJson.LEGACY.isAvailable );
-                    //console.log( bCheck + ' - availability dhis2' );
                 }
+                // TODO: FHIR availability implement/use
 
                 // REPLICA/POEDITOR availability record
                 ConnManagerNew.REPLICA_Available = ( returnJson.REPLICA && returnJson.REPLICA.isAvailable );
@@ -303,7 +304,7 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
     var mongoSchemaVersion = configJson.mongoSchemaVersion;
 
     if ( sourceType ) payloadJson.sourceType = sourceType;
-    if ( sourceType === "mongo" && mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
+    if ( sourceType === ConfigManager.KEY_SourceType_Mongo && mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
     if ( ConfigManager.getSettings().uniquePhoneNumberCase === true ) payloadJson.uniquePhoneNumberCase = true;
     if ( ConfigManager.getSettings().confirmClientSchLvl > 0 ) payloadJson.confirmClientSchLvl = ConfigManager.getSettings().confirmClientSchLvl;
 
@@ -418,14 +419,13 @@ WsCallManager.addExtraPayload_BySourceType = function( configJson, payloadJson )
         payloadJson.sourceType = configJson.sourceType;
     }
     
-    if ( configJson.sourceType === "mongo" )
+    if ( configJson.sourceType === ConfigManager.KEY_SourceType_Mongo )
     {
         if ( configJson.mongoSchemaVersion ) payloadJson.mongoSchemaVersion = configJson.mongoSchemaVersion;
         // For 'mongo' sourceType, do not need to send userName & password in payload.
     }
     else
     {
-        // if ( sourceType !== "mongo" )
         // For legacy supported calls to DWS, we need to pass userName and password in payloadJson. 
         if ( SessionManager.sessionData.login_UserName ) payloadJson.userName = SessionManager.sessionData.login_UserName;
         if ( SessionManager.sessionData.login_Password ) payloadJson.password = SessionManager.sessionData.login_Password;    

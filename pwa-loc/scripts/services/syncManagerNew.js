@@ -143,7 +143,7 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 				else isFailed = true;
 			}
 			else {
-				// Dhis2 source version..
+				// Dhis2 source version.. & fhir..
 				if (returnJson.status === Constants.ws_status_success
 					|| returnJson.status === Constants.ws_status_warning) isFailed = false;
 				else isFailed = true;
@@ -220,7 +220,7 @@ SyncManagerNew.formatDownloadedData = function (returnJson) {
 			outputData.clients = returnJson.response.dataList;
 		}
 		else if (returnJson.clientList) {
-			// dws syncUp return format.
+			// dws syncUp return format.  Also used for 'fhir'
 			outputData.clients = returnJson.clientList;
 		}
 		else if (returnJson.clients) {
@@ -374,6 +374,27 @@ SyncManagerNew.downloadClients = function (callBack) {
 			if (payloadJson) {
 				var loadingTag = undefined;
 				WsCallManager.requestPostDws(syncDownJson.url, payloadJson, loadingTag, function (success, returnJson) {
+
+					// If 'fhir' sourceType, convert the fhir 'bundle' results into list of clients..
+					if ( syncDownJson.sourceType === ConfigManager.KEY_SourceType_Fhir )
+					{
+						try
+						{
+							// This 'clientList' format should be reExamined?
+							var clientList = FhirUtil.convertResp_ClientList( returnJson );
+
+							if ( clientList ) 
+							{
+								returnJson = { clientList: [], status: Constants.ws_status_success };
+								clientList.forEach( clientResp => { returnJson.clientList.push( FhirUtil.evalClientTemplate( clientResp ) ); } );
+							} 	
+						}
+						catch( errMsg )
+						{
+							console.log( 'SyncDown FHIR failed, ' + errMsg );
+						}
+					}
+
 					callBack(success, returnJson);
 				});
 			}
@@ -849,16 +870,11 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 	try
 	{
-		if ( success && responseJson && responseJson.resourceType === 'Bundle' && responseJson.entry )
+		if ( success && responseJson && responseJson.response && responseJson.response.resourceType === 'Bundle' && responseJson.response.entry )
 		{
 			console.log( ' --- FHIR Bundle Case' );
-			
-			// Convert fhir into 'client' json
-			// FhirUtil.runEvalSample();  var fhir = { Patient: { }, QuestionnaireResponses: [ {} ] };
-			
-			var clientJson = FhirUtil.evalClientTemplate( responseJson );
-
-			// TODO: check the existing client (by id?) and replace/merge that client..		
+		
+			var clientJson = FhirUtil.evalClientTemplate( responseJson.response );
 
 			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
 

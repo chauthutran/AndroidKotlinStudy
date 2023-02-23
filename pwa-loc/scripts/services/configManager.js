@@ -52,6 +52,7 @@ ConfigManager.default_SettingPaging = {
 
 ConfigManager.KEY_SourceType_Mongo = 'mongo';
 ConfigManager.KEY_SourceType_Dhis2 = 'dhis2';
+ConfigManager.KEY_SourceType_Fhir = 'fhir';
 
 ConfigManager.KEY_ClientSyncType_ClientLevel = 'ClientLevel';
 //ConfigManager.getOuChildCase_countries = [ 'MZ' ];
@@ -474,6 +475,11 @@ ConfigManager.isSourceTypeDhis2 = function () {
 
 ConfigManager.isSourceTypeMongo = function () {
 	return (ConfigManager.getConfigJson().sourceType === ConfigManager.KEY_SourceType_Mongo);
+};
+
+ConfigManager.isSourceTypeMongoOrFhir = function () {
+	var srcType = ConfigManager.getConfigJson().sourceType;
+	return ( srcType === ConfigManager.KEY_SourceType_Mongo || srcType === ConfigManager.KEY_SourceType_Fhir );
 };
 
 // ----------------------------------------
