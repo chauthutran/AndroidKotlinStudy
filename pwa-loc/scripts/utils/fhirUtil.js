@@ -265,11 +265,15 @@ FhirUtil.getClientDateJson = function( oldestDate, newestDate )
 	return date;
 };
 
-FhirUtil.getClientDateByQRArr = function( questRespArr )
+FhirUtil.getClientDateByQRArr = function( patient, questRespArr )
 {
 	var oldestDate;
 	var newestDate;
 	// check 'meta' "lastUpdated": "2023-02-23T09:58:07.070+00:00",
+
+	var pDate = new Date( patient.meta.lastUpdated );
+	oldestDate = pDate;
+	newestDate = pDate;
 
 	questRespArr.forEach( qr => {
 		var date = new Date( qr.meta.lastUpdated );
