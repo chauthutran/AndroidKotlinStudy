@@ -378,21 +378,7 @@ SyncManagerNew.downloadClients = function (callBack) {
 					// If 'fhir' sourceType, convert the fhir 'bundle' results into list of clients..
 					if ( syncDownJson.sourceType === ConfigManager.KEY_SourceType_Fhir )
 					{
-						try
-						{
-							// This 'clientList' format should be reExamined?
-							var clientList = FhirUtil.convertResp_ClientList( returnJson );
-
-							if ( clientList ) 
-							{
-								returnJson = { clientList: [], status: Constants.ws_status_success };
-								clientList.forEach( clientResp => { returnJson.clientList.push( FhirUtil.evalClientTemplate( clientResp ) ); } );
-							} 	
-						}
-						catch( errMsg )
-						{
-							console.log( 'SyncDown FHIR failed, ' + errMsg );
-						}
+						returnJson = { clientList: FhirUtil.getClientList_FromResponse( returnJson.response ), status: Constants.ws_status_success };
 					}
 
 					callBack(success, returnJson);

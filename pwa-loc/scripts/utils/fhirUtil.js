@@ -14,8 +14,24 @@ FhirUtil.TransType_DataMap = {
 
 // ==== Methods ======================
 
+FhirUtil.getClientList_FromResponse = function ( response )
+{
+	var clientList = [];
 
-FhirUtil.convertResp_ClientList = function ( returnJson )
+	try
+	{
+		if ( response && response.entry ) FhirUtil.getPatientResourceSet( response ).forEach( rscSet => { clientList.push( FhirUtil.evalClientTemplate( rscSet ) ); } );
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in FhirUtil.getClientList_FromResponse, ' + errMsg );
+	}
+
+	return clientList;
+};
+
+
+FhirUtil.getPatientResourceSet = function ( response )
 {
 	var clientList = [];
 
@@ -24,7 +40,7 @@ FhirUtil.convertResp_ClientList = function ( returnJson )
 	try
 	{
 		// 1. Get all resource into resourceList..
-		returnJson.response.entry.forEach( item => {
+		response.entry.forEach( item => {
 			if ( item.resource ) {
 				if ( item.resource.entry ) item.resource.entry.forEach( subItem => {  if ( subItem.resource ) resourceList.push( subItem.resource );  });
 				else resourceList.push( item.resource );
@@ -55,7 +71,7 @@ FhirUtil.convertResp_ClientList = function ( returnJson )
 			}
 		});
 	}
-	catch (errMsg ) { console.log( 'ERROR in FhirUtil.convertResp_ClientList, ' + errMsg ); }
+	catch (errMsg ) { console.log( 'ERROR in FhirUtil.getPatientResourceSet, ' + errMsg ); }
 
 	return clientList;
 };
@@ -381,7 +397,7 @@ FhirUtil.evalClientTemplate = function( fhirResp )
 	var INFO = InfoDataManager.getINFO();
 	INFO.fhirResp = fhirResp;
 
-	eval( Util.getEvalStr( defFhirConvert.preEval ) );
+	if ( defFhirConvert.preEval ) eval( Util.getEvalStr( defFhirConvert.preEval ) );
 
 	// TODO: Optionally, skip the eval error case.
 	if ( defFhirConvert && defFhirConvert.clientTemplate ) 
@@ -390,6 +406,10 @@ FhirUtil.evalClientTemplate = function( fhirResp )
 
 		Util.traverseEval(clientJson, INFO, 0, 50, { skipError: true } );
 	}
+
+	INFO.client = clientJson;
+
+	if ( defFhirConvert.postEval ) eval( Util.getEvalStr( defFhirConvert.postEval ) );
 
 	return clientJson;
 };
