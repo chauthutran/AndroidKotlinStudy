@@ -342,7 +342,7 @@ AppInfoLSManager.getJobAidFolderNames = function()
 
 AppInfoLSManager.getConfigSourceType = function()
 {
-    var defaultConfigSourceType = 'mongo'; // <-- default one.  Should be between 'mongo' / 'dhis2'
+    var defaultConfigSourceType = ConfigManager.KEY_SourceType_Mongo; // <-- default one.  Should be between 'mongo' / 'dhis2'
 
     var existingConfigSourceType = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIGSOURCETYPE );
 

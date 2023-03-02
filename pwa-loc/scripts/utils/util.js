@@ -227,6 +227,11 @@ Util.getFromList = function (list, value, propertyName) {
 };
 
 
+Util.findFromList = function (list, value, propertyName) {
+	return Util.getFromList(list, value, propertyName);
+};
+
+
 // MOST USED #2 - remove from list, all.
 Util.RemoveFromArrayAll = function (list, propertyName, value) {
 	try {
