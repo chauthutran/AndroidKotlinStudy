@@ -125,7 +125,7 @@ ReportDetailsPage.templateReport = `
     <div id="pageFooter" style="border-top: 1px solid #ddd; padding: 2px 0px 2px; margin: 0px;">
         <p style="color: #666; width: 70%; margin: 0; padding-bottom: 0px; text-align: let; font-family: 'Rubik', sans-serif; font-style: normal; font-size: 10px; float: left;">
             VMMC</p>
-        <p style="color: #666; margin: 0; padding-bottom: 0px; text-align: right; font-family: 'Rubik', sans-serif; font-style: normal; font-size: 10px">
+        <p style="color: #666; margin: 0; padding-bottom: 0px; text-align: right; font-family: 'Rubik', sans-serif; font-style: normal; font-size: 10px" id="subTitle">
             Revision version - {Date year}</p>
     </div>
     <div class="wrapper-client">
