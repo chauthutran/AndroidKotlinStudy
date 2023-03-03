@@ -143,7 +143,7 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 				else isFailed = true;
 			}
 			else {
-				// Dhis2 source version..
+				// Dhis2 source version.. & fhir..
 				if (returnJson.status === Constants.ws_status_success
 					|| returnJson.status === Constants.ws_status_warning) isFailed = false;
 				else isFailed = true;
@@ -220,7 +220,7 @@ SyncManagerNew.formatDownloadedData = function (returnJson) {
 			outputData.clients = returnJson.response.dataList;
 		}
 		else if (returnJson.clientList) {
-			// dws syncUp return format.
+			// dws syncUp return format.  Also used for 'fhir'
 			outputData.clients = returnJson.clientList;
 		}
 		else if (returnJson.clients) {
@@ -374,6 +374,13 @@ SyncManagerNew.downloadClients = function (callBack) {
 			if (payloadJson) {
 				var loadingTag = undefined;
 				WsCallManager.requestPostDws(syncDownJson.url, payloadJson, loadingTag, function (success, returnJson) {
+
+					// If 'fhir' sourceType, convert the fhir 'bundle' results into list of clients..
+					if ( syncDownJson.sourceType === ConfigManager.KEY_SourceType_Fhir )
+					{
+						returnJson = { clientList: FhirUtil.getClientList_FromResponse( returnJson.response ), status: Constants.ws_status_success };
+					}
+
 					callBack(success, returnJson);
 				});
 			}
@@ -845,16 +852,30 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 	var operationSuccess = false;
 	var errMsg = 'Error: ';
 	var errorStatus = false;
+	var errStatusCode = 400; 
 
 	try
 	{
-		if (success && responseJson )
+		if ( success && responseJson && responseJson.response && responseJson.response.resourceType === 'Bundle' && responseJson.response.entry )
 		{
-			if ( responseJson.fhir )
-			{
-				// Convert fhir into 'client' json
-			}
-			else if ( responseJson.result && responseJson.result.client) 
+			console.log( ' --- FHIR Bundle Case' );
+		
+			var clientJson = FhirUtil.evalClientTemplate( responseJson.response );
+
+			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
+
+			// Removal of existing activity/client happends within 'mergeDownloadClients()'
+			ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
+				// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
+				ClientDataManager.saveCurrent_ClientsStore(() => {
+					if (callBack) callBack(operationSuccess, undefined, Constants.status_submit);
+				});
+			});
+
+		}  
+		else if ( success && responseJson && responseJson.status === Constants.ws_status_success )
+		{
+			if ( responseJson.result && responseJson.result.client) 
 			{
 				var clientJson = ConfigManager.downloadedData_UidMapping(responseJson.result.client);
 		
@@ -914,6 +935,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 		}
 		else
 		{
+			// Process error case with proper returned data
 			if (responseJson) {
 				try {
 					if (responseJson.errStatus) errStatusCode = responseJson.errStatus;
