@@ -2046,7 +2046,7 @@ FormUtil.jsonDataInTable = function (jsonData, hideEmptyVal, option) {
 									valueFieldTag.append(FormUtil.jsonDataInTable(pArrItem, hideEmptyVal, { divTablePaddingLeft: option.SndTab }));
 								}
 								else {
-									valueFieldTag.append(' ' + FormUtil.getFieldOption_LookupValue(fieldName, pArrItem.toString()) + ' ');
+									valueFieldTag.append('<div>' + FormUtil.getFieldOption_LookupValue(fieldName, pArrItem.toString()) + '</div>');
 								}
 							});
 						}
