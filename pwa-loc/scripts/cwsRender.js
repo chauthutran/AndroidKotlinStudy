@@ -134,21 +134,20 @@ function cwsRender()
 		//  - Since we need password to encrypt the data..
 		//DataVerMove.lsRedeemListMove( function() {			
 
-		ClientDataManager.loadClientsStore_FromStorage( function() {
-
+		ClientDataManager.loadClientsStore_FromStorage( function() 
+		{
 			ActivityDataManager.regenActivityList_NIndexes();
 
+			var fullActs = ActivityDataManager.getActivityList();
+
 			// NEW --> on login, adjust data in DHIS2 version
-			if ( ConfigManager.isSourceTypeDhis2() ) ActivityDataManager.getActivityList().forEach( act => {  ActivityDataManager.adjustDownloadedActivity( act );  });
-
+			if ( ConfigManager.isSourceTypeDhis2() ) ActivityDataManager.adjustDownDHIS2Acts( fullActs );
+							
 			// Change the activities that did not complete -> 'Pending' to 'Failed', as app time out measure.
-			ActivityDataManager.updateActivitiesStatus_ProcessingToFailed( ActivityDataManager.getActivityList(), { saveData: false } );
+			ActivityDataManager.updateActivitiesStatus_ProcessingToFailed( fullActs, { saveData: false } );
 
-			ClientDataManager.saveCurrent_ClientsStore( () => {
-				callBack();
-			});
+			ClientDataManager.saveCurrent_ClientsStore( () => { callBack(); });
 		});
-		//});
 	};
 
 	me.renderArea1st = function() 

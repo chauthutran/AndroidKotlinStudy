@@ -356,15 +356,8 @@ ClientDataManager.mergeDownloadedClients = function (downloadedData, processingI
 							}
 							else {
 								// Update clientDetail from dwClient - other than activities merge?
-								// For activities, shouldn't we simply add them all?  Except the existing on local ones overwriting.
-								//appClient.clientDetails = dwClient.clientDetails;
-								//appClient.clientConsent = dwClient.clientConsent;
-								//appClient.date = dwClient.date;
-								//appClient.relationships = dwClient.relationships;
-
+								//appClient.clientDetails = dwClient.clientDetails; .date, .clientConsent, .relationships...
 								Util.copyProperties(dwClient, appClient, { 'exceptions': { 'activities': true, '_id': true } });
-
-								// TODO: All Others?
 							}
 
 							Util.appendArray(mergedActivities, addedActivities);
@@ -373,7 +366,10 @@ ClientDataManager.mergeDownloadedClients = function (downloadedData, processingI
 					}
 					else {
 						// Logic: For 'dhis2RedeemMerge' case, if the downloaded client does not already exists, do not merge it..
-						if (!case_dhis2RedeemMerge) {
+						if (!case_dhis2RedeemMerge) 
+						{
+							if ( ConfigManager.isSourceTypeDhis2() ) ActivityDataManager.adjustDownDHIS2Acts( dwClient.activities );
+							
 							newClients.push(dwClient);
 							dataChangeOccurred = true;
 

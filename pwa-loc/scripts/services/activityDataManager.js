@@ -306,8 +306,7 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 			// 'syncUp' - EXISTING ACTIVITY - override the status + history..
 
 			// NEW - correct DHIS2 orgUnit 'activeUser' uid -> to code
-			if ( ConfigManager.isSourceTypeDhis2() ) ActivityDataManager.adjustDownloadedActivity(dwActivity);
-
+			if ( ConfigManager.isSourceTypeDhis2() ) ActivityDataManager.adjustDownDHIS2Act(dwActivity);
 
 			// 'appClientActivities' is the matching client (by downloaded client id)'s activities
 			// If the matching app client does not already hold the same activity (by id), proceed with ADD!!
@@ -369,27 +368,28 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 	return newActivities;
 };
 
-ActivityDataManager.adjustDownloadedActivity = function( dwActivity )
+ActivityDataManager.adjustDownDHIS2Acts = function( activities )
+{
+	if ( activities && activities.length > 0 ) activities.forEach( act => ActivityDataManager.adjustDownDHIS2Act(act) );
+};
+
+ActivityDataManager.adjustDownDHIS2Act = function( dwActivity )
 {
 	try
 	{
-		if ( ConfigManager.isSourceTypeDhis2() && !dwActivity.activeUserConverted )
-		{
-			// #1. we can also save it and get it from 'MzjA6i3SfBZ'
-			//var ouCode_fromControlStr = ActivityDataManager.getOuCodeFromControlStr( dwActivity );
-			//if ( ouCode_fromControlStr ) dwActivity.activeUser = ouCode_fromControlStr;
-
-			// #2. Get from 'id'
-			// date.capturedUTC: "2022-10-18T17:03:14.495",
-			dwActivity.activeUserConverted = true;
-			
+		if ( !dwActivity.activeUserConverted && dwActivity.activeUser !== SessionManager.sessionData.login_UserName )
+		{			
 			var ouCode_fromActivityId = ActivityDataManager.getOuCodeFromActivityId( dwActivity );
-			if ( ouCode_fromActivityId ) dwActivity.activeUser = ouCode_fromActivityId;
+			if ( ouCode_fromActivityId )
+			{
+				dwActivity.activeUser = ouCode_fromActivityId;
+				dwActivity.activeUserConverted = true;
+			}
 		}
 	}
 	catch ( errMsg ) 
 	{
-		console.log( 'ERROR in ActivityDataManager.adjustDownloadedActivity, ' + errMsg );
+		console.log( 'ERROR in ActivityDataManager.adjustDownDHIS2Act, ' + errMsg );
 	}
 };
 
