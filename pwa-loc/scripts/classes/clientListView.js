@@ -238,7 +238,7 @@ function ClientListView(cwsRenderObj, clientList, viewListNames) {
 				// 'preRunEval' - if exists, run eval <-- for definitions eval..
 				try {
 					if (preRunEval) eval(Util.getEvalStr(preRunEval));
-				} catch (errMsg) { console.log('ClilentListView.viewFilterData, preRunEval, ' + errMsg); }
+				} catch (errMsg) { console.log('ClientListView.viewFilterData, preRunEval, ' + errMsg); }
 
 
 				// 'dataFilterEval' - for 'true' condition check
@@ -246,7 +246,7 @@ function ClientListView(cwsRenderObj, clientList, viewListNames) {
 					var returnVal = false;
 					if (dataFilterEval) returnVal = eval(dataFilterEval);
 					if (returnVal === true) filteredData.push(client);
-				} catch (errMsg) { console.log('ClilentListView.viewFilterData, dataFilterEval, ' + errMsg); }
+				} catch (errMsg) { console.log('ClientListView.viewFilterData, dataFilterEval, ' + errMsg); }
 			});
 		}
 

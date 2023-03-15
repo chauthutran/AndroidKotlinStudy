@@ -249,7 +249,7 @@ function ActivityListView(cwsRenderObj, activityList, viewListNames) {
 				// 'preRunEval' - if exists, run eval <-- for definitions eval..
 				try {
 					if (preRunEval) eval(Util.getEvalStr(preRunEval));
-				} catch (errMsg) { console.log('ClilentListView.viewFilterData, preRunEval, ' + errMsg); }
+				} catch (errMsg) { console.log('ActivityListView.viewFilterData, preRunEval, ' + errMsg); }
 
 
 				try {
