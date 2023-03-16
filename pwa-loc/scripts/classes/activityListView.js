@@ -249,7 +249,7 @@ function ActivityListView(cwsRenderObj, activityList, viewListNames) {
 				// 'preRunEval' - if exists, run eval <-- for definitions eval..
 				try {
 					if (preRunEval) eval(Util.getEvalStr(preRunEval));
-				} catch (errMsg) { console.log('ActivityListView.viewFilterData, preRunEval, ' + errMsg); }
+				} catch (errMsg) { console.log('ActivityListView.viewFilterData, id: ' + viewDef.id + ', preRunEval, ' + errMsg); }
 
 
 				try {
@@ -257,7 +257,7 @@ function ActivityListView(cwsRenderObj, activityList, viewListNames) {
 					// inputVal = Util.getEvalStr( dataFilterEval );  // Handle array into string joining
 					if (dataFilterEval) returnVal = eval(dataFilterEval);
 					if (returnVal === true) filteredData.push(activity);
-				} catch (errMsg) { console.log('ActivityListView.viewFilterData, dataFilterEval: ' + errMsg); }
+				} catch (errMsg) { console.log('ActivityListView.viewFilterData, id: ' + viewDef.id + ', dataFilterEval: ' + errMsg); }
 			});
 		}
 
