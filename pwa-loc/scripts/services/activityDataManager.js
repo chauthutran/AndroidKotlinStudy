@@ -293,17 +293,21 @@ ActivityDataManager.updateStatus = function (activityJson, in_status, in_respons
 // Used by both 'SyncUp' or 'Download Merge'.
 // 'SyncUp' - Use Temporary Client which gets deleted.
 // 'Download Merge' - Normally, both app client and downloaded client exists.  Only get the activities not already exists..
-ActivityDataManager.mergeDownloadedActivities = function (downActivities, appClientActivities, appClient, processingInfo, downloadedData) {
+ActivityDataManager.mergeDownloadedActivities = function (downActivities, appClientActivities, appClient, processingInfo, downloadedData) 
+{
 	var newActivities = [];
 
 	// NOTE: New Client case will never reach here, thus, tempClient (delete on merge) case will not apply
-	for (var i = 0; i < downActivities.length; i++) {
+	for (var i = 0; i < downActivities.length; i++) 
+	{
 		var dwActivity = downActivities[i];
 
 		try {
 			// 'syncDown' - NEW ACTIVITY - only add new ones with passed 'processingInfo' ('download')
 			// 'syncUp' - NEW ACTIVITY - same as above ('synced')
 			// 'syncUp' - EXISTING ACTIVITY - override the status + history..
+			//   ** [NEW IDEA] If 'dhis2' sourceType, simply get/set the server one? (downloaded one) <-- regardless of dateTime.
+
 
 			// NEW - correct DHIS2 orgUnit 'activeUser' uid -> to code
 			if ( ConfigManager.isSourceTypeDhis2() ) ActivityDataManager.adjustDownDHIS2Act(dwActivity);
@@ -313,9 +317,9 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 			var appClientActivity = Util.getFromList(appClientActivities, dwActivity.id, "id");
 
 			// New Activity Case
-			if (!appClientActivity) {
+			if (!appClientActivity) 
+			{
 				ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
-
 				newActivities.push(dwActivity);
 			}
 			else {
@@ -326,6 +330,11 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 				//  --> 'ActivityDataManager.insertActivitiesToClient' has deleting same id activity and placing the downloaded one.
 				if (downloadedData.syncUpActivityId && dwActivity.id === downloadedData.syncUpActivityId) {
 					// This 'processingInfo' is already has 'history' of previous activity..
+					ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
+					newActivities.push(dwActivity);
+				}
+				else if ( ConfigManager.isSourceTypeDhis2() ) // If dhis2 sourceType case, simply set the server one as updated one.
+				{
 					ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
 					newActivities.push(dwActivity);
 				}

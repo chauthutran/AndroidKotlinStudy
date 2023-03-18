@@ -329,11 +329,13 @@ ClientDataManager.mergeDownloadedClients = function (downloadedData, processingI
 	var mergedActivities = [];
 
 	// 1. Compare Client List.  If matching '_id' exists, perform merge,  Otherwise, add straight to clientList.
-	if (downloadedData && downloadedData.clients && Util.isTypeArray(downloadedData.clients)) {
+	if (downloadedData && downloadedData.clients && Util.isTypeArray(downloadedData.clients)) 
+	{
 		case_dhis2RedeemMerge = (downloadedData.case === 'dhis2RedeemMerge');
-		case_noClientDateCheck = (downloadedData.case === 'syncUpActivity');
+		case_noClientDateCheck = (downloadedData.case === 'syncUpActivity' || ConfigManager.isSourceTypeDhis2() );
 
-		for (var i = 0; i < downloadedData.clients.length; i++) {
+		for (var i = 0; i < downloadedData.clients.length; i++) 
+		{
 			var dwClient = downloadedData.clients[i];
 
 			try {
