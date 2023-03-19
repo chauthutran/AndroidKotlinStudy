@@ -20,6 +20,7 @@ AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES = "jobAidFolderNames";
 AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE = "configVersioningEnable";
 AppInfoLSManager.KEY_CONFIG_VERSION = "configVersion";
 AppInfoLSManager.KEY_LOGIN_PREV_DATA = "loginPrevData";
+AppInfoLSManager.KEY_FHIR_PRACTITIONER_ID = "fhirPractitionerId";
 
 AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY = "devDebugLogHistory";
 AppInfoLSManager.DevDebugLogHistoryMaxLength = 30;
@@ -374,6 +375,17 @@ AppInfoLSManager.getConfigVersioningEnable = function()
 AppInfoLSManager.setConfigVersioningEnable = function( enable )
 {
     if ( enable ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE, enable );
+};
+
+// -----------------------------
+AppInfoLSManager.getFhirPractitionerId = function()
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_FHIR_PRACTITIONER_ID );
+};
+
+AppInfoLSManager.setFhirPractitionerId = function( itemId )
+{
+    if ( itemId ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_FHIR_PRACTITIONER_ID, itemId );
 };
 
 /*

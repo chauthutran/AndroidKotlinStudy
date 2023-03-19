@@ -482,6 +482,10 @@ ConfigManager.isSourceTypeMongoOrFhir = function () {
 	return ( srcType === ConfigManager.KEY_SourceType_Mongo || srcType === ConfigManager.KEY_SourceType_Fhir );
 };
 
+ConfigManager.isSourceTypeFhir = function () {
+	return ( ConfigManager.getConfigJson().sourceType === ConfigManager.KEY_SourceType_Fhir );
+};
+
 // ----------------------------------------
 
 

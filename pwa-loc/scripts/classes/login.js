@@ -593,8 +593,10 @@ function Login() {
 			me.checkLoginData_wthErrMsg(success, userName, password, loginData, function (resultSuccess) {
 				if (resultSuccess) {
 					me.setModifiedOUAttrList(loginData);
+
+					// Set values to 'AppInfoLSManager' - after online login success
 					AppInfoLSManager.setLastOnlineLoginDt((new Date()).toISOString());
-					//AppInfoLSManager.saveConfigSourceType( loginData );  // MOVED AFTER CONFIGLOADING - For Availability Check Usage
+					if ( loginData.fhirPractitioner ) AppInfoLSManager.setFhirPractitionerId( loginData.fhirPractitioner.id );
 
 					// Save 'loginData' in indexedDB for offline usage and load to session.
 					SessionManager.setLoginRespData_IDB(userName, password, loginData);
