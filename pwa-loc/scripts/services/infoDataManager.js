@@ -20,6 +20,7 @@ InfoDataManager.NAME_login_OrgUnitId = 'login_orgUnitId';
 InfoDataManager.NAME_login_CountryOuCode = 'login_CountryOuCode';
 InfoDataManager.NAME_login_OrgUnitData = 'login_OrgUnitData';
 InfoDataManager.NAME_userRole = 'userRole';
+InfoDataManager.NAME_practitionerId = 'practitionerId';
 
 InfoDataManager.NAME_syncLastDownloaded = 'syncLastDownloaded';	// These get changed, thus, need to be updated.
 InfoDataManager.NAME_syncLastDownloaded_noZ = 'syncLastDownloaded_noZ';	// These get changed, thus, need to be updated.
@@ -65,6 +66,8 @@ InfoDataManager.setDataAfterLogin = function()
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_CountryOuCode, SessionManager.sessionData.orgUnitData.countryOuCode );
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitData, SessionManager.sessionData.orgUnitData );
 		InfoDataManager.setINFOdata( InfoDataManager.NAME_userRole, ConfigManager.login_UserRoles );
+
+		InfoDataManager.setINFOdata( InfoDataManager.NAME_practitionerId, AppInfoLSManager.getFhirPractitionerId() );
 
 		//INFO.activityList = ActivityDataManager.getActivityList();
 		//INFO.clientList = ActivityDataManager.getClientList();

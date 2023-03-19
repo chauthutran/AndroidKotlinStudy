@@ -388,19 +388,6 @@ AppInfoLSManager.setFhirPractitionerId = function( itemId )
     if ( itemId ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_FHIR_PRACTITIONER_ID, itemId );
 };
 
-/*
-// -----------------------------
-AppInfoLSManager.getConfigVersion = function()
-{
-    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSION );
-};
-
-AppInfoLSManager.setConfigVersion = function( version )
-{
-    if ( version ) AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_CONFIG_VERSION, version );
-};
-*/
-
 // -----------------------------
 AppInfoLSManager.getLoginPrevData = function()
 {

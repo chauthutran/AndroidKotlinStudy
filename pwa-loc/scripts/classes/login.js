@@ -616,7 +616,8 @@ function Login() {
 							login_GetOuChildren: configJson.settings.login_GetOuChildren,
 							login_GetOuTagOrgUnits: configJson.settings.login_GetOuTagOrgUnits,
 							login_GetVMMC_OugId: configJson.settings.login_GetVMMC_OugId	
-						}
+						},
+						sourceType: configJson.sourceType
 					};
 
 					AppInfoLSManager.setLoginPrevData(loginPrevData);

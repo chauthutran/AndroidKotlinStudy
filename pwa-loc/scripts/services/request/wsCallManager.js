@@ -179,9 +179,7 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
         if ( loginPrevData.retrievedDateTime ) requestOption.loginPrevData = loginPrevData;
     } 
 
-    if ( ConfigManager.isSourceTypeFhir() ) {
-        requestOption.fhir = { practitionerId: AppInfoLSManager.getFhirPractitionerId() };
-    }
+    requestOption.fhirPractitionerId = AppInfoLSManager.getFhirPractitionerId(); // If exists, add this
 
     WsCallManager.requestPostDws( '/PWA.loginCheck', requestOption, loadingTag, function( success, returnJson )
 	{
