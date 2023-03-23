@@ -10,6 +10,7 @@ function ClientCardDetail(clientId) {
 	me.option;
 
 	me.relationshipListObj;
+	me.clientConversationsObj;
 	//me.timedOut1stTabOpen;
 
 	// ===============================================
@@ -37,7 +38,15 @@ function ClientCardDetail(clientId) {
 				sheetFullTag.find('li[rel=tab_relationships]').remove();
 				sheetFullTag.find('div[tabButtonId=tab_relationships]').remove();
 			}
+
+			if( clientJson.conversations == undefined || clientJson.conversations.length == 0 )
+			{
+				sheetFullTag.find('li[rel=tab_clientConversations]').remove();
+				sheetFullTag.find('div[tabButtonId=tab_clientConversations]').remove();
+			}
 		}});
+
+		
 
 		// create tab click events
 		FormUtil.setUpEntryTabClick(me.cardSheetFullTag.find('.tab_fs'), undefined, undefined, function( contentTag, selLiTag ) 
@@ -89,6 +98,8 @@ function ClientCardDetail(clientId) {
 		var relationshipTabTag = sheetFullTag.find('[tabButtonId=tab_relationships]');
 		me.relationshipListObj = new ClientRelationshipList(clientId, relationshipTabTag, 'clientRelationTab');
 
+		var conversationsTabTag = sheetFullTag.find('[tabButtonId=tab_clientConversations]');
+		me.clientConversationsObj = new ClientConversation( clientId, conversationsTabTag );
 
 		// DevMode Related
 		if (DevHelper.devMode && SessionManager.isTestLoginCountry()) 
@@ -219,6 +230,10 @@ function ClientCardDetail(clientId) {
 			}
 
 			TranslationManager.translatePage();
+		}
+		else if( tabButtonId === 'tab_clientConversations' )
+		{
+			me.clientConversationsObj.render();
 		}
 		else if ( tabButtonId === 'tab_relationships' )
 		{
@@ -547,6 +562,11 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 								<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activity</span>
 							</li>
 
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
+							</li>
+
 							<li class="secondary" style="display:none" rel="tab_relationships">
 								<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
 								<span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
@@ -565,6 +585,40 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 						</ul>
 					</li>
 
+					<li class="primary" rel="tab_clientConversations">
+						<div class="tab_fs__head-icon i-details_24" rel="tab_clientConversations"></div>
+						<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversations</span>
+						<ul class="secondary" style="display: none; z-index: 1;">
+
+							<li class="secondary" style="display:none" rel="tab_clientDetails">
+								<div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
+								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
+							</li>
+							
+							<li class="secondary" style="display:none" rel="tab_clientActivities">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
+								<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
+							</li>
+
+							<li class="secondary" style="display:none" rel="tab_relationships">
+								<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
+								<span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+							</li>
+
+							<li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
+								<div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+								<span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+							</li>
+
+							<li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
+								<div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+								<span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
+							</li>
+
+						</ul>
+					</li>
+
+
 					<li class="primary" rel="tab_clientActivities">
 						<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
 						<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
@@ -575,6 +629,13 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 								<div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
 								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
 							</li>
+
+							
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
+							</li>
+
 
 							<li class="secondary" style="display:none" rel="tab_relationships">
 								<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
@@ -604,10 +665,16 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
 							</li>
 
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
+							</li>
+
 							<li class="secondary" style="display:none" rel="tab_clientActivities">
 								<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
 								<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
 							</li>
+
 
 							<li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
 								<div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
@@ -630,6 +697,11 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 							<li class="secondary" style="display:none" rel="tab_clientDetails">
 								<div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
 								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
+							</li>
+							
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
 							</li>
 
 							<li class="secondary" style="display:none" rel="tab_clientActivities">
@@ -660,6 +732,11 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
 							</li>
 
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
+							</li>
+
 							<li class="secondary" style="display:none" rel="tab_clientActivities">
 								<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
 								<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
@@ -685,6 +762,10 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 			<div class="tab_fs__container" style="padding: 0px !important;">
 
 				<div class="tab_fs__container-content sheet_preview active" tabButtonId="tab_clientDetails" blockid="tab_clientDetails" style="overflow-x: hidden !important;" />
+
+				<div class="tab_fs__container-content sheet_preview chat" tabButtonId="tab_clientConversations" blockid="tab_clientConversations" style="display:none;" >
+					<div class="chat-history" style="width:100%"><ul></ul></div>
+				</div>
 
 				<div class="tab_fs__container-content sheet_preview" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />
 
