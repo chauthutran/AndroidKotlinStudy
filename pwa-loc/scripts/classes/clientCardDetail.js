@@ -764,7 +764,7 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 				<div class="tab_fs__container-content sheet_preview active" tabButtonId="tab_clientDetails" blockid="tab_clientDetails" style="overflow-x: hidden !important;" />
 
 				<div class="tab_fs__container-content sheet_preview chat" tabButtonId="tab_clientConversations" blockid="tab_clientConversations" style="display:none;" >
-					<div class="chat-history" style="width:100%"><ul></ul></div>
+					<div class="chat-history" style="width:100%;; height: 100%;"><ul style="padding-inline-start: 10px;"></ul></div>
 				</div>
 
 				<div class="tab_fs__container-content sheet_preview" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />

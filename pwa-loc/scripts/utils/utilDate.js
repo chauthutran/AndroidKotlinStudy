@@ -112,7 +112,7 @@ UtilDate.formatDate = function( date, formatPattern )
 
 UtilDate.formatDateTime = function( dateObj, dateType )
 {
-	return UtilDate.formatDate( dateObj, dateType );
+	return UtilDate.formatDateTimeStr( dateObj.toString(), dateType );
 };
 
 UtilDate.formatDateTimeStr = function( dateStr, dateType )
@@ -191,6 +191,24 @@ UtilDate.dateUTCToLocal = function( dateStr )
 
 	return localDateObj;
 };
+
+
+UtilDate.dateUTCToLocalStr = function( dateStr )
+{
+	var localStr = '';
+
+	try
+	{
+		localStr = UtilDate.formatDateTime( UtilDate.dateUTCToLocal( dateStr ) );
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in UtilDate.dateUTCToLocalStr, errMsg: ' + errMsg );
+	}
+
+	return localStr;
+};
+
 
 UtilDate.getUTCDateTimeStr = function( dateObj, optionStr )
 {
@@ -343,8 +361,8 @@ UtilDate.setDate_LocToUTC_bySrc = function( dateObj, fieldNameLoc, srcDateStr )
    {
 		var fieldNameUTC = Util.strCutEnd( fieldNameLoc, 3 ) + UtilDate.NAME_Date_UTC;
 		
-		dateObj[ fieldNameLoc ] = Util.formatDateTime( localDateTimeStr );    
-      dateObj[ fieldNameUTC ] = Util.getUTCDateTimeStr( UtilDate.getDateObj( localDateTimeStr ), 'noZ' );
+		dateObj[ fieldNameLoc ] = UtilDate.formatDateTime( localDateTimeStr );    
+      dateObj[ fieldNameUTC ] = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( localDateTimeStr ), 'noZ' );
    }    
 };
 
@@ -374,7 +392,7 @@ UtilDate.setDate_LocToUTC = function( dateObj, fieldNameLoc )
    if ( dateObj && dateObj[ fieldNameLoc ] )
    {
         var fieldNameUTC = Util.strCutEnd( fieldNameLoc, 3 ) + UtilDate.NAME_Date_UTC;
-        dateObj[ fieldNameUTC ] = Util.getUTCDateTimeStr( UtilDate.getDateObj( dateObj[ fieldNameLoc ] ), 'noZ' );
+        dateObj[ fieldNameUTC ] = UtilDate.getUTCDateTimeStr( UtilDate.getDateObj( dateObj[ fieldNameLoc ] ), 'noZ' );
 	}
 };
 
@@ -406,8 +424,8 @@ UtilDate.setDate_UTCToLoc = function( dateObj, fieldNameUTC )
     if ( dateObj && dateObj[ fieldNameUTC ] )
     {
         var fieldNameLoc = Util.strCutEnd( fieldNameUTC, 3 ) + UtilDate.NAME_Date_Loc;
-        var localDateTime = Util.dateUTCToLocal( dateObj[ fieldNameUTC ] );
-        if ( localDateTime ) dateObj[ fieldNameLoc ] = Util.formatDateTime( localDateTime );    
+        var localDateTime = UtilDate.dateUTCToLocal( dateObj[ fieldNameUTC ] );
+        if ( localDateTime ) dateObj[ fieldNameLoc ] = UtilDate.formatDateTime( localDateTime );    
     }
 };
 

@@ -1795,6 +1795,7 @@ Util.getTimePassedMs = function (fromDtStr) {
 	return timePassedMs;
 };
 
+// Use 'UtilDate.' rather than 'Util.'
 Util.dateUTCToLocal = function (dateStr) {
 	var localDateObj;
 

@@ -2740,6 +2740,17 @@ body {
 	position: relative;
 }
 
+.chat .chat-history .messageConv {
+	color: white;
+	padding: 8px 8px;
+	line-height: 26px;
+	font-size: 16px;
+	border-radius: 7px;
+	margin-bottom: 20px;
+	width: 80%;
+	position: relative;
+}
+
 .chat .chat-history .message:after {
 	bottom: 100%;
 	left: 7%;

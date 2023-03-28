@@ -552,7 +552,7 @@ ActivityDataManager.generateActivityPayloadJson = function (actionUrl, blockId, 
 
 		// TODO: 'history' should be merged if exitsing history exists..
 		activityJson.processing = {
-			'created': Util.formatDateTimeStr(createdDT.toString())
+			'created': UtilDate.formatDateTimeStr(createdDT.toString())
 			, 'status': Constants.status_queued
 			, 'history': history  // if prev history exists, use that. 
 			, 'url': actionUrl
@@ -823,7 +823,7 @@ ActivityDataManager.createProcessingHistory = function (statusStr, responseCode,
 
 
 ActivityDataManager.createProcessingInfo_Success = function (statusStr, msgStr, prev_ProcessingInfo) {
-	var dateStr = Util.formatDateTimeStr((new Date()).toString());
+	var dateStr = UtilDate.formatDateTimeStr((new Date()).toString());
 	var currInfo = ActivityDataManager.createProcessingHistory(statusStr, 200, dateStr, msgStr);
 	var processingInfo;
 
@@ -844,7 +844,7 @@ ActivityDataManager.createProcessingInfo_Success = function (statusStr, msgStr, 
 
 
 ActivityDataManager.createProcessingInfo_Other = function (statusStr, responseCode, msgStr) {
-	var dateStr = Util.formatDateTimeStr((new Date()).toString());
+	var dateStr = UtilDate.formatDateTimeStr((new Date()).toString());
 	var processingInfo = {
 		'status': statusStr,
 		'history': [ActivityDataManager.createProcessingHistory(statusStr, responseCode, dateStr, msgStr)]
@@ -887,10 +887,10 @@ ActivityDataManager.updateProcessing_CreatedDate = function (activity) {
 		else if (activity.date.createdOnMdbUTC) activityUtcDate = activity.date.createdOnMdbUTC;
 
 		if (activityUtcDate) {
-			var localDateTime = Util.dateUTCToLocal(activityUtcDate);
+			var localDateTime = UtilDate.dateUTCToLocal(activityUtcDate);
 			if (!localDateTime) localDateTime = new Date();
 
-			var updateCreated = Util.formatDateTime(localDateTime);
+			var updateCreated = UtilDate.formatDateTime(localDateTime);
 			if (updateCreated) activity.processing.created = updateCreated;
 		}
 	}

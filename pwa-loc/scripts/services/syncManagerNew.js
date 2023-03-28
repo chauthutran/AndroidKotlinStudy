@@ -521,7 +521,7 @@ SyncManagerNew.SyncMsg_Get = function () {
 
 SyncManagerNew.SyncMsg_InsertMsg = function (msgStr) {
 	try {
-		var newMsgJson = { "msg": msgStr, "datetime": Util.formatDateTime(new Date(), Util.dateType_DATETIME_s1) };
+		var newMsgJson = { "msg": msgStr, "datetime": UtilDate.formatDateTime(new Date(), Util.dateType_DATETIME_s1) };
 		SyncManagerNew.SyncMsg_Get().msgList.push(newMsgJson);
 
 		//console.log( 'SyncManagerNew.SyncMsg: ' + JSON.stringify( newMsgJson ) );
@@ -565,7 +565,6 @@ SyncManagerNew.SyncMsg_ShowBottomMsg = function () {
 		// Add Service Deliveries Msg
 		SyncManagerNew.SyncMsg_createSectionTag('Services Deliveries', function (sectionTag, sectionLogTag) {
 			for (var i = 0; i < syncMsgJson.msgList.length; i++) {
-				//{ "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
 				var msgJson = syncMsgJson.msgList[i];
 
 				var msgStr = msgJson.datetime + '&nbsp; &nbsp;' + msgJson.msg;
@@ -582,7 +581,6 @@ SyncManagerNew.SyncMsg_ShowBottomMsg = function () {
 			//var syncMsgJson = SyncManagerNew.SyncMsg_Get();
 
 			for (var i = 0; i < syncMsgJson.summaryList.length; i++) {
-				//{ "msg": msgStr, "datetime": Util.formatDateTime( new Date() ) };
 				var msgJson = syncMsgJson.summaryList[i];
 
 				sectionLogTag.append('<div>' + msgJson.msg + '</div>');

@@ -556,7 +556,7 @@ function settingsApp(cwsRender) {
 					'info': {
 						'userName': SessionManager.sessionData.login_UserName
 						, 'shareCode': shareCode
-						, 'timestamp': Util.getUTCDateTimeStr()
+						, 'timestamp': UtilDate.getUTCDateTimeStr()
 					}
 					, 'clientList': ClientDataManager.getClientList()
 					//, 'activityHistory': AppInfoManager.getActivityHistory()
@@ -649,7 +649,7 @@ function settingsApp(cwsRender) {
 	}
 
 	me.AddShareLogMsg = function (divDataShareTag, logMsg) {
-		var dateTimeStr = Util.formatDateTime(new Date(), "MM-dd HH:mm");
+		var dateTimeStr = UtilDate.formatDateTime(new Date(), "MM-dd HH:mm");
 		logMsg = '[' + dateTimeStr + '] ' + logMsg;
 
 		//var logMsg = '[Time: ' + infoJson.timestamp + '] ' + 'SHARE UPLOADED. shareCode: ' + infoJson.shareCode;
