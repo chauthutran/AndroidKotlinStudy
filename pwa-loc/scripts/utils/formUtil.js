@@ -10,9 +10,9 @@ FormUtil.block_payloadConfig = '';
 FormUtil._gAnalyticsTrackId = "UA-134670396-1";
 FormUtil._getPWAInfo;
 
-FormUtil.geoLocationTrackingEnabled = false;  // --> move to geolocation.js class
+//FormUtil.geoLocationTrackingEnabled = false;  // --> move to geolocation.js class
+//FormUtil.geoLocationState;  // --> move to geolocation.js class
 FormUtil.geoLocationLatLon;  // --> move to geolocation.js class
-FormUtil.geoLocationState;  // --> move to geolocation.js class
 FormUtil.geoLocationError;  // --> move to geolocation.js class
 FormUtil.geoLocationCoordinates;  // --> move to geolocation.js class
 
@@ -1242,14 +1242,28 @@ FormUtil.evalReservedField = function (form, tagTarget, val, dispatchChangeEvent
 		// do something ? $${ reserved for other use? Bruno may have examples from existing DCD configs
 		dispatchChange = false;
 	}
-	else if (val.indexOf('##{') >= 0) {
-		if (val.indexOf('getCoordinates()') >= 0) {
-			if (tagTarget.val() != FormUtil.geoLocationCoordinates) {
-				FormUtil.refreshGeoLocation(function () {
-					if (FormUtil.geoLocationLatLon.length) {
-						MsgManager.notificationMessage('<img src="images/sharp-my_location-24px.svg">', 'notifGray', undefined, '', 'right', 'top', 1000, false, undefined, 'geolocation', true, true);
+	else if (val.indexOf('##{') >= 0) 
+	{
+		if (val.indexOf('getCoordinates()') >= 0) 
+		{			
+			var tagTargetVal = tagTarget.val();
+			var geoLocCoord = GeoLocUtil.geoLocCoordStr;
+
+			// 0. Skip Case - if tagTargetVal is not emtpy & geoLoc is not empty, and they are same val, skip getting.
+			if ( tagTargetVal && geoLocCoord && tagTargetVal === geoLocCoord ) { }
+			else
+			{
+				// 1. If coordinate exists and tagVal is not same as coordinate val, set it 1st.   // if ( !tagTarget.val() || !GeoLocUtil.geoLocCoordStr ) // if (tagTarget.val() != GeoLocUtil.geoLocCoordStr) {
+				if ( GeoLocUtil.geoLocCoordStr && tagTargetVal !== GeoLocUtil.geoLocCoordStr ) tagTarget.val( GeoLocUtil.geoLocCoordStr );
+			
+				// 2. Send request for geoLoc for more accurate position.
+				GeoLocUtil.refreshGeoLocation( function ( success, data )
+				{
+					if ( success )
+					{
+						if ( GeoLocUtil.geoLocLatLonStr ) MsgManager.notificationMessage('<img src="images/sharp-my_location-24px.svg">', 'notifGray', undefined, '', 'right', 'top', 1000, false, undefined, 'geolocation', true, true);
+						tagTarget.val( GeoLocUtil.geoLocCoordStr );
 					}
-					tagTarget.val(FormUtil.geoLocationCoordinates);
 				});
 			}
 		}
@@ -1591,65 +1605,24 @@ FormUtil.appendActivityTypeIcon = function (iconObj, activityType, statusOpt, cw
 	catch (errMsg) {
 		console.log('Error on FormUtil.appendActivityTypeIcon, errMsg: ' + errMsg);
 	}
-}
+};
 
-FormUtil.getPositionObjectJSON = function (pos) {
-	var retJSON = {};
+FormUtil.getPositionObjectJSON = function ( pos ) {
+	return GeoLocUtil.getPositionObjectJSON( pos );
+};
 
-	for (var propt in pos.coords) {
-		retJSON[propt] = pos.coords[propt];
-	}
+FormUtil.refreshGeoLocation = function (returnFunc) 
+{ 
+	// --> move to new geolocation.js class
+	GeoLocUtil.refreshGeoLocation( function( success, data ) {
 
-	return retJSON;
-}
+		FormUtil.geoLocationLatLon = GeoLocUtil.geoLocLatLonStr;
+		FormUtil.geoLocationError = GeoLocUtil.geoLocErr;
+		FormUtil.geoLocationCoordinates = GeoLocUtil.geoLocCoordStr;
 
-FormUtil.refreshGeoLocation = function (returnFunc) { // --> move to new geolocation.js class
-	var error_PERMISSION_DENIED = 1;
-
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(function (position) {
-			var myPosition = FormUtil.getPositionObjectJSON(position);
-			var lat = myPosition.latitude;
-			var lon = myPosition.longitude;
-			var userLocation;
-
-			if (lat == null) {
-				userLocation = ''; //GPS not activated
-				FormUtil.geoLocationError = 'GPS not activated';
-			}
-			else {
-				userLocation = parseFloat(lat).toFixed(6) + ', ' + parseFloat(lon).toFixed(6); //6 decimals is crazy accurate, don't waste time with more (greg)
-				FormUtil.geoLocationError = '';
-			}
-
-			FormUtil.geoLocationLatLon = userLocation;
-			FormUtil.geoLocationCoordinates = JSON.stringify(myPosition);
-
-			if (returnFunc) returnFunc();
-
-		}, function (error) {
-			FormUtil.geoLocationError = error.code; //Error locating your device
-
-			if (error.code == error_PERMISSION_DENIED) {
-				FormUtil.geoLocationLatLon = '';
-			}
-			else {
-				FormUtil.geoLocationLatLon = '';
-			}
-
-			if (returnFunc) returnFunc();
-
-		},
-			{ enableHighAccuracy: false, timeout: 20000 } // enableHighAccuracy set to FALSE by Greg: if 'true' may result in slower response times or increased power consumption
-		);
-	}
-	else {
-		FormUtil.geoLocationLatLon = '';
-		FormUtil.geoLocationError = -1;
-		FormUtil.geoLocationCoordinates = '';
-	}
-
-}
+		if ( returnFunc ) returnFunc( success, data );
+	});
+};
 
 
 FormUtil.screenMaxZindex = function (parent, limit) {

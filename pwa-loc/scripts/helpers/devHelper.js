@@ -21,6 +21,8 @@ DevHelper.devModeFailMax = 5;
 
 DevHelper.debugConsoleMode = false;
 
+DevHelper.INTV_geoLocRepeat = undefined;
+
 DevHelper.sampleDataTemplate = 
 [
   {
@@ -143,6 +145,28 @@ DevHelper.setDebugConsoleMode = function()
         ConsoleCustomLog.debugConsoleStart();
     }
     else MsgManager.msgAreaShow( 'Wrong access code.', 'ERROR' );
+};
+
+DevHelper.setGeoLocRepeat = function( isSet, seconds )
+{
+    if ( !seconds ) seconds = 5;
+
+    if ( !isSet ) {
+        if ( DevHelper.INTV_geoLocRepeat ) clearInterval( DevHelper.INTV_geoLocRepeat );
+    }
+    else
+    {
+        DevHelper.INTV_geoLocRepeat = setInterval( function() 
+        {
+            GeoLocUtil.refreshGeoLocation( function( success, data ) {
+    
+                if ( !success )
+                {
+                    if ( data && data.errMsg ) MsgManager.msgAreaShowErrOpt( data.errMsg );
+                }
+            });
+        }, seconds * 1000 );    
+    }
 };
 
 

@@ -85,6 +85,8 @@ ConsoleCustomLog.addEvents = function (divMainContentTag, divDialogTag) {
 		if (caseStr === 'custom') inputCommandTag.val('');
 		else if (caseStr === 'devMode') inputCommandTag.val('DevHelper.setDevMode( true );');
 		else if (caseStr === 'debugConsole') inputCommandTag.val('DevHelper.setDebugConsoleMode();');
+		else if (caseStr === 'geoLocRpt') inputCommandTag.val('DevHelper.setGeoLocRepeat(true, 5);');
+		else if (caseStr === 'geoLocClr') inputCommandTag.val('DevHelper.setGeoLocRepeat(false);');
 		
 		else if (caseStr === 'overrideSyncLastDwDate') {
 			var lastDwDateStr = AppInfoManager.getSyncLastDownloadInfo();
@@ -233,6 +235,9 @@ ConsoleCustomLog.contentHtml = `
 			<option value="debugConsole">debugConsole</option>
 
 			<option value="overrideSyncLastDwDate">Override syncLastDwDate</option>
+
+			<option value="geoLocRpt">geoLocRpt</option>
+			<option value="geoLocClr">geoLocClr</option>
 
 			<option value="loadSampleData">Load SampData</option>
 			<option value="removeSampleData">Remove SampData</option>

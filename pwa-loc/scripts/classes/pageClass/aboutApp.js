@@ -19,9 +19,9 @@ function aboutApp(cwsRender) {
 		// Set HTML & values related
 		me.aboutFormDivTag.append(aboutApp.contentHtml);
 
-		me.aboutInfo_langSelectTag = $('#aboutInfo_langSelect');
-		me.aboutInfo_ThemeSelectTag = $('#aboutInfo_ThemeSelect');
-		me.aboutInfo_NetworkSync = $('#aboutInfo_networkSync');
+		me.aboutInfo_langSelectTag = $('div.aboutInfo_langSelect');
+		me.aboutInfo_ThemeSelectTag = $('div.aboutInfo_ThemeSelect');
+		me.aboutInfo_NetworkSync = $('div.aboutInfo_networkSync');
 
 
 		me.setEvents_OnInit();
@@ -83,10 +83,10 @@ function aboutApp(cwsRender) {
 
 
 	me.renderNonEssentialFields = function (userLoggedIn) {
-		if (!$('#aboutInfo_networkMode').attr('unselectable')) {
-			$('#aboutInfo_networkMode').attr('unselectable', 'on');
-			$('#aboutInfo_networkMode').css('user-select', 'none');
-			$('#aboutInfo_networkMode').on('selectstart', false);
+		if (!$('.aboutInfo_networkMode').attr('unselectable')) {
+			$('.aboutInfo_networkMode').attr('unselectable', 'on');
+			$('.aboutInfo_networkMode').css('user-select', 'none');
+			$('.aboutInfo_networkMode').on('selectstart', false);
 		}
 	};
 
@@ -95,11 +95,15 @@ function aboutApp(cwsRender) {
 		var dcdConfigVersion = (dcdConfig && dcdConfig.version) ? dcdConfig.version : "";
 
 		// Populate data
-		$('#aboutInfo_AppVersion').html($('#spanVersion').html());
-		$('#aboutInfo_dcdVersion').html(dcdConfigVersion);
-		$('#aboutInfo_networkMode').html('<div>' + ConnManagerNew.statusInfo.appMode + '</div>');
+		$('.aboutInfo_AppVersion').html($('#spanVersion').html());
+		$('.aboutInfo_dcdVersion').html(dcdConfigVersion);
+		$('.aboutInfo_networkMode').html('<div>' + ConnManagerNew.statusInfo.appMode + '</div>');
+		
+		GeoLocUtil.showInAboutPage( $('.aboutInfo_geoLoc') ); // $('.aboutInfo_geoLoc').html
 
-		me.displayDeviceInfo($('#aboutInfo_info'));
+		if ( !GeoLocUtil.geoLocCoordStr ) GeoLocUtil.refreshGeoLocation( function() {}, true );
+
+		me.displayDeviceInfo($('.aboutInfo_info'));
 	};
 
 	// -----------------------------------
@@ -132,16 +136,17 @@ function aboutApp(cwsRender) {
 
 
 	me.displayDeviceInfo = function (aboutInfoTag) {
+		aboutInfoTag.html('');
 		var info = InfoDataManager.INFO.deviceInfo;
 
-		var infoDivTag1 = `<div class="deviceInfoRow1">Browser: ${Util.getStr(info.browser.name)} ${Util.getStr(info.browser.version).substr(0, 2)} 
+		var infoDivTag1 = `<div class="deviceInfoRow1 about_deviceInfo">Browser: ${Util.getStr(info.browser.name)} ${Util.getStr(info.browser.version).substr(0, 2)} 
             Engine: ${Util.getStr(info.engine.name)} ${Util.getStr(info.engine.version)}
             , OS: ${Util.getStr(info.os.name)} ${Util.getStr(info.os.version)}
             , CPU: ${Util.getStr(info.cpu.architecture)} (CoreCount ${Util.getStr(info.cpu.corCount)}
             , Memory: at least ${Util.getStr(info.memory)} GB [Measurement Max 8]
         </div>`;
 
-		var infoDivTag2 = `<div class="deviceInfoRow2">Device: ${Util.getStr(info.device.type)} ${Util.getStr(info.device.vendor)} ${Util.getStr(info.device.model)}
+		var infoDivTag2 = `<div class="deviceInfoRow2 about_deviceInfo">Device: ${Util.getStr(info.device.type)} ${Util.getStr(info.device.vendor)} ${Util.getStr(info.device.model)}
             , Storage: [Using] ${AppUtil.getDiffSize(info.storage.usage, 1000000, 'MB')} / ${AppUtil.getDiffSize(info.storage.quota, 1000000000, 'GB')} [Browser Usable/DeviceSize]
         </div>`;
 
@@ -170,21 +175,26 @@ aboutApp.contentHtml = `
 				</div>
 				<div class="principal_section__title">Workforce App</div>
 			</div>
-			<div class="field-read_only">
+			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_applicationVersion">Application version</label></div>
-				<div class="field-read_only__text" id="aboutInfo_AppVersion">release candidate version number</div>
+				<div class="field-read_only__text aboutInfo_AppVersion">release candidate version number</div>
 			</div>
-			<div class="field-read_only">
+			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_configVersion">Config version</label></div>
-				<div class="field-read_only__text" id="aboutInfo_dcdVersion">13-lucky-number</div>
+				<div class="field-read_only__text aboutInfo_dcdVersion">13-lucky-number</div>
 			</div>
-			<div class="field-read_only">
+			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_networkMode">Network mode</label></div>
-				<div class="field-read_only__text" id="aboutInfo_networkMode">Online-are-you-sure</div>
+				<div class="field-read_only__text aboutInfo_networkMode">Online-are-you-sure</div>
 			</div>
-			<div class="field-read_only">
+			<div class="field-read_only noMargin">
+				<div class="field-read_only__label"><label term="about_geoLoc">GeoLocation</label></div>
+				<div class="field-read_only__text aboutInfo_geoLoc about_deviceInfo"></div>
+			</div>
+
+			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_info">Info</label></div>
-				<div class="field-read_only__text" id="aboutInfo_info"></div>
+				<div class="field-read_only__text aboutInfo_info"></div>
 			</div>
 		</div>
 

@@ -3,18 +3,6 @@
 	src: url("text-security-disc.woff");
 }
 
-/* Scroll Bar 
-::-webkit-scrollbar {
-	width: 4px;
-	background: #f7ece1;
-}
-
-::-webkit-scrollbar-thumb {
-	background: darkblue;
-	border-radius: calc(4px / 2);
-}
-*/
-
 /* Dhis2 searchResult groupBy */
 .imgGrpByIcon
 {
@@ -84,6 +72,16 @@
 	background-color: #FEFEFE;
 	padding-right: 24px;
 	font-size: 12px;
+}
+
+.noMargin {
+	margin: 0px !important;
+}
+
+.about_deviceInfo {
+	font-size: 15px;
+	color: #555;
+	margin-bottom: 8px;
 }
 
 /* ===== Job Aid Releated =========================== */

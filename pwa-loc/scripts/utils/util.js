@@ -20,6 +20,7 @@ Util.MS_DAY = 86400000;
 Util.MS_HR = 3600000;
 Util.MS_MIN = 60000;
 Util.MS_SEC = 1000;
+Util.MS = 1;
 
 Util.termName_pleaseSelectOne = "common_pleaseSelectOne";
 Util.termName_listEmpty = "common_listEmpty";
