@@ -295,6 +295,24 @@ App.checkDeviceMinSpec = function( info )
 	}
 };
 
+// If 'action' is 'clientDirect' mode
+//		get 'client' param val ==> clientId
+
+//		1. Make sure the reload / update does not change this..
+App.getClientDirectId = function( actionParamName, clientParamName )
+{
+	var clientDirectId = '';
+
+   if ( Util.getParameterByName( actionParamName ) === 'clientDirect' )
+	{
+		clientDirectId = Util.getParameterByName( clientParamName );
+	}
+
+	return clientDirectId;
+};
+
+//  App.getClientDirectId( 'action', 'client' );
+
 
 // ===========================
 // [JOB_AID]    

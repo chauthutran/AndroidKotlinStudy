@@ -274,6 +274,10 @@ function cwsRender()
 	me.startWithConfigLoad = function( runAfterFunc )
 	{
 		me.startBlockExecute( runAfterFunc );
+
+		// If 'client' exists with 'action' 'clientDirect', try to load the client 
+		var clientDirectId = App.getClientDirectId( 'action', 'client' );
+		if ( clientDirectId ) me.openClientCardById( clientDirectId );  // Set Timeout for this?
 	};
 
 	me.startBlockExecute = function( runAfterFunc ) //initializationInstructions )
@@ -320,6 +324,54 @@ function cwsRender()
 		$( 'div.favReRender' ).click();
 	};
 
+	me.openClientCardById = function( clientDirectId )
+	{
+		try
+		{
+			// TODO: If not exists, we need to download it... ?
+			//		- Or get latest info?
+			var clientJson = ClientDataManager.getClientById( clientDirectId );
+
+			if ( clientJson )
+			{
+				var clientCardDetail = new ClientCardDetail(clientDirectId);
+				clientCardDetail.render();
+		
+				MsgManager.msgAreaShow( 'Client, ' + clientDirectId + ', opening by client direct url.' );
+			}
+			else
+			{
+				MsgManager.msgAreaShowErrOpt( 'Client, ' + clientDirectId + ', not available - waiting for syncDown to finish...' );
+
+				// TODO: Register to run after online syncDown is successful..
+				ScheduleManager.afterActions_Push( 'SCH_SyncDown_RunOnce', function() 
+				{
+					//console.log( 'check1 - after SCH_SyncDown_RunOnce' );
+
+					var clientJson = ClientDataManager.getClientById( clientDirectId );
+
+					if ( clientJson )
+					{
+						//console.log( 'check2 - after SCH_SyncDown_RunOnce, clientJson exists' );
+
+						var clientCardDetail = new ClientCardDetail(clientDirectId);
+						clientCardDetail.render();
+				
+						MsgManager.msgAreaShow( 'Client, ' + clientDirectId + ', opening by client direct url.' );
+					}
+					else
+					{
+						MsgManager.msgAreaShowErrOpt( 'Client, ' + clientDirectId + ', not available after syncDown - cancelled on the opening client.' );
+					}
+
+				});
+			}
+		}
+		catch( errMsg )
+		{
+			console.log( 'FAILED on cwsRender.openClientCardById, ' + errMsg );
+		}
+	};
 	// ----------------------------------
 
 	// ------------------------------------

@@ -37,6 +37,8 @@ ScheduleManager.timerID_serverAvilableCheck;
 ScheduleManager.timerID_syncDownRunOnce;
 ScheduleManager.timerID_fixOperationRunOnce;
 
+ScheduleManager.afterActions = { SCH_SyncDown_RunOnce: [] }; // NEW - actions to call when the scheduule item is done
+
 
 // List/Controls schedules..
 ScheduleManager.scheduleList = {
@@ -240,6 +242,9 @@ ScheduleManager.syncDownRun_Online_Login = function()
 						, { cssClasses: 'notifBlue' } );
 					}
 				}
+
+				// Run any pending after actions..
+				ScheduleManager.afterActionsRun_Clear( 'SCH_SyncDown_RunOnce' );
 			} 
 
 			// If not success, still, do not do retry... <-- just once is enough..
@@ -257,6 +262,36 @@ ScheduleManager.syncDownTimeoutCall = function()
 {
 	ScheduleManager.timerID_syncDownRunOnce = setTimeout( ScheduleManager.syncDownRun_Online_Login, ScheduleManager.interval_syncDownRunOnce );
 }
+
+
+// NEW
+ScheduleManager.afterActionsRun_Clear = function( scheduleId )
+{
+	if ( scheduleId )
+	{
+		try
+		{
+			var actions = ScheduleManager.afterActions[ scheduleId ];
+			if ( actions && actions.length > 0 ) actions.forEach( act => { act(); } );	
+		}
+		catch ( errMsg ) 
+		{
+			console.log( 'ERROR running ScheduleManager.afterActionsRun_Clear with scheduleId ' + scheduleId + ', ' + errMsg );
+		}
+	
+		// Clear after operation/runs
+		ScheduleManager.afterActions[ scheduleId ] = [];	
+	}
+};
+
+ScheduleManager.afterActions_Push = function( scheduleId, runFunc )
+{
+	if ( scheduleId )
+	{
+		var actions = ScheduleManager.afterActions[ scheduleId ];
+		if ( actions ) actions.push( runFunc );
+	}
+};
 
 // ----------------------------
 
