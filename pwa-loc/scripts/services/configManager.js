@@ -88,6 +88,8 @@ ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
 			// For more spratically placed ones (outside of def section), 
 			//  We would need to use in real time..
 
+			ConfigManager.setINFO_SettingFHIRHeaderProfile(); // FHIR related - set INFO.fhirHeaderProfile
+
 			ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
 
 			// Populate options 'options_ouChildren', 'ouTag', 'ouVMMC', if applicable
@@ -656,6 +658,25 @@ ConfigManager.getActivitySch_favClickOpen = function () {
 	if (sch_favClickOpen) actionName = sch_favClickOpen;
 
 	return actionName;
+};
+
+
+ConfigManager.getSettingFHIRHeaderProfile = function () 
+{
+	var profileStr = '';
+
+	var fhirSetting = ConfigManager.getSettings().FHIR;
+
+	if ( fhirSetting && fhirSetting.headerProfile ) profileStr = fhirSetting.headerProfile;
+
+	return profileStr;
+};
+
+ConfigManager.setINFO_SettingFHIRHeaderProfile = function()
+{
+	var profileStr = ConfigManager.getSettingFHIRHeaderProfile();
+
+	InfoDataManager.setINFOdata( InfoDataManager.NAME_fhirHeaderProfile, profileStr );
 };
 
 // ---------------------------------

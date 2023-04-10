@@ -333,7 +333,7 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 					ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
 					newActivities.push(dwActivity);
 				}
-				else if ( ConfigManager.isSourceTypeDhis2() ) // If dhis2 sourceType case, simply set the server one as updated one.
+				else if ( ConfigManager.isSourceTypeDhis2() || ConfigManager.isSourceTypeFhir() ) // If dhis2 sourceType case, simply set the server one as updated one.
 				{
 					ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
 					newActivities.push(dwActivity);

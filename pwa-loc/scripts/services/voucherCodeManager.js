@@ -29,6 +29,8 @@
 //       - 'taken' - takes care of not being shared by others..  [Fields: userId, ture/false, date taken ]
 //       - 'used' - we know that it actually is used..   If 'taken', but not used for long time, should we reclaim it?  probably not..
 //          --> But, at least, we can tell the ratio or usage?
+
+//    NEW: 2023-04-07: 'FHIR' vs 'MONGO' (DEFAULT) 'storedType' added
 // ===================
 
 function VoucherCodeManager()  {};
@@ -39,10 +41,16 @@ VoucherCodeManager.queueSize_Default = 300; // Service has 300 fixed.. for some 
 VoucherCodeManager.queueLowSize_Default = 100; 
 VoucherCodeManager.queueLowMsg_Default = "<span term='msg_vcQueueLowWarning'>Low voucherCodes count, $$length, in queue!!  Login online mode to refill the queue automatically!!</span>";
 VoucherCodeManager.queueEmptyMsg_Default = "<span term='msg_vcQueueEmpty'>VoucherCode queue is empty!!  Login online mode to refill the queue automatically!!</span>";
+VoucherCodeManager.url_vcGet_DEFAULT = '/PWA.voucherCodeGet';
 
-
+// ------
 VoucherCodeManager.STATUS_InUse = 'InUse';
 VoucherCodeManager.STATUS_Used = 'Used';
+
+VoucherCodeManager.StoredType_FHIR = 'FHIR';
+VoucherCodeManager.StoredType_MONGO = 'MONGO';
+
+VoucherCodeManager.isStoredType_FHIR = false;
 
 // ===================================================
 // === MAIN FEATURES =============
@@ -56,6 +64,11 @@ VoucherCodeManager.setSettingData = function( vcSrv, runFunc )
    if ( !vcSrv.queueLowSize || vcSrv.queueLowSize < 0 ) vcSrv.queueLowSize = VoucherCodeManager.queueLowSize_Default;
    if ( !vcSrv.queueLowMsg ) vcSrv.queueLowMsg = VoucherCodeManager.queueLowMsg_Default;
    if ( !vcSrv.queueEmptyMsg ) vcSrv.queueEmptyMsg = VoucherCodeManager.queueEmptyMsg_Default;
+   if ( !vcSrv.url_vcGet ) vcSrv.url_vcGet = VoucherCodeManager.url_vcGet_DEFAULT;
+
+   vcSrv.storedType = ( ConfigManager.isSourceTypeFhir() ) ? VoucherCodeManager.StoredType_FHIR: VoucherCodeManager.StoredType_MONGO;
+   VoucherCodeManager.isStoredType_FHIR = ( vcSrv.storedType === VoucherCodeManager.StoredType_FHIR );
+
 
    // Run function for enabled voucherCodeService - like 'refill' or 'queueLowMsg'
    if ( VoucherCodeManager.settingData.enable && runFunc ) runFunc();
@@ -156,7 +169,7 @@ VoucherCodeManager.refillQueue = function( userName, callBack )
 // Can be used on Offline/Online loggin
 VoucherCodeManager.queueStatus = function( callBack )
 { 
-   var queue = PersisDataLSManager.getVoucherCodes_queue();
+   var queue = VoucherCodeManager.getQueue_CurrStoredType();
    queue = queue.filter( item => !item.status );  // 'Used' / 'InUse' / 'Displayed'
 
    var isLow = ( queue.length <= VoucherCodeManager.settingData.queueLowSize );
@@ -175,11 +188,14 @@ VoucherCodeManager.fillQueue = function( userName, fillCount, callBack )
    {
       // create a fake service?  just DWS service..
       var loadingTag = undefined;
-      WsCallManager.requestPostDws( '/PWA.voucherCodeGet', { taken_by: userName, counts: fillCount }, loadingTag, function( success, returnJson ) 
+
+      var dataJson = ( VoucherCodeManager.isStoredType_FHIR ) ? { practitionerId: INFO.practitionerId, practitionerDisplay: userName, counts: fillCount }: { taken_by: userName, counts: fillCount };
+
+      WsCallManager.requestPostDws( VoucherCodeManager.settingData.url_vcGet, dataJson, loadingTag, function( success, returnJson ) 
       {
          if ( success && returnJson && returnJson.vouchersTaken )
          {
-            var queue = PersisDataLSManager.getVoucherCodes_queue();
+            var queue = VoucherCodeManager.getQueue_Full();
 
             var newListObj = VoucherCodeManager.getQueueObj_fromVcList( returnJson.vouchersTaken );
 
@@ -206,8 +222,10 @@ VoucherCodeManager.getQueueObj_fromVcList = function( vcList )
 {
    var newListObj = [];
 
+   var storedTypeVal = ( VoucherCodeManager.isStoredType_FHIR ) ? VoucherCodeManager.StoredType_FHIR: VoucherCodeManager.StoredType_MONGO;
+
    vcList.forEach( vcItem => {
-      newListObj.push( { voucherCode: vcItem.code, status: '', ver_no: vcItem.ver_no } );
+      newListObj.push( { voucherCode: vcItem.code, status: '', ver_no: vcItem.ver_no, storedType: storedTypeVal } );
    });
 
    return newListObj;
@@ -222,7 +240,8 @@ VoucherCodeManager.getNextVoucherCode = function()
 
    if ( VoucherCodeManager.settingData.enable ) // ONLY USE THIS IF voucherCodeService is in use.
    {
-      var queue = PersisDataLSManager.getVoucherCodes_queue();
+      var queue = VoucherCodeManager.getQueue_CurrStoredType();
+
       var item = VoucherCodeManager.getNotUsed_1stOne( queue );  // This method has extra logic to check if free one is already in use somehow.
 
       if ( item )
@@ -263,7 +282,7 @@ VoucherCodeManager.markVoucherCode_InQueue = function( activityJson, transType, 
       
       
          // 2. Find the voucherCode from queue and mark it as 'InUse' status.
-         var queue = PersisDataLSManager.getVoucherCodes_queue();
+         var queue = VoucherCodeManager.getQueue_CurrStoredType();
          for( var i = 0; i < queue.length; i++ )
          {
             var vcItem = queue[i];
@@ -292,11 +311,13 @@ VoucherCodeManager.getNotUsed_1stOne = function( queue )
       {
          var item = queue[i];
 
-         if ( item.voucherCode && !item.status )
+         if ( item.voucherCode && !item.status && VoucherCodeManager.isCurrStoredType( item ) )
          {
+            //             
             // But if there is voucher in use, mark the status...  <-- 'InUse' vs 'Used? AlreadyUsed?'
             if ( ActivityDataManager.isVoucherCodeUsed( item.voucherCode ) )
             {
+               // If the current voucherCode 
                VoucherCodeManager.markStaus( item.voucherCode, VoucherCodeManager.STATUS_Used );
             }
             else
@@ -314,7 +335,7 @@ VoucherCodeManager.getNotUsed_1stOne = function( queue )
 
 VoucherCodeManager.markStaus = function( voucherCode, status )
 {
-   VoucherCodeManager.updateQueue( voucherCode, function( vcItem ) {
+   VoucherCodeManager.updateVoucherInQueue( voucherCode, function( vcItem ) {
       vcItem.status = status;
       vcItem.markDate = new Date().toISOString();
    });
@@ -323,47 +344,44 @@ VoucherCodeManager.markStaus = function( voucherCode, status )
 // When unsynced activity is removed/rolled back, unMark the voucherCode..
 VoucherCodeManager.unMarkStaus = function( voucherCode )
 {
-   VoucherCodeManager.updateQueue( voucherCode, function( vcItem ) {
+   VoucherCodeManager.updateVoucherInQueue( voucherCode, function( vcItem ) {
       if ( vcItem.status ) vcItem.status = "";
       if ( vcItem.markDate ) delete vcItem.markDate;
    });
 };
 
 
-VoucherCodeManager.updateQueue = function( voucherCode, updateFunc )
+VoucherCodeManager.updateVoucherInQueue = function( voucherCode, updateFunc )
 {
-   var queue = PersisDataLSManager.getVoucherCodes_queue();
+   var queue = VoucherCodeManager.getQueue_Full(); // Since we are replacing entire queue, get full list regardless of type.
 
-   queue.filter( item => ( item.voucherCode === voucherCode ) ).forEach( vcItem => updateFunc( vcItem ) );
+   queue.filter( item => ( item.voucherCode === voucherCode && VoucherCodeManager.isCurrStoredType( item ) ) ).forEach( vcItem => updateFunc( vcItem ) );
 
    PersisDataLSManager.updateVoucherCodes_queue( queue );
 };
 
-// NOTE: BUT, we should seperate mark it as use, and take it out..
-//    - When visible, we populate it and mark it as using..
-//    - When Created with activity?  Or after sync, we remove it from queue?
-//    - For now, make it used when activity is created with voucherCode & 'v_rdx'...
-/*
-VoucherCodeManager.takeOut_OneVoucherCode = function( callBack )
-{ 
-   var queue = PersisDataLSManager.getVoucherCodes_queue();
-   var item = VoucherCodeManager.getNotUsed_1stOne( queue );
+// -----------------
+// --- Stored Type Related
 
-   // DO NOT TAKE IT OUT!!!
-   // var item = Util.array_TakeOutOne( queue );
-
-   if ( item !== undefined )
-   {
-      item.status = 'inUse'; // '' -> 'inUse' -> 'used'
-      // CHANGE THIS...
-      PersisDataLSManager.updateVoucherCodes_queue( queue );
-      
-      callBack( item );
-   }
-   else {} // callBack with empty value??
+// Use this, so that the default returns 'MONGO' as 'storedType'
+VoucherCodeManager.getItemStoredType = function( item )
+{
+   return ( item.storedType === VoucherCodeManager.StoredType_FHIR ) ? VoucherCodeManager.StoredType_FHIR: VoucherCodeManager.StoredType_MONGO;
 };
-*/
 
-// -----------------------
+VoucherCodeManager.isCurrStoredType = function ( item )
+{
+   return ( VoucherCodeManager.getItemStoredType( item ) === VoucherCodeManager.settingData.storedType );
+};
 
-// VoucherCodeManager.clearAll = function() { };
+
+VoucherCodeManager.getQueue_CurrStoredType = function()
+{
+   var queue = PersisDataLSManager.getVoucherCodes_queue();
+   return queue.filter( item => VoucherCodeManager.isCurrStoredType( item ) );
+};
+
+VoucherCodeManager.getQueue_Full = function()
+{
+   return PersisDataLSManager.getVoucherCodes_queue();
+};

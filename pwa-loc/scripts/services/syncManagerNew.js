@@ -805,12 +805,10 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 
 SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall) {
 	// Stop the Sync Icon rotation
-	FormUtil.rotateTag(syncIconTag, false);
-
-
-	// NEW!! <-- Under 'SyncManagerNew.syncUpResponseHandle', if 'fhir' resource type & has 'fhir' resource, 
-	//		do conversion...
-
+	//FormUtil.rotateTag(syncIconTag, false);
+	FormUtil.rotateTag( syncIconTag, false );
+	FormUtil.rotateTag( syncIconTag, false );
+	FormUtil.rotateTag( syncIconTag, false );
 
 	// NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
 	// Based on response(success/fail), perform app/activity/client data change

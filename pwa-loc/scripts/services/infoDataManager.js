@@ -28,6 +28,8 @@ InfoDataManager.NAME_syncLastDownloaded_noZ = 'syncLastDownloaded_noZ';	// These
 InfoDataManager.NAME_fixOperationLast = 'fixOperationLast';
 InfoDataManager.NAME_fixOperationLast_noZ = 'fixOperationLast_noZ';
 
+InfoDataManager.NAME_fhirHeaderProfile = 'fhirHeaderProfile';
+
 //InfoDataManager.NAME_lastVoucher_overrideVC = 'lastVoucher_overrideVC'; // per client data, set as {} initially
 
 InfoDataManager.NAME_INFO = 'INFO'; // Used for array list 'INFO' name..

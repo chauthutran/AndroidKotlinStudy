@@ -307,6 +307,8 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
 
     if ( sourceType ) payloadJson.sourceType = sourceType;
     if ( sourceType === ConfigManager.KEY_SourceType_Mongo && mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
+    if ( INFO.fhirHeaderProfile ) payloadJson.fhirHeaderProfile = INFO.fhirHeaderProfile;
+
     if ( ConfigManager.getSettings().uniquePhoneNumberCase === true ) payloadJson.uniquePhoneNumberCase = true;
     if ( ConfigManager.getSettings().confirmClientSchLvl > 0 ) payloadJson.confirmClientSchLvl = ConfigManager.getSettings().confirmClientSchLvl;
 

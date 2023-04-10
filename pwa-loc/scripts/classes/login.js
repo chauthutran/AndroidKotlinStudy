@@ -418,7 +418,6 @@ function Login() {
 					{
 						// Check against current version - index.html '_ver' // var _ver = '1.3.11.56';
 						// 'response.version' - by reading manifest file.						
-
 						console.log( 'Login.appVersionCheck _ver: ' + _ver + ', response.ver: ' + response.version );
 
 						if ( response.version > _ver )
@@ -430,7 +429,8 @@ function Login() {
 					}
 				},
 				error: function ( errMsg ) {
-					console.log( 'ERROR in Login.appVersionCheck, ' + errMsg );
+					// console.log( 'ERROR in Login.appVersionCheck, ' + errMsg );
+					console.log( '-- appVersionCheck not available --' );
 				}
 			});
 	

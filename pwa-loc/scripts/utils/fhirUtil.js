@@ -283,21 +283,35 @@ FhirUtil.getClientDateJson = function( oldestDate, newestDate )
 
 FhirUtil.getClientDateByQRArr = function( patient, questRespArr )
 {
-	var oldestDate;
-	var newestDate;
-	// check 'meta' "lastUpdated": "2023-02-23T09:58:07.070+00:00",
+	var dateJson = {};
 
-	var pDate = new Date( patient.meta.lastUpdated );
-	oldestDate = pDate;
-	newestDate = pDate;
+	try
+	{
+		if ( patient && questRespArr )
+		{
+			var oldestDate;
+			var newestDate;
+			// check 'meta' "lastUpdated": "2023-02-23T09:58:07.070+00:00",
+		
+			var pDate = new Date( patient.meta.lastUpdated );
+			oldestDate = pDate;
+			newestDate = pDate;
+		
+			questRespArr.forEach( qr => {
+				var date = new Date( qr.meta.lastUpdated );
+				if ( !newestDate || newestDate < date ) newestDate = date;
+				if ( !oldestDate || oldestDate > date ) oldestDate = date;		
+			});
+		
+			dateJson = FhirUtil.getClientDateJson( oldestDate, newestDate );
+		}	
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in FhirUtil.getClientDateByQRArr, ' + errMsg );
+	}
 
-	questRespArr.forEach( qr => {
-		var date = new Date( qr.meta.lastUpdated );
-		if ( !newestDate || newestDate < date ) newestDate = date;
-		if ( !oldestDate || oldestDate > date ) oldestDate = date;		
-	});
-
-	return FhirUtil.getClientDateJson( oldestDate, newestDate );
+	return dateJson;
 };
 
 // --------------------------------
