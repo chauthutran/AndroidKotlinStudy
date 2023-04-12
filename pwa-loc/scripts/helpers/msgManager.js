@@ -251,7 +251,7 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 
 
 	// If 'delayHide' is intentionally set ( with some number or '0' for not hide ), set to 'delayTimer..
-	if (!hideTimeMs) hideTimeMs = MsgManager._autoHideDelay;  // 10 sec..
+	if (!hideTimeMs) hideTimeMs = 10000; // MsgManager._autoHideDelay;  // 10 sec..
 
 	setTimeout(function () {
 		if ($('#notif_' + unqID).is(':visible')) {

@@ -45,14 +45,16 @@ ReportDetailsPage.resolveTableData = function()
     let data = {};
             
     let reportConfig = ConfigManager.getConfigJson().definitionReportColumns;
-    var evalStr = Util.getEvalStr( reportConfig.eval );
 
     if( reportConfig != undefined && reportConfig.report2 != undefined && reportConfig.report2.detailsData != undefined )
     {
-        reportConfig = reportConfig.report2.detailsData;
-        for( var key in reportConfig )
+        var preEval = reportConfig.report2.preEval;
+        if ( preEval ) eval( Util.getEvalStr( preEval ) );
+
+        var detailsData = reportConfig.report2.detailsData;
+        for( var key in detailsData )
         {
-            var value = eval( evalStr + " var item = ReportDetailsPage.clientData; " + Util.getEvalStr(reportConfig[key]) ); 
+            var value = eval( Util.getEvalStr(detailsData[key]) ); 
             data[key] = value; 
         }
     }
