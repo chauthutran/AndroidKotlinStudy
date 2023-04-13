@@ -139,9 +139,9 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	var styleArr = options.styleArr;
 	var actionButton = options.actionButton;
 	var styles = options.styles;
-	var Xpos = options.Xpos;
-	var Ypos = options.Ypos;
-	var hideTimeMs = options.hideTimeMs;
+	var Xpos = ( options.Xpos ) ? options.Xpos: 'right';	
+	var Ypos = ( options.Ypos ) ? options.Ypos: 'top';
+	var hideTimeMs = ( options.hideTimeMs ) ? options.hideTimeMs: 10000; // 10 sec is the default hide time
 	var autoClick = options.autoClick;
 	var addtoCloseClick = options.addtoCloseClick;
 	var ReserveMsgID = options.ReserveMsgID;
@@ -248,10 +248,6 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 		trBody.append(tdClose);
 		tdClose.append(closeImgTag);
 	}
-
-
-	// If 'delayHide' is intentionally set ( with some number or '0' for not hide ), set to 'delayTimer..
-	if (!hideTimeMs) hideTimeMs = 10000; // MsgManager._autoHideDelay;  // 10 sec..
 
 	setTimeout(function () {
 		if ($('#notif_' + unqID).is(':visible')) {

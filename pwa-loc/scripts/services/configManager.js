@@ -80,7 +80,7 @@ ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
 			// Filter some list in config by 'sourceType' / 'userRole'
 			ConfigManager.applyFilter_SourceType(ConfigManager.configJson);
 			ConfigManager.applyFilter_UserRole(ConfigManager.configJson, ConfigManager.login_UserRoles
-				, ['favList', 'areas', 'definitionActivityListViews', 'definitionClientListViews'
+				, ['favList', 'areas', 'definitionActivityListViews', 'definitionClientListViews', 'definitionBlocks'
 					, 'definitionOptions', 'settings.sync.syncDown', 'settings.voucherCodeService']);
 
 			// NOTE: Above userRole filtering is done in load time (rather than run time)
