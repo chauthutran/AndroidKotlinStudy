@@ -8,7 +8,8 @@ function ChatApp(username) {
 	me.selectedUser;
 	me.users = [];
 	me.chatServerURL = (WsCallManager.isLocalDevCase) ? chatServerURL_local : chatServerURL;
-
+	// me.chatServerURL = chatServerURL;
+	
 	// ------------------------------------------------------------------------
 	// HTML Tags
 
@@ -145,7 +146,7 @@ function ChatApp(username) {
 
 	// =====================================================================
 	// For Socket
-
+	
 	me.initSocket = function () {
 		var option = {
 			reconnectionDelayMax: 1000,
@@ -235,6 +236,7 @@ function ChatApp(username) {
 			else {
 				console.log('Failed to connect to server');
 				me.initChatMsgTag.show().html(`Failed to connect to chat server. Please contact administrator.`);
+				me.chatViewTag.hide();
 				//FormUtil.unblockPage();
 			}
 		});
