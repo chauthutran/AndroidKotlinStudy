@@ -368,7 +368,7 @@ SyncManagerNew.downloadClients = function (callBack) {
 			});
 		}
 		else {
-			var payloadJson = ConfigManager.getSyncDownSearchBodyEvaluated();
+			var payloadJson = ConfigManager.runEvalSyncRelated();
 			Util.jsonCleanEmptyRunTimes(payloadJson, 2);
 
 			if (payloadJson) {

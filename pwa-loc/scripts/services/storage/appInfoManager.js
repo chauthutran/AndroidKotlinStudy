@@ -79,6 +79,10 @@ AppInfoManager.loadData_AfterLogin = function( userName, passwd, callBack )
         // Try Merging if things are still left?
         AppInfoManager.mergeOldData( appInfo );
 
+        // NEW: Moved below 2 elements out of INFO afterLogin data load
+        InfoDataManager.setINFO_lastDownloaded( AppInfoManager.getSyncLastDownloadInfo() );
+        InfoDataManager.setINFO_fixOperationLast( AppInfoManager.getFixOperationLast() );
+
         if ( callBack ) callBack( appInfo );
     });
 };

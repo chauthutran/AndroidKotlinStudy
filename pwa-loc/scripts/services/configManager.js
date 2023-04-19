@@ -73,6 +73,7 @@ ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
 			ConfigManager.applyDefaults(ConfigManager.configJson, ConfigManager.defaultJsonList);
 
 			ConfigManager.login_UserRoles = ConfigManager.setUpLogin_UserRoles(ConfigManager.configJson.definitionUserRoles, SessionManager.sessionData.orgUnitData, userRolesOverrides);
+			InfoDataManager.setINFOdata( InfoDataManager.NAME_userRole, ConfigManager.login_UserRoles ); // Set this to 'INFO'
 
 			// If 'sourceType_userRole' exists, override 'sourceType' by userRole
 			ConfigManager.setSourceType_ByUserRole(ConfigManager.configJson, ConfigManager.login_UserRoles);
@@ -82,15 +83,13 @@ ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
 			ConfigManager.applyFilter_UserRole(ConfigManager.configJson, ConfigManager.login_UserRoles
 				, ['favList', 'areas', 'definitionActivityListViews', 'definitionClientListViews', 'definitionBlocks'
 					, 'definitionOptions', 'settings.sync.syncDown', 'settings.voucherCodeService']);
-
 			// NOTE: Above userRole filtering is done in load time (rather than run time)
 			//  due to roles being placed in some special parts..
-			// For more spratically placed ones (outside of def section), 
-			//  We would need to use in real time..
 
+			// Set Special Ops on config load time.
 			ConfigManager.setINFO_SettingFHIRHeaderProfile(); // FHIR related - set INFO.fhirHeaderProfile
-
 			ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
+			//ConfigManager.runEvalSyncRelated();  // syncPreEval, syncDown.searchBodyEval
 
 			// Populate options 'options_ouChildren', 'ouTag', 'ouVMMC', if applicable
 			ConfigManager.populateOptions_ouChildren(ConfigManager.configJson, loginData);
@@ -101,8 +100,9 @@ ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
 	catch (errMsg) {
 		console.log('Error in ConfigManager.setConfigJson, errMsg: ' + errMsg);
 	}
-};
 
+	return ConfigManager.getConfigJson();
+};
 
 // ----------------------------------------------------
 
@@ -184,7 +184,8 @@ ConfigManager.filterObjByUserRoles = function (parentObj, objName, inputUserRole
 
 ConfigManager.traverseFilterByUserRoles = function (obj, inputUserRoles, iDepth, limit) {
 	if (iDepth === limit) {
-		throw 'Error in ConfigManager.traverseFilterByUserRoles, Traverse depth limit has reached: ' + iDepth;
+		//throw 'Error in ConfigManager.traverseFilterByUserRoles, Traverse depth limit has reached: ' + iDepth;
+		console.log( 'Reached the traverse depth limit, ' + limit + '. Returning unfinished.');
 	}
 	else if (obj) {
 		Object.keys(obj).forEach(key => {
@@ -1020,20 +1021,43 @@ ConfigManager.getSyncDownSetting = function () {
 	return syncDownJson;
 };
 
-// Called from 'syncManagerNew' 
-ConfigManager.getSyncDownSearchBodyEvaluated = function () {
+ConfigManager.runEvalSyncRelated = function () 
+{
 	var searchBodyJson;
 
-	var searchBodyEval = ConfigManager.getSyncDownSetting().searchBodyEval;
-
-	if (searchBodyEval) {
-		searchBodyJson = Util.cloneJson(searchBodyEval);
-
-		Util.traverseEval(searchBodyJson, InfoDataManager.getINFO(), 0, 50);
+	try
+	{
+		var syncPreEval = ConfigManager.getSync().syncPreEval;
+		if ( syncPreEval ) eval( Util.getEvalStr( syncPreEval ) );
+	}
+	catch (errMsg) {
+		console.log('ERROR in ConfigManager.runEvalSyncRelated, syncPreEval, ' + errMsg);
 	}
 
-	return searchBodyJson;
+	try
+	{
+		var searchBodyEval = ConfigManager.getSyncDownSetting().searchBodyEval;
+
+		if (searchBodyEval) 
+		{
+			searchBodyJson = Util.cloneJson(searchBodyEval);
+	
+			Util.traverseEval(searchBodyJson, InfoDataManager.getINFO(), 0, 50);
+	
+			// DO NOT SET/SAVE evaluated into configManager - INSTEAD, EVERY TIME, EVALUATE THIS AND RETURN IT TO USE IT.
+			// ConfigManager.getSyncDownSetting().searchBodyEval = searchBodyJson;
+		}	
+	}
+	catch (errMsg) {
+		console.log('ERROR in ConfigManager.runEvalSyncRelated, syncDown, searchBodyEval, ' + errMsg);
+	}
+
+	return searchBodyJson; //ConfigManager.getSyncDownSetting().searchBodyEval;
 };
+
+
+// Called from 'syncManagerNew' 
+//ConfigManager.getSyncDownSearchBodyEvaluated = function ()
 
 
 ConfigManager.getMockResponseJson = function (useMockResponse) {

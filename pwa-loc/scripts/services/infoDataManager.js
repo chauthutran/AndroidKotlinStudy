@@ -59,36 +59,20 @@ InfoDataManager.clearINFOdata = function()
 
 // -------------------------------------
 
-InfoDataManager.setDataAfterLogin = function()
+InfoDataManager.setAppStartData = function()
 {
-	try
-	{
-		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_UserName, SessionManager.sessionData.login_UserName );
-		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitId, SessionManager.sessionData.orgUnitData.orgUnitId );
-		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_CountryOuCode, SessionManager.sessionData.orgUnitData.countryOuCode );
-		InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitData, SessionManager.sessionData.orgUnitData );
-		InfoDataManager.setINFOdata( InfoDataManager.NAME_userRole, ConfigManager.login_UserRoles );
-
-		InfoDataManager.setINFOdata( InfoDataManager.NAME_practitionerId, AppInfoLSManager.getFhirPractitionerId() );
-
-		//INFO.activityList = ActivityDataManager.getActivityList();
-		//INFO.clientList = ActivityDataManager.getClientList();
-
-		// Any other info?	
-		InfoDataManager.setINFO_lastDownloaded( AppInfoManager.getSyncLastDownloadInfo() );
-		InfoDataManager.setINFO_fixOperationLast( AppInfoManager.getFixOperationLast() );
-
-		// NOTE: But we can access by '_ver' in anywhere.
-		InfoDataManager.setINFOdata( InfoDataManager.NAME_app_version, Util.getStr( _ver ) );
-
-		// Set initial empty - will get added/removed as it goes..
-		//InfoDataManager.setINFOdata( InfoDataManager.NAME_lastVoucher_overrideVC, { } );
-	}
-	catch ( errMsg )
-	{
-		console.log( 'ERROR in InfoDataManager.setDataAfterLogin, errMsg: ' + errMsg );
-	}
+	// NOTE: But we can access by '_ver' in anywhere.
+	InfoDataManager.setINFOdata( InfoDataManager.NAME_app_version, Util.getStr( _ver ) );
 };
+
+InfoDataManager.setSessionDataInfo = function( sessionData )
+{
+	InfoDataManager.setINFOdata( InfoDataManager.NAME_login_UserName, sessionData.login_UserName );
+	InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitId, sessionData.orgUnitData.orgUnitId );
+	InfoDataManager.setINFOdata( InfoDataManager.NAME_login_CountryOuCode, sessionData.orgUnitData.countryOuCode );
+	InfoDataManager.setINFOdata( InfoDataManager.NAME_login_OrgUnitData, sessionData.orgUnitData );
+};
+
 
 InfoDataManager.setINFOclientByActivity = function( activity )
 {

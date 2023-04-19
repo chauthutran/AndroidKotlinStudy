@@ -57,8 +57,14 @@ SessionManager.loadSessionData_nConfigJson = function( userName, password, login
 
 	SessionManager.sessionData.loginResp = loginData;  // <-- This will be the matching memory of LoginResp in IndexedDB.
 
+	// Put the Session Login user/orgUnit (from loginData) to 'INFO'
+	InfoDataManager.setSessionDataInfo( SessionManager.sessionData );
+	InfoDataManager.setINFOdata( InfoDataManager.NAME_practitionerId, AppInfoLSManager.getFhirPractitionerId() );
+
 	// Setup/populate data on ConfigManager
-	ConfigManager.setConfigJson( loginData );
+	var configJson = ConfigManager.setConfigJson( loginData );
+
+	return configJson;
 };
 
 

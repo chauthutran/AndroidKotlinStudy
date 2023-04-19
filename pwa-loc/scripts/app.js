@@ -27,12 +27,9 @@ App.run = function ()
 {
 	App.appInstallBtnTag = $('.appInstall');
 
-	// --------------------------
-	// Handle modes by url pattern or parameters
 	if ( Util.getParameterByName("ver") === "1.4" ) App.ver14 = true;
 	
 	// --------------------------
-
 	// Default Behavior Modify
 	App.windowEvent_BlockBackBtnAction();
 	window.addEventListener('error', App.catchErrorInCustomLog);
@@ -40,7 +37,8 @@ App.run = function ()
 	if (App.isMobileDevice()) App.mobileUISetup();
 
 	InfoDataManager.setDeviceInfo_OnStart( App.checkDeviceMinSpec );
-
+	InfoDataManager.setAppStartData();
+	
 	// Setup Static Classes
 	MsgManager.initialSetup();
 

@@ -502,7 +502,11 @@ function Login() {
 	};
 
 
-	me.loginSuccessProcess = function (userName, password, loginData, runAfterFunc) {
+	me.loginSuccessProcess = function (userName, password, loginData, runAfterFunc) 
+	{
+		AppInfoLSManager.setUserName(userName);
+		SessionManager.setLoginStatus(true);
+
 		// gAnalytics Event
 		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
 		//GAnalytics.setEvent = function(category, action, label, value = null) 
@@ -548,13 +552,10 @@ function Login() {
 		// 1. Data Related Process
 		SyncManagerNew.SyncMsg_Reset();
 
-		// Save userName to 'appInfo.userInfo'
-		AppInfoLSManager.setUserName(userName);
-
-		SessionManager.setLoginStatus(true);
-		InfoDataManager.setDataAfterLogin(); // sessionData.login_UserName update to 'INFO' object
-
-		//AppInfoManager.setLastLoginMark( new Date() );
+		// MOVED RIGHT AFTER LOGIN - before.. SessionLoad (Config Setup)
+		//AppInfoLSManager.setUserName(userName);
+		//SessionManager.setLoginStatus(true);
+		//InfoDataManager.setDataAfterLogin(); // sessionData.login_UserName update to 'INFO' object
 
 		// menu area user name show
 		$('div.navigation__user').html(userName);
@@ -592,25 +593,23 @@ function Login() {
 			// Below method also handles 'configNoNewVersion' case - getting offline dcdConfig and use it.
 			me.checkLoginData_wthErrMsg(success, userName, password, loginData, function (resultSuccess) {
 				if (resultSuccess) {
-					me.setModifiedOUAttrList(loginData);
 
 					// Set values to 'AppInfoLSManager' - after online login success
 					AppInfoLSManager.setLastOnlineLoginDt((new Date()).toISOString());
 					if ( loginData.fhirPractitioner ) AppInfoLSManager.setFhirPractitionerId( loginData.fhirPractitioner.id );
 
-					// Save 'loginData' in indexedDB for offline usage and load to session.
-					SessionManager.setLoginRespData_IDB(userName, password, loginData);
 
+					// Save 'loginData' in indexedDB for offline usage and load to session.
+					me.setModifiedOUAttrList(loginData); // 'ouAttrVals' set by this method is used by country config evaluation
+					SessionManager.setLoginRespData_IDB(userName, password, loginData);
 					// IMPORTANT PART - Load loginData in session, use 'dcdConfig' to load ConfigManager data.
-					SessionManager.loadSessionData_nConfigJson(userName, password, loginData);
-					var configJson = ConfigManager.getConfigJson();
+					var configJson = SessionManager.loadSessionData_nConfigJson(userName, password, loginData); // InfoDataManager.sessionDataLoad is also called here.
+
 
 					// Save values in 'AppInfoLS' after online login
 					AppInfoLSManager.saveConfigSourceType(configJson.sourceType);  // For Availability Check Usage, store 'sourceType'
 					AppInfoLSManager.setConfigVersioningEnable(ConfigManager.getSettings().configVersioningEnable); // Used on login request
-					//AppInfoLSManager.setConfigVersion(configJson.version);
-
-					var loginPrevData = { 
+					AppInfoLSManager.setLoginPrevData( { 
 						retrievedDateTime: configJson.retrievedDateTime,
 						settings: {
 							login_GetOuChildren: configJson.settings.login_GetOuChildren,
@@ -618,18 +617,16 @@ function Login() {
 							login_GetVMMC_OugId: configJson.settings.login_GetVMMC_OugId	
 						},
 						sourceType: configJson.sourceType
-					};
-
-					AppInfoLSManager.setLoginPrevData(loginPrevData);
+					} );
 
 
 					// Check the translation - if there is any new updated translations.  If so, retrieve & save & use it.
 					TranslationManager.loadLangTerms_NSetUpData( true );
 					
-
+					// Online Login statistic download
 					me.retrieveStatisticPage((fileName, statPageData) => { me.saveStatisticPage(fileName, statPageData); });
 
-					// AppInfo IndexDB one..  What does this do?  forgot..
+					// AppInfo IndexDB one..  Populate AppInfo data - which is (Not localStorage) IndexDB saved appInfo
 					AppInfoManager.loadData_AfterLogin(userName, password, function () {
 						if (returnFunc) returnFunc(resultSuccess, loginData);
 					});
