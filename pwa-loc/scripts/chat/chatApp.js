@@ -7,8 +7,9 @@ function ChatApp(username) {
 	me.socket;
 	me.selectedUser;
 	me.users = [];
-	me.chatServerURL = (WsCallManager.isLocalDevCase) ? chatServerURL_local : chatServerURL;
-
+	me.chatServerURL;
+	// me.chatServerURL = chatServerURL;
+	
 	// ------------------------------------------------------------------------
 	// HTML Tags
 
@@ -45,6 +46,9 @@ function ChatApp(username) {
 
 	me.init = function () {
 
+		me.chatServerURL = me.getChatServerUrl();
+
+		console.log( 'me.chatServerURL: ' + me.chatServerURL );
 
 		// Set HTML & values related
 		me.chatDivTag.html('').append(ChatApp.contentHtml);
@@ -145,7 +149,30 @@ function ChatApp(username) {
 
 	// =====================================================================
 	// For Socket
-
+	
+	me.getChatServerUrl = function()
+	{
+		if (WsCallManager.isLocalDevCase)
+		{
+			if( WsCallManager.stageName == "dev" ) return chatServerURL_local_dev;
+			else if( WsCallManager.stageName == "test" ) return chatServerURL_local_test;			
+		} 
+		else
+		{
+			if( WsCallManager.stageName == "dev" )
+			{
+				return chatDevServerURL;
+			}
+			else if( WsCallManager.stageName == "test" )
+			{
+				return chatTestServerURL;
+			}
+			else if( WsCallManager.stageName == "prod" )
+			{
+				return chatProdServerURL;
+			}
+		}
+	}
 	me.initSocket = function () {
 		var option = {
 			reconnectionDelayMax: 1000,
@@ -235,6 +262,7 @@ function ChatApp(username) {
 			else {
 				console.log('Failed to connect to server');
 				me.initChatMsgTag.show().html(`Failed to connect to chat server. Please contact administrator.`);
+				me.chatViewTag.hide();
 				//FormUtil.unblockPage();
 			}
 		});
