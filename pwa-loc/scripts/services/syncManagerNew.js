@@ -128,6 +128,9 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 	SyncManagerNew.update_UI_StartSyncAll();
 	SyncManagerNew.SyncMsg_InsertMsg("SyncDown Download started..");
 
+	var syncDownReqStartDTStr = new Date().toISOString();
+	console.log( 'syncDown Req DT StartStr: ' + syncDownReqStartDTStr );
+
 	// Retrieve data..
 	SyncManagerNew.downloadClients(function (downloadSuccess, returnJson, mockCase) {
 		SyncManagerNew.update_UI_FinishSyncAll();
@@ -203,7 +206,9 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 				// TODO: NEED TO MAKE SURE THE RESPONSE HAD ALL PROPER FORMAT OF NO EROR/FAILURE..
 				// Mongo VS DHIS....                
 
-				AppInfoManager.updateSyncLastDownloadInfo((new Date()).toISOString());
+				// <-- should target the beginning of the requet..
+				AppInfoManager.updateSyncLastDownloadInfo( syncDownReqStartDTStr );
+				console.log( 'syncDown Req DT StartStr 2: ' + syncDownReqStartDTStr );
 
 				if (callBack) callBack(downloadSuccess, changeOccurred_atMerge, mockCase, mergedActivities);
 			});
