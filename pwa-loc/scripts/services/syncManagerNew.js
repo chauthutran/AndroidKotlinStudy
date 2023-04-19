@@ -128,8 +128,8 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 	SyncManagerNew.update_UI_StartSyncAll();
 	SyncManagerNew.SyncMsg_InsertMsg("SyncDown Download started..");
 
-	var syncDownReqStartDTStr = new Date().toISOString();
-	console.log( 'syncDown Req DT StartStr: ' + syncDownReqStartDTStr );
+	// 10 min offset with sync time - to make sure it does not miss things.
+	var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
 
 	// Retrieve data..
 	SyncManagerNew.downloadClients(function (downloadSuccess, returnJson, mockCase) {
@@ -208,7 +208,6 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 
 				// <-- should target the beginning of the requet..
 				AppInfoManager.updateSyncLastDownloadInfo( syncDownReqStartDTStr );
-				console.log( 'syncDown Req DT StartStr 2: ' + syncDownReqStartDTStr );
 
 				if (callBack) callBack(downloadSuccess, changeOccurred_atMerge, mockCase, mergedActivities);
 			});
