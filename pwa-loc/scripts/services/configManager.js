@@ -89,7 +89,7 @@ ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
 			// Set Special Ops on config load time.
 			ConfigManager.setINFO_SettingFHIRHeaderProfile(); // FHIR related - set INFO.fhirHeaderProfile
 			ConfigManager.coolDownTime = ConfigManager.getSyncUpCoolDownTime();
-			//ConfigManager.runEvalSyncRelated();  // syncPreEval, syncDown.searchBodyEval
+			SyncManagerNew.coolDownEnabled = ConfigManager.getSyncUpCoolDownEnable( SyncManagerNew.coolDownEnabled );
 
 			// Populate options 'options_ouChildren', 'ouTag', 'ouVMMC', if applicable
 			ConfigManager.populateOptions_ouChildren(ConfigManager.configJson, loginData);
@@ -1085,6 +1085,21 @@ ConfigManager.getSyncUpCoolDownTime = function () {
 	}
 
 	return (coolDownTime) ? coolDownTime : ConfigManager.coolDownTime;
+};
+
+
+ConfigManager.getSyncUpCoolDownEnable = function ( defaultVal ) {
+	var coolDownEnable = defaultVal;
+
+	try {
+		if ( ConfigManager.getSync().syncUp.coolDownEnable === true ) coolDownEnable = true;
+		else if ( ConfigManager.getSync().syncUp.coolDownEnable === false ) coolDownEnable = false;
+	}
+	catch (errMsg) {
+		console.log('ERROR in ConfigManager.getSyncUpCoolDownEnable, errMsg: ' + errMsg);
+	}
+
+	return coolDownEnable;
 };
 
 

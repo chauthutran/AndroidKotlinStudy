@@ -144,7 +144,7 @@ function cwsRender()
 			if ( ConfigManager.isSourceTypeDhis2() ) ActivityDataManager.adjustDownDHIS2Acts( fullActs );
 							
 			// Change the activities that did not complete -> 'Pending' to 'Failed', as app time out measure.
-			ActivityDataManager.updateActivitiesStatus_ProcessingToFailed( fullActs, { saveData: false } );
+			ActivityDataManager.updateActivitiesStatus_ProcessingToFailed( fullActs, { saveData: false, errMsg: 'Processing activity timed out case changed to failed status.' } );
 
 			ClientDataManager.saveCurrent_ClientsStore( () => { callBack(); });
 		});

@@ -828,7 +828,13 @@ SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_O
 			// If 'syncUpResponse' changed status, make the UI applicable..
 			//var newActivityJson = ActivityDataManager.getActivityById( activityId );
 
-			if (newActivityJson) {
+			if (newActivityJson) 
+			{
+				// NEW: At this point, if it is still in 'processing' status,
+				// Someothing went wrong and it did not submitted on backend and not returned, thus, the activity is not part of client/processing updated.
+				ActivityDataManager.updateStatus_ProcessingToFailed( newActivityJson, { saveData: true, errMsg: 'Backend submit did not work somehow.' } );
+
+
 				ActivitySyncUtil.displayActivitySyncStatus(activityId);
 
 				// Process 'ResponseCaseAction' - responseJson.report - This schedules more syncUp attempts by response status/code
@@ -867,6 +873,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 			// Removal of existing activity/client happends within 'mergeDownloadClients()'
 			ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
 				// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
+				operationSuccess = true;
 				ClientDataManager.saveCurrent_ClientsStore(() => {
 					if (callBack) callBack(operationSuccess, undefined, Constants.status_submit);
 				});

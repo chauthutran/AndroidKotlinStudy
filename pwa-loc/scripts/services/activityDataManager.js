@@ -255,8 +255,12 @@ ActivityDataManager.updateActivitiesStatus_ProcessingToFailed = function (activi
 
 
 ActivityDataManager.updateStatus_ProcessingToFailed = function (activity, option) {
+	if ( !option ) option = {};
+
 	if (activity && activity.processing && activity.processing.status === Constants.status_processing) {
-		var processingInfo = ActivityDataManager.createProcessingInfo_Other(Constants.status_failed, 408, 'Processing activity timed out case changed to failed status.');
+
+		var errMsg = ( option.errMsg ) ? option.errMsg: 'Unknown error - set to failed status.';
+		var processingInfo = ActivityDataManager.createProcessingInfo_Other(Constants.status_failed, 408, errMsg);
 		ActivityDataManager.insertToProcessing(activity, processingInfo);
 
 		// On this case, we call this during loop, thus, do not save data here, but after all the operation is done..
