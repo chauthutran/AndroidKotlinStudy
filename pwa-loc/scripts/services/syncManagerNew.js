@@ -812,7 +812,7 @@ SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_O
 	//FormUtil.rotateTag(syncIconTag, false);
 	FormUtil.rotateTag( syncIconTag, false );
 	FormUtil.rotateTag( syncIconTag, false );
-	FormUtil.rotateTag( syncIconTag, false );
+	setTimeout( () => FormUtil.rotateTag( syncIconTag, false ), 500 );
 
 	// NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
 	// Based on response(success/fail), perform app/activity/client data change
@@ -830,8 +830,8 @@ SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_O
 
 			if (newActivityJson) 
 			{
-				// NEW: At this point, if it is still in 'processing' status,
-				// Someothing went wrong and it did not submitted on backend and not returned, thus, the activity is not part of client/processing updated.
+				// NEW: STOP 'processing' status if still on processing status:
+				// 	- Something went wrong, backend did not return this activity after submit/merge 
 				ActivityDataManager.updateStatus_ProcessingToFailed( newActivityJson, { saveData: true, errMsg: 'Backend submit did not work somehow.' } );
 
 
