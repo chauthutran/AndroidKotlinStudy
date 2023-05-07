@@ -322,16 +322,50 @@ function Login() {
 			localSiteInfoTag.show();
 
 			var localStageTag = $('#localStage');
-
-			//var savedLocalStageName = AppInfoManager.getLocalStageName();
 			localStageTag.val(WsCallManager.stageName);
 
-			localStageTag.off('change').change(() => {
+			localStageTag.off('change').change(() => 
+			{
 				var stage = localStageTag.val();
 				AppInfoLSManager.setLocalStageName(stage);
 				WsCallManager.setWsTarget_Stage(stage);
 				alert('Changed to [' + stage + ']');
+
+				me.renderKeyCloakDiv( stage );				
 			});
+		}
+
+
+		// KeyCloak setting..
+		me.renderKeyCloakDiv( WsCallManager.stageName, function( selTag ) 
+		{
+			// Change Event Setup --> 
+			selTag.off('change').change(() => {
+				AppInfoLSManager.setKeyCloakUse( ( selTag.val() === 'Y' ) ? 'Y': '' );
+			});
+		});
+	};
+
+	me.renderKeyCloakDiv = function( stageName, changeFunc ) {
+		if ( stageName === 'dev' ) // Later, allow 'test' as well?
+		{
+			// Get value from AppInfoLSManager
+			var keyCloakUse = AppInfoLSManager.getKeyCloakUse();
+
+			var selTag = $( '#selKeyCloakUse' );
+
+			selTag.val( ( keyCloakUse === 'Y' ) ? 'Y': '' );
+
+			// display 
+			$( '#divKeyCloakUse' ).show();
+
+			if ( changeFunc ) changeFunc( selTag );
+		}
+		else
+		{
+			$( '#divKeyCloakUse' ).hide();
+			selTag.val( '' );
+			AppInfoLSManager.setKeyCloakUse( '' );
 		}
 	};
 
@@ -909,6 +943,13 @@ Login.contentHtml = `
 				<option value="dev">dev</option>
 				<option value="test">test</option>
 				<option value="prod">prod</option>
+			</select>]
+		</div>
+		<div id="divKeyCloakUse" style="display: none; color: orange;text-align: left;">
+			[KeyCloak Use:
+			<select id="selKeyCloakUse" style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 4px;">
+				<option value="">No</option>
+				<option value="Y">Yes</option>
 			</select>]
 		</div>
 	</div>

@@ -1266,11 +1266,22 @@ Util.unselectAllOption = function (listTag) {
 };
 
 Util.valueEscape = function (input) {
-	//input.replaceAll( '\', '\\' );
-	//input = input.replace( "'", "\'" );
+	//input.replaceAll( '\', '\\' ); //input = input.replace( "'", "\'" );
 	input = input.replace(/"/g, "\\\"");
 
 	return input;
+};
+
+Util.valueStringifyEscape = function (inputJson) 
+{
+	var valStr = '';
+
+	try {
+		if ( inputJson && Util.isTypeObject( inputJson ) ) valStr = Util.valueEscape( JSON.stringify( inputJson ) );	
+	}
+	catch( errMsg ) { console.log( 'ERROR in Util.valueEscapeStringify, ' + errMsg ); }
+
+	return valStr;
 };
 
 Util.valueUnescape = function (input) {

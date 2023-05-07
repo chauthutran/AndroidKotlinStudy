@@ -454,3 +454,36 @@ FhirUtil.getQRItemsArray = function( formsJson )
 
 	return items;
 };
+
+
+FhirUtil.getExtClientDetail = function( extension, urlName )
+{   
+	var outputJson = '';
+
+	var extClientDetail = Util.getFromList( extension, urlName, 'url' );
+
+	try
+	{
+		if ( extClientDetail && extClientDetail.valueString )
+		{
+			outputJson = JSON.parse( Util.valueUnescape(extClientDetail.valueString) );			
+		}
+	}
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getExtClientDetail, ' + errMsg ); }
+
+	return outputJson;
+};
+
+FhirUtil.mergeClientDetail = function( clientDetails, pExtClientDetail )
+{
+	if ( pExtClientDetail && clientDetails )
+	{
+		for( var extProp in pExtClientDetail )
+		{
+			var propVal = pExtClientDetail[ extProp ];
+
+			if ( propVal && !clientDetails[ extProp ] ) clientDetails[ extProp ] = propVal;
+		}	
+	}
+};
+
