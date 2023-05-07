@@ -346,13 +346,14 @@ function Login() {
 		});
 	};
 
-	me.renderKeyCloakDiv = function( stageName, changeFunc ) {
+	me.renderKeyCloakDiv = function( stageName, changeFunc ) 
+	{
+		var selTag = $( '#selKeyCloakUse' );
+		
 		if ( stageName === 'dev' ) // Later, allow 'test' as well?
 		{
 			// Get value from AppInfoLSManager
 			var keyCloakUse = AppInfoLSManager.getKeyCloakUse();
-
-			var selTag = $( '#selKeyCloakUse' );
 
 			selTag.val( ( keyCloakUse === 'Y' ) ? 'Y': '' );
 

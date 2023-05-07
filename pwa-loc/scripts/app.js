@@ -18,6 +18,7 @@
 
 function App() { };
 
+//App.username = "";
 App.appInstallBtnTag;
 App.ver14 = false;
 
@@ -105,6 +106,10 @@ App.startAppProcess = function ()
 		App.App_UI_startUp_Progress('100%');
 
 		App.App_UI_startUp_ready();
+
+
+		// NEW: KeyCloak calling
+		// App.keycloakPart();
 
 	}
 	catch (err) {
@@ -326,5 +331,124 @@ window.addEventListener('message', function ( event )
 	if ( event.data.from === 'jobAidIFrame' ) JobAidHelper.msgHandle( event.data );
 });
 
-// ======================================
 
+
+
+// ======================================
+// === NEW KEYCLOAK ============
+
+var keycloak = new Keycloak();
+
+// zw_test_ipc  / 1234
+
+App.keycloakPart = function() 
+{
+	const accessToken = localStorage.getItem("accessToken");
+	const accessTokenParsed = localStorage.getItem("accessTokenParsed");
+	const refreshToken = localStorage.getItem("refreshToken");
+	const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
+	const idToken = localStorage.getItem("idToken");
+
+	if( ConnManagerNew.isAppMode_Offline()  )
+	{
+		if( accessToken != null && ( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) ) )
+		{
+			alert( "The token is expired. Please connect to internet and login again.");
+		}
+		else if( accessToken != null && !KeycloakUtils.isExpired(accessTokenParsed) && !KeycloakUtils.isExpired(refreshTokenParsed) )
+		{
+			alert( "Logged successfully !!!");
+		}
+		else if( accessToken == null )
+		{
+			alert( "Please connect internet to login in the first time.");
+		}
+	}
+	else
+	{
+		if( accessToken != null )
+		{
+			keycloak.init({ onLoad: 'login-required', token: accessToken, refreshToken: refreshToken, idToken: idToken, checkLoginIframe: false, scope: 'openid offline_access'}).then(function() {
+				
+				if( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) )
+				{
+					document.getElementById("placeholder1").innerHTML = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.logout()" />';
+				}
+				else
+				{
+					document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="App.refreshToken()" /><br><input type="button" value="LOGOUT" onclick="App.logout()" />';
+				}
+			})
+			.catch(function() {
+				console.log('failed to initialize with token');
+			});
+		}
+		else
+		{
+			keycloak.init({ onLoad: 'login-required', checkLoginIframe: false, scope: 'openid offline_access'}).then(function() {
+				localStorage.setItem("accessToken", keycloak.token);
+				localStorage.setItem("accessTokenParsed", JSON.stringify(keycloak.tokenParsed));
+				localStorage.setItem("refreshToken",keycloak.refreshToken);
+				localStorage.setItem("refreshTokenParsed", JSON.stringify(keycloak.refreshTokenParsed));
+				localStorage.setItem("idToken", keycloak.idToken);
+				
+
+				document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="App.refreshToken()" /><br><input type="button" value="LOGOUT" onclick="App.logout()" />';
+
+			})
+			.catch(function() {
+				alert('failed to initialize');
+			});
+		}
+	}
+};
+ 
+
+// TODO: MOVE THEM TO OTHER PLACE --- CALLED FROM index.html
+
+
+App.refreshToken = function() {
+	// // setTimeout(() => {
+	
+	// // }, 60 * 1000)
+
+	keycloak.updateToken(-1)
+	.then(function(refreshed){
+		
+		if (refreshed) {
+			console.debug(`Dashboard access-token refreshed`);
+			console.log("========= accessToken : " ); 
+			console.log(keycloak.token); 
+			const leftSeconds = keycloak.tokenParsed.exp - new Date().getTime() / 1000;
+			console.log("leftSeconds : " + leftSeconds); 
+
+			localStorage.setItem("accessToken", keycloak.token); 
+		} else {
+			console.log(`Dashboard refresh-token refreshed`);
+			console.log("========= refreshToken : " ); 
+			console.log(keycloak.refreshToken); 
+
+			localStorage.setItem("refreshToken", keycloak.refreshToken); 
+		}
+	}).catch(() => {
+		alert('Failed to refresh the token, or the session has expired');
+	});
+};
+
+
+// http://127.0.0.1:8887/logout.html
+// https://pwa-stage.psi-connect.org/logout.html
+App.logout = function() {
+	localStorage.removeItem("accessToken");
+	localStorage.removeItem("accessTokenParsed");
+	localStorage.removeItem("refreshToken");
+	localStorage.removeItem("refreshTokenParsed");
+	localStorage.removeItem("idToken");
+
+	// if( !ConnManagerNew.isAppMode_Offline()  )
+	// {
+		keycloak.logout({"redirectUri":"https://pwa-stage.psi-connect.org/logout.html"});
+	// }
+
+	// keycloak.logout({"redirectUri":"http://127.0.0.1:8887/"});
+};
