@@ -1272,12 +1272,19 @@ Util.valueEscape = function (input) {
 	return input;
 };
 
-Util.valueStringifyEscape = function (inputJson) 
+Util.valueStringifyEscape = function ( input ) 
 {
 	var valStr = '';
 
 	try {
-		if ( inputJson && Util.isTypeObject( inputJson ) ) valStr = Util.valueEscape( JSON.stringify( inputJson ) );	
+		if ( input )
+		{
+			if ( Util.isTypeObject( input ) || Util.isTypeArray( input ) ) valStr = JSON.stringify( input );
+			else if ( Util.isTypeString( input ) ) valStr = input;
+			else valStr = input.toString();
+
+			valStr = Util.valueEscape( valStr );
+		}
 	}
 	catch( errMsg ) { console.log( 'ERROR in Util.valueEscapeStringify, ' + errMsg ); }
 

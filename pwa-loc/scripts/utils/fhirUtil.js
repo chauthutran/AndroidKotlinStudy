@@ -440,6 +440,7 @@ FhirUtil.getQRItemsArray = function( formsJson )
 			for ( var name in formsJson )
 			{
 				var val = formsJson[name];
+				val = Util.valueStringifyEscape( val );
 
 				var item = {};
 
