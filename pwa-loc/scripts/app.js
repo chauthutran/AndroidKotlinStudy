@@ -436,17 +436,27 @@ App.displayTokensInfo = function()
 	const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
 	const idToken = localStorage.getItem("idToken");
 
-	if ( accessToken ) infoStr += ' [AC_TKN: ' + Util.getStr( accessToken, 4 ) + '] ';
-	if ( accessTokenParsed ) infoStr += ' [AC_TKN_P: ' + Util.getStr( accessTokenParsed, 4 ) + '] ';
-	if ( refreshToken ) infoStr += ' [RF_TKN: ' + Util.getStr( refreshToken, 4 ) + '] ';
-	if ( refreshTokenParsed ) infoStr += ' [RF_TKN_P: ' + Util.getStr( refreshTokenParsed, 4 ) + '] ';
-	if ( idToken ) infoStr += ' [ID_TKN: ' + Util.getStr( idToken, 4 ) + '] ';
-
-	console.log( accessToken );
-	console.log( accessTokenParsed );
-	console.log( refreshToken );
-	console.log( refreshTokenParsed );
-	console.log( idToken );
+	if ( accessToken ) {
+		infoStr += ' [AC_TKN: ' + Util.getStr( accessToken, 4 ) + '] ';
+		console.log( accessToken );
+	}
+	if ( accessTokenParsed ) {
+		infoStr += ' [AC_TKN_P: ' + Util.getStr( accessTokenParsed, 4 ) + '] ';
+		console.log( accessTokenParsed );
+	}
+	if ( refreshToken ) {
+		infoStr += ' [RF_TKN: ' + Util.getStr( refreshToken, 4 ) + '] ';
+		console.log( refreshToken );
+	}
+	if ( refreshTokenParsed ) {
+		infoStr += ' [RF_TKN_P: ' + Util.getStr( refreshTokenParsed, 4 ) + '] ';
+		console.log( refreshTokenParsed );
+	}
+	if ( idToken ) {
+		infoStr += ' [ID_TKN: ' + Util.getStr( idToken, 4 ) + '] ';
+		console.log( idToken );
+	}
+	
 
 	$( '#divTokenInfo' ).text( infoStr );
 
