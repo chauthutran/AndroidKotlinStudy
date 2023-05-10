@@ -950,16 +950,17 @@ Login.contentHtml = `
 				<option value="prod">prod</option>
 			</select>]
 		</div>
-		<div id="divKeyCloakUse" style="display: none; color: orange;text-align: left; opacity: 0.7; font-size: 14px;">
+		<div id="divKeyCloakUse" style="display: none; color: orange;text-align: left; font-size: 14px;">
 			<div style="border: 1px; background-color: lightBlue; margin: 2px; padding: 2px; ">
 				KeyCloak Flag:
-				<select id="selKeyCloakUse" disabled style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 4px;">
+				<select id="selKeyCloakUse" disabled style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 4px; opacity: 0.7;">
 					<option value="">No</option>
 					<option value="Y">Yes</option>
-				</select> ==>
-				<button id="btnKeyCloackRun">Run</button><br>
-				accessToken: <br>
-				refreshToken: <br>
+				</select> ==> 
+				<button id="btnKeyCloackRun">Run</button>
+				| <button id="btnKeyCloackLogOut" style="display: none;"></button>
+				<br>
+				<div id="divTokenInfo" style="font-size: 12px;"></div>
 			</div>
 		</div>
 	</div>

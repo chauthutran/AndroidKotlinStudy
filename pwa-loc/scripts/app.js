@@ -109,7 +109,10 @@ App.startAppProcess = function ()
 
 
 		// NEW: KeyCloak calling
-		//if ( AppInfoLSManager.getKeyCloakUse() === 'Y' ) App.keycloakPart(); // <-- Moved to Login page 'button'
+		// if ( AppInfoLSManager.getKeyCloakUse() === 'Y' ) App.keycloakPart(); // <-- Moved to Login page 'button'
+		// '#state', 'session_state', 'code' - 
+		// If any of these param exists, this is keycloak auth return page.  Thus, run App.keycloakPart automatically to set 'localStorage'
+		if ( Util.getParameterByName("session_state") ) App.keycloakPart();
 
 	}
 	catch (err) {
@@ -351,6 +354,8 @@ App.keycloakPart = function()
 
 	if( ConnManagerNew.isAppMode_Offline()  )
 	{
+		App.displayTokensInfo();
+
 		if( accessToken != null && ( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) ) )
 		{
 			alert( "The token is expired. Please connect to internet and login again.");
@@ -368,24 +373,26 @@ App.keycloakPart = function()
 	{
 		if( accessToken != null )
 		{
-			// STEP 2. AFTER KeyCloak Login SUCCESS, After App refresh, we come HERE!!
+			// STEP 3. AFTER KeyCloak Login SUCCESS and a couple app reload, (with token existing ) it comes here - not right away case after keycloak auth (STEP 2)
 			keycloak.init({ onLoad: 'login-required', token: accessToken, refreshToken: refreshToken, idToken: idToken, checkLoginIframe: false, scope: 'openid offline_access'}).then(function() 
 			{				
 				var tagStr = '';
 
 				if( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) )
 				{
-					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.logout()" />';
-					//document.getElementById("placeholder1").innerHTML = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.logout()" />';
+					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+					//document.getElementById("placeholder1").innerHTML = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
 				}
 				else
 				{
 					// STEP 2A. We come HERE!!
-					tagStr = 'Login Success <input type="button" value="Update Token" onclick="App.refreshToken()" /><br><input type="button" value="LOGOUT" onclick="App.logout()" />';
-					//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="App.refreshToken()" /><br><input type="button" value="LOGOUT" onclick="App.logout()" />';
+					tagStr = 'Login Success <input type="button" value="Update Token" onclick="App.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+					//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="App.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
 				}
 
 				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
+
+				App.displayTokensInfo();				
 			})
 			.catch(function() {
 				console.log('failed to initialize with token');
@@ -394,15 +401,18 @@ App.keycloakPart = function()
 		else
 		{
 			// STEP 1. KeyCloak Login 1st Time HERE!!
+			//		+ STEP 2. After redirect from KeyCloak Auth, we come here.
 			keycloak.init({ onLoad: 'login-required', checkLoginIframe: false, scope: 'openid offline_access'}).then(function() {
 				localStorage.setItem("accessToken", keycloak.token);
 				localStorage.setItem("accessTokenParsed", JSON.stringify(keycloak.tokenParsed));
 				localStorage.setItem("refreshToken",keycloak.refreshToken);
 				localStorage.setItem("refreshTokenParsed", JSON.stringify(keycloak.refreshTokenParsed));
 				localStorage.setItem("idToken", keycloak.idToken);
-				
-				//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="App.refreshToken()" /><br><input type="button" value="LOGOUT" onclick="App.logout()" />';
-				var tagStr = '<input type="button" value="Update Token" onclick="App.refreshToken()" /><br><input type="button" value="LOGOUT" onclick="App.logout()" />';
+
+				App.displayTokensInfo();
+
+				//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="App.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+				var tagStr = '<input type="button" value="Update Token" onclick="App.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
 				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
 			})
 			.catch(function() {
@@ -413,13 +423,33 @@ App.keycloakPart = function()
 };
  
 
+App.displayTokensInfo = function()
+{
+	var infoStr = '';
+
+	var logOutTag = $( '#btnKeyCloackLogOut' );
+	logOutTag.hide().off( 'click' );
+
+	const accessToken = localStorage.getItem("accessToken");
+	const accessTokenParsed = localStorage.getItem("accessTokenParsed");
+	const refreshToken = localStorage.getItem("refreshToken");
+	const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
+	const idToken = localStorage.getItem("idToken");
+
+	if ( accessToken ) infoStr += ' [AccTkn: ' + accessToken + '] ';
+	if ( accessTokenParsed ) infoStr += ' [AccTknPar: ' + accessTokenParsed + '] ';
+	if ( refreshToken ) infoStr += ' [RfrTkn: ' + refreshToken + '] ';
+	if ( refreshTokenParsed ) infoStr += ' [RfrTknPar: ' + refreshTokenParsed + '] ';
+	if ( idToken ) infoStr += ' [idTkn: ' + idToken + '] ';
+
+	$( '#divTokenInfo' ).text( infoStr );
+
+	if ( accessToken ) logOutTag.show().click( () => { App.tokenLogout(); });
+};
+
 // TODO: MOVE THEM TO OTHER PLACE --- CALLED FROM index.html
-
-
-App.refreshToken = function() {
-	// // setTimeout(() => {
-	
-	// // }, 60 * 1000)
+App.tokenRefresh = function() {
+	// // setTimeout(() => { // // }, 60 * 1000)
 
 	keycloak.updateToken(-1)
 	.then(function(refreshed){
@@ -447,7 +477,7 @@ App.refreshToken = function() {
 
 // http://127.0.0.1:8887/logout.html
 // https://pwa-stage.psi-connect.org/logout.html
-App.logout = function() {
+App.tokenLogout = function() {
 	localStorage.removeItem("accessToken");
 	localStorage.removeItem("accessTokenParsed");
 	localStorage.removeItem("refreshToken");
@@ -460,4 +490,8 @@ App.logout = function() {
 	// }
 
 	// keycloak.logout({"redirectUri":"http://127.0.0.1:8887/"});
+
+	
+	App.displayTokensInfo(); // TODO: Or, after logOut, we can set to reload the app?
+
 };
