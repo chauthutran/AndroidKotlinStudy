@@ -436,11 +436,17 @@ App.displayTokensInfo = function()
 	const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
 	const idToken = localStorage.getItem("idToken");
 
-	if ( accessToken ) infoStr += ' [AccTkn: ' + accessToken + '] ';
-	if ( accessTokenParsed ) infoStr += ' [AccTknPar: ' + accessTokenParsed + '] ';
-	if ( refreshToken ) infoStr += ' [RfrTkn: ' + refreshToken + '] ';
-	if ( refreshTokenParsed ) infoStr += ' [RfrTknPar: ' + refreshTokenParsed + '] ';
-	if ( idToken ) infoStr += ' [idTkn: ' + idToken + '] ';
+	if ( accessToken ) infoStr += ' [AC_TKN: ' + Util.getStr( accessToken, 4 ) + '] ';
+	if ( accessTokenParsed ) infoStr += ' [AC_TKN_P: ' + Util.getStr( accessTokenParsed, 4 ) + '] ';
+	if ( refreshToken ) infoStr += ' [RF_TKN: ' + Util.getStr( refreshToken, 4 ) + '] ';
+	if ( refreshTokenParsed ) infoStr += ' [RF_TKN_P: ' + Util.getStr( refreshTokenParsed, 4 ) + '] ';
+	if ( idToken ) infoStr += ' [ID_TKN: ' + Util.getStr( idToken, 4 ) + '] ';
+
+	console.log( accessToken );
+	console.log( accessTokenParsed );
+	console.log( refreshToken );
+	console.log( refreshTokenParsed );
+	console.log( idToken );
 
 	$( '#divTokenInfo' ).text( infoStr );
 
@@ -484,14 +490,13 @@ App.tokenLogout = function() {
 	localStorage.removeItem("refreshTokenParsed");
 	localStorage.removeItem("idToken");
 
+	
+	App.displayTokensInfo(); // TODO: Or, after logOut, we can set to reload the app?
+
 	// if( !ConnManagerNew.isAppMode_Offline()  )
 	// {
 		keycloak.logout({"redirectUri":"https://pwa-dev.psi-connect.org/logout.html"});
 	// }
 
 	// keycloak.logout({"redirectUri":"http://127.0.0.1:8887/"});
-
-	
-	App.displayTokensInfo(); // TODO: Or, after logOut, we can set to reload the app?
-
 };

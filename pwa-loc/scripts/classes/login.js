@@ -347,6 +347,8 @@ function Login() {
 			$( '#btnKeyCloackRun' ).click( () => {
 				App.keycloakPart();
 			});
+
+			App.displayTokensInfo(); // Display any value on KeyCloack Token
 		});
 	};
 
@@ -958,7 +960,7 @@ Login.contentHtml = `
 					<option value="Y">Yes</option>
 				</select> ==> 
 				<button id="btnKeyCloackRun">Run</button>
-				| <button id="btnKeyCloackLogOut" style="display: none;"></button>
+				| <button id="btnKeyCloackLogOut" style="display: none;">LogOut</button>
 				<br>
 				<div id="divTokenInfo" style="font-size: 12px;"></div>
 			</div>
