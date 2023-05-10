@@ -343,6 +343,10 @@ function Login() {
 			selTag.off('change').change(() => {
 				AppInfoLSManager.setKeyCloakUse( ( selTag.val() === 'Y' ) ? 'Y': '' );
 			});
+
+			$( '#btnKeyCloackRun' ).click( () => {
+				App.keycloakPart();
+			});
 		});
 	};
 
@@ -946,12 +950,17 @@ Login.contentHtml = `
 				<option value="prod">prod</option>
 			</select>]
 		</div>
-		<div id="divKeyCloakUse" style="display: none; color: orange;text-align: left;">
-			[KeyCloak Use:
-			<select id="selKeyCloakUse" style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 4px;">
-				<option value="">No</option>
-				<option value="Y">Yes</option>
-			</select>]
+		<div id="divKeyCloakUse" style="display: none; color: orange;text-align: left; opacity: 0.7; font-size: 14px;">
+			<div style="border: 1px; background-color: lightBlue; margin: 2px; padding: 2px; ">
+				KeyCloak Flag:
+				<select id="selKeyCloakUse" disabled style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 4px;">
+					<option value="">No</option>
+					<option value="Y">Yes</option>
+				</select> ==>
+				<button id="btnKeyCloackRun">Run</button><br>
+				accessToken: <br>
+				refreshToken: <br>
+			</div>
 		</div>
 	</div>
 

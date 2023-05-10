@@ -109,8 +109,8 @@ App.startAppProcess = function ()
 
 
 		// NEW: KeyCloak calling
+		//if ( AppInfoLSManager.getKeyCloakUse() === 'Y' ) App.keycloakPart(); // <-- Moved to Login page 'button'
 
-		if ( AppInfoLSManager.getKeyCloakUse() === 'Y' ) App.keycloakPart();
 	}
 	catch (err) {
 		console.log('error starting App > startApp() error: ' + err);
