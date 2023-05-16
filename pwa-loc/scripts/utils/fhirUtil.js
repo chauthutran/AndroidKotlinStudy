@@ -114,12 +114,12 @@ FhirUtil.convertQR_Activity = function( qr )
 			// NOTE: We can either use WFA generated activityId or this one..
 			//		- But, because we want to match with existing one, we should replace it?
 			act.id = ( extJson.activityId ) ? extJson.activityId: 'qr_' + patientId + '_' + qr.id;	
+			act.type = ( extJson.activityType ) ? extJson.activityType: '';
 
 			act.activeUser = extJson.activeUser;
 			act.creditedUsers = [ extJson.activeUser ];
 
 			act.date = FhirUtil.getActDateJson( qr.authored ); // need to get this from 'authored'
-
 			act.transactions = [ FhirUtil.getTransFromItem( qr.item, extJson ) ];
 		}
 	}
@@ -488,3 +488,34 @@ FhirUtil.mergeClientDetail = function( clientDetails, pExtClientDetail )
 	}
 };
 
+FhirUtil.getTelInfo = function( telecomArr )
+{
+	var telInfo = {};
+	var telPhone = '';
+	var telWA = '';	
+
+	if ( telecomArr && telecomArr.length > 0 )
+	{
+		telecomArr.forEach( telItem => {
+			if ( telItem.system === 'phone' ) telPhone = telItem;
+			else if ( telItem.system === 'other' && telItem.value && telItem.value.indexOf( 'whatsapp|' ) === 0 ) telWA = telItem;
+		});
+
+		telInfo.ownershipOfPhone = 'HER';
+		telInfo.sharedNumber = ( ( telPhone && telPhone.use === 'temp' ) || ( telWA && telWA.use === 'temp' ) ) ? 'YES': 'NO';
+		telInfo.phoneNumber = ( telPhone ) ? telPhone.value: '';
+		telInfo.phoneNumber_whatsApp = ( telWA ) ? telWA.value: '';
+		// telInfo.contactConsentService = 'NO'; <-- Filled later by extra?
+		// contactConsentService	--> 'NO' / 'YESP' / 'YESPP'	<-- From Consent Resource <-- Need DWS retrieval..
+
+		// preferredLanguage	--> 'en' / 'sw' <-- TODO: where to store this?
+		// preferredContactChannel --> WA / CALL / SMS 
+
+		if ( telPhone && telPhone.rank == 1 ) telInfo.preferredContactChannel = 'CALL';
+		else if ( telWA && telWA.rank == 1 ) telInfo.preferredContactChannel = 'WA';
+	}
+	else telInfo.ownershipOfPhone = 'NO';
+
+
+	return telInfo;
+};

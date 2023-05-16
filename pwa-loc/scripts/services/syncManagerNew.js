@@ -820,32 +820,22 @@ SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_O
 		if (!extraData) extraData = {}; // Always have 'extraData'
 
 		if (extraData.removedClientId) { } // In 'removedClientId' case, do not perform below.
-		else {
+		else 
+		{
 			// Updates UI & perform any followUp actions - 'responseCaseAction'
+			var activityJson = ActivityDataManager.getActivityById(activityId);  // Might not be new activityId if no server one of this activityId were passed.
+			if ( !activityJson ) throw 'FAILED to handle syncUp response, activityId lost: ' + activityId;
 
-			// On failure, if the syncUpCount has rearched the limit, set the appropriate status.
-			var newActivityJson = ActivityDataManager.getActivityById(activityId);
-			// If 'syncUpResponse' changed status, make the UI applicable..
-			//var newActivityJson = ActivityDataManager.getActivityById( activityId );
-
-			if (newActivityJson) 
-			{
-				// NEW: STOP 'processing' status if still on processing status:
-				// 	- Something went wrong, backend did not return this activity after submit/merge 
-				ActivityDataManager.updateStatus_ProcessingToFailed( newActivityJson, { saveData: true, errMsg: 'Backend submit did not work somehow.' } );
+			// NEW: If the activity status is still in 'processing', change it to err msg.
+			if ( errMsg ) 
+			ActivityDataManager.updateStatus_ProcessingToFailed( activityJson, { saveData: true, errMsg: 'Backend submit did not work somehow.' } );
 
 
-				ActivitySyncUtil.displayActivitySyncStatus(activityId);
+			ActivitySyncUtil.displayActivitySyncStatus(activityId);
 
-				// Process 'ResponseCaseAction' - responseJson.report - This schedules more syncUp attempts by response status/code
-				//  - EX. if 'X400', try 10 more tries.. etc..
-				if (responseJson && responseJson.report) {
-					ActivityDataManager.processResponseCaseAction(responseJson.report, activityId);
-				}
-			}
-			else {
-				throw 'FAILED to handle syncUp response, activityId lost: ' + activityId;
-			}
+			// Process 'ResponseCaseAction' - responseJson.report - This schedules more syncUp attempts by response status/code
+			//  - EX. if 'X400', try 10 more tries.. etc..
+			if (responseJson && responseJson.report) ActivityDataManager.processResponseCaseAction(responseJson.report, activityId);
 		}
 
 		afterDoneCall(success, responseJson, newStatus, extraData);
@@ -855,7 +845,7 @@ SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_O
 // =============================================
 
 SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, success, responseJson, callBack) {
-	var operationSuccess = false;
+	var bOptResult = false;
 	var errMsg = 'Error: ';
 	var errorStatus = false;
 	var errStatusCode = 400; 
@@ -863,82 +853,77 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 	try
 	{
 		if ( success && responseJson && responseJson.response && responseJson.response.resourceType === 'Bundle' && responseJson.response.entry )
-		{
-			console.log( ' --- FHIR Bundle Case' );
-		
+		{		
 			var clientJson = FhirUtil.evalClientTemplate( responseJson.response );
+			
+			if ( !clientJson.activities || !Util.getFromList(clientJson.activities, activityId, "id") ) throw 'No matching activity with id, ' + activityId + ', found on result';
 
 			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
 
 			// Removal of existing activity/client happends within 'mergeDownloadClients()'
 			ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
 				// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
-				operationSuccess = true;
+				bOptResult = true;
 				ClientDataManager.saveCurrent_ClientsStore(() => {
-					if (callBack) callBack(operationSuccess, undefined, Constants.status_submit);
+					if (callBack) callBack(bOptResult, undefined, Constants.status_submit);
 				});
 			});
-
 		}  
 		else if ( success && responseJson && responseJson.status === Constants.ws_status_success )
 		{
-			if ( responseJson.result && responseJson.result.client) 
-			{
-				var clientJson = ConfigManager.downloadedData_UidMapping(responseJson.result.client);
-		
-				// #1. Check if current activity Id exists in 'result.client' activities..
-				if (clientJson.activities && Util.getFromList(clientJson.activities, activityId, "id")) {
-					operationSuccess = true;
-		
-					// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
-					var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
-		
-					// [NOTE: STILL USED?]
-					// If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
-					if (processingInfo.fixActivityCase) {
-						delete processingInfo.fixActivityCase;
-						SyncManagerNew.deleteFixActivityRecord(activityId);
-					}
-		
-		
-					// TODO: If this was c_switchUser transaction activity case, and the 'oldUser' matches this user,
-					//  remove the user from database..
-					var removedClient_bySwitchUser = false;
-					var transSwitchUserList = activityJson_Orig.transactions.filter(trans => trans.type === 'c_switchUser');
-		
-					if (transSwitchUserList.length > 0) {
-						var lastTrans_SwitchUser = transSwitchUserList[transSwitchUserList.length - 1];
-		
-						if (lastTrans_SwitchUser.dataValues && lastTrans_SwitchUser.dataValues.oldUser === INFO.login_UserName) removedClient_bySwitchUser = true;
-						// NOT USED - confirm the case for deletion..
-						// if ( clientJson.clientDetails.activeUsers && clientJson.clientDetails.activeUsers.indexOf( INFO.login_UserName ) === -1 ) { } // Also, check for 'creditedUsers' array..
-					}
-		
-					if (removedClient_bySwitchUser) {
-						// ## TODO: THIS WORKS?  The clientCard is removed automatically..  
-						ClientDataManager.removeClient(clientJson);
-		
-						var extraData = { removedClientId: clientJson._id };
-		
-						ClientDataManager.saveCurrent_ClientsStore(() => {
-							if (callBack) callBack(operationSuccess, undefined, Constants.status_submit, extraData);
-						});
-					}
-					else {
-						ClientDataManager.setActivityDateLocal_client(clientJson);
-		
-						// Removal of existing activity/client happends within 'mergeDownloadClients()'
-						ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
-							// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
-							ClientDataManager.saveCurrent_ClientsStore(() => {
-								if (callBack) callBack(operationSuccess, undefined, Constants.status_submit);
-							});
-						});
-					}
-				}
-				else throw 'No matching activity with id, ' + activityId + ', found on result.client.';
+			if ( !responseJson.result || !responseJson.result.client ) throw "'result' not exists in response json.";
+
+			var clientJson = ConfigManager.downloadedData_UidMapping(responseJson.result.client);		
+			// #1. Check if current activity Id exists in 'result.client' activities..
+			if ( !clientJson.activities || !Util.getFromList(clientJson.activities, activityId, "id") ) throw 'No matching activity with id, ' + activityId + ', found on result.client.';
+			
+			bOptResult = true;
+
+			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
+			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
+
+			// [NOTE: STILL USED?]
+			// If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
+			if (processingInfo.fixActivityCase) {
+				delete processingInfo.fixActivityCase;
+				SyncManagerNew.deleteFixActivityRecord(activityId);
 			}
-			else throw "'result' not exists in response json.";
+
+
+			// TODO: If this was c_switchUser transaction activity case, and the 'oldUser' matches this user,
+			//  remove the user from database..
+			var removedClient_bySwitchUser = false;
+			var transSwitchUserList = activityJson_Orig.transactions.filter(trans => trans.type === 'c_switchUser');
+
+			if (transSwitchUserList.length > 0) {
+				var lastTrans_SwitchUser = transSwitchUserList[transSwitchUserList.length - 1];
+
+				if (lastTrans_SwitchUser.dataValues && lastTrans_SwitchUser.dataValues.oldUser === INFO.login_UserName) removedClient_bySwitchUser = true;
+				// NOT USED - confirm the case for deletion..
+				// if ( clientJson.clientDetails.activeUsers && clientJson.clientDetails.activeUsers.indexOf( INFO.login_UserName ) === -1 ) { } // Also, check for 'creditedUsers' array..
+			}
+
+			if (removedClient_bySwitchUser) {
+				// ## TODO: THIS WORKS?  The clientCard is removed automatically..  
+				ClientDataManager.removeClient(clientJson);
+
+				var extraData = { removedClientId: clientJson._id };
+
+				ClientDataManager.saveCurrent_ClientsStore(() => {
+					if (callBack) callBack(bOptResult, undefined, Constants.status_submit, extraData);
+				});
+			}
+			else {
+				ClientDataManager.setActivityDateLocal_client(clientJson);
+
+				// Removal of existing activity/client happends within 'mergeDownloadClients()'
+				ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
+					// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
+					ClientDataManager.saveCurrent_ClientsStore(() => {
+						if (callBack) callBack(bOptResult, undefined, Constants.status_submit);
+					});
+				});
+			}
 		}
 		else
 		{
@@ -986,7 +971,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 		ClientDataManager.saveCurrent_ClientsStore(() => {
 			// Add activityJson processing
-			if (callBack) callBack(operationSuccess, errMsgCatched, newStatus);
+			if (callBack) callBack(bOptResult, errMsgCatched, newStatus);
 		});		
 	}
 };

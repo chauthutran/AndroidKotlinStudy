@@ -595,14 +595,17 @@ Util.traverseEval = function (obj, INFO, iDepth, limit, options ) {
 Util.trvEval_payload = {};
 
 // Traverse and Add all the templates
-Util.trvEval_INSERT_SUBTEMPLATES = function (obj, INFO, defPTemplates, iDepth, limit) {
+Util.trvEval_INSERT_SUBTEMPLATES = function (obj, INFO, defPTemplates, iDepth, limit) 
+{
 	if (iDepth === limit) {
 		throw 'Error in Util.trvEval_INSERT_SUBTEMPLATES, Traverse depth limit has reached: ' + iDepth;
 	}
-	else {
+	else 
+	{
 		var keyArr = Object.keys(obj);
 
-		for (var i = 0; i < keyArr.length; i++) {
+		for ( var i = 0; i < keyArr.length; i++ )
+		{
 			var key = keyArr[i];
 			var propVal = obj[key];
 
@@ -614,7 +617,7 @@ Util.trvEval_INSERT_SUBTEMPLATES = function (obj, INFO, defPTemplates, iDepth, l
 					var subTemplate = Util.cloneJson(templateObj);
 					// OPTIONALLY, WE CAN LOOK FOR SAME SUBTEMP INSERT ON HERE AS WELL..
 					// Util.trvEval_INSERT_SUBTEMPLATES( subTemplate, INFO, defPTemplates, iDepth, limit );
-					Util.mergeDeep(obj, subTemplate);
+					Util.mergeDeep(obj, subTemplate, { keepTargetVal: true } );
 				}
 
 				delete obj[key];
@@ -626,7 +629,7 @@ Util.trvEval_INSERT_SUBTEMPLATES = function (obj, INFO, defPTemplates, iDepth, l
 					if (templateObj) {
 						var subTemplate = Util.cloneJson(templateObj);
 						// Util.trvEval_INSERT_SUBTEMPLATES( subTemplate, INFO, defPTemplates, iDepth, limit );
-						Util.mergeDeep(obj, subTemplate);
+						Util.mergeDeep(obj, subTemplate, { keepTargetVal: true } );
 					}
 				});
 
@@ -918,10 +921,11 @@ Util.mergeDeep = function (dest, obj, option) {
 			else Util.mergeArrays(dVal, oVal);
 		}
 		else if (Util.isTypeObject(dVal) && Util.isTypeObject(oVal)) {
-			Util.mergeDeep(dVal, oVal);
+			Util.mergeDeep(dVal, oVal, option);
 		}
 		else {
-			dest[key] = oVal;
+			if (option && option.keepTargetVal && dest[key] ) { } // with Option, keep original if both exists
+			else dest[key] = oVal;
 		}
 	});
 
