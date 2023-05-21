@@ -307,7 +307,6 @@ WsCallManager.wsActionCall = function( apiPath, payloadJson, loadingTag, returnF
 
     if ( sourceType ) payloadJson.sourceType = sourceType;
     if ( sourceType === ConfigManager.KEY_SourceType_Mongo && mongoSchemaVersion ) payloadJson.mongoSchemaVersion = mongoSchemaVersion;
-    if ( INFO.fhirHeaderProfile ) payloadJson.fhirHeaderProfile = INFO.fhirHeaderProfile;
 
     if ( ConfigManager.getSettings().uniquePhoneNumberCase === true ) payloadJson.uniquePhoneNumberCase = true;
     if ( ConfigManager.getSettings().confirmClientSchLvl > 0 ) payloadJson.confirmClientSchLvl = ConfigManager.getSettings().confirmClientSchLvl;
@@ -342,7 +341,12 @@ WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, retur
     WsCallManager.addExtraPayload_Version( payloadJson );
 
     // NEW - for adding 'syncDownWaitMs': 70000
-    if ( INFO.wsDebug ) payloadJson.wsDebug = INFO.wsDebug;
+    if ( !payloadJson.option ) payloadJson.option = {};
+    if ( INFO.wsDebug ) payloadJson.option.wsDebug = INFO.wsDebug;
+    if ( INFO.fhirHeaderProfile ) payloadJson.option.fhirHeaderProfile = INFO.fhirHeaderProfile;
+
+
+    // TODO: Need to wrap 'syncDown' & search under other json, not use straight, so above can be filtered..
 
     var url = WsCallManager.composeDwsWsFullUrl( apiPath, true );
 

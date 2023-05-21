@@ -509,8 +509,8 @@ FhirUtil.getTelInfo = function( telecomArr )
 		// contactConsentService	--> 'NO' / 'YESP' / 'YESPP'	<-- From Consent Resource <-- Need DWS retrieval..
 
 		// preferredLanguage	--> 'en' / 'sw' <-- TODO: where to store this?
-		// preferredContactChannel --> WA / CALL / SMS 
 
+		// preferredContactChannel --> WA / CALL / SMS 
 		if ( telPhone && telPhone.rank == 1 ) telInfo.preferredContactChannel = 'CALL';
 		else if ( telWA && telWA.rank == 1 ) telInfo.preferredContactChannel = 'WA';
 	}
@@ -518,4 +518,29 @@ FhirUtil.getTelInfo = function( telecomArr )
 
 
 	return telInfo;
+};
+
+
+FhirUtil.getContactConsent = function( consentArr )
+{
+	var consent = false;
+	
+	try 
+	{
+		if ( consentArr && consentArr.length > 0 )
+		{
+			consentArr.forEach( csItem => 
+			{
+				if ( csItem.scope && csItem.scope.coding )
+				{
+					csItem.scope.coding.forEach( cItem => {
+						if ( cItem.system === 'http://sample.info/consentscope' && cItem.code === 'communication' ) consent = true;
+					});
+				}
+			});
+		}	
+	}
+	catch ( errMsg ) { console.log( 'ERROR in FhirUtil.getContactConsent, ' + errMsg ); }
+
+	return consent;
 };

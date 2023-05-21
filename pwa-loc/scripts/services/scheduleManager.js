@@ -238,8 +238,9 @@ ScheduleManager.syncDownRun_Online_Login = function()
 					{
 						SessionManager.cwsRenderObj.renderArea1st();
 
-						MsgManager.noticeMsg( '<span term="msg_syncDownDataMerged">SyncDown data added/merged</span>: ' + mergedActivities.length
-						, { cssClasses: 'notifBlue' } );
+						// MsgManager.noticeMsg( '<span term="msg_syncDownDataMerged">SyncDown data added/merged</span>: ' + mergedActivities.length, { cssClasses: 'notifBlue' } );
+						var tagStr = '<span term="msg_syncDownDataMerged">SyncDown data found and merged</span>';
+						MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifBlue', hideTimeMs: 1000 } );
 					}
 				}
 
