@@ -110,14 +110,23 @@ FhirUtil.convertQR_Activity = function( qr )
 		{
 			var patientId = FhirUtil.getQrPatientId( qr.subject );
 			var extJson = FhirUtil.getExtensionVals( qr.extension );
+			var idenJson = FhirUtil.getIdentifierVals( qr.identifier ); // QR only allow 1 identifier, not array
 
 			// NOTE: We can either use WFA generated activityId or this one..
 			//		- But, because we want to match with existing one, we should replace it?
-			act.id = ( extJson.activityId ) ? extJson.activityId: 'qr_' + patientId + '_' + qr.id;	
-			act.type = ( extJson.activityType ) ? extJson.activityType: '';
+			act.id = '';
+			act.type = '';
+			var activeUser = '';
+			
+			if ( idenJson.activityId ) act.id = idenJson.activityId;
 
-			act.activeUser = extJson.activeUser;
-			act.creditedUsers = [ extJson.activeUser ];
+			if ( !act.id ) act.id = ( extJson.activityId ) ? extJson.activityId : 'qr_' + patientId + '_' + qr.id;	
+			if ( !act.type ) act.type = ( extJson.activityType ) ? extJson.activityType : '';
+
+			if ( extJson.activeUser ) activeUser = extJson.activeUser;
+			
+			act.activeUser = activeUser;
+			act.creditedUsers = [ activeUser ];
 
 			act.date = FhirUtil.getActDateJson( qr.authored ); // need to get this from 'authored'
 			act.transactions = [ FhirUtil.getTransFromItem( qr.item, extJson ) ];
@@ -142,13 +151,13 @@ FhirUtil.getQrPatientId = function( subject )
 };
 
 
-FhirUtil.getTransFromItem = function( items, extJson )
+FhirUtil.getTransFromItem = function( items, extraJson )
 {
 	var trans = { type: 's_info' };
 
 	try
 	{
-		if ( extJson.transType ) trans.type = extJson.transType;
+		if ( extraJson.transType ) trans.type = extraJson.transType;
 		var dataName = FhirUtil.getDataNameByTransType( trans.type );	// Could be either 'dataValues', 'clientDetails'
 		trans[dataName] = {};
 		var transData = trans[dataName];
@@ -182,11 +191,11 @@ FhirUtil.getItemValue = function( item )
 	
 	try
 	{
-		for( var name in item )
+		for( var prop in item )
 		{
-			if ( name.indexOf( 'value' ) >= 0 )
+			if ( prop.indexOf( 'value' ) === 0 )
 			{
-				val = item[name];
+				val = item[prop];
 				break;
 			}
 		}
@@ -195,6 +204,20 @@ FhirUtil.getItemValue = function( item )
 
 	return val;
 };
+
+FhirUtil.getItemName = function( item, prop )
+{
+	var name = ''; 
+	
+	try
+	{
+		if ( item[ prop ] ) name = item[ prop ].replace( 'http://sample.info/', '' );
+	}
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getItemName, ' + errMsg ); }
+
+	return name;
+};
+
 
 FhirUtil.getExtensionVals = function( extension )
 {
@@ -220,6 +243,32 @@ FhirUtil.getExtensionVals = function( extension )
 
 	return extensionJson;
 };
+
+
+// NOT WORK...  NEED TO DEBUG/WALK THROUGH
+FhirUtil.getIdentifierVals = function( idenInput )
+{
+	var idenJson = { };
+	var idenArr = [];
+
+	try
+	{
+		if ( Util.isTypeArray( idenInput ) ) idenArr = idenInput;
+		else if ( Util.isTypeObject( idenInput ) ) idenArr = [ idenInput ];
+
+		idenArr.forEach( item => 
+		{
+			var name = FhirUtil.getItemName( item, 'system' );
+			var val = FhirUtil.getItemValue( item );
+
+			if ( name & val ) idenJson[ name ] = val;
+		});	
+	}
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getIdentifierVals, ' + errMsg ); }
+
+	return idenJson;
+};
+
 
 FhirUtil.getActDateJson = function( authored )
 {
