@@ -356,26 +356,95 @@ App.keycloakPart = function()
 	{
 		App.displayTokensInfo();
 
-		if( accessToken != null && ( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) ) )
-		{
-			alert( "The token is expired. Please connect to internet and login again.");
-		}
-		else if( accessToken != null && !KeycloakUtils.isExpired(accessTokenParsed) && !KeycloakUtils.isExpired(refreshTokenParsed) )
-		{
-			alert( "Logged successfully !!!");
-		}
-		else if( accessToken == null )
+		// the keycloak initilized here is always failed because the init function needs to be internet online to connect Keycloak server.
+		// We need to use this function to parese existing accessToken, refreshToken and idToken to readable data
+
+		if( accessToken == null )
 		{
 			alert( "Please connect internet to login in the first time.");
 		}
+		else
+		{
+			keycloak.init({
+				promiseType: 'native',
+				checkLoginIframe: false,
+				token: accessToken,
+				refreshToken: refreshToken,
+				idToken: idToken
+			}).then(function(authenticated) {
+				// ...
+			})
+			.catch(function() {
+				var tagStr = '';
+	
+				if( keycloak.isTokenExpired() )
+				{
+					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+					//document.getElementById("placeholder1").innerHTML = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+				}
+				else
+				{
+					// STEP 2A. We come HERE!!
+					tagStr = 'Login Success <input type="button" value="Update Token" onclick="App.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+					//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="App.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+				}
+	
+				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
+	
+				App.displayTokensInfo();			
+			});
+		}
+		
+
+		// if( accessToken != null && ( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) ) )
+		// {
+		// 	alert( "The token is expired. Please connect to internet and login again.");
+		// }
+		// else if( accessToken != null && !KeycloakUtils.isExpired(accessTokenParsed) && !KeycloakUtils.isExpired(refreshTokenParsed) )
+		// {
+		// 	// alert( "Logged successfully !!!");
+		// 	keycloak.init({ onLoad: 'login-required', token: accessToken, refreshToken: refreshToken, idToken: idToken, checkLoginIframe: false, scope: 'openid offline_access'}).then(function() 
+		// 	{				
+		// 		var tagStr = '';
+
+		// 		if( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) )
+		// 		{
+		// 			tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+		// 			//document.getElementById("placeholder1").innerHTML = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+		// 		}
+		// 		else
+		// 		{
+		// 			// STEP 2A. We come HERE!!
+		// 			tagStr = 'Login Success <input type="button" value="Update Token" onclick="App.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+		// 			//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="App.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
+		// 		}
+
+		// 		MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
+
+		// 		App.displayTokensInfo();				
+		// 	})
+		// 	.catch(function() {
+		// 		console.log('failed to initialize with token');
+		// 	});
+		// }
+		// else if( accessToken == null )
+		// {
+		// 	alert( "Please connect internet to login in the first time.");
+		// }
 	}
 	else
 	{
 		if( accessToken != null )
 		{
 			// STEP 3. AFTER KeyCloak Login SUCCESS and a couple app reload, (with token existing ) it comes here - not right away case after keycloak auth (STEP 2)
-			keycloak.init({ onLoad: 'login-required', token: accessToken, refreshToken: refreshToken, idToken: idToken, checkLoginIframe: false, scope: 'openid offline_access'}).then(function() 
-			{				
+			keycloak.init({ onLoad: 'login-required', token: accessToken, refreshToken: refreshToken, idToken: idToken, checkLoginIframe: false, scope: 'openid offline_access'}).then(function(auth) 
+			{			
+				if (!auth) {
+					keycloak.login({
+					  scope: 'openid offline_access',
+					});
+				  }
+				  
 				var tagStr = '';
 
 				if( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) )
@@ -505,8 +574,40 @@ App.tokenLogout = function() {
 
 	// if( !ConnManagerNew.isAppMode_Offline()  )
 	// {
-		keycloak.logout({"redirectUri":"https://pwa-dev.psi-connect.org/logout.html"});
+		// keycloak.logout({"redirectUri":"https://pwa-dev.psi-connect.org/logout.html"});
 	// }
 
-	// keycloak.logout({"redirectUri":"http://127.0.0.1:8887/"});
+	keycloak.logout({"redirectUri":"http://127.0.0.1:8887/"});
 };
+
+
+keycloak.onAuthSuccess = function () {
+	App.event('Auth Success');
+};
+
+keycloak.onAuthError = function (errorData) {
+	App.event("Auth Error: " + JSON.stringify(errorData) );
+};
+
+keycloak.onAuthRefreshSuccess = function () {
+	App.event('Auth Refresh Success');
+};
+
+keycloak.onAuthRefreshError = function () {
+	App.event('Auth Refresh Error');
+};
+
+keycloak.onAuthLogout = function () {
+	App.event('Auth Logout');
+};
+
+keycloak.onTokenExpired = function () {
+	App.event('Access token expired.');
+};
+
+App.event = function(event) {
+	// var e = document.getElementById('events').innerHTML;
+	// document.getElementById('events').innerHTML = new Date().toLocaleString() + "\t" + event + "\n" + e;
+	console.log("========== Keycloak eventLOG");
+	console.log(event);
+}
