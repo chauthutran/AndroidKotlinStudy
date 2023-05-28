@@ -370,13 +370,16 @@ App.keycloakPart = function()
 				checkLoginIframe: false,
 				token: accessToken,
 				refreshToken: refreshToken,
-				idToken: idToken
+				idToken: idToken,
+				timeSkew: 0
 			}).then(function(authenticated) {
-				// ...
+				console.log( 'authenticated: ', authenticated );
 			})
 			.catch(function() {
 				var tagStr = '';
-	
+
+				console.log( '[Offline Auth CATCHED]' );
+
 				if( keycloak.isTokenExpired() )
 				{
 					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="App.tokenLogout()" />';
@@ -507,7 +510,7 @@ App.displayTokensInfo = function()
 
 	if ( accessToken ) {
 		infoStr += ' [AC_TKN: ' + Util.getStr( accessToken, 4 ) + '] ';
-		console.log( accessToken );
+		//console.log( accessToken );
 	}
 	if ( accessTokenParsed ) {
 		infoStr += ' [AC_TKN_P: ' + Util.getStr( accessTokenParsed, 4 ) + '] ';
@@ -515,7 +518,7 @@ App.displayTokensInfo = function()
 	}
 	if ( refreshToken ) {
 		infoStr += ' [RF_TKN: ' + Util.getStr( refreshToken, 4 ) + '] ';
-		console.log( refreshToken );
+		//console.log( refreshToken );
 	}
 	if ( refreshTokenParsed ) {
 		infoStr += ' [RF_TKN_P: ' + Util.getStr( refreshTokenParsed, 4 ) + '] ';
@@ -523,7 +526,7 @@ App.displayTokensInfo = function()
 	}
 	if ( idToken ) {
 		infoStr += ' [ID_TKN: ' + Util.getStr( idToken, 4 ) + '] ';
-		console.log( idToken );
+		//console.log( idToken );
 	}
 	
 
@@ -542,7 +545,7 @@ App.tokenRefresh = function() {
 		if (refreshed) {
 			console.debug(`Dashboard access-token refreshed`);
 			console.log("========= accessToken : " ); 
-			console.log(keycloak.token); 
+			//console.log(keycloak.token); 
 			const leftSeconds = keycloak.tokenParsed.exp - new Date().getTime() / 1000;
 			console.log("leftSeconds : " + leftSeconds); 
 
@@ -550,7 +553,7 @@ App.tokenRefresh = function() {
 		} else {
 			console.log(`Dashboard refresh-token refreshed`);
 			console.log("========= refreshToken : " ); 
-			console.log(keycloak.refreshToken); 
+			//console.log(keycloak.refreshToken); 
 
 			localStorage.setItem("refreshToken", keycloak.refreshToken); 
 		}
@@ -577,7 +580,7 @@ App.tokenLogout = function() {
 		// keycloak.logout({"redirectUri":"https://pwa-dev.psi-connect.org/logout.html"});
 	// }
 
-	keycloak.logout({"redirectUri":"http://127.0.0.1:8887/"});
+	keycloak.logout( { "redirectUri": window.location.href } ); // "http://127.0.0.1:8887/" } );
 };
 
 

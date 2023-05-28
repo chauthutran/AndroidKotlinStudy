@@ -35,7 +35,7 @@ self.addEventListener('message', (event) =>
 					//SwHelper.fetchControllers[projDir].abort().catch
 
 					//event.source.postMessage( JSON.stringify({ type: 'jobFiling', aborted: true, options: options }) );
-					delete SwHelper.fetchControllers[projDir];  // setTimeout( function() {  }, 400 );
+					delete SwHelper.fetchControllers[projDir];
 				}
 
 				// else console.log( 'service worker - NOTHING TO CANCEL ' );
