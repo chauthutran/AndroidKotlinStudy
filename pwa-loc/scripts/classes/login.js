@@ -194,16 +194,11 @@ function Login() {
 						}
 					}
 					else {
-						// If multiple char entered, just leave last one. <-- Obsolete by 'keydown' implementation
-						//if ( tagVal.length > 1 ) tag.val( Util.getStrLastChar( tagVal ) );
-
 						var nextTag = $(this).next('.pin_pw');
 						if (nextTag) nextTag.focus();
 					}
 				}
 			}
-
-			//me.current_password = me.getCurrentPassword();
 		});
 
 		// 
@@ -342,34 +337,38 @@ function Login() {
 	me.renderKeyCloakDiv = function( changeFunc ) 
 	{
 		var divUseTag = $( '#divKeyCloakUse' );
-		var selTag = $( '#selKeyCloakUse' );
 		var divKeyCloakInfoTag = $( '#divKeyCloakInfo' );
 
-		if ( AppInfoLSManager.getKeyCloakEnable() === 'Y' )
+		// keycloak setting..
+		var keycloakInUse = ( AppInfoLSManager.getKeyCloakUse() === 'Y' );
+
+		if ( [ 'dev', 'test' ].indexOf( WsCallManager.stageName ) >= 0 )
 		{
-			divUseTag.show();
-
-			// Load saved 'sel' value
-			selTag.val( ( AppInfoLSManager.getKeyCloakUse() === 'Y' ) ? 'Y': '' );
-			( selTag.val() === 'Y' ) ? divKeyCloakInfoTag.show(): divKeyCloakInfoTag.hide();
-
-			// Change Event Setup --> 
-			selTag.off('change').change(() => {
-				AppInfoLSManager.setKeyCloakUse( ( selTag.val() === 'Y' ) ? 'Y': '' );
-				( selTag.val() === 'Y' ) ? divKeyCloakInfoTag.show(): divKeyCloakInfoTag.hide();
-			});
-
-
-			$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakUtils.keycloakPart(); });
-
-			KeycloakUtils.displayTokensInfo(); // Display any value on KeyCloak Token
-		}
-		else
-		{
-			divUseTag.hide();
-			AppInfoLSManager.setKeyCloakUse( '' );
+			if ( !keycloakInUse )
+			{
+				// If emtpy case, show the 'k' button..
+				if ( !AppInfoLSManager.getUserName() ) {
+					$( 'img.imgKeyCloakUse' ).show().off( 'click' ).click( () => { 
+						AppInfoLSManager.setKeyCloakUse( 'Y' );
+						AppUtil.appReloadWtMsg();	
+					});
+				}
+				else $( 'img.imgKeyCloakUse' ).hide();
+			}
+			else 
+			{
+				// In keycloak use case, display the keyCloak related parts..
+				divUseTag.show();
+				divKeyCloakInfoTag.show();
+				Login.loginInputDisable( true ); // enable it when authenticated..
+	
+				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakUtils.keycloakPart(); });
+	
+				KeycloakUtils.displayTokensInfo(); // Display any value on KeyCloak Token
+			}
 		}
 	};
+
 
 	// -----------------------------------
 
@@ -884,6 +883,22 @@ function Login() {
 	me.initialize();
 };
 
+
+Login.loginInputDisable = function( disable )
+{
+	var divSplitPassword = $( 'div.split_password *' );
+	var inputUserNameTag = $( 'input.loginUserName' );
+
+	if ( disable ) {
+		divSplitPassword.prop( 'disabled', true ).css( 'background-color', '#eee' );
+		inputUserNameTag.prop( 'disabled', true ).css( 'background-color', '#eee' );
+	}
+	else {
+		divSplitPassword.prop( 'disabled', false ).css( 'background-color', '' );
+		inputUserNameTag.prop( 'disabled', false ).css( 'background-color', '' );
+	}
+};
+
 Login.contentHtml = `
 <div class="wrapper_login">
 	<div class="login_header">
@@ -935,6 +950,7 @@ Login.contentHtml = `
 				<label id="spanVerDate" style="margin-left: 7px; color: #999999; font-weight: 350;">[2020---]</label>
 				<span class="spanNewVersion_notification" style="color:red; margin: 0px -4px 0px 1px; display: none;" title="New version available">*</span>
 				<img class="imgAppReload mouseDown" title="App reload" src="images/sync-n.svg" style="cursor: pointer; vertical-align: top; margin-bottom: -4px; margin-top: -3px;">
+				<img class="imgKeyCloakUse mouseDown" title="KeyCloak Use" src="images/key.svg" style="display:none; cursor: pointer; vertical-align: top; margin-bottom: -4px; margin-top: -3px; opacity: 0.4; background-color: red;">
 				<span id="spanLoginAppUpdate" term="login_updateApp"
 					style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[UPDATE
 					APP]</span>
@@ -951,13 +967,8 @@ Login.contentHtml = `
 		</div>
 		<div id="divKeyCloakUse" style="display: none; color: orange;text-align: left; font-size: 14px;">
 			<div style="border: 1px; background-color: lightBlue; margin: 2px; padding: 2px; ">
-				KeyCloak Mode:
-				<select id="selKeyCloakUse" style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 2px;">
-					<option value="">No</option>
-					<option value="Y">Yes</option>
-				</select>
 				<div id="divKeyCloakInfo" style="display:none;">
-					<button id="btnKeyCloakRun">Run</button> | 
+					KeyCloak: <button id="btnKeyCloakRun">Run</button> | 
 					<button id="btnKeyCloakLogOut" style="display: none;">LogOut</button>
 					<span id="divTokenInfo" style="font-size: 12px;"></span>
 				</div>

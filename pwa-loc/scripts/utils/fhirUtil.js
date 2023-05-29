@@ -570,26 +570,48 @@ FhirUtil.getTelInfo = function( telecomArr )
 };
 
 
+FhirUtil.getCommInfo = function( commArr )
+{
+	var commInfo = { preferredLanguage: '' };
+
+	if ( commArr && commArr.length > 0 )
+	{
+		commArr.forEach( cItem => {
+			if ( cItem.preferred === true ) 
+			{
+				if ( cItem.language && cItem.language.coding )
+				{
+					cItem.language.coding.forEach( codingItem => {
+						if ( codingItem.code ) commInfo.preferredLanguage = codingItem.code;
+					} );
+				}
+			}
+		});
+	}
+
+	return commInfo;
+};
+
+
 FhirUtil.getContactConsent = function( consentArr )
 {
 	var consent = false;
-	
-	try 
+	var settingFhir = ConfigManager.getSettingFHIR();
+
+	if ( settingFhir.consentDocumentReference )
 	{
-		if ( consentArr && consentArr.length > 0 )
+		try 
 		{
-			consentArr.forEach( csItem => 
+			if ( consentArr && consentArr.length > 0 )
 			{
-				if ( csItem.scope && csItem.scope.coding )
+				consentArr.forEach( csItem => 
 				{
-					csItem.scope.coding.forEach( cItem => {
-						if ( cItem.system === 'http://sample.info/consentscope' && cItem.code === 'communication' ) consent = true;
-					});
-				}
-			});
-		}	
+					if ( csItem.sourceReference && csItem.sourceReference.reference === 'DocumentReference/' + settingFhir.consentDocumentReference ) consent = true;
+				});
+			}	
+		}
+		catch ( errMsg ) { console.log( 'ERROR in FhirUtil.getContactConsent, ' + errMsg ); }	
 	}
-	catch ( errMsg ) { console.log( 'ERROR in FhirUtil.getContactConsent, ' + errMsg ); }
 
 	return consent;
 };

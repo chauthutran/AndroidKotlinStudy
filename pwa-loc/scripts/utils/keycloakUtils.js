@@ -10,37 +10,18 @@ var keycloak;
 KeycloakUtils.startUp = function() 
 {
     keycloak = new Keycloak();
-
     KeycloakUtils.setUpEvents( keycloak );
 };
 
 KeycloakUtils.setUpEvents = function( kcObj ) 
 {
-    kcObj.onAuthSuccess = function () {
-        KeycloakUtils.event('Auth Success');
-    };
-    
-    kcObj.onAuthError = function (errorData) {
-        KeycloakUtils.event("Auth Error: " + JSON.stringify(errorData) );
-    };
-    
-    kcObj.onAuthRefreshSuccess = function () {
-        KeycloakUtils.event('Auth Refresh Success');
-    };
-    
-    kcObj.onAuthRefreshError = function () {
-        KeycloakUtils.event('Auth Refresh Error');
-    };
-    
-    kcObj.onAuthLogout = function () {
-        KeycloakUtils.event('Auth Logout');
-    };
-    
-    kcObj.onTokenExpired = function () {
-        KeycloakUtils.event('Access token expired.');
-    };    
+    kcObj.onAuthSuccess = () => KeycloakUtils.event('Auth Success');    
+    kcObj.onAuthError = (errorData) => KeycloakUtils.event("Auth Error: " + JSON.stringify(errorData) );
+    kcObj.onAuthRefreshSuccess = () => KeycloakUtils.event('Auth Refresh Success');    
+    kcObj.onAuthRefreshError = () => KeycloakUtils.event('Auth Refresh Error');
+    kcObj.onAuthLogout = () => KeycloakUtils.event('Auth Logout');
+    kcObj.onTokenExpired = () => KeycloakUtils.event('Access token expired.');
 };
-
 
 KeycloakUtils.keycloakPart = function() 
 {
@@ -57,10 +38,7 @@ KeycloakUtils.keycloakPart = function()
 		// the keycloak initilized here is always failed because the init function needs to be internet online to connect Keycloak server.
 		// We need to use this function to parese existing accessToken, refreshToken and idToken to readable data
 
-		if( accessToken == null )
-		{
-			alert( "Please connect internet to login in the first time.");
-		}
+		if( accessToken == null ) alert( "Please connect internet to login in the first time.");
 		else
 		{
 			keycloak.init({
@@ -81,13 +59,13 @@ KeycloakUtils.keycloakPart = function()
 				if( keycloak.isTokenExpired() )
 				{
 					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
-					//document.getElementById("placeholder1").innerHTML = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
 				}
 				else
 				{
 					// STEP 2A. We come HERE!!
 					tagStr = 'Login Success <input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
-					//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
+					Login.loginInputDisable( false );  // Start Login?
+					console.log( '[OFFLINE KEYCLOAK TOKEN]: ', keycloak.tokenParsed );
 				}
 	
 				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
@@ -101,26 +79,30 @@ KeycloakUtils.keycloakPart = function()
 		if( accessToken != null )
 		{
 			// STEP 3. AFTER KeyCloak Login SUCCESS and a couple app reload, (with token existing ) it comes here - not right away case after keycloak auth (STEP 2)
-			keycloak.init({ onLoad: 'login-required', token: accessToken, refreshToken: refreshToken, idToken: idToken, checkLoginIframe: false, scope: 'openid offline_access'}).then(function(auth) 
-			{			
-				if (!auth) {
-					keycloak.login({
-					  scope: 'openid offline_access',
-					});
-				  }
+			keycloak.init({ 
+				onLoad: 'login-required', 
+				token: accessToken, 
+				refreshToken: refreshToken, 
+				idToken: idToken, 
+				checkLoginIframe: false, 
+				scope: 'openid offline_access'
+			}).then(function(auth) 
+			{
+				if (!auth) keycloak.login( { scope: 'openid offline_access' } );
 				  
 				var tagStr = '';
 
 				if( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) )
 				{
 					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
-					//document.getElementById("placeholder1").innerHTML = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
 				}
 				else
 				{
 					// STEP 2A. We come HERE!!
 					tagStr = 'Login Success <input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
-					//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
+					Login.loginInputDisable( false );		
+					
+					console.log( '[ONLINE KEYCLOAK TOKEN]: ', keycloak.tokenParsed );
 				}
 
 				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
@@ -135,7 +117,8 @@ KeycloakUtils.keycloakPart = function()
 		{
 			// STEP 1. KeyCloak Login 1st Time HERE!!
 			//		+ STEP 2. After redirect from KeyCloak Auth, we come here.
-			keycloak.init({ onLoad: 'login-required', checkLoginIframe: false, scope: 'openid offline_access'}).then(function() {
+			keycloak.init({ onLoad: 'login-required', checkLoginIframe: false, scope: 'openid offline_access'}).then( function() 
+			{
 				localStorage.setItem("accessToken", keycloak.token);
 				localStorage.setItem("accessTokenParsed", JSON.stringify(keycloak.tokenParsed));
 				localStorage.setItem("refreshToken",keycloak.refreshToken);
@@ -147,9 +130,18 @@ KeycloakUtils.keycloakPart = function()
 				//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
 				var tagStr = '<input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
 				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
+				Login.loginInputDisable( false );
+
+				// W_STEP 1. Save the username info..
+				var userName = keycloak.tokenParsed.preferred_username;
+				if ( userName ) AppInfoLSManager.setUserName( userName.toUpperCase() );
+
+				// Reload? OR SessionManager.cwsRenderObj.loadSavedUserName();
+
 			})
-			.catch(function() {
+			.catch(function( errMsg ) {
 				alert('failed to initialize');
+				console( errMsg );
 			});
 		}
 	}

@@ -661,16 +661,16 @@ ConfigManager.getActivitySch_favClickOpen = function () {
 	return actionName;
 };
 
+ConfigManager.getSettingFHIR = function () 
+{
+	return ( ConfigManager.getSettings().FHIR ) ? ConfigManager.getSettings().FHIR: {};
+};
 
 ConfigManager.getSettingFHIRHeaderProfile = function () 
 {
-	var profileStr = '';
+	var settingFhir = ConfigManager.getSettingFHIR();
 
-	var fhirSetting = ConfigManager.getSettings().FHIR;
-
-	if ( fhirSetting && fhirSetting.headerProfile ) profileStr = fhirSetting.headerProfile;
-
-	return profileStr;
+	return ( settingFhir.headerProfile ) ? settingFhir.headerProfile: '';
 };
 
 ConfigManager.setINFO_SettingFHIRHeaderProfile = function()
