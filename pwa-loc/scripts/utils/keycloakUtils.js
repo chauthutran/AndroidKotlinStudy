@@ -136,8 +136,7 @@ KeycloakUtils.keycloakPart = function()
 				var userName = keycloak.tokenParsed.preferred_username;
 				if ( userName ) AppInfoLSManager.setUserName( userName.toUpperCase() );
 
-				// Reload? OR SessionManager.cwsRenderObj.loadSavedUserName();
-
+				AppUtil.appReloadWtMsg();
 			})
 			.catch(function( errMsg ) {
 				alert('failed to initialize');
