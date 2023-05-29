@@ -303,7 +303,8 @@ function Login() {
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
 
-	me.appVersionInfoDisplay = function () {
+	me.appVersionInfoDisplay = function () 
+	{
 		$('#spanVersion').text(TranslationManager.translateText('Version', 'landingPage_version_label') + ' ' + _ver);
 		$('#spanVerDate').text(' [' + _verDate + ']');
 		$('#loginVersionNote').append('<label style="color: #999999; font-weight: 350;"> ' + _versionNote + '</label>');
@@ -330,48 +331,42 @@ function Login() {
 				AppInfoLSManager.setLocalStageName(stage);
 				WsCallManager.setWsTarget_Stage(stage);
 				alert('Changed to [' + stage + ']');
-
-				me.renderKeyCloakDiv( stage );				
 			});
 		}
 
-
 		// KeyCloak setting..
-		me.renderKeyCloakDiv( WsCallManager.stageName, function( selTag ) 
+		me.renderKeyCloakDiv();
+	};
+
+
+	me.renderKeyCloakDiv = function( changeFunc ) 
+	{
+		var divUseTag = $( '#divKeyCloakUse' );
+		var selTag = $( '#selKeyCloakUse' );
+		var divKeyCloakInfoTag = $( '#divKeyCloakInfo' );
+
+		if ( AppInfoLSManager.getKeyCloakEnable() === 'Y' )
 		{
+			divUseTag.show();
+
+			// Load saved 'sel' value
+			selTag.val( ( AppInfoLSManager.getKeyCloakUse() === 'Y' ) ? 'Y': '' );
+			( selTag.val() === 'Y' ) ? divKeyCloakInfoTag.show(): divKeyCloakInfoTag.hide();
+
 			// Change Event Setup --> 
 			selTag.off('change').change(() => {
 				AppInfoLSManager.setKeyCloakUse( ( selTag.val() === 'Y' ) ? 'Y': '' );
+				( selTag.val() === 'Y' ) ? divKeyCloakInfoTag.show(): divKeyCloakInfoTag.hide();
 			});
 
-			$( '#btnKeyCloackRun' ).click( () => {
-				App.keycloakPart();
-			});
 
-			App.displayTokensInfo(); // Display any value on KeyCloack Token
-		});
-	};
+			$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakUtils.keycloakPart(); });
 
-	me.renderKeyCloakDiv = function( stageName, changeFunc ) 
-	{
-		var selTag = $( '#selKeyCloakUse' );
-		
-		if ( stageName === 'dev' ) // Later, allow 'test' as well?
-		{
-			// Get value from AppInfoLSManager
-			var keyCloakUse = AppInfoLSManager.getKeyCloakUse();
-
-			selTag.val( ( keyCloakUse === 'Y' ) ? 'Y': '' );
-
-			// display 
-			$( '#divKeyCloakUse' ).show();
-
-			if ( changeFunc ) changeFunc( selTag );
+			KeycloakUtils.displayTokensInfo(); // Display any value on KeyCloak Token
 		}
 		else
 		{
-			$( '#divKeyCloakUse' ).hide();
-			selTag.val( '' );
+			divUseTag.hide();
 			AppInfoLSManager.setKeyCloakUse( '' );
 		}
 	};
@@ -659,6 +654,8 @@ function Login() {
 						},
 						sourceType: configJson.sourceType
 					} );
+
+					AppInfoLSManager.setKeyCloakEnable( ( ConfigManager.getSettings().keyCloakEnable ) ? 'Y': '' ); 
 
 
 					// Check the translation - if there is any new updated translations.  If so, retrieve & save & use it.
@@ -954,15 +951,16 @@ Login.contentHtml = `
 		</div>
 		<div id="divKeyCloakUse" style="display: none; color: orange;text-align: left; font-size: 14px;">
 			<div style="border: 1px; background-color: lightBlue; margin: 2px; padding: 2px; ">
-				KeyCloak Flag:
-				<select id="selKeyCloakUse" disabled style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 4px; opacity: 0.7;">
+				KeyCloak Mode:
+				<select id="selKeyCloakUse" style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 2px;">
 					<option value="">No</option>
 					<option value="Y">Yes</option>
-				</select> ==> 
-				<button id="btnKeyCloackRun">Run</button>
-				| <button id="btnKeyCloackLogOut" style="display: none;">LogOut</button>
-				<br>
-				<div id="divTokenInfo" style="font-size: 12px;"></div>
+				</select>
+				<div id="divKeyCloakInfo" style="display:none;">
+					<button id="btnKeyCloakRun">Run</button> | 
+					<button id="btnKeyCloakLogOut" style="display: none;">LogOut</button>
+					<span id="divTokenInfo" style="font-size: 12px;"></span>
+				</div>
 			</div>
 		</div>
 	</div>

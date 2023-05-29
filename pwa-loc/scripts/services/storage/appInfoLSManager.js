@@ -17,6 +17,7 @@ AppInfoLSManager.KEY_NETWORKSYNC = "networkSync";
 AppInfoLSManager.KEY_LAST_SYNCALL_DT = "lastSyncAllDt";
 AppInfoLSManager.KEY_LOCAL_STAGENAME = "localStageName"; 
 AppInfoLSManager.KEY_KEYCLOCK_USE = "keyClockUse"; 
+AppInfoLSManager.KEY_KEYCLOCK_ENABLE = "keyClockEnable"; 
 AppInfoLSManager.KEY_JOBAID_FOLDER_NAMES = "jobAidFolderNames";
 AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE = "configVersioningEnable";
 AppInfoLSManager.KEY_CONFIG_VERSION = "configVersion";
@@ -466,15 +467,31 @@ AppInfoLSManager.getLoginRespOLD_createdDT = function( loginRespOLD )
 
 // ----  Stage related..
 
-AppInfoLSManager.getKeyCloakUse = function() 
+
+// -----------------------------
+AppInfoLSManager.getKeyCloakUse = function()
 {
-    return AppInfoLSManager.getKeyValue( AppInfoLSManager.KEY_KEYCLOCK_USE );
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_KEYCLOCK_USE );
 };
 
-AppInfoLSManager.setKeyCloakUse = function( useStrY ) 
+AppInfoLSManager.setKeyCloakUse = function( useStrY )
 {
-    AppInfoLSManager.updateKey_StrValue( AppInfoLSManager.KEY_KEYCLOCK_USE, useStrY );
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_KEYCLOCK_USE, useStrY );
 };
+
+// ----------------------
+AppInfoLSManager.getKeyCloakEnable = function()
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_KEYCLOCK_ENABLE );
+};
+
+AppInfoLSManager.setKeyCloakEnable = function( useStrY )
+{
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_KEYCLOCK_ENABLE, useStrY );
+};
+
+// ----------------------
+
 
 // ----------------------------------
 // === Simple Data Store - SAVE / GET
