@@ -54,7 +54,9 @@ App.run = function ()
 	// By param 'debug' with pwd - uses AppInfoLSManager
 	DevHelper.checkNStartDebugConsole();
 
-	
+	var paramMsg = Util.getParameterByName("msg");
+	if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );
+
 	KeycloakUtils.startUp();
 	
 

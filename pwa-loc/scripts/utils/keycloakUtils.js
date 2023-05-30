@@ -15,12 +15,12 @@ KeycloakUtils.startUp = function()
 
 KeycloakUtils.setUpEvents = function( kcObj ) 
 {
-    kcObj.onAuthSuccess = () => KeycloakUtils.event('Auth Success');    
-    kcObj.onAuthError = (errorData) => KeycloakUtils.event("Auth Error: " + JSON.stringify(errorData) );
-    kcObj.onAuthRefreshSuccess = () => KeycloakUtils.event('Auth Refresh Success');    
-    kcObj.onAuthRefreshError = () => KeycloakUtils.event('Auth Refresh Error');
-    kcObj.onAuthLogout = () => KeycloakUtils.event('Auth Logout');
-    kcObj.onTokenExpired = () => KeycloakUtils.event('Access token expired.');
+    kcObj.onAuthSuccess = () => KeycloakUtils.eventMsg('Auth Success');    
+    kcObj.onAuthError = (errorData) => KeycloakUtils.eventMsg("Auth Error: " + JSON.stringify(errorData) );
+    kcObj.onAuthRefreshSuccess = () => KeycloakUtils.eventMsg('Auth Refresh Success');    
+    kcObj.onAuthRefreshError = () => KeycloakUtils.eventMsg('Auth Refresh Error');
+    kcObj.onAuthLogout = () => KeycloakUtils.eventMsg('Auth Logout');
+    kcObj.onTokenExpired = () => KeycloakUtils.eventMsg('Access token expired.');
 };
 
 KeycloakUtils.keycloakPart = function() 
@@ -152,7 +152,7 @@ KeycloakUtils.keycloakPart = function()
 };
  
 
-KeycloakUtils.displayTokensInfo = function( keycloak )
+KeycloakUtils.displayTokensInfo = function()
 {
 	var infoStr = '';
 
@@ -161,17 +161,19 @@ KeycloakUtils.displayTokensInfo = function( keycloak )
 	var tokenParsed = '';
 
 	if ( keycloak ) tokenParsed = keycloak.tokenParsed;
+	
+	const accessTokenParsed = tokenParsed; // localStorage.getItem("accessTokenParsed");
+	//const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
 
 	const accessToken = localStorage.getItem("accessToken");
-	const accessTokenParsed = tokenParsed; // localStorage.getItem("accessTokenParsed");
 	const refreshToken = localStorage.getItem("refreshToken");
-	//const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
 	const idToken = localStorage.getItem("idToken");
 
 	if ( accessToken ) {
 		infoStr += ' [AC_TKN: ' + Util.getStr( accessToken, 4 ) + '] ';
 		//console.log( accessToken );
 	}
+
 	if ( accessTokenParsed ) {
 		infoStr += ' [AC_TKN_P: ' + Util.getStr( accessTokenParsed, 4 ) + '] ';
 		console.log( accessTokenParsed );
@@ -225,29 +227,40 @@ KeycloakUtils.tokenRefresh = function() {
 
 // http://127.0.0.1:8887/logout.html
 // https://pwa-stage.psi-connect.org/logout.html
-KeycloakUtils.tokenLogout = function() {
-	localStorage.removeItem("accessToken");
-	localStorage.removeItem("accessTokenParsed");
-	localStorage.removeItem("refreshToken");
-	localStorage.removeItem("refreshTokenParsed");
-	localStorage.removeItem("idToken");
-
-	
-	KeycloakUtils.displayTokensInfo(); // TODO: Or, after logOut, we can set to reload the app?
-
-	if( !ConnManagerNew.isAppMode_Offline()  )
+KeycloakUtils.tokenLogout = function() 
+{
+	if( ConnManagerNew.isAppMode_Offline() ) KeycloakUtils.localStorageRemove();
+	else
 	{
-		keycloak.logout({"redirectUri": window.location.href + "logout.html"});
+		//keycloak.logout( { redirectUri : window.location.href + "logout.html"});
+		keycloak.logout( { redirectUri : window.location.href + '?msg=keycloak_loggedOut' } ).then((success) => 
+		{
+			// TODO: Otherwise, pass the removal in param
+			KeycloakUtils.localStorageRemove();
+
+			console.log("--> KeyCloak: logout success ", success );
+		}).catch((error) => {
+			console.log("--> KeyCloak: logout error ", error );
+		});
 	}
 
 	//keycloak.logout( { "redirectUri": window.location.href } ); // "http://127.0.0.1:8887/" } );
 };
 
+KeycloakUtils.localStorageRemove = function() {
+	localStorage.removeItem("accessToken");
+	//localStorage.removeItem("accessTokenParsed");
+	localStorage.removeItem("refreshToken");
+	//localStorage.removeItem("refreshTokenParsed");
+	localStorage.removeItem("idToken");
+	
+	KeycloakUtils.displayTokensInfo(); // TODO: Or, after logOut, we can set to reload the app?
+};
 
-KeycloakUtils.event = function(event) {
+
+KeycloakUtils.eventMsg = function(event) {
 	// var e = document.getElementById('events').innerHTML;
 	// document.getElementById('events').innerHTML = new Date().toLocaleString() + "\t" + event + "\n" + e;
-	console.log("========== Keycloak eventLOG");
 	console.log(event);
 };
 
