@@ -50,6 +50,7 @@ KeycloakUtils.keycloakPart = function()
 				timeSkew: 0
 			}).then(function(authenticated) {
 				console.log( 'authenticated: ', authenticated );
+				if( exeFunc ) exeFunc(true);
 			})
 			.catch(function() {
 				var tagStr = '';
@@ -58,19 +59,20 @@ KeycloakUtils.keycloakPart = function()
 
 				if( keycloak.isTokenExpired() )
 				{
-					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
+					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="KeycloakUtils.setPendingAction(\'logoutToken\');" />';
 				}
-				else
+				else // Offline mode cannot refresh token
 				{
 					// STEP 2A. We come HERE!!
-					tagStr = 'Login Success <input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
+					tagStr = 'Login Success !';
+					// tagStr = 'Login Success <input type="button" value="Update Token" onclick="KeycloakUtils.setPendingAction(\'refreshToken\')" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
 					Login.loginInputDisable( false );  // Start Login?
 					console.log( '[OFFLINE KEYCLOAK TOKEN]: ', keycloak.tokenParsed );
 				}
 	
 				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
 	
-				KeycloakUtils.displayTokensInfo();			
+				KeycloakUtils.displayTokensInfo();
 			});
 		}
 	}
@@ -87,21 +89,21 @@ KeycloakUtils.keycloakPart = function()
 				idToken: idToken, 
 				checkLoginIframe: false, 
 				scope: 'openid offline_access',
-				//timeSkew: 0
+				adapter: 'default'
 			}).then(function(auth) 
 			{
 				if (!auth) keycloak.login( { scope: 'openid offline_access' } );
 				  
 				var tagStr = '';
 
-				if( keycloak.isExpired())
+				if( keycloak.isTokenExpired())
 				{
-					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
+					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="KeycloakUtils.setPendingAction(\'logoutToken\');" />';
 				}
 				else
 				{
 					// STEP 2A. We come HERE!!
-					tagStr = 'Login Success <input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
+					tagStr = 'Login Success <input type="button" value="Update Token" onclick="KeycloakUtils.setPendingAction(\'refreshToken\');" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.setPendingAction(\'logoutToken\');" />';
 					Login.loginInputDisable( false );		
 					
 					console.log( '[ONLINE KEYCLOAK TOKEN]: ', keycloak.tokenParsed );
@@ -109,7 +111,16 @@ KeycloakUtils.keycloakPart = function()
 
 				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
 
-				KeycloakUtils.displayTokensInfo();				
+				KeycloakUtils.displayTokensInfo();	
+
+				if( KeycloakUtils.getPendingAction() == "refreshToken" )
+				{
+					KeycloakUtils.tokenRefresh();
+				}
+				else if( KeycloakUtils.getPendingAction() == "logoutToken" )
+				{
+					KeycloakUtils.tokenLogout();
+				}
 			})
 			.catch(function() {
 				console.log('failed to initialize with token');
@@ -122,7 +133,8 @@ KeycloakUtils.keycloakPart = function()
 			keycloak.init({ 
 				onLoad: 'login-required', 
 				checkLoginIframe: false, 
-				scope: 'openid offline_access'
+				scope: 'openid offline_access',
+				adapter: 'default'
 			}).then( function() {
 				localStorage.setItem("accessToken", keycloak.token);
 				//localStorage.setItem("accessTokenParsed", JSON.stringify(keycloak.tokenParsed));
@@ -133,15 +145,26 @@ KeycloakUtils.keycloakPart = function()
 				KeycloakUtils.displayTokensInfo();
 
 				//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
-				var tagStr = '<input type="button" value="Update Token" onclick="KeycloakUtils.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
+				var tagStr = '<input type="button" value="Update Token" onclick="KeycloakUtils.setPendingAction(\'refreshToken\');" /><br><input type="button" value="LOGOUT" onclick="KeycloakUtils.setPendingAction(\'logoutToken\');" />';
 				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
-				Login.loginInputDisable( false );
 
 				// W_STEP 1. Save the username info..
 				var userName = keycloak.tokenParsed.preferred_username;
 				if ( userName ) AppInfoLSManager.setUserName( userName.toUpperCase() );
+				if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
+				//AppUtil.appReloadWtMsg();
 
-				AppUtil.appReloadWtMsg();
+				Login.loginInputDisable( false );
+				
+
+				if( KeycloakUtils.getPendingAction() == "refreshToken" )
+				{
+					KeycloakUtils.tokenRefresh();
+				}
+				else if( KeycloakUtils.getPendingAction() == "logoutToken" )
+				{
+					KeycloakUtils.tokenLogout();
+				}
 			})
 			.catch(function( errMsg ) {
 				alert('failed to initialize');
@@ -151,6 +174,17 @@ KeycloakUtils.keycloakPart = function()
 	}
 };
  
+KeycloakUtils.setPendingAction = function( actionName )
+{
+	localStorage.setItem('keycloakPendingAction', actionName);
+	KeycloakUtils.keycloakPart();
+}
+
+KeycloakUtils.getPendingAction = function()
+{
+	var pendingAction = localStorage.getItem('keycloakPendingAction');
+	return ( pendingAction == null || pendingAction == "" ) ? undefined : pendingAction;
+}
 
 KeycloakUtils.displayTokensInfo = function()
 {
@@ -158,12 +192,6 @@ KeycloakUtils.displayTokensInfo = function()
 
 	var logOutTag = $( '#btnKeyCloakLogOut' );
 	logOutTag.hide().off( 'click' );
-	var tokenParsed = '';
-
-	if ( keycloak ) tokenParsed = keycloak.tokenParsed;
-	
-	const accessTokenParsed = tokenParsed; // localStorage.getItem("accessTokenParsed");
-	//const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
 
 	const accessToken = localStorage.getItem("accessToken");
 	const refreshToken = localStorage.getItem("refreshToken");
@@ -171,36 +199,23 @@ KeycloakUtils.displayTokensInfo = function()
 
 	if ( accessToken ) {
 		infoStr += ' [AC_TKN: ' + Util.getStr( accessToken, 4 ) + '] ';
-		//console.log( accessToken );
-	}
-
-	if ( accessTokenParsed ) {
-		infoStr += ' [AC_TKN_P: ' + Util.getStr( accessTokenParsed, 4 ) + '] ';
-		console.log( accessTokenParsed );
 	}
 	if ( refreshToken ) {
 		infoStr += ' [RF_TKN: ' + Util.getStr( refreshToken, 4 ) + '] ';
-		//console.log( refreshToken );
 	}
-	//if ( refreshTokenParsed ) {
-	//	infoStr += ' [RF_TKN_P: ' + Util.getStr( refreshTokenParsed, 4 ) + '] ';
-	//	console.log( refreshTokenParsed );
-	//}
 	if ( idToken ) {
 		infoStr += ' [ID_TKN: ' + Util.getStr( idToken, 4 ) + '] ';
-		//console.log( idToken );
 	}
 	
 
 	$( '#divTokenInfo' ).text( infoStr );
 
-	if ( accessToken ) logOutTag.show().click( () => { KeycloakUtils.tokenLogout(); });
+	if ( accessToken ) logOutTag.show().click( () => { KeycloakUtils.setPendingAction("logoutToken"); });
 };
 
 // TODO: MOVE THEM TO OTHER PLACE --- CALLED FROM index.html
 KeycloakUtils.tokenRefresh = function() {
-	// // setTimeout(() => { // // }, 60 * 1000)
-
+	
 	keycloak.updateToken(-1)
 	.then(function(refreshed){
 		
@@ -219,14 +234,35 @@ KeycloakUtils.tokenRefresh = function() {
 
 			localStorage.setItem("refreshToken", keycloak.refreshToken); 
 		}
+		
+		localStorage.removeItem("keycloakPendingAction");
 	}).catch(() => {
 		alert('Failed to refresh the token, or the session has expired');
 	});
+
+	
 };
 
 
 // http://127.0.0.1:8887/logout.html
 // https://pwa-stage.psi-connect.org/logout.html
+KeycloakUtils.tokenLogout = function() {
+	
+	// KeycloakUtils.displayTokensInfo(); // TODO: Or, after logOut, we can set to reload the app?
+
+	if( !ConnManagerNew.isAppMode_Offline()  )
+	{
+		localStorage.removeItem("accessToken");
+		localStorage.removeItem("refreshToken");
+		localStorage.removeItem("idToken");
+		localStorage.removeItem("keycloakPendingAction");
+		keycloak.logout({"redirectUri": window.location.href + "logout.html"});
+			
+	}
+
+	//keycloak.logout( { "redirectUri": window.location.href } ); // "http://127.0.0.1:8887/" } );
+};
+/*
 KeycloakUtils.tokenLogout = function() 
 {
 	if( ConnManagerNew.isAppMode_Offline() ) KeycloakUtils.localStorageRemove();
@@ -246,6 +282,8 @@ KeycloakUtils.tokenLogout = function()
 
 	//keycloak.logout( { "redirectUri": window.location.href } ); // "http://127.0.0.1:8887/" } );
 };
+*/
+
 
 KeycloakUtils.localStorageRemove = function() {
 	localStorage.removeItem("accessToken");

@@ -370,7 +370,7 @@ function Login() {
 	
 				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakUtils.keycloakPart(); });
 	
-				KeycloakUtils.displayTokensInfo(); // Display any value on KeyCloak Token
+				KeycloakUtils.displayTokensInfo();
 			}
 		}
 	};
