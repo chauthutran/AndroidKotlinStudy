@@ -26,9 +26,9 @@ KeycloakUtils.setUpEvents = function( kcObj )
 KeycloakUtils.keycloakPart = function() 
 {
 	const accessToken = localStorage.getItem("accessToken");
-	const accessTokenParsed = localStorage.getItem("accessTokenParsed");
+	//const accessTokenParsed = localStorage.getItem("accessTokenParsed");
 	const refreshToken = localStorage.getItem("refreshToken");
-	const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
+	//const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
 	const idToken = localStorage.getItem("idToken");
 
 	if( ConnManagerNew.isAppMode_Offline()  )
@@ -76,6 +76,7 @@ KeycloakUtils.keycloakPart = function()
 	}
 	else
 	{
+		// ONLINE MODE
 		if( accessToken != null )
 		{
 			// STEP 3. AFTER KeyCloak Login SUCCESS and a couple app reload, (with token existing ) it comes here - not right away case after keycloak auth (STEP 2)
@@ -85,14 +86,15 @@ KeycloakUtils.keycloakPart = function()
 				refreshToken: refreshToken, 
 				idToken: idToken, 
 				checkLoginIframe: false, 
-				scope: 'openid offline_access'
+				scope: 'openid offline_access',
+				//timeSkew: 0
 			}).then(function(auth) 
 			{
 				if (!auth) keycloak.login( { scope: 'openid offline_access' } );
 				  
 				var tagStr = '';
 
-				if( KeycloakUtils.isExpired(accessTokenParsed) || KeycloakUtils.isExpired(refreshTokenParsed) )
+				if( keycloak.isExpired())
 				{
 					tagStr = 'The token is expired. Please login again. <br/><input type="button" value="LOGOUT" onclick="KeycloakUtils.tokenLogout()" />';
 				}
@@ -117,12 +119,15 @@ KeycloakUtils.keycloakPart = function()
 		{
 			// STEP 1. KeyCloak Login 1st Time HERE!!
 			//		+ STEP 2. After redirect from KeyCloak Auth, we come here.
-			keycloak.init({ onLoad: 'login-required', checkLoginIframe: false, scope: 'openid offline_access'}).then( function() 
-			{
+			keycloak.init({ 
+				onLoad: 'login-required', 
+				checkLoginIframe: false, 
+				scope: 'openid offline_access'
+			}).then( function() {
 				localStorage.setItem("accessToken", keycloak.token);
-				localStorage.setItem("accessTokenParsed", JSON.stringify(keycloak.tokenParsed));
+				//localStorage.setItem("accessTokenParsed", JSON.stringify(keycloak.tokenParsed));
 				localStorage.setItem("refreshToken",keycloak.refreshToken);
-				localStorage.setItem("refreshTokenParsed", JSON.stringify(keycloak.refreshTokenParsed));
+				//localStorage.setItem("refreshTokenParsed", JSON.stringify(keycloak.refreshTokenParsed));
 				localStorage.setItem("idToken", keycloak.idToken);
 
 				KeycloakUtils.displayTokensInfo();
@@ -147,17 +152,20 @@ KeycloakUtils.keycloakPart = function()
 };
  
 
-KeycloakUtils.displayTokensInfo = function()
+KeycloakUtils.displayTokensInfo = function( keycloak )
 {
 	var infoStr = '';
 
 	var logOutTag = $( '#btnKeyCloakLogOut' );
 	logOutTag.hide().off( 'click' );
+	var tokenParsed = '';
+
+	if ( keycloak ) tokenParsed = keycloak.tokenParsed;
 
 	const accessToken = localStorage.getItem("accessToken");
-	const accessTokenParsed = localStorage.getItem("accessTokenParsed");
+	const accessTokenParsed = tokenParsed; // localStorage.getItem("accessTokenParsed");
 	const refreshToken = localStorage.getItem("refreshToken");
-	const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
+	//const refreshTokenParsed = localStorage.getItem("refreshTokenParsed");
 	const idToken = localStorage.getItem("idToken");
 
 	if ( accessToken ) {
@@ -172,10 +180,10 @@ KeycloakUtils.displayTokensInfo = function()
 		infoStr += ' [RF_TKN: ' + Util.getStr( refreshToken, 4 ) + '] ';
 		//console.log( refreshToken );
 	}
-	if ( refreshTokenParsed ) {
-		infoStr += ' [RF_TKN_P: ' + Util.getStr( refreshTokenParsed, 4 ) + '] ';
-		console.log( refreshTokenParsed );
-	}
+	//if ( refreshTokenParsed ) {
+	//	infoStr += ' [RF_TKN_P: ' + Util.getStr( refreshTokenParsed, 4 ) + '] ';
+	//	console.log( refreshTokenParsed );
+	//}
 	if ( idToken ) {
 		infoStr += ' [ID_TKN: ' + Util.getStr( idToken, 4 ) + '] ';
 		//console.log( idToken );
@@ -227,12 +235,12 @@ KeycloakUtils.tokenLogout = function() {
 	
 	KeycloakUtils.displayTokensInfo(); // TODO: Or, after logOut, we can set to reload the app?
 
-	// if( !ConnManagerNew.isAppMode_Offline()  )
-	// {
-		// keycloak.logout({"redirectUri":"https://pwa-dev.psi-connect.org/logout.html"});
-	// }
+	if( !ConnManagerNew.isAppMode_Offline()  )
+	{
+		keycloak.logout({"redirectUri": window.location.href + "logout.html"});
+	}
 
-	keycloak.logout( { "redirectUri": window.location.href } ); // "http://127.0.0.1:8887/" } );
+	//keycloak.logout( { "redirectUri": window.location.href } ); // "http://127.0.0.1:8887/" } );
 };
 
 

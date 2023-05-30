@@ -263,6 +263,12 @@ function Login() {
 					MsgFormManager.appBlockTemplate('appLoad');
 
 					AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");
+
+
+					// NEW!!
+					var keycloakInUse = ( AppInfoLSManager.getKeyCloakUse() === 'Y' );
+					if ( keycloakInUse ) KeycloakUtils.tokenLogout();
+
 				});
 			});
 

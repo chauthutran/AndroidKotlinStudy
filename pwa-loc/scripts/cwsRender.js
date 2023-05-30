@@ -469,7 +469,7 @@ function cwsRender()
 		me.jobAid_iFrameClose_WtMsg();
 
 		SwManager.checkAppUpdate( '[AppUpdateCheck] - logOutProcess', { noMinTimeSkip: true } );
-				
+		
 		SwManager.refreshForNewAppFile_IfAvailable();  // even on offline
 	};
 
