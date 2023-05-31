@@ -141,14 +141,24 @@ DataManager2.encryptData = function( dataJson, passwd )
 
 DataManager2.decriptData_CMN = function( dataStr, iv )
 {
-	var descriptedVal = CryptoJS.AES.decrypt( dataStr.toString(), iv, {
-		keySize: 128 / 8,
-		iv: iv,
-		mode: CryptoJS.mode.CBC,
-		padding: CryptoJS.pad.Pkcs7
-	});
+	var utf8StrVal = '';
 
-	var utf8StrVal = CryptoJS.enc.Utf8.stringify( descriptedVal );
+	try
+	{
+		var descriptedVal = CryptoJS.AES.decrypt( dataStr.toString(), iv, {
+			keySize: 128 / 8,
+			iv: iv,
+			mode: CryptoJS.mode.CBC,
+			padding: CryptoJS.pad.Pkcs7
+		});
+	
+		utf8StrVal = CryptoJS.enc.Utf8.stringify( descriptedVal );	
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR decripting Data, ' + errMsg );
+		// throw errMsg;
+	}
 
 	return utf8StrVal;
 }
@@ -211,7 +221,7 @@ DataManager2.checkDecriptionPasswd = function( keyName, passwd, callBack )
 	}
 	catch ( errMsg )
 	{
-		console.log( 'password failed to decript' );
+		console.log( 'password failed to decript' + errMsg );
 		callBack( false );
 	}
 };

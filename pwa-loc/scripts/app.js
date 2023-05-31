@@ -57,7 +57,7 @@ App.run = function ()
 	var paramMsg = Util.getParameterByName("msg");
 	if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );
 
-	KeycloakUtils.startUp();
+	KeycloakManager.startUp();
 	
 
 	// Service Worker Related Initial Setup
@@ -113,10 +113,7 @@ App.startAppProcess = function ()
 
 
 		// NEW: KeyCloak calling
-		// if ( AppInfoLSManager.getKeyCloakUse() === 'Y' ) App.keycloakPart(); // <-- Moved to Login page 'button'
-		// '#state', 'session_state', 'code' - 
-		// If any of these param exists, this is keycloak auth return page.  Thus, run App.keycloakPart automatically to set 'localStorage'
-		if ( Util.getParameterByName("session_state") ) KeycloakUtils.keycloakPart();
+		if ( Util.getParameterByName("session_state") ) KeycloakManager.keycloakPart();
 
 	}
 	catch (err) {

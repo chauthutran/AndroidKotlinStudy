@@ -251,7 +251,9 @@ function Login() {
 	};
 
 
-	me.changeUserBtnClick = function () {
+	// User Switch, User Remove / Clear
+	me.changeUserBtnClick = function () 
+	{
 		FormUtil.getScrimTag().off('click');  // Make it not cancelable by clicking on scrim anymore...
 
 		// Populates the center aligned #dialog_confirmation div
@@ -262,13 +264,10 @@ function Login() {
 
 					MsgFormManager.appBlockTemplate('appLoad');
 
+					// NEW!! - When User Changing, if keycloak is in use, perform logout 1st..
+					if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.tokenLogout();
+
 					AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");
-
-
-					// NEW!!
-					var keycloakInUse = ( AppInfoLSManager.getKeyCloakUse() === 'Y' );
-					if ( keycloakInUse ) KeycloakUtils.tokenLogout();
-
 				});
 			});
 
@@ -346,11 +345,9 @@ function Login() {
 		var divKeyCloakInfoTag = $( '#divKeyCloakInfo' );
 
 		// keycloak setting..
-		var keycloakInUse = ( AppInfoLSManager.getKeyCloakUse() === 'Y' );
-
 		if ( [ 'dev', 'test' ].indexOf( WsCallManager.stageName ) >= 0 )
 		{
-			if ( !keycloakInUse )
+			if ( !KeycloakManager.isKeyCloakInUse() )
 			{
 				// If emtpy case, show the 'k' button..
 				if ( !AppInfoLSManager.getUserName() ) {
@@ -368,9 +365,9 @@ function Login() {
 				divKeyCloakInfoTag.show();
 				Login.loginInputDisable( true ); // enable it when authenticated..
 	
-				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakUtils.keycloakPart(); });
+				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
 	
-				KeycloakUtils.displayTokensInfo();
+				KeycloakManager.displayTokensInfo();
 			}
 		}
 	};
@@ -508,6 +505,11 @@ function Login() {
 						SessionManager.check_warnLastConfigCheck(ConfigManager.getConfigUpdateSetting());
 					});
 				}
+				else
+				{
+					// TODO: STOP THE LOADING MSG OF LOGIN AND DISPLAY THE MSG..
+
+				}
 
 				if (callAfterDone) callAfterDone(isSuccess);
 			});
@@ -629,7 +631,8 @@ function Login() {
 
 	// ----------------------------------------------
 
-	me.loginOnline = function (userName, password, loadingTag, returnFunc) {
+	me.loginOnline = function (userName, password, loadingTag, returnFunc) 
+	{
 		WsCallManager.submitLogin(userName, password, loadingTag, function (success, loginData) {
 			// Below method also handles 'configNoNewVersion' case - getting offline dcdConfig and use it.
 			me.checkLoginData_wthErrMsg(success, userName, password, loginData, function (resultSuccess) {
