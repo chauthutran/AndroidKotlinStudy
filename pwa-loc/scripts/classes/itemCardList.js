@@ -358,7 +358,7 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
 
 ItemCardList.showListButtonNote_BACK = function( listBottomTag, endReached )
 {
-    var endNoteText = ( endReached ) ? '[ -------------------- END -------------------- ]' : 'MORE';
+    var endNoteText = ( endReached ) ? '[ ------------ END ------------ ]' : 'MORE';
     listBottomTag.css( 'color', '#4753A3' ).text( endNoteText );
 
     listBottomTag.show();
@@ -371,7 +371,7 @@ ItemCardList.showListButtonNote = function( listBottomTag, endReached, scrollLis
     var textDivTag = $( '<div style="text-align: center; color: #4753A3; display: inline-block;"></div>' );
     var endNoteText = '';
 
-    if ( endReached ) endNoteText = '[ -------------------- END -------------------- ]';
+    if ( endReached ) endNoteText = '[ ------------ END ------------ ]';
     else
     {
         endNoteText = 'MORE';
