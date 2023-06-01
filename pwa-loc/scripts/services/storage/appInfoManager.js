@@ -42,34 +42,18 @@ AppInfoManager.KEY_LANG_CODE = "langCode";
 AppInfoManager.KEY_LANG_LASTTRYDT = "langLastTryDT"; 
 AppInfoManager.KEY_LANG_TERMS = "langTerms"; 
 
-
-// Temp stored..
-AppInfoManager.userName; 
-AppInfoManager.passwd; 
-
 // ------------------------------------------------------------------------------------  
 // ----------------  User info
 
 // Store 'userName' / 'passwd' to be used in indexedDB call (encryption/decription) - remember to unload at logout.
-AppInfoManager.setUserName_Passwd = function( userName, passwd )
-{
-    AppInfoManager.userName = userName; 
-    AppInfoManager.passwd = passwd; 
-};
-
-AppInfoManager.unsetUserName_Passwd = function()
-{
-    AppInfoManager.userName = undefined; 
-    AppInfoManager.passwd = undefined; 
-};
+//AppInfoManager.setUserName_Passwd = function( userName, passwd )
+//AppInfoManager.unsetUserName_Passwd = function()
 
 // ---------------------------------
 
 // 2 [DO]
-AppInfoManager.loadData_AfterLogin = function( userName, passwd, callBack )
+AppInfoManager.loadData_AfterLogin = function( callBack )
 {
-    AppInfoManager.setUserName_Passwd( userName, passwd );
-
     // Also save to 
     AppInfoManager.getAppInfoData_IDB( function( appInfo_IDB ) 
     {
@@ -91,7 +75,6 @@ AppInfoManager.loadData_AfterLogin = function( userName, passwd, callBack )
 AppInfoManager.unloadData_AfterLogOut = function()
 {
     AppInfoManager.appInfo = undefined;
-    AppInfoManager.unsetUserName_Passwd();
 };
 
 // --------------------------------------
@@ -131,8 +114,6 @@ AppInfoManager.getAppInfo = function()
 
     var appInfo = AppInfoManager.appInfo;
 
-    // if ( !appInfo ) AppInfoManager.saveAppInfoData_IDB( appInfo );
-
     return appInfo;    
 };
 
@@ -141,7 +122,7 @@ AppInfoManager.getAppInfo = function()
 
 AppInfoManager.getAppInfoData_IDB = function( callBack )
 {
-    DataManager2.getData_AppInfo( AppInfoManager.userName, AppInfoManager.passwd, callBack );
+    DataManager2.getData_AppInfo( SessionManager.sessionData.login_UserName, SessionManager.sessionData.login_Password, callBack );
 };
 
 AppInfoManager.saveAppInfoData_IDB = function( appInfo, callBack )
@@ -150,7 +131,7 @@ AppInfoManager.saveAppInfoData_IDB = function( appInfo, callBack )
     if ( !appInfo ) appInfo = AppInfoManager.getAppInfo();
 
     // Need session.login user name
-    DataManager2.saveData_AppInfo( AppInfoManager.userName, AppInfoManager.passwd, appInfo, callBack );
+    DataManager2.saveData_AppInfo( SessionManager.sessionData.login_UserName, SessionManager.sessionData.login_Password, appInfo, callBack );
 };
 
 // ------------------------------------------------------------------------------------  

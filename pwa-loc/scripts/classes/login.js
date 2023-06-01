@@ -505,11 +505,6 @@ function Login() {
 						SessionManager.check_warnLastConfigCheck(ConfigManager.getConfigUpdateSetting());
 					});
 				}
-				else
-				{
-					// TODO: STOP THE LOADING MSG OF LOGIN AND DISPLAY THE MSG..
-
-				}
 
 				if (callAfterDone) callAfterDone(isSuccess);
 			});
@@ -595,11 +590,6 @@ function Login() {
 		// 1. Data Related Process
 		SyncManagerNew.SyncMsg_Reset();
 
-		// MOVED RIGHT AFTER LOGIN - before.. SessionLoad (Config Setup)
-		//AppInfoLSManager.setUserName(userName);
-		//SessionManager.setLoginStatus(true);
-		//InfoDataManager.setDataAfterLogin(); // sessionData.login_UserName update to 'INFO' object
-
 		// menu area user name show
 		$('div.navigation__user').html(userName);
 
@@ -633,99 +623,137 @@ function Login() {
 
 	me.loginOnline = function (userName, password, loadingTag, returnFunc) 
 	{
-		WsCallManager.submitLogin(userName, password, loadingTag, function (success, loginData) {
-			// Below method also handles 'configNoNewVersion' case - getting offline dcdConfig and use it.
-			me.checkLoginData_wthErrMsg(success, userName, password, loginData, function (resultSuccess) {
-				if (resultSuccess) {
+		if ( !returnFunc ) returnFunc = function() { };
 
-					// Set values to 'AppInfoLSManager' - after online login success
-					AppInfoLSManager.setLastOnlineLoginDt((new Date()).toISOString());
-					if ( loginData.fhirPractitioner ) AppInfoLSManager.setFhirPractitionerId( loginData.fhirPractitioner.id );
-
-
-					// Save 'loginData' in indexedDB for offline usage and load to session.
-					me.setModifiedOUAttrList(loginData); // 'ouAttrVals' set by this method is used by country config evaluation
-					SessionManager.setLoginRespData_IDB(userName, password, loginData);
-					// IMPORTANT PART - Load loginData in session, use 'dcdConfig' to load ConfigManager data.
-					var configJson = SessionManager.loadSessionData_nConfigJson(userName, password, loginData); // InfoDataManager.sessionDataLoad is also called here.
-
-
-					// Save values in 'AppInfoLS' after online login
-					AppInfoLSManager.saveConfigSourceType(configJson.sourceType);  // For Availability Check Usage, store 'sourceType'
-					AppInfoLSManager.setConfigVersioningEnable(ConfigManager.getSettings().configVersioningEnable); // Used on login request
-					AppInfoLSManager.setLoginPrevData( { 
-						retrievedDateTime: configJson.retrievedDateTime,
-						settings: {
-							login_GetOuChildren: configJson.settings.login_GetOuChildren,
-							login_GetOuTagOrgUnits: configJson.settings.login_GetOuTagOrgUnits,
-							login_GetVMMC_OugId: configJson.settings.login_GetVMMC_OugId	
-						},
-						sourceType: configJson.sourceType
-					} );
-
-					AppInfoLSManager.setKeyCloakEnable( ( ConfigManager.getSettings().keyCloakEnable ) ? 'Y': '' ); 
-
-
-					// Check the translation - if there is any new updated translations.  If so, retrieve & save & use it.
-					TranslationManager.loadLangTerms_NSetUpData( true );
-					
-					// Online Login statistic download
-					me.retrieveStatisticPage((fileName, statPageData) => { me.saveStatisticPage(fileName, statPageData); });
-
-					// AppInfo IndexDB one..  Populate AppInfo data - which is (Not localStorage) IndexDB saved appInfo
-					AppInfoManager.loadData_AfterLogin(userName, password, function () {
-						if (returnFunc) returnFunc(resultSuccess, loginData);
+		me.checkKeyCloakPinValid_Online( userName, password, (isPass, msg, caseStr ) => 
+		{
+			if ( !isPass )
+			{
+				MsgManager.msgAreaShow( msg, 'ERROR');
+				returnFunc( false );
+			}
+			else
+			{
+				WsCallManager.submitLogin(userName, password, loadingTag, function (success, loginData) 
+				{
+					// Below method also handles 'configNoNewVersion' case - getting offline dcdConfig and use it.
+					me.checkLoginData_wthErrMsg(success, userName, password, loginData, function (resultSuccess) 
+					{
+						if (resultSuccess) {
+		
+							// Set values to 'AppInfoLSManager' - after online login success
+							AppInfoLSManager.setLastOnlineLoginDt((new Date()).toISOString());
+							if ( loginData.fhirPractitioner ) AppInfoLSManager.setFhirPractitionerId( loginData.fhirPractitioner.id );
+		
+		
+							// Save 'loginData' in indexedDB for offline usage and load to session.
+							me.setModifiedOUAttrList(loginData); // 'ouAttrVals' set by this method is used by country config evaluation
+							SessionManager.setLoginRespData_IDB(userName, password, loginData);
+							// IMPORTANT PART - Load loginData in session, use 'dcdConfig' to load ConfigManager data.
+							var configJson = SessionManager.loadSessionData_nConfigJson(userName, password, loginData); // InfoDataManager.sessionDataLoad is also called here.
+		
+		
+							// Save values in 'AppInfoLS' after online login
+							AppInfoLSManager.saveConfigSourceType(configJson.sourceType);  // For Availability Check Usage, store 'sourceType'
+							AppInfoLSManager.setConfigVersioningEnable(ConfigManager.getSettings().configVersioningEnable); // Used on login request
+							AppInfoLSManager.setLoginPrevData( { 
+								retrievedDateTime: configJson.retrievedDateTime,
+								settings: {
+									login_GetOuChildren: configJson.settings.login_GetOuChildren,
+									login_GetOuTagOrgUnits: configJson.settings.login_GetOuTagOrgUnits,
+									login_GetVMMC_OugId: configJson.settings.login_GetVMMC_OugId	
+								},
+								sourceType: configJson.sourceType
+							} );
+		
+		
+							// Check the translation - if there is any new updated translations.  If so, retrieve & save & use it.
+							TranslationManager.loadLangTerms_NSetUpData( true );
+							
+							// Online Login statistic download
+							me.retrieveStatisticPage((fileName, statPageData) => { me.saveStatisticPage(fileName, statPageData); });
+		
+							// AppInfo IndexDB one..  Populate AppInfo data - which is (Not localStorage) IndexDB saved appInfo
+							AppInfoManager.loadData_AfterLogin( () => returnFunc(resultSuccess, loginData) );
+						}
+						else returnFunc(resultSuccess, loginData);
 					});
-				}
-				else {
-					if (returnFunc) returnFunc(resultSuccess, loginData);
-				}
-			});
+				});
+			}
 		});
 	};
 
 
-	me.loginOffline = function (userName, password, returnFunc) {
-		SessionManager.checkOfflineDataExists(userName, function (dataExists) {
-			if (dataExists) {
-				if (AppInfoLSManager.getBlackListed()) {
-					// Translation term need to be added - from config?	
-					MsgManager.msgAreaShow(me.getLoginFailedMsgSpan() + ' ' + me.ERR_MSG_blackListing, 'ERROR');
-					if (returnFunc) returnFunc(false);
+	me.loginOffline = function (userName, password, returnFunc) 
+	{
+		if ( !returnFunc ) returnFunc = function() { };
+
+		// On Offline Login case, check if the password(PIN) can decript the storage in IDB properly
+		me.checkUserName_Pin_ByStorage(userName, password, ( bPassed, caseStr, errMsg ) =>
+		{
+			if ( bPassed )
+			{
+				SessionManager.getLoginRespData_IDB(userName, password, (loginResp) =>
+				{
+					if (SessionManager.checkLoginOfflineData(loginResp)) 
+					{
+						// load to session
+						SessionManager.loadSessionData_nConfigJson(userName, password, loginResp);
+						GAnalytics.setEvent('LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1);
+
+						AppInfoManager.loadData_AfterLogin( () => returnFunc(true, loginResp) );
+					}
+					else returnFunc(false);
+				});
+			}
+			else
+			{
+				MsgManager.msgAreaShow( errMsg, 'ERROR');
+				returnFunc(false);
+			}
+		});
+	};
+
+	// ---------------------------------------
+	// --- Login Online/Offline Related
+	
+	// New 
+	me.checkKeyCloakPinValid_Online = function(userName, password, returnFunc)
+	{
+		if ( !KeycloakManager.isKeyCloakInUse() ) returnFunc( true, 'Not keycloak case' );  // Proceed with OnLing Login
+		else
+		{
+			// NEW KeyCloak Case:
+			//		- If KeyCloak case, On Online Login, check the password if data exists..
+			me.checkUserName_Pin_ByStorage(userName, password, ( bPassed, caseStr, errMsg ) =>
+			{
+				if ( bPassed ) returnFunc( true, 'password valid' ); 
+				else
+				{
+					if ( caseStr === 'NoPrevData' ) returnFunc( true, '1st login case' );
+					else returnFunc( false, errMsg, caseStr );	
 				}
-				else {
-					SessionManager.checkPasswordOffline_IDB(userName, password, function (isPass) {
-						if (isPass) {
-							SessionManager.getLoginRespData_IDB(userName, password, function (loginResp) {
-								if (SessionManager.checkLoginOfflineData(loginResp)) {
-									// load to session
-									SessionManager.loadSessionData_nConfigJson(userName, password, loginResp);
+			});
+		}
+	};
 
-									// TEST, DEBUG - TO BE REMOVED AFTERWARDS
-									GAnalytics.setEvent('LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1);
-
-
-									AppInfoManager.loadData_AfterLogin(userName, password, function () {
-										if (returnFunc) returnFunc(true, loginResp);
-									});
-								}
-								else {
-									if (returnFunc) returnFunc(false);
-								}
-							});
-						}
-						else {
-							// MISSING TRANSLATION
-							MsgManager.msgAreaShow(me.getLoginFailedMsgSpan() + ' > invalid pin', 'ERROR');
-							if (returnFunc) returnFunc(false);
-						}
+	// NEW
+	me.checkUserName_Pin_ByStorage = function (userName, password, returnFunc) 
+	{		
+		SessionManager.checkOfflineDataExists(userName, function (dataExists) 
+		{
+			if (!dataExists) returnFunc( false, 'NoPrevData', 'No Offline UserData Available' );
+			else
+			{
+				if (AppInfoLSManager.getBlackListed()) returnFunc( false, 'BlackListed', me.getLoginFailedMsgSpan() + ' ' + me.ERR_MSG_blackListing );
+				else 
+				{
+					SessionManager.checkPasswordOffline_IDB(userName, password, function (isPass) 
+					{
+						if ( !isPass ) returnFunc( false, 'PinInvalid', me.getLoginFailedMsgSpan() + ' > invalid pin' );
+						else returnFunc( true, 'PinValid' );
 					});
 				}
-			}
-			else {
-				// MISSING TRANSLATION
-				MsgManager.msgAreaShow('No Offline UserData Available', 'ERROR');
-				if (returnFunc) returnFunc(false);
 			}
 		});
 	};

@@ -245,14 +245,26 @@ KeycloakManager.tokenRefresh = function() {
 // https://pwa-stage.psi-connect.org/logout.html
 KeycloakManager.tokenLogout = function() 
 {
-	if( !ConnManagerNew.isAppMode_Offline()  )
+	try
 	{
-		localStorage.removeItem("accessToken");
-		localStorage.removeItem("refreshToken");
-		localStorage.removeItem("idToken");
-		localStorage.removeItem("keycloakPendingAction");
-
-		keycloak.logout({"redirectUri": window.location.href + "logout.html"});			
+		if( !ConnManagerNew.isAppMode_Offline()  )
+		{
+			localStorage.removeItem("accessToken");
+			localStorage.removeItem("refreshToken");
+			localStorage.removeItem("idToken");
+			localStorage.removeItem("keycloakPendingAction");
+	
+			keycloak.logout({"redirectUri": window.location.href + "logout.html"}).then( (success) => {
+				console.log( 'KeyCloak Token LogOut success: ' + success );
+			}).catch( (error) => {
+				console.log( 'KeyCloak Token LogOut failed: ' );
+				console.log( error );
+			});			
+		}
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in KeycloakManager.tokenLogout, ' + errMsg );
 	}
 };
 /*
