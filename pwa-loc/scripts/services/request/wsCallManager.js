@@ -179,7 +179,12 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
         if ( loginPrevData.retrievedDateTime ) requestOption.loginPrevData = loginPrevData;
     } 
 
+    // FHIR Version <-- Check the source 1st?  1st time, can not tell..
     requestOption.fhirPractitionerId = AppInfoLSManager.getFhirPractitionerId(); // If exists, add this
+
+    // KeyCloak <-- 
+    if ( KeycloakManager.isKeyCloakInUse() ) requestOption.keycloakUserInfo = KeycloakManager.getUserInfo();
+
 
     WsCallManager.requestPostDws( '/PWA.loginCheck', requestOption, loadingTag, function( success, returnJson )
 	{

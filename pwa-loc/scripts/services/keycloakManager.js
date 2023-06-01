@@ -120,18 +120,14 @@ KeycloakManager.keycloakPart = function()
 
 				KeycloakManager.displayTokensInfo();	
 
-				if( KeycloakManager.getPendingAction() == "refreshToken" )
-				{
-					KeycloakManager.tokenRefresh();
-				}
-				else if( KeycloakManager.getPendingAction() == "logoutToken" )
-				{
-					KeycloakManager.tokenLogout();
-				}
+				if( KeycloakManager.getPendingAction() == "refreshToken" ) KeycloakManager.tokenRefresh();
+				else if( KeycloakManager.getPendingAction() == "logoutToken" ) KeycloakManager.tokenLogout();
 			})
-			.catch(function() {
+			.catch(function( errMsg ) {
 				console.log('failed to initialize with token');
+				console( errMsg );
 			});
+
 		}
 		else
 		{
@@ -159,19 +155,13 @@ KeycloakManager.keycloakPart = function()
 				var userName = keycloak.tokenParsed.preferred_username;
 				if ( userName ) AppInfoLSManager.setUserName( userName.toUpperCase() );
 				if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
-				//AppUtil.appReloadWtMsg();
 
 				Login.loginInputDisable( false );
 				
 
-				if( KeycloakManager.getPendingAction() == "refreshToken" )
-				{
-					KeycloakManager.tokenRefresh();
-				}
-				else if( KeycloakManager.getPendingAction() == "logoutToken" )
-				{
-					KeycloakManager.tokenLogout();
-				}
+				if( KeycloakManager.getPendingAction() == "refreshToken" ) KeycloakManager.tokenRefresh();
+				else if( KeycloakManager.getPendingAction() == "logoutToken" ) KeycloakManager.tokenLogout();
+
 			})
 			.catch(function( errMsg ) {
 				alert('failed to initialize');
@@ -253,21 +243,17 @@ KeycloakManager.tokenRefresh = function() {
 
 // http://127.0.0.1:8887/logout.html
 // https://pwa-stage.psi-connect.org/logout.html
-KeycloakManager.tokenLogout = function() {
-	
-	// KeycloakManager.displayTokensInfo(); // TODO: Or, after logOut, we can set to reload the app?
-
+KeycloakManager.tokenLogout = function() 
+{
 	if( !ConnManagerNew.isAppMode_Offline()  )
 	{
 		localStorage.removeItem("accessToken");
 		localStorage.removeItem("refreshToken");
 		localStorage.removeItem("idToken");
 		localStorage.removeItem("keycloakPendingAction");
-		keycloak.logout({"redirectUri": window.location.href + "logout.html"});
-			
-	}
 
-	//keycloak.logout( { "redirectUri": window.location.href } ); // "http://127.0.0.1:8887/" } );
+		keycloak.logout({"redirectUri": window.location.href + "logout.html"});			
+	}
 };
 /*
 KeycloakManager.tokenLogout = function() 
@@ -304,11 +290,29 @@ KeycloakManager.localStorageRemove = function() {
 
 
 KeycloakManager.eventMsg = function(event) {
-	// var e = document.getElementById('events').innerHTML;
-	// document.getElementById('events').innerHTML = new Date().toLocaleString() + "\t" + event + "\n" + e;
 	console.log(event);
 };
 
+
+KeycloakManager.getUserInfo = function()
+{
+	var userInfo = { userGroup: [] };
+
+	try
+	{
+		if ( keycloak )
+		{
+			var idData = keycloak.idTokenParsed;
+			if ( idData && idData.userGroupList ) userInfo.userGroup = idData.userGroupList;
+		}	
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in KeycloakManager.getLoginInfo, ' + errMsg );
+	}
+
+	return userInfo;
+};
 
 // ==================================
 
