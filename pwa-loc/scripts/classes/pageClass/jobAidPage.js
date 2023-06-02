@@ -886,21 +886,25 @@ JobAidItem.getReAttemptList = function( projDir, fileType )
 JobAidItem.itemDelete = async function (projDir) 
 {
 	var result = confirm('Are you sure you want to delete this, "' + projDir + '"?');
-
 	if (result) 
 	{		
-		// Delete on localStorage 'persisData'
-		PersisDataLSManager.deleteJobFilingProjDir( projDir );
-
-		// Optional 'removeCacheOnDelete' - delete from cache
-		if ( JobAidPage.onDel_rmCache === 'Y' )
+		var confirmed = prompt('To confirm, please type "' + projDir + '" in the box below');
+		if (confirmed != null && confirmed == projDir ) 
 		{
-			await JobAidHelper.deleteCacheKeys( JobAidHelper.rootDir_jobAid + projDir + '/' );
+			
+			// Delete on localStorage 'persisData'
+			PersisDataLSManager.deleteJobFilingProjDir( projDir );
+
+			// Optional 'removeCacheOnDelete' - delete from cache
+			if ( JobAidPage.onDel_rmCache === 'Y' )
+			{
+				await JobAidHelper.deleteCacheKeys( JobAidHelper.rootDir_jobAid + projDir + '/' );
+			}
+
+			JobAidPage.updateItem_ItemSection(projDir, 'downloaded_delete');
+
+			MsgManager.msgAreaShowOpt( 'The pack has been deleted', { hideTimeMs: 1000 } );
 		}
-
-		JobAidPage.updateItem_ItemSection(projDir, 'downloaded_delete');
-
-		MsgManager.msgAreaShowOpt( 'The pack has been deleted', { hideTimeMs: 1000 } );
 	}
 };
 
