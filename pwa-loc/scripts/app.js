@@ -112,6 +112,11 @@ App.startAppProcess = function ()
 		App.App_UI_startUp_ready();
 
 
+		// --------------------------
+		// 4. KeyCloak Related
+		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart()
+		// $( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
+
 		// NEW: KeyCloak calling
 		if ( Util.getParameterByName("session_state") ) KeycloakManager.keycloakPart();
 
