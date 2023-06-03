@@ -57,8 +57,10 @@ App.run = function ()
 	var paramMsg = Util.getParameterByName("msg");
 	if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );
 
+
+	// KeyCloak Start Object + Param case removal
 	KeycloakManager.startUp();
-	
+	if ( Util.getParameterByName("keyCloakRemove") ) { KeycloakManager.removeKeyCloakInUse(); KeycloakManager.localStorageRemove(); }
 
 	// Service Worker Related Initial Setup
 	SwManager.initialSetup(function () {
@@ -112,14 +114,11 @@ App.startAppProcess = function ()
 		App.App_UI_startUp_ready();
 
 
-		// --------------------------
-		// 4. KeyCloak Related
+		// KeyCloak Run..
 		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart()
 		// $( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
-
 		// NEW: KeyCloak calling
-		if ( Util.getParameterByName("session_state") ) KeycloakManager.keycloakPart();
-
+		//if ( Util.getParameterByName("session_state") ) KeycloakManager.keycloakPart();	
 	}
 	catch (err) {
 		console.log('error starting App > startApp() error: ' + err);

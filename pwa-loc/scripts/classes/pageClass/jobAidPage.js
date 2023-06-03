@@ -477,7 +477,7 @@ JobAidPage.templateSections = `
 
 JobAidPage.templateItem_body = `
    <div class="card__container">
-      <card__support_visuals class="card__support_visuals" style="padding-left: 4px;"><img src="images/JobAidicons.png"></card__support_visuals>
+      <card__support_visuals class="card__support_visuals jaCardImage" style="padding-left: 4px;"><img src="images/JobAidicons.png"></card__support_visuals>
       <card__content class="card__content jaCardContent">
          <div class="card__row divTitle"></div>
          <div class="card__row divBuildDate" style="display: none;"></div>
@@ -885,6 +885,11 @@ JobAidItem.getReAttemptList = function( projDir, fileType )
 
 JobAidItem.itemDelete = async function (projDir) 
 {
+
+	// TODO: 
+	// 1. Choose the form to display <-- Center Msg?
+	// 2. Center msg can get some input?
+
 	var result = confirm('Are you sure you want to delete this, "' + projDir + '"?');
 	if (result) 
 	{		
@@ -993,6 +998,9 @@ JobAidItem.itemPopulate = function (itemData, itemTag, statusType, inProcessOpti
 			
 			// 2. Setup for 'updates' by date comparison
 			JobAidItem.itemPopulate_setUpdateStatus( itemData, menus, mediaDownloaded, itemTag.find('span.appDownloadStatus').show(), itemTag.find('span.mediaDownloadStatus').show() );
+
+			// TODO: Click event under 'div.jobAidItem' --> 'jaCardImg---' 'jaCardContent'
+			itemTag.find( '.jaCardImage, .jaCardContent' ).addClass( 'mouseDown' ).off( 'click' ).click( () => JobAidItem.itemOpen(projDir) );
 		}
 	
 

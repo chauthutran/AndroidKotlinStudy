@@ -41,6 +41,10 @@
 	cursor: pointer;
 }
 
+.mouseDown {
+	cursor: pointer !important;
+}
+
 .mouseDown:active {
 	background-color: #DAEAFE !important;
 }
@@ -123,7 +127,7 @@ ul.jobContextMenuItems li.context-menu-item:last-child {
 
 .jaCardContent {
 	padding-left: 4px;
-	cursor: unset !important;
+	cursor: unset;
 }
 
 .card_jobAid {

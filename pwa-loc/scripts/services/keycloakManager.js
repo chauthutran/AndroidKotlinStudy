@@ -27,6 +27,12 @@ KeycloakManager.isKeyCloakInUse = function()
 	return ( AppInfoLSManager.getKeyCloakUse() === 'Y' );
 };
 
+
+KeycloakManager.removeKeyCloakInUse = function() 
+{
+	AppInfoLSManager.setKeyCloakUse( '' );
+};
+
 // -----------------------------------------
 
 // The Main Authentication Call
