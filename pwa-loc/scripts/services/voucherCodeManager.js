@@ -84,7 +84,7 @@ VoucherCodeManager.checkLowQueue_Msg = function()
          var msgDivTag = $( '<div></div>' );
          msgDivTag.append( VoucherCodeManager.settingData.queueEmptyMsg );
          TranslationManager.translatePage( msgDivTag );
-         MsgFormManager.showFormMsg( 'queueEmptyMsg', msgDivTag );
+         MsgFormManager.showFormMsg( { itemId: 'queueEmptyMsg', msgSpanTag: msgDivTag, width: '130px' } );
       }
       else if ( isLow )
       {
@@ -93,7 +93,7 @@ VoucherCodeManager.checkLowQueue_Msg = function()
          TranslationManager.translatePage( msgDivTag );
          var spanTag = msgDivTag.find( 'span' );
          spanTag.text( spanTag.text().replace( "$$length", currCount ) );
-         MsgFormManager.showFormMsg( 'queueLowMsg', msgDivTag );
+         MsgFormManager.showFormMsg( { itemId: 'queueLowMsg', msgSpanTag: msgDivTag, width: '130px' } );
       }
    });
 };
@@ -149,7 +149,7 @@ VoucherCodeManager.refillQueue = function( userName, callBack )
 						         var errMsg = '<b>[Refill VoucherCode Queue]</b> not filled all: ' + filledMsg + '!!';
 						         var msgDivTag = $( '<div><span term="">' + errMsg + '</span></div>').append( retryBtnTag );
 
-									MsgFormManager.showFormMsg( 'vcNotAllFilled', msgDivTag );
+									MsgFormManager.showFormMsg( { itemId: 'vcNotAllFilled', msgSpanTag: msgDivTag, width: '130px' } );
 
 									MsgManager.msgAreaShowErrOpt( errMsg );
 

@@ -214,27 +214,29 @@ MsgFormManager.appUnblock = function (itemId) {
 
 // -------------------------------------------
 
-MsgFormManager.showFormMsg = function (itemId, msgSpanTag, optionJson, btnClickFunc) {
+//MsgFormManager.showFormMsg = function (itemId, msgSpanTag, optionJson, btnClickFunc, options ) {
+// itemId, msgSpanTag, optionJson, btnClickFunc,
+MsgFormManager.showFormMsg = function ( options ) 
+{
 	var divMainTag = $('<div></div>');
-	var msgDivTag = $('<div></div>').append(msgSpanTag);
+	var msgDivTag = $('<div></div>').append(options.msgSpanTag);
 	var btnDivTag = $('<div style="margin-top: 10px;"><button class="cbtn">OK</button></div>');
 
 	btnDivTag.click(function () {
-		MsgFormManager.appUnblock(itemId);
-		if (btnClickFunc) btnClickFunc(optionJson);
+		MsgFormManager.appUnblock(options.itemId);
+		if (options.btnClickFunc) btnClickFunc(options.optionJson);
 	});
 
 	divMainTag.append(msgDivTag);
 	divMainTag.append(btnDivTag);
 
-
 	// Main FormMsg Setup/Show
-	MsgFormManager.appBlockTemplate(itemId, divMainTag, function () {
+	MsgFormManager.appBlockTemplate(options.itemId, divMainTag, () => {
 		// Modify FormMsg width
 		var blockMsgTag = $('.blockMsg');
 		if (blockMsgTag.length > 0) {
 			blockMsgTag.css('margin', '-50px 0px 0px -50px');
-			blockMsgTag.css('width', '100px');
+			blockMsgTag.css('width', ( options.width ) ? options.width: 'auto' );
 		}
 	});
 };
@@ -244,21 +246,28 @@ MsgFormManager.showErrActivityMsg = function (Nav2Tag, errActList) {
 	try {
 		var msgSpanTag = $('<span style="font-weight: bold;">' + errActList.length + ' New Errored Activities Found.</span>');
 
-		MsgFormManager.showFormMsg('showErrActivityMsg', msgSpanTag, { 'errActList': errActList }, function (optionJson) {
-			var viewListTag = Nav2Tag.find('select.selViewsListSelector');
+		itemId, msgSpanTag, optionJson, btnClickFunc
+		MsgFormManager.showFormMsg( { 
+			itemId: 'showErrActivityMsg', 
+			msgSpanTag: msgSpanTag,
+			width: '130px',			 
+			optionJson: { 'errActList': errActList }, 
+			btnClickFunc: function (optionJson) {
+				var viewListTag = Nav2Tag.find('select.selViewsListSelector');
 
-			if (viewListTag.is(':visible')) {
-				viewListTag.val('showErrored').change();
+				if (viewListTag.is(':visible')) {
+					viewListTag.val('showErrored').change();
 
-				AppInfoManager.clearNewErrorActivities();
+					AppInfoManager.clearNewErrorActivities();
 
-				setTimeout(function () {
-					optionJson.errActList.forEach(errActId => {
-						$('div.card[itemid="' + errActId + '"]').css('background-color', '#fff4f4');
-					});
-				}, 500);
-			}
-		});
+					setTimeout(function () {
+						optionJson.errActList.forEach(errActId => {
+							$('div.card[itemid="' + errActId + '"]').css('background-color', '#fff4f4');
+						});
+					}, 500);
+				}
+			} 
+		} );
 	}
 	catch (errMsg) {
 		console.log('ERROR in MsgFormManager.showErrActivityMsg, ' + errMsg);

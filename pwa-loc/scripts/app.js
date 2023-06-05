@@ -338,3 +338,4 @@ window.addEventListener('message', function ( event )
 	// NOTE: in below case, from jobAid, add another indicator to set 'jobAideTimeOut', which (within 'updateLogoutTimer') can be used if 'jobAideTimeOut' value is not empty.
 	if ( event.data.from === 'jobAidIFrame' ) JobAidHelper.msgHandle( event.data );
 });
+

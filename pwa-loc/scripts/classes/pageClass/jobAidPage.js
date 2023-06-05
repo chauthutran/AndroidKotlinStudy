@@ -885,32 +885,105 @@ JobAidItem.getReAttemptList = function( projDir, fileType )
 
 JobAidItem.itemDelete = async function (projDir) 
 {
+	JobAidItem.confirmFormRender( projDir, async () => {
+		// Delete on localStorage 'persisData'
+		PersisDataLSManager.deleteJobFilingProjDir( projDir );
 
-	// TODO: 
-	// 1. Choose the form to display <-- Center Msg?
-	// 2. Center msg can get some input?
+		// Optional 'removeCacheOnDelete' - delete from cache
+		if ( JobAidPage.onDel_rmCache === 'Y' )
+		{
+			await JobAidHelper.deleteCacheKeys( JobAidHelper.rootDir_jobAid + projDir + '/' );
+		}
 
+		JobAidPage.updateItem_ItemSection(projDir, 'downloaded_delete');
+
+		MsgManager.msgAreaShowOpt( 'The pack has been deleted', { hideTimeMs: 1000 } );
+	});
+
+	/*
 	var result = confirm('Are you sure you want to delete this, "' + projDir + '"?');
 	if (result) 
 	{		
 		var confirmed = prompt('To confirm, please type "' + projDir + '" in the box below');
 		if (confirmed != null && confirmed == projDir ) 
 		{
-			
-			// Delete on localStorage 'persisData'
-			PersisDataLSManager.deleteJobFilingProjDir( projDir );
+	*/
 
-			// Optional 'removeCacheOnDelete' - delete from cache
-			if ( JobAidPage.onDel_rmCache === 'Y' )
-			{
-				await JobAidHelper.deleteCacheKeys( JobAidHelper.rootDir_jobAid + projDir + '/' );
-			}
+};
 
-			JobAidPage.updateItem_ItemSection(projDir, 'downloaded_delete');
+JobAidItem.confirmFormRender = function( projDir, confirmedFunc )
+{
+	// MsgFormManager.showFormMsg( { itemId: 'testMsg', msgSpanTag: msgDivTag, width: '130px' } );
 
-			MsgManager.msgAreaShowOpt( 'The pack has been deleted', { hideTimeMs: 1000 } );
+	var titleSpanTag = '<span term="jobAid_msg_item_delete_title" style="font-weight: bold; font-size: 1.1em;">Are you sure you want to delete ' + projDir + '?</span>';
+
+	var descDivTag = `<div style="margin: 10px 0px 1px 0px;">
+		<span term="jobAid_msg_item_delete_desc">This action will remove this job package from your device.</span>
+	</div>`;
+
+	var deleteDivTag = `<div style="margin-top: 10px; padding: 7px; background-color: #FEF7F1; border: solid 1px #DFD2CC;">
+		<span term="jobAid_msg_item_delete_confirm">Type "DELETE" to confirm</span>
+		<div>
+			<input class="inputJADelWord" size="20" style="background-color: white; border: solid 1px #555; margin: 4px 0px;">		
+		</div>
+	</div>`;	
+	
+	var divBtnTags = `<div style="margin-top: 10px;">
+		<button class="cbtn btnDelete" term="jobAid_btn_package_delete" style="opacity: 0.5; background-color: #D93029 !important; border-radius: 7px !important;">Delete package</button>
+		<button class="cbtn btnCancel" term="jobAid_btn_package_cancel" style="background-color: #FAFAFA !important; border: solid 1px #888; color: black; border-radius: 7px !important;">Cancel</button>
+	</div>`;    
+    
+
+	var msgFull = titleSpanTag + ' ' + descDivTag + ' ' + deleteDivTag;
+	var options = { itemId: 'JobAidItemDelete', msgSpanTag: msgFull, width: '200px' };
+
+	// --------------------
+
+	var divMainTag = $('<div></div>');
+	var msgDivTag = $('<div></div>').append(options.msgSpanTag);
+	var btnDivTag = $( divBtnTags );
+
+	// ------- Tags ------
+	var btnDeleteTag = btnDivTag.find('.btnDelete');
+	var btnCancelTag = btnDivTag.find( '.btnCancel' );
+	var inputWordTag = msgDivTag.find( '.inputJADelWord' );
+
+
+	// ----- Events ---------
+	inputWordTag.keyup( function() {
+		if ( inputWordTag.val().trim().toUpperCase() == 'DELETE' ) btnDeleteTag.css( 'opacity', '1' ).prop('disabled', false);
+		else btnDeleteTag.css( 'opacity', '0.5' ).prop('disabled', true);
+	});
+
+	btnCancelTag.click(function () { MsgFormManager.appUnblock(options.itemId); });
+	btnDeleteTag.click(function () { 
+		MsgFormManager.appUnblock(options.itemId); 
+		if ( confirmedFunc ) confirmedFunc();
+	});
+
+	// ----------------------------------------
+
+	divMainTag.append(msgDivTag);
+	divMainTag.append(btnDivTag);
+	
+	btnDeleteTag.prop('disabled', true);
+	
+	TranslationManager.translatePage( divMainTag );
+
+	// ----------------------------------------
+
+	// Main FormMsg Setup/Show
+	MsgFormManager.appBlockTemplate(options.itemId, divMainTag, () => {
+		// Modify FormMsg width
+		var blockMsgTag = $('.blockMsg');
+		if (blockMsgTag.length > 0) {
+			blockMsgTag.css('margin', '-50px 0px 0px -50px');
+			blockMsgTag.css('top', '35%').css('left', '38%');
+			blockMsgTag.css('opacity', '1').css( 'textAlign', 'left' );
+			blockMsgTag.css('fontSize', '0.9em').css( 'cursor', 'unset' ).css( 'color', 'unset');
+			blockMsgTag.css('width', ( options.width ) ? options.width: 'auto' );
 		}
-	}
+	});
 };
 
 // -------------------
