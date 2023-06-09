@@ -56,7 +56,8 @@ WsCallManager.wsUrlList = {
     'noSrv': 'https://pwa-noSrv.psi-connect.org/ws/dws-dev'  // or pwa-dev.---/ws/
 };
 
-WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';  // pwa, 529n3KpyjcNcBMsP
+WsCallManager.requestBasicAuth = 'Basic cHdhOjUyOW4zS3B5amNOY0JNc1A=';  // pwa, 52--MsP
+WsCallManager.requestBasicAuth_FHIR = 'Basic Zmhpcjo1MTFuM0tweWpjTmMzMzI=';  // fhir, 511--32
 
 WsCallManager.timeOut_AvailableCheck = Util.MS_MIN; // timeout number used for 'available' request
 WsCallManager.timeOut_DwsAvailabilityCheck = 10000; // timeout number used for 'available' request
@@ -350,17 +351,15 @@ WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, retur
     if ( INFO.wsDebug ) payloadJson.option.wsDebug = INFO.wsDebug;
     if ( INFO.fhirHeaderProfile ) payloadJson.option.fhirHeaderProfile = INFO.fhirHeaderProfile;
 
-
     // TODO: Need to wrap 'syncDown' & search under other json, not use straight, so above can be filtered..
 
     var url = WsCallManager.composeDwsWsFullUrl( apiPath, true );
 
     var requestOption = {
-        headers: {
-            'Authorization': WsCallManager.requestBasicAuth
-        },        
+        headers: { Authorization: WsCallManager.requestBasicAuth },
         body: JSON.stringify( payloadJson )
     };
+    if ( payloadJson.option.basicAuth ) requestOption.headers.Authorization = payloadJson.option.basicAuth;
 
     // Send the POST reqesut (always catches the error case..)
 	WsCallManager.requestPost( url, requestOption, loadingTag, returnFunc );
@@ -368,6 +367,7 @@ WsCallManager.requestPostDws = function( apiPath, payloadJson, loadingTag, retur
 
 WsCallManager.requestGetDws = function( apiPath, optionJson, loadingTag, returnFunc )
 {	
+    if ( !optionJson ) optionJson = {};
     var url = WsCallManager.composeDwsWsFullUrl( apiPath, false );
     url = WsCallManager.addUrlParam_Version( url );
 
@@ -376,8 +376,8 @@ WsCallManager.requestGetDws = function( apiPath, optionJson, loadingTag, returnF
             'Authorization': WsCallManager.requestBasicAuth
         }
     };
-
-    if ( optionJson ) Util.mergeJson( requestOption, optionJson );
+    Util.mergeJson( requestOption, optionJson );
+    //if ( payloadJson.option.basicAuth ) requestOption.headers.Authorization = payloadJson.option.basicAuth;
 
     WsCallManager.requestGet( url, requestOption, loadingTag, returnFunc );
 };

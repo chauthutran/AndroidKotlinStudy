@@ -606,7 +606,7 @@ FhirUtil.getContactConsent = function( consentArr )
 			{
 				consentArr.forEach( csItem => 
 				{
-					if ( csItem.sourceReference && csItem.sourceReference.reference === 'DocumentReference/' + settingFhir.consentDocumentReference ) consent = true;
+					if ( csItem.status === 'active' && csItem.sourceReference && csItem.sourceReference.reference === 'DocumentReference/' + settingFhir.consentDocumentReference ) consent = true;
 				});
 			}	
 		}

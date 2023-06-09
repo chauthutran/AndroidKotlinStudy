@@ -184,37 +184,41 @@ VoucherCodeManager.queueStatus = function( callBack )
 // On Login (Online), 
 VoucherCodeManager.fillQueue = function( userName, fillCount, callBack )
 { 
+   if ( !callBack ) callBack = function() {};
+
    if ( fillCount > 0 )
    {
       // create a fake service?  just DWS service..
       var loadingTag = undefined;
 
-      var dataJson = ( VoucherCodeManager.isStoredType_FHIR ) ? { practitionerId: INFO.practitionerId, practitionerDisplay: userName, counts: fillCount }: { taken_by: userName, counts: fillCount };
-
-      WsCallManager.requestPostDws( VoucherCodeManager.settingData.url_vcGet, dataJson, loadingTag, function( success, returnJson ) 
+      // If FHIR does not have INFO.practitionerId loaded, try it again..
+      if ( VoucherCodeManager.isStoredType_FHIR && !INFO.practitionerId ) setTimeout( () => { console.log( 'VoucherCode FillQueue FHIR Practitioner not available.' ); callBack( false, [] ); }, 3000 );
+      else
       {
-         if ( success && returnJson && returnJson.vouchersTaken )
+         var dataJson = {};
+
+         if ( VoucherCodeManager.isStoredType_FHIR ) dataJson = { practitionerId: INFO.practitionerId, practitionerDisplay: userName, counts: fillCount, option: { basicAuth: WsCallManager.requestBasicAuth_FHIR } };
+         else dataJson = { taken_by: userName, counts: fillCount };
+
+         WsCallManager.requestPostDws( VoucherCodeManager.settingData.url_vcGet, dataJson, loadingTag, function( success, returnJson ) 
          {
-            var queue = VoucherCodeManager.getQueue_Full();
-
-            var newListObj = VoucherCodeManager.getQueueObj_fromVcList( returnJson.vouchersTaken );
-
-            Util.mergeArrays( queue, newListObj );
-
-            PersisDataLSManager.updateVoucherCodes_queue( queue );
-            
-            if ( callBack ) callBack( true, newListObj );
-         }
-         else
-         {
-            if ( callBack ) callBack( false, [] );
-         }
-      });
+            if ( success && returnJson && returnJson.vouchersTaken )
+            {
+               var queue = VoucherCodeManager.getQueue_Full();
+   
+               var newListObj = VoucherCodeManager.getQueueObj_fromVcList( returnJson.vouchersTaken );
+   
+               Util.mergeArrays( queue, newListObj );
+   
+               PersisDataLSManager.updateVoucherCodes_queue( queue );
+               
+               callBack( true, newListObj );
+            }
+            else callBack( false, [] );
+         });
+      }
    }
-   else
-   {
-      if ( callBack ) callBack( false, [] );
-   }
+   else callBack( false, [] );
 };
 
 
