@@ -97,7 +97,7 @@ BahnmiService.getAssessmentPlanDataList = function(exeFunc)
                     BahnmiService.patientIds.push(patientId);
                 }
 
-                const activity = BahnmiService.generateActivityFormData(item, "asmtp_a", "assessmentPlan");
+                const activity = BahnmiService.generateActivityFormData(item, "ap_a", "assessmentPlan");
                 BahnmiService.activityList[patientId] = activity;
             }
         }
@@ -120,7 +120,7 @@ BahnmiService.syncUp = function(activityJson, exeFunc)
     {
         url = BahnmiService.BASE_URL + "fupAppointment";
     }
-    else // "ref_fup_a" OR "asmtp_fup_a"
+    else // "ref_fup_a" OR "ap_fup_a"
     {
         url = BahnmiService.BASE_URL + "addFormData";
     }
