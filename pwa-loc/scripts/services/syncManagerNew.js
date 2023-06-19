@@ -192,20 +192,25 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 			const subSourceType = ConfigManager.getConfigJson().subSourceType;
 			if( subSourceType == "bahnmi")
 			{
-				BahnmiService.syncDown(function(bahnmiData){
+				SyncManagerNew.update_UI_StartSyncAll();
+
+				BahnmiService.syncDown(function(bahnmiData)
+				{
+					SyncManagerNew.update_UI_FinishSyncAll();
+
 					downloadedData.clients = downloadedData.clients.concat( bahnmiData );
-					SyncManagerNew.afterSyncDown( downloadSuccess, downloadedData, mockCase, callBack );
+					SyncManagerNew.afterSyncDown( downloadSuccess, downloadedData, mockCase, syncDownReqStartDTStr, callBack );
 				});
 			}
 			else
 			{
-				SyncManagerNew.afterSyncDown( downloadSuccess, downloadedData, mockCase, callBack );
+				SyncManagerNew.afterSyncDown( downloadSuccess, downloadedData, mockCase, syncDownReqStartDTStr, callBack );
 			}
 		}
 	});
 };
 
-SyncManagerNew.afterSyncDown = function( downloadSuccess, downloadedData, mockCase, callBack )
+SyncManagerNew.afterSyncDown = function( downloadSuccess, downloadedData, mockCase, syncDownReqStartDTStr, callBack )
 {
 	var clientDwnLength = downloadedData.clients.length;
 	downloadedData = ConfigManager.downloadedData_UidMapping(downloadedData);
@@ -218,7 +223,7 @@ SyncManagerNew.afterSyncDown = function( downloadSuccess, downloadedData, mockCa
 	ClientDataManager.setActivityDateLocal_clientList(downloadedData.clients);
 
 	// 10 min offset with sync time - to make sure it does not miss things.
-	var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
+	//var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
 
 	ClientDataManager.mergeDownloadedClients(downloadedData, processingInfo, function (changeOccurred_atMerge, mergedActivities) {
 		var mergedActivityLength = mergedActivities.length;

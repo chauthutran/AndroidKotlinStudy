@@ -12,7 +12,7 @@ BahnmiService.SYNC_DOWN_DATA = {
     "relationshipTypeDescription": "DSDA to Client Assignment"
 };
 
-BahnmiService.BASE_URL = "http://localhost:3000/";
+BahnmiService.BASE_URL = "http://localhost:3210/";
 
 BahnmiService.syncDownData = [];
 BahnmiService.patientIds = [];
