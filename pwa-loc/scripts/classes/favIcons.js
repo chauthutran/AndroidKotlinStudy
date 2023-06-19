@@ -330,6 +330,8 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
     {
         favItemTag.off( 'click' ).click( function() 
         {
+            INFO.favItemClickTag = $( this ); // To be used 
+
             if ( favItem )
             {
                 if ( me.mainFavClickPre ) me.mainFavClickPre( targetBlockTag, targetBlockContainerTag );
@@ -507,6 +509,8 @@ FavIcons.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, t
 {
     favItemTag.off( 'click' ).click( function() 
     {
+        INFO.favItemClickTag = $( this ); // To be used 
+
         if ( favItem )
         {
             //if ( me.mainFavClickPre ) me.mainFavClickPre( targetBlockTag, targetBlockContainerTag );

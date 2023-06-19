@@ -1090,11 +1090,14 @@ Util.sortByKey_Reverse = function (array, key) {
 
 Util.evalSort = function (fieldName, list, orderStr) {
 	try {
-		var isDescending = (orderStr === 'desc');
-		var sortEvalStr = 'Util.sortCompare( a.' + fieldName + ', b.' + fieldName + ')';
+		if( list.length > 1 )
+		{
+			var isDescending = (orderStr === 'desc');
+			var sortEvalStr = 'Util.sortCompare( a.' + fieldName + ', b.' + fieldName + ')';
 
-		if (!isDescending) list.sort(function (a, b) { return eval(sortEvalStr); });
-		else list.sort(function (b, a) { return eval(sortEvalStr); });
+			if (!isDescending) list.sort(function (a, b) { return eval(sortEvalStr); });
+			else list.sort(function (b, a) { return eval(sortEvalStr); });
+		}
 	}
 	catch (errMsg) {
 		console.log('ERROR in Util.evalSort, ' + errMsg);

@@ -185,35 +185,58 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 		}
 		else {
 			var downloadedData = SyncManagerNew.formatDownloadedData(returnJson);
-			var clientDwnLength = downloadedData.clients.length;
-			downloadedData = ConfigManager.downloadedData_UidMapping(downloadedData);
 
-			// 'download' processing data                
-			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_downloaded, 'Downloaded and synced.');
+      // NEW - Bahmni
 
-			SyncManagerNew.SyncMsg_InsertMsg("downloaded " + clientDwnLength + " clients");
-
-			ClientDataManager.setActivityDateLocal_clientList(downloadedData.clients);
-
-			ClientDataManager.mergeDownloadedClients(downloadedData, processingInfo, function (changeOccurred_atMerge, mergedActivities) {
-				var mergedActivityLength = mergedActivities.length;
-
-				SyncManagerNew.SyncMsg_InsertMsg("Merged " + mergedActivityLength + " activities..");
-				SyncManagerNew.SyncMsg_InsertSummaryMsg("downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities.");
-
-				// S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
-
-				// TODO: NEED TO MAKE SURE THE RESPONSE HAD ALL PROPER FORMAT OF NO EROR/FAILURE..
-				// Mongo VS DHIS....                
-
-				// <-- should target the beginning of the requet..
-				AppInfoManager.updateSyncLastDownloadInfo( syncDownReqStartDTStr );
-
-				if (callBack) callBack(downloadSuccess, changeOccurred_atMerge, mockCase, mergedActivities);
-			});
+			// if( ) // Need to set a parameter for Bahnmi sync in country configuration --- ConfigManager.<something>
+			const subSourceType = ConfigManager.getConfigJson().subSourceType;
+			if( subSourceType == "bahnmi")
+			{
+				BahnmiService.syncDown(function(bahnmiData){
+					downloadedData.clients = downloadedData.clients.concat( bahnmiData );
+					SyncManagerNew.afterSyncDown( downloadSuccess, downloadedData, mockCase, callBack );
+				});
+			}
+			else
+			{
+				SyncManagerNew.afterSyncDown( downloadSuccess, downloadedData, mockCase, callBack );
+			}
 		}
 	});
 };
+
+SyncManagerNew.afterSyncDown = function( downloadSuccess, downloadedData, mockCase, callBack )
+{
+	var clientDwnLength = downloadedData.clients.length;
+	downloadedData = ConfigManager.downloadedData_UidMapping(downloadedData);
+
+	// 'download' processing data                
+	var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_downloaded, 'Downloaded and synced.');
+
+	SyncManagerNew.SyncMsg_InsertMsg("downloaded " + clientDwnLength + " clients");
+
+	ClientDataManager.setActivityDateLocal_clientList(downloadedData.clients);
+
+	// 10 min offset with sync time - to make sure it does not miss things.
+	var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
+
+	ClientDataManager.mergeDownloadedClients(downloadedData, processingInfo, function (changeOccurred_atMerge, mergedActivities) {
+		var mergedActivityLength = mergedActivities.length;
+
+		SyncManagerNew.SyncMsg_InsertMsg("Merged " + mergedActivityLength + " activities..");
+		SyncManagerNew.SyncMsg_InsertSummaryMsg("downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities.");
+
+		// S3. NOTE: Mark the last download at here, instead of right after 'downloadActivities'?
+
+		// TODO: NEED TO MAKE SURE THE RESPONSE HAD ALL PROPER FORMAT OF NO EROR/FAILURE..
+		// Mongo VS DHIS....                
+
+		// <-- should target the beginning of the requet..
+		AppInfoManager.updateSyncLastDownloadInfo( syncDownReqStartDTStr );
+
+		if (callBack) callBack(downloadSuccess, changeOccurred_atMerge, mockCase, mergedActivities);
+	});
+}
 
 SyncManagerNew.formatDownloadedData = function (returnJson) {
 	var outputData = { 'clients': [] };
@@ -757,7 +780,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 		activityJson_Orig = ActivityDataManager.getActivityById(activityId);
 
 		if (!activityJson_Orig.processing) throw 'Activity.performSyncUp, activity.processing not available';
-		if (!activityJson_Orig.processing.url) throw 'Activity.performSyncUp, activity.processing.url not available';
+		if ( !(activityJson_Orig.processing.url || (activityJson_Orig.processing.eval && INFO.client.subSourceType == 'bahnmi' ) ) ) throw 'Activity.performSyncUp, activity.processing.url and activity.processing.eval not available';
 
 		var mockResponseJson = ConfigManager.getMockResponseJson(activityJson_Orig.processing.useMockResponse);
 
@@ -767,7 +790,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 		//  Probably do not need to save data here.  All the error / success case probably are covered and saves data afterwards.
 		activityJson_Orig.processing.status = Constants.status_processing;
 		activityJson_Orig.processing.syncUpCount = Util.getNumber(activityJson_Orig.processing.syncUpCount) + 1;
-
+		
 		ActivitySyncUtil.displayActivitySyncStatus(activityId);
 
 		try {
@@ -778,12 +801,29 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 				});
 			}
 			else {
-				var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit(activityJson_Orig);
+        // NEW - Bahmni
+				if( activityJson_Orig.processing.url != undefined )
+				{
+					var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit(activityJson_Orig);
 
-				// NOTE: We need to add app timeout, from 'request'... and throw error...
-				WsCallManager.wsActionCall(activityJson_Orig.processing.url, payloadJson, undefined, function (success, responseJson) {
-					SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
-				});
+					// NOTE: We need to add app timeout, from 'request'... and throw error...
+					WsCallManager.wsActionCall(activityJson_Orig.processing.url, payloadJson, undefined, function (success, responseJson) {
+						SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
+					});
+				}
+				else if( activityJson_Orig.processing.eval != undefined )
+				{
+					try { 
+						INFO.activity = activityJson_Orig;
+						var result = eval( Util.getEvalStr( activityJson_Orig.processing.eval ) ); 
+						BahnmiService.syncUp( result, function( response ){
+							SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, response.status, response, afterDoneCall);
+						})
+						
+					}
+					catch( errMsg ) { console.log( 'Action.actionCondition ERROR, ' + errMsg ); }
+				}
+				
 			}
 		}
 		catch (errMsg) {
@@ -852,7 +892,26 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 	try
 	{
-		if ( success && responseJson && responseJson.response && responseJson.response.resourceType === 'Bundle' && responseJson.response.entry )
+		const clientJsonSubSourceType = ClientDataManager.getClientByActivityId(activityJson_Orig.id).subSourceType;
+
+    // NEW - Bahmni
+
+		if( success && responseJson && responseJson.status == Constants.ws_status_success && clientJsonSubSourceType == "bahnmi" )
+		{
+			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
+			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
+			var clientJson = ClientDataManager.getClientByActivityId(activityId);
+			ClientDataManager.setActivityDateLocal_client(clientJson);
+
+			// Removal of existing activity/client happends within 'mergeDownloadClients()'
+			ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
+				// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
+				ClientDataManager.saveCurrent_ClientsStore(() => {
+					if (callBack) callBack(bOptResult, undefined, Constants.status_submit);
+				});
+			});
+		}
+		else if ( success && responseJson && responseJson.response && responseJson.response.resourceType === 'Bundle' && responseJson.response.entry )
 		{		
 			var clientJson = FhirUtil.evalClientTemplate( responseJson.response );
 			

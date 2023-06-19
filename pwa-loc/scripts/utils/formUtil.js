@@ -1809,7 +1809,9 @@ FormUtil.displayActivityDetail = function (clientDetails, activityJson, tabTag) 
 	}
 	else if (detailTabContent.displayMode == 2) // With block defined
 	{
-		var detailsTag = FormUtil.renderPreviewDataForm_WithBlockDefination(clientDetails);
+    // NEW - Bahmni
+
+		var detailsTag = FormUtil.renderPreviewActivityForm_WithBlockDefination(clientDetails, activityJson);
 		tabTag.append(detailsTag);
 	}
 	else //if( detailTabContent.displayMode == 0 ) // Old style
@@ -2088,6 +2090,37 @@ FormUtil.renderPreviewDataForm_WithBlockDefination = function (jsonData) {
 
 	return formTag;
 }
+
+// NEW - Bahmni
+
+FormUtil.renderPreviewActivityForm_WithBlockDefination = function (clientJson, activityData) {
+	var formTag = $("<div style='width:100%'></div>");
+
+	// Generate "passedData"
+	var passedData = { "displayData": [], "resultData": [] };
+	for (var id in activityData) {
+		passedData.displayData.push({ "id": id, "value": activityData[id] });
+	}
+	// Render data by using Block defination
+	var blockId = ConfigManager.getActivityDetailTabContent().activityBlockId;
+	FormUtil.renderBlockByBlockId(blockId, SessionManager.cwsRenderObj, formTag, passedData);
+
+	// // Remove Edit button or any buttons if any
+	// formTag.find("[btnid]").remove();
+
+	// Remove empty fields if needed
+	if (ConfigManager.getActivityDetailTabContent().dataOnly) {
+		for (var key in activityData) {
+			var value = activityData[key];
+			if (value == "") {
+				formTag.find("[name='" + key + "']").closest(".fieldBlock").remove();
+			}
+		}
+	}
+
+	return formTag;
+}
+
 
 FormUtil.createValueTag = function (fieldName, value, templateFieldTag) {
 	var fieldJson = ConfigManager.getDefinitionFieldById(fieldName);

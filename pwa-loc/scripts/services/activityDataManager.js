@@ -559,9 +559,19 @@ ActivityDataManager.generateActivityPayloadJson = function (actionUrl, blockId, 
 			'created': UtilDate.formatDateTimeStr(createdDT.toString())
 			, 'status': Constants.status_queued
 			, 'history': history  // if prev history exists, use that. 
-			, 'url': actionUrl
+			// , 'url': actionUrl
 			, 'searchValues': searchValues  // if exiting activity case, we should force it to be clientId & activityId..
 		};
+
+		if( actionUrl == "bahnmi" )
+		{
+			INFO.activity = activityJson;
+			activityJson.processing.eval = ["INFO.activity"];
+		}
+		else
+		{
+			activityJson.processing.url = actionUrl;
+		}
 
 		if (actionDefJson && actionDefJson.useMockResponse) activityJson.processing.useMockResponse = actionDefJson.useMockResponse;
 		if (existingClientId) activityJson.processing.existingClientId = existingClientId;

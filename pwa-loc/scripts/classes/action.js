@@ -712,7 +712,11 @@ function Action( cwsRenderObj, blockObj )
 
 	me.getActionUrl_Adjusted = function( actionDefJson )
 	{
-		return ( actionDefJson.dws && actionDefJson.dws.url ) ? actionDefJson.dws.url : actionDefJson.url;
+		if ( actionDefJson.dws && actionDefJson.dws.url ) return actionDefJson.dws.url;
+		if( actionDefJson.url ) return actionDefJson.url;
+		if ( actionDefJson.dws.type ) return actionDefJson.dws.type;
+
+		return;
 	};
 
 

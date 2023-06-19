@@ -478,6 +478,7 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
         {
             FavIcons.populateFavItemIcon( favIconTag, favItemJson );
             favIconTag.show();
+            favIconTag.attr( 'activityId', activityId );
 
             // OPEN FavId As New Activity Entry: Different btw Activity vs ClientDetail opening.
             if ( option.clientCardId )
@@ -534,7 +535,8 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
                         if ( renderedBlockId )
                         {
                             // Mark the block with activityEdit and scheduleConvert..
-                            ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
+                            // NEW: If 'fav_newAct' is present, do not go into Edit mode, but simply add as new Activity generating form open.
+                            if ( !activityJson.formData.fav_newAct ) ActivityDataManager.setEditModeActivityId( renderedBlockId, activityId, { scheduleConvert: 'true' } );
                         }
                     } );
                 }
