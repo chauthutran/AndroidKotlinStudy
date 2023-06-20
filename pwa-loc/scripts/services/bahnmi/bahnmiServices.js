@@ -12,7 +12,7 @@ BahnmiService.SYNC_DOWN_DATA = {
     "relationshipTypeDescription": "DSDA to Client Assignment"
 };
 
-BahnmiService.BASE_URL = "http://localhost:3210/";
+//BahnmiService.BASE_URL = "http://localhost:3210/"; // Overwritten by BahnmiService.composeURL
 
 BahnmiService.syncDownData = [];
 BahnmiService.patientIds = [];
@@ -20,6 +20,22 @@ BahnmiService.appointmentIds = [];
 BahnmiService.appointmentDataList = {};
 BahnmiService.activityList = {};
 
+// -----------------------------
+
+BahnmiService.getBaseURL = function()
+{
+    return ( WsCallManager.checkLocalDevCase( window.location.origin ) ) ? 'http://localhost:3120/' : WsCallManager.composeDwsWsFullUrl('/PWA.bahmniSrv' );
+};
+
+BahnmiService.composeURL = function( localCaseStr, dwsCaseStr )
+{
+    var fullUrl = BahnmiService.getBaseURL();
+    
+    if ( WsCallManager.checkLocalDevCase( window.location.origin ) ) fullUrl += localCaseStr;
+    else fullUrl += dwsCaseStr; // ?action=', false
+    
+    return fullUrl;
+};
 
 // ==============================================================================
 // SyncDown
@@ -57,7 +73,8 @@ BahnmiService.syncDown = function(exeFunc)
 // SyncDown - Referral Template Forms data
 BahnmiService.getRefTemplateFormDataList = function(exeFunc)
 {
-    const url = BahnmiService.BASE_URL + "getReferalsDataList";
+    const url = BahnmiService.composeURL( 'getReferalsDataList', '?action=getReferalsDataList' );
+
     BahnmiService.sendPostRequest(url, BahnmiService.SYNC_DOWN_DATA, function(refTemplateFormResponse){
         if( refTemplateFormResponse.status == "success" )
         {
@@ -83,7 +100,8 @@ BahnmiService.getRefTemplateFormDataList = function(exeFunc)
 // SyncDown - Assessment Plan data
 BahnmiService.getAssessmentPlanDataList = function(exeFunc)
 {
-    const url = BahnmiService.BASE_URL + "getAssessmentPlanDataList";
+    const url = BahnmiService.composeURL( "getAssessmentPlanDataList", '?action=getAssessmentPlanDataList' );
+
     BahnmiService.sendPostRequest(url, BahnmiService.SYNC_DOWN_DATA, function(response){
         if( response.status == "success" )
         {
@@ -115,15 +133,10 @@ BahnmiService.getAssessmentPlanDataList = function(exeFunc)
 
 BahnmiService.syncUp = function(activityJson, exeFunc)
 {
-    let url = "";
-    if( activityJson.type == "fup_a" )
-    {
-        url = BahnmiService.BASE_URL + "fupAppointment";
-    }
-    else // "ref_fup_a" OR "ap_fup_a"
-    {
-        url = BahnmiService.BASE_URL + "addFormData";
-    }
+    // elseCase: "ref_fup_a" OR "ap_fup_a"
+    var endpoint = ( activityJson.type == "fup_a" ) ? "fupAppointment": "addFormData";
+
+    const url = BahnmiService.composeURL( endpoint, '?action=' + endpoint );
 
     BahnmiService.sendPostRequest(url, activityJson.syncUp, exeFunc );
 }
@@ -201,7 +214,7 @@ BahnmiService.getPatientDataList = function( patientIds, exeFunc )
 
 BahnmiService.retrieveSyncDownData = function( exeFunc )
 {
-    const url = BahnmiService.BASE_URL + "syncDown";
+    const url = BahnmiService.composeURL( "syncDown", '?action=syncDown' );
     
     var data = {
         "lastSyncedDatetime": "2023-05-01T16:56:01.000+0530",
@@ -303,13 +316,15 @@ BahnmiService.retrieveSyncDownData = function( exeFunc )
 
 BahnmiService.retrievePatientDetails = function( patientId, exeFunc )
 {
-    const url = BahnmiService.BASE_URL + "patient?id=" + patientId;
+    const url = BahnmiService.composeURL( 'patient?id=' + patientId, '?action=patient&id=' + patientId );
+
     BahnmiService.sendGetRequest(url, exeFunc);
 };
 
 BahnmiService.retrieveAppointmentDetails = function( appointmentId, exeFunc )
 {
-    const url = BahnmiService.BASE_URL + "appointment?id=" + appointmentId;
+    const url = BahnmiService.composeURL( 'appointment?id=' + appointmentId, '?action=appointment&id=' + appointmentId );
+
     BahnmiService.sendGetRequest(url, exeFunc);
 };
 
