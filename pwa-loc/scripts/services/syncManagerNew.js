@@ -194,12 +194,12 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 			{
 				SyncManagerNew.update_UI_StartSyncAll();
 
-				BahnmiService.syncDown(function(bahnmiData)
+				BahnmiService.syncDown(function(responseBahnmiData)
 				{
 					SyncManagerNew.update_UI_FinishSyncAll();
 
-					downloadedData.clients = downloadedData.clients.concat( bahnmiData );
-					SyncManagerNew.afterSyncDown( downloadSuccess, downloadedData, mockCase, syncDownReqStartDTStr, callBack );
+					downloadedData.clients = downloadedData.clients.concat( responseBahnmiData.data );
+					SyncManagerNew.afterSyncDown( responseBahnmiData.status, downloadedData, mockCase, syncDownReqStartDTStr, callBack );
 				});
 			}
 			else
