@@ -57,8 +57,8 @@ BahnmiService.syncDown = function(exeFunc)
 // SyncDown - Referral Template Forms data
 BahnmiService.getRefTemplateFormDataList = function(exeFunc)
 {
-    // const url = BahnmiService.BASE_URL + "getReferalsDataList";
-    BahnmiRequestUtil.retrieveReferralsFormDataList(BahnmiService.SYNC_DOWN_DATA, function(refTemplateFormResponse){
+    const url = BahnmiService.BASE_URL + "getReferalsDataList";
+    BahnmiService.sendPostRequest(url, BahnmiService.SYNC_DOWN_DATA, function(refTemplateFormResponse){
         if( refTemplateFormResponse.status == "success" )
         {
             const refTemplateFormList = refTemplateFormResponse.data;
@@ -83,7 +83,8 @@ BahnmiService.getRefTemplateFormDataList = function(exeFunc)
 // SyncDown - Assessment Plan data
 BahnmiService.getAssessmentPlanDataList = function(exeFunc)
 {
-    BahnmiRequestUtil.retrieveAssessmentPlanDataList(BahnmiService.SYNC_DOWN_DATA, function(response){
+    const url = BahnmiService.BASE_URL + "getAssessmentPlanDataList";
+    BahnmiService.sendPostRequest(url, BahnmiService.SYNC_DOWN_DATA, function(response){
         if( response.status == "success" )
         {
             const refTemplateFormList = response.data;
@@ -124,7 +125,7 @@ BahnmiService.syncUp = function(activityJson, exeFunc)
         url = BahnmiService.BASE_URL + "addFormData";
     }
 
-    BahnmiRequestUtil.sendPostRequest(url, activityJson.syncUp, exeFunc );
+    BahnmiService.sendPostRequest(url, activityJson.syncUp, exeFunc );
 }
 
 
@@ -200,6 +201,8 @@ BahnmiService.getPatientDataList = function( patientIds, exeFunc )
 
 BahnmiService.retrieveSyncDownData = function( exeFunc )
 {
+    const url = BahnmiService.BASE_URL + "syncDown";
+    
     var data = {
         "lastSyncedDatetime": "2023-05-01T16:56:01.000+0530",
         "dsdaUUID": BahnmiService.dsdaUUID,
@@ -274,7 +277,7 @@ BahnmiService.retrieveSyncDownData = function( exeFunc )
         ]
     };
 
-    BahnmiRequestUtil.syncDown(data, function(response) {
+    BahnmiService.sendPostRequest(url, data, function(response) {
         if( response.status == "success" )
         {
             var dataList = response.data;
@@ -300,12 +303,14 @@ BahnmiService.retrieveSyncDownData = function( exeFunc )
 
 BahnmiService.retrievePatientDetails = function( patientId, exeFunc )
 {
-    BahnmiRequestUtil.retrievePatient(patientId,exeFunc );
+    const url = BahnmiService.BASE_URL + "patient?id=" + patientId;
+    BahnmiService.sendGetRequest(url, exeFunc);
 };
 
 BahnmiService.retrieveAppointmentDetails = function( appointmentId, exeFunc )
 {
-    BahnmiRequestUtil.retrieveAppointment(appointmentId, exeFunc);
+    const url = BahnmiService.BASE_URL + "appointment?id=" + appointmentId;
+    BahnmiService.sendGetRequest(url, exeFunc);
 };
 
 
@@ -424,3 +429,64 @@ BahnmiService.resolveNumber = function(number)
 {
     return ( number >= 10 ) ? ('' + number) : ('0' + number);
 };
+
+// BahnmiService.mergeJsonInManyLevelToOneLevel(jsonData, keyStr)
+// {
+//     // var keys = Object.keys(jsonData);
+//     var result = {};
+//     for( var key in jsonData )
+//     {
+//         var value = jsonData[key];
+//         if(  typeof(value) == "object" )
+//         {
+//             var subValueList = BahnmiService.mergeJsonInManyLevelToOneLevel(value, key + "_");
+//             result = {...result, ...subValueList};
+//         }
+//         else
+//         {
+//             result[keyStr + key] = value;
+//         }
+//     }
+    
+//     return result;
+// }
+
+// // ------------------------------------------------------------------------------
+// // Request API Util
+
+// BahnmiService.sendGetRequest = function(url, exeFunc )
+// {
+//     $.ajax({
+//         url: url,
+//         type: "GET",
+//         dataType: "json", 
+//         success: function (response) 
+//         {
+//             exeFunc(response);
+//         },
+//         error: function ( errMsg ) {
+//             console.log({ msg: errMsg, status: Constants.status_failed });
+//         }
+//     });
+// }
+
+// BahnmiService.sendPostRequest = function(url, data, exeFunc )
+// {
+//     $.ajax({
+//         url: url,
+//         type: "POST",
+//         dataType: "json", 
+//         data: data,
+//         success: function (response) 
+//         {
+//             exeFunc(response);
+//         },
+//         error: function ( errMsg ) {
+//             exeFunc({msg: errMsg, status: Constants.status_failed});
+//         }
+//     });
+// }
+
+// =================================================================================================================
+// 
+
