@@ -78,6 +78,18 @@ FhirUtil.getPatientResourceSet = function ( response )
 
 // ------------------------------
 
+
+FhirUtil.generateActivities = function ( resourceArr ) 
+{
+	var actList = [];
+
+	var act_QR = FhirUtil.generateActivities_fmQR( resourceArr.filter( item => item.resourceType === 'QuestionnaireResponse' ) );
+	var act_CommReq = FhirUtil.generateActivities_CommReq( resourceArr.filter( item => item.resourceType === 'CommunicationRequest' ) );
+
+	return actList.concat( act_QR, act_CommReq );
+};
+
+
 FhirUtil.generateActivities_fmQR = function ( questRespArr ) 
 {
 	var activities = [];
@@ -99,6 +111,28 @@ FhirUtil.generateActivities_fmQR = function ( questRespArr )
 	return activities;
 };
 
+
+FhirUtil.generateActivities_CommReq = function ( CommReqArr ) 
+{
+	var activities = [];
+
+	try
+	{
+		if ( CommReqArr && CommReqArr.length > 0 )
+		{
+			CommReqArr.forEach( item => {
+				activities.push( FhirUtil.convertCommReq_Activity( item ) );
+			});
+		}	
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in FhirUtil.generateActivities_CommReq, ' + errMsg );
+	}
+
+	return activities;
+};
+
 // What about the 'activeUser'?  <-- store it on extention json?
 
 FhirUtil.convertQR_Activity = function( qr )
@@ -108,7 +142,7 @@ FhirUtil.convertQR_Activity = function( qr )
 	{
 		if ( qr )
 		{
-			var patientId = FhirUtil.getQrPatientId( qr.subject );
+			var patientId = FhirUtil.getRefPatientId( qr.subject );
 			var extJson = FhirUtil.getExtensionVals( qr.extension );
 			var idenJson = FhirUtil.getIdentifierVals( qr.identifier ); // QR only allow 1 identifier, not array
 
@@ -122,6 +156,7 @@ FhirUtil.convertQR_Activity = function( qr )
 
 			if ( !act.id ) act.id = ( extJson.activityId ) ? extJson.activityId : 'qr_' + patientId + '_' + qr.id;	
 			if ( !act.type ) act.type = ( extJson.activityType ) ? extJson.activityType : '';
+			if ( !act.type ) act.type = ( extJson.transType === 'c_reg' ) ? 'IPC_CLIENT_REG' : '';
 
 			if ( extJson.activeUser ) activeUser = extJson.activeUser;
 			
@@ -130,6 +165,8 @@ FhirUtil.convertQR_Activity = function( qr )
 
 			act.date = FhirUtil.getActDateJson( qr.authored ); // need to get this from 'authored'
 			act.transactions = [ FhirUtil.getTransFromItem( qr.item, extJson ) ];
+
+			act.resource = qr;
 		}
 	}
 	catch( errMsg ) { console.log( 'ERROR in FhirUtil.convertQR_Activity, ' + errMsg ); }
@@ -137,7 +174,55 @@ FhirUtil.convertQR_Activity = function( qr )
 	return act;
 };
 
-FhirUtil.getQrPatientId = function( subject )
+
+FhirUtil.convertCommReq_Activity = function( item )
+{
+	var act = {};
+	try
+	{
+		if ( item )
+		{
+			var patientId = FhirUtil.getRefPatientId( item.subject );
+			var extJson = FhirUtil.getExtensionVals( item.extension );
+			var idenJson = FhirUtil.getIdentifierVals( item.identifier ); // QR only allow 1 identifier, not array
+
+			var actType_Voucher = ( idenJson.voucherCode ) ? true: false;
+			var actType_name = ( actType_Voucher ) ? 'Voucher_': '';
+
+			act.id = 'commReq_' + actType_name + patientId + '_' + item.id;
+			act.type = ( actType_Voucher ) ? 'Reminder_Voucher': 'Reminder';
+
+			var activeUser = '';
+			
+			act.activeUser = activeUser;
+			act.creditedUsers = [ activeUser ];
+
+			act.date = FhirUtil.getActDateJson( item.occurrenceDateTime );
+
+			act.status = item.status;
+			act.voucherCode = idenJson.voucherCode;
+
+			act.resource = item;
+
+			act.transactions = [{
+				type: 's_rem',
+				dataValues: {
+					voucherCode: idenJson.voucherCode,
+					payload: item.payload,
+					patientId: patientId,
+					status: item.status,
+					occurrenceDateTime: item.occurrenceDateTime
+				}
+			}];
+		}
+	}
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.convertCommReq_Activity, ' + errMsg ); }
+
+	return act;
+};
+
+
+FhirUtil.getRefPatientId = function( subject )
 {
 	var patientId;
 
@@ -145,7 +230,7 @@ FhirUtil.getQrPatientId = function( subject )
 	{
 		if ( subject && subject.reference ) patientId = subject.reference.replace( 'Patient/', '' );
 	}
-	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getQrPatientId, ' + errMsg ); }
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getRefPatientId, ' + errMsg ); }
 
 	return patientId;
 };
