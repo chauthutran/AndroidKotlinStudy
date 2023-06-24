@@ -95,6 +95,9 @@ ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
 			ConfigManager.populateOptions_ouChildren(ConfigManager.configJson, loginData);
 			ConfigManager.populateOptions_ouTagOus(ConfigManager.configJson, loginData);
 			ConfigManager.populateOptions_ouVMMC(ConfigManager.configJson, loginData);
+
+			// Bahmni Related
+			ConfigManager.setINFO_SettingsBahmni_INFO_Vals(); // Run 'INFO_Vals' in bahmni if exists.
 		}
 	}
 	catch (errMsg) {
@@ -580,6 +583,29 @@ ConfigManager.getSettingsTermId = function (termName) {
 
 	return termId;
 };
+
+
+
+// Bahmni Related:
+ConfigManager.getSettingsBahmni = function () {
+
+	var settingsBahmni = ConfigManager.getSettings().bahmni;
+
+	return ( settingsBahmni ) ? settingsBahmni: {};
+};
+
+ConfigManager.setINFO_SettingsBahmni_INFO_Vals = function() {
+	var settingsBahmni = ConfigManager.getSettingsBahmni();
+
+	if ( settingsBahmni.INFO_Vals )
+	{
+		for ( var prop in settingsBahmni.INFO_Vals )
+		{
+			//InfoDataManager.setINFOdata( InfoDataManager.NAME_fhirHeaderProfile, profileStr );
+			INFO[prop] = settingsBahmni.INFO_Vals[ prop ];
+		}
+	}
+}; 
 
 
 ConfigManager.getActivityDef = function () {
