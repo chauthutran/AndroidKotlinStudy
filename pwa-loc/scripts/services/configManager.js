@@ -98,6 +98,9 @@ ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
 
 			// Bahmni Related
 			ConfigManager.setINFO_SettingsBahmni_INFO_Vals(); // Run 'INFO_Vals' in bahmni if exists.
+
+			// Add 'AppInfo' localStorage 'selectOptions'			
+			ConfigManager.combineDefinitionOptions_wtAppInfoOpts( ConfigManager.getConfigJson().definitionOptions, AppInfoLSManager.getSelectOptions() );
 		}
 	}
 	catch (errMsg) {
@@ -606,6 +609,23 @@ ConfigManager.setINFO_SettingsBahmni_INFO_Vals = function() {
 		}
 	}
 }; 
+
+ConfigManager.combineDefinitionOptions_wtAppInfoOpts = function( definitionOptions, appInfoSelectOpts ) {
+	try
+	{
+		if ( definitionOptions && appInfoSelectOpts )
+		{
+			for ( var prop in appInfoSelectOpts )
+			{
+				if ( !definitionOptions[ prop ] )
+				{
+					definitionOptions[ prop ] = appInfoSelectOpts[ prop ];
+				}
+			}
+		}
+	}
+	catch( errMsg ) {  console.log( 'ERROR in ConfigManager.combineDefinitionOptions_wtAppInfoOpts, ' + errMsg ); }
+};
 
 
 ConfigManager.getActivityDef = function () {

@@ -7,7 +7,8 @@ AppInfoLSManager.KEY_APPINFO = "appInfo";
 
 AppInfoLSManager.appInfo_LS;
 
-AppInfoLSManager.KEY_LASTLOGINDATA = "lastLoginData";  // It actually is 'lastLoginData'
+AppInfoLSManager.KEY_LASTLOGINDATA = "lastLoginData";
+AppInfoLSManager.KEY_SELECT_OPTIONS = "selectOptions";
 
 AppInfoLSManager.KEY_USERNAME = "userName"; 
 AppInfoLSManager.KEY_CONFIGSOURCETYPE = "configSourceType"; 
@@ -29,7 +30,7 @@ AppInfoLSManager.DevDebugLogHistoryMaxLength = 30;
 
 
 // Old and obsolete keys
-AppInfoLSManager.KEY_USERINFO = "userInfo";  // It actually is 'lastLoginData'
+AppInfoLSManager.KEY_USERINFO = "userInfo";
 AppInfoLSManager.KEY_LOGINOUT = "logInOut"; 
 AppInfoLSManager.KEY_SYNC = "sync"; 
 AppInfoLSManager.KEY_DEBUG = "debug"; 
@@ -408,6 +409,23 @@ AppInfoLSManager.setLoginPrevData = function( loginPrevData )
 
 // When performing Online login, send this value
 
+
+// ----------------------------------------------------
+//  Select Option In AppInfo Related..
+AppInfoLSManager.setSelectOptions_Item = function( optionName, optionData )
+{
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_SELECT_OPTIONS, optionName, optionData );
+};
+
+AppInfoLSManager.getSelectOptions_Item = function( optionName)
+{
+    return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_SELECT_OPTIONS, optionName );
+};
+
+AppInfoLSManager.getSelectOptions = function()
+{
+    return AppInfoLSManager.getKeyValue( AppInfoLSManager.KEY_SELECT_OPTIONS );
+};
 
 
 // -----------------------------
