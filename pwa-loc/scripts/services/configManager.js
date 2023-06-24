@@ -601,7 +601,6 @@ ConfigManager.setINFO_SettingsBahmni_INFO_Vals = function() {
 	{
 		for ( var prop in settingsBahmni.INFO_Vals )
 		{
-			//InfoDataManager.setINFOdata( InfoDataManager.NAME_fhirHeaderProfile, profileStr );
 			INFO[prop] = settingsBahmni.INFO_Vals[ prop ];
 		}
 	}
