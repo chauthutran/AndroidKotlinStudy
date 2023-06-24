@@ -197,7 +197,7 @@ BahnmiService.getRefTemplateFormDataList = function(exeFunc)
                     BahnmiService.patientIds.push(patientId);
                 }
 
-                const activity = BahnmiService.generateActivityFormData(item, "ref_a", "referralsForm");
+                const activity = BahnmiService.generateActivityFormData(item, "Referrals Template", "referralsForm");
                 BahnmiService.activityList[patientId] = activity;
             }
         }
@@ -230,7 +230,7 @@ BahnmiService.getAssessmentPlanDataList = function(exeFunc)
                     BahnmiService.patientIds.push(patientId);
                 }
 
-                const activity = BahnmiService.generateActivityFormData(item, "ap_a", "assessmentPlan");
+                const activity = BahnmiService.generateActivityFormData(item, "Assessment Plan", "assessmentPlan");
                 BahnmiService.activityList[patientId] = activity;
             }
         }
@@ -253,8 +253,8 @@ BahnmiService.getAssessmentPlanDataList = function(exeFunc)
 
 BahnmiService.syncUp = function(activityJson, exeFunc)
 {
-    // elseCase: "ref_fup_a" OR "ap_fup_a"
-    var endpoint = ( activityJson.type == "fup_a" ) ? "fupAppointment": "addFormData";
+    // elseCase: "Follow Up Referrals Template Form" OR "Follow Up Assessment Plan"
+    var endpoint = ( activityJson.type == "Follow Up Appointment" ) ? "fupAppointment": "addFormData";
 
     const url = BahnmiService.composeURL( endpoint, '?action=' + endpoint );
 
