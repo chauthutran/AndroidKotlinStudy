@@ -274,14 +274,8 @@ BahmniService.generateActivityFormData = function( refDormData, type, formNameId
 };
 
 BahmniService.generateJsonDate = function() {
-    var dateStr = UtilDate.dateStr('DT', new Date())
+    var dateStr = UtilDate.dateStr('DT', new Date());
 
-    // var month = BahmniService.resolveNumber(dateObj.getMonth());
-    // var hours = BahmniService.resolveNumber( dateObj.getHours() );
-    // var minutes = BahmniService.resolveNumber(dateObj.getMinutes());
-    // var seconds = BahmniService.resolveNumber(dateObj.getSeconds());
-
-    // var dateStr = dateObj.getFullYear() + "-" + month + "-" + dateObj.getDate() + ":" + hours + ":" + minutes + ":" + seconds + ".000";
     return { capturedLoc: dateStr,
             capturedUTC: dateStr,
             createdLoc: dateStr,
@@ -290,7 +284,7 @@ BahmniService.generateJsonDate = function() {
             createdUTC: dateStr,
             updatedLoc: dateStr,
             updatedUTC: dateStr
-            };
+        };
 };
 
 BahmniService.resolveNumber = function(number)
