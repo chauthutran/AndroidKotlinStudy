@@ -5,7 +5,7 @@ function BahmniService() { }
 
 BahmniService.syncDownProcessingTotal = 0;
 BahmniService.syncDownProcessingIdx = 0;
-BahmniService.allSyncDownResponseData = {};
+// BahmniService.allSyncDownResponseData = {};
 BahmniService.syncDownDataList = [];
 BahmniService.syncDownStatus = {status: "success"};
 
@@ -27,7 +27,7 @@ BahmniService.syncDown = function(exeFunc)
 
     BahmniService.appointmentIdxProcessing = 0;
     BahmniService.syncDownStatus = {status: "success"};
-    BahmniService.allSyncDownResponseData = {};
+    // BahmniService.allSyncDownResponseData = {};
     BahmniService.syncDownDataList = [];
     
     const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
@@ -46,18 +46,12 @@ BahmniService.syncDown = function(exeFunc)
                 Util.traverseEval(configSynDownData.payload, InfoDataManager.getINFO(), 0, 50);
 
                 BahmniService.sendPostRequest(configSynDownData.id, url, configSynDownData.payload, function(response) {
-                    INFO.respone = response;
-                    const responseData = eval( Util.getEvalStr( configSynDownData.responseEval ) );
-                    BahmniService.allSyncDownResponseData[responseData.id] = responseData.data;
                     BahmniService.afterSyncDown(exeFunc);
                 })
             }
             else if( configSynDownData.method.toUpperCase() == "GET" )
             {
                 BahmniService.sendGetRequest(configSynDownData.id, url, function(response) {
-                    INFO.respone = response;
-                    const responseData = eval( Util.getEvalStr( configSynDownData.responseEval ) );
-                    BahmniService.allSyncDownResponseData[responseData.id] = responseData.data;
                     BahmniService.afterSyncDown(exeFunc);
                 });
             }
@@ -72,8 +66,21 @@ BahmniService.afterSyncDown = function(exeFunc)
     if( BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal )
     {
         console.log("===== BahmniService.allSyncDownResponseData");
-        console.log(BahmniService.allSyncDownResponseData);
-        var allSyncDownData = BahmniService.allSyncDownResponseData;
+        var allSyncDownData = {};
+        const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
+        for( var i=0; i<configSynDownList.length; i++ )
+        {
+            const configData = configSynDownList[i];
+            const responseData = eval( Util.getEvalStr( configData.responseEval ) );
+            if( responseData )
+            {
+                allSyncDownData[responseData.id] = responseData.data;
+            }
+        }
+        
+
+        // console.log(BahmniService.allSyncDownResponseData);
+        // var allSyncDownData = BahmniService.allSyncDownResponseData;
 
         var patientIds = [];
         var appointmentIds = [];
@@ -228,16 +235,34 @@ BahmniService.generateClientData = function( patientData )
     
     // Set activities - Referal Template From Data 
     const refFromDataActivity = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
-    if( refFromDataActivity != undefined )
+    for( let i=0; i<refFromDataActivity.length; i++ )
     {
-        resolveData.activities.push(refFromDataActivity);  
+        const activity = refFromDataActivity[i];
+        var checkedExisted = Util.findFromList( resolveData.activities, activity.id, "id" );
+        if( !checkedExisted )
+        {
+            resolveData.activities.push(activity);
+        }
     }
+    // // if( refFromDataActivity != undefined )
+    // // {
+    // //     resolveData.activities.push(refFromDataActivity);  
+    // // }
 
-    // Set activities - "Scheduled" Appointment 
-    const appointmentDataList = Util.findAllFromList( BahmniService.syncDownDataList.appointments, patientId, "patientId");
-    if( appointmentDataList.length > 0 )
-    {
-        resolveData.activities = resolveData.activities.concat(appointmentDataList );  
+    // // Set activities - "Scheduled" Appointment 
+    // const appointmentDataList = Util.findAllFromList( BahmniService.syncDownDataList.appointments, patientId, "patientId");
+    // // if( appointmentDataList.length > 0 )
+    // // {
+    // for( let i=0; i<appointmentDataList.length; i++ )
+    // {
+    //     const activity = appointmentDataList[i];
+    //     var checkedExisted = Util.findFromList( resolveData.activities, activity.id, "id" );
+    //     if( !checkedExisted )
+    //     {
+    //         resolveData.activities.push(activity);
+    //     }
+    // }
+        
         // for( var j=0; j<appointmentData.length; j++ )
         // {
         //     const data = appointmentData[j];
@@ -245,7 +270,7 @@ BahmniService.generateClientData = function( patientData )
         //     // const activity = BahmniService.generateActivityAppointment(data, { formData: { sch_favId: 'followUp', fav_newAct: true } } );
         //     resolveData.activities.push(activity);  
         // }
-    }
+    // }
     
     return resolveData;
 };
@@ -289,7 +314,7 @@ BahmniService.generateActivityFormData = function( refDormData, type, formNameId
     };
 
     const activityId = patientId + "_" + Math.floor(Math.random() * 1000000);
-    return { id: activityId, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: refDormData, date: BahmniService.generateJsonDate(BahmniService.lastSyncedDatetime) };
+    return { id: activityId, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: refDormData, date: BahmniService.generateJsonDate(BahmniService.lastSyncedDatetime), patientId: patientId };
 };
 
 BahmniService.generateJsonDate = function( startDateTime ) {
@@ -351,6 +376,7 @@ BahmniService.sendPostRequest = function(id, url, data, exeFunc )
         success: function (response) 
         {
             INFO.bahmniResponseData[id] = response;
+            console.log( INFO.bahmniResponseData );
             exeFunc(response);
         },
         error: function ( errMsg ) {
