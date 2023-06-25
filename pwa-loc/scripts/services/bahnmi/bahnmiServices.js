@@ -27,7 +27,6 @@ BahmniService.syncDown = function(exeFunc)
 
     BahmniService.appointmentIdxProcessing = 0;
     BahmniService.syncDownStatus = {status: "success"};
-    // BahmniService.allSyncDownResponseData = {};
     BahmniService.syncDownDataList = [];
     
     const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
@@ -65,8 +64,9 @@ BahmniService.afterSyncDown = function(exeFunc)
     BahmniService.syncDownProcessingIdx++;
     if( BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal )
     {
-        console.log("===== BahmniService.allSyncDownResponseData");
-        var allSyncDownData = {};
+        var patientIds = [];
+        var appointmentIds = [];
+        var appointments = [];
         const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
         for( var i=0; i<configSynDownList.length; i++ )
         {
@@ -74,36 +74,24 @@ BahmniService.afterSyncDown = function(exeFunc)
             const responseData = eval( Util.getEvalStr( configData.responseEval ) );
             if( responseData )
             {
-                allSyncDownData[responseData.id] = responseData.data;
-            }
-        }
-        
+                var data = responseData.data;
+                if( data.patientIds )
+                {
+                    patientIds = patientIds.concat( data.patientIds ); 
+                    patientIds = patientIds.filter((item, pos) => patientIds.indexOf(item) === pos); // Remove duplicated Ids
+                }
 
-        // console.log(BahmniService.allSyncDownResponseData);
-        // var allSyncDownData = BahmniService.allSyncDownResponseData;
+                if( data.appointmentIds )
+                {
+                    appointmentIds = appointmentIds.concat( data.appointmentIds ); 
+                    appointmentIds = appointmentIds.filter((item, pos) => appointmentIds.indexOf(item) === pos); // Remove duplicated Ids
+                }
 
-        var patientIds = [];
-        var appointmentIds = [];
-        var appointments = [];
-        for( var i in allSyncDownData )
-        {
-            var data = allSyncDownData[i];
-            if( data.patientIds )
-            {
-                patientIds = patientIds.concat( data.patientIds ); 
-                patientIds = patientIds.filter((item, pos) => patientIds.indexOf(item) === pos); // Remove duplicated Ids
+                if( data.appointments )
+                {
+                    appointments = appointments.concat( data.appointments );
+                }
             }
-
-            if( data.appointmentIds )
-            {
-                appointmentIds = appointmentIds.concat( data.appointmentIds ); 
-                appointmentIds = appointmentIds.filter((item, pos) => appointmentIds.indexOf(item) === pos); // Remove duplicated Ids
-            }
-            if( data.appointments )
-            {
-                appointments = appointments.concat( data.appointments );
-            }
-           
         }
 
         BahmniService.syncDownDataList = { patientIds, appointmentIds, appointments, patients: [] };
@@ -219,7 +207,7 @@ BahmniService.generateClientData = function( patientData )
     var resolveData =  {};
 
     const patientId = patientData.uuid;
-    resolveData = { _id: patientId, subSourceType: "bahnmi", clientDetails : patientData.person, activities: [], date: BahmniService.generateJsonDate(BahmniService.lastSyncedDatetime)};
+    resolveData = { _id: patientId, subSourceType: "bahnmi", clientDetails : patientData.person, activities: [], date: BahmniService.generateJsonDate()};
     resolveData.clientDetails.firstName = patientData.person.preferredName.givenName;
     resolveData.clientDetails.lastName = patientData.person.preferredName.familyName;
 
@@ -233,44 +221,17 @@ BahmniService.generateClientData = function( patientData )
     }
 
     
-    // Set activities - Referal Template From Data 
-    const refFromDataActivity = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
-    for( let i=0; i<refFromDataActivity.length; i++ )
+    // Set activities - "Referal Template" From Data and "Assessment Plan" Form Data
+    const activities = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
+    for( let i=0; i<activities.length; i++ )
     {
-        const activity = refFromDataActivity[i];
+        const activity = activities[i];
         var checkedExisted = Util.findFromList( resolveData.activities, activity.id, "id" );
         if( !checkedExisted )
         {
             resolveData.activities.push(activity);
         }
     }
-    // // if( refFromDataActivity != undefined )
-    // // {
-    // //     resolveData.activities.push(refFromDataActivity);  
-    // // }
-
-    // // Set activities - "Scheduled" Appointment 
-    // const appointmentDataList = Util.findAllFromList( BahmniService.syncDownDataList.appointments, patientId, "patientId");
-    // // if( appointmentDataList.length > 0 )
-    // // {
-    // for( let i=0; i<appointmentDataList.length; i++ )
-    // {
-    //     const activity = appointmentDataList[i];
-    //     var checkedExisted = Util.findFromList( resolveData.activities, activity.id, "id" );
-    //     if( !checkedExisted )
-    //     {
-    //         resolveData.activities.push(activity);
-    //     }
-    // }
-        
-        // for( var j=0; j<appointmentData.length; j++ )
-        // {
-        //     const data = appointmentData[j];
-
-        //     // const activity = BahmniService.generateActivityAppointment(data, { formData: { sch_favId: 'followUp', fav_newAct: true } } );
-        //     resolveData.activities.push(activity);  
-        // }
-    // }
     
     return resolveData;
 };
@@ -290,7 +251,7 @@ BahmniService.generateActivityAppointment = function( data, options )
         dataValues["service_" + key] = data.service[key];
     }
 
-    var activity = { id: data.uuid, transactions:[{dataValues, type}], type: type, originalData: data, date: BahmniService.generateJsonDate(BahmniService.lastSyncedDatetime), patientId: data.patient.uuid };
+    var activity = { id: data.uuid, transactions:[{dataValues, type}], type: type, originalData: data, date: BahmniService.generateJsonDate(), patientId: data.patient.uuid };
     if ( options.formData ) activity.formData = options.formData;
 
     return activity;
@@ -299,11 +260,6 @@ BahmniService.generateActivityAppointment = function( data, options )
 BahmniService.generateActivityFormData = function( refDormData, type, formNameId )
 {
     const patientId = refDormData.patientUuid;
-    // const checkedActivity = BahmniService.llSyncDownResponseData.appointments[patientId]; // Try to get the latest one in case one person has many "Referals Template Form data"
-    // if( checkedActivity != undefined && checkedActivity.formVersion > refDormData.formVersion )
-    // {
-    //     return checkedActivity;
-    // }
 
     var dataValues =  {
         encounterUuid: refDormData.encounterUuid,
@@ -314,18 +270,18 @@ BahmniService.generateActivityFormData = function( refDormData, type, formNameId
     };
 
     const activityId = patientId + "_" + Math.floor(Math.random() * 1000000);
-    return { id: activityId, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: refDormData, date: BahmniService.generateJsonDate(BahmniService.lastSyncedDatetime), patientId: patientId };
+    return { id: activityId, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: refDormData, date: BahmniService.generateJsonDate(), patientId: patientId };
 };
 
-BahmniService.generateJsonDate = function( startDateTime ) {
-    var dateObj = new Date( startDateTime );
+BahmniService.generateJsonDate = function() {
+    var dateStr = UtilDate.dateStr('DT', new Date())
 
-    var month = BahmniService.resolveNumber(dateObj.getMonth());
-    var hours = BahmniService.resolveNumber( dateObj.getHours() );
-    var minutes = BahmniService.resolveNumber(dateObj.getMinutes());
-    var seconds = BahmniService.resolveNumber(dateObj.getSeconds());
+    // var month = BahmniService.resolveNumber(dateObj.getMonth());
+    // var hours = BahmniService.resolveNumber( dateObj.getHours() );
+    // var minutes = BahmniService.resolveNumber(dateObj.getMinutes());
+    // var seconds = BahmniService.resolveNumber(dateObj.getSeconds());
 
-    var dateStr = dateObj.getFullYear() + "-" + month + "-" + dateObj.getDate() + ":" + hours + ":" + minutes + ":" + seconds + ".000";
+    // var dateStr = dateObj.getFullYear() + "-" + month + "-" + dateObj.getDate() + ":" + hours + ":" + minutes + ":" + seconds + ".000";
     return { capturedLoc: dateStr,
             capturedUTC: dateStr,
             createdLoc: dateStr,
@@ -355,10 +311,19 @@ BahmniService.sendGetRequest = function(id, url, exeFunc )
         dataType: "json", 
         success: function (response) 
         {
-            INFO.bahmniResponseData[id] = response;
-            exeFunc(response);
+            if( response.error)
+            {
+                INFO.bahmniResponseData[id] = [];
+                exeFunc({msg: errMsg, status: Constants.status_failed});
+            }
+            else
+            {
+                INFO.bahmniResponseData[id] = response;
+                exeFunc(response);
+            }
         },
         error: function ( errMsg ) {
+            INFO.bahmniResponseData[id] = [];
             console.log({ msg: errMsg, status: Constants.status_failed });
         }
     });
@@ -375,11 +340,19 @@ BahmniService.sendPostRequest = function(id, url, data, exeFunc )
         async: true,
         success: function (response) 
         {
-            INFO.bahmniResponseData[id] = response;
-            console.log( INFO.bahmniResponseData );
-            exeFunc(response);
+            if( response.error)
+            {
+                INFO.bahmniResponseData[id] = [];
+                exeFunc({msg: errMsg, status: Constants.status_failed});
+            }
+            else
+            {
+                INFO.bahmniResponseData[id] = response;
+                exeFunc(response);
+            }
         },
         error: function ( errMsg ) {
+            INFO.bahmniResponseData[id] = [];
             exeFunc({msg: errMsg, status: Constants.status_failed});
         }
     });
