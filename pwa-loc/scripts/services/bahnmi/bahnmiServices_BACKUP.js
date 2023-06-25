@@ -12,7 +12,7 @@ BahmniService.SYNC_DOWN_DATA = {
     "relationshipTypeDescription": "DSDA to Client Assignment"
 };
 
-//BahmniService.BASE_URL = "http://localhost:3210/"; // Overwritten by BahmniService.composeURL
+BahmniService.SERVICE_BASE_URL = "http://localhost:3020/";
 
 BahmniService.downloadSyncUpList = false;
 BahmniService.downloadReferralsTemplateList = false;
@@ -27,10 +27,9 @@ BahmniService.activityList = {};
 
 // -----------------------------
 
-BahmniService.getBaseURL = function()
+BahmniService.getURL = function( bahmniUrl)
 {
-    // return ( WsCallManager.checkLocalDevCase( window.location.origin ) ) ? 'http://localhost:3120/' : WsCallManager.composeDwsWsFullUrl('/PWA.bahmniSrv' );
-    return WsCallManager.composeDwsWsFullUrl('/PWA.bahmniSrv' );
+    return ( WsCallManager.checkLocalDevCase( window.location.origin ) ) ? BahmniService.SERVICE_BASE_URL + bahmniUrl : bahmniUrl;
 };
 
 BahmniService.composeURL = function( localCaseStr, dwsCaseStr )

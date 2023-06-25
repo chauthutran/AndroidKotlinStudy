@@ -9,6 +9,13 @@ BahmniService.allSyncDownResponseData = {};
 BahmniService.syncDownStatus = {status: "success"};
 
 
+BahmniService.SERVICE_BASE_URL = "http://localhost:3020/";
+
+BahmniService.composeURL = function( bahmniUrl )
+{
+    var baseUrlService = ( WsCallManager.checkLocalDevCase( window.location.origin ) ) ? BahmniService.SERVICE_BASE_URL : "";
+    return baseUrlService + bahmniUrl;
+};
 // ==============================================================================
 // SyncDown
 // ==============================================================================
@@ -36,13 +43,15 @@ BahmniService.syncDown = function(exeFunc)
                 Util.traverseEval(configSynDownData.payload, InfoDataManager.getINFO(), 0, 50);
 
                 BahmniService.sendPostRequest(url, configSynDownData.payload, function(response) {
-                    BahmniService.afterSyncDown(configSynDownData, response);
+                    BahmniService.setResponseData(configSynDownData, response);
+                    BahmniService.afterSyncDown();
                 })
             }
             else if( configSynDownData.method.toUpperCase() == "GET" )
             {
                 BahmniService.sendGetRequest(url, function(response){
-                   BahmniService.afterSyncDown(configSynDownData, response);
+                    BahmniService.setResponseData(configSynDownData, response);
+                    BahmniService.afterSyncDown();
                 });
             }
         }
@@ -50,20 +59,25 @@ BahmniService.syncDown = function(exeFunc)
     
 };
 
-BahmniService.afterSyncDown = function(configData, response)
+BahmniService.setResponseData = function(configData, response)
 {
     INFO.respone = response;
-    var configId = configData.id;
-    BahmniService.allSyncDownResponseData[configId] = eval( Util.getEvalStr( configData.responseEval ) );
+    const responseData = eval( Util.getEvalStr( configData.responseEval ) );
+    BahmniService.allSyncDownResponseData[responseData.id] = responseData.data
+}
 
+BahmniService.afterSyncDown = function()
+{
     BahmniService.syncDownProcessingIdx++;
     if( BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal )
     {
+        console.log("===== BahmniService.allSyncDownResponseData");
+        console.log(BahmniService.allSyncDownResponseData);
         var allSyncDownData = BahmniService.allSyncDownResponseData;
 
         var patientIds = [];
         var appointmentIds = [];
-        var appointmentList = {};
+        var appointments = {};
         for( var i in allSyncDownData )
         {
             var data = allSyncDownData[i];
@@ -74,16 +88,16 @@ BahmniService.afterSyncDown = function(configData, response)
 
             if( data.appointmentIds )
             {
-                appointmentIds = appointmentIds.concat( data.appointmentIdList ); 
+                appointmentIds = appointmentIds.concat( data.appointmentIds ); 
             }
             if( data.appointments )
             {
-                $.extend(appointmentList, appointmentList, data.appointments);
+                $.extend(appointments, appointments, data.appointments);
             }
            
         }
 
-        BahmniService.allSyncDownResponseData = { patientIds, appointmentIds, appointmentList, patients: [] };
+        BahmniService.allSyncDownResponseData = { patientIds, appointmentIds, appointments, patients: [] };
         
         BahmniService.getAppointmentDataList( BahmniService.allSyncDownResponseData.appointmentIds, function() {
             BahmniService.getPatientDataList(BahmniService.allSyncDownResponseData.patientIds, function() {
@@ -105,18 +119,18 @@ BahmniService.getAppointmentDataList = function( appointmentIds, exeFunc )
             BahmniService.retrieveAppointmentDetails( appointmentIds[i], function(response) {
                 BahmniService.appointmentIdxProcessing ++;
                 
-                const data = response.data;
+                const data = response;
                 const patientId = data.patient.uuid;
                 if( BahmniService.allSyncDownResponseData.patientIds.indexOf( patientId) < 0 )
                 {
                     BahmniService.allSyncDownResponseData.patientIds.push( patientId );
                 }
 
-                if( BahmniService.allSyncDownResponseData.appointmentList[patientId] == undefined )
+                if( BahmniService.allSyncDownResponseData.appointments[patientId] == undefined )
                 {
-                    BahmniService.allSyncDownResponseData.appointmentList[patientId] = [];
+                    BahmniService.allSyncDownResponseData.appointments[patientId] = [];
                 }
-                BahmniService.allSyncDownResponseData.appointmentList[patientId].push(data);
+                BahmniService.allSyncDownResponseData.appointments[patientId].push(data);
     
                 
                
@@ -166,13 +180,13 @@ BahmniService.getPatientDataList = function( patientIds, exeFunc )
 
 BahmniService.retrievePatientDetails = function( patientId, exeFunc )
 {
-    const url = INFO.bahmni_baseUrl + "/openmrs/ws/rest/v1/patientprofile/" + patientId + "?v=full";
+    const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/patientprofile/" + patientId + "?v=full";
     BahmniService.sendGetRequest(url, exeFunc);
 };
 
 BahmniService.retrieveAppointmentDetails = function( appointmentId, exeFunc )
 {
-    const url = INFO.bahmni_baseUrl + "/openmrs/ws/rest/v1/appointment?uuid=" + appointmentId;
+    const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/appointment?uuid=" + appointmentId;
     BahmniService.sendGetRequest(url, exeFunc);
 };
 
@@ -214,14 +228,14 @@ BahmniService.generateClientData = function( patientData )
 
     
     // Set activities - Referal Template From Data 
-    const refFromDataActivity = BahmniService.activityList[patientId];
+    const refFromDataActivity = BahmniService.allSyncDownResponseData.appointments[patientId];
     if( refFromDataActivity != undefined )
     {
         resolveData.activities.push(refFromDataActivity);  
     }
 
     // Set activities - "Scheduled" Appointment 
-    const appointmentData = BahmniService.appointmentDataList[patientId];
+    const appointmentData = BahmniService.allSyncDownResponseData.appointments[patientId];
     if( appointmentData )
     {
         for( var j=0; j<appointmentData.length; j++ )
@@ -260,11 +274,11 @@ BahmniService.generateActivityAppointment = function( data, options )
 BahmniService.generateActivityFormData = function( refDormData, type, formNameId )
 {
     const patientId = refDormData.patientUuid;
-    const checkedActivity = BahmniService.activityList[patientId]; // Try to get the latest one in case one person has many "Referals Template Form data"
-    if( checkedActivity != undefined && checkedActivity.formVersion > refDormData.formVersion )
-    {
-        return checkedActivity;
-    }
+    // const checkedActivity = BahmniService.llSyncDownResponseData.appointments[patientId]; // Try to get the latest one in case one person has many "Referals Template Form data"
+    // if( checkedActivity != undefined && checkedActivity.formVersion > refDormData.formVersion )
+    // {
+    //     return checkedActivity;
+    // }
 
     var dataValues =  {
         encounterUuid: refDormData.encounterUuid,
@@ -310,9 +324,9 @@ BahmniService.resolveNumber = function(number)
 BahmniService.sendGetRequest = function(url, exeFunc )
 {
     $.ajax({
-        url: url,
+        url: BahmniService.composeURL(url),
         type: "GET",
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'authorization': INFO.bahmni_authBasicEval },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'Authorization': eval(INFO.bahmni_authBasicEval) },
         dataType: "json", 
         success: function (response) 
         {
@@ -327,11 +341,12 @@ BahmniService.sendGetRequest = function(url, exeFunc )
 BahmniService.sendPostRequest = function(url, data, exeFunc )
 {
     $.ajax({
-        url: url,
+        url: BahmniService.composeURL(url),
         type: "POST",
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'authorization': INFO.bahmni_authBasicEval },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'Authorization': eval(INFO.bahmni_authBasicEval) },
         dataType: "json", 
         data: JSON.stringify(data),
+        // async: false,
         success: function (response) 
         {
             exeFunc(response);
