@@ -180,13 +180,13 @@ BahmniService.getPatientDataList = function( patientIds, exeFunc )
 BahmniService.retrievePatientDetails = function( patientId, exeFunc )
 {
     const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/patientprofile/" + patientId + "?v=full";
-    BahmniService.sendGetRequest(url, exeFunc);
+    BahmniService.sendGetRequest(patientId, url, exeFunc);
 };
 
 BahmniService.retrieveAppointmentDetails = function( appointmentId, exeFunc )
 {
     const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/appointment?uuid=" + appointmentId;
-    BahmniService.sendGetRequest(url, exeFunc);
+    BahmniService.sendGetRequest(appointmentId, url, exeFunc);
 };
 
 // ==============================================================================
@@ -227,7 +227,7 @@ BahmniService.generateClientData = function( patientData )
 
     
     // Set activities - Referal Template From Data 
-    const refFromDataActivity = BahmniService.syncDownDataList.appointments[patientId];
+    const refFromDataActivity = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
     if( refFromDataActivity != undefined )
     {
         resolveData.activities.push(refFromDataActivity);  
@@ -288,7 +288,7 @@ BahmniService.generateActivityFormData = function( refDormData, type, formNameId
         formVersion: refDormData.formVersion
     };
 
-    const activityId = patientId + "_" + (new Date).getMilliseconds();
+    const activityId = patientId + "_" + Math.floor(Math.random() * 1000000);
     return { id: activityId, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: refDormData, date: BahmniService.generateJsonDate(BahmniService.lastSyncedDatetime) };
 };
 
@@ -347,7 +347,7 @@ BahmniService.sendPostRequest = function(id, url, data, exeFunc )
         headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'Authorization': eval(INFO.bahmni_authBasicEval) },
         dataType: "json", 
         data: JSON.stringify(data),
-        async: false,
+        async: true,
         success: function (response) 
         {
             INFO.bahmniResponseData[id] = response;
