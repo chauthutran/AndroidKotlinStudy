@@ -188,18 +188,18 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 
       // NEW - Bahmni
 
-			// if( ) // Need to set a parameter for Bahnmi sync in country configuration --- ConfigManager.<something>
+			// if( ) // Need to set a parameter for Bahmni sync in country configuration --- ConfigManager.<something>
 			const subSourceType = ConfigManager.getConfigJson().subSourceType;
 			if( subSourceType == "bahnmi")
 			{
 				SyncManagerNew.update_UI_StartSyncAll();
 
-				BahnmiService.syncDown(function(responseBahnmiData)
+				BahmniService.syncDown(function(responseBahmniData)
 				{
 					SyncManagerNew.update_UI_FinishSyncAll();
 
-					downloadedData.clients = downloadedData.clients.concat( responseBahnmiData.data );
-					SyncManagerNew.afterSyncDown( responseBahnmiData.status, downloadedData, mockCase, syncDownReqStartDTStr, callBack );
+					downloadedData.clients = downloadedData.clients.concat( responseBahmniData.data );
+					SyncManagerNew.afterSyncDown( responseBahmniData.status, downloadedData, mockCase, syncDownReqStartDTStr, callBack );
 				});
 			}
 			else
@@ -821,7 +821,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 					try { 
 						INFO.activity = activityJson_Orig;
 						var result = eval( Util.getEvalStr( activityJson_Orig.processing.eval ) ); 
-						BahnmiService.syncUp( result, function( response ){
+						BahmniService.syncUp( result, function( response ){
 							SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, response.status, response, afterDoneCall);
 						})
 						

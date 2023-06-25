@@ -1,368 +1,213 @@
 
 
-function BahnmiService() { }
+function BahmniService() { }
 
-BahnmiService.lastSyncedDatetime = "2023-05-01T16:56:01.000+0530";
-BahnmiService.dsdaUUID = "8fa28e5b-caaf-4337-a611-f143a645aba8";
-BahnmiService.REFERALS_FORM_ID = "8eddd3da-f8a7-49b6-925f-7a54745ca168";
 
-BahnmiService.SYNC_DOWN_DATA = {
-    "lastSyncedDatetime": BahnmiService.lastSyncedDatetime,
-    "dsdaUUID": BahnmiService.dsdaUUID,
-    "relationshipTypeDescription": "DSDA to Client Assignment"
-};
+BahmniService.syncDownProcessingTotal = 0;
+BahmniService.syncDownProcessingIdx = 0;
+// BahmniService.allSyncDownResponseData = {};
+BahmniService.syncDownDataList = [];
+BahmniService.syncDownStatus = {status: "success"};
 
-//BahnmiService.BASE_URL = "http://localhost:3210/"; // Overwritten by BahnmiService.composeURL
 
-BahnmiService.downloadSyncUpList = false;
-BahnmiService.downloadReferralsTemplateList = false;
-BahnmiService.downloadAssessmentPlanList = false;
-BahnmiService.syncDownStatus = {status: "success"};
+BahmniService.SERVICE_BASE_URL = "http://localhost:3020/";
 
-BahnmiService.syncDownData = [];
-BahnmiService.patientIds = [];
-BahnmiService.appointmentIds = [];
-BahnmiService.appointmentDataList = {};
-BahnmiService.activityList = {};
-
-// -----------------------------
-
-BahnmiService.getBaseURL = function()
+BahmniService.composeURL = function( bahmniUrl )
 {
-    // return ( WsCallManager.checkLocalDevCase( window.location.origin ) ) ? 'http://localhost:3120/' : WsCallManager.composeDwsWsFullUrl('/PWA.bahmniSrv' );
-    return WsCallManager.composeDwsWsFullUrl('/PWA.bahmniSrv' );
+    var baseUrlService = ( WsCallManager.checkLocalDevCase( window.location.origin ) ) ? BahmniService.SERVICE_BASE_URL : "";
+    return baseUrlService + bahmniUrl;
 };
-
-BahnmiService.composeURL = function( localCaseStr, dwsCaseStr )
-{
-    // var fullUrl = BahnmiService.getBaseURL();
-    
-    // if ( WsCallManager.checkLocalDevCase( window.location.origin ) ) fullUrl += localCaseStr;
-    // else fullUrl += dwsCaseStr; // ?action=', false
-    
-    // return fullUrl;
-
-    var fullUrl = BahnmiService.getBaseURL();
-    return fullUrl + dwsCaseStr;
-};
-
 // ==============================================================================
 // SyncDown
 // ==============================================================================
 
-BahnmiService.syncDown = function(exeFunc)
+BahmniService.syncDown = function(exeFunc)
 {
-    BahnmiService.syncDownData = [];
-    BahnmiService.patientIds = [];
-    BahnmiService.appointmentIds = [];
-    BahnmiService.appointmentDataList = {};
-    BahnmiService.activityList = {};
+    INFO.bahmniResponseData = {};
+
+    BahmniService.appointmentIdxProcessing = 0;
+    BahmniService.syncDownStatus = {status: "success"};
+    BahmniService.syncDownDataList = [];
     
-    BahnmiService.appointmentListTotal = 0;
-    BahnmiService.appointmentIdxProcessing = 0;
-    BahnmiService.downloadSyncUpList = false;
-    BahnmiService.downloadReferralsTemplateList = false;
-    BahnmiService.downloadAssessmentPlanList = false;
-    BahnmiService.syncDownStatus = {status: "success"};
+    const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
+    if( configSynDownList )
+    {
+        BahmniService.syncDownProcessingTotal = configSynDownList.length;
+        BahmniService.syncDownProcessingIdx = 0;
+
+        for( var i=0; i<configSynDownList.length; i++ )
+        {
+            var configSynDownData = configSynDownList[i];
+            var url = eval( Util.getEvalStr( configSynDownData.urlEval ) );
+
+            if( configSynDownData.method.toUpperCase() == "POST" )
+            {
+                Util.traverseEval(configSynDownData.payload, InfoDataManager.getINFO(), 0, 50);
+
+                BahmniService.sendPostRequest(configSynDownData.id, url, configSynDownData.payload, function(response) {
+                    BahmniService.afterSyncDown(exeFunc);
+                })
+            }
+            else if( configSynDownData.method.toUpperCase() == "GET" )
+            {
+                BahmniService.sendGetRequest(configSynDownData.id, url, function(response) {
+                    BahmniService.afterSyncDown(exeFunc);
+                });
+            }
+        }
+    }
     
-    BahnmiService.retrieveSyncDownData( exeFunc );
-    BahnmiService.getRefTemplateFormDataList( exeFunc );
-    BahnmiService.getAssessmentPlanDataList( exeFunc );
 };
 
-
-// SyncDown - patient uuids, scheduled appoimemt uuids
-BahnmiService.retrieveSyncDownData = function( exeFunc )
+BahmniService.afterSyncDown = function(exeFunc)
 {
-    const url = BahnmiService.composeURL( "syncDown", '?action=syncDown' );
-    
-    var data = {
-        "lastSyncedDatetime": "2023-05-01T16:56:01.000+0530",
-        "dsdaUUID": BahnmiService.dsdaUUID,
-        "relationshipTypeDescription": "DSDA to Client Assignment",
+    BahmniService.syncDownProcessingIdx++;
+    if( BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal )
+    {
+        var patientIds = [];
+        var appointmentIds = [];
+        var appointments = [];
+        const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
+        for( var i=0; i<configSynDownList.length; i++ )
+        {
+            const configData = configSynDownList[i];
+            const responseData = eval( Util.getEvalStr( configData.responseEval ) );
+            if( responseData )
+            {
+                var data = responseData.data;
+                if( data.patientIds )
+                {
+                    patientIds = patientIds.concat( data.patientIds ); 
+                    patientIds = patientIds.filter((item, pos) => patientIds.indexOf(item) === pos); // Remove duplicated Ids
+                }
+
+                if( data.appointmentIds )
+                {
+                    appointmentIds = appointmentIds.concat( data.appointmentIds ); 
+                    appointmentIds = appointmentIds.filter((item, pos) => appointmentIds.indexOf(item) === pos); // Remove duplicated Ids
+                }
+
+                if( data.appointments )
+                {
+                    appointments = appointments.concat( data.appointments );
+                }
+            }
+        }
+
+        BahmniService.syncDownDataList = { patientIds, appointmentIds, appointments, patients: [] };
         
-        "conceptUUIDs": [
-            "37e8714b-d0ea-11ea-b8e2-6c2b59806788",
-            "0af5a830-27b4-42cc-9ba8-3e8ebe83017b",
-            "13d527bc-4643-4fb3-ae48-90ab33386e8d",
-            "1ddf68a9-f5bc-401e-a97c-5e22d74a6d1b",
-            "28be5152-8a49-4d44-8618-4f22bbdebe59",
-            "32402436-febd-11ed-be56-0242ac120002",
-            "37e8714b-d0ea-11ea-b8e2-6c2b59806788",
-            "3a5ae01e-d035-4092-bbb5-3f8901e5a592",
-            "3b9e3038-8425-4793-a6c6-f4aedf363ea7",
-            "3e2fcd84-4329-40dc-8512-db2afbd104ec",
-            "3f2d3fb6-fadb-11ed-be56-0242ac120002",
-            "46dc2fc7-0040-4559-9352-5bbaaefaf3a9",
-            "48777090-fadc-11ed-be56-0242ac120002",
-            "487776f8-fadc-11ed-be56-0242ac120002",
-            "48777842-fadc-11ed-be56-0242ac120002",
-            "48777978-fadc-11ed-be56-0242ac120002",
-            "48777d24-fadc-11ed-be56-0242ac120002",
-            "48777e46-fadc-11ed-be56-0242ac120002",
-            "4fdc5b5b-ff7a-4bdf-920f-92276ef6c07f",
-            "59c8545c-8214-4db3-b392-e3a4af4034cc",
-            "64fe9aa4-7161-4cf8-8609-de24937100f2",
-            "65237869-febb-4738-887a-e6391041f193",
-            "6b495154-f4b2-11ed-a05b-0242ac120003",
-            "6b49541a-f4b2-11ed-a05b-0242ac120003",
-            "6b495564-f4b2-11ed-a05b-0242ac120003",
-            "6b4958b6-f4b2-11ed-a05b-0242ac120003",
-            "70da8fed-7b41-45df-b6b9-a85dfe47162f",
-            "74474881-d1b1-11ea-8b80-6c2b598065f0",
-            "744756c4-d1b1-11ea-8b80-6c2b598065f0",
-            "74476602-d1b1-11ea-8b80-6c2b598065f0",
-            "7447740d-d1b1-11ea-8b80-6c2b598065f0",
-            "744781ff-d1b1-11ea-8b80-6c2b598065f0",
-            "74479085-d1b1-11ea-8b80-6c2b598065f0",
-            "7f183aca-c617-4843-bfbc-c2697ab802b9",
-            "84758f77-664c-4208-8f4d-c8362d555537",
-            "8e207e0e-0ea1-4023-9d4c-5de6e12a7648",
-            "8e702207-d241-4540-a986-79c216304744",
-            "9fc47da4-febd-11ed-be56-0242ac120002",
-            "a5945d04-6785-43c3-a9c0-92c18ad17dff",
-            "b50c20f4-f878-11ed-b67e-0242ac120002",
-            "b81154a0-f4b7-11ed-a05b-0242ac120003",
-            "b81158ec-f4b7-11ed-a05b-0242ac120003",
-            "c13326fb-f507-4327-81fd-2b56cdd7bee3",
-            "d612c6f0-ee2e-4bd1-adb6-af88ac2f961e",
-            "db8fea9c-fad2-11ed-be56-0242ac120002",
-            "dcda17a3-1e3c-4f3c-9976-af98bed3b0b9",
-            "e595ce36-491a-4463-a574-c6478fe83bfc",
-            "ee5f815a-c908-4e33-bb67-0659991017d8",
-            "fa076264-db78-498d-9d89-6ea4c6e942c5",
-            "fdaff043-ae60-49f5-ad11-a4cce88b3e6f",
-            "77d8ee60-6e96-4dd4-baff-7d8a3062617e",
-            "c41a88ce-1924-4d7f-b7bf-5099afb2a404",
-            "4944f8e7-3c06-43fd-90bc-d6412004aee2",
-            "ad1c901f-2c1c-4aff-b663-904b0dfb0238",
-            "5cab41f0-16ac-4489-a289-52e216a7865b",
-            "49d79e4d-af1e-483f-8189-6489f7c9d5d4",
-            "9c76e07b-c28e-42c1-98cd-ed55c5d814d9",
-            "5e3321a1-1a1b-4046-9811-fda9d0fe371c",
-            "36cd754f-73f4-4294-8062-3948409b9c38",
-            "548a9f54-8aca-4a15-8bb7-46d7dc8a49db",
-            "a766df2b-28d4-417d-bc8b-4306396d60cf",
-            "4da67b35-4754-49ee-838a-b19fc52e956f",
-            "7b86be42-4025-48c2-9ea1-4cb6d684dc30",
-            "81b9baa1-ba6d-40ae-91f7-8a0bd2a28cd8",
-            "4e24d8a8-12cd-4e27-9a84-93abee497c80"
-        ]
-    };
+        BahmniService.getAppointmentDataList(BahmniService.syncDownDataList.appointmentIds, function() {
+            BahmniService.getPatientDataList(BahmniService.syncDownDataList.patientIds, function() {
+                exeFunc({status: BahmniService.syncDownStatus, data: BahmniService.syncDownDataList.patients});
+            });
+        })
+    }
+}
 
-    BahnmiService.sendPostRequest(url, data, function(response) {
-        if( response.status == "success" )
-        {
-            var dataList = response.data;
-            
-            for( let i=0; i<dataList.length; i++ )
-            {
-                let item = dataList[i];
-                let resourceType = item.resource;
-                if( resourceType == "patient" )
-                {
-                    BahnmiService.patientIds.push(item.uuid);
-                }
-                else if( resourceType == "appointment" )
-                {
-                    BahnmiService.appointmentIds.push(item.uuid);
-                }
-            }
-        }
-        else
-        {
-            BahnmiService.syncDownStatus = response;
-        }
-        BahnmiService.downloadSyncUpList = true;
-        BahnmiService.afterDownloadSyncDownIdList( exeFunc );
-        // exeFunc( response );
-    } );
-};
-
-// SyncDown - Referral Template Forms data
-BahnmiService.getRefTemplateFormDataList = function(exeFunc)
+BahmniService.getAppointmentDataList = function( appointmentIds, exeFunc )
 {
-    const url = BahnmiService.composeURL( 'getReferalsDataList', '?action=getReferalsDataList' );
+    if( appointmentIds.length > 0 )
+    {
+        BahmniService.appointmentListTotal = appointmentIds.length;
+        BahmniService.appointmentIdxProcessing = 0;
 
-    BahnmiService.sendPostRequest(url, BahnmiService.SYNC_DOWN_DATA, function(refTemplateFormResponse){
-        if( refTemplateFormResponse.status == "success" )
+        for( var i=0; i<appointmentIds.length; i++ )
         {
-            const refTemplateFormList = refTemplateFormResponse.data;
-            for( let i=0; i<refTemplateFormList.length; i++ )
-            {
-                const item = refTemplateFormList[i];
-                const patientId = item.patientUuid;
-                if( BahnmiService.patientIds.indexOf(patientId) <0 )
+            BahmniService.retrieveAppointmentDetails( appointmentIds[i], function(response) {
+                BahmniService.appointmentIdxProcessing ++;
+                
+                const data = response;
+                const patientId = data.patient.uuid;
+                if( BahmniService.syncDownDataList.patientIds.indexOf( patientId) < 0 )
                 {
-                    BahnmiService.patientIds.push(patientId);
+                    BahmniService.syncDownDataList.patientIds.push( patientId );
                 }
 
-                const activity = BahnmiService.generateActivityFormData(item, "Referrals Template", "referralsForm");
-                BahnmiService.activityList[patientId] = activity;
-            }
+                var activity = BahmniService.generateActivityAppointment(data,  { formData: { sch_favId: 'followUp', fav_newAct: true } } )
+                BahmniService.syncDownDataList.appointments.push(activity);
+    
+                
+               
+                if( BahmniService.appointmentIdxProcessing == BahmniService.syncDownDataList.appointmentIds.length )
+                {
+                    exeFunc();
+                }
+            })
         }
-        else
-        {
-            BahnmiService.syncDownStatus = refTemplateFormResponse;
-        }
-
-        BahnmiService.downloadReferralsTemplateList = true;
-        BahnmiService.afterDownloadSyncDownIdList(exeFunc);
-        // exeFunc(refTemplateFormResponse);
-    });
+    }
+    else
+    {
+        exeFunc();
+    }
 };
 
-// SyncDown - Assessment Plan data
-BahnmiService.getAssessmentPlanDataList = function(exeFunc)
+
+BahmniService.getPatientDataList = function( patientIds, exeFunc )
 {
-    const url = BahnmiService.composeURL( "getAssessmentPlanDataList", '?action=getAssessmentPlanDataList' );
+    if( patientIds.length > 0 )
+    {
+        BahmniService.patientListTotal = patientIds.length;
+        BahmniService.patientIdxProcessing = 0;
 
-    BahnmiService.sendPostRequest(url, BahnmiService.SYNC_DOWN_DATA, function(response){
-        if( response.status == "success" )
+        for( var i=0; i<patientIds.length; i++ )
         {
-            const refTemplateFormList = response.data;
-            for( let i=0; i<refTemplateFormList.length; i++ )
-            {
-                const item = refTemplateFormList[i];
-                const patientId = item.patientUuid;
-                if( BahnmiService.patientIds.indexOf(patientId) <0 )
+            BahmniService.retrievePatientDetails( patientIds[i], function(response) {
+                BahmniService.patientIdxProcessing ++;
+                BahmniService.syncDownDataList.patients.push( BahmniService.generateClientData(response.patient) );
+
+                if( BahmniService.patientIdxProcessing == BahmniService.syncDownDataList.patientIds.length )
                 {
-                    BahnmiService.patientIds.push(patientId);
+                    exeFunc();
                 }
-
-                const activity = BahnmiService.generateActivityFormData(item, "Assessment Plan", "assessmentPlan");
-                BahnmiService.activityList[patientId] = activity;
-            }
+            })
         }
-        else
-        {
-            BahnmiService.syncDownStatus = response;
-        }
-
-        BahnmiService.downloadAssessmentPlanList = true;
-        BahnmiService.afterDownloadSyncDownIdList(exeFunc);
-    });
+    }
+    else
+    {
+        exeFunc();
+    }
 };
 
 
+// ------------------------------------------------------------------------------
+// Retrieve data from Bahmni server
 
+BahmniService.retrievePatientDetails = function( patientId, exeFunc )
+{
+    const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/patientprofile/" + patientId + "?v=full";
+    BahmniService.sendGetRequest(patientId, url, exeFunc);
+};
+
+BahmniService.retrieveAppointmentDetails = function( appointmentId, exeFunc )
+{
+    const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/appointment?uuid=" + appointmentId;
+    BahmniService.sendGetRequest(appointmentId, url, exeFunc);
+};
 
 // ==============================================================================
 // SyncUp 
 // ==============================================================================
 
-BahnmiService.syncUp = function(activityJson, exeFunc)
+BahmniService.syncUp = function(activityJson, exeFunc)
 {
     // elseCase: "Follow Up Referrals Template Form" OR "Follow Up Assessment Plan"
     var endpoint = ( activityJson.type == "Follow Up Appointment" ) ? "fupAppointment": "addFormData";
 
-    const url = BahnmiService.composeURL( endpoint, '?action=' + endpoint );
+    const url = BahmniService.composeURL( endpoint, '?action=' + endpoint );
 
-    BahnmiService.sendPostRequest(url, activityJson.syncUp, exeFunc );
+    BahmniService.sendPostRequest(url, activityJson.syncUp, exeFunc );
 }
-
-
-// ==============================================================================
-// Supportive methods for SyncDown - Get data details list methods
-
-BahnmiService.getAppointmentDataList = function( appointmentIds, exeFunc )
-{
-    if( appointmentIds.length > 0 )
-    {
-        BahnmiService.appointmentListTotal = appointmentIds.length;
-        BahnmiService.appointmentIdxProcessing = 0;
-
-        for( var i=0; i<appointmentIds.length; i++ )
-        {
-            BahnmiService.retrieveAppointmentDetails( appointmentIds[i], function(response) {
-                BahnmiService.appointmentIdxProcessing ++;
-                if( response.status == "error" ) {
-                    BahnmiService.syncDownStatus = response;
-                }
-                else
-                {
-                    const data = response.data;
-                    const patientId = data.patient.uuid;
-                    if( BahnmiService.patientIds.indexOf( patientId) < 0 )
-                    {
-                        BahnmiService.patientIds.push( patientId );
-                    }
-    
-                    if( BahnmiService.appointmentDataList[patientId] == undefined )
-                    {
-                        BahnmiService.appointmentDataList[patientId] = [];
-                    }
-                    BahnmiService.appointmentDataList[patientId].push(data);
-    
-                }
-               
-                if( BahnmiService.appointmentIdxProcessing == BahnmiService.appointmentListTotal )
-                {
-                    exeFunc();
-                }
-            })
-        }
-    }
-    else
-    {
-        exeFunc();
-    }
-};
-
-BahnmiService.getPatientDataList = function( patientIds, exeFunc )
-{
-    if( patientIds.length >= 0 )
-    {
-        BahnmiService.patientListTotal = patientIds.length;
-        BahnmiService.patientIdxProcessing = 0;
-
-        for( var i=0; i<patientIds.length; i++ )
-        {
-            BahnmiService.retrievePatientDetails( patientIds[i], function(response) {
-                BahnmiService.patientIdxProcessing ++;
-                BahnmiService.syncDownData.push( BahnmiService.generateClientData(response.data.patient) );
-
-                if( BahnmiService.patientIdxProcessing == BahnmiService.patientListTotal )
-                {
-                    exeFunc();
-                }
-            })
-        }
-    }
-    else
-    {
-        exeFunc();
-    }
-};
-
-
-// ------------------------------------------------------------------------------
-// Retrieve data from Bahnmi server
-
-BahnmiService.retrievePatientDetails = function( patientId, exeFunc )
-{
-    const url = BahnmiService.composeURL( 'patient?id=' + patientId, '?action=patient&id=' + patientId );
-
-    BahnmiService.sendGetRequest(url, exeFunc);
-};
-
-BahnmiService.retrieveAppointmentDetails = function( appointmentId, exeFunc )
-{
-    const url = BahnmiService.composeURL( 'appointment?id=' + appointmentId, '?action=appointment&id=' + appointmentId );
-
-    BahnmiService.sendGetRequest(url, exeFunc);
-};
 
 
 // ------------------------------------------------------------------------------
 // Convert data ( patient, appointment ) to WFA Object
 
-BahnmiService.generateClientData = function( patientData )
+BahmniService.generateClientData = function( patientData )
 {
     var resolveData =  {};
 
     const patientId = patientData.uuid;
-    resolveData = { _id: patientId, subSourceType: "bahnmi", clientDetails : patientData.person, activities: [], date: BahnmiService.generateJsonDate(BahnmiService.lastSyncedDatetime)};
+    resolveData = { _id: patientId, subSourceType: "bahnmi", clientDetails : patientData.person, activities: [], date: BahmniService.generateJsonDate()};
     resolveData.clientDetails.firstName = patientData.person.preferredName.givenName;
     resolveData.clientDetails.lastName = patientData.person.preferredName.familyName;
 
@@ -376,30 +221,22 @@ BahnmiService.generateClientData = function( patientData )
     }
 
     
-    // Set activities - Referal Template From Data 
-    const refFromDataActivity = BahnmiService.activityList[patientId];
-    if( refFromDataActivity != undefined )
+    // Set activities - "Referal Template" From Data and "Assessment Plan" Form Data
+    const activities = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
+    for( let i=0; i<activities.length; i++ )
     {
-        resolveData.activities.push(refFromDataActivity);  
-    }
-
-    // Set activities - "Scheduled" Appointment 
-    const appointmentData = BahnmiService.appointmentDataList[patientId];
-    if( appointmentData )
-    {
-        for( var j=0; j<appointmentData.length; j++ )
+        const activity = activities[i];
+        var checkedExisted = Util.findFromList( resolveData.activities, activity.id, "id" );
+        if( !checkedExisted )
         {
-            const data = appointmentData[j];
-
-            const activity = BahnmiService.generateActivityAppointment(data, { formData: { sch_favId: 'followUp', fav_newAct: true } } );
-            resolveData.activities.push(activity);  
+            resolveData.activities.push(activity);
         }
     }
     
     return resolveData;
 };
 
-BahnmiService.generateActivityAppointment = function( data, options )
+BahmniService.generateActivityAppointment = function( data, options )
 {
     if ( !options ) options = {};
 
@@ -414,42 +251,31 @@ BahnmiService.generateActivityAppointment = function( data, options )
         dataValues["service_" + key] = data.service[key];
     }
 
-    var activity = { id: data.uuid, transactions:[{dataValues, type}], type: type, originalData: data, date: BahnmiService.generateJsonDate(BahnmiService.lastSyncedDatetime) };
+    var activity = { id: data.uuid, transactions:[{dataValues, type}], type: type, originalData: data, date: BahmniService.generateJsonDate(), patientId: data.patient.uuid };
     if ( options.formData ) activity.formData = options.formData;
 
     return activity;
 };
 
-BahnmiService.generateActivityFormData = function( refDormData, type, formNameId )
+BahmniService.generateActivityFormData = function( refDormData, type, formNameId )
 {
     const patientId = refDormData.patientUuid;
-    const checkedActivity = BahnmiService.activityList[patientId]; // Try to get the latest one in case one person has many "Referals Template Form data"
-    if( checkedActivity != undefined && checkedActivity.formVersion > refDormData.formVersion )
-    {
-        return checkedActivity;
-    }
 
     var dataValues =  {
         encounterUuid: refDormData.encounterUuid,
-        formUuid: BahnmiService.REFERALS_FORM_ID,
+        formUuid: BahmniService.REFERALS_FORM_ID,
         patientUuid: patientId,
         visitUuid: refDormData.visitUuid,
         formVersion: refDormData.formVersion
     };
 
-    const activityId = patientId + "_" + (new Date).getMilliseconds();
-    return { id: activityId, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: refDormData, date: BahnmiService.generateJsonDate(BahnmiService.lastSyncedDatetime) };
+    const activityId = patientId + "_" + Math.floor(Math.random() * 1000000);
+    return { id: activityId, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: refDormData, date: BahmniService.generateJsonDate(), patientId: patientId };
 };
 
-BahnmiService.generateJsonDate = function( startDateTime ) {
-    var dateObj = new Date( startDateTime );
+BahmniService.generateJsonDate = function() {
+    var dateStr = UtilDate.dateStr('DT', new Date());
 
-    var month = BahnmiService.resolveNumber(dateObj.getMonth());
-    var hours = BahnmiService.resolveNumber( dateObj.getHours() );
-    var minutes = BahnmiService.resolveNumber(dateObj.getMinutes());
-    var seconds = BahnmiService.resolveNumber(dateObj.getSeconds());
-
-    var dateStr = dateObj.getFullYear() + "-" + month + "-" + dateObj.getDate() + ":" + hours + ":" + minutes + ":" + seconds + ".000";
     return { capturedLoc: dateStr,
             capturedUTC: dateStr,
             createdLoc: dateStr,
@@ -458,62 +284,69 @@ BahnmiService.generateJsonDate = function( startDateTime ) {
             createdUTC: dateStr,
             updatedLoc: dateStr,
             updatedUTC: dateStr
-            };
+        };
 };
 
-BahnmiService.resolveNumber = function(number)
+BahmniService.resolveNumber = function(number)
 {
     return ( number >= 10 ) ? ('' + number) : ('0' + number);
 };
-
-BahnmiService.afterDownloadSyncDownIdList = function(exeFunc)
-{
-    if( BahnmiService.downloadSyncUpList 
-        && BahnmiService.downloadReferralsTemplateList 
-        && BahnmiService.downloadAssessmentPlanList )
-    {
-        BahnmiService.getAppointmentDataList( BahnmiService.appointmentIds, function() {
-            BahnmiService.getPatientDataList(BahnmiService.patientIds, function() {
-                exeFunc({status: BahnmiService.syncDownStatus, data: BahnmiService.syncDownData});
-            });
-        })
-       
-    }
-}
-
 
 
 // ------------------------------------------------------------------------------
 // Request API Util
 
-BahnmiService.sendGetRequest = function(url, exeFunc )
+BahmniService.sendGetRequest = function(id, url, exeFunc )
 {
     $.ajax({
-        url: url,
+        url: BahmniService.composeURL(url),
         type: "GET",
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'Authorization': eval(INFO.bahmni_authBasicEval) },
         dataType: "json", 
         success: function (response) 
         {
-            exeFunc(response);
+            if( response.error)
+            {
+                INFO.bahmniResponseData[id] = [];
+                exeFunc({msg: errMsg, status: Constants.status_failed});
+            }
+            else
+            {
+                INFO.bahmniResponseData[id] = response;
+                exeFunc(response);
+            }
         },
         error: function ( errMsg ) {
+            INFO.bahmniResponseData[id] = [];
             console.log({ msg: errMsg, status: Constants.status_failed });
         }
     });
 }
 
-BahnmiService.sendPostRequest = function(url, data, exeFunc )
+BahmniService.sendPostRequest = function(id, url, data, exeFunc )
 {
     $.ajax({
-        url: url,
+        url: BahmniService.composeURL(url),
         type: "POST",
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'Authorization': eval(INFO.bahmni_authBasicEval) },
         dataType: "json", 
         data: JSON.stringify(data),
+        async: true,
         success: function (response) 
         {
-            exeFunc(response);
+            if( response.error)
+            {
+                INFO.bahmniResponseData[id] = [];
+                exeFunc({msg: errMsg, status: Constants.status_failed});
+            }
+            else
+            {
+                INFO.bahmniResponseData[id] = response;
+                exeFunc(response);
+            }
         },
         error: function ( errMsg ) {
+            INFO.bahmniResponseData[id] = [];
             exeFunc({msg: errMsg, status: Constants.status_failed});
         }
     });

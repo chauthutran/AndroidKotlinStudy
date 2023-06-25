@@ -233,6 +233,27 @@ Util.findFromList = function (list, value, propertyName) {
 };
 
 
+Util.findAllFromList = function (list, value, propertyName) {
+	var foundList = [];
+
+	if (list) {
+		// If propertyName being compare to has not been passed, set it as 'id'.
+		if (propertyName === undefined) {
+			propertyName = "id";
+		}
+
+		for (i = 0; i < list.length; i++) {
+			var listItem = list[i];
+
+			if (listItem[propertyName] && listItem[propertyName] === value) {
+				foundList.push(listItem);
+			}
+		}
+	}
+
+	return foundList;
+};
+
 // MOST USED #2 - remove from list, all.
 Util.RemoveFromArrayAll = function (list, propertyName, value) {
 	try {
