@@ -23,6 +23,8 @@ BahmniService.composeURL = function( bahmniUrl )
 
 BahmniService.syncDown = function(exeFunc)
 {
+    INFO.bahmniResponseData = {};
+
     BahmniService.appointmentIdxProcessing = 0;
     BahmniService.syncDownStatus = {status: "success"};
     BahmniService.allSyncDownResponseData = {};
@@ -43,7 +45,7 @@ BahmniService.syncDown = function(exeFunc)
             {
                 Util.traverseEval(configSynDownData.payload, InfoDataManager.getINFO(), 0, 50);
 
-                BahmniService.sendPostRequest(url, configSynDownData.payload, function(response) {
+                BahmniService.sendPostRequest(configSynDownData.id, url, configSynDownData.payload, function(response) {
                     INFO.respone = response;
                     const responseData = eval( Util.getEvalStr( configSynDownData.responseEval ) );
                     BahmniService.allSyncDownResponseData[responseData.id] = responseData.data;
@@ -52,7 +54,7 @@ BahmniService.syncDown = function(exeFunc)
             }
             else if( configSynDownData.method.toUpperCase() == "GET" )
             {
-                BahmniService.sendGetRequest(url, function(response) {
+                BahmniService.sendGetRequest(configSynDownData.id, url, function(response) {
                     INFO.respone = response;
                     const responseData = eval( Util.getEvalStr( configSynDownData.responseEval ) );
                     BahmniService.allSyncDownResponseData[responseData.id] = responseData.data;
@@ -319,7 +321,7 @@ BahmniService.resolveNumber = function(number)
 // ------------------------------------------------------------------------------
 // Request API Util
 
-BahmniService.sendGetRequest = function(url, exeFunc )
+BahmniService.sendGetRequest = function(id, url, exeFunc )
 {
     $.ajax({
         url: BahmniService.composeURL(url),
@@ -328,6 +330,7 @@ BahmniService.sendGetRequest = function(url, exeFunc )
         dataType: "json", 
         success: function (response) 
         {
+            INFO.bahmniResponseData[id] = response;
             exeFunc(response);
         },
         error: function ( errMsg ) {
@@ -336,7 +339,7 @@ BahmniService.sendGetRequest = function(url, exeFunc )
     });
 }
 
-BahmniService.sendPostRequest = function(url, data, exeFunc )
+BahmniService.sendPostRequest = function(id, url, data, exeFunc )
 {
     $.ajax({
         url: BahmniService.composeURL(url),
@@ -347,6 +350,7 @@ BahmniService.sendPostRequest = function(url, data, exeFunc )
         async: false,
         success: function (response) 
         {
+            INFO.bahmniResponseData[id] = response;
             exeFunc(response);
         },
         error: function ( errMsg ) {
