@@ -301,7 +301,7 @@ BahmniService.sendGetRequest = function(id, url, exeFunc )
     $.ajax({
         url: BahmniService.composeURL(url),
         type: "GET",
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'Authorization': eval(INFO.bahmni_authBasicEval) },
+        headers: { 'Content-Type': 'application/json', 'Authorization': eval(INFO.bahmni_authBasicEval) },
         dataType: "json", 
         success: function (response) 
         {
@@ -328,7 +328,7 @@ BahmniService.sendPostRequest = function(id, url, data, exeFunc )
     $.ajax({
         url: BahmniService.composeURL(url),
         type: "POST",
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache', 'Authorization': eval(INFO.bahmni_authBasicEval) },
+        headers: { 'Content-Type': 'application/json', 'Authorization': eval(INFO.bahmni_authBasicEval) },
         dataType: "json", 
         data: JSON.stringify(data),
         async: true,
