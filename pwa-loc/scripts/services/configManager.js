@@ -844,6 +844,20 @@ ConfigManager.getClientActivityCardDefDisplaySettings = function () {
 	return displaySettings;
 };
 
+
+ConfigManager.getClientActivityFilterEval = function () {
+	var filterEval = '';
+
+	var clientDef = ConfigManager.getClientDef();
+
+	if (clientDef.clientActivity && clientDef.clientActivity.listFilterEval) {
+		filterEval = Util.getEvalStr( clientDef.clientActivityCardDef.listFilterEval );
+	}
+
+	return filterEval;
+};
+
+
 ConfigManager.getActionQueueActivity = function () {
 	var actionJson;
 

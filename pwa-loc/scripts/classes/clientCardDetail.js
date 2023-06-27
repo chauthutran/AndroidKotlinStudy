@@ -196,6 +196,10 @@ function ClientCardDetail(clientId) {
 				if (ConfigManager.switchLatestVoucher() && divLatestVoucherTag) me.setSwitchLatestVoucher(clientJson, divLatestVoucherTag, activityTabTag);
 
 				var filteredActivities = ClientDataManager.getActivities_EP_Filtered(clientJson);  // clientJson.activities
+
+				// NEW - Activity list filter by eval
+				filteredActivities = me.filterActList( filteredActivities, ConfigManager.getClientActivityFilterEval() );
+
 				me.populateActivityCardList(filteredActivities, activityListDivTag);
 			}
 
@@ -256,6 +260,29 @@ function ClientCardDetail(clientId) {
 			me.setUpClientJsonEdit(clientId, devTabTag, sheetFullTag);
 		}
 
+	};
+
+
+	// me.filterActList( list, ConfigManager.getClientActivityFilterEval() )
+	me.filterActList = function ( actList, configFilterEvalStr ) 
+	{
+		var filteredData = actList;
+
+		if ( configFilterEvalStr )
+		{
+			try {
+				InfoDataManager.setINFOdata('activityList', actList);
+				filteredData = eval(configFilterEvalStr);
+			} 
+			catch (errMsg) { console.log('ClientCardDetail.filterActList, ' + errMsg); }
+			
+			//actList.forEach( act => { InfoDataManager.setINFOdata('activity', act);
+			//		if (configFilterEvalStr) returnVal = eval(configFilterEvalStr);
+			//		if (returnVal === true) filteredData.push(client);
+			// try .. catch (errMsg) { console.log('ClientCardDetail.filterActList, ' + errMsg); }
+		}
+
+		return filteredData;
 	};
 
 	// ---------------------------------------------
