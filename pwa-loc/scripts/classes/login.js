@@ -19,7 +19,10 @@ function Login() {
 	me.advanceOptionLoginBtnTag;
 	me.loginPinClearTag;
 	me.splitPasswordTag;
-
+	me.selAuthChoiceTag;
+	me.spanAuthPageUseTag;
+	me.spanAuthPageUseNoTag;
+	
 	// ------------
 
 	// Flags
@@ -50,6 +53,9 @@ function Login() {
 		me.advanceOptionLoginBtnTag = $('#advanceOptionLoginBtn');	
 		me.loginPinClearTag = $('#loginPinClear');
 		me.splitPasswordTag = $('.split_password');
+		me.selAuthChoiceTag = $( '.selAuthChoice' );
+		me.spanAuthPageUseTag = $( '.spanAuthPageUse' );
+		me.spanAuthPageUseNoTag = $( '.spanAuthPageUseNo' );
 
 		// ------------------
 		me.setEvents_OnInit();
@@ -82,12 +88,50 @@ function Login() {
 
 		me.setLoginEvents();
 		me.setAdvOptBtnClick();
+		me.setAuthChoiceChange();
 
 		me.setUpInteractionDetect();
+
+		// Move as function
+		me.spanAuthPageUseTag.off('click').click(() => 
+		{
+			PersisDataLSManager.setAuthPageUse( 'Y' );
+			AppUtil.appReloadWtMsg("Reloading Page.  AuthPageUse Setting Changed..");			
+		});
+
+		// Move as function
+		me.spanAuthPageUseNoTag.off('click').click(() => 
+		{
+			PersisDataLSManager.setAuthPageUse( 'N' );
+			AppUtil.appReloadWtMsg("Reloading Page.  AuthPageUse Setting Changed..");			
+		});
+
 	}
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
+
+	me.setAuthChoiceChange = function() {
+		me.selAuthChoiceTag.off('change').change(() => 
+		{
+			var authChoice = me.selAuthChoiceTag.val();
+
+			if ( authChoice )
+			{
+				AppInfoLSManager.setAuthChoice( authChoice );
+
+				// show the openLoginForm..
+				$( '.divAuthForm' ).hide();
+				me.openLoginForm();	
+
+				if ( authChoice === 'kc_sw_psi' ) $( 'img.imgKeyCloakUse' ).click();
+				else if ( authChoice === 'dhis2' )
+				{
+					// The Keycloak would have been already cleared at this point..
+				}
+			}
+		});
+	};
 
 	me.setUpInteractionDetect = function () {
 		me.loginFormDivTag.focusin(function () {
@@ -380,12 +424,44 @@ function Login() {
 		me.loginPage1stTouchFlag = false;
 		me.loginAppUpdateCheck = false;
 
-
 		SessionManager.cwsRenderObj.hidePageDiv();
-
-
-		me.loginFormDivTag.show();
 		Menu.setInitialLogInMenu();
+		me.loginFormDivTag.show();
+		$( '.divAuthForm' ).hide();
+		$( '.divLoginForm' ).hide();
+		$( '.login_buttons' ).hide();
+
+		var authPageUseCase = ( PersisDataLSManager.getAuthPageUse() === 'Y' ) ? true: false;
+
+		if ( authPageUseCase )
+		{
+			me.spanAuthPageUseTag.hide();
+			
+			var authChoice = AppInfoLSManager.getAuthChoice();
+
+			if ( authChoice ) me.openLoginForm();
+			else me.openAuthForm();	
+		}
+		else me.openLoginForm();
+
+		// ?? On 'closeForm', we should consider hiding any auth selection related things..
+	};
+
+
+	me.openAuthForm = function() 
+	{
+		$( '.divAuthForm' ).show();
+	};
+
+
+	me.openLoginForm = function() 
+	{
+		$( '.divLoginForm' ).show();
+		$( '.login_buttons' ).show();
+
+
+		// TODO: Need to also display the Auth Choice
+
 
 		// Reset vals and set focus
 		me.clearResetPasswords();
@@ -396,7 +472,8 @@ function Login() {
 	};
 
 
-	me.closeForm = function () {
+	me.closeForm = function () 
+	{
 		var loginUserNameH4Tag = $('#loginUserNameH4');
 
 		// Div (Input) part of Login UserName
@@ -411,7 +488,6 @@ function Login() {
 
 		// Display login name as Big text part - if we already have user..
 		loginUserNameH4Tag.text(me.loginUserNameTag.val()).show();
-
 
 		//$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
 
@@ -651,30 +727,19 @@ function Login() {
 							SessionManager.setLoginRespData_IDB(userName, password, loginData);
 							// IMPORTANT PART - Load loginData in session, use 'dcdConfig' to load ConfigManager data.
 							var configJson = SessionManager.loadSessionData_nConfigJson(userName, password, loginData); // InfoDataManager.sessionDataLoad is also called here.
+							// Bahmni Related
+							if( ConfigManager.isBahmniSubSourceType() )
+							{
+								BahmniService.loadInitData(function(){
+									me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
+								});
+							}
+							else
+							{
+								me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
+							}
 		
 		
-							// Save values in 'AppInfoLS' after online login
-							AppInfoLSManager.saveConfigSourceType(configJson.sourceType);  // For Availability Check Usage, store 'sourceType'
-							AppInfoLSManager.setConfigVersioningEnable(ConfigManager.getSettings().configVersioningEnable); // Used on login request
-							AppInfoLSManager.setLoginPrevData( { 
-								retrievedDateTime: configJson.retrievedDateTime,
-								settings: {
-									login_GetOuChildren: configJson.settings.login_GetOuChildren,
-									login_GetOuTagOrgUnits: configJson.settings.login_GetOuTagOrgUnits,
-									login_GetVMMC_OugId: configJson.settings.login_GetVMMC_OugId	
-								},
-								sourceType: configJson.sourceType
-							} );
-		
-		
-							// Check the translation - if there is any new updated translations.  If so, retrieve & save & use it.
-							TranslationManager.loadLangTerms_NSetUpData( true );
-							
-							// Online Login statistic download
-							me.retrieveStatisticPage((fileName, statPageData) => { me.saveStatisticPage(fileName, statPageData); });
-		
-							// AppInfo IndexDB one..  Populate AppInfo data - which is (Not localStorage) IndexDB saved appInfo
-							AppInfoManager.loadData_AfterLogin( () => returnFunc(resultSuccess, loginData) );
 						}
 						else returnFunc(resultSuccess, loginData);
 					});
@@ -683,6 +748,31 @@ function Login() {
 		});
 	};
 
+	me.setConfigAfterLogin = function(configJson, resultSuccess, loginData, returnFunc)
+	{
+		// Save values in 'AppInfoLS' after online login
+		AppInfoLSManager.saveConfigSourceType(configJson.sourceType);  // For Availability Check Usage, store 'sourceType'
+		AppInfoLSManager.setConfigVersioningEnable(ConfigManager.getSettings().configVersioningEnable); // Used on login request
+		AppInfoLSManager.setLoginPrevData( { 
+			retrievedDateTime: configJson.retrievedDateTime,
+			settings: {
+				login_GetOuChildren: configJson.settings.login_GetOuChildren,
+				login_GetOuTagOrgUnits: configJson.settings.login_GetOuTagOrgUnits,
+				login_GetVMMC_OugId: configJson.settings.login_GetVMMC_OugId	
+			},
+			sourceType: configJson.sourceType
+		} );
+
+
+		// Check the translation - if there is any new updated translations.  If so, retrieve & save & use it.
+		TranslationManager.loadLangTerms_NSetUpData( true );
+		
+		// Online Login statistic download
+		me.retrieveStatisticPage((fileName, statPageData) => { me.saveStatisticPage(fileName, statPageData); });
+
+		// AppInfo IndexDB one..  Populate AppInfo data - which is (Not localStorage) IndexDB saved appInfo
+		AppInfoManager.loadData_AfterLogin( () => returnFunc(resultSuccess, loginData) );
+	}
 
 	me.loginOffline = function (userName, password, returnFunc) 
 	{
@@ -943,7 +1033,7 @@ Login.contentHtml = `
 		<div class="login_title" term="login_title">PSI - workforce app</div>
 	</div>
 
-	<div class="login_data">
+	<div class="login_data divLoginForm" style="display:none;">
 		<div class="login_data__fields">
 			<h4 id="loginUserNameH4" style="display:none; text-align: left; margin-left: 10px;"></h4>
 			<div id="loginField" class="field" style="background-color: white;">
@@ -990,7 +1080,8 @@ Login.contentHtml = `
 				<img class="imgKeyCloakUse mouseDown" title="KeyCloak Use" src="images/key.svg" style="display:none; cursor: pointer; vertical-align: top; margin-bottom: -4px; margin-top: -3px; opacity: 0.4; background-color: red;">
 				<span id="spanLoginAppUpdate" term="login_updateApp"
 					style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[UPDATE
-					APP]</span>
+					APP]</span>				
+				<span class="spanAuthPageUse" title="AuthPageUse" style="color: #AAA; font-weight: bold; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[A]</span>
 			</div>
 			<div id="loginVersionNote" style="margin-left: 7px; color: #999999;"></div>
 		</div>
@@ -1013,7 +1104,25 @@ Login.contentHtml = `
 		</div>
 	</div>
 
-	<div class="login_buttons login_cta">
+	<div class="divAuthForm" style="display:none; text-align: center; ">
+		<div term="authForm_welcome" style="font-size: x-large; margin-bottom: 10px;">Welcome</div>
+		<div term="authForm_loginChoice" style="margin-bottom: 10px; color: #777;">How do you want to log in?</div>
+		<div>
+			<select class="selAuthChoice" style="all: revert; color: #555; border: solid 1px gray; padding: 4px;">
+				<option value="">SELECT ONE</option>
+				<option value="dhis2">Classic WFA auth (legacy)</option>
+				<option value="kc_sw_psi">Eswatini - PSI</option>
+				<option value="kc_sw_moh">Eswatini - MoH</option>
+				<option value="kc_ke_moh">Kenya - MoH</option>
+			</select>
+		</div>
+		<div style="margin-top: 10px; ">
+			<span class="spanAuthPageUseNo" title="Disable AuthPageUse" style="color: #AAA; font-weight: bold; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[NA]</span>
+		</div>
+
+	</div>
+
+	<div class="login_buttons login_cta" style="display:none;">
 		<div class="login_buttons__container">
 			<div class="button l-emphasis button-full_width mouseDown" id="advanceOptionLoginBtn">
 				<div class="button__container">
