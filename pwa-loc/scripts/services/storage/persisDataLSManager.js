@@ -6,11 +6,13 @@ PersisDataLSManager.persisData_LS;
 
 // --- top level keys (all object?)
 PersisDataLSManager.KEY_PERSISDATA = "persisData";
-PersisDataLSManager.KEY_VOUCHER_CODES = "voucherCodes";
-PersisDataLSManager.KEY_JOB_FILING_STATUS = "jobFilingStatus";
 
-// --- keys of object prop
+PersisDataLSManager.KEY_JOB_FILING_STATUS = "jobFilingStatus";
 PersisDataLSManager.KEY_TRANSLATION = "translation"; 
+PersisDataLSManager.KEY_VOUCHER_CODES = "voucherCodes";
+PersisDataLSManager.KEY_AUTH_PAGE_USE = "authPageUse";
+
+// --- translation related..
 PersisDataLSManager.KEY_LANG_TERMS = "langTerms"; 
 PersisDataLSManager.KEY_LANG_CODE = "langCode";
 PersisDataLSManager.KEY_LANG_LASTTRYDT = "langLastTryDT";
@@ -138,6 +140,18 @@ PersisDataLSManager.removeProperty = function( mainKey, subKey )
     }
 };
 
+
+// ----------------------------------------------
+
+PersisDataLSManager.setAuthPageUse = function( strYN )
+{
+    return PersisDataLSManager.updateKey_StrValue( PersisDataLSManager.KEY_AUTH_PAGE_USE, strYN );
+};
+
+PersisDataLSManager.getAuthPageUse = function()
+{
+    return PersisDataLSManager.getKeyValue( PersisDataLSManager.KEY_AUTH_PAGE_USE );
+};
 
 // ----------------------------------------------
 // ------ Translatoin langTerms
