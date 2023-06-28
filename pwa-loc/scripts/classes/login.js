@@ -12,6 +12,7 @@ function Login() {
 	me.loginFormDivTag = $('#loginFormDiv');
 
 	me.loginBtnTag;
+	me.loginSetPinBtnTag;
 	me.passRealTag;
 	me.loginUserNameTag;
 	me.loginUserPinTag;
@@ -46,6 +47,7 @@ function Login() {
 		me.loginFormDivTag.append(Login.contentHtml);
 
 		me.loginBtnTag = $('.loginBtn');
+		me.loginSetPinBtnTag = $('.loginSetPinBtn');
 		me.passRealTag = $('#passReal');
 		me.loginUserNameTag = $('.loginUserName');
 		me.loginUserPinTag = $('.loginUserPin');
@@ -171,7 +173,11 @@ function Login() {
 		});
 
 
-		me.loginBtnTag.click(function () {
+		me.loginSetPinBtnTag.off( 'click' ).click(function () {
+			me.loginBtnTag.click();
+		});
+
+		me.loginBtnTag.off( 'click' ).click(function () {
 			$('.pin_pw_loading').hide();
 
 			var loginUserNameVal = me.loginUserNameTag.val();
@@ -268,39 +274,6 @@ function Login() {
 		});
 	};
 
-	/*
-	me.setAdvOptBtnClick = function () {
-		me.advanceOptionLoginBtnTag.click(function () {
-
-			FormUtil.blockPage(undefined, function (scrimTag) {
-				scrimTag.off('click').click(function () {
-					FormUtil.emptySheetBottomTag();
-					FormUtil.unblockPage(scrimTag);
-				});
-			});
-
-
-			FormUtil.genTagByTemplate(FormUtil.getSheetBottomTag(), Templates.Advance_Login_Buttons, function (tag) {
-				// Template events..
-				tag.find('.switchToStagBtn').click(function () {
-					alert('switchToStagBtn');
-					FormUtil.emptySheetBottomTag();
-					FormUtil.unblockPage();
-				});
-
-				tag.find('.demoBtn').click(function () {
-					alert('demo');
-					FormUtil.emptySheetBottomTag();
-					FormUtil.unblockPage();
-				});
-
-				tag.find('.changeUserBtn').click(function () {
-					me.changeUserBtnClick();
-				});
-			});
-		});
-	};
-	*/
 
 	// User Switch, User Remove / Clear
 	me.changeUserBtnClick = function () 
@@ -471,19 +444,44 @@ function Login() {
 	{
 		$( '.divLoginForm' ).show();
 		$( '.login_buttons' ).show();
+		me.loginBtnTag.show();
+		me.loginSetPinBtnTag.hide();
+
+
+		// loginUserName Related 
+		var loginUserName = me.loginUserNameTag.val();
+		if ( !loginUserName ) me.loginUserNameTag.focus();
+
 
 		// Auth choice display
 		if ( me.isAuthPageUse() )
 		{
+			var authChoiceName = '';
+			var authChoice = AppInfoLSManager.getAuthChoice();
+			if ( authChoice ) authChoiceName = me.selAuthChoiceTag.find( 'option[value="' + authChoice + '"]').text();			
+
 			$( '.divLoginWith' ).show();
-			$( '.divLoginWith_choice' ).text( me.selAuthChoiceTag.val() );
+			$( '.divLoginWith_choice' ).text( authChoiceName );
 		}
 		else $( '.divLoginWith' ).hide();
 
+
+		// Also check online status:
+		if ( KeycloakManager.isKeyCloakInUse() ) 
+		{
+			SessionManager.checkOfflineDataExists( loginUserName, function (dataExists) 
+			{
+				if (!dataExists)
+				{
+					me.loginBtnTag.hide();
+					me.loginSetPinBtnTag.show();
+				}
+			});
+		}
+
+
 		// Reset vals and set focus
 		me.clearResetPasswords();
-
-		if (!me.loginUserNameTag.val()) me.loginUserNameTag.focus();
 
 		me.loginBottomButtonsVisible(true);
 	};
@@ -1099,11 +1097,19 @@ Login.contentHtml = `
 							<div class="button-label" term="login_changeUserAdv" style="color: #999;">Change user</div>
 						</div>
 					</div>
-					<div class="button h-emphasis button-full_width loginBtn mouseDown" tabindex="6" style="border-radius: 20px;">
+
+					<div class="button h-emphasis button-full_width loginBtn mouseDown" tabindex="6" style="border-radius: 20px; background-color: #F06D24;;">
 						<div class="button__container ">
 							<div class="button-label" term="login_btn_login">Log in</div>
 						</div>
 					</div>
+
+					<div class="button h-emphasis button-full_width loginSetPinBtn mouseDown" tabindex="7" style="display: none; border-radius: 20px; background-color: #F06D24;">
+						<div class="button__container ">
+							<div class="button-label" term="login_btn_setPin">Set PIN & Login</div>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>
