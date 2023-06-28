@@ -291,9 +291,20 @@ function Login() {
 					MsgFormManager.appBlockTemplate('appLoad');
 
 					// NEW!! - When User Changing, if keycloak is in use, perform logout 1st..
-					if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.tokenLogout();
-
-					AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");
+					if ( KeycloakManager.isKeyCloakInUse() ) 
+					{
+						KeycloakManager.tokenLogout( function( isSuccess ) 
+						{
+							if ( !isSuccess ) alert( 'Failed to perform KeyCloak Logout!' );
+							else 
+							{
+								//KeycloakManager.removeKeyCloakInUse(); // These 2 already done by 'tokenLogout' 
+								// KeycloakManager.localStorageRemove();	
+								AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");								
+							}
+						});
+					}
+					else AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");
 				});
 			});
 

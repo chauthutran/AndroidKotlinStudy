@@ -249,7 +249,7 @@ KeycloakManager.tokenRefresh = function() {
 
 // http://127.0.0.1:8887/logout.html
 // https://pwa-stage.psi-connect.org/logout.html
-KeycloakManager.tokenLogout = function() 
+KeycloakManager.tokenLogout = function( callFunc ) 
 {
 	try
 	{
@@ -262,9 +262,11 @@ KeycloakManager.tokenLogout = function()
 	
 			keycloak.logout({"redirectUri": window.location.href + "logout.html"}).then( (success) => {
 				console.log( 'KeyCloak Token LogOut success: ' + success );
+				if ( callFunc ) callFunc( true );
 			}).catch( (error) => {
 				console.log( 'KeyCloak Token LogOut failed: ' );
 				console.log( error );
+				if ( callFunc ) callFunc( false );
 			});			
 		}
 	}
@@ -273,28 +275,6 @@ KeycloakManager.tokenLogout = function()
 		console.log( 'ERROR in KeycloakManager.tokenLogout, ' + errMsg );
 	}
 };
-/*
-KeycloakManager.tokenLogout = function() 
-{
-	if( ConnManagerNew.isAppMode_Offline() ) KeycloakManager.localStorageRemove();
-	else
-	{
-		//keycloak.logout( { redirectUri : window.location.href + "logout.html"});
-		keycloak.logout( { redirectUri : window.location.href + '?msg=keycloak_loggedOut' } ).then((success) => 
-		{
-			// TODO: Otherwise, pass the removal in param
-			KeycloakManager.localStorageRemove();
-
-			console.log("--> KeyCloak: logout success ", success );
-		}).catch((error) => {
-			console.log("--> KeyCloak: logout error ", error );
-		});
-	}
-
-	//keycloak.logout( { "redirectUri": window.location.href } ); // "http://127.0.0.1:8887/" } );
-};
-*/
-
 
 KeycloakManager.localStorageRemove = function() {
 	localStorage.removeItem("accessToken");
