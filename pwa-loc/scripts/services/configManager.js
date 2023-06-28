@@ -600,7 +600,7 @@ ConfigManager.getSettingsBahmni = function () {
 ConfigManager.setINFO_SettingsBahmni_INFO_Vals = function() {
 	var settingsBahmni = ConfigManager.getSettingsBahmni();
 
-	if ( settingsBahmni.INFO_Vals )
+	if ( settingsBahmni && settingsBahmni.INFO_Vals )
 	{
 		for ( var prop in settingsBahmni.INFO_Vals )
 		{
@@ -609,6 +609,13 @@ ConfigManager.setINFO_SettingsBahmni_INFO_Vals = function() {
 		}
 	}
 }; 
+
+ConfigManager.isBahmniSubSourceType = function()
+{
+	const subSourceType = ConfigManager.getConfigJson().subSourceType;
+	return ( subSourceType && subSourceType == "bahmni");
+}
+
 
 ConfigManager.combineDefinitionOptions_wtAppInfoOpts = function( definitionOptions, appInfoSelectOpts ) {
 	try

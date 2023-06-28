@@ -25,6 +25,7 @@ AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE = "configVersioningEnable";
 AppInfoLSManager.KEY_CONFIG_VERSION = "configVersion";
 AppInfoLSManager.KEY_LOGIN_PREV_DATA = "loginPrevData";
 AppInfoLSManager.KEY_FHIR_PRACTITIONER_ID = "fhirPractitionerId";
+AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME = "lastSyncedDatetime"; 
 
 AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY = "devDebugLogHistory";
 AppInfoLSManager.DevDebugLogHistoryMaxLength = 30;
@@ -315,6 +316,23 @@ AppInfoLSManager.setUserName = function( userName )
 AppInfoLSManager.getUserName = function()
 {
     return AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_USERNAME );
+};
+
+// For Bahmni related
+AppInfoLSManager.setBahmni_lastSyncedDatetime = function( value )
+{
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME, value );
+};
+
+AppInfoLSManager.getBahmni_lastSyncedDatetime = function()
+{
+    var dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME );
+    if( dateTimeStr == null )
+    {
+        dateTimeStr = "1900-01-01T00:00:00";
+        AppInfoLSManager.setBahmni_lastSyncedDatetime ( dateTimeStr );
+    }
+    return dateTimeStr;
 };
 
 // ----------------------------------------------------

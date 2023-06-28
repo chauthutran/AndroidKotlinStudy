@@ -186,11 +186,11 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 		else {
 			var downloadedData = SyncManagerNew.formatDownloadedData(returnJson);
 
-      // NEW - Bahmni
+			// ------------------------------------------------------------------------------------------------------
+      		// NEW - Bahmni
 
 			// if( ) // Need to set a parameter for Bahmni sync in country configuration --- ConfigManager.<something>
-			const subSourceType = ConfigManager.getConfigJson().subSourceType;
-			if( subSourceType == "bahnmi")
+			if( ConfigManager.isBahmniSubSourceType() )
 			{
 				SyncManagerNew.update_UI_StartSyncAll();
 
@@ -785,7 +785,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 		activityJson_Orig = ActivityDataManager.getActivityById(activityId);
 
 		if (!activityJson_Orig.processing) throw 'Activity.performSyncUp, activity.processing not available';
-		if ( !(activityJson_Orig.processing.url || (activityJson_Orig.processing.eval && INFO.client.subSourceType == 'bahnmi' ) ) ) throw 'Activity.performSyncUp, activity.processing.url and activity.processing.eval not available';
+		if ( !(activityJson_Orig.processing.url || (activityJson_Orig.processing.eval && INFO.client.subSourceType == 'bahmni' ) ) ) throw 'Activity.performSyncUp, activity.processing.url and activity.processing.eval not available';
 
 		var mockResponseJson = ConfigManager.getMockResponseJson(activityJson_Orig.processing.useMockResponse);
 
@@ -901,7 +901,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
     // NEW - Bahmni
 
-		if( success && responseJson && responseJson.status == Constants.ws_status_success && clientJsonSubSourceType == "bahnmi" )
+		if( success && responseJson && responseJson.status == Constants.ws_status_success && clientJsonSubSourceType == "bahmni" )
 		{
 			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
 			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);

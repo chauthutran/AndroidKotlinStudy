@@ -727,18 +727,19 @@ function Login() {
 							SessionManager.setLoginRespData_IDB(userName, password, loginData);
 							// IMPORTANT PART - Load loginData in session, use 'dcdConfig' to load ConfigManager data.
 							var configJson = SessionManager.loadSessionData_nConfigJson(userName, password, loginData); // InfoDataManager.sessionDataLoad is also called here.
-
 							// Bahmni Related
-							//if( ConfigManager.isBahmniSubSourceType() )
-							//{
-							//	BahmniService.loadInitData(function(){
-							//		me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
-							//	});
-							//}
-							//else
-							//{
-								me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
-							//}
+							// if( ConfigManager.isBahmniSubSourceType() )
+							// {
+							// 	BahmniService.loadInitData(function(){
+							// 		me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
+							// 	});
+							// }
+							// else
+							// {
+							// 	me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
+							// }
+		
+							me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
 						}
 						else returnFunc(resultSuccess, loginData);
 					});
