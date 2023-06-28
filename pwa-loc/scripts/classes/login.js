@@ -13,7 +13,7 @@ function Login() {
 
 	me.loginBtnTag;
 	me.loginSetPinBtnTag;
-	me.passRealTag;
+	//me.passRealTag;
 	me.loginUserNameTag;
 	me.loginUserPinTag;
 	me.loginFormTag;
@@ -48,7 +48,7 @@ function Login() {
 
 		me.loginBtnTag = $('.loginBtn');
 		me.loginSetPinBtnTag = $('.loginSetPinBtn');
-		me.passRealTag = $('#passReal');
+		//me.passRealTag = $('#passReal');
 		me.loginUserNameTag = $('.loginUserName');
 		me.loginUserPinTag = $('.loginUserPin');
 		me.loginFormTag = $('div.login_data');
@@ -163,9 +163,9 @@ function Login() {
 
 
 		// Disable this...
-		me.loginBtnTag.focus(function () {
-			me.passRealTag.hide();
-		});
+		//me.loginBtnTag.focus(function () {
+		//	me.passRealTag.hide();
+		//});
 
 
 		me.splitPasswordTag.find('.pin1').focus(function () {
@@ -1089,30 +1089,31 @@ Login.contentHtml = `
 					<div class="field__right"></div>
 				</div>
 			</div>
+		</div>
 
-			<div class="login_buttons login_cta" style="display:none;">
-				<div class="login_buttons__container">
-					<div class="button l-emphasis button-full_width btnChangeUser mouseDown" style="border: solid 1px #ccc; background-color: white; border-radius: 20px;">
-						<div class="button__container">
-							<div class="button-label" term="login_changeUserAdv" style="color: #999;">Change user</div>
-						</div>
+		<div class="login_buttons login_cta" style="display:none;">
+			<div class="login_buttons__container">
+				<div class="button l-emphasis button-full_width btnChangeUser mouseDown" style="border: solid 1px #ccc; background-color: white; border-radius: 20px;">
+					<div class="button__container">
+						<div class="button-label" term="login_changeUserAdv" style="color: #999;">Change user</div>
 					</div>
-
-					<div class="button h-emphasis button-full_width loginBtn mouseDown" tabindex="6" style="border-radius: 20px; background-color: #F06D24;;">
-						<div class="button__container ">
-							<div class="button-label" term="login_btn_login">Log in</div>
-						</div>
-					</div>
-
-					<div class="button h-emphasis button-full_width loginSetPinBtn mouseDown" tabindex="7" style="display: none; border-radius: 20px; background-color: #F06D24;">
-						<div class="button__container ">
-							<div class="button-label" term="login_btn_setPin">Set PIN & Login</div>
-						</div>
-					</div>
-
 				</div>
+
+				<div class="button h-emphasis button-full_width loginBtn mouseDown" tabindex="6" style="border-radius: 20px; background-color: #F06D24;;">
+					<div class="button__container ">
+						<div class="button-label" term="login_btn_login">Log in</div>
+					</div>
+				</div>
+
+				<div class="button h-emphasis button-full_width loginSetPinBtn mouseDown" tabindex="7" style="display: none; border-radius: 20px; background-color: #F06D24;">
+					<div class="button__container ">
+						<div class="button-label" term="login_btn_setPin">Set PIN & Login</div>
+					</div>
+				</div>
+
 			</div>
 		</div>
+				
 	</div>
 
 	<div class="divAuthForm" style="display:none; text-align: center; ">
