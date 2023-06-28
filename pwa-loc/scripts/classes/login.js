@@ -16,7 +16,7 @@ function Login() {
 	me.loginUserNameTag;
 	me.loginUserPinTag;
 	me.loginFormTag;
-	me.advanceOptionLoginBtnTag;
+	me.btnChangeUserTag;
 	me.loginPinClearTag;
 	me.splitPasswordTag;
 	me.selAuthChoiceTag;
@@ -50,7 +50,7 @@ function Login() {
 		me.loginUserNameTag = $('.loginUserName');
 		me.loginUserPinTag = $('.loginUserPin');
 		me.loginFormTag = $('div.login_data');
-		me.advanceOptionLoginBtnTag = $('#advanceOptionLoginBtn');	
+		me.btnChangeUserTag = $('.btnChangeUser');	
 		me.loginPinClearTag = $('#loginPinClear');
 		me.splitPasswordTag = $('.split_password');
 		me.selAuthChoiceTag = $( '.selAuthChoice' );
@@ -87,7 +87,7 @@ function Login() {
 		FormUtil.setUpTabAnchorUI(me.loginFormDivTag);
 
 		me.setLoginEvents();
-		me.setAdvOptBtnClick();
+		//me.setAdvOptBtnClick();
 		me.setAuthChoiceChange();
 
 		me.setUpInteractionDetect();
@@ -204,6 +204,12 @@ function Login() {
 			}
 		});
 
+
+		me.btnChangeUserTag.click(function () {
+			me.changeUserBtnClick();
+		});
+
+
 		$(".onKeyboardOnOff").focus(function () { // Focus		
 			me.loginBottomButtonsVisible(false);
 		});
@@ -262,6 +268,7 @@ function Login() {
 		});
 	};
 
+	/*
 	me.setAdvOptBtnClick = function () {
 		me.advanceOptionLoginBtnTag.click(function () {
 
@@ -293,11 +300,13 @@ function Login() {
 			});
 		});
 	};
-
+	*/
 
 	// User Switch, User Remove / Clear
 	me.changeUserBtnClick = function () 
 	{
+		FormUtil.blockPage(undefined, function (scrimTag) { });
+
 		FormUtil.getScrimTag().off('click');  // Make it not cancelable by clicking on scrim anymore...
 
 		// Populates the center aligned #dialog_confirmation div
@@ -419,6 +428,11 @@ function Login() {
 
 	// -----------------------------------
 
+	me.isAuthPageUse = function()
+	{
+		return ( PersisDataLSManager.getAuthPageUse() === 'Y' ) ? true: false;
+	};
+
 	me.openForm = function () {
 		// Reset various login related flags - the 1st touch/focus flag..
 		me.loginPage1stTouchFlag = false;
@@ -431,9 +445,8 @@ function Login() {
 		$( '.divLoginForm' ).hide();
 		$( '.login_buttons' ).hide();
 
-		var authPageUseCase = ( PersisDataLSManager.getAuthPageUse() === 'Y' ) ? true: false;
 
-		if ( authPageUseCase )
+		if ( me.isAuthPageUse() )
 		{
 			me.spanAuthPageUseTag.hide();
 			
@@ -459,9 +472,13 @@ function Login() {
 		$( '.divLoginForm' ).show();
 		$( '.login_buttons' ).show();
 
-
-		// TODO: Need to also display the Auth Choice
-
+		// Auth choice display
+		if ( me.isAuthPageUse() )
+		{
+			$( '.divLoginWith' ).show();
+			$( '.divLoginWith_choice' ).text( me.selAuthChoiceTag.val() );
+		}
+		else $( '.divLoginWith' ).hide();
 
 		// Reset vals and set focus
 		me.clearResetPasswords();
@@ -488,8 +505,6 @@ function Login() {
 
 		// Display login name as Big text part - if we already have user..
 		loginUserNameH4Tag.text(me.loginUserNameTag.val()).show();
-
-		//$( '#advanceOptionLoginBtn' ).removeClass( 'dis' ).addClass( 'l-emphasis' );
 
 		FormUtil.hideProgressBar();
 	};
@@ -1035,6 +1050,12 @@ Login.contentHtml = `
 
 	<div class="login_data divLoginForm" style="display:none;">
 		<div class="login_data__fields">
+
+			<div class="divLoginWith" style="display: none; text-align: left; padding: 8px; margin-bottom: 7px;">
+				<div class="divLoginWith_lbl" style="font-size: 0.75rem; color: #555;">Log in with</div>
+				<div class="divLoginWith_choice" style="color: #555;">Classic WFA auth (legacy)</div>
+			</div>
+
 			<h4 id="loginUserNameH4" style="display:none; text-align: left; margin-left: 10px;"></h4>
 			<div id="loginField" class="field" style="background-color: white;">
 				<div class="field__label">
@@ -1070,35 +1091,19 @@ Login.contentHtml = `
 					<div class="field__right"></div>
 				</div>
 			</div>
-		</div>
-		<div id="divAppVersion" class="login_data__more" style="text-align: left;">
-			<div>
-				<label id="spanVersion" style="color: #999999; font-weight: 350;">Version #.#</label>
-				<label id="spanVerDate" style="margin-left: 7px; color: #999999; font-weight: 350;">[2020---]</label>
-				<span class="spanNewVersion_notification" style="color:red; margin: 0px -4px 0px 1px; display: none;" title="New version available">*</span>
-				<img class="imgAppReload mouseDown" title="App reload" src="images/sync-n.svg" style="cursor: pointer; vertical-align: top; margin-bottom: -4px; margin-top: -3px;">
-				<img class="imgKeyCloakUse mouseDown" title="KeyCloak Use" src="images/key.svg" style="display:none; cursor: pointer; vertical-align: top; margin-bottom: -4px; margin-top: -3px; opacity: 0.4; background-color: red;">
-				<span id="spanLoginAppUpdate" term="login_updateApp"
-					style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[UPDATE
-					APP]</span>				
-				<span class="spanAuthPageUse" title="AuthPageUse" style="color: #AAA; font-weight: bold; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[A]</span>
-			</div>
-			<div id="loginVersionNote" style="margin-left: 7px; color: #999999;"></div>
-		</div>
-		<div id="localSiteInfo" style="display: none; color: orange;text-align: left;">
-			[Connected To:
-			<select id="localStage" style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 4px;">
-				<option value="dev">dev</option>
-				<option value="test">test</option>
-				<option value="prod">prod</option>
-			</select>]
-		</div>
-		<div id="divKeyCloakUse" style="display: none; color: orange;text-align: left; font-size: 14px;">
-			<div style="border: 1px; background-color: lightBlue; margin: 2px; padding: 2px; ">
-				<div id="divKeyCloakInfo" style="display:none;">
-					KeyCloak: <button id="btnKeyCloakRun">Run</button> | 
-					<button id="btnKeyCloakLogOut" style="display: none;">LogOut</button>
-					<span id="divTokenInfo" style="font-size: 12px;"></span>
+
+			<div class="login_buttons login_cta" style="display:none;">
+				<div class="login_buttons__container">
+					<div class="button l-emphasis button-full_width btnChangeUser mouseDown" style="border: solid 1px #ccc; background-color: white; border-radius: 20px;">
+						<div class="button__container">
+							<div class="button-label" term="login_changeUserAdv" style="color: #999;">Change user</div>
+						</div>
+					</div>
+					<div class="button h-emphasis button-full_width loginBtn mouseDown" tabindex="6" style="border-radius: 20px;">
+						<div class="button__container ">
+							<div class="button-label" term="login_btn_login">Log in</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -1121,17 +1126,36 @@ Login.contentHtml = `
 		</div>
 
 	</div>
-
-	<div class="login_buttons login_cta" style="display:none;">
-		<div class="login_buttons__container">
-			<div class="button l-emphasis button-full_width mouseDown" id="advanceOptionLoginBtn">
-				<div class="button__container">
-					<div class="button-label" term="login_options">Options</div>
-				</div>
+	
+	<div class="loginPage_bottomDiv">
+		<div id="divAppVersion" class="login_data__more" style="float: left; margin-left: 4px;">
+			<div>
+				<label id="spanVersion" style="color: #999999; font-weight: 350;">Version #.#</label>
+				<label id="spanVerDate" style="margin-left: 7px; color: #999999; font-weight: 350;">[2020---]</label>
+				<span class="spanNewVersion_notification" style="color:red; margin: 0px -4px 0px 1px; display: none;" title="New version available">*</span>
+				<img class="imgAppReload mouseDown" title="App reload" src="images/sync-n.svg" style="cursor: pointer; width: 20px; vertical-align: top; margin-bottom: -4px; margin-top: -3px;">
+				<img class="imgKeyCloakUse mouseDown" title="KeyCloak Use" src="images/key.svg" style="display:none; width: 16px; cursor: pointer; vertical-align: top; margin-bottom: -4px; opacity: 0.4; background-color: red;">
+				<span id="spanLoginAppUpdate" term="login_updateApp"
+					style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin: 0px 2px;">[UPDATE
+					APP]</span>				
+				<span class="spanAuthPageUse" title="AuthPageUse" style="color: #AAA; opacity: 0.7; cursor: pointer; font-size: 0.80rem; vertical-align: top; ">[A]</span>
 			</div>
-			<div class="button h-emphasis button-full_width loginBtn mouseDown" tabindex="6">
-				<div class="button__container ">
-					<div class="button-label" term="login_btn_login">Login</div>
+			<div id="loginVersionNote" style="margin-left: 7px; color: #999999;"></div>
+		</div>
+		<div style="float: right; margin-right: 10px;">
+			<div id="localSiteInfo" style="display: none; color: orange;">			
+				[Connected To:
+				<select id="localStage" style="all: unset; color: #888; border: solid 1px gray; background-color: #eee; padding: 2px;">
+					<option value="dev">dev</option>
+					<option value="test">test</option>
+					<option value="prod">prod</option>
+				</select>]
+			</div>
+			<div id="divKeyCloakUse" style="display: none; text-align: left;">
+				<div id="divKeyCloakInfo" style="display:none;">
+					KeyCloak: <button id="btnKeyCloakRun" style="font-size: 10px;">Run</button> | 
+					<button id="btnKeyCloakLogOut" style="display: none; font-size: 10px;">LogOut</button>
+					<span id="divTokenInfo" style="font-size: 12px; display: none;"></span>
 				</div>
 			</div>
 		</div>

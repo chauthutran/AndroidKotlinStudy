@@ -10,6 +10,18 @@
 }
 
 
+.loginPage_bottomDiv
+{
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	background-color: #222;
+	width: 100%;
+	color: #bbb;
+	padding: 4px;
+	font-size: 12px;
+}
+
 /* IFrame JobAid */
 .iframeDiv {
 	position: fixed;
