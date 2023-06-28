@@ -851,7 +851,7 @@ ConfigManager.getClientActivityFilterEval = function () {
 	var clientDef = ConfigManager.getClientDef();
 
 	if (clientDef.clientActivity && clientDef.clientActivity.listFilterEval) {
-		filterEval = Util.getEvalStr( clientDef.clientActivityCardDef.listFilterEval );
+		filterEval = Util.getEvalStr( clientDef.clientActivity.listFilterEval );
 	}
 
 	return filterEval;
