@@ -25,6 +25,7 @@ AppInfoLSManager.KEY_CONFIG_VERSIONING_ENABLE = "configVersioningEnable";
 AppInfoLSManager.KEY_CONFIG_VERSION = "configVersion";
 AppInfoLSManager.KEY_LOGIN_PREV_DATA = "loginPrevData";
 AppInfoLSManager.KEY_FHIR_PRACTITIONER_ID = "fhirPractitionerId";
+AppInfoLSManager.KEY_BAHMNI_INITILIZED = "bahmniInitilized"; 
 AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME = "lastSyncedDatetime"; 
 
 AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY = "devDebugLogHistory";

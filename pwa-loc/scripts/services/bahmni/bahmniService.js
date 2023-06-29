@@ -29,7 +29,7 @@ BahmniService.syncDown = function(exeFunc)
         
         for( var i=0; i<configSynDownList.length; i++ )
         {
-            var configSynDownData = configSynDownList[i];
+            var configSynDownData = JSON.parse(JSON.stringify(configSynDownList[i]));
             var url = eval( Util.getEvalStr( configSynDownData.urlEval ) );
 
             if( configSynDownData.method.toUpperCase() == "POST" )

@@ -18,6 +18,14 @@ Constants.status_submit_wMsg = "submit_wMsg";
 Constants.status_submit_wMsgRead = "submit_wMsgRead";
 Constants.status_custom = "custom";
 
+// Sync Down
+// --- Get data from Bahmni 
+// --- Get data from Mongo 
+// ------> Merge all data in local
+// Sync Up
+// --- Sync to Bahmni
+// --- Sync to Mongo
+
 // BACKEND RESPONSE STATUS:
 Constants.ws_status_success = "success";
 Constants.ws_status_warning = "warning";
