@@ -84,6 +84,11 @@ FhirUtil.generateActivities = function ( resourceArr )
 	var actList = [];
 
 	var act_QR = FhirUtil.generateActivities_fmQR( resourceArr.filter( item => item.resourceType === 'QuestionnaireResponse' ) );
+
+	// var act_SrvReq = FhirUtil.generateActivities_SrvReq( resourceArr.filter( item => item.resourceType === 'ServiceRequest' ) );
+
+	// Merge the activity..  Look for v_iss ones..  with code..
+
 	var act_CommReq = FhirUtil.generateActivities_CommReq( resourceArr.filter( item => item.resourceType === 'CommunicationRequest' ) );
 
 	return actList.concat( act_QR, act_CommReq );
@@ -96,16 +101,28 @@ FhirUtil.generateActivities_fmQR = function ( questRespArr )
 
 	try
 	{
-		if ( questRespArr && questRespArr.length > 0 )
-		{
-			questRespArr.forEach( qr => {
-				activities.push( FhirUtil.convertQR_Activity( qr ) );
-			});
-		}	
+		if ( questRespArr && questRespArr.length > 0 ) questRespArr.forEach( qr => {  activities.push( FhirUtil.convertQR_Activity( qr ) );  });
 	}
 	catch( errMsg )
 	{
 		console.log( 'ERROR in FhirUtil.generateActivities_fmQR, ' + errMsg );
+	}
+
+	return activities;
+};
+
+
+FhirUtil.generateActivities_SrvReq = function ( srvReqArr ) 
+{
+	var activities = [];
+
+	try
+	{
+		if ( srvReqArr && srvReqArr.length > 0 ) srvReqArr.forEach( item => {  activities.push( FhirUtil.convertSrvReq_Activity( item ) );  });
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in FhirUtil.generateActivities_SrvReq, ' + errMsg );
 	}
 
 	return activities;
@@ -118,12 +135,7 @@ FhirUtil.generateActivities_CommReq = function ( CommReqArr )
 
 	try
 	{
-		if ( CommReqArr && CommReqArr.length > 0 )
-		{
-			CommReqArr.forEach( item => {
-				activities.push( FhirUtil.convertCommReq_Activity( item ) );
-			});
-		}	
+		if ( CommReqArr && CommReqArr.length > 0 ) CommReqArr.forEach( item => {  activities.push( FhirUtil.convertCommReq_Activity( item ) );  });
 	}
 	catch( errMsg )
 	{
@@ -175,6 +187,52 @@ FhirUtil.convertQR_Activity = function( qr )
 };
 
 
+FhirUtil.convertSrvReq_Activity = function( item )
+{
+	var act = {};
+	try
+	{
+		if ( item )
+		{
+			var patientId = FhirUtil.getRefPatientId( item.subject );
+			var extJson = FhirUtil.getExtensionVals( item.extension );
+			var idenJson = FhirUtil.getIdentifierVals( item.identifier ); // QR only allow 1 identifier, not array
+			var codeJson = FhirUtil.getCodeVals( item.code );
+
+			act.id = 'srvReq_' + patientId + '_' + item.id;
+			act.type = 'IPC_ISS';	// if ( status is 'active', ISS, -->  or 'completed', create extra ones.. )
+
+			var activeUser = '';
+			
+			if ( extJson.activeUser ) activeUser = extJson.activeUser;
+
+			act.activeUser = activeUser;
+			act.creditedUsers = [ activeUser ];
+
+			act.date = FhirUtil.getActDateJson( item.occurrenceDateTime );
+
+			//act.status = item.status;
+			act.voucherCode = codeJson[ 'voucher-code' ];
+
+			act.resource = item;
+
+			act.transactions = [{
+				type: 'v_iss',
+				dataValues: {
+					voucherCode: act.voucherCode,
+					patientId: patientId,
+					status: item.status,
+					occurrenceDateTime: item.occurrenceDateTime
+				}
+			}];
+		}
+	}
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.convertSrvReq_Activity, ' + errMsg ); }
+
+	return act;
+};
+
+
 FhirUtil.convertCommReq_Activity = function( item )
 {
 	var act = {};
@@ -186,7 +244,9 @@ FhirUtil.convertCommReq_Activity = function( item )
 			var extJson = FhirUtil.getExtensionVals( item.extension );
 			var idenJson = FhirUtil.getIdentifierVals( item.identifier ); // QR only allow 1 identifier, not array
 
-			var actType_Voucher = ( idenJson.voucherCode ) ? true: false;
+			var gIdenVoucher = ( item.groupIdentifier && item.groupIdentifier.value ) ? item.groupIdentifier.value: '';
+
+			var actType_Voucher = ( idenJson.voucherCode || gIdenVoucher ) ? true: false;
 			var actType_name = ( actType_Voucher ) ? 'Voucher_': '';
 
 			act.id = 'commReq_' + actType_name + patientId + '_' + item.id;
@@ -194,6 +254,8 @@ FhirUtil.convertCommReq_Activity = function( item )
 
 			var activeUser = '';
 			
+			if ( extJson.activeUser ) activeUser = extJson.activeUser;
+
 			act.activeUser = activeUser;
 			act.creditedUsers = [ activeUser ];
 
@@ -201,13 +263,14 @@ FhirUtil.convertCommReq_Activity = function( item )
 
 			act.status = item.status;
 			act.voucherCode = idenJson.voucherCode;
+			if ( !act.voucherCode && gIdenVoucher )  act.voucherCode = gIdenVoucher;
 
 			act.resource = item;
 
 			act.transactions = [{
 				type: 's_rem',
 				dataValues: {
-					voucherCode: idenJson.voucherCode,
+					voucherCode: act.voucherCode,
 					payload: item.payload,
 					patientId: patientId,
 					status: item.status,
@@ -303,7 +366,6 @@ FhirUtil.getItemName = function( item, prop )
 	return name;
 };
 
-
 FhirUtil.getExtensionVals = function( extension )
 {
 	var extensionJson = { };
@@ -338,20 +400,45 @@ FhirUtil.getIdentifierVals = function( idenInput )
 
 	try
 	{
-		if ( Util.isTypeArray( idenInput ) ) idenArr = idenInput;
-		else if ( Util.isTypeObject( idenInput ) ) idenArr = [ idenInput ];
-
-		idenArr.forEach( item => 
+		if ( idenInput )
 		{
-			var name = FhirUtil.getItemName( item, 'system' );
-			var val = FhirUtil.getItemValue( item );
-
-			if ( name & val ) idenJson[ name ] = val;
-		});	
+			if ( Util.isTypeArray( idenInput ) ) idenArr = idenInput;
+			else if ( Util.isTypeObject( idenInput ) ) idenArr = [ idenInput ];
+	
+			idenArr.forEach( item => 
+			{
+				var name = FhirUtil.getItemName( item, 'system' );
+				var val = FhirUtil.getItemValue( item );
+	
+				if ( name & val ) idenJson[ name ] = val;
+			});
+		}
 	}
 	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getIdentifierVals, ' + errMsg ); }
 
 	return idenJson;
+};
+
+
+FhirUtil.getCodeVals = function( code )
+{
+	var codeJson = { };
+
+	try
+	{
+		if ( code && code.coding )
+		{
+			code.coding.forEach( item => 
+			{
+				var name = FhirUtil.getItemName( item, 'system' );
+
+				if ( name & item.code ) codeJson[ name ] = item.code;
+			});	
+		}
+	}
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getCodeVals, ' + errMsg ); }
+
+	return codeJson;
 };
 
 
