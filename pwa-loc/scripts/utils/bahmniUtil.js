@@ -21,20 +21,6 @@ BahmniUtil.generateClientData = function( patientData )
         const key = iden.identifierType.display; // iden.identifierType.uuid
         resolveData.clientDetails[key] = value;
     }
-
-    
-    // // Set activities - "Referal Template" From Data and "Assessment Plan" Form Data
-    // const activities = Util.findAllFromList(appointments, patientId, "patientId");
-    // for( let i=0; i<activities.length; i++ )
-    // {
-    //     const activity = activities[i];
-    //     var checkedExisted = Util.findFromList( resolveData.activities, activity.id, "id" );
-    //     if( !checkedExisted )
-    //     {
-    //         resolveData.activities.push(activity);
-    //     }
-    // }
-    
     return resolveData;
 };
 

@@ -16,6 +16,8 @@ BahmniService.syncDownStatus = {status: "success"};
 
 BahmniService.syncDown = function(exeFunc)
 {
+    BahmniService.showRequestMessage( "Starting sync data with Bahmni server ..." );
+
     INFO.bahmniResponseData = {};
 
     BahmniService.syncDownStatus = {status: "success"};
@@ -37,13 +39,13 @@ BahmniService.syncDown = function(exeFunc)
                 Util.traverseEval(configSynDownData.payload, InfoDataManager.getINFO(), 0, 50);
 
                 BahmniRequestService.sendPostRequest(configSynDownData.id, url, configSynDownData.payload, function(response) {
-                    BahmniService.afterSyncDown(response, exeFunc);
+                    BahmniService.resolveSyncDownResponseData(response, exeFunc);
                 })
             }
             else if( configSynDownData.method.toUpperCase() == "GET" )
             {
                 BahmniRequestService.sendGetRequest(configSynDownData.id, url, function(response) {
-                    BahmniService.afterSyncDown(response, exeFunc);
+                    BahmniService.resolveSyncDownResponseData(response, exeFunc);
                 });
             }
         }
@@ -51,7 +53,7 @@ BahmniService.syncDown = function(exeFunc)
     
 };
 
-BahmniService.serResponseErrorIfAny = function(response)
+BahmniService.setResponseErrorIfAny = function(response)
 {
     if( response.status == "error" )
     {
@@ -66,10 +68,11 @@ BahmniService.serResponseErrorIfAny = function(response)
     }
 };
 
-BahmniService.afterSyncDown = function(response, exeFunc)
+BahmniService.resolveSyncDownResponseData = function(response, exeFunc)
 {
     BahmniService.syncDownProcessingIdx++;
-    BahmniService.serResponseErrorIfAny(response);
+    BahmniService.setResponseErrorIfAny(response);
+    BahmniService.showRequestMessage("Synced data " + BahmniService.syncDownProcessingIdx + "/"+ BahmniService.syncDownProcessingTotal);
     
     if( BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal )
     {
@@ -112,22 +115,29 @@ BahmniService.afterSyncDown = function(response, exeFunc)
 
         BahmniService.syncDownDataList = { conceptIds, patientIds, appointmentIds, appointments, patients: [], concepts: [] };
 
+        BahmniService.showRequestMessage("Retrieving details of concepts, patients, appointments, form data ...");
+    
+
         BahmniService.syncDownProcessingIdx = 0;
         BahmniService.syncDownProcessingTotal = patientIds.length + appointmentIds.length + conceptIds.length;
 
         BahmniService.getConceptList( conceptIds, function(){
+            BahmniService.showRequestMessage("DONE !");
             exeFunc({status: BahmniService.syncDownStatus, data: BahmniService.syncDownDataList.patients});
         } );
 
         BahmniService.getAppointmentDataList( appointmentIds, function(){
+            BahmniService.showRequestMessage("DONE !");
             exeFunc({status: BahmniService.syncDownStatus, data: BahmniService.syncDownDataList.patients});
         } );
 
         BahmniService.getPatientDataList( patientIds, function(){
+            BahmniService.showRequestMessage("DONE !");
             exeFunc({status: BahmniService.syncDownStatus, data: BahmniService.syncDownDataList.patients});
         } );
     }
 }
+
 
 BahmniService.getAppointmentDataList = function( appointmentIds, exeFunc )
 {
@@ -161,7 +171,6 @@ BahmniService.getAppointmentDataList = function( appointmentIds, exeFunc )
         exeFunc();
     }
 };
-
 
 BahmniService.getPatientDataList = function( patientIds, exeFunc )
 {
@@ -214,7 +223,8 @@ BahmniService.getConceptList = function( conceptIdList, exeFunc)
 BahmniService.afterSyncDownAll = function(response, exeFunc)
 {
     BahmniService.syncDownProcessingIdx ++;
-    BahmniService.serResponseErrorIfAny(response);
+    BahmniService.setResponseErrorIfAny(response);
+    BahmniService.showRequestMessage("Retrieved details data " + BahmniService.syncDownProcessingIdx + "/" + BahmniService.syncDownProcessingTotal );
 
     if( BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal )
     {
@@ -277,6 +287,7 @@ BahmniService.retrieveAppointmentDetails = function( appointmentId, exeFunc )
     BahmniRequestService.sendGetRequest(appointmentId, url, exeFunc);
 };
 
+
 // ==============================================================================
 // SyncUp 
 // ==============================================================================
@@ -291,3 +302,9 @@ BahmniService.syncUp = function(activityJson, exeFunc)
 }
 
 
+
+BahmniService.showRequestMessage = function( message )
+{
+    MsgFormManager.appUnblock({itemId: 'oldConfigMsg'});
+    MsgFormManager.showFormMsg( { itemId: 'oldConfigMsg', msgSpanTag: $( '<span>' + message + '</span>' ), width: '530px' } );
+}
