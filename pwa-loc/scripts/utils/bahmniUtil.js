@@ -103,8 +103,7 @@ BahmniUtil.generateOptionsByConcept = function(concept)
     const answers = concept.answers;
     for( var i=0; i<answers.length; i++ )
     {
-        var name = answers[i].display;
-        options.push({ "defaultName": name, "value": name });
+        options.push({ "defaultName": answers[i].display, "value": answers[i].uuid });
     }
 
     return options;
