@@ -72,7 +72,7 @@ BahmniUtil.generateActivityFormData = function( refDormData, type, formNameId, f
         // fieldReport: refDormData.fieldReport
     };
 
-    var activityId = refDormData.encounterUuid + "--" + refDormData.formUuid;
+    var activityId = refDormData.encounterUuid + "--" + formId;
     return { id: activityId, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: refDormData, date: BahmniUtil.generateJsonDate(), patientId: patientId };
 };
 
