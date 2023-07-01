@@ -305,6 +305,6 @@ BahmniService.syncUp = function(activityJson, exeFunc)
 
 BahmniService.showRequestMessage = function( message )
 {
-    MsgFormManager.appUnblock({itemId: 'oldConfigMsg'});
-    MsgFormManager.showFormMsg( { itemId: 'oldConfigMsg', msgSpanTag: $( '<span>' + message + '</span>' ), width: '530px' } );
+    //MsgFormManager.appUnblock({itemId: 'oldConfigMsg'});
+    //MsgFormManager.showFormMsg( { itemId: 'oldConfigMsg', msgSpanTag: $( '<span>' + message + '</span>' ), width: '530px' } );
 }
