@@ -1295,6 +1295,7 @@ Util.unselectAllOption = function (listTag) {
 
 Util.valueEscape = function (input) {
 	//input.replaceAll( '\', '\\' ); //input = input.replace( "'", "\'" );
+	//input = Util.valueUnescape(input); // In case there already is excapting thigns..
 	input = input.replace(/"/g, "\\\"");
 
 	return input;

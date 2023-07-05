@@ -14,13 +14,17 @@ FhirUtil.TransType_DataMap = {
 
 // ==== Methods ======================
 
-FhirUtil.getClientList_FromResponse = function ( response )
+FhirUtil.getClientList_FromResponse = function ( response, option )
 {
 	var clientList = [];
+	if ( !option ) option = {};
 
 	try
 	{
 		if ( response && response.entry ) FhirUtil.getPatientResourceSet( response ).forEach( rscSet => { clientList.push( FhirUtil.evalClientTemplate( rscSet ) ); } );
+
+		// Merge clients that already exists
+		if ( option.mergeWithLocal ) FhirUtil.mergeWithLocalClient( clientList );
 	}
 	catch( errMsg )
 	{
@@ -28,6 +32,23 @@ FhirUtil.getClientList_FromResponse = function ( response )
 	}
 
 	return clientList;
+};
+
+
+FhirUtil.mergeWithLocalClient = function( dwClientList )
+{
+	var downloadedData = { clients: [] }; 
+
+	// NEW: if the clientList has matching local client, perform download.
+	dwClientList.forEach( client => {
+		var localClient = ClientDataManager.getClientById( client._id );
+		if ( localClient ) downloadedData.clients.push( client ); 
+	});	
+	
+	var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'Search result download data merged.');
+	// ClientDataManager.setActivityDateLocal_clientList(downloadedData.clients);
+	
+	ClientDataManager.mergeDownloadedClients(downloadedData, processingInfo);	
 };
 
 
@@ -176,7 +197,8 @@ FhirUtil.convertQR_Activity = function( qr )
 			act.creditedUsers = [ activeUser ];
 
 			act.date = FhirUtil.getActDateJson( qr.authored ); // need to get this from 'authored'
-			act.transactions = [ FhirUtil.getTransFromItem( qr.item, extJson ) ];
+			//act.transactions = [ FhirUtil.getTransFromItem( qr.item, extJson ) ];
+			act.transactions = FhirUtil.getTransArrFromItems( qr.item, extJson );
 
 			act.resource = qr;
 		}
@@ -299,31 +321,84 @@ FhirUtil.getRefPatientId = function( subject )
 };
 
 
-FhirUtil.getTransFromItem = function( items, extraJson )
+FhirUtil.getTransArrFromItems = function( items, extraJson )
 {
-	var trans = { type: 's_info' };
+	var transArr = [];
+	var transObj = {};
 
 	try
-	{
-		if ( extraJson.transType ) trans.type = extraJson.transType;
-		var dataName = FhirUtil.getDataNameByTransType( trans.type );	// Could be either 'dataValues', 'clientDetails'
-		trans[dataName] = {};
-		var transData = trans[dataName];
+	{		
+		var transDataTarget_default = FhirUtil.getTransDataTarget_Default( transObj, extraJson );
 
+		// Set up transaction object for target
 		items.forEach( item => 
 		{
 			if ( item.answer && item.answer.length > 0 )
 			{
-				var answerObj = item.answer[0];
-				transData[ item.linkId ] = FhirUtil.getItemValue( answerObj );	
+				var transDataTarget = FhirUtil.getTransDataTarget_byItemText( transObj, item, transDataTarget_default );
+
+				transDataTarget[ item.linkId ] = FhirUtil.getItemValue( item.answer[0] );	
 			}
 		});
+
+
+		// Convert object to array
+		for ( var prop in transObj )
+		{
+			var tObj = { type: prop };
+			var tObj_data = transObj[ prop ];
+			Util.mergeJson( tObj, tObj_data );
+
+			transArr.push( tObj );
+		}
 	}
 	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getTransFromItem, ' + errMsg ); }
 
-	return trans;
+	return transArr;
 };
 
+
+FhirUtil.getTransDataTarget_Default = function( transObj, extraJson )
+{
+	var name_type = 's_info';
+
+	if ( extraJson && extraJson.transType ) name_type = extraJson.transType;
+
+	var name_dataName = FhirUtil.getDataNameByTransType( name_type );	// Could be either 'dataValues', 'clientDetails'
+
+	if ( !transObj[name_type] ) transObj[name_type] = {};
+	if ( !transObj[name_type][name_dataName] ) transObj[name_type][name_dataName] = {};	
+	
+	return transObj[name_type][name_dataName];
+};
+
+
+FhirUtil.getTransDataTarget_byItemText = function( transObj, item, transDataTarget_default )
+{
+	var transDataTarget = transDataTarget_default;
+
+	if ( item.text )
+	{
+		var nameArr = item.text.split( '..' );
+		if ( nameArr.length === 2 )
+		{
+			var name_type = nameArr[0];
+			var name_dataName = nameArr[1];
+	
+			if ( name_type && name_dataName )
+			{
+				if ( !transObj[name_type] ) transObj[name_type] = {};
+				if ( !transObj[name_type][name_dataName] ) transObj[name_type][name_dataName] = {};	
+				
+				transDataTarget = transObj[name_type][name_dataName];
+			}
+		}
+	}
+	
+	return transDataTarget;
+};
+
+// get 'dataValues' or 'clientDetails' by 'c_reg', 'c_upd', 'v_iss', 'v_rdx', etc..
 FhirUtil.getDataNameByTransType = function( transType )
 {
 	var dataName = 'dataValues';
@@ -339,13 +414,16 @@ FhirUtil.getItemValue = function( item )
 	
 	try
 	{
-		for( var prop in item )
+		if ( item )
 		{
-			if ( prop.indexOf( 'value' ) === 0 )
+			for( var prop in item )
 			{
-				val = item[prop];
-				break;
-			}
+				if ( prop.indexOf( 'value' ) === 0 )
+				{
+					val = item[prop];
+					break;
+				}
+			}	
 		}
 	}
 	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getItemValue, ' + errMsg ); }
@@ -359,7 +437,7 @@ FhirUtil.getItemName = function( item, prop )
 	
 	try
 	{
-		if ( item[ prop ] ) name = item[ prop ].replace( 'http://sample.info/', '' );
+		if ( item && item[ prop ] ) name = item[ prop ].replace( 'http://sample.info/', '' );
 	}
 	catch( errMsg ) { console.log( 'ERROR in FhirUtil.getItemName, ' + errMsg ); }
 
@@ -644,31 +722,43 @@ FhirUtil.evalClientTemplate = function( fhirResp )
 
 	INFO.client = clientJson;
 
-	if ( defFhirConvert.postEval ) eval( Util.getEvalStr( defFhirConvert.postEval ) );
+	try
+	{
+		if ( defFhirConvert.postEval ) eval( Util.getEvalStr( defFhirConvert.postEval ) );
+	}
+	catch( errMsg ) { console.log( 'ERROR in FhirUtil.evalClientTemplate, postEval, ' + errMsg ); }
 
 	return clientJson;
 };
 
-
-FhirUtil.getQRItemsArray = function( formsJson )
+// TODO: add 2nd field for option...
+FhirUtil.getQRItemsArray = function( formsJson, option )
 {
 	var items = [];
 
 	try
 	{
+		if ( !option ) option = {};
+		 
 		if ( formsJson )
 		{
 			for ( var name in formsJson )
 			{
-				var val = formsJson[name];
-				val = Util.valueStringifyEscape( val );
+				if ( option.exceptions && option.exceptions.indexOf( name ) >= 0 ) { }
+				else
+				{
+					var val = formsJson[name];
+					val = Util.valueStringifyEscape( val );
+	
+					var item = {};
+	
+					item.linkId = name;  // item.text = name;
+					item.answer = [ { valueString: val } ];	// Not always string, right?
 
-				var item = {};
+					if ( option.text ) item.text = option.text;
 
-				item.linkId = name;  // item.text = name;
-				item.answer = [ { valueString: val } ];	// Not always string, right?
-
-				items.push( item );
+					items.push( item );	
+				}
 			}
 		}
 	}

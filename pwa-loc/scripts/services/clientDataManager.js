@@ -332,7 +332,7 @@ ClientDataManager.mergeDownloadedClients = function (downloadedData, processingI
 	if (downloadedData && downloadedData.clients && Util.isTypeArray(downloadedData.clients)) 
 	{
 		case_dhis2RedeemMerge = (downloadedData.case === 'dhis2RedeemMerge');
-		case_noClientDateCheck = (downloadedData.case === 'syncUpActivity' || ConfigManager.isSourceTypeDhis2() );
+		case_noClientDateCheck = (downloadedData.case === 'syncUpActivity' || ConfigManager.isSourceTypeDhis2() || ConfigManager.isSourceTypeFhir() );
 
 		for (var i = 0; i < downloadedData.clients.length; i++) 
 		{
