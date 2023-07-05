@@ -409,7 +409,6 @@ function Login() {
 		}
 	};
 
-
 	// -----------------------------------
 
 	me.isAuthPageUse = function()
@@ -428,6 +427,7 @@ function Login() {
 		$( '.divAuthForm' ).hide();
 		$( '.divLoginForm' ).hide();
 		$( '.login_buttons' ).hide();
+		if ( [ 'dev', 'test' ].indexOf( WsCallManager.stageName ) >= 0 ) me.spanAuthPageUseTag.show(); // For now, limit to dev/test
 
 
 		if ( me.isAuthPageUse() )
@@ -1156,7 +1156,7 @@ Login.contentHtml = `
 				<span id="spanLoginAppUpdate" term="login_updateApp"
 					style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin: 0px 2px;">[UPDATE
 					APP]</span>				
-				<span class="spanAuthPageUse" title="AuthPageUse" style="color: #AAA; opacity: 0.7; cursor: pointer; font-size: 0.80rem; vertical-align: top; ">[A]</span>
+				<span class="spanAuthPageUse" title="AuthPageUse" style="display: none; color: #AAA; opacity: 0.7; cursor: pointer; font-size: 0.80rem; vertical-align: top; ">[A]</span>
 			</div>
 			<div id="loginVersionNote" style="margin-left: 7px; color: #999999;"></div>
 		</div>
