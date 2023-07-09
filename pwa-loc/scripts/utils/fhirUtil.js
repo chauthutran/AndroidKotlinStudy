@@ -106,13 +106,16 @@ FhirUtil.generateActivities = function ( resourceArr )
 
 	var act_QR = FhirUtil.generateActivities_fmQR( resourceArr.filter( item => item.resourceType === 'QuestionnaireResponse' ) );
 
+	// TODO: Use serviceReq resource for voucher.. rather than relying on the questionnaireReponse?
 	// var act_SrvReq = FhirUtil.generateActivities_SrvReq( resourceArr.filter( item => item.resourceType === 'ServiceRequest' ) );
-
 	// Merge the activity..  Look for v_iss ones..  with code..
 
-	var act_CommReq = FhirUtil.generateActivities_CommReq( resourceArr.filter( item => item.resourceType === 'CommunicationRequest' ) );
+	// What about simply adding 'voucherCode' in clientDetails by 'serviceReq', not the details..?
 
-	return actList.concat( act_QR, act_CommReq );
+
+	//var act_CommReq = FhirUtil.generateActivities_CommReq( resourceArr.filter( item => item.resourceType === 'CommunicationRequest' ) );
+
+	return actList.concat( act_QR ); //, act_CommReq );
 };
 
 
