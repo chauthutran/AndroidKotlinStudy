@@ -192,7 +192,7 @@ VoucherCodeManager.fillQueue = function( userName, fillCount, callBack )
       var loadingTag = undefined;
 
       // If FHIR does not have INFO.practitionerId loaded, try it again..
-      if ( VoucherCodeManager.isStoredType_FHIR && !INFO.practitionerId ) setTimeout( () => { console.log( 'VoucherCode FillQueue FHIR Practitioner not available.' ); callBack( false, [] ); }, 3000 );
+      if ( VoucherCodeManager.isStoredType_FHIR && !INFO.practitionerId ) setTimeout( () => { console.log( 'Current User Practitioner Resource is not available - during VoucherCode FillQueue processing.' ); callBack( false, [] ); }, 1000 );
       else
       {
          var dataJson = {};

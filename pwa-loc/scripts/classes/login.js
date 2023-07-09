@@ -97,8 +97,16 @@ function Login() {
 		// Move as function
 		me.spanAuthPageUseTag.off('click').click(() => 
 		{
-			PersisDataLSManager.setAuthPageUse( 'Y' );
-			AppUtil.appReloadWtMsg("Reloading Page.  AuthPageUse Setting Changed..");			
+			var reply = confirm('This will clear existing user data before switching to [Authentication Selection Mode].  Do you want to continue?');
+
+			if (reply === true) 
+			{
+				DataManager2.deleteAllStorageData(function () 
+				{
+					PersisDataLSManager.setAuthPageUse( 'Y' );
+					AppUtil.appReloadWtMsg("Reloading Page.  AuthPageUse Setting Changed..");		
+				});
+			}
 		});
 
 		// Move as function
@@ -344,7 +352,7 @@ function Login() {
 	{
 		$('#spanVersion').text(TranslationManager.translateText('Version', 'landingPage_version_label') + ' ' + _ver);
 		$('#spanVerDate').text(' [' + _verDate + ']');
-		$('#loginVersionNote').append('<label style="color: #999999; font-weight: 350;"> ' + _versionNote + '</label>');
+		$('#loginVersionNote').append('<label style="font-weight: 350;"> ' + _versionNote + '</label>');
 
 		$('#spanLoginAppUpdate').off('click').click(() => {
 			AppUtil.appReloadWtMsg();
@@ -1148,17 +1156,17 @@ Login.contentHtml = `
 	<div class="loginPage_bottomDiv">
 		<div id="divAppVersion" class="login_data__more" style="float: left; margin-left: 4px;">
 			<div>
-				<label id="spanVersion" style="color: #999999; font-weight: 350;">Version #.#</label>
-				<label id="spanVerDate" style="margin-left: 7px; color: #999999; font-weight: 350;">[2020---]</label>
+				<label id="spanVersion" style=" font-weight: 350;">Version #.#</label>
+				<label id="spanVerDate" style="margin-left: 7px; font-weight: 350;">[2020---]</label>
 				<span class="spanNewVersion_notification" style="color:red; margin: 0px -4px 0px 1px; display: none;" title="New version available">*</span>
 				<img class="imgAppReload mouseDown" title="App reload" src="images/sync-n.svg" style="cursor: pointer; width: 20px; vertical-align: top; margin-bottom: -4px; margin-top: -3px;">
 				<img class="imgKeyCloakUse mouseDown" title="KeyCloak Use" src="images/key.svg" style="display:none; width: 16px; cursor: pointer; vertical-align: top; margin-bottom: -4px; opacity: 0.4; background-color: red;">
 				<span id="spanLoginAppUpdate" term="login_updateApp"
 					style="display:none; color: blue; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin: 0px 2px;">[UPDATE
 					APP]</span>				
-				<span class="spanAuthPageUse" title="AuthPageUse" style="display: none; color: #AAA; opacity: 0.7; cursor: pointer; font-size: 0.80rem; vertical-align: top; ">[A]</span>
+				<span class="spanAuthPageUse" title="AuthPageUse" style="display: none; opacity: 0.7; cursor: pointer; font-size: 0.80rem; vertical-align: top; ">[A]</span>
 			</div>
-			<div id="loginVersionNote" style="margin-left: 7px; color: #999999;"></div>
+			<div id="loginVersionNote" style="margin-left: 7px;"></div>
 		</div>
 		<div style="float: right; margin-right: 10px;">
 			<div id="localSiteInfo" style="display: none; color: orange;">			
