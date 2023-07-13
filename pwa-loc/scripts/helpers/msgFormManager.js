@@ -164,7 +164,46 @@ MsgFormManager.removeItemsUntil = function (itemId) {
 
 // -----------------------------------
 
+// New appBlock with Option
+MsgFormManager.appBlockTemplateOpt = function( optionJson )
+{
+	if ( !optionJson ) optionJson = {};
 
+	if ( optionJson.templateId && optionJson.templateId.indexOf( 'appLoadWtClose_' ) >= 0 ) 
+	{
+		optionJson.block = `<div>
+			<div class="divClose_appLoad" title="Close" style="float: right; margin: 3px 3px 0px 0px; color: tomato; font-weight: bold;cursor: pointer;"><span>X</span></div>
+			<div style="padding: 15px 15px;">
+				<img src='images/Connect.svg' class='cwsLogoRotateSpin' style='width:44px height:44px;'>
+			</div>
+			<div class="titleName_appLoad" style="color: #999; margin-top: -15px;">IN PROCESS..</div>
+		</div>`;
+
+		optionJson.css = { 'border': '2px solid rgb(255, 255, 255) !important', 'background-color': '#fff !important', 'margin-top': '-50px', 'margin-left': '-50px' };
+
+		// optionJson.templateId += '_' + new Date().getTime();
+	}
+	
+	MsgFormManager.appBlock(optionJson.templateId, optionJson.block, optionJson.css, () =>
+	{
+		// Add 'Close' UI HTML & close feature
+		var blockPageTag = $( 'div.blockUI.blockMsg.blockPage' );
+		blockPageTag.css( 'padding', '0px 0px 0px 0px' );
+
+		$( '.divClose_appLoad' ).off( 'click' ).click( () => MsgFormManager.appUnblock( optionJson.templateId ) );
+
+		// Also, set timelimit to close
+		if ( !optionJson.closeTime ) optionJson.closeTime = 20000; // 20 seconds close if nothing happens..
+		setTimeout( () => MsgFormManager.appUnblock( optionJson.templateId ), optionJson.closeTime );
+
+		if ( optionJson.titleName ) $( '.titleName_appLoad' ).html( optionJson.titleName );
+
+		if ( optionJson.afterRun ) optionJson.afterRun();
+	});
+		
+};
+
+// Old version..
 MsgFormManager.appBlockTemplate = function (templateId, customTemplate, afterRun) {
 	var block;
 	//var css = cssInput;

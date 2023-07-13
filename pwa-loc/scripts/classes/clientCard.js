@@ -318,6 +318,9 @@ ClientCard.reRenderClientCardsById = function (clientId, option) {
 		if (option && option.activitiesTabClick) {
 			clientCardTags.find('.tab_fs li[rel=tab_clientActivities]:visible').click();
 		}
+
+		// TODO: also, with full client detail reRender, we should refresh the entire page?
+		// TODO: also, with full activity detail reRender..
 	}
 };
 

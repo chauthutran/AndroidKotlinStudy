@@ -273,11 +273,9 @@ SyncManagerNew.syncUpActivity = function (activityId, resultData, returnFunc) {
 	var syncReadyJson = SyncManagerNew.syncUpReadyCheck(activityJson);
 
 	// NOTE: Need try/catch here?
-	if (syncReadyJson.ready) {
-		// Q: We should get existing actiivty?
-		//var activityCardObj = new ActivityCard( activityId );
-		var clientId = ClientDataManager.getClientByActivityId(activityId)._id;
-
+	if (syncReadyJson.ready) 
+	{
+		var clientId_before = ClientDataManager.getClientByActivityId(activityId)._id;
 
 		// Q: THIS SHOULD NOT BE OBJECT METHOD...  
 		ActivityCard.highlightActivityDiv(activityId, true);
@@ -290,23 +288,25 @@ SyncManagerNew.syncUpActivity = function (activityId, resultData, returnFunc) {
 				// gAnalytics Event
 				GAnalytics.setEvent('SyncEnded', activityId, success, 1);
 
-
 				SyncManagerNew.syncUpActivity_ResultUpdate(success, resultData);
 
 				// Cool Down Related Last synced time Set ...
 				if (SyncManagerNew.coolDownEnabled) ActivityDataManager.setActivityLastSyncedUp(activityId);
 
-
 				// NEW - Added.
 				ConfigManager.activityStatusSwitchOps('afterSync', [activityJson]);
 
-
 				// Activity Card
-				ActivityCard.reRenderAllById(activityId); //             ActivityCard.reRenderActivityDiv();
+				ActivityCard.reRenderAllById(activityId); // ActivityCard.reRenderActivityDiv();
 				ActivityCard.highlightActivityDiv(activityId, false);
 
 				// Rerender the client card that holds this activity as well. - if new client case, the id is tempClient, yet.
-				ClientCard.reRenderClientCardsById(clientId, { 'activitiesTabClick': true });
+				var clientId_after = ClientDataManager.getClientByActivityId(activityId)._id;
+
+				// For New Client Reg Case: Close Temp Client Detail Page & Open the Newly Created one.
+				if ( clientId_before !== clientId_after ) SyncManagerNew.TempClientDetailTagRefresh( clientId_before, clientId_after );
+				SyncManagerNew.ActivityDetailTagRefresh( activityId );
+				ClientCard.reRenderClientCardsById(clientId_after, { 'activitiesTabClick': true });
 			}
 
 			if (returnFunc) returnFunc(syncReadyJson, success, responseJson, newStatus, extraData);
@@ -314,6 +314,36 @@ SyncManagerNew.syncUpActivity = function (activityId, resultData, returnFunc) {
 	}
 	else {
 		if (returnFunc) returnFunc(syncReadyJson);
+	}
+};
+
+
+// If clientDetail Page is open, perform refresh - after activitySync
+SyncManagerNew.TempClientDetailTagRefresh = function( clientId_before, clientId_after )
+{
+	// Close current client detail tab <-- if exists..
+	// Check if current is 
+	var clientDetailTag_before = $( 'div.card._tab.client[itemid=' + clientId_before + ']' );
+
+	if ( clientDetailTag_before.length > 0 )
+	{
+		clientDetailTag_before.parent().find( 'img.btnBack.clientDetail' ).click();
+
+		var clientCardDetail = new ClientCardDetail(clientId_after);
+		clientCardDetail.render();
+
+		setTimeout( () => clientCardDetail.cardSheetFullTag.find('.tab_fs li[rel=tab_clientActivities]:visible').click(), 800 );
+	}
+};
+
+// If activityDetail Page is open, perform refresh - after activitySync
+SyncManagerNew.ActivityDetailTagRefresh = function( activityId )
+{
+	var actDetailTag = $( 'div.card._tab.activity[itemid=' + activityId + ']' );
+
+	if ( actDetailTag.length > 0 )
+	{
+		actDetailTag.find( '.activityDetailRerender' ).click();
 	}
 };
 

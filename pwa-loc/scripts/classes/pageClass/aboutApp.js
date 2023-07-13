@@ -30,7 +30,7 @@ function aboutApp(cwsRender) {
 	// ------------------
 
 	me.render = function () {
-		me.populateAboutPageData(ConfigManager.getConfigJson());
+		me.populateAboutPageData();
 
 		TranslationManager.translatePage();
 
@@ -90,13 +90,12 @@ function aboutApp(cwsRender) {
 		}
 	};
 
-	me.populateAboutPageData = function (dcdConfig) {
+	me.populateAboutPageData = function () {
 		// Dcd Config related data set
-		var dcdConfigVersion = (dcdConfig && dcdConfig.version) ? dcdConfig.version : "";
 
 		// Populate data
 		$('.aboutInfo_AppVersion').html($('#spanVersion').html());
-		$('.aboutInfo_dcdVersion').html(dcdConfigVersion);
+		$('.aboutInfo_dcdVersion').html(ConfigManager.getConfigInfo() );
 		$('.aboutInfo_networkMode').html('<div>' + ConnManagerNew.statusInfo.appMode + '</div>');
 		
 		GeoLocUtil.showInAboutPage( $('.aboutInfo_geoLoc') ); // $('.aboutInfo_geoLoc').html

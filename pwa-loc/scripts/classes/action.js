@@ -368,7 +368,11 @@ function Action( cwsRenderObj, blockObj )
 						else if ( dataPass.syncActivityId ) activityId = dataPass.syncActivityId;
 
 						if ( activityId )
-						{						
+						{
+							// TODO: Add progress msg here!!!
+							var tempId = 'appLoadWtClose_' + new Date().getTime(); 
+							MsgFormManager.appBlockTemplateOpt( { templateId: tempId, titleName: 'SYNCING..', closeTime: 15000 } );
+
 							ActivitySyncUtil.syncUpActivity_IfOnline( activityId
 							, function( syncReadyJson, success, responseJson ) 
 							{ 
@@ -377,9 +381,10 @@ function Action( cwsRenderObj, blockObj )
 									dataPass.relTargetClientId = responseJson.result.client._id;
 								}
 
+								MsgFormManager.appUnblock( tempId );
 								afterActionFunc( true ); 
 							}
-							, function() { afterActionFunc( true ); });
+							, function() { MsgFormManager.appUnblock( tempId ); afterActionFunc( true ); });
 						}
 						else afterActionFunc( true );
 					}

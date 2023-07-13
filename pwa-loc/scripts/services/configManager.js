@@ -404,6 +404,17 @@ ConfigManager.getConfigJson = function () {
 	return ConfigManager.configJson;
 };
 
+ConfigManager.getConfigInfo = function ()
+{
+	var resultStr = '';
+	var configJson = ConfigManager.getConfigJson();
+
+	resultStr += Util.getStr( configJson.version ) + ', ' + Util.getStr( configJson.countryCode ) 
+		+ ', ' + Util.getStr( configJson.sourceType )+ ', ' + Util.getStr( configJson['0.Info'] );
+
+	return resultStr;
+};
+
 ConfigManager.getAreaListByStatus = function (bOnline, callBack) {
 	var configJson = ConfigManager.getConfigJson();
 	var areaList = (bOnline) ? configJson.areas.online : configJson.areas.offline;
