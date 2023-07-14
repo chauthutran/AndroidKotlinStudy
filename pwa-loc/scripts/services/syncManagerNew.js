@@ -189,7 +189,7 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 
 			// ------------------------------------------------------------------------------------------------------
       		// NEW - Bahmni
-			BahmniService.checkConnection();
+			// BahmniService.checkConnection();
 		}
 	});
 };

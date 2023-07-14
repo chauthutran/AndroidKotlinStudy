@@ -49,15 +49,16 @@ ScheduleManager.scheduleList = {
 	"AfterLogin": [
 		"SCH_SyncDown_RunOnce",  // schedule_syncAll? - based on frequency on setting
 		"SCH_FixOper_RunOnce",  // schedule_syncAll? - based on frequency on setting
-		"SCH_SyncAll_Background"
+		"SCH_SyncAll_Background",
+		"BahmniPingService_Start" // Not needed to be in schedule, but for now, placed here.
 	],
 	"AfterLogOut": [
 		"CLR_syncDown_RunOnce",
 		"CLR_FixOper_RunOnce",
-		"CLR_SyncAll_Background"
+		"CLR_SyncAll_Background",
+		"BahmniPingService_Stop" // Not needed to be in schedule, but for now, placed here.
 	]
 };
-
 
 // List to run when appMode switches from offline to online
 ScheduleManager.runSwitchToOnlineList = {};
@@ -89,7 +90,8 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 		if ( itemName === "SCH_SyncDown_RunOnce" ) ScheduleManager.schedule_syncDownRunOnce();
 		else if ( itemName === "SCH_FixOper_RunOnce" ) ScheduleManager.schedule_fixOperationRunOnce();
 		else if ( itemName === "SCH_SyncAll_Background" ) ScheduleManager.schedule_syncAll_Background( cwsRenderObj );
-	});	
+		else if ( itemName === "BahmniPingService_Start" && ConfigManager.isBahmniSubSourceType() ) BahmniService.pingService_Start();
+	});
 
 	if ( callBack ) callBack();
 };
@@ -102,6 +104,7 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 		if ( itemName === "CLR_syncDown_RunOnce" ) clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
 		else if ( itemName === "CLR_FixOper_RunOnce" ) ScheduleManager.clearTimeout_fixOperationRunOnce();
 		else if ( itemName === "CLR_SyncAll_Background" ) clearInterval( ScheduleManager.timerID_scheduleSyncAllRun );
+		else if ( itemName === "BahmniPingService_Stop" && ConfigManager.isBahmniSubSourceType() ) BahmniService.pingService_Stop();
 	});	
 	
 	if ( callBack ) callBack();
@@ -174,9 +177,6 @@ ScheduleManager.schedule_syncDownRunOnce = function()
 			clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
 			ScheduleManager.timerID_syncDownRunOnce = undefined;
 			ScheduleManager.syncDownRun_Online_Login();
-
-      // TODO: CHANGE LOCATION OF THIS
-			BahmniService.checkConnection();
 		}
 	}
 	catch( errMsg )
