@@ -174,6 +174,9 @@ ScheduleManager.schedule_syncDownRunOnce = function()
 			clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
 			ScheduleManager.timerID_syncDownRunOnce = undefined;
 			ScheduleManager.syncDownRun_Online_Login();
+
+      // TODO: CHANGE LOCATION OF THIS
+			BahmniService.checkConnection();
 		}
 	}
 	catch( errMsg )
@@ -221,12 +224,15 @@ ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 	}		
 };
 
+ScheduleManager.syncDownProcessing = false;
 
 // TODO: Move to 'SyncManager' class later..
 ScheduleManager.syncDownRun_Online_Login = function()
 {
-	if ( ConnManagerNew.isAppMode_Online() && SessionManager.getLoginStatus() )
+	if ( ConnManagerNew.isAppMode_Online() && SessionManager.getLoginStatus() && !BahmniService.isSyncDataProcessing() )
 	{
+		ScheduleManager.syncDownProcessing = true;
+
 		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase, mergedActivities ) 
 		{
 			if ( success ) 
@@ -246,7 +252,10 @@ ScheduleManager.syncDownRun_Online_Login = function()
 
 				// Run any pending after actions..
 				ScheduleManager.afterActionsRun_Clear( 'SCH_SyncDown_RunOnce' );
-			} 
+				
+			}
+
+			ScheduleManager.syncDownProcessing = false;
 
 			// If not success, still, do not do retry... <-- just once is enough..
 			//else ScheduleManager.syncDownTimeoutCall();

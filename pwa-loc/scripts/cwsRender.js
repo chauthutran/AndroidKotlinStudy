@@ -463,6 +463,9 @@ function cwsRender()
 		
 		ScheduleManager.stopSchedules_AfterLogOut();
 
+    // TODO: MOVE this to BahmniService Method
+		clearInterval(BahmniService.timerID_Interval);
+
 		me.logOutUI();
 
 		// JobAid iFrame close if currently on open state

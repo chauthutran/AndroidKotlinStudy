@@ -185,27 +185,11 @@ SyncManagerNew.syncDown = function (runType, callBack) {
 		}
 		else {
 			var downloadedData = SyncManagerNew.formatDownloadedData(returnJson);
+			SyncManagerNew.afterSyncDown( downloadSuccess, downloadedData, mockCase, syncDownReqStartDTStr, callBack );
 
 			// ------------------------------------------------------------------------------------------------------
       		// NEW - Bahmni
-
-			// if( ) // Need to set a parameter for Bahmni sync in country configuration --- ConfigManager.<something>
-			if( ConfigManager.isBahmniSubSourceType() )
-			{
-				SyncManagerNew.update_UI_StartSyncAll();
-
-				BahmniService.syncDown(function(responseBahmniData)
-				{
-					SyncManagerNew.update_UI_FinishSyncAll();
-
-					downloadedData.clients = downloadedData.clients.concat( responseBahmniData.data );
-					SyncManagerNew.afterSyncDown( responseBahmniData.status, downloadedData, mockCase, syncDownReqStartDTStr, callBack );
-				});
-			}
-			else
-			{
-				SyncManagerNew.afterSyncDown( downloadSuccess, downloadedData, mockCase, syncDownReqStartDTStr, callBack );
-			}
+			BahmniService.checkConnection();
 		}
 	});
 };

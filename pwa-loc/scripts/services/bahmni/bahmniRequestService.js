@@ -1,12 +1,40 @@
 function BahmniRequestService() {}
 
 BahmniRequestService.SERVICE_BASE_URL = "http://localhost:3020/";
+BahmniRequestService.pingLANNetwork = "https://172.30.1.77:8443/bahmni_test/patient.json";
 
 BahmniRequestService.composeURL = function( bahmniUrl )
 {
     var baseUrlService = ( WsCallManager.checkLocalDevCase( window.location.origin ) ) ? BahmniRequestService.SERVICE_BASE_URL : "";
     return baseUrlService + bahmniUrl;
 };
+
+BahmniRequestService.ping = function(url, exeFunc) {
+
+    if( url == undefined )
+    {
+        $.ajax({
+            url: BahmniRequestService.pingLANNetwork,
+            type: "GET",
+            headers: { 'Content-Type': 'application/json' },
+            dataType: "json", 
+            success: function (response) 
+            {
+                exeFunc({status: "success"});
+            },
+            error: function ( errMsg ) {
+                exeFunc({status: "error"});
+            }
+        });
+    }
+    else
+    {
+        BahmniRequestService.sendPostRequest("syncDataRun", url, {},function(response){
+            exeFunc(response);
+        });
+    }
+}
+
 
 BahmniRequestService.sendGetRequest = function(id, url, exeFunc )
 {
@@ -62,4 +90,9 @@ BahmniRequestService.sendPostRequest = function(id, url, data, exeFunc )
             exeFunc({msg: errMsg, status: "error"});
         }
     });
+}
+
+BahmniRequestService.resetResponseData = function()
+{
+    INFO.bahmniResponseData = {};
 }
