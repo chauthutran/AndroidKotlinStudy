@@ -7,6 +7,12 @@ BahmniService.maxNoCheckingConnection = 5;
 BahmniService.interval_syncData = Util.MS_SEC * 1; // 5s
 BahmniService.syncDataProcessing = false;
 
+BahmniService.connStatus_OFFLINE = 'OFFLINE';
+BahmniService.connStatus_ONLINE = 'ONLINE';
+
+BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE; // Online vs Offline
+
+
 BahmniService.syncDataIconTag = $("#divAppDataSubResourceSyncStatus");
 BahmniService.syncImgTag = $("#imgAppDataSubResourceSyncStatus");
 BahmniService.syncOne = false;
@@ -22,12 +28,30 @@ BahmniService.syncDownStatus = { status: "success" };
 BahmniService.syncUpProcessingTotal = 0;
 BahmniService.syncUpProcessingIdx = 0;
 
+BahmniService._bmPingCase = '1';
 
 // ==============================================================================
 // Ping Bahmni service
 // ==============================================================================
 
-BahmniService.pingService_Start = function () {
+// Features - Methods Add:
+//  - Add ping false in the middle.
+//	 - 
+
+// 
+BahmniService.pingCaseSwitch = function ( caseStr ) {
+	BahmniService._bmPingCase = caseStr;
+};
+
+BahmniService.getPingUrl = function () 
+{
+	if ( BahmniService._bmPingCase === "1" ) return INFO.bahmni_baseUrl + '/syncable';
+	else if ( BahmniService._bmPingCase === "2" ) return BahmniRequestService.pingLANNetwork;
+	else INFO.bahmni_baseUrl + '/syncable';
+};
+
+BahmniService.pingService_Start = function () 
+{
 	//if( ConfigManager.isBahmniSubSourceType() )
 
 	BahmniService.syncDataIconTag.show();
@@ -38,19 +62,23 @@ BahmniService.pingService_Start = function () {
 
 	// Setup the interval
 	BahmniService.timerID_Interval = setInterval(() => 
-	{
-		// TODO: Easy way to switch from 'undefined' to specific ip address with port case?
-		
-		BahmniRequestService.ping(undefined, function (response) 
+	{		
+		// const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/wfa/integration/get/syncable";
+
+		BahmniRequestService.ping( BahmniService.getPingUrl(), function (response) 
 		{
+			console.log( 'Ping response:', response, BahmniService.noCheckingConnection );
+
 			if (response.status == "success") // NOTE: this is only for local test case response!!!!??
 			{
 				BahmniService.noCheckingConnection++;
-				if (BahmniService.noCheckingConnection >= BahmniService.maxNoCheckingConnection) {
+				if (BahmniService.noCheckingConnection >= BahmniService.maxNoCheckingConnection) 
+				{
+					// Keep the count max limit
+					BahmniService.noCheckingConnection = BahmniService.maxNoCheckingConnection;
+
 					BahmniService.connection_StatusOnline();
-					if (!BahmniService.syncOne) {
-						BahmniService.syncDataRun();
-					}
+					if (!BahmniService.syncOne) BahmniService.syncDataRun();
 				}
 			}
 			else {
@@ -67,12 +95,20 @@ BahmniService.pingService_Stop = function () {
 	clearInterval(BahmniService.timerID_Interval);
 };
 
-BahmniService.connection_StatusOnline = function () {
+BahmniService.connection_StatusOnline = function () 
+{
+	BahmniService.connStatus_Stable = BahmniService.connStatus_ONLINE;
+	console.log( 'BahmniService StatusOnline' );
+
 	BahmniService.syncImgTag.attr("src", "images/sync_24.png");
 	BahmniMsgManager.SyncMsg_InsertMsg("The connection is available");
 }
 
-BahmniService.connection_StatusOffline = function () {
+BahmniService.connection_StatusOffline = function () 
+{
+	BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE;
+	console.log( 'BahmniService StatusOffline' );
+
 	BahmniService.syncDataIconTag.attr("src", "images/sync-error_24.png");
 	BahmniMsgManager.SyncMsg_InsertMsg("The connection is not available");
 }

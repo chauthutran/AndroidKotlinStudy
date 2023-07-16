@@ -1,4 +1,4 @@
-function BahmniMsgManager() {}
+function BahmniMsgManager() {};
 BahmniMsgManager.syncMsgJson; 
 
 BahmniMsgManager.bottomMsgShow = function (statusVal, activityJson, activityCardDivTag, contentFillFunc) {

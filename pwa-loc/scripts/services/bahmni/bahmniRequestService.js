@@ -1,4 +1,4 @@
-function BahmniRequestService() { }
+function BahmniRequestService() { };
 
 BahmniRequestService.SERVICE_BASE_URL = "http://localhost:3020/";
 BahmniRequestService.pingLANNetwork = "https://172.30.1.77:8443/bahmni_test/patient.json";
@@ -10,9 +10,11 @@ BahmniRequestService.composeURL = function (bahmniUrl) {
 
 BahmniRequestService.ping = function (url, exeFunc) {
 
-	if (url == undefined) {
-		$.ajax({
-			url: BahmniRequestService.pingLANNetwork,
+	// if ( url == undefined) {
+	if ( url.indexOf( 'bahmni_test' ) >= 0 ) // Local Area Network Laptop Test Case - mock service
+	{
+			$.ajax({
+			url: url, //BahmniRequestService.pingLANNetwork,
 			type: "GET",
 			headers: { 'Content-Type': 'application/json' },
 			dataType: "json",

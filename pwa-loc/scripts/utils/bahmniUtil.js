@@ -109,9 +109,17 @@ BahmniUtil.generateOptionsByConcept = function(concept)
 
 BahmniUtil.getFormMetadata = function(formName, formVersion, keyword, propertyName)
 {
-    var metadata = INFO.formMetadata[formName][formVersion][keyword];
-    var value = (metadata ) ? metadata[propertyName] : undefined ;
-    return ( value ) ? metadata[propertyName] : "null";
+    var returnVal = 'null';
+
+    // NOTE: CHANGED!!
+    try {
+        var metadata = INFO.formMetadata[formName][formVersion][keyword];
+        var value = (metadata ) ? metadata[propertyName] : undefined ;
+        returnVal = ( value ) ? metadata[propertyName] : "null";
+    }
+    catch( errMsg ) {  console.log( 'ERROR in BahmniUtil.getFormMetadata, ' + errMsg );  }
+
+    return returnVal;
 }
 
 BahmniUtil.getActivityInfo = function( activity )
