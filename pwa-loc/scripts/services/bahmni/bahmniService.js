@@ -69,6 +69,8 @@ BahmniService.pingService_Start = function ()
 		{
 			console.log( 'Ping response:', response, BahmniService.noCheckingConnection );
 
+			// TODO: if bahmni config country, always show 2nd sync icon?
+
 			if (response.status == "success") // NOTE: this is only for local test case response!!!!??
 			{
 				BahmniService.noCheckingConnection++;
