@@ -2,6 +2,7 @@ function BahmniService() { }
 
 
 BahmniService.timerID_Interval;
+BahmniService.startSyncStatus_Interval;
 BahmniService.noCheckingConnection = 0;
 BahmniService.maxNoCheckingConnection = 5;
 BahmniService.interval_syncData = Util.MS_SEC * 1; // 5s
@@ -47,7 +48,7 @@ BahmniService.getPingUrl = function ()
 {
 	if ( BahmniService._bmPingCase === "1" ) return INFO.bahmni_baseUrl + '/syncable';
 	else if ( BahmniService._bmPingCase === "2" ) return BahmniRequestService.pingLANNetwork;
-	else INFO.bahmni_baseUrl + '/syncable';
+	else return INFO.bahmni_baseUrl + '/syncable';
 };
 
 BahmniService.pingService_Start = function () 
@@ -102,7 +103,7 @@ BahmniService.connection_StatusOnline = function ()
 	BahmniService.connStatus_Stable = BahmniService.connStatus_ONLINE;
 	console.log( 'BahmniService StatusOnline' );
 
-	BahmniService.syncImgTag.attr("src", "images/sync_24.png");
+	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
 	BahmniMsgManager.SyncMsg_InsertMsg("The connection is available");
 }
 
@@ -111,24 +112,41 @@ BahmniService.connection_StatusOffline = function ()
 	BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE;
 	console.log( 'BahmniService StatusOffline' );
 
-	BahmniService.syncDataIconTag.attr("src", "images/sync-error_24.png");
+	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_gray1.svg");
 	BahmniMsgManager.SyncMsg_InsertMsg("The connection is not available");
 }
 
 BahmniService.connection_StatusPending = function () {
-	BahmniService.syncDataIconTag.attr("src", "images/sync_pending_msd-la.png");
-	FormUtil.rotateTag(BahmniService.syncDataIconTag, true);
+	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_white.svg");
+	// FormUtil.rotateTag(BahmniService.syncDataIconTag, true);
 }
 
 BahmniService.update_UI_Status_StartSync = function () {
 	BahmniMsgManager.initializeProgressBar();
-	FormUtil.rotateTag(BahmniService.syncDataIconTag, true);
+    // FormUtil.rotateTag(BahmniService.syncDataIconTag, true);
+    BahmniService.startSyncStatus_Interval = setInterval(() => {
+        if( BahmniService.syncImgTag.attr("setcolor") == "green" )
+        {
+            BahmniService.syncImgTag.attr("src", "images/bahmni_connection_blue.svg");
+            BahmniService.syncImgTag.attr("setcolor", "blue");
+        }
+        else
+        {
+            BahmniService.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
+            BahmniService.syncImgTag.attr("setcolor", "green");
+        }
+       
+    }, Util.MS_SEC/3);
+	
 }
 
 BahmniService.update_UI_Status_FinishSyncAll = function () {
 	// sync_error_msd.svg
+    clearInterval( BahmniService.startSyncStatus_Interval );
 	BahmniMsgManager.hideProgressBar();
-	FormUtil.rotateTag(BahmniService.syncDataIconTag, false);
+    BahmniService.syncDataIconTag.attr("src", "images/bahmni_connection_green.svg");
+    BahmniService.syncDataIconTag.attr("setcolor", "green");
+	// FormUtil.rotateTag(BahmniService.syncDataIconTag, false);
 	BahmniMsgManager.SyncMsg_ShowBottomMsg();
 }
 
