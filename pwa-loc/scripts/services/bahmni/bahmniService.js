@@ -119,7 +119,7 @@ BahmniService.connection_StatusOffline = function ()
 	BahmniMsgManager.SyncMsg_InsertMsg("The connection is not available");
 }
 
-BahmniService.connection_StatusPending = function () {asfasd
+BahmniService.connection_StatusPending = function () {
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_white.svg");
 	// FormUtil.rotateTag(BahmniService.syncDataIconTag, true);
 }
