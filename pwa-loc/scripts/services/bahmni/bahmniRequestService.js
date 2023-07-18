@@ -43,7 +43,7 @@ BahmniRequestService.sendGetRequest = function (id, url, exeFunc) {
 		success: function (response) {
 			if (response.error) {
 				INFO.bahmniResponseData[id] = [];
-				exeFunc({ data: response.error.message, status: "error" });
+				exeFunc({ data: response.error.message, status: "error", url, id });
 			}
 			else {
 				INFO.bahmniResponseData[id] = response;
@@ -52,7 +52,7 @@ BahmniRequestService.sendGetRequest = function (id, url, exeFunc) {
 		},
 		error: function (errMsg) {
 			INFO.bahmniResponseData[id] = [];
-			exeFunc({ data: errMsg, status: "error" });
+			exeFunc({ data: errMsg.statusText, status: "error", url, id });
 		}
 	});
 }
@@ -68,7 +68,7 @@ BahmniRequestService.sendPostRequest = function (id, url, data, exeFunc) {
 		success: function (response) {
 			if (response.error) {
 				INFO.bahmniResponseData[id] = [];
-				exeFunc({ msg: response.error.message, status: "error" });
+				exeFunc({ msg: response.error.message, status: "error", url, id });
 			}
 			else {
 				INFO.bahmniResponseData[id] = response;
@@ -77,7 +77,7 @@ BahmniRequestService.sendPostRequest = function (id, url, data, exeFunc) {
 		},
 		error: function (errMsg) {
 			INFO.bahmniResponseData[id] = [];
-			exeFunc({ msg: errMsg, status: "error" });
+			exeFunc({ msg: errMsg.statusText, status: "error", url, id });
 		}
 	});
 }

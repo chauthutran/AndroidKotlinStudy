@@ -1,4 +1,5 @@
 function BahmniMsgManager() {};
+BahmniMsgManager.timeMessageId_Interval;
 BahmniMsgManager.syncMsgJson; 
 
 BahmniMsgManager.bottomMsgShow = function (statusVal, activityJson, activityCardDivTag, contentFillFunc) {
@@ -116,9 +117,10 @@ BahmniMsgManager.initializeProgressBar = function () {
 	FormUtil.showProgressBar(0);
 };
 
-BahmniMsgManager.SyncMsg_InsertMsg = function (msgStr) {
+BahmniMsgManager.SyncMsg_InsertMsg = function (msgStr, type) {
 	try {
-		var newMsgJson = { "msg": msgStr, "datetime": UtilDate.formatDateTime(new Date(), Util.dateType_DATETIME_s1) };
+		var realType = ( type == undefined ) ? "text" : type;
+		var newMsgJson = { "msg": msgStr, "datetime": UtilDate.formatDateTime(new Date(), Util.dateType_DATETIME_s1), type: realType };
 		BahmniMsgManager.SyncMsg_Get().msgList.push(newMsgJson);
 
 		//console.log( 'BahmniMsgManager.SyncMsg: ' + JSON.stringify( newMsgJson ) );
@@ -161,55 +163,62 @@ BahmniMsgManager.SyncMsg_ShowBottomMsg = function () {
     
     // 1. Set Header
     msgHeaderTag.append(Templates.syncMsg_Header);
+
+	var serviceTag = BahmniMsgManager.SyncMsg_createSectionTag("Services Deliveries", BahmniMsgManager.bahmniServiceSectionTagId);
+	var summaryTag = BahmniMsgManager.SyncMsg_createSectionTag("Summaries", BahmniMsgManager.bahmniSummarySectionTagId);
+
     // TODO: Need to update the sync progress status.. and register 
 
-    // 2. Set Body
-    var syncMsgJson = BahmniMsgManager.SyncMsg_Get();
+	BahmniMsgManager.timeMessageId_Interval = setInterval(() => {
+		   	// 2. Set Body
+		  	var syncMsgJson = BahmniMsgManager.SyncMsg_Get();
 
-    // Add Service Deliveries Msg
-    BahmniMsgManager.SyncMsg_createSectionTag('Services Deliveries', function (sectionTag, sectionLogTag) {
-        for (var i = 0; i < syncMsgJson.msgList.length; i++) {
-            var msgJson = syncMsgJson.msgList[i];
+		   	// Add Service Deliveries Msg
+		   	var serviceSectionLogTag = serviceTag.find("#log_" + BahmniMsgManager.bahmniServiceSectionTagId);
+			serviceSectionLogTag.html("");
+			for (var i = 0; i < syncMsgJson.msgList.length; i++) {
+				var msgJson = syncMsgJson.msgList[i];
+				if( msgJson.type == "error" )
+				{
+					var msgStr = msgJson.datetime + '&nbsp; &nbsp;<span style="color:red">' + msgJson.msg + "</span>";
+					serviceSectionLogTag.append('<div>' + msgStr + '</div>');
+				}
+				else
+				{
+					var msgStr = msgJson.datetime + '&nbsp; &nbsp;' + msgJson.msg;
+					serviceSectionLogTag.append('<div>' + msgStr + '</div>');
+				}
+			}
+			msgContentTag.append(serviceTag);
 
-            var msgStr = msgJson.datetime + '&nbsp; &nbsp;' + msgJson.msg;
-
-            sectionLogTag.append('<div>' + msgStr + '</div>');
-        }
-
-        msgContentTag.append(sectionTag);
-    });
-
-
-    // Add Summaries Msg
-    BahmniMsgManager.SyncMsg_createSectionTag('Summaries', function (sectionTag, sectionLogTag) {
-        var syncMsgJson = BahmniMsgManager.SyncMsg_Get();
-
-        for (var i = 0; i < syncMsgJson.summaryList.length; i++) {
-            var msgJson = syncMsgJson.summaryList[i];
-
-            sectionLogTag.append('<div>' + msgJson.msg + '</div>');
-        }
-
-        msgContentTag.append(sectionTag);
-    });
-
-
+		    // Add Summaries Msg
+			var summarySectionLogTag = summaryTag.find("#log_" + BahmniMsgManager.bahmniSummarySectionTagId);
+			summarySectionLogTag.html("");
+			for (var i = 0; i < syncMsgJson.summaryList.length; i++) {
+				var msgJson = syncMsgJson.summaryList[i];
+				summarySectionLogTag.append('<div>' + msgJson.msg + '</div>');
+			}
+			msgContentTag.append(summaryTag);
+	   	   
+	}, Util.MS_SEC );
+ 
 
     // Common ones - make a method out of it..
     syncInfoAreaTag.show( 200 );//css('display', 'block');
     $( '#divSubResourceMsgAreaBottomScrim' ).show();  //   opacity: 0.2;  <-- css changed
 
-    syncInfoAreaTag.find( '.divSyncAllClose' ).click( MsgAreaBottom.closeMsgAreaBottomScrim );
-
-
+    syncInfoAreaTag.find( '.divSyncAllClose' ).click( function(){
+		clearInterval( BahmniMsgManager.timeMessageId_Interval );
+		MsgAreaBottom.closeMsgAreaBottomScrim();
+	});
 
 };
 
-BahmniMsgManager.SyncMsg_createSectionTag = function (sectionTitle, callBack) {
+BahmniMsgManager.SyncMsg_createSectionTag = function (sectionTitle, id) {
 	var sectionTag = $(Templates.syncMsg_Section);
 
-	var sectionTitleTag = sectionTag.find('div.sync_all__section_title').html(sectionTitle);
-	var sectionLogTag = sectionTag.find('div.sync_all__section_log');
+	sectionTag.find('div.sync_all__section_title').attr("id", "section_" + id).html(sectionTitle);
+	sectionTag.find('div.sync_all__section_log').attr("id", "log_" + id);
 
-	callBack(sectionTag, sectionLogTag);
+	return sectionTag;
 };

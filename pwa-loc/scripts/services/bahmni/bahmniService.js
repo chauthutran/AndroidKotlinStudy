@@ -29,7 +29,7 @@ BahmniService.syncDownStatus = { status: "success" };
 BahmniService.syncUpProcessingTotal = 0;
 BahmniService.syncUpProcessingIdx = 0;
 
-BahmniService._bmPingCase = '1';
+BahmniService._bmPingCase = '2';
 
 // ==============================================================================
 // Ping Bahmni service
@@ -77,6 +77,9 @@ BahmniService.pingService_Start = function ()
 				BahmniService.noCheckingConnection++;
 				if (BahmniService.noCheckingConnection >= BahmniService.maxNoCheckingConnection) 
 				{
+					// Change the header color to orange
+					$("#Nav1").css("background-color", "#ed8f2d"); // Orange
+
 					// Keep the count max limit
 					BahmniService.noCheckingConnection = BahmniService.maxNoCheckingConnection;
 
@@ -85,6 +88,10 @@ BahmniService.pingService_Start = function ()
 				}
 			}
 			else {
+				// Reset header color
+				$("#Nav1").css("background-color", ""); // Change back to Blue color
+
+				$("#Nav1").css("background-color", "#ed8f2d");
 				BahmniService.connection_StatusOffline();
 				BahmniService.noCheckingConnection = 0;
 			}
@@ -104,7 +111,7 @@ BahmniService.connection_StatusOnline = function ()
 	console.log( 'BahmniService StatusOnline' );
 
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
-	BahmniMsgManager.SyncMsg_InsertMsg("The connection is available");
+	// BahmniMsgManager.SyncMsg_InsertMsg("The connection is available");
 }
 
 BahmniService.connection_StatusOffline = function () 
@@ -180,6 +187,7 @@ BahmniService.syncDataRun = function () {
 		&& !BahmniService.syncDataProcessing) {
 		BahmniService.syncDataProcessing = true;
 		BahmniService.update_UI_Status_StartSync();
+		BahmniMsgManager.SyncMsg_SetAsNew();
 		BahmniMsgManager.SyncMsg_InsertMsg('Start Syncing to Bahmni server ...');
 
 		try {
@@ -265,7 +273,7 @@ BahmniService.isSyncDataProcessing = function () {
 // ==============================================================================
 
 BahmniService.syncDown = function (exeFunc) {
-	BahmniService.syncDownStatus = { status: "success" };
+	BahmniService.syncDownStatus = { status: "success", msg: "" };
 	BahmniService.syncDownDataList = {};
 
 	const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
@@ -294,21 +302,18 @@ BahmniService.syncDown = function (exeFunc) {
 
 };
 
-BahmniService.serResponseErrorIfAny = function (response) {
+BahmniService.setResponseErrorIfAny = function (response) {
 	if (response.status == "error") {
 		BahmniService.syncDownStatus.status = Constants.status_failed;
-		var msg = BahmniService.syncDownStatus.msg;
-		if (msg == undefined) {
-			msg = [];
-		}
-		msg.push(response.msg);
-		BahmniService.syncDownStatus.msg = msg.join("; ");
+		BahmniService.syncDownStatus.msg += response.msg + "; ";
+
+		BahmniMsgManager.SyncMsg_InsertMsg("Error while running '" + response.id + "', URL '" + response.url + "'. Details: " + response.msg, "error");
 	}
 };
 
 BahmniService.afterSyncDown = function (response, exeFunc) {
 	BahmniService.syncDownProcessingIdx++;
-	BahmniService.serResponseErrorIfAny(response);
+	BahmniService.setResponseErrorIfAny(response);
 
 	if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) {
 		var conceptIds = [];
@@ -430,7 +435,7 @@ BahmniService.getConceptList = function (conceptIdList, exeFunc) {
 
 BahmniService.afterSyncDownAll = function (response, exeFunc) {
 	BahmniService.syncDownProcessingIdx++;
-	BahmniService.serResponseErrorIfAny(response);
+	BahmniService.setResponseErrorIfAny(response);
 
 	if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) {
 		// -------------------------------------------------------------------------------------------------------------
