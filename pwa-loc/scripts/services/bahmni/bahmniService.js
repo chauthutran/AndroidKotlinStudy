@@ -29,7 +29,7 @@ BahmniService.syncDownStatus = { status: "success" };
 BahmniService.syncUpProcessingTotal = 0;
 BahmniService.syncUpProcessingIdx = 0;
 
-BahmniService._bmPingCase = '2';
+BahmniService._bmPingCase = '1';
 
 // ==============================================================================
 // Ping Bahmni service
