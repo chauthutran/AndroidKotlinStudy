@@ -671,6 +671,9 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function () {
 
 							$(btnRefresh).click(() => {
 								SessionManager.cwsRenderObj.renderArea1st();
+								// If this is activity list, we should refresh the activityDetail? <-- only if already in 'activity' tab
+								// Also, we can refresh the client card, no?
+
 							});
 
 							MsgManager.notificationMessage('SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false);
