@@ -151,6 +151,8 @@ App.App_UI_startUp_Progress = function (perc) {
 
 App.App_syncIcon_UI_event = function () {
 	SyncManagerNew.setAppTopSyncAllBtnClick();
+	
+	BahmniService.setAppTopSyncAllBtnClick();
 };
 
 // ---------------------------------------

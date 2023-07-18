@@ -49,15 +49,16 @@ ScheduleManager.scheduleList = {
 	"AfterLogin": [
 		"SCH_SyncDown_RunOnce",  // schedule_syncAll? - based on frequency on setting
 		"SCH_FixOper_RunOnce",  // schedule_syncAll? - based on frequency on setting
-		"SCH_SyncAll_Background"
+		"SCH_SyncAll_Background",
+		"BahmniPingService_Start" // Not needed to be in schedule, but for now, placed here.
 	],
 	"AfterLogOut": [
 		"CLR_syncDown_RunOnce",
 		"CLR_FixOper_RunOnce",
-		"CLR_SyncAll_Background"
+		"CLR_SyncAll_Background",
+		"BahmniPingService_Stop" // Not needed to be in schedule, but for now, placed here.
 	]
 };
-
 
 // List to run when appMode switches from offline to online
 ScheduleManager.runSwitchToOnlineList = {};
@@ -89,7 +90,8 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 		if ( itemName === "SCH_SyncDown_RunOnce" ) ScheduleManager.schedule_syncDownRunOnce();
 		else if ( itemName === "SCH_FixOper_RunOnce" ) ScheduleManager.schedule_fixOperationRunOnce();
 		else if ( itemName === "SCH_SyncAll_Background" ) ScheduleManager.schedule_syncAll_Background( cwsRenderObj );
-	});	
+		else if ( itemName === "BahmniPingService_Start" && ConfigManager.isBahmniSubSourceType() ) BahmniService.pingService_Start();
+	});
 
 	if ( callBack ) callBack();
 };
@@ -102,6 +104,7 @@ ScheduleManager.stopSchedules_AfterLogOut = function( callBack )
 		if ( itemName === "CLR_syncDown_RunOnce" ) clearTimeout( ScheduleManager.timerID_syncDownRunOnce );
 		else if ( itemName === "CLR_FixOper_RunOnce" ) ScheduleManager.clearTimeout_fixOperationRunOnce();
 		else if ( itemName === "CLR_SyncAll_Background" ) clearInterval( ScheduleManager.timerID_scheduleSyncAllRun );
+		else if ( itemName === "BahmniPingService_Stop" && ConfigManager.isBahmniSubSourceType() ) BahmniService.pingService_Stop();
 	});	
 	
 	if ( callBack ) callBack();
@@ -221,12 +224,15 @@ ScheduleManager.schedule_syncAll_Background = function( cwsRenderObj )
 	}		
 };
 
+ScheduleManager.syncDownProcessing = false;
 
 // TODO: Move to 'SyncManager' class later..
 ScheduleManager.syncDownRun_Online_Login = function()
 {
-	if ( ConnManagerNew.isAppMode_Online() && SessionManager.getLoginStatus() )
+	if ( ConnManagerNew.isAppMode_Online() && SessionManager.getLoginStatus() && !BahmniService.isSyncDataProcessing() )
 	{
+		ScheduleManager.syncDownProcessing = true;
+
 		SyncManagerNew.syncDown( 'AfterLogin', function( success, changeOccurred, mockCase, mergedActivities ) 
 		{
 			if ( success ) 
@@ -246,7 +252,10 @@ ScheduleManager.syncDownRun_Online_Login = function()
 
 				// Run any pending after actions..
 				ScheduleManager.afterActionsRun_Clear( 'SCH_SyncDown_RunOnce' );
-			} 
+				
+			}
+
+			ScheduleManager.syncDownProcessing = false;
 
 			// If not success, still, do not do retry... <-- just once is enough..
 			//else ScheduleManager.syncDownTimeoutCall();
