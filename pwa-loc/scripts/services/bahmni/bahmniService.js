@@ -77,9 +77,6 @@ BahmniService.pingService_Start = function ()
 				BahmniService.noCheckingConnection++;
 				if (BahmniService.noCheckingConnection >= BahmniService.maxNoCheckingConnection) 
 				{
-					// Change the header color to orange
-					$("#Nav1").css("background-color", "#ed8f2d"); // Orange
-
 					// Keep the count max limit
 					BahmniService.noCheckingConnection = BahmniService.maxNoCheckingConnection;
 
@@ -88,10 +85,6 @@ BahmniService.pingService_Start = function ()
 				}
 			}
 			else {
-				// Reset header color
-				$("#Nav1").css("background-color", ""); // Change back to Blue color
-
-				$("#Nav1").css("background-color", "#ed8f2d");
 				BahmniService.connection_StatusOffline();
 				BahmniService.noCheckingConnection = 0;
 			}
@@ -109,7 +102,8 @@ BahmniService.connection_StatusOnline = function ()
 {
 	BahmniService.connStatus_Stable = BahmniService.connStatus_ONLINE;
 	console.log( 'BahmniService StatusOnline' );
-
+	// Change the header color to orange
+	$("#Nav1").css("background-color", "#ed8f2d"); // Orange
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
 	// BahmniMsgManager.SyncMsg_InsertMsg("The connection is available");
 }
@@ -119,11 +113,13 @@ BahmniService.connection_StatusOffline = function ()
 	BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE;
 	console.log( 'BahmniService StatusOffline' );
 
+	// Change the header color to orange
+	$("#Nav1").css("background-color", ""); // Blue
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_gray1.svg");
 	BahmniMsgManager.SyncMsg_InsertMsg("The connection is not available");
 }
 
-BahmniService.connection_StatusPending = function () {
+BahmniService.connection_StatusPending = function () {asfasd
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_white.svg");
 	// FormUtil.rotateTag(BahmniService.syncDataIconTag, true);
 }
