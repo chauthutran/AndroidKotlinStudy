@@ -168,9 +168,8 @@ BahmniMsgManager.SyncMsg_ShowBottomMsg = function () {
     msgHeaderTag.append(Templates.syncMsg_Header);
 
 
-	// var serviceTag = BahmniMsgManager.SyncMsg_createSectionTag("Services Deliveries", BahmniMsgManager.bahmniServiceSectionTagId);
-	// var summaryTag = BahmniMsgManager.SyncMsg_createSectionTag("Summaries", BahmniMsgManager.bahmniSummarySectionTagId);
-	var serviceTag = BahmniMsgManager.SyncMsg_createSectionTag("", BahmniMsgManager.bahmniServiceSectionTagId);
+	var serviceTag = BahmniMsgManager.SyncMsg_createSectionTag("Services Deliveries", BahmniMsgManager.bahmniServiceSectionTagId);
+	var summaryTag = BahmniMsgManager.SyncMsg_createSectionTag("Summaries", BahmniMsgManager.bahmniSummarySectionTagId);
 
     // TODO: Need to update the sync progress status.. and register 
 
@@ -201,16 +200,16 @@ BahmniMsgManager.SyncMsg_ShowBottomMsg = function () {
 			}
 			msgContentTag.append(serviceTag);
 
-		    // // Add Summaries Msg
-			// var summarySectionLogTag = summaryTag.find("#log_" + BahmniMsgManager.bahmniSummarySectionTagId);
-			// summarySectionLogTag.html("");
-			// for (var i = 0; i < syncMsgJson.summaryList.length; i++) {
-			// 	var msgJson = syncMsgJson.summaryList[i];
-			// 	summarySectionLogTag.append('<div>' + msgJson.msg + '</div>');
-			// }
-			// msgContentTag.append(summaryTag);
+		    // Add Summaries Msg
+			var summarySectionLogTag = summaryTag.find("#log_" + BahmniMsgManager.bahmniSummarySectionTagId);
+			summarySectionLogTag.html("");
+			for (var i = 0; i < syncMsgJson.summaryList.length; i++) {
+				var msgJson = syncMsgJson.summaryList[i];
+				summarySectionLogTag.append('<div>' + msgJson.msg + '</div>');
+			}
+			msgContentTag.append(summaryTag);
 	   	   
-	}, Util.MS_SEC );
+	}, Util.MS_SEC);
  
 
     // Common ones - make a method out of it..
