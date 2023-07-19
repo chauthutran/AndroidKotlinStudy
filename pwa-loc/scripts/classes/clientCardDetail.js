@@ -39,7 +39,7 @@ function ClientCardDetail(clientId) {
 				sheetFullTag.find('div[tabButtonId=tab_relationships]').remove();
 			}
 
-			if( clientJson.conversations == undefined || clientJson.conversations.length == 0 )
+			if( !clientJson.conversations || clientJson.conversations.length == 0 )
 			{
 				sheetFullTag.find('li[rel=tab_clientConversations]').remove();
 				sheetFullTag.find('div[tabButtonId=tab_clientConversations]').remove();
