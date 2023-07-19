@@ -1017,9 +1017,18 @@ ConfigManager.runLoginTimeRuns = function () {
 					catch (errMsg) { console.log('ERROR in ConfigManager.runLoginTimeRuns, ' + errMsg); }
 				});
 
-				//console.log( 'ConfigManager.runLoginTimeRuns delete old client count: ' + clientIdsArr.length );                
-
-				ClientDataManager.removeClientsByIdArr(clientIdsArr);
+				if ( clientIdsArr.length > 0 )
+				{
+					try
+					{
+						ClientDataManager.removeClientsByIdArr(clientIdsArr);
+						
+						ClientDataManager.saveCurrent_ClientsStore(() => {  
+							console.log( 'DELETED OLD RECORDS: ' + clientIdsArr.length );
+						});
+					}
+					catch (errMsg) { console.log('ERROR in ConfigManager.removeClientsByIdArr, ' + errMsg); }
+				}
 			}
 		}
 	}
