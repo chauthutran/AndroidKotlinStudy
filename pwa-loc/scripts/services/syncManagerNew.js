@@ -252,7 +252,8 @@ SyncManagerNew.formatDownloadedData = function (returnJson) {
 // === 1. 'syncUpItem' Related Methods =============
 
 
-SyncManagerNew.syncUpActivity = function (activityId, resultData, returnFunc) {
+SyncManagerNew.syncUpActivity = function (activityId, resultData, returnFunc) 
+{
 	var activityJson = ActivityDataManager.getActivityById(activityId);
 	var syncReadyJson = SyncManagerNew.syncUpReadyCheck(activityJson);
 
@@ -288,7 +289,13 @@ SyncManagerNew.syncUpActivity = function (activityId, resultData, returnFunc) {
 				var clientId_after = ClientDataManager.getClientByActivityId(activityId)._id;
 
 				// For New Client Reg Case: Close Temp Client Detail Page & Open the Newly Created one.
-				if ( clientId_before !== clientId_after ) SyncManagerNew.TempClientDetailTagRefresh( clientId_before, clientId_after );
+				//		- Also, change clientCard -> from old clientId to new clientId?  Or in client click, we can switch over..
+				if ( clientId_before.indexOf( 'client_' ) === 0 && clientId_before !== clientId_after )
+				{
+					SyncManagerNew.TempClientDetailTagRefresh( clientId_before, clientId_after );
+					SyncManagerNew.tagSwitchToNewClientId( clientId_before, clientId_after );
+				}
+
 				SyncManagerNew.ActivityDetailTagRefresh( activityId );
 				ClientCard.reRenderClientCardsById(clientId_after, { 'activitiesTabClick': true });
 			}
@@ -305,19 +312,33 @@ SyncManagerNew.syncUpActivity = function (activityId, resultData, returnFunc) {
 // If clientDetail Page is open, perform refresh - after activitySync
 SyncManagerNew.TempClientDetailTagRefresh = function( clientId_before, clientId_after )
 {
-	// Close current client detail tab <-- if exists..
-	// Check if current is 
-	var clientDetailTag_before = $( 'div.card._tab.client[itemid=' + clientId_before + ']' );
-
-	if ( clientDetailTag_before.length > 0 )
+	try
 	{
-		clientDetailTag_before.parent().find( 'img.btnBack.clientDetail' ).click();
+		// Close current client detail tab <-- if exists..
+		// Check if current is 
+		var clientDetailTag_before = $( 'div.card._tab.client[itemid=' + clientId_before + ']' );
 
-		var clientCardDetail = new ClientCardDetail(clientId_after);
-		clientCardDetail.render();
+		if ( clientDetailTag_before.length > 0 )
+		{
+			clientDetailTag_before.parent().find( 'img.btnBack.clientDetail' ).click();
 
-		setTimeout( () => clientCardDetail.cardSheetFullTag.find('.tab_fs li[rel=tab_clientActivities]:visible').click(), 800 );
+			var clientCardDetail = new ClientCardDetail(clientId_after);
+			clientCardDetail.render();
+
+			setTimeout( () => clientCardDetail.cardSheetFullTag.find('.tab_fs li[rel=tab_clientActivities]:visible').click(), 800 );
+		}
 	}
+	catch( errMsg ) {  console.log( 'Error in SyncManagerNew.TempClientDetailTagRefresh, ' + errMsg );  }
+};
+
+SyncManagerNew.tagSwitchToNewClientId = function( clientId_before, clientId_after )
+{
+	try
+	{
+		var clientCardTag = $( 'div.client.card[itemId="' + clientId_before + '"]' );
+		if ( clientCardTag && clientCardTag.length > 0 ) clientCardTag.attr( 'itemId', clientId_after );	
+	}
+	catch( errMsg ) {  console.log( 'Error in SyncManagerNew.tagSwitchToNewClientId, ' + errMsg );  }
 };
 
 // If activityDetail Page is open, perform refresh - after activitySync
