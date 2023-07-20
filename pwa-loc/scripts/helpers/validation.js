@@ -177,6 +177,10 @@ Validation.checkRequiredValue = function( inputTag, divTag, type )
     var valid = true;
     var value = inputTag.val();
 
+    if ( inputTag.attr( 'type' ) === 'checkbox' ) {
+        if ( value === 'false' ) value = false;
+    }
+
     if( ! Validation.checkFalseEvalSpecialCase() && ( ! value || value == "" || value == null ) )
     {
         var message = Validation.getMessage( type, "This field is required" );

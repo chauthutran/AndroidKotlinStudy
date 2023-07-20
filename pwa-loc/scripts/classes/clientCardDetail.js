@@ -19,6 +19,13 @@ function ClientCardDetail(clientId) {
 	me.initialize = function () {
 		me.actionObj = new Action(SessionManager.cwsRenderObj, {});
 		// var preCall = undefined;
+
+		if ( !me.clientId ) 
+		{
+			MsgManager.msgAreaShow( 'ERROR: ClientId not available.', 'ERROR');
+			return;
+		}
+
 		var clientJson = ClientDataManager.getClientById(me.clientId);
 
 		var bExternalPartner = ConfigManager.externalPartner();
