@@ -396,7 +396,8 @@ function Login() {
 			{
 				// If emtpy case, show the 'k' button..
 				if ( !AppInfoLSManager.getUserName() ) {
-					$( 'img.imgKeyCloakUse' ).show().off( 'click' ).click( () => { 
+					//$( 'img.imgKeyCloakUse' ).show().off( 'click' ).click( () => { 
+					$( 'img.imgKeyCloakUse' ).off( 'click' ).click( () => { 
 						AppInfoLSManager.setKeyCloakUse( 'Y' );
 						AppUtil.appReloadWtMsg();	
 					});
@@ -1139,7 +1140,7 @@ Login.contentHtml = `
 		<div term="authForm_welcome" style="font-size: x-large; margin-bottom: 10px;">Welcome</div>
 		<div term="authForm_loginChoice" style="margin-bottom: 10px; color: #777;">How do you want to log in?</div>
 		<div>
-			<select class="selAuthChoice" style="all: revert; color: #555; border: solid 1px gray; padding: 4px;">
+			<select class="selAuthChoice" style="color: #555; border: solid 1px gray; padding: 5px; width: fit-content; background-color: powderblue;">
 				<option value="">SELECT ONE</option>
 				<option value="dhis2">Classic WFA auth (legacy)</option>
 				<option value="kc_sw_psi">Eswatini - PSI</option>
