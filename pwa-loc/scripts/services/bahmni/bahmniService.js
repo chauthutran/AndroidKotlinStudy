@@ -16,14 +16,14 @@ BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE; // Online vs
 
 BahmniService.syncDataIconTag = $("#divAppDataSubResourceSyncStatus");
 BahmniService.syncImgTag = $("#imgAppDataSubResourceSyncStatus");
-BahmniService.syncOne = false;
 
 
 BahmniService.formMetadata = {};
 BahmniService.syncDownProcessingTotal = 0;
 BahmniService.syncDownProcessingIdx = 0;
 BahmniService.syncDownDataList = {};
-BahmniService.syncDownStatus = { status: "success" };
+BahmniService.syncDataStatus = { status: "success" };
+BahmniService.allowToSyncDataInNextConnection = true;
 
 
 BahmniService.syncUpProcessingTotal = 0;
@@ -81,12 +81,18 @@ BahmniService.pingService_Start = function ()
 					BahmniService.noCheckingConnection = BahmniService.maxNoCheckingConnection;
 
 					BahmniService.connection_StatusOnline();
-					if (!BahmniService.syncOne) BahmniService.syncDataRun();
+
+					if( BahmniService.allowToSyncDataInNextConnection )
+					{
+						BahmniService.syncDataRun();
+						BahmniService.allowToSyncDataInNextConnection = false;
+					}
 				}
 			}
 			else {
 				BahmniService.connection_StatusOffline();
 				BahmniService.noCheckingConnection = 0;
+				BahmniService.allowToSyncDataInNextConnection = true;
 			}
 		});
 
@@ -102,31 +108,43 @@ BahmniService.connection_StatusOnline = function ()
 {
 	BahmniService.connStatus_Stable = BahmniService.connStatus_ONLINE;
 	console.log( 'BahmniService StatusOnline' );
-	// Change the header color to orange
-	$("#Nav1").css("background-color", "#ed8f2d"); // Orange
+	// 
+	// $("#Nav1").css("background-color", "#ed8f2d"); // Orange
+	BahmniService.setHeaderColor();
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
-	// BahmniMsgManager.SyncMsg_InsertMsg("The connection is available");
 }
 
+BahmniService.setHeaderColor = function(subTag)
+{
+	if(BahmniService.connStatus_Stable == BahmniService.connStatus_ONLINE)
+	{
+		// Change the header color to orange
+		$("#Nav1").css("background-color", "#ed8f2d"); // Orange
+		if( subTag) subTag.find(".sheet-title").css("background-color", "#ed8f2d"); // Orange
+	}
+	else
+	{
+		// Change the header color to the default color
+		$("#Nav1").css("background-color", ""); // Orange
+		if( subTag) subTag.find(".sheet-title").css("background-color", ""); // Orange
+	}
+	
+}
 BahmniService.connection_StatusOffline = function () 
 {
 	BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE;
 	console.log( 'BahmniService StatusOffline' );
 
-	// Change the header color to orange
-	$("#Nav1").css("background-color", ""); // Blue
+	BahmniService.setHeaderColor();
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_gray1.svg");
-	BahmniMsgManager.SyncMsg_InsertMsg("The connection is not available");
 }
 
 BahmniService.connection_StatusPending = function () {
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_white.svg");
-	// FormUtil.rotateTag(BahmniService.syncDataIconTag, true);
 }
 
 BahmniService.update_UI_Status_StartSync = function () {
 	BahmniMsgManager.initializeProgressBar();
-    // FormUtil.rotateTag(BahmniService.syncDataIconTag, true);
     BahmniService.startSyncStatus_Interval = setInterval(() => {
         if( BahmniService.syncImgTag.attr("setcolor") == "green" )
         {
@@ -138,26 +156,25 @@ BahmniService.update_UI_Status_StartSync = function () {
             BahmniService.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
             BahmniService.syncImgTag.attr("setcolor", "green");
         }
-       
     }, Util.MS_SEC/3);
 	
 }
 
 BahmniService.update_UI_Status_FinishSyncAll = function () {
-	// sync_error_msd.svg
     clearInterval( BahmniService.startSyncStatus_Interval );
 	BahmniMsgManager.hideProgressBar();
     BahmniService.syncDataIconTag.attr("src", "images/bahmni_connection_green.svg");
     BahmniService.syncDataIconTag.attr("setcolor", "green");
-	// FormUtil.rotateTag(BahmniService.syncDataIconTag, false);
-	BahmniMsgManager.SyncMsg_ShowBottomMsg();
+	// BahmniMsgManager.SyncMsg_ShowBottomMsg();
+
+	if( BahmniService.syncDataStatus.status == Constants.status_failed )
+	{
+		MsgManager.msgAreaShowOpt( "Syncing data has some error. Click on the icon the see the details.", { hideTimeMs: 1000 } );
+	}
 }
 
 
 BahmniService.setAppTopSyncAllBtnClick = function () {
-
-	// if( ConfigManager.isBahmniSubSourceType() )
-	// {
 	BahmniService.syncDataIconTag.off('click').click(() => {
 		// if already running, just show message..
 		// if offline, also, no message in this case about offline...   
@@ -168,8 +185,6 @@ BahmniService.setAppTopSyncAllBtnClick = function () {
 			BahmniService.syncDataRun();
 		}
 	});
-	// }
-
 };
 
 // ==============================================================================
@@ -200,6 +215,7 @@ BahmniService.syncDataRun = function () {
 
 					BahmniMsgManager.SyncMsg_InsertMsg("Downloaded " + clientDwnLength + " clients");
 
+					console.log("Downloaded " + clientDwnLength + " clients");
 					ClientDataManager.setActivityDateLocal_clientList(downloadedData.clients);
 
 					// 10 min offset with sync time - to make sure it does not miss things.
@@ -207,11 +223,10 @@ BahmniService.syncDataRun = function () {
 
 					ClientDataManager.mergeDownloadedClients(downloadedData, processingInfo, function (changeOccurred_atMerge, mergedActivities) {
 
-
 						if (responseBahmniData.status.status == "success") {
 							var mergedActivityLength = mergedActivities.length;
 							BahmniMsgManager.SyncMsg_InsertMsg("Merged " + mergedActivityLength + " activities..");
-							BahmniMsgManager.SyncMsg_InsertSummaryMsg("downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities.");
+							BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities.");
 
 							var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
 							AppInfoManager.updateSyncLastDownloadInfo(syncDownReqStartDTStr);
@@ -232,28 +247,23 @@ BahmniService.syncDataRun = function () {
 							}
 						}
 						else {
-							BahmniMsgManager.SyncMsg_InsertSummaryMsg("ERROR:" + responseBahmniData.status.msg);
+							BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
 						}
 
-
 						BahmniService.syncDataProcessing = false;
-						BahmniService.syncOne = true;
 						BahmniService.update_UI_Status_FinishSyncAll();
 					});
 				});
 			})
-
-
 		}
 		catch (errMsg) {
 
 			BahmniMsgManager.SyncMsg_ShowBottomMsg();
-			BahmniMsgManager.SyncMsg_InsertMsg("Sync data failed.");
+			BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
 
 			console.log('BahmniService.syncDataRun, ' + errMsg);
 
 			BahmniService.syncDataProcessing = false;
-			BahmniService.syncOne = true;
 			BahmniService.update_UI_Status_FinishSyncAll();
 		}
 	}
@@ -269,7 +279,7 @@ BahmniService.isSyncDataProcessing = function () {
 // ==============================================================================
 
 BahmniService.syncDown = function (exeFunc) {
-	BahmniService.syncDownStatus = { status: "success", msg: "" };
+	BahmniService.syncDataStatus = { status: "success", msg: "" };
 	BahmniService.syncDownDataList = {};
 
 	const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
@@ -300,10 +310,10 @@ BahmniService.syncDown = function (exeFunc) {
 
 BahmniService.setResponseErrorIfAny = function (response) {
 	if (response.status == "error") {
-		BahmniService.syncDownStatus.status = Constants.status_failed;
-		BahmniService.syncDownStatus.msg += response.msg + "; ";
+		BahmniService.syncDataStatus.status = Constants.status_failed;
+		BahmniService.syncDataStatus.msg += response.msg + "; ";
 
-		BahmniMsgManager.SyncMsg_InsertMsg("Error while running '" + response.id + "', URL '" + response.url + "'. Details: " + response.msg, "error");
+		BahmniMsgManager.SyncMsg_InsertMsg("Error while running '" + response.id + "', URL '" + response.url + "'. Details: " + response.msg, BahmniMsgManager.MESSAGE_TYPE_ERROR);
 	}
 };
 
@@ -349,17 +359,24 @@ BahmniService.afterSyncDown = function (response, exeFunc) {
 		BahmniService.syncDownProcessingIdx = 0;
 		BahmniService.syncDownProcessingTotal = patientIds.length + appointmentIds.length + conceptIds.length;
 
-		BahmniService.getConceptList(conceptIds, function () {
-			exeFunc({ status: BahmniService.syncDownStatus, data: BahmniService.syncDownDataList.patients });
-		});
-
-		BahmniService.getAppointmentDataList(appointmentIds, function () {
-			exeFunc({ status: BahmniService.syncDownStatus, data: BahmniService.syncDownDataList.patients });
-		});
-
-		BahmniService.getPatientDataList(patientIds, function () {
-			exeFunc({ status: BahmniService.syncDownStatus, data: BahmniService.syncDownDataList.patients });
-		});
+		if( BahmniService.syncDownProcessingTotal == 0 )
+		{
+			exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
+		}
+		else
+		{
+			BahmniService.getConceptList(conceptIds, function () {
+				exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
+			});
+	
+			BahmniService.getAppointmentDataList(appointmentIds, function () {
+				exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
+			});
+	
+			BahmniService.getPatientDataList(patientIds, function () {
+				exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
+			});
+		}
 
 	}
 }
@@ -390,7 +407,6 @@ BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc) {
 		exeFunc();
 	}
 };
-
 
 BahmniService.getPatientDataList = function (patientIds, exeFunc) {
 	if (patientIds.length > 0) {
@@ -517,6 +533,7 @@ BahmniService.syncUpAll = function (exeFunc) {
 		BahmniService.syncUpProcessingTotal = activityList.length;
 		for (var i = 0; i < activityList.length; i++) {
 			BahmniService.syncUp(activityList[i], function (response) {
+				BahmniService.setResponseErrorIfAny(response);
 				if (BahmniService.syncUpProcessingIdx == BahmniService.syncUpProcessingTotal) {
 					exeFunc();
 				}

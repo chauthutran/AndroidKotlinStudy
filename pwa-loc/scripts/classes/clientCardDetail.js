@@ -53,8 +53,6 @@ function ClientCardDetail(clientId) {
 			}
 		}});
 
-		
-
 		// create tab click events
 		FormUtil.setUpEntryTabClick(me.cardSheetFullTag.find('.tab_fs'), undefined, undefined, function( contentTag, selLiTag ) 
 		{

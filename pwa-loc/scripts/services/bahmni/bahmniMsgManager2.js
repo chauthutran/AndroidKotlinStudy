@@ -1,6 +1,11 @@
 function BahmniMsgManager() {};
+
 BahmniMsgManager.timeMessageId_Interval;
 BahmniMsgManager.syncMsgJson; 
+
+BahmniMsgManager.MESSAGE_TYPE_SUMMARY = "summary";
+BahmniMsgManager.MESSAGE_TYPE_DEFAULT = "text";
+BahmniMsgManager.MESSAGE_TYPE_ERROR = "error";
 
 BahmniMsgManager.bottomMsgShow = function (statusVal, activityJson, activityCardDivTag, contentFillFunc) {
 	// If 'activityCardDivTag ref is not workign with fresh data, we might want to get it by activityId..
@@ -119,11 +124,9 @@ BahmniMsgManager.initializeProgressBar = function () {
 
 BahmniMsgManager.SyncMsg_InsertMsg = function (msgStr, type) {
 	try {
-		var realType = ( type == undefined ) ? "text" : type;
+		var realType = ( type == undefined ) ? BahmniMsgManager.MESSAGE_TYPE_DEFAULT : type;
 		var newMsgJson = { "msg": msgStr, "datetime": UtilDate.formatDateTime(new Date(), Util.dateType_DATETIME_s1), type: realType };
 		BahmniMsgManager.SyncMsg_Get().msgList.push(newMsgJson);
-
-		//console.log( 'BahmniMsgManager.SyncMsg: ' + JSON.stringify( newMsgJson ) );
 	}
 	catch (errMsg) {
 		console.log('Error BahmniMsgManager.SyncMsg_InsertMsg, errMsg: ' + errMsg);
@@ -164,6 +167,7 @@ BahmniMsgManager.SyncMsg_ShowBottomMsg = function () {
     // 1. Set Header
     msgHeaderTag.append(Templates.syncMsg_Header);
 
+
 	var serviceTag = BahmniMsgManager.SyncMsg_createSectionTag("Services Deliveries", BahmniMsgManager.bahmniServiceSectionTagId);
 	var summaryTag = BahmniMsgManager.SyncMsg_createSectionTag("Summaries", BahmniMsgManager.bahmniSummarySectionTagId);
 
@@ -178,10 +182,15 @@ BahmniMsgManager.SyncMsg_ShowBottomMsg = function () {
 			serviceSectionLogTag.html("");
 			for (var i = 0; i < syncMsgJson.msgList.length; i++) {
 				var msgJson = syncMsgJson.msgList[i];
-				if( msgJson.type == "error" )
+				if( msgJson.type == BahmniMsgManager.MESSAGE_TYPE_ERROR )
 				{
 					var msgStr = msgJson.datetime + '&nbsp; &nbsp;<span style="color:red">' + msgJson.msg + "</span>";
 					serviceSectionLogTag.append('<div>' + msgStr + '</div>');
+				}
+				if( msgJson.type == BahmniMsgManager.MESSAGE_TYPE_SUMMARY )
+				{
+					var msgStr = msgJson.datetime + '&nbsp; &nbsp;' + msgJson.msg;
+					serviceSectionLogTag.append('<div style="font-weight: bold">Summary: ' + msgStr + '</div>');
 				}
 				else
 				{
@@ -200,7 +209,7 @@ BahmniMsgManager.SyncMsg_ShowBottomMsg = function () {
 			}
 			msgContentTag.append(summaryTag);
 	   	   
-	}, Util.MS_SEC );
+	}, Util.MS_SEC);
  
 
     // Common ones - make a method out of it..
