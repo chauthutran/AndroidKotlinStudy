@@ -844,7 +844,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 				});
 			}
 			else {
-        // NEW - Bahmni
+       
 				if( activityJson_Orig.processing.url != undefined )
 				{
 					var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit(activityJson_Orig);
@@ -854,6 +854,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 						SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
 					});
 				}
+ 				// NEW - Bahmni				
 				else if( activityJson_Orig.processing.eval != undefined )
 				{
 					try { 
