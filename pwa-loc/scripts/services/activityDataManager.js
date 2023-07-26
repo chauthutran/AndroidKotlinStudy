@@ -702,6 +702,7 @@ ActivityDataManager.createNewPayloadActivity = function (actionUrl, blockId, for
 	}
 };
 
+
 ActivityDataManager.activityPayload_ConvertForWsSubmit = function (activityJson, _version) {
 
 	if (!_version) _version = _ver;

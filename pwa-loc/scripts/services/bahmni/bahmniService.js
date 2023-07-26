@@ -30,6 +30,7 @@ BahmniService.syncUpProcessingTotal = 0;
 BahmniService.syncUpProcessingIdx = 0;
 
 BahmniService._bmPingCase = '1';
+BahmniService.pingDebug = false;
 
 // ==============================================================================
 // Ping Bahmni service
@@ -68,7 +69,7 @@ BahmniService.pingService_Start = function ()
 
 		BahmniRequestService.ping( BahmniService.getPingUrl(), function (response) 
 		{
-			console.log( 'Ping response:', response, BahmniService.noCheckingConnection );
+			if ( BahmniService.pingDebug ) console.log( 'Ping response:', response, BahmniService.noCheckingConnection );
 
 			// TODO: if bahmni config country, always show 2nd sync icon?
 
@@ -107,7 +108,7 @@ BahmniService.pingService_Stop = function () {
 BahmniService.connection_StatusOnline = function () 
 {
 	BahmniService.connStatus_Stable = BahmniService.connStatus_ONLINE;
-	console.log( 'BahmniService StatusOnline' );
+	if ( BahmniService.pingDebug ) console.log( 'BahmniService StatusOnline' );
 	// 
 	// $("#Nav1").css("background-color", "#ed8f2d"); // Orange
 	BahmniService.setHeaderColor();
@@ -133,7 +134,7 @@ BahmniService.setHeaderColor = function(subTag)
 BahmniService.connection_StatusOffline = function () 
 {
 	BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE;
-	console.log( 'BahmniService StatusOffline' );
+	if ( BahmniService.pingDebug ) console.log( 'BahmniService StatusOffline' );
 
 	BahmniService.setHeaderColor();
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_gray1.svg");
@@ -215,7 +216,7 @@ BahmniService.syncDataRun = function () {
 
 					BahmniMsgManager.SyncMsg_InsertMsg("Downloaded " + clientDwnLength + " clients");
 
-					console.log("Downloaded " + clientDwnLength + " clients");
+					//console.log("Downloaded " + clientDwnLength + " clients");
 					ClientDataManager.setActivityDateLocal_clientList(downloadedData.clients);
 
 					// 10 min offset with sync time - to make sure it does not miss things.
@@ -261,7 +262,7 @@ BahmniService.syncDataRun = function () {
 			BahmniMsgManager.SyncMsg_ShowBottomMsg();
 			BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
 
-			console.log('BahmniService.syncDataRun, ' + errMsg);
+			console.log('ERROR in BahmniService.syncDataRun, ' + errMsg);
 
 			BahmniService.syncDataProcessing = false;
 			BahmniService.update_UI_Status_FinishSyncAll();

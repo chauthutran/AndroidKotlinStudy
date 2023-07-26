@@ -290,7 +290,7 @@ SyncManagerNew.syncUpActivity = function (activityId, resultData, returnFunc)
 
 				// For New Client Reg Case: Close Temp Client Detail Page & Open the Newly Created one.
 				//		- Also, change clientCard -> from old clientId to new clientId?  Or in client click, we can switch over..
-				if ( clientId_before.indexOf( 'client_' ) === 0 && clientId_before !== clientId_after )
+				if ( clientId_before.indexOf( ClientDataManager.tempClientNamePre ) === 0 && clientId_before !== clientId_after )
 				{
 					SyncManagerNew.TempClientDetailTagRefresh( clientId_before, clientId_after );
 					SyncManagerNew.tagSwitchToNewClientId( clientId_before, clientId_after );
@@ -822,17 +822,22 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 
 		activityJson_Orig = ActivityDataManager.getActivityById(activityId);
 
-		if (!activityJson_Orig.processing) throw 'Activity.performSyncUp, activity.processing not available';
-		if ( !(activityJson_Orig.processing.url || (activityJson_Orig.processing.eval && INFO.client.subSourceType == 'bahmni' ) ) ) throw 'Activity.performSyncUp, activity.processing.url and activity.processing.eval not available';
+		var actProc = activityJson_Orig.processing;
 
-		var mockResponseJson = ConfigManager.getMockResponseJson(activityJson_Orig.processing.useMockResponse);
+		if (!actProc) throw 'Activity.performSyncUp, activity.processing not available';
+		if ( !( actProc.url 
+				|| (actProc.eval && INFO.client.subSourceType == 'bahmni' )
+		 		|| actProc.bahmniMongoSync ) 
+			) throw 'Activity.performSyncUp, activity.processing.url and activity.processing.eval not available';
+
+		var mockResponseJson = ConfigManager.getMockResponseJson(actProc.useMockResponse);
 
 
 		// NOTE: On 'afterDoneCall', 'reRenderActivityDiv()' gets used to reRender of activity.  
 		//  'displayActivitySyncStatus()' also has 'FormUtil.rotateTag()' in it.
 		//  Probably do not need to save data here.  All the error / success case probably are covered and saves data afterwards.
-		activityJson_Orig.processing.status = Constants.status_processing;
-		activityJson_Orig.processing.syncUpCount = Util.getNumber(activityJson_Orig.processing.syncUpCount) + 1;
+		actProc.status = Constants.status_processing;
+		actProc.syncUpCount = Util.getNumber(actProc.syncUpCount) + 1;
 		
 		ActivitySyncUtil.displayActivitySyncStatus(activityId);
 
@@ -843,23 +848,40 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 					SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
 				});
 			}
-			else {
-       
-				if( activityJson_Orig.processing.url != undefined )
+			else 
+			{   
+				// Bahmni Mongo Sync				    
+				if ( actProc.bahmniMongoSync )
+				{
+					//		1. Send 'clientDetails' & 'activity' json.. - minus 'formsJson', 'processing'
+					//		2. When creating new client on mongo, we do need to change client data via merge?
+					//			- change client.id? (Get all client back)
+					var payloadJson = SyncManagerNew.getBahmniMongo_ReqPayload( activityId, activityJson_Orig );
+
+					WsCallManager.wsActionCall( INFO.bahmniMongoSyncUrl, payloadJson, undefined, function (success, responseJson) {
+
+						// TODO: <-- 2 CHECKS: 
+						//		- NEW CLIENT <-- get full client Json, merge with existing local activity
+						//		- Existing Client --> after syncUp, we do same merge without _id change..
+						SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
+					});					
+				}
+				// Normal Sync Operation
+				else if( actProc.url != undefined )
 				{
 					var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit(activityJson_Orig);
 
 					// NOTE: We need to add app timeout, from 'request'... and throw error...
-					WsCallManager.wsActionCall(activityJson_Orig.processing.url, payloadJson, undefined, function (success, responseJson) {
+					WsCallManager.wsActionCall(actProc.url, payloadJson, undefined, function (success, responseJson) {
 						SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
 					});
 				}
- 				// NEW - Bahmni				
-				else if( activityJson_Orig.processing.eval != undefined )
+ 				// NEW - Bahmni Sync		
+				else if( actProc.eval != undefined )	// Should be 'bahmniSyncEval'?
 				{
 					try { 
 						INFO.activity = activityJson_Orig;
-						var result = eval( Util.getEvalStr( activityJson_Orig.processing.eval ) ); 
+						var result = eval( Util.getEvalStr( actProc.eval ) ); 
 						BahmniService.syncUp( result, function( response ){
 							SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, response.status, response, afterDoneCall);
 						})
@@ -887,6 +909,36 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 			afterDoneCall(false, errMsg);
 		});
 	}
+};
+
+
+SyncManagerNew.getBahmniMongo_ReqPayload = function( activityId, activityJson_Orig )
+{
+	var clientJson = ClientDataManager.getClientByActivityId( activityId );
+
+	var activityJson_Copy = Util.cloneJson( activityJson_Orig );
+	delete activityJson_Copy.processing;
+	delete activityJson_Copy.formData; // bahmni activity does not need editing formData
+
+	var payloadJson = { 
+		appVersion: _version, 
+		payload: { 
+			searchValues: { '_id': clientJson._id }, 
+			captureValues: activityJson_Copy 
+		},
+		historyData: ActivityDataManager.getHistoryShortenData( activityJson_Orig.processing.historyData )
+	};
+
+	// Add _id is temp client one, send client data (without activity)
+	if ( clientJson._id.indexOf( ClientDataManager.tempClientNamePre ) === 0 )
+	{
+		var clientJsonCopy = Util.cloneJson( clientJson );
+		delete clientJsonCopy.activities;
+
+		payloadJson.clientJson = clientJsonCopy;
+	}	
+
+	return payloadJson;
 };
 
 // ----------------------------------------------
