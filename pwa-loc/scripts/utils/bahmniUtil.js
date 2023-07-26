@@ -21,8 +21,10 @@ BahmniUtil.generateClientData = function( patientData )
 {
     var resolveData =  {};
 
+    const date = new Date();
     const patientId = patientData.uuid;
-    resolveData = { _id: patientId, subSourceType: "bahmni", clientDetails : patientData.person, activities: [], date: BahmniUtil.generateJsonDate(), patientId: patientId};
+    const clientTempId = INFO.login_UserName + '_' + Util.formatDate(date.toUTCString(), 'yyyyMMdd_HHmmss' ) + date.getMilliseconds();
+    resolveData = { _id: clientTempId, clientDetails : patientData.person, activities: [], date: BahmniUtil.generateJsonDate(), patientId: patientId};
     resolveData.clientDetails.firstName = patientData.person.preferredName.givenName;
     resolveData.clientDetails.lastName = patientData.person.preferredName.familyName;
 
@@ -53,7 +55,7 @@ BahmniUtil.generateActivityAppointment = function( data, options )
         dataValues["service_" + key] = data.service[key];
     }
 
-    var activity = { id: data.uuid, transactions:[{dataValues, type}], type: type, originalData: data, date: BahmniUtil.generateJsonDate(), patientId: data.patient.uuid };
+    var activity = { id: data.uuid, subSourceType: BahmniService.BAHMNI_KEYWORD, transactions:[{dataValues, type}], type: type, originalData: data, date: BahmniUtil.generateJsonDate(), patientId: data.patient.uuid };
     if ( options.formData ) activity.formData = options.formData;
 
     return activity;
@@ -71,7 +73,7 @@ BahmniUtil.generateActivityFormData = function( formData, type, formNameId )
     };
 
     var activityId = formData.encounterUuid + "--" + BahmniUtil.getFormMetadata(formData.formName, formData.formVersion, BahmniUtil.KEY_FD_META_DATA, "uuid");
-    return { id: activityId, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: formData, date: BahmniUtil.generateJsonDate(), patientId: patientId };
+    return { id: activityId, subSourceType: BahmniService.BAHMNI_KEYWORD, transactions:[{dataValues, type}], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: formData, date: BahmniUtil.generateJsonDate(), patientId: patientId };
 };
 
 BahmniUtil.generateJsonDate = function() {
@@ -138,16 +140,14 @@ BahmniUtil.getActivityInfo = function( activity )
 
 
 BahmniUtil.showProgressBar = function (width) {
-	if (width) {
+	if (width) 
+    {
 		$('#divSubResourceProgressInfo').css('width', width);
-		// $('div.determinate').css('width', width);
 	}
 	$('#divSubResourceProgressBar').css('display', 'block');
-	//$( '#divProgressBar' ).css( 'zIndex', '200' );
 	$('#divSubResourceProgressBar').show();
 }
 
 BahmniUtil.hideProgressBar = function () {
 	$('#divSubResourceProgressBar').hide();
-	//$( '#divProgressBar' ).css( 'zIndex', '0' );
 }

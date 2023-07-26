@@ -563,7 +563,7 @@ ActivityDataManager.generateActivityPayloadJson = function (actionUrl, blockId, 
 			, 'searchValues': searchValues  // if exiting activity case, we should force it to be clientId & activityId..
 		};
 
-		if( actionUrl == "bahmni" )
+		if( actionUrl == BahmniService.BAHMNI_KEYWORD )
 		{
 			INFO.activity = activityJson;
 			activityJson.processing.eval = ["INFO.activity"];

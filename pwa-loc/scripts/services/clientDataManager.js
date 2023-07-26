@@ -417,10 +417,13 @@ ClientDataManager.clientsActivities_AddProcessingInfo = function (newClients, pr
 	for (var i = 0; i < newClients.length; i++) {
 		var client = newClients[i];
 
-		for (var x = 0; x < client.activities.length; x++) {
-			var activity = client.activities[x];
+		if( client.activities )
+		{
+			for (var x = 0; x < client.activities.length; x++) {
+				var activity = client.activities[x];
 
-			ActivityDataManager.insertToProcessing(activity, processingInfo);
+				ActivityDataManager.insertToProcessing(activity, processingInfo);
+			}
 		}
 	}
 };

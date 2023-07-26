@@ -10,7 +10,6 @@ BahmniRequestService.composeURL = function (bahmniUrl) {
 
 BahmniRequestService.ping = function (url, exeFunc) {
 
-	// if ( url == undefined) {
 	if ( url.indexOf( 'bahmni_test' ) >= 0 ) // Local Area Network Laptop Test Case - mock service
 	{
 			$.ajax({

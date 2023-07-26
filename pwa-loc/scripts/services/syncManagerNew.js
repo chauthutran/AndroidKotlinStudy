@@ -826,7 +826,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 
 		if (!actProc) throw 'Activity.performSyncUp, activity.processing not available';
 		if ( !( actProc.url 
-				|| (actProc.eval && INFO.client.subSourceType == 'bahmni' )
+				|| (actProc.eval && activityJson_Orig.subSourceType == 'bahmni' )
 		 		|| actProc.bahmniMongoSync ) 
 			) throw 'Activity.performSyncUp, activity.processing.url and activity.processing.eval not available';
 
@@ -988,7 +988,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 	try
 	{
-		const clientJsonSubSourceType = ClientDataManager.getClientByActivityId(activityJson_Orig.id).subSourceType;
+		const clientJsonSubSourceType = activityJson_Orig.subSourceType;
 
     // NEW - Bahmni
 

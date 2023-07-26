@@ -624,7 +624,7 @@ ConfigManager.setINFO_SettingsBahmni_INFO_Vals = function() {
 ConfigManager.isBahmniSubSourceType = function()
 {
 	const subSourceType = ConfigManager.getConfigJson().subSourceType;
-	return ( subSourceType && subSourceType == "bahmni");
+	return ( subSourceType && subSourceType == BahmniService.BAHMNI_KEYWORD);
 }
 
 
