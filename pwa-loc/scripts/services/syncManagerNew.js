@@ -827,7 +827,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 		if (!actProc) throw 'Activity.performSyncUp, activity.processing not available';
 		if ( !( actProc.url 
 				|| (actProc.eval && activityJson_Orig.subSourceType == 'bahmni' )
-		 		|| actProc.bahmniMongoSync ) 
+		 		|| activityJson_Orig.syncStatus === BahmniService.readyToMongoSync ) 
 			) throw 'Activity.performSyncUp, activity.processing.url and activity.processing.eval not available';
 
 		var mockResponseJson = ConfigManager.getMockResponseJson(actProc.useMockResponse);
@@ -851,7 +851,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 			else 
 			{   
 				// Bahmni Mongo Sync				    
-				if ( actProc.bahmniMongoSync )
+				if ( activityJson_Orig.syncStatus === BahmniService.readyToMongoSync )
 				{
 					//		1. Send 'clientDetails' & 'activity' json.. - minus 'formsJson', 'processing'
 					//		2. When creating new client on mongo, we do need to change client data via merge?
