@@ -114,19 +114,19 @@ BahmniService.connection_StatusOnline = function ()
 	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
 }
 
-BahmniService.setHeaderColor = function(subTag)
+BahmniService.setHeaderColor = function()
 {
-	if(BahmniService.connStatus_Stable == BahmniService.connStatus_ONLINE)
-	{
-		// Change the header color to orange
-		$("#Nav1").css("background-color", "#ed8f2d"); // Orange
-		if( subTag) subTag.find(".sheet-title").css("background-color", "#ed8f2d"); // Orange
-	}
-	else
+	if( status == "default" || BahmniService.connStatus_Stable < BahmniService.connStatus_ONLINE )
 	{
 		// Change the header color to the default color
 		$("#Nav1").css("background-color", ""); // Orange
-		if( subTag) subTag.find(".sheet-title").css("background-color", ""); // Orange
+		$(".sheet-title").css("background-color", ""); // Orange
+	}
+	else 
+	{
+		// Change the header color to orange
+		$("#Nav1").css("background-color", "#ed8f2d"); // Orange
+		$(".sheet-title").css("background-color", "#ed8f2d");
 	}
 	
 }

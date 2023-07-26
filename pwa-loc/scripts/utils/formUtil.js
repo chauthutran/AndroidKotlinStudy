@@ -187,10 +187,10 @@ FormUtil.sheetFullSetup = function (template, options) {
 
 	// 1. create with template & append to body
 	var sheetFullTag = $(template).css('z-index', zIndex);
-	if( ConfigManager.isBahmniSubSourceType() )
-	{
-		BahmniService.setHeaderColor(sheetFullTag);
-	}
+	// if( ConfigManager.isBahmniSubSourceType() )
+	// {
+	// 	BahmniService.setHeaderColor(sheetFullTag);
+	// }
 
 	if (options.preCall) options.preCall(sheetFullTag);
 
