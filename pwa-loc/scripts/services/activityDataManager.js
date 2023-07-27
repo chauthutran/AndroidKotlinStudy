@@ -889,6 +889,12 @@ ActivityDataManager.insertToProcessing = function (activity, newProcessingInfo) 
 		// NEW - add logic of 'historyData' here <-- Which stores the updated failed count..
 		if (activity.processing.status === Constants.status_failed) activity.processing.historyData = ActivityDataManager.getHistoryData(activity.processing.history);
 		else activity.processing.historyData = {};
+
+		// NEW: on sync success, if bahmniMongo sync, remove the subSyncStatus..
+		//if ( SyncManagerNew.statusSynced(activity.processing.status) )
+		//{
+		//	if ( activity.subSyncStatus === BahmniService.readyToMongoSync ) delete activity.subSyncStatus;
+		//}	
 	}
 };
 

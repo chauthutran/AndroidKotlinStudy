@@ -625,7 +625,7 @@ ConfigManager.isBahmniSubSourceType = function()
 {
 	const subSourceType = ConfigManager.getConfigJson().subSourceType;
 	return ( subSourceType && subSourceType == BahmniService.BAHMNI_KEYWORD);
-}
+};
 
 
 ConfigManager.combineDefinitionOptions_wtAppInfoOpts = function( definitionOptions, appInfoSelectOpts ) {

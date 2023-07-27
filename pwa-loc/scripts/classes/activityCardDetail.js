@@ -461,6 +461,7 @@ ActivityCardDetail.cardFullScreen = `
 			<span class="sheetTopTitle" mark="activityFull" style="vertical-align: super;">Details</span>
 		</div>
 		<div style="width: 100px; display: flex">
+			<div class="bahmniSyncIcon mouseDown" title="Bahmni SyncAll" style="width: 42px; opacity: 0.0; cursor: pointer;">-</div>
 			<div class="syncIcon mouseDown" title="SyncAll" style="width: 45px; opacity: 0.0; cursor: pointer;">-</div>
 			<div class="onOfflineIcon mouseDown" title="Network" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
   		</div>

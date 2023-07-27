@@ -212,6 +212,18 @@ FormUtil.sheetFullSetup = function (template, options) {
 
 
 	// 4. Optional 'syncIcon' or 'onOfflineIcon' click point to actual ones..
+	if ( ConfigManager.isBahmniSubSourceType() )
+	{
+		sheetFullTag.find('.bahmniSyncIcon').off('click').click(function (e) {
+			e.stopPropagation();  // Stops calling parent tags event calls..
+			BahmniService.syncDataIconTag.click();
+		});	
+	}
+	else 
+	{
+		sheetFullTag.find('.bahmniSyncIcon').attr( 'title', '' ).removeClass( 'mouseDown' ).css( 'cursor', '' );
+	}
+	
 	sheetFullTag.find('.syncIcon').off('click').click(function (e) {
 		e.stopPropagation();  // Stops calling parent tags event calls..
 		$(SyncManagerNew.imgAppSyncActionButtonId).click();

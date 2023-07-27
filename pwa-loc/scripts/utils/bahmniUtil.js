@@ -23,10 +23,18 @@ BahmniUtil.generateClientData = function( patientData )
 
     const date = new Date();
     const patientId = patientData.uuid;
-    const clientTempId = INFO.login_UserName + '_' + Util.formatDate(date.toUTCString(), 'yyyyMMdd_HHmmss' ) + date.getMilliseconds();
+
+    var tempActId = INFO.login_UserName + '_' + Util.formatDate(date.toUTCString(), 'yyyyMMdd_HHmmss' ) + date.getMilliseconds();
+    const clientTempId = ClientDataManager.createNewTempClientId(tempActId);    
+
     resolveData = { _id: clientTempId, clientDetails : patientData.person, activities: [], date: BahmniUtil.generateJsonDate(), patientId: patientId};
     resolveData.clientDetails.firstName = patientData.person.preferredName.givenName;
     resolveData.clientDetails.lastName = patientData.person.preferredName.familyName;
+
+    resolveData.clientDetails.activeUsers = INFO.login_UserName;
+    resolveData.clientDetails.creditedUsers = INFO.login_UserName;
+    resolveData.clientDetails.voucherCodes = [];
+    
 
     const identifiers = patientData.identifiers;
     for( let i=0; i<identifiers.length; i++ )
@@ -35,6 +43,22 @@ BahmniUtil.generateClientData = function( patientData )
         const value =  iden.identifier;
         const key = iden.identifierType.display; // iden.identifierType.uuid
         resolveData.clientDetails[key] = value;
+    }
+
+    try
+    {
+        var syncDownClientFormatEval = ConfigManager.getSettingsBahmni().syncDownClientFormatEval;
+        if (syncDownClientFormatEval) 
+        {
+            INFO.client = resolveData;
+            INFO.patientData = patientData;
+            
+            eval( Util.getEvalStr(syncDownClientFormatEval) );
+        }
+    }
+    catch( errMsg )
+    {
+        MsgManager.msgAreaShow( 'ERROR during Eval of bahmni client json create: ' + errMsg, 'ERROR' );	
     }
 
     return resolveData;
@@ -65,7 +89,7 @@ BahmniUtil.generateActivityFormData = function( formData, type, formNameId )
 {
     const patientId = formData.patientUuid;
 
-    var dataValues =  {
+    var dataValues = {
         encounterUuid: formData.encounterUuid,
         patientUuid: patientId,
         visitUuid: formData.visitUuid,

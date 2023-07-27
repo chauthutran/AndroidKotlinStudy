@@ -431,8 +431,8 @@ ClientDataManager.clientsActivities_AddProcessingInfo = function (newClients, pr
 
 ClientDataManager.createClient_forActivityPayload = function (activity) {
 	// Call it from template?
-	var newTempClientId = ClientDataManager.tempClientNamePre + activity.id;
-
+	var newTempClientId = ClientDataManager.createNewTempClientId(activity.id);
+	
 	// NEW: If same client with id (local, not synced, id based on activity) exists, use that instead
 	var existingClient = ClientDataManager.getClientById(newTempClientId);
 	if (existingClient) return existingClient;
@@ -510,6 +510,11 @@ ClientDataManager.isTempClientCase = function (client) {
 
 ClientDataManager.isTempClientCaseById = function (clientId) {
 	return (clientId && clientId.indexOf(ClientDataManager.tempClientNamePre) === 0);
+};
+
+ClientDataManager.createNewTempClientId = function (activityId) {
+	if ( !activityId ) activityId = new Date().getTime();
+	return ClientDataManager.tempClientNamePre + activityId;
 };
 
 // ClientDataManager.tempClient_NewClient_IdMap = {};

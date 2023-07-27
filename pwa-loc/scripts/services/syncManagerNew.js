@@ -34,6 +34,7 @@ SyncManagerNew.syncAll_conflictShortDelayTime = Util.MS_SEC * 10; // 10 secounds
 SyncManagerNew.syncAll_conflictShortDelayCall; // 
 
 SyncManagerNew.imgAppSyncActionButtonId = '#imgAppDataSyncStatus';
+SyncManagerNew.imgAppSubResourceSyncActionButtonId = '#imgAppDataSubResourceSyncStatus';
 SyncManagerNew.subProgressBarId = '#divProgressInfo';
 
 SyncManagerNew.template_SyncMsgJson = {
@@ -501,19 +502,19 @@ SyncManagerNew.hideProgressBar = function () {
 // === 'syncStart/Finish' Related Methods =============
 
 // use as callBack?  
-SyncManagerNew.syncUpReadyCheck = function (activityJson) {
+SyncManagerNew.syncUpReadyCheck = function (activityJson) 
+{
 	var readyJson = { 'ready': false, 'loggedIn': false, 'online': false, 'syncableStatus': false, 'coolDownPass': false };
 
-	if (activityJson) {
+	if (activityJson) 
+	{
+		//var actProc = ( activityJson.processing ) ? activityJson.processing: {};
 		readyJson.loggedIn = SessionManager.Status_LoggedIn;
 		readyJson.online = ConnManagerNew.isAppMode_Online();
-		readyJson.syncableStatus = SyncManagerNew.checkActivityStatus_SyncUpReady(activityJson);
+		readyJson.syncableStatus = ( SyncManagerNew.checkActivityStatus_SyncUpReady(activityJson) || ( activityJson.subSyncStatus === BahmniService.readyToMongoSync ) );
 		readyJson.coolDownPass = ActivityDataManager.checkActivityCoolDown(activityJson.id);
 
 		readyJson.ready = (readyJson.loggedIn && readyJson.online && readyJson.syncableStatus && readyJson.coolDownPass);
-		// For 'ResponseAction' scheduling case, we should stop the calling in background if 'syncableStatus' is false..
-		//      For 'loggedIn' is false, (logged out case), should we stop it?  For now, have it running.
-		//          The best would be     
 	}
 
 	return readyJson;
@@ -827,7 +828,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 		if (!actProc) throw 'Activity.performSyncUp, activity.processing not available';
 		if ( !( actProc.url 
 				|| (actProc.eval && activityJson_Orig.subSourceType == 'bahmni' )
-		 		|| activityJson_Orig.syncStatus === BahmniService.readyToMongoSync ) 
+		 		|| activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync ) 
 			) throw 'Activity.performSyncUp, activity.processing.url and activity.processing.eval not available';
 
 		var mockResponseJson = ConfigManager.getMockResponseJson(actProc.useMockResponse);
@@ -851,7 +852,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 			else 
 			{   
 				// Bahmni Mongo Sync				    
-				if ( activityJson_Orig.syncStatus === BahmniService.readyToMongoSync )
+				if ( activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync )
 				{
 					//		1. Send 'clientDetails' & 'activity' json.. - minus 'formsJson', 'processing'
 					//		2. When creating new client on mongo, we do need to change client data via merge?
@@ -918,10 +919,11 @@ SyncManagerNew.getBahmniMongo_ReqPayload = function( activityId, activityJson_Or
 
 	var activityJson_Copy = Util.cloneJson( activityJson_Orig );
 	delete activityJson_Copy.processing;
-	delete activityJson_Copy.formData; // bahmni activity does not need editing formData
+	if ( activityJson_Copy.formData ) delete activityJson_Copy.formData;
+	if ( activityJson_Copy.subSyncStatus ) delete activityJson_Copy.subSyncStatus;
 
 	var payloadJson = { 
-		appVersion: _version, 
+		appVersion: _ver, 
 		payload: { 
 			searchValues: { '_id': clientJson._id }, 
 			captureValues: activityJson_Copy 
@@ -988,16 +990,29 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 	try
 	{
-		const clientJsonSubSourceType = activityJson_Orig.subSourceType;
+		// MongoBahmniCase --> Check the 'activityJson_Orig.subSyncStatus' === 
+		var successCaseName = '';
 
-    // NEW - Bahmni
+		if ( success && responseJson )
+		{
+			if ( responseJson.response && responseJson.response.resourceType === 'Bundle' && responseJson.response.entry ) successCaseName = 'fhirSyncSuccess';
+			else if ( responseJson.status == Constants.ws_status_success && activityJson_Orig.subSourceType === BahmniService.BAHMNI_KEYWORD ) {
+				if ( activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync ) successCaseName = 'mongoSyncSuccess';
+				else successCaseName = 'bahmniSyncSuccess';
+			}
+			else if ( responseJson.status === Constants.ws_status_success ) successCaseName = 'mongoSyncSuccess';
+		}
 
-		if( success && responseJson && responseJson.status == Constants.ws_status_success && clientJsonSubSourceType == "bahmni" )
+
+    	// NEW - Bahmni
+		if( successCaseName === 'bahmniSyncSuccess' )
 		{
 			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
 			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
 			var clientJson = ClientDataManager.getClientByActivityId(activityId);
 			ClientDataManager.setActivityDateLocal_client(clientJson);
+
+			activityJson_Orig.subSyncStatus = BahmniService.readyToMongoSync;
 
 			// Removal of existing activity/client happends within 'mergeDownloadClients()'
 			ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
@@ -1007,7 +1022,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 				});
 			});
 		}
-		else if ( success && responseJson && responseJson.response && responseJson.response.resourceType === 'Bundle' && responseJson.response.entry )
+		else if ( successCaseName === 'fhirSyncSuccess' )
 		{		
 			var clientJson = FhirUtil.evalClientTemplate( responseJson.response );
 			
@@ -1024,7 +1039,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 				});
 			});
 		}  
-		else if ( success && responseJson && responseJson.status === Constants.ws_status_success )
+		else if ( successCaseName === 'mongoSyncSuccess' )
 		{
 			if ( !responseJson.result || !responseJson.result.client ) throw "'result' not exists in response json.";
 
@@ -1037,13 +1052,11 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
 			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
 
-			// [NOTE: STILL USED?]
-			// If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
-			if (processingInfo.fixActivityCase) {
-				delete processingInfo.fixActivityCase;
-				SyncManagerNew.deleteFixActivityRecord(activityId);
-			}
+			// NEW: NOTE: remove 'subSyncStatus' at here OR after merge?
+			if ( activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync ) delete activityJson_Orig.subSyncStatus;
 
+			// [NOTE: STILL USED?]  If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
+			if (processingInfo.fixActivityCase) { delete processingInfo.fixActivityCase;  SyncManagerNew.deleteFixActivityRecord(activityId); }
 
 			// TODO: If this was c_switchUser transaction activity case, and the 'oldUser' matches this user,
 			//  remove the user from database..

@@ -6,8 +6,8 @@ BahmniService.readyToMongoSync = "readyToMongoSync";
 BahmniService.timerID_Interval;
 BahmniService.startSyncStatus_Interval;
 BahmniService.noCheckingConnection = 0;
-BahmniService.maxNoCheckingConnection = 5;
-BahmniService.interval_syncData = Util.MS_SEC * 1; // 5s
+BahmniService.maxNoCheckingConnection = 3;
+BahmniService.interval_syncData = Util.MS_SEC * 2; // 5s
 BahmniService.syncDataProcessing = false;
 
 BahmniService.connStatus_OFFLINE = 'OFFLINE';
@@ -609,9 +609,10 @@ BahmniService.syncUp = function (activityJson, exeFunc) {
 		var clientJson = ClientDataManager.getClientByActivityId(activityJson.id );
 		if( response.status == "success")
 		{
-			activityJson.syncStatus = BahmniService.readyToMongoSync;
+			//activityJson.subSyncStatus = BahmniService.readyToMongoSync;
 			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson.processing);
 			ActivityDataManager.insertToProcessing(activityJson, processingInfo);
+			//activityJson.processing.subSyncStatus = BahmniService.readyToMongoSync;
 
 			ActivityDataManager.updateActivityIdx(activityJson.id, activityJson, clientJson);
 		}

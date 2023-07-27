@@ -553,8 +553,9 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 				<img src="images/arrow_back.svg" class="btnBack mouseDown" />
 				<span class="sheetTopTitle" mark="clientFull" style="vertical-align: super;">Details</span>
 			</div>
-			<div style="width: 150px; display: flex">
-				<div class="syncIcon mouseDown" title="SyncAll" style="width: 45px; opacity: 0.0; cursor: pointer;">-</div>
+			<div style="width: 135px; display: flex">
+				<div class="bahmniSyncIcon mouseDown" title="Bahmni SyncAll" style="width: 42px; opacity: 0.0; cursor: pointer;">-</div>
+				<div class="syncIcon mouseDown" title="SyncAll" style="width: 42px; opacity: 0.0; cursor: pointer;">-</div>
 				<div class="onOfflineIcon mouseDown" title="Network" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
 			</div>
 		</div>
