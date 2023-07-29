@@ -61,6 +61,13 @@ SessionManager.loadSessionData_nConfigJson = function( userName, password, login
 	InfoDataManager.setSessionDataInfo( SessionManager.sessionData );
 	InfoDataManager.setINFOdata( InfoDataManager.NAME_practitionerId, AppInfoLSManager.getFhirPractitionerId() );
 
+	var ouAttrVals = loginData.orgUnitData.ouAttrVals;
+	if ( ouAttrVals && ouAttrVals.XQOOFWUwwyP && ouAttrVals.XQOOFWUwwyP.indexOf( 'bahmniPatient_' ) === 0 ) 
+	{
+		var bahmniAgentUUID = ouAttrVals.XQOOFWUwwyP.replace( 'bahmniPatient_', '' );
+		InfoDataManager.setINFOdata( 'bahmniAgentUUID', bahmniAgentUUID );
+	}
+
 	// Setup/populate data on ConfigManager
 	var configJson = ConfigManager.setConfigJson( loginData );
 

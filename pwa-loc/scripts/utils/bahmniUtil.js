@@ -31,8 +31,8 @@ BahmniUtil.generateClientData = function( patientData )
     resolveData.clientDetails.firstName = patientData.person.preferredName.givenName;
     resolveData.clientDetails.lastName = patientData.person.preferredName.familyName;
 
-    resolveData.clientDetails.activeUsers = INFO.login_UserName;
-    resolveData.clientDetails.creditedUsers = INFO.login_UserName;
+    resolveData.clientDetails.activeUsers = [ INFO.login_UserName ];
+    resolveData.clientDetails.creditedUsers = [ INFO.login_UserName ];
     resolveData.clientDetails.voucherCodes = [];
     
 
@@ -47,13 +47,13 @@ BahmniUtil.generateClientData = function( patientData )
 
     try
     {
-        var syncDownClientFormatEval = ConfigManager.getSettingsBahmni().syncDownClientFormatEval;
-        if (syncDownClientFormatEval) 
+        var generateClientFormatEval = ConfigManager.getSettingsBahmni().generateClientFormatEval;
+        if (generateClientFormatEval) 
         {
             INFO.client = resolveData;
             INFO.patientData = patientData;
             
-            eval( Util.getEvalStr(syncDownClientFormatEval) );
+            eval( Util.getEvalStr(generateClientFormatEval) );
         }
     }
     catch( errMsg )
