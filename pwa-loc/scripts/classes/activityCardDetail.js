@@ -29,7 +29,7 @@ function ActivityCardDetail( activityId, isRestore )
 
 		// ReRender
 		me.cardSheetFullTag.find('.activityDetailRerender').off('click').click(function () {
-			me.showFullPreview(me.activityId);
+			//me.showFullPreview(me.activityId);
 		});
 	};
 
