@@ -555,58 +555,75 @@ BahmniService.retrieveConceptDetails = function (conceptId, exeFunc)
 
 BahmniService.syncUpAll = function (exeFunc) 
 {
-	var clients = ClientDataManager.getClientList();
-	var activityList = [];
-	for (var i = 0; i < clients.length; i++) 
+	var resultData = { 'success': 0, 'failure': 0 };
+
+	var activityList = ActivityDataManager.getActivityList();
+	var actIdList = [];
+
+	activityList.forEach( activityJson => 
 	{
-		var clientJson = clients[i];
-		var activities = clientJson.activities;
-		for (var j = 0; j < activities.length; j++) 
+		// Bahmni Syncable condition - on activity..
+		if ( activityJson.subSourceType === BahmniService.BAHMNI_KEYWORD && activityJson.processing 
+			&& SyncManagerNew.isSyncReadyStatus(activityJson.processing.status) ) 
 		{
-			if (activities.subSourceType == BahmniService.BAHMNI_KEYWORD) 
+			actIdList.push( activityJson.id );
+		}
+	});
+
+	var doneCount = 0;
+
+	for( var i = 0; i < actIdList.length; i++ )
+	{
+		var activityId = actIdList[i];
+
+		var clientId_before = ClientDataManager.getClientByActivityId(activityId)._id;
+
+		ActivityCard.highlightActivityDiv(activityId, true);
+
+		SyncManagerNew.performSyncUp_Activity(activityId, function (success, responseJson, newStatus, extraData) 
+		{
+			doneCount++;
+
+			SyncManagerNew.syncUpActivity_ResultUpdate(success, resultData);
+
+			ActivityCard.reRenderAllById(activityId); // ActivityCard.reRenderActivityDiv();
+			ActivityCard.highlightActivityDiv(activityId, false);
+	
+	
+			var clientId_after = ClientDataManager.getClientByActivityId(activityId)._id;
+			if ( clientId_before.indexOf( ClientDataManager.tempClientNamePre ) === 0 && clientId_before !== clientId_after )
 			{
-				var activityJson = activities[j];
-				if (activityJson.processing.status == Constants.status_queued) 
-				{
-					activityList.push(activityList);
-				}
+				SyncManagerNew.TempClientDetailTagRefresh( clientId_before, clientId_after );
+				SyncManagerNew.tagSwitchToNewClientId( clientId_before, clientId_after );
 			}
-		}
-	}
+	
+			SyncManagerNew.ActivityDetailTagRefresh( activityId );
+			ClientCard.reRenderClientCardsById(clientId_after, { 'activitiesTabClick': true });			
 
-	if (activityList.length > 0) 
-	{
-		BahmniService.syncUpProcessingIdx = 0;
-		BahmniService.syncUpProcessingTotal = activityList.length;
-		for (var i = 0; i < activityList.length; i++) 
-		{
-			BahmniService.syncUp(activityList[i], function (response) 
-			{
-				// BahmniService.setResponseErrorIfAny(response);
-				if (BahmniService.syncUpProcessingIdx == BahmniService.syncUpProcessingTotal) 
-				{
-					exeFunc();
-				}
-			});
-		}
+			if ( doneCount >= actIdList.length ) exeFunc();
+		});		
 	}
-	else 
-	{
-		exeFunc();
-	}
-}
+};
 
-BahmniService.syncUp = function (activityJson, exeFunc) {
 
+// Called from SyncManagerNew.performSyncUp_Activity
+BahmniService.syncUp = function (activityJson, exeFunc) 
+{
 	// elseCase: "Follow Up Referrals Template Form" OR "Follow Up Assessment Plan"
 	var endpoint = (activityJson.type == "Follow Up Appointment") ? "/openmrs/ws/rest/v1/appointment" : "/openmrs/ws/rest/v1/bahmnicore/bahmniencounter";
-
 	const url = INFO.bahmni_domain + endpoint;
-	BahmniRequestService.sendPostRequest(activityJson.id, url, activityJson.syncUp, function(response){
-		
+
+	BahmniRequestService.sendPostRequest(activityJson.id, url, activityJson.syncUp, function(response)
+	{		
 		BahmniService.setResponseErrorIfAny(response);
 
-		var clientJson = ClientDataManager.getClientByActivityId(activityJson.id );
+		// response need to have this format...
+		// if ( !responseJson.result || !responseJson.result.client ) throw "'result' not exists in response json.";
+
+
+		//var clientJson = ClientDataManager.getClientByActivityId(activityJson.id );
+
+		/*
 		if( response.status == "success")
 		{
 			//activityJson.subSyncStatus = BahmniService.readyToMongoSync;
@@ -621,13 +638,9 @@ BahmniService.syncUp = function (activityJson, exeFunc) {
 			// Need to check if there is any activity of clients  were sync fail  --> change status of the client to "FAIL"
 			ActivityDataManager.updateStatus_ProcessingToFailed(activityJson, { saveData: true, errMsg: response.msg });
 		}
+		*/
 
-		// if( !isSyncAll )
-		// {
-		// 	ClientDataManager.updateClient(clientJson._id, clientJson);
-		// }
-
-		exeFunc(response);
+		exeFunc( ( response.status === "success" ), response );
 	});
 }
 

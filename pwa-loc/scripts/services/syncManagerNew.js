@@ -883,8 +883,8 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 					try { 
 						INFO.activity = activityJson_Orig;
 						var result = eval( Util.getEvalStr( actProc.eval ) ); 
-						BahmniService.syncUp( result, function( response ){
-							SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, response.status, response, afterDoneCall);
+						BahmniService.syncUp( result, function( success, responseJson ) {
+							SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
 						})
 						
 					}
@@ -996,7 +996,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 		if ( success && responseJson )
 		{
 			if ( responseJson.response && responseJson.response.resourceType === 'Bundle' && responseJson.response.entry ) successCaseName = 'fhirSyncSuccess';
-			else if ( responseJson.status == Constants.ws_status_success && activityJson_Orig.subSourceType === BahmniService.BAHMNI_KEYWORD ) {
+			else if ( responseJson.status === Constants.ws_status_success && activityJson_Orig.subSourceType === BahmniService.BAHMNI_KEYWORD ) {
 				if ( activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync ) successCaseName = 'mongoSyncSuccess';
 				else successCaseName = 'bahmniSyncSuccess';
 			}
@@ -1012,6 +1012,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 			var clientJson = ClientDataManager.getClientByActivityId(activityId);
 			ClientDataManager.setActivityDateLocal_client(clientJson);
 
+			// Set Flag - Set for mongo bahmni sync
 			activityJson_Orig.subSyncStatus = BahmniService.readyToMongoSync;
 
 			// Removal of existing activity/client happends within 'mergeDownloadClients()'
@@ -1052,7 +1053,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
 			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
 
-			// NEW: NOTE: remove 'subSyncStatus' at here OR after merge?
+			// Remove Flag - Remove flag for mongo bahmni sync
 			if ( activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync ) delete activityJson_Orig.subSyncStatus;
 
 			// [NOTE: STILL USED?]  If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.

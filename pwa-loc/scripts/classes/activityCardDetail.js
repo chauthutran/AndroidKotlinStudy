@@ -25,11 +25,13 @@ function ActivityCardDetail( activityId, isRestore )
 		});
 		
 		// ADD TEST/DUMMY VALUE
-		me.cardSheetFullTag.find('.activity').attr('itemid', me.activityId)
+		me.cardSheetFullTag.find('.activity').attr('itemid', me.activityId);
 
 		// ReRender
 		me.cardSheetFullTag.find('.activityDetailRerender').off('click').click(function () {
 			//me.showFullPreview(me.activityId);
+			me.cardSheetFullTag.find('div.activityRerender').click();
+			me.cardSheetFullTag.find('.tab_fs__head li.primary.active').click();
 		});
 	};
 
@@ -476,6 +478,9 @@ ActivityCardDetail.cardFullScreen = `
           <div class="activityPhone card__cta_one mouseDown" style="cursor: pointer;"></div>
           <div class="activityStatusIcon card__cta_two mouseDown" style="cursor: pointer;"></div>
         </card__cta>
+
+        <div class="activityRerender" style="float: left; width: 1px; height: 1px;"></div>
+
       </div>
 
       <div class="divActivityModBtns" style="">
