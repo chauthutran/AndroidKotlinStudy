@@ -570,39 +570,48 @@ BahmniService.syncUpAll = function (exeFunc)
 		}
 	});
 
-	var doneCount = 0;
+	var actCount = actIdList.length;
 
-	for( var i = 0; i < actIdList.length; i++ )
+	if ( actCount <= 0 ) exeFunc( resultData );
+	else
 	{
-		var activityId = actIdList[i];
-
-		var clientId_before = ClientDataManager.getClientByActivityId(activityId)._id;
-
-		ActivityCard.highlightActivityDiv(activityId, true);
-
-		SyncManagerNew.performSyncUp_Activity(activityId, function (success, responseJson, newStatus, extraData) 
+		for( var i = 0; i < actIdList.length; i++ )
 		{
-			doneCount++;
-
-			SyncManagerNew.syncUpActivity_ResultUpdate(success, resultData);
-
-			ActivityCard.reRenderAllById(activityId); // ActivityCard.reRenderActivityDiv();
-			ActivityCard.highlightActivityDiv(activityId, false);
+			var activityId = actIdList[i];
 	
+			var clientId_before = ClientDataManager.getClientByActivityId(activityId)._id;
 	
-			var clientId_after = ClientDataManager.getClientByActivityId(activityId)._id;
-			if ( clientId_before.indexOf( ClientDataManager.tempClientNamePre ) === 0 && clientId_before !== clientId_after )
+			ActivityCard.highlightActivityDiv(activityId, true);
+	
+			SyncManagerNew.performSyncUp_Activity(activityId, function (success, responseJson, newStatus, extraData) 
 			{
-				SyncManagerNew.TempClientDetailTagRefresh( clientId_before, clientId_after );
-				SyncManagerNew.tagSwitchToNewClientId( clientId_before, clientId_after );
-			}
+				actCount--;
 	
-			SyncManagerNew.ActivityDetailTagRefresh( activityId );
-			ClientCard.reRenderClientCardsById(clientId_after, { 'activitiesTabClick': true });			
-
-			if ( doneCount >= actIdList.length ) exeFunc();
-		});		
+				try
+				{
+					SyncManagerNew.syncUpActivity_ResultUpdate(success, resultData);
+	
+					ActivityCard.reRenderAllById(activityId); // ActivityCard.reRenderActivityDiv();
+					ActivityCard.highlightActivityDiv(activityId, false);
+			
+			
+					var clientId_after = ClientDataManager.getClientByActivityId(activityId)._id;
+					if ( clientId_before.indexOf( ClientDataManager.tempClientNamePre ) === 0 && clientId_before !== clientId_after )
+					{
+						SyncManagerNew.TempClientDetailTagRefresh( clientId_before, clientId_after );
+						SyncManagerNew.tagSwitchToNewClientId( clientId_before, clientId_after );
+					}
+			
+					SyncManagerNew.ActivityDetailTagRefresh( activityId );
+					ClientCard.reRenderClientCardsById(clientId_after, { 'activitiesTabClick': true });	
+				}
+				catch( errMsg ) {  console.log( 'ERROR ' );  }
+	
+				if ( actCount <= 0 ) exeFunc( resultData );
+			});		
+		}
 	}
+
 };
 
 
