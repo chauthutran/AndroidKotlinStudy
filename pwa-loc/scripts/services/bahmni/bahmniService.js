@@ -16,6 +16,8 @@ BahmniService.connStatus_ONLINE = 'ONLINE';
 BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE; // Online vs Offline
 
 
+BahmniService.preConnStatus = BahmniService.connStatus_OFFLINE;
+
 BahmniService.syncDataIconTag = $("#divAppDataSubResourceSyncStatus");
 BahmniService.syncImgTag = $("#imgAppDataSubResourceSyncStatus");
 
@@ -55,6 +57,7 @@ BahmniService.getPingUrl = function ()
 	else return INFO.bahmni_baseUrl + '/syncable';
 };
 
+
 BahmniService.pingService_Start = function () 
 {
 	BahmniService.syncDataIconTag.show();
@@ -80,7 +83,11 @@ BahmniService.pingService_Start = function ()
 					// Keep the count max limit
 					BahmniService.noCheckingConnection = BahmniService.maxNoCheckingConnection;
 
-					BahmniService.connection_StatusOnline();
+					if( BahmniService.preConnStatus != BahmniService.connStatus_ONLINE )
+					{
+						BahmniService.connection_StatusOnline();
+						BahmniService.preConnStatus = BahmniService.connStatus_ONLINE;
+					}
 
 					if( BahmniService.allowToSyncDataInNextConnection )
 					{
@@ -90,8 +97,13 @@ BahmniService.pingService_Start = function ()
 				}
 			}
 			else {
-				BahmniService.connection_StatusOffline();
 				BahmniService.noCheckingConnection = 0;
+				if( BahmniService.preConnStatus != BahmniService.connStatus_OFFLINE )
+				{
+					BahmniService.connection_StatusOffline();
+					BahmniService.preConnStatus = BahmniService.connStatus_OFFLINE;
+				}
+					
 				BahmniService.allowToSyncDataInNextConnection = true;
 			}
 		});
