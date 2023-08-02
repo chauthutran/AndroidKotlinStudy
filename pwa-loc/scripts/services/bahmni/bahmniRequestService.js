@@ -18,7 +18,8 @@ BahmniRequestService.ping = function (url, exeFunc) {
 			headers: { 'Content-Type': 'application/json' },
 			dataType: "json",
 			success: function (response) {
-				exeFunc({ status: "success" });
+				var urlObj = new URL(url);
+				exeFunc({ status: "success", urlInfo: urlObj });
 			},
 			error: function (errMsg) {
 				exeFunc({ status: "error" });
@@ -46,7 +47,8 @@ BahmniRequestService.sendGetRequest = function (id, url, exeFunc) {
 			}
 			else {
 				INFO.bahmniResponseData[id] = response;
-				exeFunc({ data: response, status: "success" });
+				var urlObj = new URL(url);
+				exeFunc({ data: response, status: "success", urlInfo: urlObj });
 			}
 		},
 		error: function (errMsg) {
@@ -71,7 +73,8 @@ BahmniRequestService.sendPostRequest = function (id, url, data, exeFunc) {
 			}
 			else {
 				INFO.bahmniResponseData[id] = response;
-				exeFunc({ data: response, status: "success" });
+				var urlObj = new URL(url);
+				exeFunc({ data: response, status: "success", urlInfo: urlObj });
 			}
 		},
 		error: function (errMsg) {

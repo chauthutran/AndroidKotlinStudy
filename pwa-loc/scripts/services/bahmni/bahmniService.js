@@ -3,23 +3,12 @@ function BahmniService() { }
 BahmniService.BAHMNI_KEYWORD = "bahmni";
 BahmniService.readyToMongoSync = "readyToMongoSync";
 
-BahmniService.timerID_Interval;
-BahmniService.startSyncStatus_Interval;
-BahmniService.noCheckingConnection = 0;
-BahmniService.maxNoCheckingConnection = 3;
-BahmniService.interval_syncData = Util.MS_SEC * 2; // 5s
+// BahmniService.timerID_Interval;
+// BahmniService.startSyncStatus_Interval;
+// BahmniService.noCheckingConnection = 0;
+// BahmniService.maxNoCheckingConnection = 3;
+BahmniService.interval_syncData = Util.MS_SEC * 2;
 BahmniService.syncDataProcessing = false;
-
-BahmniService.connStatus_OFFLINE = 'OFFLINE';
-BahmniService.connStatus_ONLINE = 'ONLINE';
-
-BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE; // Online vs Offline
-
-
-BahmniService.preConnStatus = BahmniService.connStatus_OFFLINE;
-
-BahmniService.syncDataIconTag = $("#divAppDataSubResourceSyncStatus");
-BahmniService.syncImgTag = $("#imgAppDataSubResourceSyncStatus");
 
 
 BahmniService.formMetadata = {};
@@ -27,178 +16,62 @@ BahmniService.syncDownProcessingTotal = 0;
 BahmniService.syncDownProcessingIdx = 0;
 BahmniService.syncDownDataList = {};
 BahmniService.syncDataStatus = { status: "success" };
-BahmniService.allowToSyncDataInNextConnection = true;
 
 
 BahmniService.syncUpProcessingTotal = 0;
 BahmniService.syncUpProcessingIdx = 0;
 
-BahmniService._bmPingCase = '1';
-BahmniService.pingDebug = false;
-
 // ==============================================================================
 // Ping Bahmni service
 // ==============================================================================
 
-// Features - Methods Add:
-//  - Add ping false in the middle.
-//	 - 
 
-// 
-BahmniService.pingCaseSwitch = function ( caseStr ) 
-{
-	BahmniService._bmPingCase = caseStr;
-};
-
-BahmniService.getPingUrl = function () 
-{
-	if ( BahmniService._bmPingCase === "1" ) return INFO.bahmni_baseUrl + '/syncable';
-	else if ( BahmniService._bmPingCase === "2" ) return BahmniRequestService.pingLANNetwork;
-	else return INFO.bahmni_baseUrl + '/syncable';
-};
-
-
-BahmniService.pingService_Start = function () 
-{
-	BahmniService.syncDataIconTag.show();
-	BahmniService.connection_StatusPending();
-
-	clearInterval(BahmniService.timerID_Interval);
-	BahmniRequestService.resetResponseData();
-
-	// Setup the interval
-	BahmniService.timerID_Interval = setInterval(() => 
-	{		
-		BahmniRequestService.ping( BahmniService.getPingUrl(), function (response) 
-		{
-			if ( BahmniService.pingDebug ) console.log( 'Ping response:', response, BahmniService.noCheckingConnection );
-
-			// TODO: if bahmni config country, always show 2nd sync icon?
-
-			if (response.status == "success") // NOTE: this is only for local test case response!!!!??
-			{
-				BahmniService.noCheckingConnection++;
-				if (BahmniService.noCheckingConnection >= BahmniService.maxNoCheckingConnection) 
-				{
-					// Keep the count max limit
-					BahmniService.noCheckingConnection = BahmniService.maxNoCheckingConnection;
-
-					if( BahmniService.preConnStatus != BahmniService.connStatus_ONLINE )
-					{
-						BahmniService.connection_StatusOnline();
-						BahmniService.preConnStatus = BahmniService.connStatus_ONLINE;
-					}
-
-					if( BahmniService.allowToSyncDataInNextConnection )
-					{
-						BahmniService.syncDataRun();
-						BahmniService.allowToSyncDataInNextConnection = false;
-					}
-				}
-			}
-			else {
-				BahmniService.noCheckingConnection = 0;
-				if( BahmniService.preConnStatus != BahmniService.connStatus_OFFLINE )
-				{
-					BahmniService.connection_StatusOffline();
-					BahmniService.preConnStatus = BahmniService.connStatus_OFFLINE;
-				}
-					
-				BahmniService.allowToSyncDataInNextConnection = true;
-			}
-		});
-
-	}, BahmniService.interval_syncData);
-
-};
-
-BahmniService.pingService_Stop = function () {
-	clearInterval(BahmniService.timerID_Interval);
-};
-
-BahmniService.connection_StatusOnline = function () 
-{
-	BahmniService.connStatus_Stable = BahmniService.connStatus_ONLINE;
-	if ( BahmniService.pingDebug ) console.log( 'BahmniService StatusOnline' );
-	// 
-	// $("#Nav1").css("background-color", "#ed8f2d"); // Orange
-	BahmniService.setHeaderColor();
-	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
-}
-
-BahmniService.setHeaderColor = function()
-{
-	if( status == "default" || BahmniService.connStatus_Stable < BahmniService.connStatus_ONLINE )
-	{
-		// Change the header color to the default color
-		$("#Nav1").css("background-color", ""); // Orange
-		$(".sheet-title").css("background-color", ""); // Orange
-	}
-	else 
-	{
-		// Change the header color to orange
-		$("#Nav1").css("background-color", "#ed8f2d"); // Orange
-		$(".sheet-title").css("background-color", "#ed8f2d");
-	}
-	
-}
-BahmniService.connection_StatusOffline = function () 
-{
-	BahmniService.connStatus_Stable = BahmniService.connStatus_OFFLINE;
-	if ( BahmniService.pingDebug ) console.log( 'BahmniService StatusOffline' );
-
-	BahmniService.setHeaderColor();
-	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_gray1.svg");
-}
-
-BahmniService.connection_StatusPending = function () 
-{
-	BahmniService.syncImgTag.attr("src", "images/bahmni_connection_white.svg");
-}
-
-BahmniService.update_UI_Status_StartSync = function () 
-{
-	BahmniMsgManager.initializeProgressBar();
-    BahmniService.startSyncStatus_Interval = setInterval(() => {
-        if( BahmniService.syncImgTag.attr("setcolor") == "green" )
-        {
-            BahmniService.syncImgTag.attr("src", "images/bahmni_connection_blue.svg");
-            BahmniService.syncImgTag.attr("setcolor", "blue");
-        }
-        else
-        {
-            BahmniService.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
-            BahmniService.syncImgTag.attr("setcolor", "green");
-        }
-    }, Util.MS_SEC/3);
-	
-}
-
-BahmniService.update_UI_Status_FinishSyncAll = function () 
-{
-    clearInterval( BahmniService.startSyncStatus_Interval );
-	BahmniMsgManager.hideProgressBar();
-    BahmniService.syncDataIconTag.attr("src", "images/bahmni_connection_green.svg");
-    BahmniService.syncDataIconTag.attr("setcolor", "green");
-
-	if( BahmniService.syncDataStatus.status == Constants.status_failed )
-	{
-		MsgManager.msgAreaShowOpt( "Syncing data has some error. Click on the icon the see the details.", { hideTimeMs: 1000 } );
-	}
-}
-
+// BahmniService.pingService_Stop = function () {
+// 	clearInterval(BahmniService.timerID_Interval);
+// };
 
 BahmniService.setAppTopSyncAllBtnClick = function () {
-	BahmniService.syncDataIconTag.off('click').click(() => {
-		// if already running, just show message..
-		// if offline, also, no message in this case about offline...   
-		BahmniMsgManager.SyncMsg_ShowBottomMsg();
 
-		// 2. SyncUp All
-		if (BahmniService.noCheckingConnection >= BahmniService.maxNoCheckingConnection) {
-			BahmniService.syncDataRun();
-		}
-	});
+	if( ConfigManager.isBahmniSubSourceType() )
+	{
+		BahmniConnManager.syncDataIconTag.show();
+		BahmniConnManager.connection_StatusPending();
+
+		BahmniConnManager.syncDataIconTag.off('click').click(() => {
+			// if already running, just show message..
+			// if offline, also, no message in this case about offline...   
+			BahmniMsgManager.SyncMsg_ShowBottomMsg();
+
+			if ( !BahmniService.syncDataProcessing ) 
+			{
+				if( BahmniConnManager.connectionURL == "" )
+				{
+					BahmniConnManager.lookForConnectionUrl(function(){
+						BahmniConnManager.pingService_Start( function() {
+							BahmniConnManager.allowToPingConnection = false;
+							BahmniService.syncDataRun();
+						});
+					});
+				}
+				else if( BahmniConnManager.noCheckingConnection < BahmniConnManager.maxNoCheckingConnection )
+				{
+					BahmniConnManager.pingService_Start( function() {
+						BahmniConnManager.allowToPingConnection = false;
+						BahmniService.syncDataRun();
+					});
+				}
+				else if( ScheduleManager.syncDownProcessing )
+				{
+					setTimeout(function() { BahmniService.syncDataRun(); }, Util.MS_SEC * 2);
+				}
+				else
+				{
+					BahmniService.syncDataRun();
+				}
+
+			};
+		})
+	}
 };
 
 // ==============================================================================
@@ -207,79 +80,78 @@ BahmniService.setAppTopSyncAllBtnClick = function () {
 
 BahmniService.syncDataRun = function () 
 {
+	BahmniService.syncDataProcessing = true;
+	BahmniConnManager.update_UI_Status_StartSync();
+	BahmniMsgManager.SyncMsg_SetAsNew();
+	BahmniMsgManager.SyncMsg_InsertMsg('Connected to the server ' + BahmniConnManager.connectionURL);
+	BahmniMsgManager.SyncMsg_InsertMsg('Start Syncing to Bahmni server ...');
 
-	if ( BahmniService.noCheckingConnection >= BahmniService.maxNoCheckingConnection
-		&& !ScheduleManager.syncDownProcessing
-		&& !BahmniService.syncDataProcessing ) 
-	{
-		BahmniService.syncDataProcessing = true;
-		BahmniService.update_UI_Status_StartSync();
-		BahmniMsgManager.SyncMsg_SetAsNew();
-		BahmniMsgManager.SyncMsg_InsertMsg('Start Syncing to Bahmni server ...');
 
-		try {
-			// Sync Up activity to Bahmni server
-			BahmniService.syncUpAll(function () 
+	try {
+		// Sync Up activity to Bahmni server
+		BahmniService.syncUpAll(function () 
+		{
+			// Sync Down activity to Bahmni server
+			BahmniService.syncDown(function (responseBahmniData) 
 			{
-				// Sync Down activity to Bahmni server
-				BahmniService.syncDown(function (responseBahmniData) 
-				{
-					var clientList = responseBahmniData.data;
-					var clientDwnLength = clientList.length;
+				var clientList = responseBahmniData.data;
+				var clientDwnLength = clientList.length;
 
-					// 'download' processing data                
-					var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_downloaded, 'Downloaded and synced.');
+				// 'download' processing data                
+				var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_downloaded, 'Downloaded and synced.');
 
-					BahmniMsgManager.SyncMsg_InsertMsg("Downloaded " + clientDwnLength + " clients");
+				BahmniMsgManager.SyncMsg_InsertMsg("Downloaded " + clientDwnLength + " clients");
 
-					console.log("Downloaded " + clientDwnLength + " clients");
-					ClientDataManager.setActivityDateLocal_clientList(clientList);
+				console.log("Downloaded " + clientDwnLength + " clients");
+				ClientDataManager.setActivityDateLocal_clientList(clientList);
 
-					// 10 min offset with sync time - to make sure it does not miss things.
-					BahmniService.mergeDownloadedClients(clientList, processingInfo, function (changeOccurred_atMerge, mergedActivities) {
+				// 10 min offset with sync time - to make sure it does not miss things.
+				BahmniService.mergeDownloadedClients(clientList, processingInfo, function (changeOccurred_atMerge, mergedActivities) {
 
-						if (responseBahmniData.status.status == "success") {
-							var mergedActivityLength = mergedActivities.length;
-							BahmniMsgManager.SyncMsg_InsertMsg("Merged " + mergedActivityLength + " activities..");
-							BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities.");
+					if (responseBahmniData.status.status == "success") {
+						var mergedActivityLength = mergedActivities.length;
+						BahmniMsgManager.SyncMsg_InsertMsg("Merged " + mergedActivityLength + " activities..");
+						BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities.");
 
-							var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
-							AppInfoManager.updateSyncLastDownloadInfo(syncDownReqStartDTStr);
+						var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
+						AppInfoManager.updateSyncLastDownloadInfo(syncDownReqStartDTStr);
 
 
-							// NOTE: If there was a new merge, for now, alert the user to reload the list?
-							if (changeOccurred_atMerge) {
-								// Display the summary of 'syncDown'.  However, this could be a bit confusing
+						// NOTE: If there was a new merge, for now, alert the user to reload the list?
+						if (changeOccurred_atMerge) {
+							// Display the summary of 'syncDown'.  However, this could be a bit confusing
 
-								var btnRefresh = $('<a class="notifBtn" term=""> REFRESH </a>');
+							var btnRefresh = $('<a class="notifBtn" term=""> REFRESH </a>');
 
-								$(btnRefresh).click(() => {
-									SessionManager.cwsRenderObj.renderArea1st();
-								});
+							$(btnRefresh).click(() => {
+								SessionManager.cwsRenderObj.renderArea1st();
+							});
 
-								MsgManager.notificationMessage('SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false);
-							}
+							MsgManager.notificationMessage('SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false);
 						}
-						else {
-							BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
-						}
+					}
+					else {
+						BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
+					}
 
-						BahmniService.syncDataProcessing = false;
-						BahmniService.update_UI_Status_FinishSyncAll();
-					});
+					BahmniService.syncDataProcessing = false;
+					BahmniConnManager.update_UI_Status_FinishSyncAll();
+
+					BahmniConnManager.allowToPingConnection = true;
+					BahmniConnManager.pingService_Start();
 				});
-			})
-		}
-		catch (errMsg) {
+			});
+		})
+	}
+	catch (errMsg) {
 
-			BahmniMsgManager.SyncMsg_ShowBottomMsg();
-			BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
+		BahmniMsgManager.SyncMsg_ShowBottomMsg();
+		BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
 
-			console.log('ERROR in BahmniService.syncDataRun, ' + errMsg);
+		console.log('ERROR in BahmniService.syncDataRun, ' + errMsg);
 
-			BahmniService.syncDataProcessing = false;
-			BahmniService.update_UI_Status_FinishSyncAll();
-		}
+		BahmniService.syncDataProcessing = false;
+		BahmniConnManager.update_UI_Status_FinishSyncAll();
 	}
 }
 
@@ -334,6 +206,7 @@ BahmniService.setResponseErrorIfAny = function (response)
 		BahmniService.syncDataStatus.status = Constants.status_failed;
 		BahmniService.syncDataStatus.msg += response.msg + "; ";
 
+		BahmniConnManager.connection_StatusOffline();
 		BahmniMsgManager.SyncMsg_InsertMsg("Error while running '" + response.id + "', URL '" + response.url + "'. Details: " + response.msg, BahmniMsgManager.MESSAGE_TYPE_ERROR);
 	}
 };
@@ -539,23 +412,23 @@ BahmniService.updateOptionsChanges = function ()
 }
 
 // ------------------------------------------------------------------------------
-// Retrieve data from Bahmni server
+// Retrieve data from Bahmni server for SyncDown processing
 
 BahmniService.retrievePatientDetails = function (patientId, exeFunc) 
 {
-	const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/patientprofile/" + patientId + "?v=full";
+	const url = BahmniConnManager.connectionURL + "/openmrs/ws/rest/v1/patientprofile/" + patientId + "?v=full";
 	BahmniRequestService.sendGetRequest(patientId, url, exeFunc);
 };
 
 BahmniService.retrieveAppointmentDetails = function (appointmentId, exeFunc) 
 {
-	const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/appointment?uuid=" + appointmentId;
+	const url = BahmniConnManager.connectionURL + "/openmrs/ws/rest/v1/appointment?uuid=" + appointmentId;
 	BahmniRequestService.sendGetRequest(appointmentId, url, exeFunc);
 };
 
 BahmniService.retrieveConceptDetails = function (conceptId, exeFunc)
 {
-	var url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/concept/" + conceptId;
+	var url = BahmniConnManager.connectionURL + "/openmrs/ws/rest/v1/concept/" + conceptId;
 	BahmniRequestService.sendGetRequest(conceptId, url, exeFunc);
 };
 
@@ -632,7 +505,7 @@ BahmniService.syncUp = function (activityJson, exeFunc)
 {
 	// elseCase: "Follow Up Referrals Template Form" OR "Follow Up Assessment Plan"
 	var endpoint = (activityJson.type == "Follow Up Appointment") ? "/openmrs/ws/rest/v1/appointment" : "/openmrs/ws/rest/v1/bahmnicore/bahmniencounter";
-	const url = INFO.bahmni_domain + endpoint;
+	const url = BahmniConnManager.connectionURL + endpoint;
 
 	BahmniRequestService.sendPostRequest(activityJson.id, url, activityJson.syncUp, function(response)
 	{		
