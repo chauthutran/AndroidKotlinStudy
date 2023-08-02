@@ -59,6 +59,7 @@ BahmniUtil.generateClientData = function( patientData )
     catch( errMsg )
     {
         MsgManager.msgAreaShow( 'ERROR during Eval of bahmni client json create: ' + errMsg, 'ERROR' );	
+        console.log( errMsg );
     }
 
     return resolveData;
