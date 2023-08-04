@@ -176,3 +176,9 @@ BahmniUtil.showProgressBar = function (width) {
 BahmniUtil.hideProgressBar = function () {
 	$('#divSubResourceProgressBar').hide();
 }
+
+BahmniUtil.getDiffBetweenCurrentMinutes = function( startDateObj )
+{
+    var diff = UtilDate.timeCalculation( (new Date()).getTime(), startDateObj.getTime() );
+    return eval( diff.mm );
+}
