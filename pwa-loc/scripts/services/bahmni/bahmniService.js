@@ -2,6 +2,7 @@ function BahmniService() { }
 
 BahmniService.BAHMNI_KEYWORD = "bahmni";
 BahmniService.readyToMongoSync = "readyToMongoSync";
+BahmniService.OPENMRS_URL = "/openmrs/";
 
 // BahmniService.timerID_Interval;
 // BahmniService.startSyncStatus_Interval;
@@ -17,14 +18,205 @@ BahmniService.syncDownProcessingIdx = 0;
 BahmniService.syncDownDataList = {};
 BahmniService.syncDataStatus = { status: "success" };
 
-
 BahmniService.syncUpProcessingTotal = 0;
 BahmniService.syncUpProcessingIdx = 0;
+
+// -----------------------
+
+BahmniService.ping_intervalId;
+
+BahmniService.VAL_DISCONNECTED = 'disconnected';
+BahmniService.VAL_CONNECTED = 'connected';
+BahmniService.VAL_CONNECT = 'connect';
+BahmniService.VAL_DISCONNECT = 'disconnect';
+
+BahmniService.VAL_CONNECT_COLOR = 'green';
+BahmniService.VAL_DISCONNECT_COLOR = 'gray';
+
+// NEW
+BahmniService.connStatusData = { stableConn: BahmniService.VAL_DISCONNECTED, activeConnCount: 0, pingFor: BahmniService.VAL_CONNECT, activeCount: 0 };
+
+// ==============================================================================
+
+
+BahmniService.serviceStartUp = function()
+{
+	BahmniRequestService.resetResponseData();
+
+	BahmniService.VAL_CONNECT_COLOR = INFO.bahmni_iconColor;
+
+	BahmniService.resetConnStatus(); // Get from InfoVal
+	BahmniService.setIconUI_byStatus();
+	BahmniConnManager.syncDataIconTag.show();
+
+	// Setup Click Event - Offline Ping Start & Sync Operation..
+	if ( INFO.bahmni_ping_autoRun ) BahmniService.pingSlowly();
+
+	BahmniService.syncBtnClickSetup();
+};
+
+
+BahmniService.resetConnStatus = function()
+{
+	BahmniService.connStatusData = { stableConn: BahmniService.VAL_DISCONNECTED, activeConnCount: 0, pingFor: BahmniService.VAL_CONNECT };
+};
+
+BahmniService.setIconUI_byStatus = function()
+{
+	if ( BahmniService.connStatusData.stableConn === BahmniService.VAL_DISCONNECTED ) {
+		$( '#divAppDataSyncStatus2' ).css( 'opacity', '0.6' );
+		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_DISCONNECT_COLOR );
+	}
+	else {
+		$( '#divAppDataSyncStatus2' ).css( 'opacity', '1.0' );
+		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_CONNECT_COLOR );
+	}
+};
+
+
+BahmniService.syncBtnClickSetup = function()
+{
+	BahmniConnManager.syncDataIconTag.off('click').click(() => {
+		if ( BahmniService.connStatusData.stableConn === BahmniService.VAL_DISCONNECTED ) BahmniService.pingActively();
+		else BahmniService.syncDataRun();  //BahmniService.startSyncAll();  // 'STATUS CONNECTED
+	});
+};
+
+
+BahmniService.check_Mark_PingForMatch = function( success )
+{
+	var match = false;
+	var pingFor = BahmniService.connStatusData.pingFor;
+
+	match = ( ( success && pingFor === BahmniService.VAL_CONNECT )
+	|| ( !success && pingFor === BahmniService.VAL_DISCONNECT ) ) ? true: false;
+
+	if ( match ) BahmniService.connStatusData.activeConnCount++;
+	else BahmniService.connStatusData.activeConnCount = 0;
+
+	BahmniService.pingBlinkUI( success );
+
+	return match;
+};
+
+
+BahmniService.swichStableConn = function( success )
+{
+	BahmniService.connStatusData.stableConn = ( success ) ? BahmniService.VAL_CONNECTED: BahmniService.VAL_DISCONNECTED;
+	BahmniService.connStatusData.pingFor = ( success ) ? BahmniService.VAL_DISCONNECT : BahmniService.VAL_CONNECT;
+	BahmniService.connStatusData.activeConnCount = 0;
+	BahmniService.connStatusData.activeCount = 0;
+};
+
+
+BahmniService.pingRequest = function( callBack )
+{
+	BahmniRequestService.ping( BahmniConnManager.getPingUrl( INFO.bahmni_domain ), function (response) 
+	{
+		if ( response.status === "success" ) callBack( true ); // connected
+		else callBack( false );
+	});
+};
+
+BahmniService.pingBlinkUI = function( success )
+{
+	//BahmniService.connStatusData.activeConnCount++;
+
+	// UI Ping Mark
+	// Mark according to 'success' and return back to stable color..	
+	if ( success )
+	{
+		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_CONNECT_COLOR );
+		$( '#divAppDataSyncStatus2' ).css( 'opacity', '1.0' );
+
+		setTimeout( BahmniService.setIconUI_byStatus, INFO.bahmni_ping_blinkMS );	
+	}
+	else 
+	{
+		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_DISCONNECT_COLOR );
+		$( '#divAppDataSyncStatus2' ).css( 'opacity', '0.6' );
+		
+		setTimeout( BahmniService.setIconUI_byStatus, INFO.bahmni_ping_blinkMS );	
+	}
+};
+
+
+BahmniService.pingSlowly = function()
+{
+	// Current Ping interval remove
+	if ( BahmniService.ping_intervalId ) clearInterval( BahmniService.ping_intervalId );
+
+
+	// RUN Once Before Interval:
+	BahmniService.pingRequest( function( success )
+	{
+		if ( BahmniService.check_Mark_PingForMatch( success ) ) BahmniService.pingActively();
+	});
+
+
+	// Setup Slow Mode Ping -->
+	BahmniService.ping_intervalId = setInterval( () => 
+	{
+		// If we find what we are slowly ping for, switch to be Active Ping State..
+		BahmniService.pingRequest( function( success )
+		{
+			if ( BahmniService.check_Mark_PingForMatch( success ) ) BahmniService.pingActively();
+		});
+	}, INFO.bahmni_ping_slow_intervalSec * 1000 );
+};
+
+
+BahmniService.pingActively = function() 
+{  
+	if ( BahmniService.ping_intervalId ) clearInterval( BahmniService.ping_intervalId );
+	BahmniService.connStatusData.activeCount = 1;
+
+	// After number of tries, it turns back to slow mode..
+	BahmniService.ping_intervalId = setInterval( () => 
+	{
+		// Try ping actively for online/offline
+		BahmniService.pingRequest( function( success )
+		{
+			//BahmniService.connStatusData.activeCount++;
+			if ( BahmniService.check_Mark_PingForMatch( success ) )
+			{
+				//BahmniService.markPingResult( success );
+				if ( BahmniService.connStatusData.activeConnCount >= INFO.bahmni_ping_active_stableNum )
+				{
+					// Switch the 'stableConn' + pingFor, and change to pingSlowly..
+					BahmniService.swichStableConn( success );
+					BahmniService.setIconUI_byStatus();
+	
+					BahmniService.pingSlowly();
+				}
+			}
+			else
+			{
+				//BahmniService.connStatusData.activeConnCount = 0;
+				if ( BahmniService.connStatusData.activeCount >= INFO.bahmni_ping_active_stop )
+				{
+					BahmniService.connStatusData.activeConnCount = 0;
+					BahmniService.connStatusData.activeCount = 0;					
+					BahmniService.pingSlowly();
+				}
+			}
+		});
+
+	}, INFO.bahmni_ping_active_intervalSec * 1000 );
+};
+
+
+// -----------------
+
+BahmniService.checkBahmniUrl = function( url )
+{
+	return ( url === BahmniService.BAHMNI_KEYWORD || url.indexOf( BahmniService.OPENMRS_URL ) >= 0 );
+};
+
 
 // ==============================================================================
 // Ping Bahmni service
 // ==============================================================================
-
 
 // BahmniService.pingService_Stop = function () {
 // 	clearInterval(BahmniService.timerID_Interval);
@@ -34,16 +226,32 @@ BahmniService.setAppTopSyncAllBtnClick = function () {
 
 	if( ConfigManager.isBahmniSubSourceType() )
 	{
-		BahmniConnManager.syncDataIconTag.show();
+		//BahmniConnManager.syncDataIconTag.show();
 		BahmniConnManager.connection_StatusPending();
 
 		BahmniConnManager.syncDataIconTag.off('click').click(() => {
 			// if already running, just show message..
 			// if offline, also, no message in this case about offline...   
-			BahmniMsgManager.SyncMsg_ShowBottomMsg();
+			// BahmniMsgManager.SyncMsg_ShowBottomMsg();
 
-			if ( !BahmniService.syncDataProcessing ) 
+			/*
+			BahmniConnManager.pingService_Start( function() {
+				BahmniConnManager.allowToPingConnection = false;
+				BahmniService.syncDataRun();
+			});
+
+
+			BahmniRequestService.ping( BahmniConnManager.getPingUrl( INFO.bahmni_domain ), function (response) 
 			{
+				BahmniConnManager.afterPing(response, execAfterSuccess);
+			});
+			*/
+
+
+			/*
+			// if ( !BahmniService.syncDataProcessing ) 
+			{
+				// WE already have this..
 				if( BahmniConnManager.connectionURL == "" )
 				{
 					BahmniConnManager.lookForConnectionUrl(function(){
@@ -60,17 +268,12 @@ BahmniService.setAppTopSyncAllBtnClick = function () {
 						BahmniService.syncDataRun();
 					});
 				}
-				else if( ScheduleManager.syncDownProcessing )
-				{
-					setTimeout(function() { BahmniService.syncDataRun(); }, Util.MS_SEC * 2);
-				}
-				else
-				{
-					BahmniService.syncDataRun();
-				}
+				else if( ScheduleManager.syncDownProcessing ) setTimeout(function() { BahmniService.syncDataRun(); }, Util.MS_SEC * 2);
+				else BahmniService.syncDataRun();
 
 			};
-		})
+			*/
+		});
 	}
 };
 
@@ -80,10 +283,12 @@ BahmniService.setAppTopSyncAllBtnClick = function () {
 
 BahmniService.syncDataRun = function () 
 {
-	BahmniService.syncDataProcessing = true;
-	BahmniConnManager.update_UI_Status_StartSync();
+	FormUtil.rotateTag( $( '.syncBtn2_svg' ), true );
+
+	//BahmniService.syncDataProcessing = true;
+	//BahmniConnManager.update_UI_Status_StartSync();
 	BahmniMsgManager.SyncMsg_SetAsNew();
-	BahmniMsgManager.SyncMsg_InsertMsg('Connected to the server ' + BahmniConnManager.connectionURL);
+	BahmniMsgManager.SyncMsg_InsertMsg('Connected to the server ' + INFO.bahmni_domain);
 	BahmniMsgManager.SyncMsg_InsertMsg('Start Syncing to Bahmni server ...');
 
 
@@ -137,8 +342,10 @@ BahmniService.syncDataRun = function ()
 					BahmniService.syncDataProcessing = false;
 					BahmniConnManager.update_UI_Status_FinishSyncAll();
 
-					BahmniConnManager.allowToPingConnection = true;
-					BahmniConnManager.pingService_Start();
+					//BahmniConnManager.allowToPingConnection = true;
+					//BahmniConnManager.pingService_Start();
+
+					FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
 				});
 			});
 		})
@@ -150,10 +357,13 @@ BahmniService.syncDataRun = function ()
 
 		console.log('ERROR in BahmniService.syncDataRun, ' + errMsg);
 
-		BahmniService.syncDataProcessing = false;
+		//BahmniService.syncDataProcessing = false;
 		BahmniConnManager.update_UI_Status_FinishSyncAll();
+
+		FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
 	}
-}
+};
+
 
 BahmniService.isSyncDataProcessing = function () {
 	return BahmniService.syncDataProcessing;
@@ -416,19 +626,19 @@ BahmniService.updateOptionsChanges = function ()
 
 BahmniService.retrievePatientDetails = function (patientId, exeFunc) 
 {
-	const url = BahmniConnManager.connectionURL + "/openmrs/ws/rest/v1/patientprofile/" + patientId + "?v=full";
+	const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/patientprofile/" + patientId + "?v=full";
 	BahmniRequestService.sendGetRequest(patientId, url, exeFunc);
 };
 
 BahmniService.retrieveAppointmentDetails = function (appointmentId, exeFunc) 
 {
-	const url = BahmniConnManager.connectionURL + "/openmrs/ws/rest/v1/appointment?uuid=" + appointmentId;
+	const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/appointment?uuid=" + appointmentId;
 	BahmniRequestService.sendGetRequest(appointmentId, url, exeFunc);
 };
 
 BahmniService.retrieveConceptDetails = function (conceptId, exeFunc)
 {
-	var url = BahmniConnManager.connectionURL + "/openmrs/ws/rest/v1/concept/" + conceptId;
+	var url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/concept/" + conceptId;
 	BahmniRequestService.sendGetRequest(conceptId, url, exeFunc);
 };
 
@@ -503,9 +713,20 @@ BahmniService.syncUpAll = function (exeFunc)
 // Called from SyncManagerNew.performSyncUp_Activity
 BahmniService.syncUp = function (activityJson, exeFunc) 
 {
-	// elseCase: "Follow Up Referrals Template Form" OR "Follow Up Assessment Plan"
-	var endpoint = (activityJson.type == "Follow Up Appointment") ? "/openmrs/ws/rest/v1/appointment" : "/openmrs/ws/rest/v1/bahmnicore/bahmniencounter";
-	const url = BahmniConnManager.connectionURL + endpoint;
+	var url = '';
+
+	// TODO: move this as Action 'dws' or 'url'.. <-- as pre-determined url..
+	var procJson = ActivityDataManager.getProcessingJson( activityJson );
+
+	// Old 'dws: { type: 'bahmni' } case
+	if ( procJson.url === BahmniService.BAHMNI_KEYWORD )
+	{
+		// elseCase: "Follow Up Referrals Template Form" OR "Follow Up Assessment Plan"
+		var endpoint = (activityJson.type == "Follow Up Appointment") ? "/openmrs/ws/rest/v1/appointment" : "/openmrs/ws/rest/v1/bahmnicore/bahmniencounter";
+		url = INFO.bahmni_domain + endpoint;
+	}
+	else url = INFO.bahmni_domain + procJson.url;
+
 
 	BahmniRequestService.sendPostRequest(activityJson.id, url, activityJson.syncUp, function(response)
 	{		

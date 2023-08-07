@@ -43,9 +43,6 @@ SessionManager.WSblockFormsJsonArr = [];  // Save block payload - search only fo
 // Only used in Login..
 SessionManager.loadSessionData_nConfigJson = function( userName, password, loginData ) 
 {
-	// If dcdConfig or orgUnitData does not exists, we need to notify!!!
-	// SessionManager.checkLoginOfflineData( loginData );
-
 	var newSessionInfo = { 
 		login_UserName: userName,
 		login_Password: password,
@@ -61,17 +58,48 @@ SessionManager.loadSessionData_nConfigJson = function( userName, password, login
 	InfoDataManager.setSessionDataInfo( SessionManager.sessionData );
 	InfoDataManager.setINFOdata( InfoDataManager.NAME_practitionerId, AppInfoLSManager.getFhirPractitionerId() );
 
-	var ouAttrVals = loginData.orgUnitData.ouAttrVals;
-	if ( ouAttrVals && ouAttrVals.XQOOFWUwwyP && ouAttrVals.XQOOFWUwwyP.indexOf( 'bahmniPatient_' ) === 0 ) 
-	{
-		var bahmniAgentUUID = ouAttrVals.XQOOFWUwwyP.replace( 'bahmniPatient_', '' );
-		InfoDataManager.setINFOdata( 'bahmniAgentUUID', bahmniAgentUUID );
-	}
-
 	// Setup/populate data on ConfigManager
 	var configJson = ConfigManager.setConfigJson( loginData );
 
+	// After ConfigManager is loaded & bahmni (if bahmni case) INFO variables are loaded.
+	SessionManager.setBahmniAgent_domainINFO( loginData.orgUnitData );
+
 	return configJson;
+};
+
+
+SessionManager.setBahmniAgent_domainINFO = function( orgUnitData )
+{
+	var ouAttrVals = orgUnitData.ouAttrVals;
+
+	if ( ouAttrVals && ouAttrVals.XQOOFWUwwyP && ouAttrVals.XQOOFWUwwyP.indexOf( 'bahmniPatient_' ) === 0 ) 
+	{
+		var bahmniAgentUUID = '';
+		var facilityId = '';
+		var connectDomain = '';
+
+		var altCode = Util.trim( ouAttrVals.XQOOFWUwwyP );
+		var altCodeArr = altCode.split( '_' );
+
+		if ( altCodeArr[0] === 'bahmniPatient' && altCodeArr.length >= 2 )
+		{
+			bahmniAgentUUID = altCodeArr[1];
+			if ( altCodeArr.length >= 3 ) facilityId = altCodeArr[2];
+			if ( !facilityId || facilityId === 'STG' ) facilityId = 'STAGE'; // FacilityId is only prod..?  staging one is default, but should use diff ..
+		}
+
+		InfoDataManager.setINFOdata( 'bahmniAgentUUID', bahmniAgentUUID );
+
+
+		if ( facilityId === 'STAGE' ) connectDomain = INFO.bahmni_domain_stage;
+		else {
+			connectDomain = INFO.bahmni_domain_prod;
+			connectDomain = connectDomain.replace( '[NNN]', facilityId.toLowerCase() );
+			console.log( 'INFO.bahmni_domain set to ' + connectDomain );
+		}
+
+		InfoDataManager.setINFOdata( 'bahmni_domain', connectDomain );
+	}
 };
 
 

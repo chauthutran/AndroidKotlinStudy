@@ -7,8 +7,8 @@ BahmniConnManager.connStatus_ONLINE = 'ONLINE';
 
 BahmniConnManager.connStatus_Stable = BahmniConnManager.connStatus_OFFLINE; // Online vs Offline
 
-BahmniConnManager.syncDataIconTag = $("#divAppDataSubResourceSyncStatus");
-BahmniConnManager.syncImgTag = $("#imgAppDataSubResourceSyncStatus");
+BahmniConnManager.syncDataIconTag = $("#divAppDataSyncStatus2");
+//BahmniConnManager.syncImgTag = $("#imgAppDataSyncStatus2");
 
 BahmniConnManager.startSyncStatus_Interval;
 
@@ -21,7 +21,7 @@ BahmniConnManager.interval_syncData = Util.MS_SEC * 2;
 BahmniConnManager.MINUTES_TO_LOOK_FOR_BASE_URL = Util.MS_MIN * 2;
 
 BahmniConnManager._bmPingCase = '1';
-BahmniConnManager.connectionURL = "";
+BahmniConnManager.connectionURL = "";  // NOT USED ANYMORE?
 
 
 /** 
@@ -50,86 +50,55 @@ BahmniConnManager.getPingUrl = function (baseUrl)
 	else return baseUrl + "/openmrs/ws/rest/v1/wfa/integration/get/syncable";
 };
 
-BahmniConnManager.connectionURL = "";
-
+/*
 BahmniConnManager.lookForConnectionUrl = function( execAfterSuccess )
 {
 	BahmniRequestService.resetResponseData();
 	var startTime = new Date();
 	var intervalObj;
 
-    // while( BahmniConnManager.connectionURL == "" 
-    //     && BahmniUtil.getDiffBetweenCurrentMinutes(startTime) < BahmniConnManager.MINUTES_TO_LOOK_FOR_BASE_URL )
-    // {
-        var pingBasedUrlList = INFO.bahmni_domain_list;
-		var idx = 0;
-		intervalObj = setInterval(function(){
-			
-			if( BahmniConnManager.connectionURL != "" 
-				|| BahmniUtil.getDiffBetweenCurrentMinutes(startTime) >= BahmniConnManager.MINUTES_TO_LOOK_FOR_BASE_URL ){
-			   clearInterval(intervalObj);
-			}
-			else
+	var pingBasedUrlList = INFO.bahmni_domain_list;
+	var idx = 0;
+
+	intervalObj = setInterval(function()
+	{		
+		if( BahmniConnManager.connectionURL != "" 
+			|| BahmniUtil.getDiffBetweenCurrentMinutes(startTime) >= BahmniConnManager.MINUTES_TO_LOOK_FOR_BASE_URL ){
+			clearInterval(intervalObj);
+		}
+		else
+		{
+			if( idx == pingBasedUrlList.length ) 
 			{
-				if( idx == pingBasedUrlList.length ) 
-				{
-					idx = 0;
-				}
-
-				var url = BahmniConnManager.getPingUrl(pingBasedUrlList[idx]);
-				BahmniRequestService.ping( url, function (response) 
-                {
-                    if (response.status == "success")
-                    {
-                        BahmniConnManager.connectionURL = response.urlInfo.origin;
-                        execAfterSuccess();
-                    }
-                    else
-                    {
-                        BahmniConnManager.connectionURL = "";
-                    }
-                })
+				idx = 0;
 			}
-			idx++;
-		}, BahmniConnManager.interval_syncData);
 
-
-
-        // for( var i=0; i<pingBasedUrlList.length; i++ )
-        // {
-        //     var url = BahmniConnManager.getPingUrl(pingBasedUrlList[i]);
-        //     timeout = setTimeout(() => {
-        //         BahmniRequestService.ping( url, function (response) 
-        //         {
-        //             if (response.status == "success")
-        //             {
-        //                 BahmniConnManager.connectionURL = response.urlInfo.origin;
-        //                 execAfterSuccess();
-        //             }
-        //             else
-        //             {
-        //                 BahmniConnManager.connectionURL = "";
-        //             }
-        //         })
-        //     }, BahmniConnManager.interval_syncData * ( i + 1 ) );
-        // }
-    // }
-    // clearTimeout( timeout );
+			var url = BahmniConnManager.getPingUrl(pingBasedUrlList[idx]);
+			BahmniRequestService.ping( url, function (response) 
+					{
+						if (response.status == "success")
+						{
+							//BahmniConnManager.connectionURL = response.urlInfo.origin;
+							execAfterSuccess();
+						}
+						else
+						{
+							//BahmniConnManager.connectionURL = "";
+						}
+					})
+		}
+		idx++;
+	}, BahmniConnManager.interval_syncData);
 	
-}
+};
+*/
 
+/*
 BahmniConnManager.pingService_Start = function ( execAfterSuccess ) 
-{
-	// BahmniConnManager.syncDataIconTag.show();
-	// BahmniConnManager.connection_StatusPending();
-
-	// clearInterval(BahmniConnManager.timerID_Interval);
-	// BahmniRequestService.resetResponseData();
-	// BahmniConnManager.noCheckingConnection = 0;
-	
+{	
 	var	intervalObj = setInterval(function(){
 		if(BahmniConnManager.allowToPingConnection){
-			BahmniRequestService.ping( BahmniConnManager.getPingUrl( BahmniConnManager.connectionURL), function (response) 
+			BahmniRequestService.ping( BahmniConnManager.getPingUrl( INFO.bahmni_domain ), function (response) 
 			{
 				BahmniConnManager.afterPing(response, execAfterSuccess);
 			});
@@ -139,15 +108,7 @@ BahmniConnManager.pingService_Start = function ( execAfterSuccess )
 			clearInterval(intervalObj);
 		}
 	}, BahmniConnManager.interval_syncData);
-
-		// BahmniRequestService.ping( BahmniConnManager.getPingUrl(), function (response) 
-		// {
-		// 	BahmniConnManager.afterPing(response, execAfterSuccess);
-		// });
-
-	// }
 };
-
 
 
 BahmniConnManager.afterPing = function( response, execAfterSuccess )
@@ -189,8 +150,8 @@ BahmniConnManager.afterPing = function( response, execAfterSuccess )
 		}
 		// BahmniConnManager.needToSyncData = true;
 	}
-}
-
+};
+*/
 
 // ---------------------------------------------------------------------------------
 // Set status for Icon
@@ -201,12 +162,12 @@ BahmniConnManager.connection_StatusOffline = function ()
 	if ( BahmniConnManager.pingDebug ) console.log( 'BahmniConnManager StatusOffline' );
 
 	BahmniConnManager.setHeaderColor();
-	BahmniConnManager.syncImgTag.attr("src", "images/bahmni_connection_gray1.svg");
+	//BahmniConnManager.syncImgTag.attr("src", "images/bahmni_connection_gray1.svg");
 }
 
 BahmniConnManager.connection_StatusPending = function () 
 {
-	BahmniConnManager.syncImgTag.attr("src", "images/bahmni_connection_white.svg");
+	//BahmniConnManager.syncImgTag.attr("src", "images/bahmni_connection_white.svg");
 }
 
 
@@ -217,13 +178,14 @@ BahmniConnManager.connection_StatusOnline = function ()
 	// 
 	// $("#Nav1").css("background-color", "#ed8f2d"); // Orange
 	BahmniConnManager.setHeaderColor();
-	BahmniConnManager.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
+	//BahmniConnManager.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
 }
 
 BahmniConnManager.update_UI_Status_StartSync = function () 
 {
 	BahmniMsgManager.initializeProgressBar();
     // BahmniConnManager.startSyncStatus_Interval = setInterval(() => {
+		/*
     if( BahmniConnManager.syncImgTag.attr("setcolor") == "green" )
     {
         BahmniConnManager.syncImgTag.attr("src", "images/bahmni_connection_blue.svg");
@@ -234,6 +196,7 @@ BahmniConnManager.update_UI_Status_StartSync = function ()
         BahmniConnManager.syncImgTag.attr("src", "images/bahmni_connection_green.svg");
         BahmniConnManager.syncImgTag.attr("setcolor", "green");
     }
+	 */
     // }, Util.MS_SEC/3);
 	
 }
@@ -242,8 +205,8 @@ BahmniConnManager.update_UI_Status_FinishSyncAll = function ()
 {
     // clearInterval( BahmniConnManager.startSyncStatus_Interval );
 	BahmniMsgManager.hideProgressBar();
-    BahmniConnManager.syncDataIconTag.attr("src", "images/bahmni_connection_green.svg");
-    BahmniConnManager.syncDataIconTag.attr("setcolor", "green");
+    //BahmniConnManager.syncDataIconTag.attr("src", "images/bahmni_connection_green.svg");
+    //BahmniConnManager.syncDataIconTag.attr("setcolor", "green");
 
 	if( BahmniService.syncDataStatus.status == Constants.status_failed )
 	{
@@ -267,46 +230,3 @@ BahmniConnManager.setHeaderColor = function()
 	}
 	
 }
-
-// BahmniConnManager.lookForConnectionUrl = function()
-// {
-// 	var startTime = new Date();
-// 	var interval;
-
-// 	if( BahmniConnManager.connectionURL == "" )
-// 	{
-// 		while( BahmniConnManager.connectionURL == "" 
-// 			&& BahmniUtil.getDiffBetweenCurrentMinutes(startTime) < BahmniConnManager.MINUTES_TO_LOOK_FOR_BASE_URL )
-// 		{
-// 			var pingBasedUrlList = INFO.bahmni_domain_list;
-// 			for( var i=0; i<pingBasedUrlList.length; i++ )
-// 			{
-// 				var url = BahmniConnManager.getPingUrl(pingBasedUrlList[i]);
-// 				interval = setInterval(() => {
-// 					BahmniRequestService.ping( url, function (response) 
-// 					{
-// 						if (response.status == "success")
-// 						{
-// 							BahmniConnManager.connectionURL = response.urlInfo.origin;
-// 							BahmniConnManager.pingService_Start( BahmniConnManager.syncDataRun );
-// 						}
-// 						else
-// 						{
-// 							BahmniConnManager.connectionURL = "";
-// 						}
-// 					})
-// 				}, BahmniConnManager.interval_syncData );
-// 			}
-// 		}
-
-// 		clearInterval( interval );
-// 	}
-// 	else if( BahmniConnManager.noCheckingConnection < BahmniConnManager.maxNoCheckingConnection )
-// 	{
-// 		BahmniConnManager.pingService_Start( BahmniConnManager.syncDataRun );
-// 	}
-// 	else if( ScheduleManager.syncDownProcessing )
-// 	{
-// 		setTimeout(function() { BahmniConnManager.lookForConnectionUrl(); }, Util.MS_SEC * 2);
-// 	}
-// }

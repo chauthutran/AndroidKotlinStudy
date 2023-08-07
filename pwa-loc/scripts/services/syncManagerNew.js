@@ -34,7 +34,7 @@ SyncManagerNew.syncAll_conflictShortDelayTime = Util.MS_SEC * 10; // 10 secounds
 SyncManagerNew.syncAll_conflictShortDelayCall; // 
 
 SyncManagerNew.imgAppSyncActionButtonId = '#imgAppDataSyncStatus';
-SyncManagerNew.imgAppSubResourceSyncActionButtonId = '#imgAppDataSubResourceSyncStatus';
+SyncManagerNew.imgAppSyncActionButtonId2 = '#imgAppDataSyncStatus2';
 SyncManagerNew.subProgressBarId = '#divProgressInfo';
 
 SyncManagerNew.template_SyncMsgJson = {
@@ -851,7 +851,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 			}
 			else 
 			{   
-				// Bahmni Mongo Sync				    
+				// Bahmni Mongo Sync - TODO: Still not fully done/tested this part
 				if ( activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync )
 				{
 					//		1. Send 'clientDetails' & 'activity' json.. - minus 'formsJson', 'processing'
@@ -868,29 +868,26 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 					});					
 				}
 				// Normal Sync Operation
-				else if( actProc.url != undefined )
+				else if( actProc.url )
 				{
-					var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit(activityJson_Orig);
-
-					// NOTE: We need to add app timeout, from 'request'... and throw error...
-					WsCallManager.wsActionCall(actProc.url, payloadJson, undefined, function (success, responseJson) {
-						SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
-					});
-				}
- 				// NEW - Bahmni Sync		
-				else if( actProc.eval != undefined )	// Should be 'bahmniSyncEval'?
-				{
-					try { 
-						INFO.activity = activityJson_Orig;
-						var result = eval( Util.getEvalStr( actProc.eval ) ); 
-						BahmniService.syncUp( result, function( success, responseJson ) {
+	 				// NEW - Bahmni Sync
+					if( BahmniService.checkBahmniUrl( actProc.url ) )
+					{
+						BahmniService.syncUp( activityJson_Orig, function( success, responseJson ) {
 							SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
-						})
-						
-					}
-					catch( errMsg ) { console.log( 'Action.actionCondition ERROR, ' + errMsg ); }
-				}
-				
+						});
+					} 
+					// Mongo & Dhis2
+					else
+					{
+						var payloadJson = ActivityDataManager.activityPayload_ConvertForWsSubmit(activityJson_Orig);
+
+						// NOTE: We need to add app timeout, from 'request'... and throw error...
+						WsCallManager.wsActionCall(actProc.url, payloadJson, undefined, function (success, responseJson) {
+							SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
+						});	
+					} 
+				}				
 			}
 		}
 		catch (errMsg) {

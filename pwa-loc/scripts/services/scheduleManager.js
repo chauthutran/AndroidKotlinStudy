@@ -90,7 +90,7 @@ ScheduleManager.runSchedules_AfterLogin = function( cwsRenderObj, callBack )
 		if ( itemName === "SCH_SyncDown_RunOnce" ) ScheduleManager.schedule_syncDownRunOnce();
 		else if ( itemName === "SCH_FixOper_RunOnce" ) ScheduleManager.schedule_fixOperationRunOnce();
 		else if ( itemName === "SCH_SyncAll_Background" ) ScheduleManager.schedule_syncAll_Background( cwsRenderObj );
-		else if ( itemName === "BahmniPingService_Start" && ConfigManager.isBahmniSubSourceType() ) BahmniService.setAppTopSyncAllBtnClick();
+		//else if ( itemName === "BahmniPingService_Start" && ConfigManager.isBahmniSubSourceType() ) BahmniService.setAppTopSyncAllBtnClick();
 	});
 
 	if ( callBack ) callBack();

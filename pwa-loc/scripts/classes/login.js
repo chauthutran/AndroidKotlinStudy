@@ -169,13 +169,6 @@ function Login() {
 			me.current_userName = me.loginUserNameTag.val();
 		});
 
-
-		// Disable this...
-		//me.loginBtnTag.focus(function () {
-		//	me.passRealTag.hide();
-		//});
-
-
 		me.splitPasswordTag.find('.pin1').focus(function () {
 			SwManager.checkAppUpdate('[AppUpdateCheck] - PassCode Pin 1');
 		});
@@ -654,13 +647,15 @@ function Login() {
 		AppInfoLSManager.setUserName(userName);
 		SessionManager.setLoginStatus(true);
 
+		// NEW - SetUp + StartUp Bahmni Related Service - with Config settings.
+		if ( ConfigManager.isBahmniSubSourceType() ) BahmniService.serviceStartUp();
+
+
 		// gAnalytics Event
 		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
-		//GAnalytics.setEvent = function(category, action, label, value = null) 
 
 		// Matomo Submit - Check current network status rather than stable one - ConnManagerNew.isAppMode_Online
 		if ( navigator.onLine ) MatomoHelper.processQueueList( 'From Login.loginSuccessProcess' );
-
 
 		// Load config and continue the CWS App process
 		if (!loginData.dcdConfig || loginData.dcdConfig.ERROR) MsgManager.msgAreaShow('<span term="msgNotif_loginSuccess_noConfig">Login Success, but country config not available.</span> <span>Msg: ' + loginData.dcdConfig.ERROR + '</span>', 'ERROR');
@@ -687,9 +682,6 @@ function Login() {
 
 				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.  For availableType 'v2' only.
 				ConnManagerNew.checkNSet_ServerAvailable();
-
-				// MsgFormManager.showFormMsg( 'testTemp', $( '<span term="">TEST ERROR FORM MSG HERE!!</span>' ) );  // A link to try again?
-
 			});
 		}
 	};
@@ -752,25 +744,13 @@ function Login() {
 		
 							// Set values to 'AppInfoLSManager' - after online login success
 							AppInfoLSManager.setLastOnlineLoginDt((new Date()).toISOString());
-							if ( loginData.fhirPractitioner ) AppInfoLSManager.setFhirPractitionerId( loginData.fhirPractitioner.id );
-		
+							if ( loginData.fhirPractitioner ) AppInfoLSManager.setFhirPractitionerId( loginData.fhirPractitioner.id );		
 		
 							// Save 'loginData' in indexedDB for offline usage and load to session.
 							me.setModifiedOUAttrList(loginData); // 'ouAttrVals' set by this method is used by country config evaluation
 							SessionManager.setLoginRespData_IDB(userName, password, loginData);
 							// IMPORTANT PART - Load loginData in session, use 'dcdConfig' to load ConfigManager data.
 							var configJson = SessionManager.loadSessionData_nConfigJson(userName, password, loginData); // InfoDataManager.sessionDataLoad is also called here.
-							// Bahmni Related
-							// if( ConfigManager.isBahmniSubSourceType() )
-							// {
-							// 	BahmniService.loadInitData(function(){
-							// 		me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
-							// 	});
-							// }
-							// else
-							// {
-							// 	me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
-							// }
 		
 							me.setConfigAfterLogin(configJson, resultSuccess, loginData, returnFunc);
 						}

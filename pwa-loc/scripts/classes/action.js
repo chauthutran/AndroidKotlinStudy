@@ -475,8 +475,10 @@ function Action( cwsRenderObj, blockObj )
 						dataPass.prevWsReplyData = undefined;  // CLEAR RELATED DATA
 						dataPass.activityJson = undefined;
 
-						var actionUrl = me.getActionUrl_Adjusted( clickActionJson );					
-						//FormUtil.trackPayload( 'sent', inputsJson, 'received', actionDef );	
+						var actionUrl = me.getActionUrl_Adjusted( clickActionJson );				
+
+						if ( me.bahmniCase_agentNotValid( actionUrl, INFO.client ) ) afterActionFunc( false, { errMsg: 'ERROR: Not the agent of this client/patient!' } );
+
 
 						ActivityUtil.handlePayloadPreview( clickActionJson.previewPrompt, formDivSecTag, btnTag, function( passed ) 
 						{ 
@@ -615,6 +617,27 @@ function Action( cwsRenderObj, blockObj )
 	};
 
 	// ----------------------------------------------
+
+
+	me.bahmniCase_agentNotValid = function( actionUrl, clientJson )
+	{
+		var notValid = false;
+
+		try
+		{
+			if ( BahmniService.checkBahmniUrl( actionUrl ) && clientJson )
+			{
+				if ( clientJson.clientDetails && clientJson.clientDetails.agentId && INFO.bahmniAgentUUID )
+				{
+					if ( INFO.bahmniAgentUUID !== clientJson.clientDetails.agentId ) notValid = true;
+				}
+			}	
+		} catch ( errMsg ) {  console.log( 'ERROR in Action.bahmniCase_agentNotValid, ' + errMsg );  }
+
+		return notValid;
+	};
+
+	// ----------------------------------------------
 	// ---- Make Activities as Edit Mode -----
 
 	me.makeEditMode_Activity = function( activity, formsJsonActivityPayload, actionUrl, clickActionJson )
@@ -718,10 +741,15 @@ function Action( cwsRenderObj, blockObj )
 	me.getActionUrl_Adjusted = function( actionDefJson )
 	{
 		if ( actionDefJson.dws && actionDefJson.dws.url ) return actionDefJson.dws.url;
-		if( actionDefJson.url ) return actionDefJson.url;
-		if ( actionDefJson.dws.type ) return actionDefJson.dws.type;
+		else if ( actionDefJson.dws && actionDefJson.dws.type ) return actionDefJson.dws.type;
+		else if ( actionDefJson.url ) return actionDefJson.url;
+		else if ( actionDefJson.urlEval ) {
+			var evalOutput;
+			try { evalOutput = eval( Util.getEvalStr( actionDefJson.urlEval ) ); }
+			catch( errMsg ) { console.log( 'ERROR in Action.getActionUrl_Adjusted, ' + errMsg ); }					
 
-		return;
+			return evalOutput;
+		} 
 	};
 
 

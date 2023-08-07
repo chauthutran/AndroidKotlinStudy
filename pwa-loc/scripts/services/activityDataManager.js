@@ -563,15 +563,17 @@ ActivityDataManager.generateActivityPayloadJson = function (actionUrl, blockId, 
 			, 'searchValues': searchValues  // if exiting activity case, we should force it to be clientId & activityId..
 		};
 
-		if( actionUrl == BahmniService.BAHMNI_KEYWORD )
+		/*
+		if( actionUrl == BahmniService.BAHMNI_KEYWORD ) 	// dws: { 'type': 'bahmni' } result in this?
 		{
-			INFO.activity = activityJson;
-			activityJson.processing.eval = ["INFO.activity"];
+			INFO.activity = activityJson;	// NOTE: No need
+			activityJson.processing.eval = ["INFO.activity"];	// This does not really do anything...
 		}
 		else
-		{
-			activityJson.processing.url = actionUrl;
-		}
+		{*/
+		
+		activityJson.processing.url = actionUrl;
+	
 
 		if (actionDefJson && actionDefJson.useMockResponse) activityJson.processing.useMockResponse = actionDefJson.useMockResponse;
 		if (existingClientId) activityJson.processing.existingClientId = existingClientId;
@@ -811,21 +813,24 @@ ActivityDataManager.getHistoryData = function (history) {
 ActivityDataManager.getActivityForm = function (activityJson) {
 	var formData;
 
-	if (activityJson.processing && activityJson.processing.form) formData = activityJson.processing.form
+	var procJson = ActivityDataManager.getProcessingJson( activityJson );
+	if ( procJson.form ) formData = procJson.form
 	else if (activityJson.formData) formData = activityJson.formData;
 
 	return formData;
 };
 
 
-ActivityDataManager.getProcessingHistory = function (activity) {
-	var history = [];
+ActivityDataManager.getProcessingHistory = function (activity) 
+{
+	var procJson = ActivityDataManager.getProcessingJson( activity );
+	return ( procJson.history ) ? procJson.history: [];
+};
 
-	if (activity && activity.processing && activity.processing.history) {
-		history = activity.processing.history;
-	}
 
-	return history;
+ActivityDataManager.getProcessingJson = function (activity) 
+{
+	return ( activity && activity.processing ) ? activity.processing: {};
 };
 
 // ----------------------------------------------

@@ -18,9 +18,9 @@
 
   <script>
     //var _manifestData = $.parseJSON( ManifestData.get( 'manifest.json' ) );
-    var _verDate = '2023-07-31';
-    var _ver = '1.3.63';
-    var _versionNote = '- Detail: Bahmni Sync Update.';
+    var _verDate = '2023-08-04';
+    var _ver = '1.3.64';
+    var _versionNote = '- Detail: Bahmni Sync change.';
   </script>
 
 
@@ -112,8 +112,11 @@
             <div id="divOptionalNav" class="icons-status" style="display:none;"></div>
           </td>
           <td>
-            <div id="divAppDataSubResourceSyncStatus" class="icons-status mouseDown" title="Bahmni SyncAll" style="width:34px;padding: 6px 2px 3px 3px;display:none;">
-              <img id="imgAppDataSubResourceSyncStatus" src="images/bahmni_connection_gray1.svg" alt="sync banner" style="cursor:pointer;">
+            <div id="divAppDataSyncStatus2" class="icons-status mouseDown" title="Bahmni SyncAll" style="display:none; cursor:pointer; margin-right: 2px; padding: 6px 4px 3px 4px;">
+              <svg class="syncBtn2_svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path class="Nav__sync-d" fill="gray" d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z"></path>
+                <path class="Nav__sync-s" fill="white" d="M12 4V1L8 5L12 9V6C15.31 6 18 8.69 18 12C18 13.01 17.75 13.97 17.3 14.8L18.76 16.26C19.54 15.03 20 13.57 20 12C20 7.58 16.42 4 12 4ZM12 18C8.69 18 6 15.31 6 12C6 10.99 6.25 10.03 6.7 9.2L5.24 7.74C4.46 8.97 4 10.43 4 12C4 16.42 7.58 20 12 20V23L16 19L12 15V18Z"></path>
+              </svg>
             </div>
           </td>
           <td>

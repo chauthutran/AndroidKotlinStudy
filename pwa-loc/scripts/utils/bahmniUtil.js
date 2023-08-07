@@ -151,7 +151,7 @@ BahmniUtil.getFormMetadata = function(formName, formVersion, keyword, propertyNa
 
 BahmniUtil.getActivityInfo = function( activity )
 {
-    let activityType = INFO.activity.type; 
+    let activityType = activity.type;  // INFO.activity.type; 
     let activityFormVersion = ActivityDataManager.getTransDataValue( activity.transactions, 'formVersion' );
     if( activityFormVersion )
     {
