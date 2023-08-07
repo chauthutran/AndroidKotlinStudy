@@ -106,6 +106,9 @@ BahmniService.swichStableConn = function( success )
 	BahmniService.connStatusData.pingFor = ( success ) ? BahmniService.VAL_DISCONNECT : BahmniService.VAL_CONNECT;
 	BahmniService.connStatusData.activeConnCount = 0;
 	BahmniService.connStatusData.activeCount = 0;
+
+	// If switched to stable connected, run syncDataRun
+	if ( success ) BahmniService.syncDataRun();		
 };
 
 
@@ -177,10 +180,8 @@ BahmniService.pingActively = function()
 		// Try ping actively for online/offline
 		BahmniService.pingRequest( function( success )
 		{
-			//BahmniService.connStatusData.activeCount++;
 			if ( BahmniService.check_Mark_PingForMatch( success ) )
 			{
-				//BahmniService.markPingResult( success );
 				if ( BahmniService.connStatusData.activeConnCount >= INFO.bahmni_ping_active_stableNum )
 				{
 					// Switch the 'stableConn' + pingFor, and change to pingSlowly..
@@ -192,7 +193,7 @@ BahmniService.pingActively = function()
 			}
 			else
 			{
-				//BahmniService.connStatusData.activeConnCount = 0;
+				// If Active Ping Try reaches limit (too many), switch back to slow ping..
 				if ( BahmniService.connStatusData.activeCount >= INFO.bahmni_ping_active_stop )
 				{
 					BahmniService.connStatusData.activeConnCount = 0;
