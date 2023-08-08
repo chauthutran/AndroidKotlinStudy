@@ -66,10 +66,13 @@ BahmniService.setIconUI_byStatus = function()
 	if ( BahmniService.connStatusData.stableConn === BahmniService.VAL_DISCONNECTED ) {
 		$( '#divAppDataSyncStatus2' ).css( 'opacity', '0.6' );
 		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_DISCONNECT_COLOR );
+
+		BahmniService.syncIconTitleUpdate( 'Bahmni DISCONNECTED - Click to trigger Connect' );
 	}
 	else {
 		$( '#divAppDataSyncStatus2' ).css( 'opacity', '1.0' );
 		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_CONNECT_COLOR );
+		BahmniService.syncIconTitleUpdate( 'Bahmni CONNECTED - Click to Sync' );
 	}
 };
 
@@ -217,6 +220,11 @@ BahmniService.checkBahmniUrl = function( url )
 	return ( url === BahmniService.BAHMNI_KEYWORD || url.indexOf( BahmniService.OPENMRS_URL ) >= 0 );
 };
 
+BahmniService.syncIconTitleUpdate = function( titleStr )
+{
+	if ( !titleStr ) titleStr = 'Bahmni SyncAll';
+	$( '#divAppDataSyncStatus2' ).attr( 'title', titleStr );
+};
 
 // ==============================================================================
 // Ping Bahmni service
