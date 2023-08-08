@@ -107,6 +107,9 @@ BahmniService.swichStableConn = function( success )
 	BahmniService.connStatusData.activeConnCount = 0;
 	BahmniService.connStatusData.activeCount = 0;
 
+	if ( success ) MsgManager.msgAreaShowOpt( 'Bahmni CONNECTED', { hideTimeMs: 1000, styles: 'background-color: orange;' } );
+	else MsgManager.msgAreaShowOpt( 'Bahmni DISCONNECTED', { hideTimeMs: 1000, styles: 'background-color: silver;' } );
+
 	// If switched to stable connected, run syncDataRun
 	if ( success ) BahmniService.syncDataRun();		
 };
