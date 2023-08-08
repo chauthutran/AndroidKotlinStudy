@@ -85,13 +85,13 @@ SessionManager.setBahmniAgent_domainINFO = function( orgUnitData )
 		{
 			bahmniAgentUUID = altCodeArr[1];
 			if ( altCodeArr.length >= 3 ) facilityId = altCodeArr[2];
-			if ( !facilityId || facilityId === 'STG' ) facilityId = 'STAGE'; // FacilityId is only prod..?  staging one is default, but should use diff ..
+			if ( !facilityId || facilityId === 'STG' || facilityId === 'stg' ) facilityId = 'stage'; // FacilityId is only prod..?  staging one is default, but should use diff ..
 		}
 
 		InfoDataManager.setINFOdata( 'bahmniAgentUUID', bahmniAgentUUID );
 
 
-		if ( facilityId === 'STAGE' ) connectDomain = INFO.bahmni_domain_stage;
+		if ( facilityId === 'stage' ) connectDomain = INFO.bahmni_domain_stage;
 		else {
 			connectDomain = INFO.bahmni_domain_prod;
 			connectDomain = connectDomain.replace( '[NNN]', facilityId.toLowerCase() );
