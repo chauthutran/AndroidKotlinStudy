@@ -32,8 +32,11 @@ BahmniService.VAL_DISCONNECT = 'disconnect';
 
 BahmniService.VAL_CONNECT_COLOR = 'green';
 BahmniService.VAL_DISCONNECT_COLOR = 'gray';
+BahmniService.VAL_FAILED_COLOR = 'red';
 
-// NEW
+// 'stableConn' - If consequetive 'connected/disconnected' ping results (in activePing result), we like to set the mode as 'stable' connected/disconnected.
+// 'activeConnCount' - During 'activePing' mode, if the connection matched the goal active Ping - If # of consequtive match found, we like to set 'stable'
+// 'activeCount' - How many loop/pings it stayed in the 'active'. - if too many times, we like to get out of active, and move to slow ping mode.
 BahmniService.connStatusData = { stableConn: BahmniService.VAL_DISCONNECTED, activeConnCount: 0, pingFor: BahmniService.VAL_CONNECT, activeCount: 0 };
 
 // ==============================================================================
@@ -43,14 +46,18 @@ BahmniService.serviceStartUp = function()
 {
 	BahmniRequestService.resetResponseData();
 
-	BahmniService.VAL_CONNECT_COLOR = INFO.bahmni_iconColor;
+	// Color override from config setting
+	if ( INFO.bahmni_iconColor ) BahmniService.VAL_CONNECT_COLOR = INFO.bahmni_iconColor;
+	if ( INFO.bahmni_iconColor_disconnect ) BahmniService.VAL_DISCONNECT_COLOR = INFO.bahmni_iconColor_disconnect;
+	if ( INFO.bahmni_iconColor_blink_fail ) BahmniService.VAL_FAILED_COLOR = INFO.bahmni_iconColor_blink_fail;
+
 
 	BahmniService.resetConnStatus(); // Get from InfoVal
 	BahmniService.setIconUI_byStatus();
 	BahmniConnManager.syncDataIconTag.show();
 
 	// Setup Click Event - Offline Ping Start & Sync Operation..
-	if ( INFO.bahmni_ping_autoRun ) BahmniService.pingSlowly();
+	if ( INFO.bahmni_ping_autoRun ) BahmniService.pingSlowly( { firstPingNow: true } );
 
 	BahmniService.syncBtnClickSetup();
 };
@@ -80,13 +87,13 @@ BahmniService.setIconUI_byStatus = function()
 BahmniService.syncBtnClickSetup = function()
 {
 	BahmniConnManager.syncDataIconTag.off('click').click(() => {
-		if ( BahmniService.connStatusData.stableConn === BahmniService.VAL_DISCONNECTED ) BahmniService.pingActively();
+		if ( BahmniService.connStatusData.stableConn === BahmniService.VAL_DISCONNECTED ) BahmniService.pingActively( { firstPingNow: true } );
 		else BahmniService.syncDataRun();  //BahmniService.startSyncAll();  // 'STATUS CONNECTED
 	});
 };
 
 
-BahmniService.check_Mark_PingForMatch = function( success )
+BahmniService.check_Mark_PingForMatch = function( success, option )
 {
 	var match = false;
 	var pingFor = BahmniService.connStatusData.pingFor;
@@ -97,7 +104,7 @@ BahmniService.check_Mark_PingForMatch = function( success )
 	if ( match ) BahmniService.connStatusData.activeConnCount++;
 	else BahmniService.connStatusData.activeConnCount = 0;
 
-	BahmniService.pingBlinkUI( success );
+	BahmniService.pingBlinkUI( success, option );
 
 	return match;
 };
@@ -127,9 +134,9 @@ BahmniService.pingRequest = function( callBack )
 	});
 };
 
-BahmniService.pingBlinkUI = function( success )
+BahmniService.pingBlinkUI = function( success, option )
 {
-	//BahmniService.connStatusData.activeConnCount++;
+	if ( !option ) option = {};
 
 	// UI Ping Mark
 	// Mark according to 'success' and return back to stable color..	
@@ -142,7 +149,9 @@ BahmniService.pingBlinkUI = function( success )
 	}
 	else 
 	{
-		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_DISCONNECT_COLOR );
+		var failPingColor = ( option.activePing ) ? BahmniService.VAL_FAILED_COLOR: BahmniService.VAL_DISCONNECT_COLOR;
+		
+		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', failPingColor );
 		$( '#divAppDataSyncStatus2' ).css( 'opacity', '0.6' );
 		
 		setTimeout( BahmniService.setIconUI_byStatus, INFO.bahmni_ping_blinkMS );	
@@ -150,17 +159,23 @@ BahmniService.pingBlinkUI = function( success )
 };
 
 
-BahmniService.pingSlowly = function()
+BahmniService.pingSlowly = function( option )
 {
+	if ( !option ) option = {};
+
 	// Current Ping interval remove
 	if ( BahmniService.ping_intervalId ) clearInterval( BahmniService.ping_intervalId );
+	BahmniService.connStatusData.activeConnCount = 0;
+	BahmniService.connStatusData.activeCount = 0;	
 
-
-	// RUN Once Before Interval:
-	BahmniService.pingRequest( function( success )
+	if ( option.firstPingNow )
 	{
-		if ( BahmniService.check_Mark_PingForMatch( success ) ) BahmniService.pingActively();
-	});
+		// RUN Once Before Interval:
+		BahmniService.pingRequest( function( success )
+		{
+			if ( BahmniService.check_Mark_PingForMatch( success ) ) BahmniService.pingActively();
+		});
+	}
 
 
 	// Setup Slow Mode Ping -->
@@ -175,41 +190,60 @@ BahmniService.pingSlowly = function()
 };
 
 
-BahmniService.pingActively = function() 
-{  
+BahmniService.pingActively = function( option ) 
+{
+	if ( !option ) option = {};
+	option.activePing = true;
+
 	if ( BahmniService.ping_intervalId ) clearInterval( BahmniService.ping_intervalId );
-	BahmniService.connStatusData.activeCount = 1;
+
+	if ( option.firstPingNow )
+	{
+		BahmniService.connStatusData.activeCount = 0;
+		BahmniService.activePingHandle( option );
+	}
+	else 
+	{
+		BahmniService.connStatusData.activeCount = 1;
+	}
 
 	// After number of tries, it turns back to slow mode..
 	BahmniService.ping_intervalId = setInterval( () => 
 	{
-		// Try ping actively for online/offline
-		BahmniService.pingRequest( function( success )
-		{
-			if ( BahmniService.check_Mark_PingForMatch( success ) )
-			{
-				if ( BahmniService.connStatusData.activeConnCount >= INFO.bahmni_ping_active_stableNum )
-				{
-					// Switch the 'stableConn' + pingFor, and change to pingSlowly..
-					BahmniService.swichStableConn( success );
-					BahmniService.setIconUI_byStatus();
-	
-					BahmniService.pingSlowly();
-				}
-			}
-			else
-			{
-				// If Active Ping Try reaches limit (too many), switch back to slow ping..
-				if ( BahmniService.connStatusData.activeCount >= INFO.bahmni_ping_active_stop )
-				{
-					BahmniService.connStatusData.activeConnCount = 0;
-					BahmniService.connStatusData.activeCount = 0;					
-					BahmniService.pingSlowly();
-				}
-			}
-		});
+		BahmniService.connStatusData.activeCount++;
+
+		BahmniService.activePingHandle( option );
 
 	}, INFO.bahmni_ping_active_intervalSec * 1000 );
+};
+
+BahmniService.activePingHandle = function( option )
+{
+	// Try ping actively for online/offline
+	BahmniService.pingRequest( function( success )
+	{
+		if ( BahmniService.check_Mark_PingForMatch( success, option ) )
+		{
+			if ( BahmniService.connStatusData.activeConnCount >= INFO.bahmni_ping_active_stableNum )
+			{
+				// Switch the 'stableConn' + pingFor, and change to pingSlowly..
+				BahmniService.swichStableConn( success );
+				BahmniService.setIconUI_byStatus();
+
+				BahmniService.pingSlowly();
+			}
+		}
+		else
+		{
+			// If Active Ping Try reaches limit (too many), switch back to slow ping..
+			if ( BahmniService.connStatusData.activeCount >= INFO.bahmni_ping_active_stop )
+			{
+				BahmniService.connStatusData.activeConnCount = 0;
+				BahmniService.connStatusData.activeCount = 0;					
+				BahmniService.pingSlowly();
+			}
+		}
+	});
 };
 
 
