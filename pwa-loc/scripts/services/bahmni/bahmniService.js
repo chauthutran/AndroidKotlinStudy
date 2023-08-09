@@ -39,6 +39,7 @@ BahmniService.VAL_FAILED_COLOR = 'red';
 // 'activeCount' - How many loop/pings it stayed in the 'active'. - if too many times, we like to get out of active, and move to slow ping mode.
 BahmniService.connStatusData = { stableConn: BahmniService.VAL_DISCONNECTED, activeConnCount: 0, pingFor: BahmniService.VAL_CONNECT, activeCount: 0 };
 
+BahmniService.debug_forceDisconnect = false;
 // ==============================================================================
 
 
@@ -129,7 +130,8 @@ BahmniService.pingRequest = function( callBack )
 {
 	BahmniRequestService.ping( BahmniConnManager.getPingUrl( INFO.bahmni_domain ), function (response) 
 	{
-		if ( response.status === "success" ) callBack( true ); // connected
+		if ( BahmniService.debug_forceDisconnect ) callBack( false ); // NEW - debug/testing val
+		else if ( response.status === "success" ) callBack( true ); // connected
 		else callBack( false );
 	});
 };
