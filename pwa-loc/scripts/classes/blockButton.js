@@ -23,7 +23,7 @@ function BlockButton( cwsRenderObj, blockObj )
 	// === TEMPLATE METHODS ========================
 
 	me.initialize = function() {
-		me.actionObj = new Action( me.cwsRenderObj, me.blockObj );
+		me.actionObj = SessionManager.cwsRenderObj.getActionObj( me.blockObj );
 	};
 
 	me.render = function( buttonsId, blockTag, passedData )

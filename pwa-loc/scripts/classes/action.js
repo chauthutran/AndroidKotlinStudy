@@ -14,7 +14,13 @@ function Action( cwsRenderObj, blockObj )
 	// -----------------------------
 	// ---- Methods ----------------
 	
-	me.initialize = function() { }
+	me.initialize = function() { };
+
+	me.setBlock = function( blockObj ) 
+	{ 
+		me.blockObj = blockObj; 
+		return me;
+	};
 
 	// ------------------------------------
 	// NOTE: Passed Param Info:
@@ -269,15 +275,6 @@ function Action( cwsRenderObj, blockObj )
 
 						if ( blockJson )
 						{
-							// 'blockPassingData' exists is called from 'processWSResult' actions
-
-							// NEW: INFO.blockPassingData - new way to pass data set from config..
-
-							//if( INFO.blockPassingData != undefined ) {
-							//	blockPassingData = Util.cloneJson( INFO.blockPassingData ); 
-							//	INFO.blockPassingData = undefined;  // delete INFO.blockPassingData?
-							//}
-							//else 
 							if ( dataPass.formsJson ) blockPassingData = { formsJson: dataPass.formsJson };
 							else if ( dataPass.blockPassingData ) blockPassingData = dataPass.blockPassingData;
 							else if ( blockPassingData === undefined ) blockPassingData = {}; 
@@ -404,17 +401,12 @@ function Action( cwsRenderObj, blockObj )
 								statusActionsCalled = true;
 								var dataPass_Status = {};
 								
-								// NEW: 
-								//INFO.blockPassingData = wsReplyData;
-
+								// NEW: //INFO.blockPassingData = wsReplyData;
 								// NOTE: Calling 'statusActions' sub action list.  After completing this list, continue with main action list.
 								me.handleActionsInSync( blockDivTag, blockParentAreaTag, formDivSecTag, btnTag, statusActions, 0, dataPass_Status, wsReplyData, function( finalPassData ) {
 									afterActionFunc( true );
-
-									// NEW: Clear this after the usage?
-									//INFO.blockPassingData = undefined;
+									// NEW: Clear this after the usage? //INFO.blockPassingData = undefined;
 								});
-
 							}
 						}
 
@@ -779,6 +771,7 @@ function Action( cwsRenderObj, blockObj )
 					if ( actionDefJson.searchType === 'voucherSearch' ) me.handleMultipleVouchersSplit(redeemReturnJson, payloadJson );
 					
 					dataPass.prevWsReplyData = redeemReturnJson;
+					moreInfoJson = redeemReturnJson;
 				}
 				else
 				{

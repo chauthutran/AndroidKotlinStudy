@@ -22,7 +22,7 @@ function cwsRender()
 	me.chatAppObj;
 	me.banmiPage;
 	//me.sessionObj; // NEW PROPOSAL
-
+	me.actionObj;
 
 	// Settings var
 	me.storage_offline_ItemNetworkAttemptLimit = Constants.storage_offline_ItemNetworkAttemptLimit; //number of times sync-attempt allowed per redeemItem (with failure/error) before blocking new 'sync' attempts
@@ -54,7 +54,7 @@ function cwsRender()
 		Menu.setUpMenu();
 
 		me.createSubClasses();
-	}
+	};
 
 	me.render = function()
 	{
@@ -66,21 +66,16 @@ function cwsRender()
 		if ( me._translateEnable ) TranslationManager.loadLangTerms_NSetUpData( false );
 		
 		//me.afterRender();
-	}
+	};
 
 	// ------------------
 
-	me.setInitialData = function()
-	{
-		//me.manifest = FormUtil.getManifest();
-
-		//me.updateFromSession();
-	}
+	me.setInitialData = function() { };
 
 	me.setEvents_OnInit = function()
 	{		
 		me.setOtherEvents();
-	}
+	};
 
 	me.createSubClasses = function()
 	{
@@ -89,7 +84,8 @@ function cwsRender()
 		me.settingsApp = new settingsApp( me );
 		me.statisticsObj = new Statistics( me );
 		me.banmiPage = new BanmiPage( me );
-		
+		me.actionObj = new Action( me, {} );
+
 		// This probably gets used for menu swipe?
 		me._manageInputSwipe = new inputMonitor( me );
 	};
@@ -125,6 +121,11 @@ function cwsRender()
 
 	// =============================================
 	// === OTHER INTERNAL/EXTERNAL METHODS =========
+
+	me.getActionObj = function( blockObj )
+	{
+		return me.actionObj.setBlock( blockObj );
+	};
 
 
 	// NOTE: 'redeemList' data load after login <-- Called by login class - After Login
@@ -277,7 +278,45 @@ function cwsRender()
 
 		// If 'client' exists with 'action' 'clientDirect', try to load the client 
 		var clientDirectId = App.getClientDirectId( 'action', 'client' );
-		if ( clientDirectId ) me.openClientCardById( clientDirectId );  // Set Timeout for this?
+		if ( clientDirectId ) 
+		{
+			if ( ConnManagerNew.isAppMode_Offline() ) MsgManager.msgAreaShowErrOpt( 'clientDirect is not available in OFFLINE.', { hideTimeMs: 5000 } );
+			else
+			{
+				// Create one 'action' in config?
+				var actionObj = SessionManager.cwsRenderObj.getActionObj( {} );
+				var actionJson = {
+					actionType: "sendToWS",
+					url: "/PWA.mongo_search?type=clientSearch",
+					payloadJson: { clientId: clientDirectId }	
+				};
+
+
+				// TODO: Loading Msg Open...
+
+				actionObj.actionPerform( actionJson, undefined, undefined, undefined, undefined, {}, {}, function( bResult, resultJson )
+				{			
+					if ( bResult )
+					{
+						if ( !resultJson || !resultJson.searchResult2 || resultJson.searchResult2.length <= 0 ) MsgManager.msgAreaShowErrOpt( 'clientDirect not found.', { hideTimeMs: 5000 } );
+						else 
+						{
+							var itemJson = resultJson.searchResult2.find( item => item._id === clientDirectId );
+							if ( !itemJson ) MsgManager.msgAreaShowErrOpt( 'clientDirect not found.', { hideTimeMs: 5000 } );
+							else
+							{
+								var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and stored by clientDirect.' );
+			
+								ClientDataManager.mergeDownloadedClients( { 'clients': [ itemJson ] }, processingInfo, function() 
+								{		
+									me.openClientCardById( clientDirectId );
+								});
+							}
+						}
+					}
+				});
+			}
+		}
 	};
 
 	me.startBlockExecute = function( runAfterFunc ) //initializationInstructions )
@@ -328,8 +367,6 @@ function cwsRender()
 	{
 		try
 		{
-			// TODO: If not exists, we need to download it... ?
-			//		- Or get latest info?
 			var clientJson = ClientDataManager.getClientById( clientDirectId );
 
 			if ( clientJson )
@@ -337,35 +374,9 @@ function cwsRender()
 				var clientCardDetail = new ClientCardDetail(clientDirectId);
 				clientCardDetail.render();
 		
-				MsgManager.msgAreaShow( 'Client, ' + clientDirectId + ', opening by client direct url.' );
+				MsgManager.msgAreaShowOpt( 'Client opened by ClientDirect.',{ hideTimeMs: 4000, styles: 'background-color: green;' } );
 			}
-			else
-			{
-				MsgManager.msgAreaShowErrOpt( 'Client, ' + clientDirectId + ', not available - waiting for syncDown to finish...' );
-
-				// TODO: Register to run after online syncDown is successful..
-				ScheduleManager.afterActions_Push( 'SCH_SyncDown_RunOnce', function() 
-				{
-					//console.log( 'check1 - after SCH_SyncDown_RunOnce' );
-
-					var clientJson = ClientDataManager.getClientById( clientDirectId );
-
-					if ( clientJson )
-					{
-						//console.log( 'check2 - after SCH_SyncDown_RunOnce, clientJson exists' );
-
-						var clientCardDetail = new ClientCardDetail(clientDirectId);
-						clientCardDetail.render();
-				
-						MsgManager.msgAreaShow( 'Client, ' + clientDirectId + ', opening by client direct url.' );
-					}
-					else
-					{
-						MsgManager.msgAreaShowErrOpt( 'Client, ' + clientDirectId + ', not available after syncDown - cancelled on the opening client.' );
-					}
-
-				});
-			}
+			else MsgManager.msgAreaShowErrOpt( 'Client, ' + clientDirectId + ', not available..' );
 		}
 		catch( errMsg )
 		{

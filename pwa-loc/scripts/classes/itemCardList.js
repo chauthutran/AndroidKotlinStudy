@@ -124,7 +124,7 @@ function ItemCardList( cwsRenderObj, blockObj, blockDefJson )
                     var formDivSecTag = undefined;
                     var passedData = {};
         
-                    var actionObj = new Action( me.cwsRenderObj, me.blockObj );
+                    var actionObj = SessionManager.cwsRenderObj.getActionObj( me.blockObj );
                     actionObj.handleClickActions( sheetBottomBtnTag, btnJson.onClick, me.blockObj.parentTag, blockTag, formDivSecTag, passedData );
                 });        
             }

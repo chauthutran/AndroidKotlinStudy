@@ -163,9 +163,11 @@ ActivityUtil.generateFormsJsonData_ByType = function (payloadDefJson, actionDefJ
 	var formsJson = {};
 	var formsJsonGroup = {};
 
-	if (payloadDefJson) {
+	if (payloadDefJson) 
+	{
+		if ( payloadDefJson.payloadJson ) formsJson = payloadDefJson.payloadJson;
 		// If payloadVersion is undefined or "1", it is version 1 (default one)
-		if (!payloadDefJson.payloadVersion || payloadDefJson.payloadVersion === "1") {
+		else if (!payloadDefJson.payloadVersion || payloadDefJson.payloadVersion === "1") {
 			formsJson = ActivityUtil.generateInputJson(formDivSecTag, actionDefJson.payloadBody, formsJsonGroup);
 		}
 		else if (payloadDefJson.payloadVersion === "2") {

@@ -517,7 +517,7 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
                             }
                         });
 
-                        var actionObj = new Action( SessionManager.cwsRenderObj, {} );
+                        var actionObj = SessionManager.cwsRenderObj.getActionObj( { } );
                         actionObj.handleClickActionsAlt( onClickActions ); //, targetBlockTag, targetBlockContainerTag );    
                     }
                 });

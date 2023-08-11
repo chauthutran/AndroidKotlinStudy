@@ -128,7 +128,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
                         formsJson.clientId = itemJson._id;
                         var blockPassingData = { formsJson: formsJson };
 
-                        var actionObj = new Action( SessionManager.cwsRenderObj, me.blockObj );
+                        var actionObj = SessionManager.cwsRenderObj.getActionObj( me.blockObj );
                         actionObj.handleClickActions( undefined, blockDefJson.selectActions, me.blockObj.parentTag, me.blockObj.blockTag, undefined, blockPassingData );
                     }
                 });
@@ -155,7 +155,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
                         //formsJson.clientId = itemJson._id;
                         //var blockPassingData = { formsJson: formsJson };
 
-                        var actionObj = new Action( SessionManager.cwsRenderObj, me.blockObj );
+                        var actionObj = SessionManager.cwsRenderObj.getActionObj( me.blockObj );
                         actionObj.handleClickActions( undefined, opDef.onClick, me.blockObj.parentTag, me.blockObj.blockTag );
                     }
                 });

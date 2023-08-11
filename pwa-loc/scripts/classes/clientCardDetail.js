@@ -17,7 +17,7 @@ function ClientCardDetail(clientId) {
 	// === Initialize Related ========================
 
 	me.initialize = function () {
-		me.actionObj = new Action(SessionManager.cwsRenderObj, {});
+		me.actionObj = SessionManager.cwsRenderObj.getActionObj( {} );
 		// var preCall = undefined;
 
 		if ( !me.clientId ) 

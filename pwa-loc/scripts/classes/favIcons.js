@@ -347,7 +347,7 @@ function FavIcons( favType, targetBlockTag, targetBlockContainerTag, options )
                 }
                 else if ( favItem.onClick )
                 {
-                    var actionObj = new Action( SessionManager.cwsRenderObj, {} );
+                    var actionObj = SessionManager.cwsRenderObj.getActionObj( {} );
                     actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag );
 
                     if ( me.mainFavClickPost ) me.mainFavClickPost( targetBlockTag, targetBlockContainerTag );
@@ -527,7 +527,7 @@ FavIcons.setFavItemClickEvent = function( favItemTag, favItem, targetBlockTag, t
             }
             else if ( favItem.onClick )
             {
-                var actionObj = new Action( SessionManager.cwsRenderObj, {} );
+                var actionObj = SessionManager.cwsRenderObj.getActionObj( {} );
                 actionObj.handleClickActionsAlt( favItem.onClick, targetBlockTag, targetBlockContainerTag, function( resultStr ) 
                 {
                     if ( resultStr === "Success" )                    
