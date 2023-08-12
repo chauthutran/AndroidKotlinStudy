@@ -21,13 +21,19 @@ function App() { };
 //App.username = "";
 App.appInstallBtnTag;
 App.ver14 = false;
+
+App.paramsJson = {}; // Load all params data in here and get them from here.
 // -------------------------------
 
 App.run = function () 
 {
 	App.appInstallBtnTag = $('.appInstall');
 
-	if ( Util.getParameterByName("ver") === "1.4" ) App.ver14 = true;
+	// NEW
+	App.paramsJson = App.paramsHandler_ReloadApp( window.location.href );
+
+
+	if ( App.getParamVal_ByName("ver") === "1.4" ) App.ver14 = true;
 	
 	// --------------------------
 	// Default Behavior Modify
@@ -54,13 +60,13 @@ App.run = function ()
 	// By param 'debug' with pwd - uses AppInfoLSManager
 	DevHelper.checkNStartDebugConsole();
 
-	var paramMsg = Util.getParameterByName("msg");
+	var paramMsg = App.getParamVal_ByName("msg");
 	if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );
 
 
 	// KeyCloak Start Object + Param case removal
 	KeycloakManager.startUp();
-	if ( Util.getParameterByName("keyCloakRemove") ) { KeycloakManager.removeKeyCloakInUse(); KeycloakManager.localStorageRemove(); }
+	if ( App.getParamVal_ByName("keyCloakRemove") ) { KeycloakManager.removeKeyCloakInUse(); KeycloakManager.localStorageRemove(); }
 
 	// Service Worker Related Initial Setup
 	SwManager.initialSetup(function () {
@@ -116,9 +122,6 @@ App.startAppProcess = function ()
 
 		// KeyCloak Run..
 		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart()
-		// $( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
-		// NEW: KeyCloak calling
-		//if ( Util.getParameterByName("session_state") ) KeycloakManager.keycloakPart();	
 	}
 	catch (err) {
 		console.log('error starting App > startApp() error: ' + err);
@@ -316,15 +319,47 @@ App.getClientDirectId = function( actionParamName, clientParamName )
 {
 	var clientDirectId = '';
 
-   if ( Util.getParameterByName( actionParamName ) === 'clientDirect' )
+   if ( App.getParamVal_ByName( actionParamName ) === 'clientDirect' )
 	{
-		clientDirectId = Util.getParameterByName( clientParamName );
+		clientDirectId = App.getParamVal_ByName( clientParamName );
 	}
 
 	return clientDirectId;
 };
 
 //  App.getClientDirectId( 'action', 'client' );
+
+App.paramsHandler_ReloadApp = function( urlStr )
+{
+	var paramsLoadJson = {};
+
+	// If param exists, save it on oneTime storage and reload the app..
+	var paramObj = Util.getParamObj( urlStr );
+
+	// CASE 1. If Params exists in url, store in LS, and reload app.
+	if ( Object.keys( paramObj ).length > 0 )
+	{
+		LocalStgMng.saveJsonData( 'paramsLoad', paramObj );
+
+		AppUtil.appReloadWtMsg( 'Reloading For Params Handling..' );
+	}
+	else
+	{
+		// CASE 2. If LS has 'paramsLoad', save it on paramsObj
+		if ( LocalStgMng.getJsonData( 'paramsLoad' ) )
+		{
+			paramsLoadJson = LocalStgMng.getJsonData( 'paramsLoad' );
+			LocalStgMng.deleteData( 'paramsLoad' );			
+		}
+	}
+
+	return paramsLoadJson;
+};
+
+App.getParamVal_ByName = function( name )
+{
+	return ( App.paramsJson && App.paramsJson[ name ] ) ? App.paramsJson[ name ]: undefined;
+};
 
 
 // ===========================

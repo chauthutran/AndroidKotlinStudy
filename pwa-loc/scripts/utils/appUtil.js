@@ -20,7 +20,8 @@ AppUtil.appReloadWtMsg = function( optionalMsg )
 	MsgManager.msgAreaShowOpt( optionalMsg, { cssClasses: 'notifCBlue', closeOthers: true } );
 
 	AppUtil.appReloading = true;
-	window.location.reload();
+	//window.location.reload();
+	window.location = window.location.href.split("?")[0];	
 };
 
 

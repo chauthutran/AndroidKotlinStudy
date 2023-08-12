@@ -321,7 +321,7 @@ function Login() {
 
 	me.testVersion_LoginBtn_NotHide = function (paramName, paramVal) {
 		Util.tryCatchContinue(function () {
-			me.loginBtn_NotHideFlag = (Util.getParameterByName(paramName) === paramVal);
+			me.loginBtn_NotHideFlag = ( App.getParamVal_ByName(paramName) === paramVal );
 		}, 'Login.testVersion_LoginBtn_NotHide');
 	};
 

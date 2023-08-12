@@ -1430,6 +1430,40 @@ Util.getServerUrl = function () {
 };
 
 
+Util.getParamObj = function (urlStr ) 
+{
+	var obj = {};
+
+	try
+	{
+		if (!urlStr) urlStr = window.location.href;
+
+		var url = new URL(urlStr);
+		var params = new URLSearchParams(url.search);
+	
+		for (var [key, value] of params) 
+		{			  
+			 if (obj.hasOwnProperty(key)) {
+				  if (Array.isArray(obj[key])) {
+						obj[key].push(value);
+				  } else {
+						obj[key] = [obj[key], value];
+				  }
+			 } else {
+				  obj[key] = value;
+			 }
+		}
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in Util.getParameters, ' + errMsg );
+	}
+
+	return obj;
+};
+
+
+
 Util.getParameterByName = function (name, url) {
 	try
 	{

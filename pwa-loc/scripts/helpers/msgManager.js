@@ -153,6 +153,7 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 
 	// ----------------
 
+	if ( options.groupCloseOthers ) $( 'div.notifMsg.' + options.groupCloseOthers ).remove();
 	if ( closeOthers ) $( 'div.notifMsg' ).remove();
 	$( 'div.notifMsg.closeNextMarked' ).remove();
 
@@ -180,6 +181,7 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	var notifDiv = $('<div id="notif_' + unqID + '" class="notifMsg" style="' + optStyle + '">');
 	notifDiv.addClass(['notifBase', cssClasses, class_RoundType]);
 	if ( closeNextMarked ) notifDiv.addClass( 'closeNextMarked' );
+	if ( options.group ) notifDiv.addClass( options.group );
 
 	if ( Util.isTypeArray( styleArr ) )
 	{

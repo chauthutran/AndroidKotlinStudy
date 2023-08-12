@@ -276,47 +276,7 @@ function cwsRender()
 	{
 		me.startBlockExecute( runAfterFunc );
 
-		// If 'client' exists with 'action' 'clientDirect', try to load the client 
-		var clientDirectId = App.getClientDirectId( 'action', 'client' );
-		if ( clientDirectId ) 
-		{
-			if ( ConnManagerNew.isAppMode_Offline() ) MsgManager.msgAreaShowErrOpt( 'clientDirect is not available in OFFLINE.', { hideTimeMs: 5000 } );
-			else
-			{
-				// Create one 'action' in config?
-				var actionObj = SessionManager.cwsRenderObj.getActionObj( {} );
-				var actionJson = {
-					actionType: "sendToWS",
-					url: "/PWA.mongo_search?type=clientSearch",
-					payloadJson: { clientId: clientDirectId }	
-				};
-
-
-				// TODO: Loading Msg Open...
-
-				actionObj.actionPerform( actionJson, undefined, undefined, undefined, undefined, {}, {}, function( bResult, resultJson )
-				{			
-					if ( bResult )
-					{
-						if ( !resultJson || !resultJson.searchResult2 || resultJson.searchResult2.length <= 0 ) MsgManager.msgAreaShowErrOpt( 'clientDirect not found.', { hideTimeMs: 5000 } );
-						else 
-						{
-							var itemJson = resultJson.searchResult2.find( item => item._id === clientDirectId );
-							if ( !itemJson ) MsgManager.msgAreaShowErrOpt( 'clientDirect not found.', { hideTimeMs: 5000 } );
-							else
-							{
-								var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and stored by clientDirect.' );
-			
-								ClientDataManager.mergeDownloadedClients( { 'clients': [ itemJson ] }, processingInfo, function() 
-								{		
-									me.openClientCardById( clientDirectId );
-								});
-							}
-						}
-					}
-				});
-			}
-		}
+		me.checkNPerform_ClientDirectParam();
 	};
 
 	me.startBlockExecute = function( runAfterFunc ) //initializationInstructions )
@@ -363,24 +323,80 @@ function cwsRender()
 		$( 'div.favReRender' ).click();
 	};
 
+	// --------------------
+
+	me.checkNPerform_ClientDirectParam = function()
+	{			
+		// If 'client' exists with 'action' 'clientDirect', try to load the client 
+		var clientDirectId = App.getClientDirectId( 'action', 'client' );
+	
+		if ( clientDirectId ) 
+		{
+			if ( ConnManagerNew.isAppMode_Offline() ) MsgManager.msgAreaShowErrOpt( 'clientDirect is not available in OFFLINE.', { hideTimeMs: 5000 } );
+			else
+			{
+				MsgManager.msgAreaShowOpt( 'ClientDirect Request Found.  Processing..',{ hideTimeMs: 2000, styles: 'background-color: blue;', group: 'clientDirect' } );
+
+				// Create one 'action' in config?
+				var actionObj = SessionManager.cwsRenderObj.getActionObj( {} );
+				var actionJson = { actionType: "sendToWS", url: "/PWA.mongo_search?type=clientSearch", payloadJson: { clientId: clientDirectId }	};
+
+				// Show Loading/Progress Msg Open...
+				var tempId = 'appLoadWtClose_' + new Date().getTime(); 
+				MsgFormManager.appBlockTemplateOpt( { templateId: tempId, titleName: 'Downloading Client...', closeTime: 15000 } );
+		
+				// Perform client search/download
+				actionObj.actionPerform( actionJson, undefined, undefined, undefined, undefined, {}, {}, function( bResult, resultJson )
+				{			
+					MsgFormManager.appUnblock( tempId );
+
+					var clientDownloaded = false;
+
+					if ( bResult && resultJson && resultJson.searchResult2 && resultJson.searchResult2.length >= 1 )  //MsgManager.msgAreaShowErrOpt( 'Client for clientDirect not found.', { hideTimeMs: 5000 } );
+					{
+						var itemJson = resultJson.searchResult2.find( item => item._id === clientDirectId );
+
+						if ( itemJson ) //MsgManager.msgAreaShowErrOpt( 'Client for clientDirect not found.', { hideTimeMs: 5000 } );
+						{
+							clientDownloaded = true;
+							MsgManager.msgAreaShowOpt( 'Client Downloaded.  Merging and Opening..', { hideTimeMs: 2000, styles: 'background-color: blue;', group: 'clientDirect' } );
+
+							var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and stored for clientDirect.' );
+		
+							ClientDataManager.mergeDownloadedClients( { 'clients': [ itemJson ] }, processingInfo, function() 
+							{		
+								me.openClientCardById( clientDirectId );
+							});
+						}
+					}
+
+					if ( !clientDownloaded ) MsgManager.msgAreaShowOpt( 'Client for clientDirect not found.', { hideTimeMs: 500 } );
+
+				});
+			}
+		}
+	};
+		
+
 	me.openClientCardById = function( clientDirectId )
 	{
 		try
 		{
 			var clientJson = ClientDataManager.getClientById( clientDirectId );
 
-			if ( clientJson )
+			if ( !clientJson ) throw " No ClientJson..";
+			else 
 			{
 				var clientCardDetail = new ClientCardDetail(clientDirectId);
 				clientCardDetail.render();
 		
-				MsgManager.msgAreaShowOpt( 'Client opened by ClientDirect.',{ hideTimeMs: 4000, styles: 'background-color: green;' } );
+				MsgManager.msgAreaShowOpt( 'Client, ' + clientDirectId + ', Opened by ClientDirect.',{ hideTimeMs: 4000, styles: 'background-color: green;', groupCloseOthers: 'clientDirect' } );
 			}
-			else MsgManager.msgAreaShowErrOpt( 'Client, ' + clientDirectId + ', not available..' );
 		}
 		catch( errMsg )
 		{
-			console.log( 'FAILED on cwsRender.openClientCardById, ' + errMsg );
+			MsgManager.msgAreaShowErrOpt( 'FAILED on opening client, ' + clientDirectId + ', for ClientDirect, ' + errMsg );			
+			console.log( 'FAILED on CwsRender.openClientCardById, ' + errMsg );
 		}
 	};
 	// ----------------------------------
