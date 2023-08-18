@@ -343,13 +343,7 @@ App.paramsHandler_ReloadApp = function( urlStr )
 		{
 			paramsLoadJson = LocalStgMng.getJsonData( 'paramsLoad' );
 
-			// LocalStgMng.deleteData( 'paramsLoad' );
-			//if ( paramsLoadJson.action === 'clientDirect' ) { }
-			//else LocalStgMng.deleteData( 'paramsLoad' );
-
-
-			// TODO: DELETE after use or one time usage below..
-			// App.delete_ParamsInLS( 'action' );  App.delete_ParamsInLS( 'client' );
+			if ( paramsLoadJson.action === 'clientDirect' && paramsLoadJson.client ) MsgManager.msgAreaShowErrOpt( 'ClientDirect URL Param Used: ' + paramsLoadJson.client, { hideTimeMs: 7000, styles: 'background-color: green;' } );
 		}
 	}
 

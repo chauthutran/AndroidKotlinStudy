@@ -314,13 +314,15 @@ BahmniService.syncDataRun = function () {
 						if (changeOccurred_atMerge) {
 							// Display the summary of 'syncDown'.  However, this could be a bit confusing
 
-							var btnRefresh = $('<a class="notifBtn" term=""> REFRESH </a>');
+							var btnRefresh = $('<a class="color: blue;" term=""> REFRESH </a>');
 
 							$(btnRefresh).click(() => {
 								SessionManager.cwsRenderObj.renderArea1st();
 							});
 
-							MsgManager.notificationMessage('SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false);
+							//MsgManager.notificationMessage('Bahmni SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false);
+							MsgManager.msgAreaShowOpt( 'Bahmni SyncDown data found',{ hideTimeMs: 10000, styles: 'background-color: orange;', actionButton: btnRefresh } );
+							
 						}
 					}
 					else {
