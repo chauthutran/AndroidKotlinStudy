@@ -302,11 +302,15 @@ App.checkDeviceMinSpec = function( info )
 			if ( notPass )
 			{
 				// If POTerm exists (in local storage), translate it..
-	
-				var msg = 'This device is in either Incognito Mode, \n OR does not meet the minimum spec. \n [Min: ' + JSON.stringify( minSpec ) 
-					+ ', Curr: { memory: ' + info.memory + ', storage: ' + AppUtil.getStorageGBStr( info.storage.quota ) + ' }]';
-	
-				alert( msg );
+				detectIncognito().then(function(result) 
+				{
+					if (result.isPrivate) console.log( '-- In Incognito Mode --' );
+					else {
+						var msg = 'This device is in either Incognito Mode, \n OR does not meet the minimum spec. \n [Min: ' + JSON.stringify( minSpec ) 
+						+ ', Curr: { memory: ' + info.memory + ', storage: ' + AppUtil.getStorageGBStr( info.storage.quota ) + ' }]';		
+						alert( msg );
+					}
+				}).catch(function(error) {  console.log(error);  });
 			}
 		}	
 	}
@@ -315,6 +319,7 @@ App.checkDeviceMinSpec = function( info )
 		console.log( 'ERROR in InfoDataManager.setDeviceInfo_OnStart, ', errMsg );
 	}
 };
+
 
 // --------------------
 

@@ -933,7 +933,7 @@ BahmniService.generateActivityFormData = function (formData, type, formNameId) {
 BahmniService.generateJsonDate = function () {
 	var dateStr = UtilDate.dateStr('DT', new Date());
 
-	dateObj = {
+	var dateObj = {
 		capturedLoc: dateStr,
 		capturedUTC: dateStr,
 		createdLoc: dateStr,
