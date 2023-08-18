@@ -69,7 +69,7 @@ Templates.inputFieldYear = `
     <div class="modalSymbol">
       <div class="dialog__title">
         <input type="text" class="searchSymbol">
-        <span class="closeSearchSymbol">ï¿?/span>
+        <span class="closeSearchSymbol">ï¿½?/span>
       </div>
       <div class="container--optionsSymbol checkbox">
         <ul class="optionsSymbol">
@@ -576,6 +576,14 @@ Templates.settings_app_data_configuration = `
   </div>
 </dialog>`;
 
+Templates.sheetRightDiv = `
+<div class="sheetRightDiv" style="width: 135px; display: flex">
+  <div class="bahmniSyncIcon mouseDown" title="Bahmni SyncAll" style="width: 42px; opacity: 0.0; cursor: pointer;">-</div>
+  <div class="syncIcon mouseDown" title="SyncAll" style="width: 42px; opacity: 0.0; cursor: pointer;">-</div>
+  <div class="onOfflineIcon mouseDown" title="Network" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
+</div>
+`;
+
 Templates.sheetFullFrame = `
 <div class="sheet_full-fs detailFullScreen sheetFull">
   <div class="wapper_card">
@@ -584,11 +592,7 @@ Templates.sheetFullFrame = `
         <img src="images/arrow_back.svg" class="btnBack mouseDown">
         <span class="sheetTopTitle" mark="templateSheetFull" term="term_newClient" style="vertical-align: super;">New Client</span>
       </div>
-      <div class="sheetRightDiv" style="width: 135px; display: flex">
-        <div class="bahmniSyncIcon mouseDown" title="Bahmni SyncAll" style="width: 42px; opacity: 0.0; cursor: pointer;">-</div>
-        <div class="syncIcon mouseDown" title="SyncAll" style="width: 42px; opacity: 0.0; cursor: pointer;">-</div>
-        <div class="onOfflineIcon mouseDown" title="Network" style="width: 49px; opacity: 0.0; cursor: pointer;">-</div>
-      </div>
+      ${ Templates.sheetRightDiv }
     </div>
     <div class="info contentBody" style="background-color: #FFF; overflow-y: auto !important; height: calc(100vh - 60px);">
     </div>

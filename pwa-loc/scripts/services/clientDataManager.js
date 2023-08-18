@@ -669,8 +669,7 @@ ClientDataManager.setActivityDateLocal_clientList = function (clientList) {
 // Used by 'SyncUp' downloaded/processed 'client' activity dates..  UTC -> Loc..
 ClientDataManager.setActivityDateLocal_client = function (client) {
 	if (client) {
-		ClientDataManager.setClientDateLocal(client);
-
+		//ClientDataManager.setClientDateLocal(client);  // <-- duplicate..
 		ClientDataManager.setActivityDateLocal_clientList([client]);
 	}
 };

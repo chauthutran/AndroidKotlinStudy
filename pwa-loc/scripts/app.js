@@ -33,7 +33,8 @@ App.run = function ()
 	App.paramsJson = App.paramsHandler_ReloadApp( window.location.href );
 
 
-	if ( App.getParamVal_ByName("ver") === "1.4" ) App.ver14 = true;
+	if ( App.getParamVal_ByName( 'ver', { deleteInLS: true } ) === '1.4' ) App.ver14 = true;
+
 	
 	// --------------------------
 	// Default Behavior Modify
@@ -60,13 +61,17 @@ App.run = function ()
 	// By param 'debug' with pwd - uses AppInfoLSManager
 	DevHelper.checkNStartDebugConsole();
 
-	var paramMsg = App.getParamVal_ByName("msg");
+	var paramMsg = App.getParamVal_ByName( 'msg', { deleteInLS: true } );
 	if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );
-
 
 	// KeyCloak Start Object + Param case removal
 	KeycloakManager.startUp();
-	if ( App.getParamVal_ByName("keyCloakRemove") ) { KeycloakManager.removeKeyCloakInUse(); KeycloakManager.localStorageRemove(); }
+
+	if ( App.getParamVal_ByName( 'keyCloakRemove', { deleteInLS: true } ) ) 
+	{ 
+		KeycloakManager.removeKeyCloakInUse(); 
+		KeycloakManager.localStorageRemove(); 
+	}
 
 	// Service Worker Related Initial Setup
 	SwManager.initialSetup(function () {
@@ -311,23 +316,7 @@ App.checkDeviceMinSpec = function( info )
 	}
 };
 
-// If 'action' is 'clientDirect' mode
-//		get 'client' param val ==> clientId
-
-//		1. Make sure the reload / update does not change this..
-App.getClientDirectId = function( actionParamName, clientParamName )
-{
-	var clientDirectId = '';
-
-   if ( App.getParamVal_ByName( actionParamName ) === 'clientDirect' )
-	{
-		clientDirectId = App.getParamVal_ByName( clientParamName );
-	}
-
-	return clientDirectId;
-};
-
-//  App.getClientDirectId( 'action', 'client' );
+// --------------------
 
 App.paramsHandler_ReloadApp = function( urlStr )
 {
@@ -339,9 +328,13 @@ App.paramsHandler_ReloadApp = function( urlStr )
 	// CASE 1. If Params exists in url, store in LS, and reload app.
 	if ( Object.keys( paramObj ).length > 0 )
 	{
-		LocalStgMng.saveJsonData( 'paramsLoad', paramObj );
+		var existingParamJson = LocalStgMng.getJsonData( 'paramsLoad' );
+		if ( !existingParamJson ) existingParamJson = {};
+
+		LocalStgMng.saveJsonData( 'paramsLoad', Util.mergeJson( paramObj, existingParamJson ) );
 
 		AppUtil.appReloadWtMsg( 'Reloading For Params Handling..' );
+		// AppUtil.requestAppReload( { msg: 'Reloading For Params Handling..', delay: 1000 } );
 	}
 	else
 	{
@@ -349,18 +342,52 @@ App.paramsHandler_ReloadApp = function( urlStr )
 		if ( LocalStgMng.getJsonData( 'paramsLoad' ) )
 		{
 			paramsLoadJson = LocalStgMng.getJsonData( 'paramsLoad' );
-			LocalStgMng.deleteData( 'paramsLoad' );			
+
+			// LocalStgMng.deleteData( 'paramsLoad' );
+			//if ( paramsLoadJson.action === 'clientDirect' ) { }
+			//else LocalStgMng.deleteData( 'paramsLoad' );
+
+
+			// TODO: DELETE after use or one time usage below..
+			// App.delete_ParamsInLS( 'action' );  App.delete_ParamsInLS( 'client' );
 		}
 	}
 
 	return paramsLoadJson;
 };
 
-App.getParamVal_ByName = function( name )
+App.getParamVal_ByName = function( name, option )
 {
+	if ( !option ) option = {};
+	if ( option.deleteInLS ) App.delete_ParamsInLS( name );
+
 	return ( App.paramsJson && App.paramsJson[ name ] ) ? App.paramsJson[ name ]: undefined;
 };
 
+App.delete_ParamsInLS = function( propName )
+{
+	var existingParamJson = LocalStgMng.getJsonData( 'paramsLoad' );
+	if ( !existingParamJson ) existingParamJson = {};
+
+	if ( existingParamJson[ propName ] )
+	{
+		delete existingParamJson[ propName ];
+		LocalStgMng.saveJsonData( 'paramsLoad', existingParamJson );
+	}
+};
+
+
+App.getClientDirectId = function( actionParamName, clientParamName )
+{
+	var clientDirectId = '';
+
+   if ( App.getParamVal_ByName( actionParamName ) === 'clientDirect' )
+	{
+		clientDirectId = App.getParamVal_ByName( clientParamName );
+	}
+
+	return clientDirectId;
+};
 
 // ===========================
 // [JOB_AID]    

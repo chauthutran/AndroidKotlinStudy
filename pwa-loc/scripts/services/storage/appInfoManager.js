@@ -29,9 +29,8 @@ AppInfoManager.KEY_ACTIVITY_HISTORY = "activityHistory";
 AppInfoManager.KEY_CUSTOM_LOG_HISTORY = "customLogHistory"; 
 AppInfoManager.KEY_FIX_OPERATION_HISTORY = "fixOperationHistory"; 
 
-AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO = "syncLastDownloaded"; 
+AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO = "syncLastDownloaded"; // Bahmni version is in AppInfoLS
 AppInfoManager.KEY_FIX_OPERATION_LAST = "fixOperationLast"; 
-
 
 // NOTE: Add statisticPages: { '@LA@stat_IPC.html': '' }
 // <-- do not keep it on memory?  but get it from localStorage everytime..
@@ -381,6 +380,7 @@ AppInfoManager.getSyncLastDownloadInfo = function()
 {
     return AppInfoManager.getPropertyValue( AppInfoManager.KEY_SYNC, AppInfoManager.KEY_SYNC_LAST_DOWNLOADINFO );
 };	
+
 
 // ------------------------------------------------------------------------------------  
 // ---------------- Fix Operation Last Performed

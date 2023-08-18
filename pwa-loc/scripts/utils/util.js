@@ -929,6 +929,8 @@ Util.mergeJson = function (destObj, srcObj) {
 			destObj[key] = srcObj[key];
 		}
 	}
+
+	return destObj;
 };
 
 Util.mergeDeep = function (dest, obj, option) {

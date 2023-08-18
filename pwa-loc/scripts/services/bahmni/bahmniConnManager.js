@@ -7,9 +7,6 @@ BahmniConnManager.connStatus_ONLINE = 'ONLINE';
 
 BahmniConnManager.connStatus_Stable = BahmniConnManager.connStatus_OFFLINE; // Online vs Offline
 
-BahmniConnManager.syncDataIconTag = $("#divAppDataSyncStatus2");
-//BahmniConnManager.syncImgTag = $("#imgAppDataSyncStatus2");
-
 BahmniConnManager.startSyncStatus_Interval;
 
 BahmniConnManager.pingDebug = false;
@@ -49,109 +46,6 @@ BahmniConnManager.getPingUrl = function (baseUrl)
 	else if ( BahmniConnManager._bmPingCase === "2" ) return BahmniRequestService.pingLANNetwork;
 	else return baseUrl + "/openmrs/ws/rest/v1/wfa/integration/get/syncable";
 };
-
-/*
-BahmniConnManager.lookForConnectionUrl = function( execAfterSuccess )
-{
-	BahmniRequestService.resetResponseData();
-	var startTime = new Date();
-	var intervalObj;
-
-	var pingBasedUrlList = INFO.bahmni_domain_list;
-	var idx = 0;
-
-	intervalObj = setInterval(function()
-	{		
-		if( BahmniConnManager.connectionURL != "" 
-			|| BahmniUtil.getDiffBetweenCurrentMinutes(startTime) >= BahmniConnManager.MINUTES_TO_LOOK_FOR_BASE_URL ){
-			clearInterval(intervalObj);
-		}
-		else
-		{
-			if( idx == pingBasedUrlList.length ) 
-			{
-				idx = 0;
-			}
-
-			var url = BahmniConnManager.getPingUrl(pingBasedUrlList[idx]);
-			BahmniRequestService.ping( url, function (response) 
-					{
-						if (response.status == "success")
-						{
-							//BahmniConnManager.connectionURL = response.urlInfo.origin;
-							execAfterSuccess();
-						}
-						else
-						{
-							//BahmniConnManager.connectionURL = "";
-						}
-					})
-		}
-		idx++;
-	}, BahmniConnManager.interval_syncData);
-	
-};
-*/
-
-/*
-BahmniConnManager.pingService_Start = function ( execAfterSuccess ) 
-{	
-	var	intervalObj = setInterval(function(){
-		if(BahmniConnManager.allowToPingConnection){
-			BahmniRequestService.ping( BahmniConnManager.getPingUrl( INFO.bahmni_domain ), function (response) 
-			{
-				BahmniConnManager.afterPing(response, execAfterSuccess);
-			});
-		}
-		else
-		{
-			clearInterval(intervalObj);
-		}
-	}, BahmniConnManager.interval_syncData);
-};
-
-
-BahmniConnManager.afterPing = function( response, execAfterSuccess )
-{
-	if ( BahmniConnManager.pingDebug ) console.log( 'Ping response:', response, BahmniConnManager.noCheckingConnection );
-
-	// TODO: if bahmni config country, always show 2nd sync icon?
-	if (response.status == "success") // NOTE: this is only for local test case response!!!!??
-	{
-		BahmniConnManager.noCheckingConnection++;
-
-		// Connection is online and stable
-		if (BahmniConnManager.noCheckingConnection >= BahmniConnManager.maxNoCheckingConnection) 
-		{
-			// Keep the count max limit
-			BahmniConnManager.noCheckingConnection = BahmniConnManager.maxNoCheckingConnection;
-
-			if( BahmniConnManager.preConnStatus != BahmniConnManager.connStatus_ONLINE )
-			{
-				BahmniConnManager.connection_StatusOnline();
-				BahmniConnManager.preConnStatus = BahmniConnManager.connStatus_ONLINE;
-			}
-
-			if( execAfterSuccess ) execAfterSuccess();
-		}
-	}
-	else 
-	{
-		BahmniConnManager.noCheckingConnection -- ;
-		if (BahmniConnManager.noCheckingConnection < 0) 
-		{
-			BahmniConnManager.noCheckingConnection = 0;
-		}
-
-		if( BahmniConnManager.preConnStatus != BahmniConnManager.connStatus_OFFLINE )
-		{
-			BahmniConnManager.connection_StatusOffline();
-			BahmniConnManager.preConnStatus = BahmniConnManager.connStatus_OFFLINE;
-		}
-		// BahmniConnManager.needToSyncData = true;
-	}
-};
-*/
 
 // ---------------------------------------------------------------------------------
 // Set status for Icon
@@ -203,10 +97,7 @@ BahmniConnManager.update_UI_Status_StartSync = function ()
 
 BahmniConnManager.update_UI_Status_FinishSyncAll = function () 
 {
-    // clearInterval( BahmniConnManager.startSyncStatus_Interval );
 	BahmniMsgManager.hideProgressBar();
-    //BahmniConnManager.syncDataIconTag.attr("src", "images/bahmni_connection_green.svg");
-    //BahmniConnManager.syncDataIconTag.attr("setcolor", "green");
 
 	if( BahmniService.syncDataStatus.status == Constants.status_failed )
 	{

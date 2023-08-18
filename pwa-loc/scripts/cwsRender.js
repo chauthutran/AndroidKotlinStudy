@@ -337,6 +337,10 @@ function cwsRender()
 			{
 				MsgManager.msgAreaShowOpt( 'ClientDirect Request Found.  Processing..',{ hideTimeMs: 2000, styles: 'background-color: blue;', group: 'clientDirect' } );
 
+				// Delete the params val in LocalStorage
+				App.delete_ParamsInLS( 'action' );
+				App.delete_ParamsInLS( 'client' );
+
 				// Create one 'action' in config?
 				var actionObj = SessionManager.cwsRenderObj.getActionObj( {} );
 				var actionJson = { actionType: "sendToWS", url: "/PWA.mongo_search?type=clientSearch", payloadJson: { clientId: clientDirectId }	};

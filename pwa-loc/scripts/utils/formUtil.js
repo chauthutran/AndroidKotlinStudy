@@ -215,8 +215,9 @@ FormUtil.sheetFullSetup = function (template, options) {
 	if ( ConfigManager.isBahmniSubSourceType() )
 	{
 		sheetFullTag.find('.bahmniSyncIcon').off('click').click(function (e) {
+			console.log( 'bahmni Sync Icon Clicked' );
 			e.stopPropagation();  // Stops calling parent tags event calls..
-			BahmniService.syncDataIconTag.click();
+			BahmniService.syncDataIconTag.click();			
 		});	
 	}
 	else 

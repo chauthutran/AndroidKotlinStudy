@@ -321,7 +321,7 @@ function Login() {
 
 	me.testVersion_LoginBtn_NotHide = function (paramName, paramVal) {
 		Util.tryCatchContinue(function () {
-			me.loginBtn_NotHideFlag = ( App.getParamVal_ByName(paramName) === paramVal );
+			me.loginBtn_NotHideFlag = ( App.getParamVal_ByName( paramName, { deleteInLS: true } ) === paramVal );
 		}, 'Login.testVersion_LoginBtn_NotHide');
 	};
 
@@ -535,45 +535,52 @@ function Login() {
 
 	me.appVersionCheck = function()
 	{
-		if ( ConnManagerNew.isAppMode_Online() && navigator.onLine && _ver )
+		try
 		{
-			var requestUrl;
-			var options = {};
-
-			options.isLocal = WsCallManager.checkLocalDevCase(window.location.origin);
-			options.appName = WsCallManager.getAppName();
+			if ( ConnManagerNew.isAppMode_Online() && navigator.onLine && _ver )
+			{
+				var requestUrl;
+				var options = {};
 	
-			requestUrl = (options.isLocal) ? 'http://localhost:8383/wfaAppVer' : WsCallManager.composeDwsWsFullUrl('/TTS.wfaAppVer');
-			requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
-	
-			var optionsStr = JSON.stringify( options );
-	
-			$.ajax({
-				url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
-				type: "GET",
-				dataType: "json",
-				success: function (response) 
-				{
-					if ( response && response.version )
+				options.isLocal = WsCallManager.checkLocalDevCase(window.location.origin);
+				options.appName = WsCallManager.getAppName();
+		
+				requestUrl = (options.isLocal) ? 'http://localhost:8383/wfaAppVer' : WsCallManager.composeDwsWsFullUrl('/TTS.wfaAppVer');
+				requestUrl = WsCallManager.localhostProxyCaseHandle( requestUrl ); // Add Cors sending IF LOCAL
+		
+				var optionsStr = JSON.stringify( options );
+		
+				$.ajax({
+					url: requestUrl + '?optionsStr=' + encodeURIComponent( optionsStr ),
+					type: "GET",
+					dataType: "json",
+					success: function (response) 
 					{
-						// Check against current version - index.html '_ver' // var _ver = '1.3.11.56';
-						// 'response.version' - by reading manifest file.						
-						console.log( 'Login.appVersionCheck _ver: ' + _ver + ', response.ver: ' + response.version );
-
-						if ( response.version > _ver )
+						if ( response && response.version )
 						{
-							// Display the sepcial tag (*) with 'title' = new version, 1.3.11.56, available.
-							var spenNewVersionTag = $( '.spanNewVersion_notification' ).show();
-							spenNewVersionTag.attr( 'title', 'New version, ' + response.version + ', available' );
-						}
-					}
-				},
-				error: function ( errMsg ) {
-					// console.log( 'ERROR in Login.appVersionCheck, ' + errMsg );
-					console.log( '-- appVersionCheck not available --' );
-				}
-			});
+							// Check against current version - index.html '_ver' // var _ver = '1.3.11.56';
+							// 'response.version' - by reading manifest file.						
+							console.log( 'Login.appVersionCheck _ver: ' + _ver + ', response.ver: ' + response.version );
 	
+							if ( response.version > _ver )
+							{
+								// Display the sepcial tag (*) with 'title' = new version, 1.3.11.56, available.
+								var spenNewVersionTag = $( '.spanNewVersion_notification' ).show();
+								spenNewVersionTag.attr( 'title', 'New version, ' + response.version + ', available' );
+							}
+						}
+					},
+					error: function ( errMsg ) {
+						// console.log( 'ERROR in Login.appVersionCheck, ' + errMsg );
+						console.log( '-- appVersionCheck not available --' );
+					}
+				});
+		
+			}
+		}
+		catch( errMsg )
+		{
+			console.log( 'Failed in Login.appVersionCheck, ' + errMsg );
 		}
 	};
 

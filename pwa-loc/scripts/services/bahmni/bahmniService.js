@@ -1,16 +1,13 @@
-function BahmniService() { }
+function BahmniService() { };
+
+function BahmniUtil() {}; // Temp Relay Method <-- Remove soon
 
 BahmniService.BAHMNI_KEYWORD = "bahmni";
 BahmniService.readyToMongoSync = "readyToMongoSync";
 BahmniService.OPENMRS_URL = "/openmrs/";
 
-// BahmniService.timerID_Interval;
-// BahmniService.startSyncStatus_Interval;
-// BahmniService.noCheckingConnection = 0;
-// BahmniService.maxNoCheckingConnection = 3;
 BahmniService.interval_syncData = Util.MS_SEC * 2;
 BahmniService.syncDataProcessing = false;
-
 
 BahmniService.formMetadata = {};
 BahmniService.syncDownProcessingTotal = 0;
@@ -22,6 +19,23 @@ BahmniService.syncUpProcessingTotal = 0;
 BahmniService.syncUpProcessingIdx = 0;
 
 // -----------------------
+
+BahmniService.KEY_FD_META_DATA = "metadata";
+
+BahmniService.KEY_RT_FIELD_REPORT = "fieldReport";
+BahmniService.KEY_RT_CLIENT_REPORT_OUTCOME = "clientReportOutcome";
+BahmniService.KEY_RT_DATE_REPORT_BY_CLIENT = "dateReportedByClient";
+BahmniService.KEY_RT_NEW_DATE = "newDate";
+
+BahmniService.KEY_AP_FIELD_REPORT = "fieldReport";
+BahmniService.KEY_AP_PILL_COUNT_CONT = "pillCountCont";
+BahmniService.KEY_AP_SUPPLY_DELEVERIED_TO_CLIENT = "supplyDeleveriedToClient";
+BahmniService.KEY_AP_FORM_RESCHEDULE_IN_CONC = "formRescheduleInConc";
+BahmniService.KEY_AP_REASON_FORM_MISSED_DELEVERY = "reasonForMissedDelivery";
+
+// ==============================================================================
+
+BahmniService.syncDataIconTag = $("#divAppDataSyncStatus2");
 
 BahmniService.ping_intervalId;
 
@@ -40,208 +54,182 @@ BahmniService.VAL_FAILED_COLOR = 'red';
 BahmniService.connStatusData = { stableConn: BahmniService.VAL_DISCONNECTED, activeConnCount: 0, pingFor: BahmniService.VAL_CONNECT, activeCount: 0 };
 
 BahmniService.debug_forceDisconnect = false;
+
 // ==============================================================================
 
-
-BahmniService.serviceStartUp = function()
-{
+BahmniService.serviceStartUp = function () {
 	BahmniRequestService.resetResponseData();
 
 	// Color override from config setting
-	if ( INFO.bahmni_iconColor ) BahmniService.VAL_CONNECT_COLOR = INFO.bahmni_iconColor;
-	if ( INFO.bahmni_iconColor_disconnect ) BahmniService.VAL_DISCONNECT_COLOR = INFO.bahmni_iconColor_disconnect;
-	if ( INFO.bahmni_iconColor_blink_fail ) BahmniService.VAL_FAILED_COLOR = INFO.bahmni_iconColor_blink_fail;
+	if (INFO.bahmni_iconColor) BahmniService.VAL_CONNECT_COLOR = INFO.bahmni_iconColor;
+	if (INFO.bahmni_iconColor_disconnect) BahmniService.VAL_DISCONNECT_COLOR = INFO.bahmni_iconColor_disconnect;
+	if (INFO.bahmni_iconColor_blink_fail) BahmniService.VAL_FAILED_COLOR = INFO.bahmni_iconColor_blink_fail;
 
 
 	BahmniService.resetConnStatus(); // Get from InfoVal
 	BahmniService.setIconUI_byStatus();
-	BahmniConnManager.syncDataIconTag.show();
+	BahmniService.syncDataIconTag.show();
 
 	// Setup Click Event - Offline Ping Start & Sync Operation..
-	if ( INFO.bahmni_ping_autoRun ) BahmniService.pingSlowly( { firstPingNow: true } );
+	if (INFO.bahmni_ping_autoRun) BahmniService.pingSlowly({ firstPingNow: true });
 
 	BahmniService.syncBtnClickSetup();
 };
 
 
-BahmniService.resetConnStatus = function()
-{
+BahmniService.resetConnStatus = function () {
 	BahmniService.connStatusData = { stableConn: BahmniService.VAL_DISCONNECTED, activeConnCount: 0, pingFor: BahmniService.VAL_CONNECT };
 };
 
-BahmniService.setIconUI_byStatus = function()
-{
-	if ( BahmniService.connStatusData.stableConn === BahmniService.VAL_DISCONNECTED ) {
-		$( '#divAppDataSyncStatus2' ).css( 'opacity', '0.6' );
-		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_DISCONNECT_COLOR );
+BahmniService.setIconUI_byStatus = function () {
+	if (BahmniService.connStatusData.stableConn === BahmniService.VAL_DISCONNECTED) {
+		$('#divAppDataSyncStatus2').css('opacity', '0.6');
+		$('.syncBtn2_svg .Nav__sync-d').attr('fill', BahmniService.VAL_DISCONNECT_COLOR);
 
-		BahmniService.syncIconTitleUpdate( 'Bahmni DISCONNECTED - Click to trigger Connect' );
+		BahmniService.syncIconTitleUpdate('Bahmni DISCONNECTED - Click to trigger Connect');
 	}
 	else {
-		$( '#divAppDataSyncStatus2' ).css( 'opacity', '1.0' );
-		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_CONNECT_COLOR );
-		BahmniService.syncIconTitleUpdate( 'Bahmni CONNECTED - Click to Sync' );
+		$('#divAppDataSyncStatus2').css('opacity', '1.0');
+		$('.syncBtn2_svg .Nav__sync-d').attr('fill', BahmniService.VAL_CONNECT_COLOR);
+		BahmniService.syncIconTitleUpdate('Bahmni CONNECTED - Click to Sync');
 	}
 };
 
 
-BahmniService.syncBtnClickSetup = function()
-{
-	BahmniConnManager.syncDataIconTag.off('click').click(() => {
-		if ( BahmniService.connStatusData.stableConn === BahmniService.VAL_DISCONNECTED ) BahmniService.pingActively( { firstPingNow: true } );
+BahmniService.syncBtnClickSetup = function () {
+	BahmniService.syncDataIconTag.off('click').click(() => {
+		if (BahmniService.connStatusData.stableConn === BahmniService.VAL_DISCONNECTED) BahmniService.pingActively({ firstPingNow: true });
 		else BahmniService.syncDataRun();  //BahmniService.startSyncAll();  // 'STATUS CONNECTED
 	});
 };
 
 
-BahmniService.check_Mark_PingForMatch = function( success, option )
-{
+BahmniService.check_Mark_PingForMatch = function (success, option) {
 	var match = false;
 	var pingFor = BahmniService.connStatusData.pingFor;
 
-	match = ( ( success && pingFor === BahmniService.VAL_CONNECT )
-	|| ( !success && pingFor === BahmniService.VAL_DISCONNECT ) ) ? true: false;
+	match = ((success && pingFor === BahmniService.VAL_CONNECT)
+		|| (!success && pingFor === BahmniService.VAL_DISCONNECT)) ? true : false;
 
-	if ( match ) BahmniService.connStatusData.activeConnCount++;
+	if (match) BahmniService.connStatusData.activeConnCount++;
 	else BahmniService.connStatusData.activeConnCount = 0;
 
-	BahmniService.pingBlinkUI( success, option );
+	BahmniService.pingBlinkUI(success, option);
 
 	return match;
 };
 
 
-BahmniService.swichStableConn = function( success )
-{
-	BahmniService.connStatusData.stableConn = ( success ) ? BahmniService.VAL_CONNECTED: BahmniService.VAL_DISCONNECTED;
-	BahmniService.connStatusData.pingFor = ( success ) ? BahmniService.VAL_DISCONNECT : BahmniService.VAL_CONNECT;
+BahmniService.swichStableConn = function (success) {
+	BahmniService.connStatusData.stableConn = (success) ? BahmniService.VAL_CONNECTED : BahmniService.VAL_DISCONNECTED;
+	BahmniService.connStatusData.pingFor = (success) ? BahmniService.VAL_DISCONNECT : BahmniService.VAL_CONNECT;
 	BahmniService.connStatusData.activeConnCount = 0;
 	BahmniService.connStatusData.activeCount = 0;
 
-	if ( success ) MsgManager.msgAreaShowOpt( 'Bahmni CONNECTED', { hideTimeMs: 1000, styles: 'background-color: orange;' } );
-	else MsgManager.msgAreaShowOpt( 'Bahmni DISCONNECTED', { hideTimeMs: 1000, styles: 'background-color: silver;' } );
+	if (success) MsgManager.msgAreaShowOpt('Bahmni CONNECTED', { hideTimeMs: 1000, styles: 'background-color: orange;' });
+	else MsgManager.msgAreaShowOpt('Bahmni DISCONNECTED', { hideTimeMs: 1000, styles: 'background-color: silver;' });
 
 	// If switched to stable connected, run syncDataRun
-	if ( success ) BahmniService.syncDataRun();		
+	if (success) BahmniService.syncDataRun();
 };
 
 
-BahmniService.pingRequest = function( callBack )
-{
-	BahmniRequestService.ping( BahmniConnManager.getPingUrl( INFO.bahmni_domain ), function (response) 
-	{
-		if ( BahmniService.debug_forceDisconnect ) callBack( false ); // NEW - debug/testing val
-		else if ( response.status === "success" ) callBack( true ); // connected
-		else callBack( false );
+BahmniService.pingRequest = function (callBack) {
+	BahmniRequestService.ping(BahmniConnManager.getPingUrl(INFO.bahmni_domain), function (response) {
+		if (BahmniService.debug_forceDisconnect) callBack(false); // NEW - debug/testing val
+		else if (response.status === "success") callBack(true); // connected
+		else callBack(false);
 	});
 };
 
-BahmniService.pingBlinkUI = function( success, option )
-{
-	if ( !option ) option = {};
+BahmniService.pingBlinkUI = function (success, option) {
+	if (!option) option = {};
 
 	// UI Ping Mark
 	// Mark according to 'success' and return back to stable color..	
-	if ( success )
-	{
-		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', BahmniService.VAL_CONNECT_COLOR );
-		$( '#divAppDataSyncStatus2' ).css( 'opacity', '1.0' );
+	if (success) {
+		$('.syncBtn2_svg .Nav__sync-d').attr('fill', BahmniService.VAL_CONNECT_COLOR);
+		$('#divAppDataSyncStatus2').css('opacity', '1.0');
 
-		setTimeout( BahmniService.setIconUI_byStatus, INFO.bahmni_ping_blinkMS );	
+		setTimeout(BahmniService.setIconUI_byStatus, INFO.bahmni_ping_blinkMS);
 	}
-	else 
-	{
-		var failPingColor = ( option.activePing ) ? BahmniService.VAL_FAILED_COLOR: BahmniService.VAL_DISCONNECT_COLOR;
-		
-		$( '.syncBtn2_svg .Nav__sync-d' ).attr( 'fill', failPingColor );
-		$( '#divAppDataSyncStatus2' ).css( 'opacity', '0.6' );
-		
-		setTimeout( BahmniService.setIconUI_byStatus, INFO.bahmni_ping_blinkMS );	
+	else {
+		var failPingColor = (option.activePing) ? BahmniService.VAL_FAILED_COLOR : BahmniService.VAL_DISCONNECT_COLOR;
+
+		$('.syncBtn2_svg .Nav__sync-d').attr('fill', failPingColor);
+		$('#divAppDataSyncStatus2').css('opacity', '0.6');
+
+		setTimeout(BahmniService.setIconUI_byStatus, INFO.bahmni_ping_blinkMS);
 	}
 };
 
 
-BahmniService.pingSlowly = function( option )
-{
-	if ( !option ) option = {};
+BahmniService.pingSlowly = function (option) {
+	if (!option) option = {};
 
 	// Current Ping interval remove
-	if ( BahmniService.ping_intervalId ) clearInterval( BahmniService.ping_intervalId );
+	if (BahmniService.ping_intervalId) clearInterval(BahmniService.ping_intervalId);
 	BahmniService.connStatusData.activeConnCount = 0;
-	BahmniService.connStatusData.activeCount = 0;	
+	BahmniService.connStatusData.activeCount = 0;
 
-	if ( option.firstPingNow )
-	{
+	if (option.firstPingNow) {
 		// RUN Once Before Interval:
-		BahmniService.pingRequest( function( success )
-		{
-			if ( BahmniService.check_Mark_PingForMatch( success ) ) BahmniService.pingActively();
+		BahmniService.pingRequest(function (success) {
+			if (BahmniService.check_Mark_PingForMatch(success)) BahmniService.pingActively();
 		});
 	}
 
 
 	// Setup Slow Mode Ping -->
-	BahmniService.ping_intervalId = setInterval( () => 
-	{
+	BahmniService.ping_intervalId = setInterval(() => {
 		// If we find what we are slowly ping for, switch to be Active Ping State..
-		BahmniService.pingRequest( function( success )
-		{
-			if ( BahmniService.check_Mark_PingForMatch( success ) ) BahmniService.pingActively();
+		BahmniService.pingRequest(function (success) {
+			if (BahmniService.check_Mark_PingForMatch(success)) BahmniService.pingActively();
 		});
-	}, INFO.bahmni_ping_slow_intervalSec * 1000 );
+	}, INFO.bahmni_ping_slow_intervalSec * 1000);
 };
 
 
-BahmniService.pingActively = function( option ) 
-{
-	if ( !option ) option = {};
+BahmniService.pingActively = function (option) {
+	if (!option) option = {};
 	option.activePing = true;
 
-	if ( BahmniService.ping_intervalId ) clearInterval( BahmniService.ping_intervalId );
+	if (BahmniService.ping_intervalId) clearInterval(BahmniService.ping_intervalId);
 
-	if ( option.firstPingNow )
-	{
+	if (option.firstPingNow) {
 		BahmniService.connStatusData.activeCount = 0;
-		BahmniService.activePingHandle( option );
+		BahmniService.activePingHandle(option);
 	}
-	else 
-	{
+	else {
 		BahmniService.connStatusData.activeCount = 1;
 	}
 
 	// After number of tries, it turns back to slow mode..
-	BahmniService.ping_intervalId = setInterval( () => 
-	{
+	BahmniService.ping_intervalId = setInterval(() => {
 		BahmniService.connStatusData.activeCount++;
 
-		BahmniService.activePingHandle( option );
+		BahmniService.activePingHandle(option);
 
-	}, INFO.bahmni_ping_active_intervalSec * 1000 );
+	}, INFO.bahmni_ping_active_intervalSec * 1000);
 };
 
-BahmniService.activePingHandle = function( option )
-{
+BahmniService.activePingHandle = function (option) {
 	// Try ping actively for online/offline
-	BahmniService.pingRequest( function( success )
-	{
-		if ( BahmniService.check_Mark_PingForMatch( success, option ) )
-		{
-			if ( BahmniService.connStatusData.activeConnCount >= INFO.bahmni_ping_active_stableNum )
-			{
+	BahmniService.pingRequest(function (success) {
+		if (BahmniService.check_Mark_PingForMatch(success, option)) {
+			if (BahmniService.connStatusData.activeConnCount >= INFO.bahmni_ping_active_stableNum) {
 				// Switch the 'stableConn' + pingFor, and change to pingSlowly..
-				BahmniService.swichStableConn( success );
+				BahmniService.swichStableConn(success);
 				BahmniService.setIconUI_byStatus();
 
 				BahmniService.pingSlowly();
 			}
 		}
-		else
-		{
+		else {
 			// If Active Ping Try reaches limit (too many), switch back to slow ping..
-			if ( BahmniService.connStatusData.activeCount >= INFO.bahmni_ping_active_stop )
-			{
+			if (BahmniService.connStatusData.activeCount >= INFO.bahmni_ping_active_stop) {
 				BahmniService.connStatusData.activeConnCount = 0;
-				BahmniService.connStatusData.activeCount = 0;					
+				BahmniService.connStatusData.activeCount = 0;
 				BahmniService.pingSlowly();
 			}
 		}
@@ -251,16 +239,20 @@ BahmniService.activePingHandle = function( option )
 
 // -----------------
 
-BahmniService.checkBahmniUrl = function( url )
-{
-	return ( url === BahmniService.BAHMNI_KEYWORD || url.indexOf( BahmniService.OPENMRS_URL ) >= 0 );
+BahmniService.checkBahmniUrl = function (url) {
+	return (url === BahmniService.BAHMNI_KEYWORD || url.indexOf(BahmniService.OPENMRS_URL) >= 0);
 };
 
-BahmniService.syncIconTitleUpdate = function( titleStr )
-{
-	if ( !titleStr ) titleStr = 'Bahmni SyncAll';
-	$( '#divAppDataSyncStatus2' ).attr( 'title', titleStr );
+BahmniService.syncIconTitleUpdate = function (titleStr) {
+	if (!titleStr) titleStr = 'Bahmni SyncAll';
+	$('#divAppDataSyncStatus2').attr('title', titleStr);
 };
+
+
+BahmniService.isBahmniActivity = function (activityJson) {
+	return (activityJson && activityJson.subSourceType === BahmniService.BAHMNI_KEYWORD) ? true : false;
+};
+
 
 // ==============================================================================
 // Ping Bahmni service
@@ -272,55 +264,10 @@ BahmniService.syncIconTitleUpdate = function( titleStr )
 
 BahmniService.setAppTopSyncAllBtnClick = function () {
 
-	if( ConfigManager.isBahmniSubSourceType() )
-	{
-		//BahmniConnManager.syncDataIconTag.show();
+	if (ConfigManager.isBahmniSubSourceType()) {
 		BahmniConnManager.connection_StatusPending();
 
-		BahmniConnManager.syncDataIconTag.off('click').click(() => {
-			// if already running, just show message..
-			// if offline, also, no message in this case about offline...   
-			// BahmniMsgManager.SyncMsg_ShowBottomMsg();
-
-			/*
-			BahmniConnManager.pingService_Start( function() {
-				BahmniConnManager.allowToPingConnection = false;
-				BahmniService.syncDataRun();
-			});
-
-
-			BahmniRequestService.ping( BahmniConnManager.getPingUrl( INFO.bahmni_domain ), function (response) 
-			{
-				BahmniConnManager.afterPing(response, execAfterSuccess);
-			});
-			*/
-
-
-			/*
-			// if ( !BahmniService.syncDataProcessing ) 
-			{
-				// WE already have this..
-				if( BahmniConnManager.connectionURL == "" )
-				{
-					BahmniConnManager.lookForConnectionUrl(function(){
-						BahmniConnManager.pingService_Start( function() {
-							BahmniConnManager.allowToPingConnection = false;
-							BahmniService.syncDataRun();
-						});
-					});
-				}
-				else if( BahmniConnManager.noCheckingConnection < BahmniConnManager.maxNoCheckingConnection )
-				{
-					BahmniConnManager.pingService_Start( function() {
-						BahmniConnManager.allowToPingConnection = false;
-						BahmniService.syncDataRun();
-					});
-				}
-				else if( ScheduleManager.syncDownProcessing ) setTimeout(function() { BahmniService.syncDataRun(); }, Util.MS_SEC * 2);
-				else BahmniService.syncDataRun();
-
-			};
-			*/
+		BahmniService.syncDataIconTag.off('click').click(() => {
 		});
 	}
 };
@@ -329,9 +276,8 @@ BahmniService.setAppTopSyncAllBtnClick = function () {
 // Ping Bahmni service
 // ==============================================================================
 
-BahmniService.syncDataRun = function () 
-{
-	FormUtil.rotateTag( $( '.syncBtn2_svg' ), true );
+BahmniService.syncDataRun = function () {
+	FormUtil.rotateTag($('.syncBtn2_svg'), true);
 
 	//BahmniService.syncDataProcessing = true;
 	//BahmniConnManager.update_UI_Status_StartSync();
@@ -342,11 +288,9 @@ BahmniService.syncDataRun = function ()
 
 	try {
 		// Sync Up activity to Bahmni server
-		BahmniService.syncUpAll(function () 
-		{
+		BahmniService.syncUpAll(function () {
 			// Sync Down activity to Bahmni server
-			BahmniService.syncDown(function (responseBahmniData) 
-			{
+			BahmniService.syncDown(function (responseBahmniData) {
 				var clientList = responseBahmniData.data;
 				var clientDwnLength = clientList.length;
 
@@ -359,16 +303,12 @@ BahmniService.syncDataRun = function ()
 				ClientDataManager.setActivityDateLocal_clientList(clientList);
 
 				// 10 min offset with sync time - to make sure it does not miss things.
-				BahmniService.mergeDownloadedClients(clientList, processingInfo, function (changeOccurred_atMerge, mergedActivities) {
+				BahmniService.mergeDownloadedClients(clientList, processingInfo, {}, function (changeOccurred_atMerge, mergedActivities) {
 
 					if (responseBahmniData.status.status == "success") {
 						var mergedActivityLength = mergedActivities.length;
 						BahmniMsgManager.SyncMsg_InsertMsg("Merged " + mergedActivityLength + " activities..");
 						BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities.");
-
-						var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
-						AppInfoManager.updateSyncLastDownloadInfo(syncDownReqStartDTStr);
-
 
 						// NOTE: If there was a new merge, for now, alert the user to reload the list?
 						if (changeOccurred_atMerge) {
@@ -393,7 +333,7 @@ BahmniService.syncDataRun = function ()
 					//BahmniConnManager.allowToPingConnection = true;
 					//BahmniConnManager.pingService_Start();
 
-					FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
+					FormUtil.rotateTag($('.syncBtn2_svg'), false);
 				});
 			});
 		})
@@ -408,7 +348,7 @@ BahmniService.syncDataRun = function ()
 		//BahmniService.syncDataProcessing = false;
 		BahmniConnManager.update_UI_Status_FinishSyncAll();
 
-		FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
+		FormUtil.rotateTag($('.syncBtn2_svg'), false);
 	}
 };
 
@@ -422,32 +362,27 @@ BahmniService.isSyncDataProcessing = function () {
 // SyncDown
 // ==============================================================================
 
-BahmniService.syncDown = function (exeFunc) 
-{
+BahmniService.syncDown = function (exeFunc) {
 	BahmniService.syncDataStatus = { status: "success", msg: "" };
 	BahmniService.syncDownDataList = {};
 
 	const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
-	if (configSynDownList) 
-	{
+	if (configSynDownList) {
 		BahmniService.syncDownProcessingTotal = configSynDownList.length;
 		BahmniService.syncDownProcessingIdx = 0;
 
-		for (var i = 0; i < configSynDownList.length; i++) 
-		{
+		for (var i = 0; i < configSynDownList.length; i++) {
 			var configSynDownData = JSON.parse(JSON.stringify(configSynDownList[i]));
 			var url = eval(Util.getEvalStr(configSynDownData.urlEval));
 
-			if (configSynDownData.method.toUpperCase() == "POST") 
-			{
+			if (configSynDownData.method.toUpperCase() == "POST") {
 				Util.traverseEval(configSynDownData.payload, InfoDataManager.getINFO(), 0, 50);
 
 				BahmniRequestService.sendPostRequest(configSynDownData.id, url, configSynDownData.payload, function (response) {
 					BahmniService.afterSyncDown(response, exeFunc);
 				})
 			}
-			else if (configSynDownData.method.toUpperCase() == "GET") 
-			{
+			else if (configSynDownData.method.toUpperCase() == "GET") {
 				BahmniRequestService.sendGetRequest(configSynDownData.id, url, function (response) {
 					BahmniService.afterSyncDown(response, exeFunc);
 				});
@@ -457,10 +392,8 @@ BahmniService.syncDown = function (exeFunc)
 
 };
 
-BahmniService.setResponseErrorIfAny = function (response) 
-{
-	if (response.status == "error") 
-	{
+BahmniService.setResponseErrorIfAny = function (response) {
+	if (response.status == "error") {
 		BahmniService.syncDataStatus.status = Constants.status_failed;
 		BahmniService.syncDataStatus.msg += response.msg + "; ";
 
@@ -469,45 +402,37 @@ BahmniService.setResponseErrorIfAny = function (response)
 	}
 };
 
-BahmniService.afterSyncDown = function (response, exeFunc) 
-{
+BahmniService.afterSyncDown = function (response, exeFunc) {
 	BahmniService.syncDownProcessingIdx++;
 	BahmniService.setResponseErrorIfAny(response);
 
-	if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) 
-	{
+	if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) {
 		var conceptIds = [];
 		var patientIds = [];
 		var appointmentIds = [];
 		var appointments = [];
 		const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
-		for (var i = 0; i < configSynDownList.length; i++) 
-		{
+		for (var i = 0; i < configSynDownList.length; i++) {
 			const configData = configSynDownList[i];
 			const responseData = eval(Util.getEvalStr(configData.responseEval));
-			if (responseData) 
-			{
+			if (responseData) {
 				var data = responseData.data;
-				if (data.conceptIds) 
-				{
+				if (data.conceptIds) {
 					conceptIds = conceptIds.concat(data.conceptIds);
 					conceptIds = conceptIds.filter((item, pos) => conceptIds.indexOf(item) === pos); // Remove duplicated Ids
 				}
 
-				if (data.patientIds) 
-				{
+				if (data.patientIds) {
 					patientIds = patientIds.concat(data.patientIds);
 					patientIds = patientIds.filter((item, pos) => patientIds.indexOf(item) === pos); // Remove duplicated Ids
 				}
 
-				if (data.appointmentIds) 
-				{
+				if (data.appointmentIds) {
 					appointmentIds = appointmentIds.concat(data.appointmentIds);
 					appointmentIds = appointmentIds.filter((item, pos) => appointmentIds.indexOf(item) === pos); // Remove duplicated Ids
 				}
 
-				if (data.appointments) 
-				{
+				if (data.appointments) {
 					appointments = appointments.concat(data.appointments);
 				}
 
@@ -519,24 +444,19 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 		BahmniService.syncDownProcessingIdx = 0;
 		BahmniService.syncDownProcessingTotal = patientIds.length + appointmentIds.length + conceptIds.length;
 
-		if( BahmniService.syncDownProcessingTotal == 0 )
-		{
+		if (BahmniService.syncDownProcessingTotal == 0) {
 			exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
 		}
-		else
-		{
-			BahmniService.getConceptList(conceptIds, function () 
-			{
+		else {
+			BahmniService.getConceptList(conceptIds, function () {
 				exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
 			});
-	
-			BahmniService.getAppointmentDataList(appointmentIds, function () 
-			{
+
+			BahmniService.getAppointmentDataList(appointmentIds, function () {
 				exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
 			});
-	
-			BahmniService.getPatientDataList(patientIds, function () 
-			{
+
+			BahmniService.getPatientDataList(patientIds, function () {
 				exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
 			});
 		}
@@ -544,15 +464,12 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 	}
 }
 
-BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc) 
-{
-	if (appointmentIds.length > 0) 
-	{
+BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc) {
+	if (appointmentIds.length > 0) {
 		for (var i = 0; i < appointmentIds.length; i++) {
 			BahmniService.retrieveAppointmentDetails(appointmentIds[i], function (response) {
 
-				if (response.status == "success") 
-				{
+				if (response.status == "success") {
 					const data = response.data;
 					const patientId = data.patient.uuid;
 					// Add patientId in patientId list so that we can retrieve the details later
@@ -561,7 +478,7 @@ BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc)
 					}
 
 					// Create an activity for this Appointment
-					var activity = BahmniUtil.generateActivityAppointment(data, { formData: { sch_favId: 'followUp', fav_newAct: true } })
+					var activity = BahmniService.generateActivityAppointment(data, { formData: { sch_favId: 'followUp', fav_newAct: true } })
 					BahmniService.syncDownDataList.appointments.push(activity);
 				}
 
@@ -574,15 +491,12 @@ BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc)
 	}
 };
 
-BahmniService.getPatientDataList = function (patientIds, exeFunc) 
-{
-	if (patientIds.length > 0) 
-	{
+BahmniService.getPatientDataList = function (patientIds, exeFunc) {
+	if (patientIds.length > 0) {
 		for (var i = 0; i < patientIds.length; i++) {
 			BahmniService.retrievePatientDetails(patientIds[i], function (response) {
-				if (response.status == "success") 
-				{
-					BahmniService.syncDownDataList.patients.push(BahmniUtil.generateClientData(response.data.patient));
+				if (response.status == "success") {
+					BahmniService.syncDownDataList.patients.push(BahmniService.generateClientData(response.data.patient));
 				}
 
 				BahmniService.afterSyncDownAll(response, exeFunc);
@@ -594,12 +508,9 @@ BahmniService.getPatientDataList = function (patientIds, exeFunc)
 	}
 };
 
-BahmniService.getConceptList = function (conceptIdList, exeFunc) 
-{
-	if (conceptIdList.length > 0) 
-	{
-		for (var i = 0; i < conceptIdList.length; i++) 
-		{
+BahmniService.getConceptList = function (conceptIdList, exeFunc) {
+	if (conceptIdList.length > 0) {
+		for (var i = 0; i < conceptIdList.length; i++) {
 			var id = conceptIdList[i];
 			BahmniService.retrieveConceptDetails(id, function (response) {
 				if (response.status == "success") {
@@ -610,30 +521,25 @@ BahmniService.getConceptList = function (conceptIdList, exeFunc)
 			});
 		}
 	}
-	else 
-	{
+	else {
 		BahmniService.updateOptionsChanges();
 		exeFunc();
 	}
 
 }
 
-BahmniService.afterSyncDownAll = function (response, exeFunc) 
-{
+BahmniService.afterSyncDownAll = function (response, exeFunc) {
 	BahmniService.syncDownProcessingIdx++;
 	BahmniService.setResponseErrorIfAny(response);
 
-	if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) 
-	{
+	if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) {
 		// -------------------------------------------------------------------------------------------------------------
 		// Set conceps in AppInfo localStorage
 		var concepts = BahmniService.syncDownDataList.concepts;
-		for (var i = 0; i < concepts.length; i++) 
-		{
+		for (var i = 0; i < concepts.length; i++) {
 			var concept = concepts[i];
-			if (concept && concept.answers && concept.answers.length > 0) 
-			{
-				AppInfoLSManager.setSelectOptions_Item(concept.uuid, BahmniUtil.generateOptionsByConcept(concept));
+			if (concept && concept.answers && concept.answers.length > 0) {
+				AppInfoLSManager.setSelectOptions_Item(concept.uuid, BahmniService.generateOptionsByConcept(concept));
 			}
 		}
 		// Override the options of concepts in "definitionOptions" of the configuration file 
@@ -642,13 +548,11 @@ BahmniService.afterSyncDownAll = function (response, exeFunc)
 		// -------------------------------------------------------------------------------------------------------------
 		// Add all activities for patients based on patienId
 		const patientList = BahmniService.syncDownDataList.patients;
-		for (var i = 0; i < patientList.length; i++) 
-		{
+		for (var i = 0; i < patientList.length; i++) {
 			var item = patientList[i];
 			var patientId = item.patientId;
 			var activities = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
-			if (activities != undefined) 
-			{
+			if (activities != undefined) {
 				item.activities = activities;
 			}
 		}
@@ -657,35 +561,31 @@ BahmniService.afterSyncDownAll = function (response, exeFunc)
 	}
 };
 
-BahmniService.updateOptionsChanges = function () 
-{
+BahmniService.updateOptionsChanges = function () {
 	const newOptionsChanged = AppInfoLSManager.getSelectOptions();
 	let configOptions = ConfigManager.getConfigJson().definitionOptions;
-	for (var optionName in newOptionsChanged) 
-	{
+	for (var optionName in newOptionsChanged) {
 		configOptions[optionName] = newOptionsChanged[optionName];
 	}
 
-	AppInfoLSManager.setBahmni_lastSyncedDatetime(UtilDate.getDateTimeStr());
+	var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
+	AppInfoLSManager.setBahmni_lastSyncedDatetime(syncDownReqStartDTStr);
 }
 
 // ------------------------------------------------------------------------------
 // Retrieve data from Bahmni server for SyncDown processing
 
-BahmniService.retrievePatientDetails = function (patientId, exeFunc) 
-{
+BahmniService.retrievePatientDetails = function (patientId, exeFunc) {
 	const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/patientprofile/" + patientId + "?v=full";
 	BahmniRequestService.sendGetRequest(patientId, url, exeFunc);
 };
 
-BahmniService.retrieveAppointmentDetails = function (appointmentId, exeFunc) 
-{
+BahmniService.retrieveAppointmentDetails = function (appointmentId, exeFunc) {
 	const url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/appointment?uuid=" + appointmentId;
 	BahmniRequestService.sendGetRequest(appointmentId, url, exeFunc);
 };
 
-BahmniService.retrieveConceptDetails = function (conceptId, exeFunc)
-{
+BahmniService.retrieveConceptDetails = function (conceptId, exeFunc) {
 	var url = INFO.bahmni_domain + "/openmrs/ws/rest/v1/concept/" + conceptId;
 	BahmniRequestService.sendGetRequest(conceptId, url, exeFunc);
 };
@@ -696,62 +596,54 @@ BahmniService.retrieveConceptDetails = function (conceptId, exeFunc)
 // ==============================================================================
 
 
-BahmniService.syncUpAll = function (exeFunc) 
-{
+BahmniService.syncUpAll = function (exeFunc) {
 	var resultData = { 'success': 0, 'failure': 0 };
 
 	var activityList = ActivityDataManager.getActivityList();
 	var actIdList = [];
 
-	activityList.forEach( activityJson => 
-	{
+	activityList.forEach(activityJson => {
 		// Bahmni Syncable condition - on activity..
-		if ( activityJson.subSourceType === BahmniService.BAHMNI_KEYWORD && activityJson.processing 
-			&& SyncManagerNew.isSyncReadyStatus(activityJson.processing.status) ) 
-		{
-			actIdList.push( activityJson.id );
+		if (activityJson.subSourceType === BahmniService.BAHMNI_KEYWORD && activityJson.processing
+			&& SyncManagerNew.isSyncReadyStatus(activityJson.processing.status)) {
+			actIdList.push(activityJson.id);
 		}
 	});
 
 	var actCount = actIdList.length;
 
-	if ( actCount <= 0 ) exeFunc( resultData );
-	else
-	{
-		for( var i = 0; i < actIdList.length; i++ )
-		{
+	if (actCount <= 0) exeFunc(resultData);
+	else {
+		for (var i = 0; i < actIdList.length; i++) {
 			var activityId = actIdList[i];
-	
+
 			var clientId_before = ClientDataManager.getClientByActivityId(activityId)._id;
-	
+
 			ActivityCard.highlightActivityDiv(activityId, true);
-	
-			SyncManagerNew.performSyncUp_Activity(activityId, function (success, responseJson, newStatus, extraData) 
-			{
+
+			SyncManagerNew.performSyncUp_Activity(activityId, function (success, responseJson, newStatus, extraData) {
 				actCount--;
-	
-				try
-				{
+
+				try {
 					SyncManagerNew.syncUpActivity_ResultUpdate(success, resultData);
-	
+
 					ActivityCard.reRenderAllById(activityId); // ActivityCard.reRenderActivityDiv();
 					ActivityCard.highlightActivityDiv(activityId, false);
-			
-			
+
+
 					var clientId_after = ClientDataManager.getClientByActivityId(activityId)._id;
-					if ( clientId_before.indexOf( ClientDataManager.tempClientNamePre ) === 0 && clientId_before !== clientId_after )
-					{
-						SyncManagerNew.TempClientDetailTagRefresh( clientId_before, clientId_after );
-						SyncManagerNew.tagSwitchToNewClientId( clientId_before, clientId_after );
+					if (clientId_before.indexOf(ClientDataManager.tempClientNamePre) === 0 && clientId_before !== clientId_after) {
+						SyncManagerNew.TempClientDetailTagRefresh(clientId_before, clientId_after);
+						SyncManagerNew.tagSwitchToNewClientId(clientId_before, clientId_after);
 					}
-			
-					SyncManagerNew.ActivityDetailTagRefresh( activityId );
-					ClientCard.reRenderClientCardsById(clientId_after, { 'activitiesTabClick': true });	
+
+					SyncManagerNew.ActivityDetailTagRefresh(activityId);
+					ClientCard.reRenderClientCardsById(clientId_after, { 'activitiesTabClick': true });
 				}
-				catch( errMsg ) {  console.log( 'ERROR ' );  }
-	
-				if ( actCount <= 0 ) exeFunc( resultData );
-			});		
+				catch (errMsg) { console.log('ERROR '); }
+
+				if (actCount <= 0) exeFunc(resultData);
+			});
 		}
 	}
 
@@ -759,16 +651,14 @@ BahmniService.syncUpAll = function (exeFunc)
 
 
 // Called from SyncManagerNew.performSyncUp_Activity
-BahmniService.syncUp = function (activityJson, exeFunc) 
-{
+BahmniService.syncUp = function (activityJson, exeFunc) {
 	var url = '';
 
 	// TODO: move this as Action 'dws' or 'url'.. <-- as pre-determined url..
-	var procJson = ActivityDataManager.getProcessingJson( activityJson );
+	var procJson = ActivityDataManager.getProcessingJson(activityJson);
 
 	// Old 'dws: { type: 'bahmni' } case
-	if ( procJson.url === BahmniService.BAHMNI_KEYWORD )
-	{
+	if (procJson.url === BahmniService.BAHMNI_KEYWORD) {
 		// elseCase: "Follow Up Referrals Template Form" OR "Follow Up Assessment Plan"
 		var endpoint = (activityJson.type == "Follow Up Appointment") ? "/openmrs/ws/rest/v1/appointment" : "/openmrs/ws/rest/v1/bahmnicore/bahmniencounter";
 		url = INFO.bahmni_domain + endpoint;
@@ -776,76 +666,45 @@ BahmniService.syncUp = function (activityJson, exeFunc)
 	else url = INFO.bahmni_domain + procJson.url;
 
 
-	BahmniRequestService.sendPostRequest(activityJson.id, url, activityJson.syncUp, function(response)
-	{		
+	BahmniRequestService.sendPostRequest(activityJson.id, url, activityJson.syncUp, function (response) {
 		BahmniService.setResponseErrorIfAny(response);
 
-		// response need to have this format...
-		// if ( !responseJson.result || !responseJson.result.client ) throw "'result' not exists in response json.";
-
-
-		//var clientJson = ClientDataManager.getClientByActivityId(activityJson.id );
-
-		/*
-		if( response.status == "success")
-		{
-			//activityJson.subSyncStatus = BahmniService.readyToMongoSync;
-			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson.processing);
-			ActivityDataManager.insertToProcessing(activityJson, processingInfo);
-			//activityJson.processing.subSyncStatus = BahmniService.readyToMongoSync;
-
-			ActivityDataManager.updateActivityIdx(activityJson.id, activityJson, clientJson);
-		}
-		else
-		{
-			// Need to check if there is any activity of clients  were sync fail  --> change status of the client to "FAIL"
-			ActivityDataManager.updateStatus_ProcessingToFailed(activityJson, { saveData: true, errMsg: response.msg });
-		}
-		*/
-
-		exeFunc( ( response.status === "success" ), response );
+		exeFunc((response.status === "success"), response);
 	});
-}
+};
 
 
 // ==============================================================================
 // BahmniService.mergeDownloadedClients 
 // ==============================================================================
 
-BahmniService.mergeDownloadedClients = function (clientList, processingInfo, callBack) {
+BahmniService.mergeDownloadedClients = function (clientList, processingInfo, downloadedData, callBack) {
 	var dataChangeOccurred = false;
 	var newClients = [];
 	var mergedActivities = [];
 
+	if (!downloadedData) downloadedData = {};
+
 	// 1. Compare Client List.  If matching '_id' exists, perform merge,  Otherwise, add straight to clientList.
-	if (clientList && Util.isTypeArray(clientList)) 
-	{
-		for (var i = 0; i < clientList.length; i++) 
-		{
+	if (clientList && Util.isTypeArray(clientList)) {
+		for (var i = 0; i < clientList.length; i++) {
 			var bmClient = clientList[i];
-			try 
-			{
-				var appClient = ( bmClient.patientId ) ? Util.findFromList(ClientDataManager.getClientList(), bmClient.patientId, "patientId") : undefined;
+			try {
+				// In Bahmni case, find client by 'patientId'
+				var appClient = (bmClient.patientId) ? Util.findFromList(ClientDataManager.getClientList(), bmClient.patientId, "patientId") : undefined;
 
 				// If matching client exists in App already.
-				if (appClient) 
-				{
-					var clientDateCheckPass = (ClientDataManager.getDateStr_LastUpdated(bmClient) > ClientDataManager.getDateStr_LastUpdated(appClient));
-					if (clientDateCheckPass) 
-					{
-						// Get activities in bmClient that does not exists...
-						var addedActivities = ActivityDataManager.mergeDownloadedActivities(bmClient.activities, appClient.activities, appClient, Util.cloneJson(processingInfo), {});
+				if (appClient) {
+					// NOTE: On Bahmni case, downloaded 'client' data always overwrite to local one.
+					// 	Same for 'activity' --> if matching activity exists, always overwrite it.
+					var addedActivities = ActivityDataManager.mergeDownloadedActivities(bmClient.activities, appClient.activities, appClient, Util.cloneJson(processingInfo), downloadedData);
 
-						// Update clientDetail from bmClient - other than activities merge?
-						//appClient.clientDetails = bmClient.clientDetails; .date, .clientConsent, .relationships...
-						Util.copyProperties(bmClient, appClient, { 'exceptions': { 'activities': true, '_id': true } });
+					Util.copyProperties(bmClient, appClient, { 'exceptions': { 'activities': true, '_id': true } });
 
-						Util.appendArray(mergedActivities, addedActivities);
-						dataChangeOccurred = true;
-					}
+					Util.appendArray(mergedActivities, addedActivities);
+					dataChangeOccurred = true;
 				}
-				else 
-				{
+				else {
 					newClients.push(bmClient);
 					dataChangeOccurred = true;
 
@@ -856,6 +715,7 @@ BahmniService.mergeDownloadedClients = function (clientList, processingInfo, cal
 			}
 			catch (errMsg) {
 				console.log('Error during BahmniService.mergeDownloadedClients, errMsg: ' + errMsg);
+				MsgManager.msgAreaShowErrOpt('ERROR in Bahmni Download Merge, ' + errMsg);
 			}
 		}
 	}
@@ -879,4 +739,180 @@ BahmniService.mergeDownloadedClients = function (clientList, processingInfo, cal
 	else {
 		if (callBack) callBack(false, mergedActivities);
 	}
+};
+
+
+// ===========================================================
+// ==== BahmniUtil Code Moved HERE
+
+// ------------------------------------------------------------------------------
+// Convert data ( patient, appointment ) to WFA Object
+
+BahmniService.generateClientData = function (patientData, option) {
+	var resolveData = {};
+
+	const date = new Date();
+	const patientId = patientData.uuid;
+
+	if (!option) option = {};
+
+
+	var tempActId = INFO.login_UserName + '_' + Util.formatDate(date.toUTCString(), 'yyyyMMdd_HHmmss') + date.getMilliseconds();
+	const clientTempId = ClientDataManager.createNewTempClientId(tempActId);
+
+	resolveData = { clientDetails: patientData.person, activities: [], date: BahmniService.generateJsonDate(), patientId: patientId };
+
+	resolveData.clientDetails.firstName = patientData.person.preferredName.givenName;
+	resolveData.clientDetails.lastName = patientData.person.preferredName.familyName;
+
+	if (!option.mergeCase) {
+		resolveData._id = clientTempId;
+		resolveData.clientDetails.activeUsers = [INFO.login_UserName];
+		resolveData.clientDetails.creditedUsers = [INFO.login_UserName];
+		resolveData.clientDetails.voucherCodes = [];
+	}
+
+	const identifiers = patientData.identifiers;
+	for (let i = 0; i < identifiers.length; i++) {
+		const iden = identifiers[i];
+		const value = iden.identifier;
+		const key = iden.identifierType.display; // iden.identifierType.uuid
+		resolveData.clientDetails[key] = value;
+	}
+
+	try {
+		var generateClientFormatEval = ConfigManager.getSettingsBahmni().generateClientFormatEval;
+		if (generateClientFormatEval) {
+			INFO.client = resolveData;
+			INFO.patientData = patientData;
+
+			eval(Util.getEvalStr(generateClientFormatEval));
+		}
+	}
+	catch (errMsg) {
+		MsgManager.msgAreaShow('ERROR during Eval of bahmni client json create: ' + errMsg, 'ERROR');
+		console.log(errMsg);
+	}
+
+	return resolveData;
+};
+
+BahmniService.generateActivityAppointment = function (data, options) {
+	if (!options) options = {};
+
+	const type = "Appointment";
+	let dataValues = { ...data };
+	dataValues.startDateTime = UtilDate.dateStr("DT", new Date(dataValues.startDateTime)); // Format the 'startDateTime'
+	dataValues.endDateTime = UtilDate.dateStr("DT", new Date(dataValues.endDateTime)); //  Format the 'endDateTime'
+	const serviceKeys = Object.keys(data.service);
+	for (var i = 0; i < serviceKeys.length; i++) {
+		const key = serviceKeys[i];
+		dataValues["service_" + key] = data.service[key];
+	}
+
+	var activity = { id: data.uuid, subSourceType: BahmniService.BAHMNI_KEYWORD, transactions: [{ dataValues, type }], type: type, originalData: data, date: BahmniService.generateJsonDate(), patientId: data.patient.uuid };
+	if (options.formData) activity.formData = options.formData;
+
+	return activity;
+};
+
+BahmniUtil.generateActivityFormData = function (formData, type, formNameId) {
+	return BahmniService.generateActivityFormData( formData, type, formNameId );
+};
+
+BahmniService.generateActivityFormData = function (formData, type, formNameId) {
+	const patientId = formData.patientUuid;
+
+	var dataValues = {
+		encounterUuid: formData.encounterUuid,
+		patientUuid: patientId,
+		visitUuid: formData.visitUuid,
+		formVersion: formData.formVersion
+	};
+
+	var activityId = formData.encounterUuid + "--" + BahmniService.getFormMetadata(formData.formName, formData.formVersion, BahmniService.KEY_FD_META_DATA, "uuid");
+	return { id: activityId, subSourceType: BahmniService.BAHMNI_KEYWORD, transactions: [{ dataValues, type }], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: formData, date: BahmniService.generateJsonDate(), patientId: patientId };
+};
+
+BahmniService.generateJsonDate = function () {
+	var dateStr = UtilDate.dateStr('DT', new Date());
+
+	dateObj = {
+		capturedLoc: dateStr,
+		capturedUTC: dateStr,
+		createdLoc: dateStr,
+		createdOnDeviceLoc: dateStr,
+		createdOnDeviceUTC: dateStr,
+		createdUTC: dateStr,
+		updatedLoc: dateStr,
+		updatedUTC: dateStr
+	};
+
+	UtilDate.setDate_LocToUTC_fields(dateObj, 'ALL');
+
+	return dateObj;
+};
+
+BahmniService.resolveNumber = function (number) {
+	return (number >= 10) ? ('' + number) : ('0' + number);
+};
+
+
+BahmniService.generateOptionsByConcept = function (concept) {
+	var options = [];
+
+	const answers = concept.answers;
+	for (var i = 0; i < answers.length; i++) {
+		options.push({ "defaultName": answers[i].display, "value": answers[i].uuid });
+	}
+
+	return options;
+};
+
+BahmniUtil.getFormMetadata = function (formName, formVersion, keyword, propertyName) {
+	return BahmniService.getFormMetadata(formName, formVersion, keyword, propertyName);
+};
+
+BahmniService.getFormMetadata = function (formName, formVersion, keyword, propertyName) {
+	var returnVal = 'null';
+
+	// NOTE: CHANGED!!
+	try {
+		var metadata = INFO.formMetadata[formName][formVersion][keyword];
+		var value = (metadata) ? metadata[propertyName] : undefined;
+		returnVal = (value) ? metadata[propertyName] : "null";
+	}
+	catch (errMsg) { console.log('ERROR in BahmniService.getFormMetadata, ' + errMsg); }
+
+	return returnVal;
+}
+
+BahmniService.getActivityInfo = function (activity) {
+	let activityType = activity.type;  // INFO.activity.type; 
+	let activityFormVersion = ActivityDataManager.getTransDataValue(activity.transactions, 'formVersion');
+	if (activityFormVersion) {
+		let matadataFormVersion = (INFO.formMetadata[activityType]) ? INFO.formMetadata[activityType][activityFormVersion] : '';
+		let isSupported = (matadataFormVersion !== "undefined") ? '' : 'No supported';
+		return activity.type + ": " + activityFormVersion + " <span style=\"font-size:10px;font-style:italic;\">" + isSupported + "</span>";
+	}
+
+	return activity.type;
+}
+
+
+BahmniService.showProgressBar = function (width) {
+	if (width) {
+		$('#divSubResourceProgressInfo').css('width', width);
+	}
+	$('#divSubResourceProgressBar').css('display', 'block');
+	$('#divSubResourceProgressBar').show();
+}
+
+BahmniService.hideProgressBar = function () {
+	$('#divSubResourceProgressBar').hide();
+}
+
+BahmniService.getDiffBetweenCurrentMinutes = function (startDateObj) {
+	var diff = UtilDate.timeCalculation((new Date()).getTime(), startDateObj.getTime());
+	return eval(diff.mm);
 };

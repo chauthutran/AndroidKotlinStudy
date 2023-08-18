@@ -1004,16 +1004,39 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
     	// NEW - Bahmni
 		if( successCaseName === 'bahmniSyncSuccess' )
 		{
+			var clientList = [];
+
 			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
 			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
-			var clientJson = ClientDataManager.getClientByActivityId(activityId);
-			ClientDataManager.setActivityDateLocal_client(clientJson);
+
+			// NOTE: Bahmni SyncUp --> Does not Create 'client' or Get Response / Download proper data!!
+			//  - THUS, GET 'client' DATA FROM EXISTING local data!!!
+			var existingClient = ClientDataManager.getClientByActivityId(activityId);
+
+			if ( !existingClient ) MsgManager.msgAreaShowErrOpt( 'Bahmni SyncUp Failed due to client not found!!' );
+			else
+			{
+				// NEW: EXCEPTION IS patient data update SyncUp <-- Update existing Client with this data!!!
+				if ( activityJson_Orig.syncUp && activityJson_Orig.syncUp.person && responseJson.person )
+				{
+					var dwClient = BahmniService.generateClientData( responseJson, { mergeCase: true } );
+	
+					Util.copyProperties( existingClient, dwClient, { 'exceptions': { 'activities': true, '_id': true, 'clientDetails': true } } );
+					Util.copyProperties( existingClient.clientDetails, dwClient.clientDetails );	
+				}
+				
+				// ClientDataManager.setActivityDateLocal_client(clientJson);		
+
+				clientList.push( existingClient );
+			}
 
 			// Set Flag - Set for mongo bahmni sync
 			activityJson_Orig.subSyncStatus = BahmniService.readyToMongoSync;
 
+
 			// Removal of existing activity/client happends within 'mergeDownloadClients()'
-			ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
+			BahmniService.mergeDownloadedClients(clientList, processingInfo, { 'syncUpActivityId': activityId }, function (changeOccurred_atMerge, mergedActivities) {
+			//ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
 				// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
 				ClientDataManager.saveCurrent_ClientsStore(() => {
 					if (callBack) callBack(bOptResult, undefined, Constants.status_submit);

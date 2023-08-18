@@ -337,10 +337,21 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 					ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
 					newActivities.push(dwActivity);
 				}
-				else if ( ConfigManager.isSourceTypeDhis2() || ConfigManager.isSourceTypeFhir() ) // If dhis2 sourceType case, simply set the server one as updated one.
+				 // If dhis2 sourceType case, simply set the server one as updated one.
+				else if ( ConfigManager.isSourceTypeDhis2() || ConfigManager.isSourceTypeFhir() )
 				{
 					ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
 					newActivities.push(dwActivity);
+				}
+				else if ( BahmniService.isBahmniActivity( dwActivity ) )
+				{
+					// In 'bahmni' activity SyncDown case, only replace the activity if it was downloaded in later time
+					if ( dwActivity.date && dwActivity.date.updatedUTC && appClientActivity.date && appClientActivity.date.updatedUTC
+						&& dwActivity.date.updatedUTC > appClientActivity.date.updatedUTC )
+						{
+							ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
+							newActivities.push(dwActivity);		
+						}
 				}
 				// NOTE: For other activities downloaded and existing, we should not merge it? - Do not add to activity?
 				//  <-- On Mongo case, we should update it..  I think..
@@ -368,13 +379,11 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 
 
 	// if new list to push to appClientActivities exists, add to the list.
-	if (newActivities.length > 0) {
-		//ActivityDataManager.insertActivitiesToClient( newActivities, appClient, { 'bRemoveActivityTempClient': true } );
+	if (newActivities.length > 0) 
+	{
+		// NOTE: This Below 'insert' also removes existing data 1st..
 		ActivityDataManager.insertActivitiesToClient(newActivities, appClient);
-
-		// NOTE: Could sort all activities in this client AT THIS TIME.
-		//  - Whenever there is an activity to add, we can do sort here? oldest(lowest date string value) on top - ascending
-		// appClient.activities.sort( function(a, b) { return Util.sortCompare( a.date.createdOnDeviceUTC, b.date.createdOnDeviceUTC ) } );
+		// NOTE: Could sort all activities in this client AT THIS TIME.  // appClient.activities.sort( function(a, b) { return Util.sortCompare( a.date.createdOnDeviceUTC, b.date.createdOnDeviceUTC ) } );
 	}
 
 	// Return the number of added ones.
@@ -1318,11 +1327,14 @@ ActivityDataManager.getVoucherActivitiesData = function (activities, voucherCode
 ActivityDataManager.getTransDataValue = function (transList, transDVProp) {
 	var value;
 
-	transList.forEach(trans => {
-		var dvJson = trans.dataValues;
-
-		if (dvJson && dvJson[transDVProp] !== undefined && dvJson[transDVProp] !== '' ) value = dvJson[transDVProp];
-	});
+	if ( transList )
+	{
+		transList.forEach(trans => {
+			var dvJson = trans.dataValues;
+	
+			if (dvJson && dvJson[transDVProp] !== undefined && dvJson[transDVProp] !== '' ) value = dvJson[transDVProp];
+		});	
+	}
 
 	return value;
 };
