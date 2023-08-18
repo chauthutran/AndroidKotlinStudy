@@ -302,7 +302,6 @@ BahmniService.syncDataRun = function () {
 				console.log("Downloaded " + clientDwnLength + " clients");
 				ClientDataManager.setActivityDateLocal_clientList(clientList);
 
-				// 10 min offset with sync time - to make sure it does not miss things.
 				BahmniService.mergeDownloadedClients(clientList, processingInfo, {}, function (changeOccurred_atMerge, mergedActivities) {
 
 					if (responseBahmniData.status.status == "success") {
@@ -369,22 +368,30 @@ BahmniService.syncDown = function (exeFunc) {
 	BahmniService.syncDownDataList = {};
 
 	const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
-	if (configSynDownList) {
+
+	if (configSynDownList) 
+	{
 		BahmniService.syncDownProcessingTotal = configSynDownList.length;
 		BahmniService.syncDownProcessingIdx = 0;
 
-		for (var i = 0; i < configSynDownList.length; i++) {
+
+		// NOTE #1. Wait Until this is all finished?
+
+		for (var i = 0; i < configSynDownList.length; i++) 
+		{
 			var configSynDownData = JSON.parse(JSON.stringify(configSynDownList[i]));
 			var url = eval(Util.getEvalStr(configSynDownData.urlEval));
 
-			if (configSynDownData.method.toUpperCase() == "POST") {
+			if (configSynDownData.method.toUpperCase() == "POST") 
+			{
 				Util.traverseEval(configSynDownData.payload, InfoDataManager.getINFO(), 0, 50);
 
 				BahmniRequestService.sendPostRequest(configSynDownData.id, url, configSynDownData.payload, function (response) {
 					BahmniService.afterSyncDown(response, exeFunc);
 				})
 			}
-			else if (configSynDownData.method.toUpperCase() == "GET") {
+			else if (configSynDownData.method.toUpperCase() == "GET") 
+			{
 				BahmniRequestService.sendGetRequest(configSynDownData.id, url, function (response) {
 					BahmniService.afterSyncDown(response, exeFunc);
 				});
@@ -404,22 +411,31 @@ BahmniService.setResponseErrorIfAny = function (response) {
 	}
 };
 
-BahmniService.afterSyncDown = function (response, exeFunc) {
+BahmniService.afterSyncDown = function (response, exeFunc) 
+{
 	BahmniService.syncDownProcessingIdx++;
 	BahmniService.setResponseErrorIfAny(response);
 
-	if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) {
+	// NOTE: Run only if this is last 'syncDown' perform task index.
+	if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) 
+	{
 		var conceptIds = [];
 		var patientIds = [];
 		var appointmentIds = [];
 		var appointments = [];
 		const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
-		for (var i = 0; i < configSynDownList.length; i++) {
+
+		for (var i = 0; i < configSynDownList.length; i++) 
+		{
 			const configData = configSynDownList[i];
 			const responseData = eval(Util.getEvalStr(configData.responseEval));
-			if (responseData) {
+
+			if (responseData) 
+			{
 				var data = responseData.data;
-				if (data.conceptIds) {
+			
+				if (data.conceptIds) 
+				{					
 					conceptIds = conceptIds.concat(data.conceptIds);
 					conceptIds = conceptIds.filter((item, pos) => conceptIds.indexOf(item) === pos); // Remove duplicated Ids
 				}
@@ -450,6 +466,13 @@ BahmniService.afterSyncDown = function (response, exeFunc) {
 			exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
 		}
 		else {
+
+
+			// NOTE: Since Appointment also adds to Patient List..
+			// We need to run patient 1st..
+
+
+
 			BahmniService.getConceptList(conceptIds, function () {
 				exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
 			});
@@ -461,19 +484,28 @@ BahmniService.afterSyncDown = function (response, exeFunc) {
 			BahmniService.getPatientDataList(patientIds, function () {
 				exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
 			});
+
+
+
 		}
 
 	}
 }
 
-BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc) {
-	if (appointmentIds.length > 0) {
-		for (var i = 0; i < appointmentIds.length; i++) {
-			BahmniService.retrieveAppointmentDetails(appointmentIds[i], function (response) {
+BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc) 
+{
+	if (appointmentIds.length > 0) 
+	{
+		for (var i = 0; i < appointmentIds.length; i++) 
+		{
+			BahmniService.retrieveAppointmentDetails(appointmentIds[i], function (response) 
+			{
 
-				if (response.status == "success") {
+				if (response.status == "success") 
+				{
 					const data = response.data;
 					const patientId = data.patient.uuid;
+				
 					// Add patientId in patientId list so that we can retrieve the details later
 					if (BahmniService.syncDownDataList.patientIds.indexOf(patientId) < 0) {
 						BahmniService.syncDownDataList.patientIds.push(patientId);
@@ -493,10 +525,14 @@ BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc) {
 	}
 };
 
-BahmniService.getPatientDataList = function (patientIds, exeFunc) {
-	if (patientIds.length > 0) {
-		for (var i = 0; i < patientIds.length; i++) {
-			BahmniService.retrievePatientDetails(patientIds[i], function (response) {
+BahmniService.getPatientDataList = function (patientIds, exeFunc) 
+{
+	if (patientIds.length > 0) 
+	{
+		for (var i = 0; i < patientIds.length; i++) 
+		{
+			BahmniService.retrievePatientDetails(patientIds[i], function (response) 
+			{
 				if (response.status == "success") {
 					BahmniService.syncDownDataList.patients.push(BahmniService.generateClientData(response.data.patient));
 				}
@@ -550,13 +586,71 @@ BahmniService.afterSyncDownAll = function (response, exeFunc) {
 		// -------------------------------------------------------------------------------------------------------------
 		// Add all activities for patients based on patienId
 		const patientList = BahmniService.syncDownDataList.patients;
-		for (var i = 0; i < patientList.length; i++) {
+		var usedAppointIds = [];
+
+		for (var i = 0; i < patientList.length; i++) 
+		{
 			var item = patientList[i];
 			var patientId = item.patientId;
+
 			var activities = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
-			if (activities != undefined) {
-				item.activities = activities;
+			item.activities = activities;
+			activities.forEach( app => usedAppointIds.push( app.id ) );
+		}
+
+
+		// Get not used (by above) activities/Appointments
+		var remainAppoints = BahmniService.syncDownDataList.appointments.filter( app => usedAppointIds.indexOf( app.id ) == -1 );
+
+
+		// Also, for appointments that is not in patient list, check if that patient is in local
+		var localClientList = ClientDataManager.getClientList();
+
+		var inLocalPatientList = { };
+		var notFoundPatientList = [];
+
+		// Get Patient/Client List for these 'remain appointment'
+		remainAppoints.forEach( app => 
+		{
+			var patientId = app.patientId;
+
+			if ( patientId )
+			{
+				var localClient = Util.findFromList( localClientList, patientId, "patientId" );
+
+				if ( localClient ) 
+				{
+					if ( !inLocalPatientList[ patientId ] ) inLocalPatientList[ patientId ] = Util.cloneJson( client );
+				}
+				else 
+				{
+					if ( notFoundPatientList.indexOf( patientId ) < 0 ) notFoundPatientList.push( patientId );
+				}
 			}
+		});
+
+
+		// For each localClient, add activities..
+		for( var patientId in inLocalPatientList )
+		{
+			var clientCopy = inLocalPatientList[patientId];
+
+			var activities = Util.findAllFromList( remainAppoints, patientId, "patientId");
+
+			activities.forEach( act => 
+			{
+				// Remove existing one in local and replace it with new downloaded one.
+				Util.RemoveFromArrayAll( clientCopy.activities, 'id', act.id );
+				clientCopy.activities.push( act );				
+			});
+
+			BahmniService.syncDownDataList.patients.push( clientCopy );
+		}
+
+
+		if ( notFoundPatientList.length > 0 )
+		{
+			MsgManager.msgAreaShowErrOpt( 'Bahmni Appointment Merge Error - Not Found Patients: ' + notFoundPatientList.toString() );
 		}
 
 		exeFunc();
@@ -839,7 +933,7 @@ BahmniService.generateActivityFormData = function (formData, type, formNameId) {
 BahmniService.generateJsonDate = function () {
 	var dateStr = UtilDate.dateStr('DT', new Date());
 
-	dateObj = {
+	var dateObj = {
 		capturedLoc: dateStr,
 		capturedUTC: dateStr,
 		createdLoc: dateStr,

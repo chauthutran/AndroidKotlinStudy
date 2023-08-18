@@ -77,7 +77,7 @@ function Login() {
 		// Translate the page..
 		TranslationManager.translatePage();
 
-		me.appVersionCheck();
+		//me.appVersionCheck();
 
 		//MsgManager.msgAreaShowOpt( 'Testing Notification Msg', { cssClasses: 'notifCBlue', hideTimeMs: 900000, styleArr: [ { name: 'background-color', value: '#50A3C6' } ] } );
 	};
