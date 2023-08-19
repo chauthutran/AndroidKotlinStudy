@@ -653,10 +653,7 @@ function Login() {
 	{
 		AppInfoLSManager.setUserName(userName);
 		SessionManager.setLoginStatus(true);
-
-		// NEW - SetUp + StartUp Bahmni Related Service - with Config settings.
-		if ( ConfigManager.isBahmniSubSourceType() ) BahmniService.serviceStartUp();
-
+		
 
 		// gAnalytics Event
 		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
