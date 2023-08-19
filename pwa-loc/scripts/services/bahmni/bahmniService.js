@@ -293,11 +293,14 @@ BahmniService.syncDataRun = function ()
 	BahmniMsgManager.SyncMsg_InsertMsg('Start Syncing to Bahmni server ...');
 
 
-	try {
+	try 
+	{
 		// Sync Up activity to Bahmni server
-		BahmniService.syncUpAll(function () {
+		BahmniService.syncUpAll(function () 
+		{
 			// Sync Down activity to Bahmni server
-			BahmniService.syncDown(function (responseBahmniData) {
+			BahmniService.syncDown(function (responseBahmniData) 
+			{
 				var clientList = responseBahmniData.data;
 				var clientDwnLength = clientList.length;
 
@@ -309,34 +312,24 @@ BahmniService.syncDataRun = function ()
 				// console.log("Downloaded " + clientDwnLength + " clients");
 				ClientDataManager.setActivityDateLocal_clientList(clientList);
 
-				BahmniService.mergeDownloadedClients(clientList, processingInfo, {}, function (changeOccurred_atMerge, mergedActivities) {
-
-					console.log(" ---- responseBahmniData.status.status: " + responseBahmniData.status.status );
-					console.log(" ---- changeOccurred_atMerge: " + changeOccurred_atMerge );
-
-
-					if (responseBahmniData.status.status == "success") {
+				BahmniService.mergeDownloadedClients(clientList, processingInfo, {}, function (changeOccurred_atMerge, mergedActivities) 
+				{
+					//console.log(" ---- responseBahmniData.status.status: " + responseBahmniData.status.status );
+					//console.log(" ---- changeOccurred_atMerge: " + changeOccurred_atMerge );
+					if (responseBahmniData.status.status == "success") 
+					{
 						var mergedActivityLength = mergedActivities.length;
 						BahmniMsgManager.SyncMsg_InsertMsg("Merged " + mergedActivityLength + " activities..");
 						BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities.");
 
 						// NOTE: If there was a new merge, for now, alert the user to reload the list?
-						if (changeOccurred_atMerge) {
-							// Display the summary of 'syncDown'.  However, this could be a bit confusing
-
-							var btnRefresh = $('<a style="color: blue !important; cursor: pointer;" term="">REFRESH </a>');
-
-							$(btnRefresh).click(() => {
-								SessionManager.cwsRenderObj.renderArea1st();
-							});
-
+						if (changeOccurred_atMerge) 
+						{
+							var btnRefresh = $('<a style="color: blue !important; cursor: pointer;" term="">REFRESH </a>').click(() => { SessionManager.cwsRenderObj.renderArea1st(); });
 							MsgManager.msgAreaShowOpt( 'Bahmni SyncDown data found',{ hideTimeMs: 10000, styles: 'background-color: orange;', actionButton: btnRefresh } );
-							
 						}
 					}
-					else {
-						BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
-					}
+					else BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
 
 					BahmniService.syncDataProcessing = false;
 					BahmniConnManager.update_UI_Status_FinishSyncAll();
@@ -959,8 +952,15 @@ BahmniService.generateActivityFormData = function (formData, type, formNameId) {
 	return { id: activityId, subSourceType: BahmniService.BAHMNI_KEYWORD, transactions: [{ dataValues, type }], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: formData, date: BahmniService.generateJsonDate(), patientId: patientId };
 };
 
-BahmniService.generateJsonDate = function () {
-	var dateStr = UtilDate.dateStr('DT', new Date());
+BahmniService.generateJsonDate = function ( originalDateStr ) 
+{
+	var dateStr;
+	
+	try {
+		if ( originalDateStr ) dateStr = UtilDate.dateStr( 'DT', UtilDate.getDateObj( originalDateStr ) );
+	} catch ( errMsg ) { console.log( 'ERROR in BahmniService.generateJsonDate, ' + errMsg ); }
+
+	if ( !dateStr ) dateStr = UtilDate.dateStr('DT', new Date());
 
 	var dateObj = {
 		capturedLoc: dateStr,
