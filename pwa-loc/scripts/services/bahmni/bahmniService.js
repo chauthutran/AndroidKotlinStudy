@@ -324,7 +324,7 @@ BahmniService.syncDataRun = function ()
 						if (changeOccurred_atMerge) {
 							// Display the summary of 'syncDown'.  However, this could be a bit confusing
 
-							var btnRefresh = $('<a class="color: blue;" term=""> REFRESH </a>');
+							var btnRefresh = $('<a style="color: blue !important; cursor: pointer;" term="">REFRESH </a>');
 
 							$(btnRefresh).click(() => {
 								SessionManager.cwsRenderObj.renderArea1st();
@@ -421,7 +421,7 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 	BahmniService.setResponseErrorIfAny(response);
 
 	// NOTE: Run only if this is last 'syncDown' perform task index.
-	if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) 
+	if (BahmniService.syncDownProcessingIdx >= BahmniService.syncDownProcessingTotal) 
 	{
 		var conceptIds = [];
 		var patientIds = [];
@@ -514,7 +514,7 @@ BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc)
 					BahmniService.syncDownDataList.appointments.push(activity);
 				}
 
-				if( BahmniService.syncDownAppointmentProcessing == BahmniService.syncDownAppointmentTotal )
+				if( BahmniService.syncDownAppointmentProcessing >= BahmniService.syncDownAppointmentTotal )
 				{
 					exeFunc();
 				}
@@ -545,7 +545,7 @@ BahmniService.getPatientDataList = function (patientIds, exeFunc)
 					BahmniService.syncDownDataList.patients.push(BahmniService.generateClientData(response.data.patient));
 				}
 
-				if( BahmniService.syncDownPatientDataProcessingIdx == BahmniService.syncDownPatientDataTotal )
+				if( BahmniService.syncDownPatientDataProcessingIdx >= BahmniService.syncDownPatientDataTotal )
 				{
 					exeFunc();
 				}
@@ -576,7 +576,7 @@ BahmniService.getConceptList = function (conceptIdList, exeFunc)
 					BahmniService.syncDownDataList.concepts.push(response.data);
 				}
 
-				if( BahmniService.syncDownConceptProcessingIdx == BahmniService.syncDownConceptTotal )
+				if( BahmniService.syncDownConceptProcessingIdx >= BahmniService.syncDownConceptTotal )
 				{
 					exeFunc();
 				}
@@ -820,7 +820,7 @@ BahmniService.mergeDownloadedClients = function (clientList, processingInfo, dow
 
 				// If matching client exists in App already.
 				if (appClient) 
-        {
+				{
 					// NOTE: On Bahmni case, downloaded 'client' data always overwrite to local one.
 					// 	Same for 'activity' --> if matching activity exists, always overwrite it.
 					// var clientDateCheckPass = (ClientDataManager.getDateStr_LastUpdated(bmClient) > ClientDataManager.getDateStr_LastUpdated(appClient));  // if (clientDateCheckPass) 
