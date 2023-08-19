@@ -285,70 +285,79 @@ BahmniService.isBahmniActivity = function (activityJson) {
 
 BahmniService.syncDataRun = function () 
 {
-	FormUtil.rotateTag($('.syncBtn2_svg'), true);
-	BahmniMsgManager.SyncMsg_ShowBottomMsg();
-
-	BahmniMsgManager.SyncMsg_SetAsNew();
-	BahmniMsgManager.SyncMsg_InsertMsg('Connected to the server ' + INFO.bahmni_domain);
-	BahmniMsgManager.SyncMsg_InsertMsg('Start Syncing to Bahmni server ...');
-
-
-	try 
+	if ( BahmniService.syncDataProcessing ) 
 	{
-		// Sync Up activity to Bahmni server
-		BahmniService.syncUpAll(function () 
-		{
-			// Sync Down activity to Bahmni server
-			BahmniService.syncDown(function (responseBahmniData) 
-			{
-				var clientList = responseBahmniData.data;
-				var clientDwnLength = clientList.length;
-
-				// 'download' processing data                
-				var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_downloaded, 'Downloaded and synced.');
-
-				BahmniMsgManager.SyncMsg_InsertMsg("Downloaded " + clientDwnLength + " clients");
-
-				// console.log("Downloaded " + clientDwnLength + " clients");
-				ClientDataManager.setActivityDateLocal_clientList(clientList);
-
-				BahmniService.mergeDownloadedClients(clientList, processingInfo, {}, function (changeOccurred_atMerge, mergedActivities) 
-				{
-					//console.log(" ---- responseBahmniData.status.status: " + responseBahmniData.status.status );
-					//console.log(" ---- changeOccurred_atMerge: " + changeOccurred_atMerge );
-					if (responseBahmniData.status.status == "success") 
-					{
-						var mergedActivityLength = mergedActivities.length;
-						BahmniMsgManager.SyncMsg_InsertMsg("Merged " + mergedActivityLength + " activities..");
-						BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " clients, merged " + mergedActivityLength + " activities.");
-
-						// NOTE: If there was a new merge, for now, alert the user to reload the list?
-						if (changeOccurred_atMerge) 
-						{
-							var btnRefresh = $('<a style="color: blue !important; cursor: pointer;" term="">REFRESH </a>').click(() => { SessionManager.cwsRenderObj.renderArea1st(); });
-							MsgManager.msgAreaShowOpt( 'Bahmni SyncDown data found',{ hideTimeMs: 10000, styles: 'background-color: orange;', actionButton: btnRefresh } );
-						}
-					}
-					else BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
-
-					BahmniService.syncDataProcessing = false;
-					BahmniConnManager.update_UI_Status_FinishSyncAll();
-
-					FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
-				});
-			});
-		})
+		MsgManager.msgAreaShowErrOpt( 'Bahmni Sync Already In Progress!!' );
 	}
-	catch (errMsg) {
+	else
+	{
+		BahmniService.syncDataProcessing = true;
+		FormUtil.rotateTag($('.syncBtn2_svg'), true);
 
 		BahmniMsgManager.SyncMsg_ShowBottomMsg();
-		BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync data failed.");
 
-		console.log('ERROR in BahmniService.syncDataRun, ' + errMsg);
+		BahmniMsgManager.SyncMsg_SetAsNew();
+		BahmniMsgManager.SyncMsg_InsertMsg('Bahmni Server: ' + INFO.bahmni_domain);
+	
+		try 
+		{
+			// Sync Up activity to Bahmni server
+			BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncUp Started...");
+			BahmniService.syncUpAll( function () 
+			{
+				BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncUp Finished.");
 
-		BahmniConnManager.update_UI_Status_FinishSyncAll();
-
-		FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
+				// Sync Down activity to Bahmni server
+				BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncDown Started...");
+				BahmniService.syncDown( function (responseBahmniData) 
+				{
+					var clientList = responseBahmniData.data;
+					var clientDwnLength = clientList.length;
+	
+					BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncDown Finished.  Merging " + clientDwnLength + " Patients..." );
+	
+					// Download Down, Stop the SyncIconRotation
+					BahmniService.syncDataProcessing = false;
+					BahmniConnManager.update_UI_Status_FinishSyncAll();
+					FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
+	
+					// 'download' processing data                
+					var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_downloaded, 'Downloaded and synced.');
+	
+					BahmniService.mergeDownloadedClients( clientList, processingInfo, {}, function (changeOccurred_atMerge, mergedActivities) 
+					{
+						//console.log(" ---- responseBahmniData.status.status: " + responseBahmniData.status.status );
+						//console.log(" ---- changeOccurred_atMerge: " + changeOccurred_atMerge );
+						if (responseBahmniData.status.status == "success") 
+						{
+							var mergedActivityLength = mergedActivities.length;
+							BahmniMsgManager.SyncMsg_InsertMsg( "Merge FINSIHED: " + mergedActivityLength + " activities, " + clientDwnLength + " patients." );
+							BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " patients, merged " + mergedActivityLength + " activities.");
+	
+							// NOTE: If there was a new merge, for now, alert the user to reload the list?
+							if (changeOccurred_atMerge) 
+							{
+								var btnRefresh = $('<a style="color: blue !important; cursor: pointer;" term="">REFRESH </a>').click(() => { SessionManager.cwsRenderObj.renderArea1st(); });
+								MsgManager.msgAreaShowOpt( 'Bahmni SyncDown data found', { hideTimeMs: 10000, styles: 'background-color: orange;', actionButton: btnRefresh } );
+							}
+						}
+						else BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync Data Failed.");
+	
+					});
+				});
+			})
+		}
+		catch (errMsg) 
+		{	
+			BahmniMsgManager.SyncMsg_ShowBottomMsg();
+			BahmniMsgManager.SyncMsg_InsertSummaryMsg( "ERROR during SyncDataRun, Try Catch Occurred!" );
+	
+			console.log('ERROR in BahmniService.syncDataRun, ' + errMsg);
+	
+			BahmniService.syncDataProcessing = false;
+			BahmniConnManager.update_UI_Status_FinishSyncAll();
+			FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
+		}		
 	}
 };
 
@@ -374,7 +383,7 @@ BahmniService.syncDown = function (exeFunc)
 		BahmniService.syncDownProcessingTotal = configSynDownList.length;
 		BahmniService.syncDownProcessingIdx = 0;
 
-		// NOTE #1. Wait Until this is all finished?
+		// NOTE #1. Runs Multiple Async Calls and 'afterSyncDown' detects the last response to run follow up process
 		for (var i = 0; i < configSynDownList.length; i++) 
 		{
 			var configSynDownData = JSON.parse(JSON.stringify(configSynDownList[i]));
@@ -414,7 +423,7 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 	BahmniService.setResponseErrorIfAny(response);
 
 	// NOTE: Run only if this is last 'syncDown' perform task index.
-	if (BahmniService.syncDownProcessingIdx >= BahmniService.syncDownProcessingTotal) 
+	if ( BahmniService.syncDownProcessingIdx >= BahmniService.syncDownProcessingTotal ) 
 	{
 		var conceptIds = [];
 		var patientIds = [];
@@ -462,13 +471,18 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 		}
 		else
 		{
-			BahmniService.getConceptList(conceptIds, function () 
+			BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Concepts: " + conceptIds.length + " items.." );
+			BahmniService.getConceptList( conceptIds, function () 
 			{
-				BahmniService.getAppointmentDataList(appointmentIds, function () 
+				BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Appointments: " + appointmentIds.length + " items.." );
+				BahmniService.getAppointmentDataList( appointmentIds, function () 
 				{
-					BahmniService.getPatientDataList(BahmniService.syncDownDataList.patientIds, function () 
+					BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Patients: " + BahmniService.syncDownDataList.patientIds.length + " items.." );
+					BahmniService.getPatientDataList( BahmniService.syncDownDataList.patientIds, function () 
 					{
-						BahmniService.afterSyncDownAll( function(){
+						BahmniMsgManager.SyncMsg_InsertMsg( "After SyncDownAll Processing.." );
+						BahmniService.afterSyncDownAll( function()
+						{
 							exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
 						});
 					});
@@ -477,7 +491,7 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 		}
 
 	}
-}
+};
 
 BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc) 
 {
@@ -523,25 +537,19 @@ BahmniService.getPatientDataList = function (patientIds, exeFunc)
 {
 	if (patientIds.length > 0) 
 	{
-		
 		BahmniService.syncDownPatientDataProcessingIdx = 0;
 		BahmniService.syncDownPatientDataTotal = patientIds.length;
 
-		for (var i = 0; i < patientIds.length; i++) {
-			BahmniService.retrievePatientDetails(patientIds[i], function (response) {
-
+		for (var i = 0; i < patientIds.length; i++) 
+		{
+			BahmniService.retrievePatientDetails(patientIds[i], function (response) 
+			{
 				BahmniService.syncDownPatientDataProcessingIdx++;
 				BahmniService.setResponseErrorIfAny(response);
 
-				if (response.status == "success") 
-				{
-					BahmniService.syncDownDataList.patients.push(BahmniService.generateClientData(response.data.patient));
-				}
+				if (response.status == "success") BahmniService.syncDownDataList.patients.push(BahmniService.generateClientData(response.data.patient));
 
-				if( BahmniService.syncDownPatientDataProcessingIdx >= BahmniService.syncDownPatientDataTotal )
-				{
-					exeFunc();
-				}
+				if( BahmniService.syncDownPatientDataProcessingIdx >= BahmniService.syncDownPatientDataTotal ) exeFunc();
 			})
 		}
 	}
@@ -608,7 +616,7 @@ BahmniService.afterSyncDownAll = function (exeFunc)
 		// -------------------------------------------------------------------------------------------------------------
 		// Add all activities for patients based on patienId
 		const patientList = BahmniService.syncDownDataList.patients;
-		var usedAppointIds = [];
+		//var usedAppointIds = [];
 
 		for (var i = 0; i < patientList.length; i++) 
 		{
@@ -617,71 +625,75 @@ BahmniService.afterSyncDownAll = function (exeFunc)
 
 			var activities = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
 			item.activities = activities;
-			activities.forEach( app => usedAppointIds.push( app.id ) );
+			//activities.forEach( app => usedAppointIds.push( app.id ) );
 		}
 
-
-		// Get not used (by above) activities/Appointments
-		var remainAppoints = BahmniService.syncDownDataList.appointments.filter( app => usedAppointIds.indexOf( app.id ) == -1 );
-
-
-		// Also, for appointments that is not in patient list, check if that patient is in local
-		var localClientList = ClientDataManager.getClientList();
-
-		var inLocalPatientList = { };
-		var notFoundPatientList = [];
-
-		// Get Patient/Client List for these 'remain appointment'
-		remainAppoints.forEach( app => 
-		{
-			var patientId = app.patientId;
-
-			if ( patientId )
-			{
-				var localClient = Util.findFromList( localClientList, patientId, "patientId" );
-
-				if ( localClient ) 
-				{
-					if ( !inLocalPatientList[ patientId ] ) inLocalPatientList[ patientId ] = Util.cloneJson( client );
-				}
-				else 
-				{
-					if ( notFoundPatientList.indexOf( patientId ) < 0 ) notFoundPatientList.push( patientId );
-				}
-			}
-		});
-
-
-		// For each localClient, add activities..
-		for( var patientId in inLocalPatientList )
-		{
-			var clientCopy = inLocalPatientList[patientId];
-
-			var activities = Util.findAllFromList( remainAppoints, patientId, "patientId");
-
-			activities.forEach( act => 
-			{
-				// Remove existing one in local and replace it with new downloaded one.
-				Util.RemoveFromArrayAll( clientCopy.activities, 'id', act.id );
-				clientCopy.activities.push( act );				
-			});
-
-			BahmniService.syncDownDataList.patients.push( clientCopy );
-		}
-
-
-		if ( notFoundPatientList.length > 0 )
-		{
-			MsgManager.msgAreaShowErrOpt( 'Bahmni Appointment Merge Error - Not Found Patients: ' + notFoundPatientList.toString() );
-		}
+		// BahmniService.otherPatientAppointments_Processing( usedAppointIds );
 
 		exeFunc();
 	//}
 };
 
-BahmniService.updateOptionsChanges = function () {
+
+BahmniService.otherPatientAppointments_Processing = function ( usedAppointIds ) 
+{
+	// Get not used (by above) activities/Appointments
+	var remainAppoints = BahmniService.syncDownDataList.appointments.filter( app => usedAppointIds.indexOf( app.id ) == -1 );
+
+	// Also, for appointments that is not in patient list, check if that patient is in local
+	var localClientList = ClientDataManager.getClientList();
+
+	var inLocalPatientList = { };
+	var notFoundPatientList = [];
+
+	// Get Patient/Client List for these 'remain appointment'
+	remainAppoints.forEach( app => 
+	{
+		var patientId = app.patientId;
+
+		if ( patientId )
+		{
+			var localClient = Util.findFromList( localClientList, patientId, "patientId" );
+
+			if ( localClient ) 
+			{
+				if ( !inLocalPatientList[ patientId ] ) inLocalPatientList[ patientId ] = Util.cloneJson( client );
+			}
+			else 
+			{
+				if ( notFoundPatientList.indexOf( patientId ) < 0 ) notFoundPatientList.push( patientId );
+			}
+		}
+	});
+
+
+	// For each localClient, add activities..
+	for( var patientId in inLocalPatientList )
+	{
+		var clientCopy = inLocalPatientList[patientId];
+
+		var activities = Util.findAllFromList( remainAppoints, patientId, "patientId");
+
+		activities.forEach( act => 
+		{
+			// Remove existing one in local and replace it with new downloaded one.
+			Util.RemoveFromArrayAll( clientCopy.activities, 'id', act.id );
+			clientCopy.activities.push( act );				
+		});
+
+		BahmniService.syncDownDataList.patients.push( clientCopy );
+	}
+
+
+	if ( notFoundPatientList.length > 0 ) MsgManager.msgAreaShowErrOpt( 'Bahmni Appointment Merge Error - Not Found Patients: ' + notFoundPatientList.toString() );
+};
+
+
+BahmniService.updateOptionsChanges = function () 
+{
 	const newOptionsChanged = AppInfoLSManager.getSelectOptions();
 	let configOptions = ConfigManager.getConfigJson().definitionOptions;
+
 	for (var optionName in newOptionsChanged) {
 		configOptions[optionName] = newOptionsChanged[optionName];
 	}

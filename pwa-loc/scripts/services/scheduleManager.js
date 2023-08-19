@@ -229,7 +229,7 @@ ScheduleManager.syncDownProcessing = false;
 // TODO: Move to 'SyncManager' class later..
 ScheduleManager.syncDownRun_Online_Login = function()
 {
-	if ( ConnManagerNew.isAppMode_Online() && SessionManager.getLoginStatus() && !BahmniService.isSyncDataProcessing() )
+	if ( ConnManagerNew.isAppMode_Online() && SessionManager.getLoginStatus() ) // && !BahmniService.isSyncDataProcessing() )
 	{
 		ScheduleManager.syncDownProcessing = true;
 
