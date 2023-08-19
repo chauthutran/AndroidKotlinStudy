@@ -381,9 +381,7 @@ BahmniService.syncDown = function (exeFunc)
 		BahmniService.syncDownProcessingTotal = configSynDownList.length;
 		BahmniService.syncDownProcessingIdx = 0;
 
-
 		// NOTE #1. Wait Until this is all finished?
-
 		for (var i = 0; i < configSynDownList.length; i++) 
 		{
 			var configSynDownData = JSON.parse(JSON.stringify(configSynDownList[i]));
@@ -405,7 +403,6 @@ BahmniService.syncDown = function (exeFunc)
 			}
 		}
 	}
-
 };
 
 BahmniService.setResponseErrorIfAny = function (response) {

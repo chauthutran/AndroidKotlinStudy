@@ -325,14 +325,17 @@ AppInfoLSManager.setBahmni_lastSyncedDatetime = function( value )
     AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME, value );
 };
 
-AppInfoLSManager.getBahmni_lastSyncedDatetime = function()
+AppInfoLSManager.getBahmni_lastSyncedDatetime = function( overrideVal )
 {
     var dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME );
-    if( dateTimeStr == null )
-    {
+
+    if ( !dateTimeStr ) {
         dateTimeStr = "1900-01-01T00:00:00";
         AppInfoLSManager.setBahmni_lastSyncedDatetime ( dateTimeStr );
     }
+
+    if ( overrideVal ) dateTimeStr = overrideVal;
+
     return dateTimeStr;
 };
 
