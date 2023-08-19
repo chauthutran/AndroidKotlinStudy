@@ -334,7 +334,7 @@ AppInfoLSManager.getBahmni_lastSyncedDatetime = function( overrideVal )
         AppInfoLSManager.setBahmni_lastSyncedDatetime ( dateTimeStr );
     }
 
-    if ( overrideVal ) dateTimeStr = overrideVal;
+    if ( overrideVal ) dateTimeStr = overrideVal;  // Ex. INFO.Bahmni_LastSyncedDateTime <-- if passed as 'overrideVal
 
     return dateTimeStr;
 };
