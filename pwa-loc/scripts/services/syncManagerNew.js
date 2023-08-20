@@ -874,6 +874,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 					if( BahmniService.checkBahmniUrl( actProc.url ) )
 					{
 						BahmniService.syncUp( activityJson_Orig, function( success, responseJson ) {
+							if ( INFO.bahmniDebug || WsCallManager.stageName === "dev" ) console.log( 'SyncUp Response: ', responseJson );
 							SyncManagerNew.syncUpWsCall_ResultHandle(syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall);
 						});
 					} 
@@ -1011,23 +1012,24 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 			// NOTE: Bahmni SyncUp --> Does not Create 'client' or Get Response / Download proper data!!
 			//  - THUS, GET 'client' DATA FROM EXISTING local data!!!
-			var existingClient = ClientDataManager.getClientByActivityId(activityId);
+			var existingClientCopy = Util.cloneJson( ClientDataManager.getClientByActivityId( activityId ) );
 
-			if ( !existingClient ) MsgManager.msgAreaShowErrOpt( 'Bahmni SyncUp Failed due to client not found!!' );
+			if ( !existingClientCopy ) {
+				MsgManager.msgAreaShowErrOpt( 'Bahmni SyncUp Failed due to client not found!!' );
+				throw "Bahmni SyncUp Failed - Client of the activity could not be found.";
+			} 
 			else
 			{
 				// NEW: EXCEPTION IS patient data update SyncUp <-- Update existing Client with this data!!!
-				if ( activityJson_Orig.syncUp && activityJson_Orig.syncUp.person && responseJson.person )
+				if ( activityJson_Orig.syncUp && activityJson_Orig.syncUp.person && responseJson.data && responseJson.data.person )
 				{
-					var dwClient = BahmniService.generateClientData( responseJson, { mergeCase: true } );
+					var dwClient = BahmniService.generateClientData( responseJson.data, { mergeCase: true } );
 	
-					Util.copyProperties( existingClient, dwClient, { 'exceptions': { 'activities': true, '_id': true, 'clientDetails': true } } );
-					Util.copyProperties( existingClient.clientDetails, dwClient.clientDetails );	
+					Util.copyProperties( existingClientCopy, dwClient, { 'exceptions': { 'activities': true, '_id': true, 'clientDetails': true } } );
+					Util.copyProperties( existingClientCopy.clientDetails, dwClient.clientDetails );	
 				}
 				
-				// ClientDataManager.setActivityDateLocal_client(clientJson);		
-
-				clientList.push( existingClient );
+				clientList.push( existingClientCopy );
 			}
 
 			// Set Flag - Set for mongo bahmni sync

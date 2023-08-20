@@ -683,7 +683,8 @@ BahmniService.updateOptionsChanges = function ()
 
 
 BahmniService.setResponseErrorIfAny = function (response) {
-	if (response.status == "error") {
+	if (response.status == "error") 
+	{
 		BahmniService.syncDataStatus.status = Constants.status_failed;
 		BahmniService.syncDataStatus.msg += response.msg + "; ";
 
@@ -769,8 +770,9 @@ BahmniService.syncUpAll = function (exeFunc) {
 };
 
 
-// Called from SyncManagerNew.performSyncUp_Activity
-BahmniService.syncUp = function (activityJson, exeFunc) {
+BahmniService.syncUp = function (activityJson, exeFunc) 
+{
+	// Called from SyncManagerNew.performSyncUp_Activity
 	var url = '';
 
 	// TODO: move this as Action 'dws' or 'url'.. <-- as pre-determined url..
@@ -785,7 +787,8 @@ BahmniService.syncUp = function (activityJson, exeFunc) {
 	else url = INFO.bahmni_domain + procJson.url;
 
 
-	BahmniRequestService.sendPostRequest(activityJson.id, url, activityJson.syncUp, function (response) {
+	BahmniRequestService.sendPostRequest(activityJson.id, url, activityJson.syncUp, function (response) 
+	{
 		BahmniService.setResponseErrorIfAny(response);
 
 		exeFunc((response.status === "success"), response);
