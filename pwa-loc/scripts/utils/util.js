@@ -369,6 +369,11 @@ Util.getItemsFromList = function (list, value, propertyName) {
 };
 
 
+Util.makeUniqueList = function( list )
+{
+	return list.filter((item, pos) => list.indexOf(item) === pos);
+};
+
 // ----------------------------------
 // Recurrsive/iterative - synced call
 

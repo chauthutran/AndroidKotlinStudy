@@ -321,6 +321,11 @@ BahmniService.syncDataRun = function ()
 					BahmniConnManager.update_UI_Status_FinishSyncAll();
 					FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
 	
+
+					// DEBUG - CONSOLE LOG Patients + Activities HERE!!
+					if ( INFO.bahmniDebug || WsCallManager.stageName === "dev" ) console.log( 'Downloaded Clients: ', clientList );
+
+
 					// 'download' processing data                
 					var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_downloaded, 'Downloaded and synced.');
 	
@@ -366,7 +371,6 @@ BahmniService.isSyncDataProcessing = function () {
 	return BahmniService.syncDataProcessing;
 };
 
-
 // ==============================================================================
 // SyncDown
 // ==============================================================================
@@ -407,15 +411,6 @@ BahmniService.syncDown = function (exeFunc)
 	}
 };
 
-BahmniService.setResponseErrorIfAny = function (response) {
-	if (response.status == "error") {
-		BahmniService.syncDataStatus.status = Constants.status_failed;
-		BahmniService.syncDataStatus.msg += response.msg + "; ";
-
-		BahmniConnManager.connection_StatusOffline();
-		BahmniMsgManager.SyncMsg_InsertMsg("Error while running '" + response.id + "', URL '" + response.url + "'. Details: " + response.msg, BahmniMsgManager.MESSAGE_TYPE_ERROR);
-	}
-};
 
 BahmniService.afterSyncDown = function (response, exeFunc) 
 {
@@ -436,30 +431,15 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 			const configData = configSynDownList[i];
 			const responseData = eval(Util.getEvalStr(configData.responseEval));
 
-			if (responseData) 
+			if (responseData && responseData.data ) 
 			{
 				var data = responseData.data;
 			
-				if (data.conceptIds) 
-				{					
-					conceptIds = conceptIds.concat(data.conceptIds);
-					conceptIds = conceptIds.filter((item, pos) => conceptIds.indexOf(item) === pos); // Remove duplicated Ids
-				}
+				if ( data.conceptIds ) conceptIds = Util.makeUniqueList( conceptIds.concat(data.conceptIds) );
+				if ( data.patientIds ) patientIds = Util.makeUniqueList( patientIds.concat(data.patientIds) );
+				if ( data.appointmentIds ) appointmentIds = Util.makeUniqueList( appointmentIds.concat(data.appointmentIds) );
 
-				if (data.patientIds) {
-					patientIds = patientIds.concat(data.patientIds);
-					patientIds = patientIds.filter((item, pos) => patientIds.indexOf(item) === pos); // Remove duplicated Ids
-				}
-
-				if (data.appointmentIds) {
-					appointmentIds = appointmentIds.concat(data.appointmentIds);
-					appointmentIds = appointmentIds.filter((item, pos) => appointmentIds.indexOf(item) === pos); // Remove duplicated Ids
-				}
-
-				if (data.appointments) {
-					appointments = appointments.concat(data.appointments);
-				}
-
+				if ( data.appointments ) appointments = appointments.concat( data.appointments );
 			}
 		}
 
@@ -492,6 +472,7 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 
 	}
 };
+
 
 BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc) 
 {
@@ -590,49 +571,47 @@ BahmniService.getConceptList = function (conceptIdList, exeFunc)
 		exeFunc();
 	}
 
-}
+};
+
+// -------------------------
 
 BahmniService.afterSyncDownAll = function (exeFunc) 
 {
-	// BahmniService.syncDownProcessingIdx++;
-	// BahmniService.setResponseErrorIfAny(response);
-
-	// if (BahmniService.syncDownProcessingIdx == BahmniService.syncDownProcessingTotal) 
-	// {
-		// -------------------------------------------------------------------------------------------------------------
-		// Set conceps in AppInfo localStorage
-		var concepts = BahmniService.syncDownDataList.concepts;
-		for (var i = 0; i < concepts.length; i++) 
+	// -------------------------------------------------------------------------------------------------------------
+	// Set conceps in AppInfo localStorage
+	var concepts = BahmniService.syncDownDataList.concepts;
+	for (var i = 0; i < concepts.length; i++) 
+	{
+		var concept = concepts[i];
+		if (concept && concept.answers && concept.answers.length > 0) 
 		{
-			var concept = concepts[i];
-			if (concept && concept.answers && concept.answers.length > 0) 
-			{
-				AppInfoLSManager.setSelectOptions_Item(concept.uuid, BahmniService.generateOptionsByConcept(concept));
-			}
+			AppInfoLSManager.setSelectOptions_Item(concept.uuid, BahmniService.generateOptionsByConcept(concept));
 		}
-		// Override the options of concepts in "definitionOptions" of the configuration file 
-		BahmniService.updateOptionsChanges();
+	}
+	// Override the options of concepts in "definitionOptions" of the configuration file 
+	BahmniService.updateOptionsChanges();
 
-		// -------------------------------------------------------------------------------------------------------------
-		// Add all activities for patients based on patienId
-		const patientList = BahmniService.syncDownDataList.patients;
-		//var usedAppointIds = [];
+	// -------------------------------------------------------------------------------------------------------------
+	// Add all activities for patients based on patienId
+	const patientList = BahmniService.syncDownDataList.patients;
+	//var usedAppointIds = [];
 
-		for (var i = 0; i < patientList.length; i++) 
-		{
-			var item = patientList[i];
-			var patientId = item.patientId;
+	for (var i = 0; i < patientList.length; i++) 
+	{
+		var item = patientList[i];
+		var patientId = item.patientId;
 
-			var activities = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
-			item.activities = activities;
-			//activities.forEach( app => usedAppointIds.push( app.id ) );
-		}
+		var activities = Util.findAllFromList(BahmniService.syncDownDataList.appointments, patientId, "patientId");
+		item.activities = activities;
+		//activities.forEach( app => usedAppointIds.push( app.id ) );
+	}
 
-		// BahmniService.otherPatientAppointments_Processing( usedAppointIds );
+	// BahmniService.otherPatientAppointments_Processing( usedAppointIds );
 
-		exeFunc();
-	//}
+	exeFunc();
 };
+
+// ------------------------------
 
 
 BahmniService.otherPatientAppointments_Processing = function ( usedAppointIds ) 
@@ -700,7 +679,18 @@ BahmniService.updateOptionsChanges = function ()
 
 	var syncDownReqStartDTStr = moment().subtract(10, 'minutes').toDate().toISOString();
 	AppInfoLSManager.setBahmni_lastSyncedDatetime(syncDownReqStartDTStr);
-}
+};
+
+
+BahmniService.setResponseErrorIfAny = function (response) {
+	if (response.status == "error") {
+		BahmniService.syncDataStatus.status = Constants.status_failed;
+		BahmniService.syncDataStatus.msg += response.msg + "; ";
+
+		BahmniConnManager.connection_StatusOffline();
+		BahmniMsgManager.SyncMsg_InsertMsg("Error while running '" + response.id + "', URL '" + response.url + "'. Details: " + response.msg, BahmniMsgManager.MESSAGE_TYPE_ERROR);
+	}
+};
 
 // ------------------------------------------------------------------------------
 // Retrieve data from Bahmni server for SyncDown processing
@@ -724,7 +714,6 @@ BahmniService.retrieveConceptDetails = function (conceptId, exeFunc) {
 // ==============================================================================
 // SyncUp 
 // ==============================================================================
-
 
 BahmniService.syncUpAll = function (exeFunc) {
 	var resultData = { 'success': 0, 'failure': 0 };

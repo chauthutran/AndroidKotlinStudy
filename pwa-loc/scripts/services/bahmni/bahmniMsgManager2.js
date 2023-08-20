@@ -207,6 +207,8 @@ BahmniMsgManager.SyncMsg_ShowBottomMsg = function () {
 				var msgJson = syncMsgJson.summaryList[i];
 				summarySectionLogTag.append('<div>' + msgJson.msg + '</div>');
 			}
+			summarySectionLogTag.append('<div>&nbsp;</div>');
+
 			msgContentTag.append(summaryTag);
 	   	   
 	}, Util.MS_SEC);
