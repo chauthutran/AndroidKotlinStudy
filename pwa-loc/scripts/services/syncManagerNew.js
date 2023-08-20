@@ -943,12 +943,13 @@ SyncManagerNew.getBahmniMongo_ReqPayload = function( activityId, activityJson_Or
 
 // ----------------------------------------------
 
-SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall) {
-	// Stop the Sync Icon rotation
-	//FormUtil.rotateTag(syncIconTag, false);
+SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_Orig, activityId, success, responseJson, afterDoneCall) 
+{
+	// Stop the Sync Icon rotation - also add setTimeout of stopping the rotation - unless it is bahmni case..
 	FormUtil.rotateTag( syncIconTag, false );
 	FormUtil.rotateTag( syncIconTag, false );
 	setTimeout( () => FormUtil.rotateTag( syncIconTag, false ), 500 );
+
 
 	// NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
 	// Based on response(success/fail), perform app/activity/client data change
@@ -1010,47 +1011,26 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
 			var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_submit, 'SyncedUp processed.', activityJson_Orig.processing);
 
-			// NOTE: Bahmni SyncUp --> Does not Create 'client' or Get Response / Download proper data!!
-			//  - THUS, GET 'client' DATA FROM EXISTING local data!!!
+			// NOTE: Bahmni SyncUp --> For merging, since Bahmni case does not use response, use existing client data
 			var existingClientCopy = Util.cloneJson( ClientDataManager.getClientByActivityId( activityId ) );
 
 			if ( !existingClientCopy ) {
 				MsgManager.msgAreaShowErrOpt( 'Bahmni SyncUp Failed due to client not found!!' );
 				throw "Bahmni SyncUp Failed - Client of the activity could not be found.";
 			} 
+			else clientList.push( existingClientCopy );
 
-			/*
-			else
-			{
-				// NEW: EXCEPTION IS patient data update SyncUp <-- Update existing Client with this data!!!
-				if ( activityJson_Orig.syncUp && activityJson_Orig.syncUp.person && responseJson.data && responseJson.data.person )
-				{
-					var dwClient = BahmniService.generateClientData( responseJson.data, { mergeCase: true } );
-	
-					//Util.copyProperties( existingClientCopy, dwClient, { 'exceptions': { 'activities': true, '_id': true, 'clientDetails': true } } );
-					Util.copyProperties( existingClientCopy.clientDetails, dwClient.clientDetails );	
-					//Util.copyProperties( existingClientCopy.date, dwClient.date );	// TODO: copy this as well?  to set it as latest?
-				}
-				
-				clientList.push( existingClientCopy );
-			}
-			*/
-
-			// NOTE: IN ABOVE ELSE case, Bahmni response returns a bit diff structure of patient, thus, BahmniService.generateClientData
-			//		Can not populate the patient properly..
-			//		Rather, the SyncDown should be ran to get updated patient changes from Bahmni Data..
-			clientList.push( existingClientCopy );
+			// NEW: If SyncUp is Bahmni Patient & Not part of SyncAll (which has followUp SyncDown), We need to update patient
+			if ( activityJson_Orig.syncUp.person && !BahmniService.syncDataProcessing ) {
+				BahmniService.syncDataRun( { doNotOpenSummary: true } );
+			} 
 
 			// Set Flag - Set for mongo bahmni sync
 			activityJson_Orig.subSyncStatus = BahmniService.readyToMongoSync;
 
-			// Removal of existing activity/client happends within 'mergeDownloadClients()'
-			BahmniService.mergeDownloadedClients(clientList, processingInfo, { 'syncUpActivityId': activityId }, function (changeOccurred_atMerge, mergedActivities) {
-			//ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
-				// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
-				ClientDataManager.saveCurrent_ClientsStore(() => {
-					if (callBack) callBack(bOptResult, undefined, Constants.status_submit);
-				});
+			BahmniService.mergeDownloadedClients(clientList, processingInfo, { 'syncUpActivityId': activityId }, function (changeOccurred_atMerge, mergedActivities) 
+			{
+				ClientDataManager.saveCurrent_ClientsStore(() => { if (callBack) callBack( bOptResult, undefined, Constants.status_submit ); });
 			});
 		}
 		else if ( successCaseName === 'fhirSyncSuccess' )

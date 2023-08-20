@@ -283,18 +283,19 @@ BahmniService.isBahmniActivity = function (activityJson) {
 // SyncUp / SyncDown - SyncAll
 // ==============================================================================
 
-BahmniService.syncDataRun = function () 
+BahmniService.syncDataRun = function ( option ) 
 {
-	if ( BahmniService.syncDataProcessing ) 
-	{
-		MsgManager.msgAreaShowErrOpt( 'Bahmni Sync Already In Progress!!' );
+	if ( !option ) option = {};
+
+	if ( BahmniService.syncDataProcessing ) {
+		if ( !option.doNotOpenSummary ) MsgManager.msgAreaShowErrOpt( 'Bahmni Sync Already In Progress!!' );
 	}
 	else
 	{
 		BahmniService.syncDataProcessing = true;
 		FormUtil.rotateTag($('.syncBtn2_svg'), true);
 
-		BahmniMsgManager.SyncMsg_ShowBottomMsg();
+		if ( !option.doNotOpenSummary ) BahmniMsgManager.SyncMsg_ShowBottomMsg();
 
 		BahmniMsgManager.SyncMsg_SetAsNew();
 		BahmniMsgManager.SyncMsg_InsertMsg('Bahmni Server: ' + INFO.bahmni_domain);
@@ -308,7 +309,7 @@ BahmniService.syncDataRun = function ()
 				BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncUp Finished.");
 
 				// Sync Down activity to Bahmni server
-				BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncDown Started...");
+				BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncDown Started, Searching for 3 types new data...");
 				BahmniService.syncDown( function (responseBahmniData) 
 				{
 					var clientList = responseBahmniData.data;
@@ -321,18 +322,14 @@ BahmniService.syncDataRun = function ()
 					BahmniConnManager.update_UI_Status_FinishSyncAll();
 					FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
 	
-
 					// DEBUG - CONSOLE LOG Patients + Activities HERE!!
 					if ( INFO.bahmniDebug || WsCallManager.stageName === "dev" ) console.log( 'Downloaded Clients: ', clientList );
 
 
-					// 'download' processing data                
 					var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_downloaded, 'Downloaded and synced.');
 	
 					BahmniService.mergeDownloadedClients( clientList, processingInfo, {}, function (changeOccurred_atMerge, mergedActivities) 
 					{
-						//console.log(" ---- responseBahmniData.status.status: " + responseBahmniData.status.status );
-						//console.log(" ---- changeOccurred_atMerge: " + changeOccurred_atMerge );
 						if (responseBahmniData.status.status == "success") 
 						{
 							var mergedActivityLength = mergedActivities.length;
@@ -340,7 +337,7 @@ BahmniService.syncDataRun = function ()
 							BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " patients, merged " + mergedActivityLength + " activities.");
 	
 							// NOTE: If there was a new merge, for now, alert the user to reload the list?
-							if (changeOccurred_atMerge) 
+							if (changeOccurred_atMerge && !option.doNotOpenSummary ) 
 							{
 								var btnRefresh = $('<a style="color: blue !important; cursor: pointer;" term="">REFRESH </a>').click(() => { SessionManager.cwsRenderObj.renderArea1st(); });
 								MsgManager.msgAreaShowOpt( 'Bahmni SyncDown data found', { hideTimeMs: 10000, styles: 'background-color: orange;', actionButton: btnRefresh } );
@@ -354,22 +351,20 @@ BahmniService.syncDataRun = function ()
 		}
 		catch (errMsg) 
 		{	
-			BahmniMsgManager.SyncMsg_ShowBottomMsg();
-			BahmniMsgManager.SyncMsg_InsertSummaryMsg( "ERROR during SyncDataRun, Try Catch Occurred!" );
-	
-			console.log('ERROR in BahmniService.syncDataRun, ' + errMsg);
-	
 			BahmniService.syncDataProcessing = false;
 			BahmniConnManager.update_UI_Status_FinishSyncAll();
 			FormUtil.rotateTag( $( '.syncBtn2_svg' ), false );
+
+			if ( !option.doNotOpenSummary ) BahmniMsgManager.SyncMsg_ShowBottomMsg();
+			BahmniMsgManager.SyncMsg_InsertSummaryMsg( "ERROR during SyncDataRun, Try Catch Occurred!" );
+	
+			console.log('ERROR in BahmniService.syncDataRun, ' + errMsg);	
 		}		
 	}
 };
 
 
-BahmniService.isSyncDataProcessing = function () {
-	return BahmniService.syncDataProcessing;
-};
+BahmniService.isSyncDataProcessing = function () { return BahmniService.syncDataProcessing; };
 
 // ==============================================================================
 // SyncDown
@@ -682,15 +677,19 @@ BahmniService.updateOptionsChanges = function ()
 };
 
 
-BahmniService.setResponseErrorIfAny = function (response) {
-	if (response.status == "error") 
+BahmniService.setResponseErrorIfAny = function (response) 
+{
+	try
 	{
-		BahmniService.syncDataStatus.status = Constants.status_failed;
-		BahmniService.syncDataStatus.msg += response.msg + "; ";
-
-		BahmniConnManager.connection_StatusOffline();
-		BahmniMsgManager.SyncMsg_InsertMsg("Error while running '" + response.id + "', URL '" + response.url + "'. Details: " + response.msg, BahmniMsgManager.MESSAGE_TYPE_ERROR);
+		if (response.status == "error") 
+		{
+			BahmniService.syncDataStatus.status = Constants.status_failed;
+			BahmniService.syncDataStatus.msg += response.msg + "; ";
+	
+			BahmniMsgManager.SyncMsg_InsertMsg( "ERROR: '" + response.id + "', URL '" + response.url + "'. Details: " + response.msg, BahmniMsgManager.MESSAGE_TYPE_ERROR);
+		}	
 	}
+	catch ( errMsg ) { console.log( 'ERROR in BahmniService.setResponseErrorIfAny, ' + errMsg ); }
 };
 
 // ------------------------------------------------------------------------------
@@ -716,13 +715,15 @@ BahmniService.retrieveConceptDetails = function (conceptId, exeFunc) {
 // SyncUp 
 // ==============================================================================
 
-BahmniService.syncUpAll = function (exeFunc) {
+BahmniService.syncUpAll = function ( exeFunc) 
+{
 	var resultData = { 'success': 0, 'failure': 0 };
 
 	var activityList = ActivityDataManager.getActivityList();
 	var actIdList = [];
 
-	activityList.forEach(activityJson => {
+	activityList.forEach(activityJson => 
+	{
 		// Bahmni Syncable condition - on activity..
 		if (activityJson.subSourceType === BahmniService.BAHMNI_KEYWORD && activityJson.processing
 			&& SyncManagerNew.isSyncReadyStatus(activityJson.processing.status)) {
@@ -733,8 +734,10 @@ BahmniService.syncUpAll = function (exeFunc) {
 	var actCount = actIdList.length;
 
 	if (actCount <= 0) exeFunc(resultData);
-	else {
-		for (var i = 0; i < actIdList.length; i++) {
+	else 
+	{
+		for (var i = 0; i < actIdList.length; i++) 
+		{
 			var activityId = actIdList[i];
 
 			var clientId_before = ClientDataManager.getClientByActivityId(activityId)._id;
@@ -751,6 +754,7 @@ BahmniService.syncUpAll = function (exeFunc) {
 					ActivityCard.highlightActivityDiv(activityId, false);
 
 
+					// Does not get applied in Bahmni Case!!!
 					var clientId_after = ClientDataManager.getClientByActivityId(activityId)._id;
 					if (clientId_before.indexOf(ClientDataManager.tempClientNamePre) === 0 && clientId_before !== clientId_after) {
 						SyncManagerNew.TempClientDetailTagRefresh(clientId_before, clientId_after);
