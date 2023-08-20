@@ -26,7 +26,8 @@ AppInfoLSManager.KEY_CONFIG_VERSION = "configVersion";
 AppInfoLSManager.KEY_LOGIN_PREV_DATA = "loginPrevData";
 AppInfoLSManager.KEY_FHIR_PRACTITIONER_ID = "fhirPractitionerId";
 AppInfoLSManager.KEY_BAHMNI_INITILIZED = "bahmniInitilized"; 
-AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME = "lastSyncedDatetime"; 
+AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME = "bahmniLastSyncedDatetime"; 
+AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME_OLD = "lastSyncedDatetime"; 
 
 AppInfoLSManager.KEY_DEV_DEBUG_LOG_HISTORY = "devDebugLogHistory";
 AppInfoLSManager.DevDebugLogHistoryMaxLength = 30;
@@ -328,6 +329,9 @@ AppInfoLSManager.setBahmni_lastSyncedDatetime = function( value )
 AppInfoLSManager.getBahmni_lastSyncedDatetime = function( overrideVal )
 {
     var dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME );
+
+    // OLD Obsolete ONE
+    if ( !dateTimeStr ) dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME_OLD );
 
     if ( !dateTimeStr ) {
         dateTimeStr = "1900-01-01T00:00:00";
