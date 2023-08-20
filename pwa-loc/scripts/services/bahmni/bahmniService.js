@@ -885,7 +885,7 @@ BahmniService.generateClientData = function (patientData, option) {
 	var tempActId = INFO.login_UserName + '_' + Util.formatDate(date.toUTCString(), 'yyyyMMdd_HHmmss') + date.getMilliseconds();
 	const clientTempId = ClientDataManager.createNewTempClientId(tempActId);
 
-	resolveData = { clientDetails: patientData.person, activities: [], date: BahmniService.generateJsonDate(), patientId: patientId };
+	resolveData = { clientDetails: Util.cloneJson( patientData.person ), activities: [], date: BahmniService.generateJsonDate(), patientId: patientId };
 
 	resolveData.clientDetails.firstName = patientData.person.preferredName.givenName;
 	resolveData.clientDetails.lastName = patientData.person.preferredName.familyName;
@@ -897,18 +897,23 @@ BahmniService.generateClientData = function (patientData, option) {
 		resolveData.clientDetails.voucherCodes = [];
 	}
 
-	const identifiers = patientData.identifiers;
-	for (let i = 0; i < identifiers.length; i++) {
-		const iden = identifiers[i];
-		const value = iden.identifier;
-		const key = iden.identifierType.display; // iden.identifierType.uuid
-		resolveData.clientDetails[key] = value;
+	if ( patientData.identifiers )
+	{
+		patientData.identifiers.forEach( iden => 
+		{
+			if ( iden.identifierType )
+			{
+				const value = iden.identifier;
+				const key = iden.identifierType.display; // iden.identifierType.uuid
+				if ( key ) resolveData.clientDetails[key] = value;	
+			}	
+		});
 	}
 
 	try {
 		var generateClientFormatEval = ConfigManager.getSettingsBahmni().generateClientFormatEval;
 		if (generateClientFormatEval) {
-			INFO.client = resolveData;
+			INFO.patientClient = resolveData;
 			INFO.patientData = patientData;
 
 			eval(Util.getEvalStr(generateClientFormatEval));

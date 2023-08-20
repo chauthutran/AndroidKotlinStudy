@@ -1018,6 +1018,8 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 				MsgManager.msgAreaShowErrOpt( 'Bahmni SyncUp Failed due to client not found!!' );
 				throw "Bahmni SyncUp Failed - Client of the activity could not be found.";
 			} 
+
+			/*
 			else
 			{
 				// NEW: EXCEPTION IS patient data update SyncUp <-- Update existing Client with this data!!!
@@ -1025,16 +1027,22 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 				{
 					var dwClient = BahmniService.generateClientData( responseJson.data, { mergeCase: true } );
 	
-					Util.copyProperties( existingClientCopy, dwClient, { 'exceptions': { 'activities': true, '_id': true, 'clientDetails': true } } );
+					//Util.copyProperties( existingClientCopy, dwClient, { 'exceptions': { 'activities': true, '_id': true, 'clientDetails': true } } );
 					Util.copyProperties( existingClientCopy.clientDetails, dwClient.clientDetails );	
+					//Util.copyProperties( existingClientCopy.date, dwClient.date );	// TODO: copy this as well?  to set it as latest?
 				}
 				
 				clientList.push( existingClientCopy );
 			}
+			*/
+
+			// NOTE: IN ABOVE ELSE case, Bahmni response returns a bit diff structure of patient, thus, BahmniService.generateClientData
+			//		Can not populate the patient properly..
+			//		Rather, the SyncDown should be ran to get updated patient changes from Bahmni Data..
+			clientList.push( existingClientCopy );
 
 			// Set Flag - Set for mongo bahmni sync
 			activityJson_Orig.subSyncStatus = BahmniService.readyToMongoSync;
-
 
 			// Removal of existing activity/client happends within 'mergeDownloadClients()'
 			BahmniService.mergeDownloadedClients(clientList, processingInfo, { 'syncUpActivityId': activityId }, function (changeOccurred_atMerge, mergedActivities) {
