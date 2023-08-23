@@ -804,7 +804,8 @@ BahmniService.syncUp = function (activityJson, exeFunc)
 // BahmniService.mergeDownloadedClients 
 // ==============================================================================
 
-BahmniService.mergeDownloadedClients = function (clientList, processingInfo, downloadedData, callBack) {
+BahmniService.mergeDownloadedClients = function (clientList, processingInfo, downloadedData, callBack) 
+{
 	var dataChangeOccurred = false;
 	var newClients = [];
 	var mergedActivities = [];
@@ -812,33 +813,42 @@ BahmniService.mergeDownloadedClients = function (clientList, processingInfo, dow
 	if (!downloadedData) downloadedData = {};
 
 	// 1. Compare Client List.  If matching '_id' exists, perform merge,  Otherwise, add straight to clientList.
-	if (clientList && Util.isTypeArray(clientList)) {
-		for (var i = 0; i < clientList.length; i++) {
-			var bmClient = clientList[i];
-			try {
+	if (clientList && Util.isTypeArray(clientList)) 
+	{
+		for (var i = 0; i < clientList.length; i++) 
+		{
+			var downloadClient = clientList[i];
+
+			try 
+			{
 				// In Bahmni case, find client by 'patientId'
-				var appClient = (bmClient.patientId) ? Util.findFromList(ClientDataManager.getClientList(), bmClient.patientId, "patientId") : undefined;
+				var existingClient = (downloadClient.patientId) ? Util.findFromList(ClientDataManager.getClientList(), downloadClient.patientId, "patientId") : undefined;
 
 				// If matching client exists in App already.
-				if (appClient) 
+				if (existingClient) 
 				{
 					// NOTE: On Bahmni case, downloaded 'client' data always overwrite to local one.
 					// 	Same for 'activity' --> if matching activity exists, always overwrite it.
-					// var clientDateCheckPass = (ClientDataManager.getDateStr_LastUpdated(bmClient) > ClientDataManager.getDateStr_LastUpdated(appClient));  // if (clientDateCheckPass) 
+					// var clientDateCheckPass = (ClientDataManager.getDateStr_LastUpdated(downloadClient) > ClientDataManager.getDateStr_LastUpdated(existingClient));  // if (clientDateCheckPass) 
 
-					var addedActivities = ActivityDataManager.mergeDownloadedActivities(bmClient.activities, appClient.activities, appClient, Util.cloneJson(processingInfo), downloadedData);
+					var addedActivities = ActivityDataManager.mergeDownloadedActivities(downloadClient.activities, existingClient.activities, existingClient, Util.cloneJson(processingInfo), downloadedData);
 
-					Util.copyProperties(bmClient, appClient, { 'exceptions': { 'activities': true, '_id': true } });
+					// NOTE: On Client Merge, the download client should follow the local client Id if matching patien exists.
+					//		- On 'date' of client, it should not overwrite the 'created--' ones..
+					// Copying from 'existingClient.--' to 'downloadClient.--'
+					Util.copyProperties( downloadClient.date, existingClient.date, { exceptionCustom: { nameBeginWith: 'created' } } );
+					Util.copyProperties( downloadClient.clientDetails, existingClient.clientDetails, { exceptions: { activeUsers: true, creditedUsers: true, voucherCodes: true } } );
+
 
 					Util.appendArray(mergedActivities, addedActivities);
 					dataChangeOccurred = true;
 				}
 				else {
-					newClients.push(bmClient);
+					newClients.push(downloadClient);
 					dataChangeOccurred = true;
 
-					if (bmClient.activities && bmClient.activities.length > 0) {
-						Util.appendArray(mergedActivities, bmClient.activities);
+					if (downloadClient.activities && downloadClient.activities.length > 0) {
+						Util.appendArray(mergedActivities, downloadClient.activities);
 					}
 				}
 			}
@@ -979,11 +989,13 @@ BahmniService.generateJsonDate = function ( originalDateStr )
 		capturedLoc: dateStr,
 		capturedUTC: dateStr,
 		createdLoc: dateStr,
+		createdUTC: dateStr,
 		createdOnDeviceLoc: dateStr,
 		createdOnDeviceUTC: dateStr,
-		createdUTC: dateStr,
 		updatedLoc: dateStr,
-		updatedUTC: dateStr
+		updatedUTC: dateStr,
+		updatedOnMdbLoc: dateStr,
+		updatedOnMdbUTC: dateStr
 	};
 
 	UtilDate.setDate_LocToUTC_fields(dateObj, 'ALL');

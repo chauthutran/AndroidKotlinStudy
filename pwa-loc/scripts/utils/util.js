@@ -423,13 +423,22 @@ Util.getJsonDeepCopy = function (jsonObj) {
 };
 
 Util.copyProperties = function (source, dest, option) {
-	try {
-		var exceptions = (option && option.exceptions && Util.isTypeObject(option.exceptions)) ? option.exceptions : {};
-		var consoleLog = (option && option.consoleLog) ? option.consoleLog : false;
-
-		for (var key in source) {
-			if (consoleLog) console.log('key: ' + key);
-			if (!exceptions[key]) dest[key] = source[key];
+	try 
+	{
+		if ( source && dest )
+		{
+			var exceptions = (option && option.exceptions && Util.isTypeObject(option.exceptions)) ? option.exceptions : {};
+			var exceptionCustom = (option && option.exceptionCustom && Util.isTypeObject(option.exceptionCustom)) ? option.exceptionCustom : {};
+			var consoleLog = (option && option.consoleLog) ? option.consoleLog : false;
+	
+			for (var key in source) 
+			{
+				if (consoleLog) console.log('key: ' + key);
+	
+				if ( exceptions[key] ) { }
+				else if ( exceptionCustom.nameBeginWith && key.indexOf( exceptionCustom.nameBeginWith ) === 0 ) { }
+				else dest[key] = source[key];
+			}	
 		}
 	}
 	catch (errMsg) {
