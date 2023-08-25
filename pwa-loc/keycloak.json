@@ -1,6 +1,7 @@
+
 {
-  "realm": "Eswatini PSI",
-  "auth-server-url": "https://keycloak.solidlines.io/auth",
+  "realm": "SWZ_PSI",
+  "auth-server-url": "https://keycloak.psidigital.org/",
   "ssl-required": "external",
   "resource": "pwaapp",
   "public-client": true,
