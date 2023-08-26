@@ -334,20 +334,21 @@ App.paramsHandler_ReloadApp = function( urlStr )
 		var existingParamJson = LocalStgMng.getJsonData( 'paramsLoad' );
 		if ( !existingParamJson ) existingParamJson = {};
 
+		if ( paramObj.keyCloakRemove === 'Y' ) paramObj.noReload = 'Y';
+
 		LocalStgMng.saveJsonData( 'paramsLoad', Util.mergeJson( paramObj, existingParamJson ) );
 
-		AppUtil.appReloadWtMsg( 'Reloading For Params Handling..' );
-		// AppUtil.requestAppReload( { msg: 'Reloading For Params Handling..', delay: 1000 } );
+		if ( paramObj.noReload === 'Y' ) { console.log( 'url param reload skipped' ); }
+		else AppUtil.appReloadWtMsg( 'Reloading For Params Removal From URL..' );
 	}
-	else
-	{
-		// CASE 2. If LS has 'paramsLoad', save it on paramsObj
-		if ( LocalStgMng.getJsonData( 'paramsLoad' ) )
-		{
-			paramsLoadJson = LocalStgMng.getJsonData( 'paramsLoad' );
 
-			if ( paramsLoadJson.action === 'clientDirect' && paramsLoadJson.client ) MsgManager.msgAreaShowErrOpt( 'ClientDirect URL Param Used: ' + paramsLoadJson.client, { hideTimeMs: 7000, styles: 'background-color: green;' } );
-		}
+
+	// CASE 2. If LS has 'paramsLoad', save it on paramsObj
+	if ( LocalStgMng.getJsonData( 'paramsLoad' ) )
+	{
+		paramsLoadJson = LocalStgMng.getJsonData( 'paramsLoad' );
+
+		if ( paramsLoadJson.action === 'clientDirect' && paramsLoadJson.client ) MsgManager.msgAreaShowErrOpt( 'ClientDirect URL Param Used: ' + paramsLoadJson.client, { hideTimeMs: 7000, styles: 'background-color: green;' } );
 	}
 
 	return paramsLoadJson;

@@ -950,6 +950,13 @@ SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_O
 	FormUtil.rotateTag( syncIconTag, false );
 	setTimeout( () => FormUtil.rotateTag( syncIconTag, false ), 500 );
 
+	// NEW: responseJson .msg or .errMsg display <-- let it also control the msg duration?
+	if ( responseJson )
+	{
+		if ( responseJson.appMsg ) { MsgManager.msgAreaShowOpt( responseJson.appMsg, { hideTimeMs: 10000, styles: 'background-color: blue;' } ); }
+		else if ( responseJson.errMsg ) { MsgManager.msgAreaShowErrOpt( responseJson.errMsg ); }
+	}
+
 
 	// NOTE: 'activityJson_Orig' is used for failed case only.  If success, we create new activity
 	// Based on response(success/fail), perform app/activity/client data change
