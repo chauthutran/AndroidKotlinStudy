@@ -152,7 +152,7 @@ MsgManager.noticeMsg = function (bodyMessage, options ) // cssClasses, actionBut
 	var closeNextMarked = options.closeNextMarked;
 
 	// ----------------
-
+	if ( options.consoleLog ) console.log( bodyMessage );
 	if ( options.groupCloseOthers ) $( 'div.notifMsg.' + options.groupCloseOthers ).remove();
 	if ( closeOthers ) $( 'div.notifMsg' ).remove();
 	$( 'div.notifMsg.closeNextMarked' ).remove();

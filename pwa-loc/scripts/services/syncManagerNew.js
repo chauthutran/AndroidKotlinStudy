@@ -953,8 +953,8 @@ SyncManagerNew.syncUpWsCall_ResultHandle = function (syncIconTag, activityJson_O
 	// NEW: responseJson .msg or .errMsg display <-- let it also control the msg duration?
 	if ( responseJson )
 	{
-		if ( responseJson.appMsg ) { MsgManager.msgAreaShowOpt( responseJson.appMsg, { hideTimeMs: 10000, styles: 'background-color: blue;' } ); }
-		else if ( responseJson.errMsg ) { MsgManager.msgAreaShowErrOpt( responseJson.errMsg ); }
+		if ( responseJson.appMsg ) { MsgManager.msgAreaShowOpt( responseJson.appMsg, { hideTimeMs: 10000, styles: 'background-color: blue;', consoleLog: true } ); }
+		else if ( responseJson.errMsg ) { MsgManager.msgAreaShowErrOpt( responseJson.errMsg, { consoleLog: true } ); }
 	}
 
 
