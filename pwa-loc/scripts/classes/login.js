@@ -63,7 +63,8 @@ function Login() {
 		me.setEvents_OnInit();
 	}
 
-	me.render = function () {
+	me.render = function () 
+	{
 		GAnalytics.setSendPageView('/' + GAnalytics.PAGE_LOGIN);
 		GAnalytics.setEvent('LoginOpen', GAnalytics.PAGE_LOGIN, 'login displayed', 1);
 
@@ -78,7 +79,6 @@ function Login() {
 		TranslationManager.translatePage();
 
 		//me.appVersionCheck();
-
 		//MsgManager.msgAreaShowOpt( 'Testing Notification Msg', { cssClasses: 'notifCBlue', hideTimeMs: 900000, styleArr: [ { name: 'background-color', value: '#50A3C6' } ] } );
 	};
 
@@ -397,7 +397,7 @@ function Login() {
 				}
 				else $( 'img.imgKeyCloakUse' ).hide();
 			}
-			else 
+			else
 			{
 				// In keycloak use case, display the keyCloak related parts..
 				divUseTag.show();
@@ -413,12 +413,8 @@ function Login() {
 
 	// -----------------------------------
 
-	me.isAuthPageUse = function()
+	me.openForm = function () 
 	{
-		return ( PersisDataLSManager.getAuthPageUse() === 'Y' ) ? true: false;
-	};
-
-	me.openForm = function () {
 		// Reset various login related flags - the 1st touch/focus flag..
 		me.loginPage1stTouchFlag = false;
 		me.loginAppUpdateCheck = false;
@@ -432,6 +428,23 @@ function Login() {
 		if ( [ 'dev', 'test' ].indexOf( WsCallManager.stageName ) >= 0 ) me.spanAuthPageUseTag.show(); // For now, limit to dev/test
 
 
+		// [NEW] Set Auth Related values from URL Param
+		var paramAuthChoice = App.getParamVal_ByName( App.paramName_authChoice, { deleteInLS: true } );
+		var paramAuthPage = App.getParamVal_ByName( App.paramName_authPage, { deleteInLS: true } );
+
+		if ( paramAuthChoice ) 
+		{
+			AppInfoLSManager.setAuthChoice( paramAuthChoice );
+			PersisDataLSManager.setAuthPageUse( 'Y' );
+		}
+		else if ( paramAuthPage === 'Y' ) 
+		{
+			AppInfoLSManager.setAuthChoice( '' );
+			PersisDataLSManager.setAuthPageUse( 'Y' );
+		}
+
+
+		// Check the 'Auth Page' Use and open form -> in AuthForm or in LoginForm
 		if ( me.isAuthPageUse() )
 		{
 			me.spanAuthPageUseTag.hide();
@@ -442,16 +455,10 @@ function Login() {
 			else me.openAuthForm();	
 		}
 		else me.openLoginForm();
-
-		// ?? On 'closeForm', we should consider hiding any auth selection related things..
 	};
 
-
-	me.openAuthForm = function() 
-	{
-		$( '.divAuthForm' ).show();
-	};
-
+	me.isAuthPageUse = function() { return ( PersisDataLSManager.getAuthPageUse() === 'Y' ) ? true: false; };
+	me.openAuthForm = function() { $( '.divAuthForm' ).show(); };
 
 	me.openLoginForm = function() 
 	{

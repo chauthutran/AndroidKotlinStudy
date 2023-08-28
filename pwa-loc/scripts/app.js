@@ -23,6 +23,10 @@ App.appInstallBtnTag;
 App.ver14 = false;
 
 App.paramsJson = {}; // Load all params data in here and get them from here.
+App.paramName_keyCloakRemove = 'keyCloakRemove';
+App.paramName_authPage = 'authPage';
+App.paramName_authChoice = 'authChoice';
+
 // -------------------------------
 
 App.run = function () 
@@ -32,9 +36,7 @@ App.run = function ()
 	// NEW
 	App.paramsJson = App.paramsHandler_ReloadApp( window.location.href );
 
-
 	if ( App.getParamVal_ByName( 'ver', { deleteInLS: true } ) === '1.4' ) App.ver14 = true;
-
 	
 	// --------------------------
 	// Default Behavior Modify
@@ -67,16 +69,16 @@ App.run = function ()
 	// KeyCloak Start Object + Param case removal
 	KeycloakManager.startUp();
 
-	if ( App.getParamVal_ByName( 'keyCloakRemove', { deleteInLS: true } ) ) 
+	if ( App.getParamVal_ByName( App.paramName_keyCloakRemove, { deleteInLS: true } ) ) 
 	{ 
 		KeycloakManager.removeKeyCloakInUse(); 
 		KeycloakManager.localStorageRemove(); 
 	}
 
 	// Service Worker Related Initial Setup
-	SwManager.initialSetup(function () {
-
-		App.App_UI_startUp_Progress('40%');
+	SwManager.initialSetup(function () 
+	{
+		//App.App_UI_startUp_Progress('40%');
 		App.startAppProcess();
 
 		console.log( 'AppStart statusInfo.appMode: ' + ConnManagerNew.statusInfo.appMode );
@@ -94,9 +96,7 @@ App.startAppProcess = function ()
 		WsCallManager.setWsTarget();
 
 		ConnManagerNew.createNetworkConnListeners();
-
-		App.App_UI_startUp_Progress('50%');
-
+		//App.App_UI_startUp_Progress('50%');
 
 		// --------------------
 		// 2. START PHASE
@@ -109,18 +109,15 @@ App.startAppProcess = function ()
 		// Start the scheduling on app start
 		ScheduleManager.runSchedules_AppStart();
 
-		App.App_UI_startUp_Progress('70%');
-
+		//App.App_UI_startUp_Progress('70%');
 
 		// --------------------
 		// 3. FINISH APP START PHASE
 		App.App_syncIcon_UI_event();
-
-		App.App_UI_startUp_Progress('80%');
+		//App.App_UI_startUp_Progress('80%');
 
 		SessionManager.cwsRenderObj.render();
-
-		App.App_UI_startUp_Progress('100%');
+		//App.App_UI_startUp_Progress('100%');
 
 		App.App_UI_startUp_ready();
 
@@ -139,8 +136,7 @@ App.startAppProcess = function ()
 App.App_UI_startUp_loading = function () {
 	// show PWA (loading) screen
 	MsgFormManager.appBlockTemplate( 'appLoad' );
-
-	App.App_UI_startUp_Progress('10%');
+	//App.App_UI_startUp_Progress('10%');
 };
 
 
@@ -152,9 +148,7 @@ App.App_UI_startUp_ready = function () {
 };
 
 
-App.App_UI_startUp_Progress = function (perc) {
-	$('div.startUpProgress').css('width', perc);
-};
+//App.App_UI_startUp_Progress = function (perc) {  $('div.startUpProgress').css('width', perc);  };
 
 
 App.App_syncIcon_UI_event = function () {
@@ -319,7 +313,8 @@ App.checkDeviceMinSpec = function( info )
 };
 
 
-// --------------------
+// ------------------------
+// -- Param Related
 
 App.paramsHandler_ReloadApp = function( urlStr )
 {
@@ -334,7 +329,7 @@ App.paramsHandler_ReloadApp = function( urlStr )
 		var existingParamJson = LocalStgMng.getJsonData( 'paramsLoad' );
 		if ( !existingParamJson ) existingParamJson = {};
 
-		if ( paramObj.keyCloakRemove === 'Y' ) paramObj.noReload = 'Y';
+		if ( paramObj[ App.paramName_keyCloakRemove ] === 'Y' ) paramObj.noReload = 'Y';
 
 		LocalStgMng.saveJsonData( 'paramsLoad', Util.mergeJson( paramObj, existingParamJson ) );
 
