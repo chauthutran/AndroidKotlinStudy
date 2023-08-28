@@ -284,9 +284,12 @@ function Login() {
 		FormUtil.getScrimTag().off('click');  // Make it not cancelable by clicking on scrim anymore...
 
 		// Populates the center aligned #dialog_confirmation div
-		FormUtil.genTagByTemplate(FormUtil.getSheetBottomTag(), Templates.Change_User_Form, function (tag) {
-			$('#accept').click(function () {
-				DataManager2.deleteAllStorageData(function () {
+		FormUtil.genTagByTemplate(FormUtil.getSheetBottomTag(), Templates.Change_User_Form, function (tag) 
+		{
+			$('#accept').click(function () 
+			{
+				DataManager2.deleteAllStorageData(function () 
+				{
 					FormUtil.emptySheetBottomTag();
 
 					MsgFormManager.appBlockTemplate('appLoad');
@@ -426,22 +429,6 @@ function Login() {
 		$( '.divLoginForm' ).hide();
 		$( '.login_buttons' ).hide();
 		if ( [ 'dev', 'test' ].indexOf( WsCallManager.stageName ) >= 0 ) me.spanAuthPageUseTag.show(); // For now, limit to dev/test
-
-
-		// [NEW] Set Auth Related values from URL Param
-		var paramAuthChoice = App.getParamVal_ByName( App.paramName_authChoice, { deleteInLS: true } );
-		var paramAuthPage = App.getParamVal_ByName( App.paramName_authPage, { deleteInLS: true } );
-
-		if ( paramAuthChoice ) 
-		{
-			AppInfoLSManager.setAuthChoice( paramAuthChoice );
-			PersisDataLSManager.setAuthPageUse( 'Y' );
-		}
-		else if ( paramAuthPage === 'Y' ) 
-		{
-			AppInfoLSManager.setAuthChoice( '' );
-			PersisDataLSManager.setAuthPageUse( 'Y' );
-		}
 
 
 		// Check the 'Auth Page' Use and open form -> in AuthForm or in LoginForm

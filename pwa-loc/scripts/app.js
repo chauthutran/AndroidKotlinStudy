@@ -33,56 +33,75 @@ App.run = function ()
 {
 	App.appInstallBtnTag = $('.appInstall');
 
-	// NEW
-	App.paramsJson = App.paramsHandler_ReloadApp( window.location.href );
-
-	if ( App.getParamVal_ByName( 'ver', { deleteInLS: true } ) === '1.4' ) App.ver14 = true;
-	
-	// --------------------------
-	// Default Behavior Modify
-	App.windowEvent_BlockBackBtnAction();
-	window.addEventListener('error', App.catchErrorInCustomLog);
-	window.addEventListener('beforeinstallprompt', App.beforeinstallprompt);
-	if (App.isMobileDevice()) App.mobileUISetup();
-
-	InfoDataManager.setDeviceInfo_OnStart( App.checkDeviceMinSpec );
-	InfoDataManager.setAppStartData();
-	
-	// Setup Static Classes
-	MsgManager.initialSetup();
-
-	// Instantiate Classes
-	SessionManager.cwsRenderObj = new cwsRender();  // Global Reference to cwsRenderObj..
-
-	PersisDataLSManager.initialDataLoad_LocalStorage();
-	AppInfoLSManager.initialDataLoad_LocalStorage();
-
-	App.App_UI_startUp_loading(); // << should we move this into cwsRender?
-
-
-	// By param 'debug' with pwd - uses AppInfoLSManager
-	DevHelper.checkNStartDebugConsole();
-
-	var paramMsg = App.getParamVal_ByName( 'msg', { deleteInLS: true } );
-	if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );
-
-	// KeyCloak Start Object + Param case removal
-	KeycloakManager.startUp();
-
-	if ( App.getParamVal_ByName( App.paramName_keyCloakRemove, { deleteInLS: true } ) ) 
-	{ 
-		KeycloakManager.removeKeyCloakInUse(); 
-		KeycloakManager.localStorageRemove(); 
-	}
-
-	// Service Worker Related Initial Setup
-	SwManager.initialSetup(function () 
+	// NEW: After Param data handling, proceed with normal app start process.
+	App.paramsHandler_ReloadApp( window.location.href, 
+	function( paramObj ) 
 	{
-		//App.App_UI_startUp_Progress('40%');
-		App.startAppProcess();
+		// After Reload, Saved 'AuthChoice'/'AuthPage' will be used for setting LocalStorage
+		DataManager2.deleteAllStorageData( () => 
+		{ 
+			console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 
 
-		console.log( 'AppStart statusInfo.appMode: ' + ConnManagerNew.statusInfo.appMode );
-		SwManager.checkAppUpdate( '[AppUpdateCheck] - App startUp' );
+			LocalStgMng.saveJsonData( 'paramsLoad', paramObj );
+			AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
+		});
+	}, 
+	function( paramsJson ) 
+	{
+		// Normal Flow
+		App.paramsJson = paramsJson;
+
+		if ( App.getParamVal_ByName( 'ver', { deleteInLS: true } ) === '1.4' ) App.ver14 = true;
+	
+		// --------------------------
+		// Default Behavior Modify
+		App.windowEvent_BlockBackBtnAction();
+		window.addEventListener('error', App.catchErrorInCustomLog);
+		window.addEventListener('beforeinstallprompt', App.beforeinstallprompt);
+		if (App.isMobileDevice()) App.mobileUISetup();
+	
+		InfoDataManager.setDeviceInfo_OnStart( App.checkDeviceMinSpec );
+		InfoDataManager.setAppStartData();
+		
+		// Setup Static Classes
+		MsgManager.initialSetup();
+	
+		// Instantiate Classes
+		SessionManager.cwsRenderObj = new cwsRender();  // Global Reference to cwsRenderObj..
+	
+		PersisDataLSManager.initialDataLoad_LocalStorage();
+		AppInfoLSManager.initialDataLoad_LocalStorage();
+	
+		App.authChiocePage_DataSet(); // NEW: Save to AppInfoLS & PersisDataLS on 'authChoice/Page', 'keycloak'
+	
+	
+		App.App_UI_startUp_loading(); // << should we move this into cwsRender?
+	
+	
+		// By param 'debug' with pwd - uses AppInfoLSManager
+		DevHelper.checkNStartDebugConsole();
+	
+		var paramMsg = App.getParamVal_ByName( 'msg', { deleteInLS: true } );
+		if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );
+	
+		// KeyCloak Start Object + Param case removal
+		KeycloakManager.startUp();
+	
+		if ( App.getParamVal_ByName( App.paramName_keyCloakRemove, { deleteInLS: true } ) ) 
+		{ 
+			KeycloakManager.removeKeyCloakInUse(); 
+			KeycloakManager.localStorageRemove(); 
+		}
+	
+		// Service Worker Related Initial Setup
+		SwManager.initialSetup(function () 
+		{
+			//App.App_UI_startUp_Progress('40%');
+			App.startAppProcess();
+	
+			console.log( 'AppStart statusInfo.appMode: ' + ConnManagerNew.statusInfo.appMode );
+			SwManager.checkAppUpdate( '[AppUpdateCheck] - App startUp' );
+		});		
 	});
 };
 
@@ -316,12 +335,13 @@ App.checkDeviceMinSpec = function( info )
 // ------------------------
 // -- Param Related
 
-App.paramsHandler_ReloadApp = function( urlStr )
+App.paramsHandler_ReloadApp = function( urlStr, exec_AuthChoicePageCase, func_NormalCase )
 {
 	var paramsLoadJson = {};
 
 	// If param exists, save it on oneTime storage and reload the app..
 	var paramObj = Util.getParamObj( urlStr );
+
 
 	// CASE 1. If Params exists in url, store in LS, and reload app.
 	if ( Object.keys( paramObj ).length > 0 )
@@ -329,12 +349,21 @@ App.paramsHandler_ReloadApp = function( urlStr )
 		var existingParamJson = LocalStgMng.getJsonData( 'paramsLoad' );
 		if ( !existingParamJson ) existingParamJson = {};
 
-		if ( paramObj[ App.paramName_keyCloakRemove ] === 'Y' ) paramObj.noReload = 'Y';
+		var noReload = ( paramObj[ App.paramName_keyCloakRemove ] === 'Y' ) ? true: false;
 
-		LocalStgMng.saveJsonData( 'paramsLoad', Util.mergeJson( paramObj, existingParamJson ) );
+		Util.mergeJson( paramObj, existingParamJson );
 
-		if ( paramObj.noReload === 'Y' ) { console.log( 'url param reload skipped' ); }
-		else AppUtil.appReloadWtMsg( 'Reloading For Params Removal From URL..' );
+		// If 'authChoice' or 'authPage' was passed, delete all storage & reload
+		var paramAuthChoice = paramObj[ App.paramName_authChoice ];
+		var paramAuthPage = paramObj[ App.paramName_authPage ];
+		if ( paramAuthChoice || paramAuthPage ) exec_AuthChoicePageCase( paramObj );
+		else
+		{
+			LocalStgMng.saveJsonData( 'paramsLoad', paramObj );
+				
+			if ( noReload ) console.log( 'url param reload skipped' ); 
+			else AppUtil.appReloadWtMsg( 'Reloading For Params Removal From URL..' );
+		}
 	}
 
 
@@ -346,7 +375,8 @@ App.paramsHandler_ReloadApp = function( urlStr )
 		if ( paramsLoadJson.action === 'clientDirect' && paramsLoadJson.client ) MsgManager.msgAreaShowErrOpt( 'ClientDirect URL Param Used: ' + paramsLoadJson.client, { hideTimeMs: 7000, styles: 'background-color: green;' } );
 	}
 
-	return paramsLoadJson;
+	func_NormalCase( paramsLoadJson );
+	//return paramsLoadJson;
 };
 
 App.getParamVal_ByName = function( name, option )
@@ -381,6 +411,31 @@ App.getClientDirectId = function( actionParamName, clientParamName )
 
 	return clientDirectId;
 };
+
+
+
+// AuthChoice/Page Related #2
+App.authChiocePage_DataSet = function()
+{
+	var paramAuthChoice = App.getParamVal_ByName( App.paramName_authChoice, { deleteInLS: true } );
+	var paramAuthPage = App.getParamVal_ByName( App.paramName_authPage, { deleteInLS: true } );
+
+	if ( paramAuthChoice ) 
+	{
+		AppInfoLSManager.setAuthChoice( paramAuthChoice );
+		PersisDataLSManager.setAuthPageUse( 'Y' );
+		if ( paramAuthChoice.indexOf( 'kc_' ) === 0 ) AppInfoLSManager.setKeyCloakUse( 'Y' );
+		console.log( 'User Data has been removed..' );
+	}
+	else if ( paramAuthPage === 'Y' ) 
+	{
+		AppInfoLSManager.setAuthChoice( '' );
+		PersisDataLSManager.setAuthPageUse( 'Y' );
+		AppInfoLSManager.setKeyCloakUse( '' );  // TODO: Should check if keyCloak is used and logOut if currently used?
+		console.log( 'User Data has been removed..' );
+	}
+};
+	
 
 // ===========================
 // [JOB_AID]    
