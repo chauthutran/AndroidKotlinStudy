@@ -134,7 +134,10 @@ function Login() {
 				$( '.divAuthForm' ).hide();
 				me.openLoginForm();	
 
-				if ( authChoice === 'kc_sw_psi' ) $( 'img.imgKeyCloakUse' ).click();
+				if ( authChoice === 'kc_swz_psi' || authChoice === 'kc_swz_psi_dev' ) {
+					$( 'img.imgKeyCloakUse' ).click();
+					KeycloakManager.startUp();
+				} 
 				else if ( authChoice === 'dhis2' )
 				{
 					// The Keycloak would have been already cleared at this point..
@@ -1121,7 +1124,8 @@ Login.contentHtml = `
 			<select class="selAuthChoice" style="color: #555; border: solid 1px gray; padding: 5px; width: fit-content; background-color: powderblue;">
 				<option value="">SELECT ONE</option>
 				<option value="dhis2">Classic WFA auth (legacy)</option>
-				<option value="kc_sw_psi">Eswatini - PSI</option>
+				<option value="kc_swz_psi_dev">Eswatini - PSI (DEV)</option>
+				<option value="kc_swz_psi">Eswatini - PSI</option>
 				<option value="kc_sw_moh">Eswatini - MoH</option>
 				<option value="kc_ke_moh">Kenya - MoH</option>
 			</select>

@@ -7,8 +7,17 @@ var keycloak;
 
 KeycloakManager.startUp = function() 
 {
-    keycloak = new Keycloak();
-    KeycloakManager.setUpEvents( keycloak );
+	var realName = AppInfoLSManager.getAuthChoice();
+	if( realName )
+	{
+		realName = realName.replace("kc_", "").toUpperCase();
+		keycloak =  new Keycloak({
+			url: 'https://keycloak.psidigital.org/',
+			realm: realName,
+			clientId: 'pwaapp'
+		});
+    	KeycloakManager.setUpEvents( keycloak );
+	}
 };
 
 KeycloakManager.setUpEvents = function( kcObj ) 
