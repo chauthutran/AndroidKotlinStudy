@@ -915,15 +915,18 @@ SyncManagerNew.getBahmniMongo_ReqPayload = function( activityId, activityJson_Or
 {
 	var clientJson = ClientDataManager.getClientByActivityId( activityId );
 
+	if ( !clientJson.patientId ) throw 'client.patientId not available on sync payload creation.';
+
 	var activityJson_Copy = Util.cloneJson( activityJson_Orig );
 	delete activityJson_Copy.processing;
 	if ( activityJson_Copy.formData ) delete activityJson_Copy.formData;
 	if ( activityJson_Copy.subSyncStatus ) delete activityJson_Copy.subSyncStatus;
 
+	// search client by 'patientId' rather than '_id'
 	var payloadJson = { 
 		appVersion: _ver, 
 		payload: { 
-			searchValues: { '_id': clientJson._id }, 
+			searchValues: { 'patientId': clientJson.patientId }, 
 			captureValues: activityJson_Copy 
 		},
 		historyData: ActivityDataManager.getHistoryShortenData( activityJson_Orig.processing.historyData )
@@ -1034,6 +1037,9 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 			// Set Flag - Set for mongo bahmni sync
 			activityJson_Orig.subSyncStatus = BahmniService.readyToMongoSync;
+			existingClientCopy.activities.filter( act => act.id === activityJson_Orig.id ).forEach( act => act.subSyncStatus = BahmniService.readyToMongoSync );
+			// On Merge, in this bahmniCase, existingClientCopy.activity gets added to original existingClient after removing the one.  Thus, we need to make changes on the copy one.
+
 
 			BahmniService.mergeDownloadedClients(clientList, processingInfo, { 'syncUpActivityId': activityId }, function (changeOccurred_atMerge, mergedActivities) 
 			{
