@@ -7,3 +7,4 @@ pwa-loc/service-worker.*
 pwa-loc/workbox-*
 deploy/*
 */node_modules
+package-lock.json
