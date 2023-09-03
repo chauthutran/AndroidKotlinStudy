@@ -4679,6 +4679,7 @@ only screen and (min-device-pixel-ratio: 1.5) {
 	.wrapper_login .login_header .login_title {
 		padding: 7% 0 8% 16px;
 		font-size: 150%;
+		width: fit-content;
 	}
 }
 

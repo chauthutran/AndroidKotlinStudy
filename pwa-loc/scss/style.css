@@ -4446,6 +4446,7 @@ textarea {
   .wrapper_login .login_header .login_title {
     padding: 7% 0 8% 16px;
     font-size: 150%;
+    width: fit-content;
   }
 }
 

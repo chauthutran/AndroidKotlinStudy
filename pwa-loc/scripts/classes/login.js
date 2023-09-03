@@ -13,6 +13,7 @@ function Login() {
 
 	me.loginBtnTag;
 	me.loginSetPinBtnTag;
+	me.loginPinConfirmDivTag;
 	//me.passRealTag;
 	me.loginUserNameTag;
 	me.loginUserPinTag;
@@ -27,6 +28,7 @@ function Login() {
 	// ------------
 
 	// Flags
+	me.needToSetPin = false;
 	me.lastPinTrigger = false;
 	me.loginPage1stTouchFlag = false;
 	me.loginBtn_NotHideFlag = false;
@@ -46,15 +48,20 @@ function Login() {
 		// Set HTML & values related
 		me.loginFormDivTag.append(Login.contentHtml);
 
-		me.loginBtnTag = $('.loginBtn');
 		me.loginSetPinBtnTag = $('.loginSetPinBtn');
+		me.loginPinConfirmDivTag = $('.loginPinConfirmDiv');
+		me.splitPasswordConfirmTag = $(".pin_confirm");
+		me.loginPinConfirmClearTag = $("#loginPinConfirmClear");
+		
 		//me.passRealTag = $('#passReal');
+		me.loginBtnTag = $('.loginBtn');
+		me.loginPinDivTag = $('.loginPinDiv');
 		me.loginUserNameTag = $('.loginUserName');
 		me.loginUserPinTag = $('.loginUserPin');
 		me.loginFormTag = $('div.login_data');
 		me.btnChangeUserTag = $('.btnChangeUser');	
 		me.loginPinClearTag = $('#loginPinClear');
-		me.splitPasswordTag = $('.split_password');
+		me.splitPasswordTag = $('.pin');
 		me.selAuthChoiceTag = $( '.selAuthChoice' );
 		me.spanAuthPageUseTag = $( '.spanAuthPageUse' );
 		me.spanAuthPageUseNoTag = $( '.spanAuthPageUseNo' );
@@ -125,7 +132,7 @@ function Login() {
 		me.selAuthChoiceTag.off('change').change(() => 
 		{
 			var authChoice = me.selAuthChoiceTag.val();
-
+			
 			if ( authChoice )
 			{
 				AppInfoLSManager.setAuthChoice( authChoice );
@@ -166,6 +173,21 @@ function Login() {
 	};
 
 
+	me.getPinVal = function( divTag )
+	{
+		var pin1Val = Util.trim(divTag.find('.pin1').val());
+		var pin2Val = Util.trim(divTag.find('.pin2').val());
+		var pin3Val = Util.trim(divTag.find('.pin3').val());
+		var pin4Val = Util.trim(divTag.find('.pin4').val());
+		
+
+		if (pin1Val && pin2Val && pin3Val && pin4Val) {
+			return pin1Val + pin2Val + pin3Val + pin4Val;
+		}
+
+		return "";
+	}
+
 	me.setLoginEvents = function () {
 		// Save userName that user has entered - to restore when App refreshed by appUpdate
 		me.loginUserNameTag.keyup(function () {
@@ -178,26 +200,32 @@ function Login() {
 
 
 		me.loginSetPinBtnTag.off( 'click' ).click(function () {
-			me.loginBtnTag.click();
+
+			var pin = me.getPinVal( me.splitPasswordTag );
+			var pinConfirm = me.getPinVal( me.splitPasswordConfirmTag );
+			if( pin == pinConfirm )
+			{
+				var ok = confirm("Pin confirm checked. Are you sure you want to set this as pin ?");
+				if( ok )
+				{
+					me.loginBtnTag.click();
+				}
+			}
+			else
+			{
+				MsgManager.msgAreaShow('Pin confirmation is not match. Please enter again.', 'ERROR');
+			}
+
 		});
 
 		me.loginBtnTag.off( 'click' ).click(function () {
 			$('.pin_pw_loading').hide();
 
 			var loginUserNameVal = me.loginUserNameTag.val();
-			var loginUserPinVal = ''; //me.loginUserPinTag.val();
-
-			var pin1Val = Util.trim(me.splitPasswordTag.find('.pin1').val());
-			var pin2Val = Util.trim(me.splitPasswordTag.find('.pin2').val());
-			var pin3Val = Util.trim(me.splitPasswordTag.find('.pin3').val());
-			var pin4Val = Util.trim(me.splitPasswordTag.find('.pin4').val());
-
-			if (pin1Val && pin2Val && pin3Val && pin4Val) {
-				loginUserPinVal = pin1Val + pin2Val + pin3Val + pin4Val;
-			}
+			var loginUserPinVal = me.getPinVal( me.splitPasswordTag );
 
 			if (loginUserNameVal == "" || loginUserPinVal == "") {
-				me.clearResetPasswords();
+				me.clearResetPasswords(me.loginPinDivTag);
 				MsgManager.msgAreaShow('Please enter username / fill all pin', 'ERROR');
 			}
 			else {
@@ -208,8 +236,15 @@ function Login() {
 
 				// Main Login Processing
 				me.processLogin(loginUserNameVal, loginUserPinVal, location.origin, $(this), function (success) {
-					me.clearResetPasswords();
-					if (!success) $('.pin1').focus();
+					
+					me.clearResetPasswords(me.loginPinDivTag);
+					if (!success) {
+						$('.pin1').focus();
+					}
+					else
+					{
+						$('.pin_pw_loading').hide();
+					}
 				});
 			}
 		});
@@ -221,11 +256,17 @@ function Login() {
 
 
 		$(".onKeyboardOnOff").focus(function () { // Focus		
-			me.loginBottomButtonsVisible(false);
+			if( !me.needToSetPin )
+			{
+				me.loginBottomButtonsVisible(false);
+			}
 		});
 
 		$(".onKeyboardOnOff").blur(function () { // Lost focus
-			me.loginBottomButtonsVisible(true);
+			if( !me.needToSetPin )
+			{
+				me.loginBottomButtonsVisible(true);
+			}
 		});
 
 		$(".pin_pw").keyup(function (event) {
@@ -250,7 +291,11 @@ function Login() {
 						// if userName is already selected /filled
 						if (Util.trim(me.loginUserNameTag.val()).length > 0) {
 							me.lastPinTrigger = true;
-							me.loginBtnTag.click();
+
+							if( !me.needToSetPin )
+							{
+								me.loginBtnTag.click();
+							}
 						}
 					}
 					else {
@@ -271,13 +316,18 @@ function Login() {
 		});
 
 		me.loginPinClearTag.off('click').click(function () {
-			me.clearResetPasswords();
-			$('.pin1').focus();
+			me.clearResetPasswords(me.loginPinDivTag);
+			me.loginPinDivTag.find('.pin1').focus();
 
 			// NOTE: We also need to cancel the current login process..
 		});
-	};
 
+		
+		me.loginPinConfirmClearTag.off('click').click(function () {
+			me.clearResetPasswords(me.loginPinConfirmDivTag);
+			me.loginPinConfirmDivTag.find('.pin1').focus();
+		});
+	};
 
 	// User Switch, User Remove / Clear
 	me.changeUserBtnClick = function () 
@@ -456,6 +506,8 @@ function Login() {
 		$( '.login_buttons' ).show();
 		me.loginBtnTag.show();
 		me.loginSetPinBtnTag.hide();
+		me.loginPinConfirmDivTag.hide();
+		me.needToSetPin = false;
 
 
 		// loginUserName Related 
@@ -483,15 +535,18 @@ function Login() {
 			{
 				if (!dataExists)
 				{
+					me.needToSetPin = true;
 					me.loginBtnTag.hide();
 					me.loginSetPinBtnTag.show();
+					me.loginPinConfirmDivTag.show();
 				}
 			});
 		}
 
 
 		// Reset vals and set focus
-		me.clearResetPasswords();
+		me.clearResetPasswords(me.loginPinDivTag);
+		me.clearResetPasswords(me.loginPinConfirmDivTag);
 
 		me.loginBottomButtonsVisible(true);
 	};
@@ -518,14 +573,14 @@ function Login() {
 	};
 
 
-	me.clearResetPasswords = function () {
+	me.clearResetPasswords = function (divTag) {
 		// If last pin cause error, move the focus to 1st one.
 		// if ( me.lastPinTrigger ) $( '.pin1' ).focus();
 
 		me.lastPinTrigger = false;
-		$('#pass').val('');
-		$('.pin_pw').val('');
-		$('.pin_pw_loading').hide();
+		divTag.find('#pass').val('');
+		divTag.find('.pin_pw').val('');
+		divTag.find('.pin_pw_loading').hide();
 	};
 
 	// ------------------------------------------
@@ -1067,12 +1122,14 @@ Login.contentHtml = `
 					<div class="field__right"></div>
 				</div>
 			</div>
+			
+			<!-- PIN -->
 			<div class="field pin">
 				<div class="field__label">
 					<label term="login_password">PIN</label><span>*</span>
 				</div>
 				<div class="field__controls">
-					<div class="field__left split_password" style="width: 100%;">
+					<div class="field__left split_password pin" style="width: 100%;">
 						<div class="loginPinDiv" style="float: left;">
 							<input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4" autocomplete="new-password" mandatory="true" />
 							<input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
@@ -1090,6 +1147,30 @@ Login.contentHtml = `
 					<div class="field__right"></div>
 				</div>
 			</div>
+
+
+			<!-- CONFIM PIN -->
+			<div class="field pin loginPinConfirmDiv" style="display: none;">
+				<div class="field__label">
+					<label term="login_password_confirm">CONFIRM</label><span>*</span>
+				</div>
+				<div class="field__controls">
+					<div class="field__left split_password pin_confirm" style="width: 100%;">
+						<div class="loginPinConfirmFields" style="float: left;">
+							<input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4" autocomplete="new-password" mandatory="true" />
+							<input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="3" class="onKeyboardOnOff pin_pw pin2" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="4" class="onKeyboardOnOff pin_pw pin3" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+						</div>
+						<div style="float: left;">
+							<button id="loginPinConfirmClear" class="cbtn mouseDown" term="login_passwordClear">clear</button>
+						</div>
+					</div>
+					<div class="field__right"></div>
+				</div>
+			</div>
+
 		</div>
 
 		<div class="login_buttons login_cta" style="display:none;">
