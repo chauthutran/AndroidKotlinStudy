@@ -16,7 +16,6 @@ function Login() {
 	me.loginPinConfirmDivTag;
 	//me.passRealTag;
 	me.loginUserNameTag;
-	me.loginUserPinTag;
 	me.loginFormTag;
 	me.btnChangeUserTag;
 	me.loginPinClearTag;
@@ -53,11 +52,9 @@ function Login() {
 		me.splitPasswordConfirmTag = $(".pin_confirm");
 		me.loginPinConfirmClearTag = $("#loginPinConfirmClear");
 		
-		//me.passRealTag = $('#passReal');
 		me.loginBtnTag = $('.loginBtn');
 		me.loginPinDivTag = $('.loginPinDiv');
 		me.loginUserNameTag = $('.loginUserName');
-		me.loginUserPinTag = $('.loginUserPin');
 		me.loginFormTag = $('div.login_data');
 		me.btnChangeUserTag = $('.btnChangeUser');	
 		me.loginPinClearTag = $('#loginPinClear');
@@ -199,26 +196,34 @@ function Login() {
 		});
 
 
-		me.loginSetPinBtnTag.off( 'click' ).click(function () {
-
+		me.loginSetPinBtnTag.off( 'click' ).click(function () 
+		{
 			var pin = me.getPinVal( me.splitPasswordTag );
 			var pinConfirm = me.getPinVal( me.splitPasswordConfirmTag );
+
 			if( pin == pinConfirm )
 			{
-				var ok = confirm("Pin confirm checked. Are you sure you want to set this as pin ?");
-				if( ok )
+				var ok = confirm("Pin confirm checked. Are you sure you want to set this as pin?");
+				if( ok ) me.loginBtnTag.click();
+				else
 				{
-					me.loginBtnTag.click();
+					me.loginPinConfirmClearTag.click();
+					me.loginPinClearTag.click();
+			
+					MsgManager.msgAreaShowOpt( 'Pin cancelled.' );
 				}
 			}
 			else
 			{
+				me.loginPinConfirmClearTag.click();
+				me.loginPinClearTag.click();
+
 				MsgManager.msgAreaShow('Pin confirmation is not match. Please enter again.', 'ERROR');
 			}
-
 		});
 
-		me.loginBtnTag.off( 'click' ).click(function () {
+		me.loginBtnTag.off( 'click' ).click(function () 
+		{
 			$('.pin_pw_loading').hide();
 
 			var loginUserNameVal = me.loginUserNameTag.val();
@@ -238,13 +243,9 @@ function Login() {
 				me.processLogin(loginUserNameVal, loginUserPinVal, location.origin, $(this), function (success) {
 					
 					me.clearResetPasswords(me.loginPinDivTag);
-					if (!success) {
-						$('.pin1').focus();
-					}
-					else
-					{
-						$('.pin_pw_loading').hide();
-					}
+					if (!success) $('.pin1').focus();
+
+					$('.pin_pw_loading').hide();
 				});
 			}
 		});
@@ -284,23 +285,45 @@ function Login() {
 					if (prevTag) prevTag.focus();
 				}
 			}
-			else {
+			else 
+			{
 				if (hasVal) //== this.maxLength ) 
 				{
-					if ($(this).hasClass('pin4')) {
-						// if userName is already selected /filled
-						if (Util.trim(me.loginUserNameTag.val()).length > 0) {
-							me.lastPinTrigger = true;
+					me.lastPinTrigger = false; 
+					var confirmCase = me.loginPinConfirmDivTag.is( ':visible' );
+					var loginUserNameSet = ( Util.trim( me.loginUserNameTag.val() ).length > 0 );
 
-							if( !me.needToSetPin )
+					if ( tag.hasClass( 'pin4' ) ) 
+					{
+						// If Confirm Pin case, either move to next row or click login button
+						if ( confirmCase )
+						{
+							if ( tag.hasClass( 'confirmPin' ) )
 							{
+								if ( loginUserNameSet ) {
+									me.lastPinTrigger = true;
+									me.loginSetPinBtnTag.click();									
+								}
+							}
+							else 
+							{
+								// go to next line 1st one..
+								me.loginPinConfirmDivTag.find('.pin1').focus();
+							}
+						}
+						else 
+						{
+							// if userName is already selected /filled
+							if ( loginUserNameSet ) {
+								me.lastPinTrigger = true;
 								me.loginBtnTag.click();
 							}
 						}
 					}
-					else {
+					else 
+					{
 						var nextTag = $(this).next('.pin_pw');
-						if (nextTag) nextTag.focus();
+						if ( nextTag.length > 0 ) nextTag.focus();
 					}
 				}
 			}
@@ -578,7 +601,6 @@ function Login() {
 		// if ( me.lastPinTrigger ) $( '.pin1' ).focus();
 
 		me.lastPinTrigger = false;
-		divTag.find('#pass').val('');
 		divTag.find('.pin_pw').val('');
 		divTag.find('.pin_pw_loading').hide();
 	};
@@ -1054,18 +1076,6 @@ function Login() {
 
 	// --------------------------------------
 
-	me.getInputBtnPairTags = function (formDivStr, pwdInputStr, btnStr, returnFunc) {
-		$(formDivStr).each(function (i) {
-
-			var formDivTag = $(this);
-			var loginUserPinTag = formDivTag.find(pwdInputStr);
-			var loginBtnTag = formDivTag.find(btnStr);
-
-			returnFunc(loginUserPinTag, loginBtnTag);
-
-		});
-	};
-
 	me.setUpInputTypeCopy = function (inputTags) {
 		inputTags.keyup(function () {  // keydown vs keypress
 			// What about copy and paste?
@@ -1131,7 +1141,7 @@ Login.contentHtml = `
 				<div class="field__controls">
 					<div class="field__left split_password pin" style="width: 100%;">
 						<div class="loginPinDiv" style="float: left;">
-							<input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4" autocomplete="new-password" mandatory="true" />
+							<input type="password" class="loginUserPin" name="pass" data-ng-minlength="4" maxlength="4" autocomplete="new-password" mandatory="true" />
 							<input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 							<input tabindex="3" class="onKeyboardOnOff pin_pw pin2" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 							<input tabindex="4" class="onKeyboardOnOff pin_pw pin3" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
@@ -1157,11 +1167,11 @@ Login.contentHtml = `
 				<div class="field__controls">
 					<div class="field__left split_password pin_confirm" style="width: 100%;">
 						<div class="loginPinConfirmFields" style="float: left;">
-							<input type="password" class="loginUserPin" id="pass" name="pass" data-ng-minlength="4" maxlength="4" autocomplete="new-password" mandatory="true" />
-							<input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
-							<input tabindex="3" class="onKeyboardOnOff pin_pw pin2" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
-							<input tabindex="4" class="onKeyboardOnOff pin_pw pin3" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
-							<input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input type="password" class="loginUserPin" name="pass" data-ng-minlength="4" maxlength="4" autocomplete="new-password" mandatory="true" />
+							<input tabindex="2" class="onKeyboardOnOff confirmPin pin_pw pin1" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="3" class="onKeyboardOnOff confirmPin pin_pw pin2" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="4" class="onKeyboardOnOff confirmPin pin_pw pin3" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="5" class="onKeyboardOnOff confirmPin pin_pw pin4" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 						</div>
 						<div style="float: left;">
 							<button id="loginPinConfirmClear" class="cbtn mouseDown" term="login_passwordClear">clear</button>
