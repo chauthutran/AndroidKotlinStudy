@@ -2396,11 +2396,6 @@ only screen and (min-device-pixel-ratio: 1.5) {
 	-moz-box-sizing: border-box;
 }
 
-.pin {
-	border: none;
-	margin-bottom: 20px;
-}
-
 .btm_nav {
 	top: 0;
 	display: -webkit-box;

@@ -1151,7 +1151,7 @@ Login.contentHtml = `
 
 			<!-- CONFIM PIN -->
 			<div class="field pin loginPinConfirmDiv" style="display: none;">
-				<div class="field__label">
+				<div class="field__label" style="display: none;">
 					<label term="login_password_confirm">CONFIRM</label><span>*</span>
 				</div>
 				<div class="field__controls">

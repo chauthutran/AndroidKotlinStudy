@@ -577,6 +577,11 @@ ul.jobContextMenuItems li.context-menu-item:last-child {
 	border: 1px solid #aae6f7;
 }
 
+.pin {
+	border: none;
+	/* margin-bottom: 20px; */
+}
+
 /* 2. logo greyscale for offline/online */
 .logoOffline {
 	-webkit-filter: grayscale(1);

@@ -2241,11 +2241,6 @@ textarea {
   -moz-box-sizing: border-box;
 }
 
-.pin {
-  border: none;
-  margin-bottom: 20px;
-}
-
 .btm_nav {
   top: 0;
   display: -webkit-box;
