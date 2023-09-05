@@ -89,13 +89,12 @@ KeycloakManager.keycloakPart = function()
 				else // Offline mode cannot refresh token
 				{
 					// STEP 2A. We come HERE!!
-					tagStr = 'Login Success !';
-					// tagStr = 'Login Success <input type="button" value="Update Token" onclick="KeycloakManager.setPendingAction(\'refreshToken\')" /><br><input type="button" value="LOGOUT" onclick="KeycloakManager.tokenLogout()" />';
+					// tagStr = 'Login Success !';
 					Login.loginInputDisable( false );  // Start Login?
 					console.log( '[OFFLINE KEYCLOAK TOKEN]: ', keycloak.tokenParsed );
 				}
 	
-				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
+				if ( tagStr ) MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
 	
 				KeycloakManager.displayTokensInfo();
 			});
@@ -128,13 +127,13 @@ KeycloakManager.keycloakPart = function()
 				else
 				{
 					// STEP 2A. We come HERE!!
-					tagStr = 'Login Success <input type="button" value="Update Token" onclick="KeycloakManager.setPendingAction(\'refreshToken\');" /><br><input type="button" value="LOGOUT" onclick="KeycloakManager.setPendingAction(\'logoutToken\');" />';
+					// tagStr = 'Login Success <input type="button" value="Update Token" onclick="KeycloakManager.setPendingAction(\'refreshToken\');" /><br><input type="button" value="LOGOUT" onclick="KeycloakManager.setPendingAction(\'logoutToken\');" />';
 					Login.loginInputDisable( false );		
 					
 					console.log( '[ONLINE KEYCLOAK TOKEN]: ', keycloak.tokenParsed );
 				}
 
-				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
+				if ( tagStr ) MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
 
 				KeycloakManager.displayTokensInfo();	
 
@@ -165,9 +164,8 @@ KeycloakManager.keycloakPart = function()
 
 				KeycloakManager.displayTokensInfo();
 
-				//document.getElementById("placeholder1").innerHTML = '<input type="button" value="Update Token" onclick="KeycloakManager.tokenRefresh()" /><br><input type="button" value="LOGOUT" onclick="KeycloakManager.tokenLogout()" />';
-				var tagStr = '<input type="button" value="Update Token" onclick="KeycloakManager.setPendingAction(\'refreshToken\');" /><br><input type="button" value="LOGOUT" onclick="KeycloakManager.setPendingAction(\'logoutToken\');" />';
-				MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
+				//var tagStr = '<input type="button" value="Update Token" onclick="KeycloakManager.setPendingAction(\'refreshToken\');" /><br><input type="button" value="LOGOUT" onclick="KeycloakManager.setPendingAction(\'logoutToken\');" />';
+				//MsgManager.msgAreaShowOpt( tagStr, { cssClasses: 'notifGray', hideTimeMs: 180000 } );
 
 				// W_STEP 1. Save the username info..
 				var userName = keycloak.tokenParsed.preferred_username;

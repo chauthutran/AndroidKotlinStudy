@@ -229,11 +229,13 @@ function Login() {
 			var loginUserNameVal = me.loginUserNameTag.val();
 			var loginUserPinVal = me.getPinVal( me.splitPasswordTag );
 
-			if (loginUserNameVal == "" || loginUserPinVal == "") {
+			if ( loginUserNameVal == "" || loginUserPinVal == "" ) 
+			{
 				me.clearResetPasswords(me.loginPinDivTag);
 				MsgManager.msgAreaShow('Please enter username / fill all pin', 'ERROR');
 			}
-			else {
+			else 
+			{
 				if (me.lastPinTrigger) $('.pin_pw_loading').show();
 
 				// NOTE: On login button click, also check app update..
@@ -696,7 +698,7 @@ function Login() {
 		{
 			if ( !navigator.onLine ) // Stable Online still, but currently connection lost case - not stable
 			{
-				MsgManager.msgAreaShowErrOpt( '<span term="login_msg_connectionTempOff">Network connection temporarily off detected</span>', { closeNextMarked: true } );
+				MsgManager.msgAreaShowErrOpt( '<span term="login_msg_connectionTempOff">Network connection temporarily off detected.  Please Try again after a couple seconds.</span>', { closeNextMarked: true } );
 				if (callAfterDone) callAfterDone( false );
 			}
 			else
