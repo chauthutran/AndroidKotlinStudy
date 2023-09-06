@@ -462,7 +462,7 @@ function Login() {
 	
 				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
 	
-				KeycloakManager.displayTokensInfo();
+				// KeycloakManager.displayTokensInfo();
 			}
 		}
 	};
@@ -1243,7 +1243,6 @@ Login.contentHtml = `
 			</div>
 			<div id="divKeyCloakUse" style="display: none; text-align: left;">
 				<div id="divKeyCloakInfo" style="display:none;">
-					KeyCloak: <button id="btnKeyCloakRun" style="font-size: 10px;">Run</button> | 
 					<button id="btnKeyCloakLogOut" style="display: none; font-size: 10px;">LogOut</button>
 					<span id="divTokenInfo" style="font-size: 12px; display: none;"></span>
 				</div>
