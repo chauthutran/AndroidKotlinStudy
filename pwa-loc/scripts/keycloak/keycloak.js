@@ -1329,7 +1329,7 @@
 	                                    kc.clearToken();
 	                                }
 
-	                                kc.onAuthRefreshError && kc.onAuthRefreshError();
+	                                kc.onAuthRefreshError && kc.onAuthRefreshError( req.responseText );
 	                                for (var p = refreshQueue.pop(); p != null; p = refreshQueue.pop()) {
 	                                    p.setError(true);
 	                                }
