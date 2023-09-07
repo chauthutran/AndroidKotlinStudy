@@ -1205,6 +1205,15 @@ Login.contentHtml = `
 					</div>
 				</div>
 
+				<div id="btnKeyCloakLogInInForm" class="button h-emphasis button-full_width mouseDown" tabindex="7" style="display: none; border-radius: 20px; background-color: green;">
+					<div class="button__container ">
+						<div class="button-label">keyCloak Login</div>
+					</div>
+				</div>
+
+				
+
+
 			</div>
 		</div>
 				
