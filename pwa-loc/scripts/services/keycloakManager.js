@@ -76,6 +76,7 @@ KeycloakManager.setForm_TokenExpired = function()
 	{
 		MsgManager.msgAreaShowOpt( "Token is expired. Please login again.", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
 		btnKeyCloakLogOutTag.html("Login").show().off("click").click( () => { KeycloakManager.setPendingAction("logoutToken"); });
+		btnKeyCloakLogInInFormTag.show().off("click").click( () => { KeycloakManager.setPendingAction("logoutToken"); });
 	}
 }
 
