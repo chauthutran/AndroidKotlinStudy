@@ -1,0 +1,9 @@
+
+{
+  "realm": "SWZ_PSI",
+  "auth-server-url": "https://keycloak.psidigital.org/",
+  "ssl-required": "external",
+  "resource": "pwaapp",
+  "public-client": true,
+  "confidential-port": 0
+}
