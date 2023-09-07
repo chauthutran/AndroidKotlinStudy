@@ -263,7 +263,7 @@ KeycloakManager.tokenLogout = function( callFunc )
 				console.log( 'KeyCloak Token LogOut failed: ' );
 				console.log( error );
 				if ( callFunc ) callFunc( false );
-			});			
+			});
 		}
 	}
 	catch ( errMsg )

@@ -1243,7 +1243,7 @@ Login.contentHtml = `
 			</div>
 			<div id="divKeyCloakUse" style="display: none; text-align: left;">
 				<div id="divKeyCloakInfo" style="display:none;">
-					<button id="btnKeyCloakLogOut" style="display: none; font-size: 10px;">LogOut</button>
+					Keycloak: <button id="btnKeyCloakLogOut" style="display: none; font-size: 10px;">LogOut</button>
 					<span id="divTokenInfo" style="font-size: 12px; display: none;"></span>
 				</div>
 			</div>
