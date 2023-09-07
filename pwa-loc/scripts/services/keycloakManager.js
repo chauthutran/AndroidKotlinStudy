@@ -1,8 +1,12 @@
 function KeycloakManager() {};
 
+var OFFLINE_TIMEOUT = 3 * 60; // 3 minutes
+
 var keycloak;
 var btnKeyCloakLogOutTag;
+var btnKeyCloakLogInInFormTag;
 var timeSkew = 1;
+
 	
 // ======================================
 // === NEW KEYCLOAK ============
@@ -10,6 +14,7 @@ var timeSkew = 1;
 KeycloakManager.startUp = function() 
 {
 	btnKeyCloakLogOutTag = $('#btnKeyCloakLogOut');
+	btnKeyCloakLogInInFormTag = $("#btnKeyCloakLogInInForm");
 
 	var realName = AppInfoLSManager.getAuthChoice();
 	if( realName )
@@ -18,7 +23,7 @@ KeycloakManager.startUp = function()
 		
 		realName = realName.replace("kc_", "").toUpperCase();
 		keycloak =  new Keycloak({
-			url: 'http://localhost:8080/',
+			url: 'https://keycloak.psidigital.org/',
 			realm: realName,
 			clientId: 'pwaapp'
 		});
@@ -57,19 +62,20 @@ KeycloakManager.setForm_TokenExpired = function()
 	KeycloakManager.eventMsg('Access token expired.');
 
 	// Disabled the login form
-	$("#loginFormDiv").find("div.button").off('click');
+	$("#loginFormDiv").find(".loginSetPinBtn").off('click').css("background-color", "#eeeeee");
+	$("#loginFormDiv").find(".loginBtn").off('click').css("background-color", "#eeeeee"); 
 	Login.loginInputDisable( true ); 
 
 	// Show/Hide the buttons
 	if( ConnManagerNew.isAppMode_Offline() ){
 		
-		MsgManager.msgAreaShowOpt( "Token is expired. Please refresh token when it is online", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
+		MsgManager.msgAreaShowOpt( "Token is expired. Please login again when it is online", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
 		btnKeyCloakLogOutTag.hide();
 	}
 	else
 	{
-		MsgManager.msgAreaShowOpt( "Token is expired. Please refresh token or login again.", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
-		btnKeyCloakLogOutTag.show().off("click").click( () => { KeycloakManager.setPendingAction("logoutToken"); });
+		MsgManager.msgAreaShowOpt( "Token is expired. Please login again.", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
+		btnKeyCloakLogOutTag.html("Login").show().off("click").click( () => { KeycloakManager.setPendingAction("logoutToken"); });
 	}
 }
 
@@ -77,10 +83,12 @@ KeycloakManager.setForm_InitSuccess = function()
 {
 	KeycloakManager.eventMsg('Authenticated.');
 
+	KeycloakLSManager.setLastLoginDate(UtilDate.dateStr( "DATETIME" ));
 	localStorage.setItem("accessToken", keycloak.token);
 	localStorage.setItem("refreshToken", keycloak.refreshToken);
 	localStorage.setItem("idToken", keycloak.idToken);
 	localStorage.setItem("accessTokenParsed", JSON.stringify(keycloak.tokenParsed));
+	
 
 	// Save the username info..
 	var userName = keycloak.tokenParsed.preferred_username;
@@ -88,30 +96,32 @@ KeycloakManager.setForm_InitSuccess = function()
 	if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
 
 	// Enable the login form
-	$("#loginFormDiv").find("div.button").on('click');
+	$("#loginFormDiv").find(".loginSetPinBtn").on('click').css("background-color", "#F06D24");
+	$("#loginFormDiv").find(".loginBtn").on('click').css("background-color", "#F06D24"); 
 	Login.loginInputDisable( false ); 
 
 	// Show/Hide the buttons
-	MsgManager.msgAreaShowOpt( "Keycloak is initilized.", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
+	MsgManager.msgAreaShowOpt( "Login with Keycloak success !", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
 	if( ConnManagerNew.isAppMode_Offline() ){
 		btnKeyCloakLogOutTag.hide();
 	}
 	else
 	{
-		btnKeyCloakLogOutTag.show().off("click").click( () => { KeycloakManager.setPendingAction("logoutToken"); });
+		btnKeyCloakLogOutTag.html("LogOut").show().off("click").click( () => { KeycloakManager.setPendingAction("logoutToken"); });
 	}
 }
 
 KeycloakManager.setForm_InitFail = function()
 {
-	KeycloakManager.eventMsg('Keycloak is initilized failed.');
+	KeycloakManager.eventMsg('Login with Keycloak failure.');
 
 	// Disabled the login form
-	$("#loginFormDiv").find("div.button").off('click');
+	$("#loginFormDiv").find(".loginSetPinBtn").off('click').css("background-color", "#eeeeee");
+	$("#loginFormDiv").find(".loginBtn").off('click').css("background-color", "#eeeeee");
 	Login.loginInputDisable( true ); 
 
 	// Hide the buttons
-	MsgManager.msgAreaShowOpt( "Keycloak is initilized failled.", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
+	MsgManager.msgAreaShowOpt( "Login with Keycloak failure !", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
 	btnKeyCloakLogOutTag.hide();
 	
 }
@@ -120,13 +130,15 @@ KeycloakManager.setForm_InitFail = function()
 KeycloakManager.setForm_DisabledAll = function(msg)
 {
 	// Disabled the login form
-	$("#loginFormDiv").find("div.button").off('click');
+	$("#loginFormDiv").find(".loginSetPinBtn").off('click').css("background-color", "#eeeeee");
+	$("#loginFormDiv").find(".loginBtn").off('click').css("background-color", "#eeeeee");
 	Login.loginInputDisable( true ); 
 
 	// Show/Hide the buttons
 	MsgManager.msgAreaShowOpt( msg, { cssClasses: 'notifDark', hideTimeMs: 180000 } );
 	btnKeyCloakLogOutTag.hide();
 }
+
 
 // -------------------------------------------------------------------------------------
 // INIT keycloak
@@ -144,15 +156,18 @@ KeycloakManager.initWithoutToken = function(successFunc, errorFunc)
 
 		if( !authenticated ) KeycloakManager.setForm_InitFail();
 		else  {
-		
 			KeycloakManager.setForm_InitSuccess();
 		}
 
 		if( successFunc) successFunc( authenticated );
 	})
 	.catch(function( errMsg ) {
-		KeycloakManager.setForm_InitFail();
-		if(errorFunc) errorFunc( errMsg );
+		// This fail because of the "Offline user session not found" ( resfeshToken is expired ).
+		// We need to init again without any token in options
+		KeycloakManager.initWithoutToken();
+
+		// KeycloakManager.setForm_InitFail();
+		// if(errorFunc) errorFunc( errMsg );
 	});
 }
 
@@ -185,53 +200,119 @@ KeycloakManager.initWithToken = function(successFunc, errorFunc)
 
 // -------------------------------------------------------------------------------------
 // The Main Authentication Call
+
 KeycloakManager.keycloakPart = function() 
 {
 	const accessToken = localStorage.getItem("accessToken");
-	const refreshToken = localStorage.getItem("refreshToken");
-	const idToken = localStorage.getItem("idToken");
 	const pendingAction = KeycloakManager.getPendingAction();
 	
-	if( pendingAction != undefined && !ConnManagerNew.isAppMode_Offline() )
+	btnKeyCloakLogInInFormTag.hide();
+
+	if(!ConnManagerNew.isAppMode_Offline()) // ONLINE
 	{
-		if( keycloak.token == undefined && accessToken != undefined )
+		if( pendingAction != undefined)
 		{
-			KeycloakManager.initWithToken(function(auth){
-				console.log( 'authenticated: ', auth );
-				if( auth && pendingAction == "logoutToken")
-				{
-					KeycloakManager.tokenLogout();
-				}
-			});
+			if( keycloak.token == undefined && accessToken != undefined ) // Open the PWA app from the second time
+			{
+				KeycloakManager.initWithToken(function(auth){
+					console.log( 'authenticated: ', auth );
+					if( auth && pendingAction == "logoutToken")
+					{
+						KeycloakManager.tokenLogout();
+					}
+				});
+			}
+			else if( pendingAction == "logoutToken" ) // For the first time using Keycloak
+			{
+				KeycloakManager.tokenLogout();
+			}
 		}
-		else if( pendingAction == "logoutToken" )
+		else if( accessToken != null )
 		{
-			KeycloakManager.tokenLogout();
+			if( KeycloakManager.isTokenExpired())
+			{
+				KeycloakManager.setForm_TokenExpired();
+				btnKeyCloakLogInInFormTag.show().off("click").click( () => { KeycloakManager.setPendingAction("logoutToken"); });
+			}
+			else
+			{
+				KeycloakManager.initWithToken();
+			}
 		}
-	}
-	else if( accessToken != null )
-	{
-		if( KeycloakManager.isTokenExpired())
-		{
-			KeycloakManager.setForm_TokenExpired();
-		}
-		else
-		{
-			KeycloakManager.initWithToken();
-		}
-	}
-	else 
-	{
-		if( ConnManagerNew.isAppMode_Offline()  )
-		{
-			KeycloakManager.setForm_DisabledAll("Please connect internet to login in the first time");
-		}
-		else // ONLINE MODE
+		else if( accessToken == null )
 		{
 			KeycloakManager.initWithoutToken();
 		}
 	}
+	else // OFFLINE
+	{
+		if( accessToken != null )
+		{
+			var diffSeconds = timeCalculation( UtilDate.dateStr( "DATETIME" ), KeycloakLSManager.getLastLoginDate() );
+			if( diffSeconds > OFFLINE_TIMEOUT ) // Need to check keycloak token expired here
+			{
+				if( KeycloakManager.isTokenExpired())
+				{
+					KeycloakManager.setForm_TokenExpired();
+				}
+				else
+				{
+					Login.loginInputDisable( false ); 
+				}
+			}
+			else
+			{
+				Login.loginInputDisable( false ); 
+			}
+		}
+		else
+		{
+			KeycloakManager.setForm_DisabledAll("Please connect internet to login in the first time");
+		}
+	}
+	 
+	// if( pendingAction != undefined && !ConnManagerNew.isAppMode_Offline() )
+	// {
+	// 	if( keycloak.token == undefined && accessToken != undefined )
+	// 	{
+	// 		KeycloakManager.initWithToken(function(auth){
+	// 			console.log( 'authenticated: ', auth );
+	// 			if( auth && pendingAction == "logoutToken")
+	// 			{
+	// 				KeycloakManager.tokenLogout();
+	// 			}
+	// 		});
+	// 	}
+	// 	else if( pendingAction == "logoutToken" )
+	// 	{
+	// 		KeycloakManager.tokenLogout();
+	// 	}
+	// }
+	// else if( accessToken != null )
+	// {
+	// 	if( KeycloakManager.isTokenExpired())
+	// 	{
+	// 		KeycloakManager.setForm_TokenExpired();
+	// 	}
+	// 	else
+	// 	{
+	// 		KeycloakManager.initWithToken();
+	// 	}
+	// }
+	// else 
+	// {
+	// 	if( ConnManagerNew.isAppMode_Offline()  )
+	// 	{
+	// 		KeycloakManager.setForm_DisabledAll("Please connect internet to login in the first time");
+	// 	}
+	// 	else // ONLINE MODE
+	// 	{
+	// 		KeycloakManager.initWithoutToken();
+	// 	}
+	// }
 };
+
+
  
 KeycloakManager.setPendingAction = function( actionName )
 {
@@ -333,3 +414,12 @@ KeycloakManager.isTokenExpired = function(minValidity) {
 	return expiresIn < 0;
 };
 
+
+
+// =======================================================================================
+// Suportive methods
+
+function timeCalculation( dtmNewer, dtmOlder )
+{
+	return ( new Date( dtmNewer ).getTime()  - new Date( dtmOlder ).getTime() ) / Util.MS_SEC;
+}
