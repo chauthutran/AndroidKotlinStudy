@@ -23,7 +23,7 @@ KeycloakManager.startUp = function()
 		
 		realName = realName.replace("kc_", "").toUpperCase();
 		keycloak =  new Keycloak({
-			url: 'http://localhost:8080/',
+			url: 'https://keycloak.psidigital.org/',
 			realm: realName,
 			clientId: 'pwaapp'
 		});
