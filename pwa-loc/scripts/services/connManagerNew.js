@@ -216,6 +216,9 @@ ConnManagerNew.setAppMode = function (appModeNew, statusInfo) {
 };
 
 
+
+// TODO: CREATE BETTER TRIGGER METHODS
+
 ConnManagerNew.runWhenSwitchedToOnline = function () {
 	// 1. Run schedule specific tasks - that was added for this case.
 	ScheduleManager.runWhenSwitchedToOnline();
@@ -232,6 +235,9 @@ ConnManagerNew.runWhenSwitchedToOnline = function () {
 	// 4. 'backgroundUpdateWhenOnline' enabled, perform app Update in background.
 	// if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) {	SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
 	// SYNC ALL (ONLINE) Does call NewAppFile with delayed reload.
+
+	KeycloakManager.keycloakPart();
+
 };
 
 
