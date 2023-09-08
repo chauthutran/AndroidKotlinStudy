@@ -483,6 +483,8 @@ function cwsRender()
 
 	me.logOutProcess = function()
 	{
+		BahmniService.syncDataProcessing = false;		
+
 		SessionManager.setLoginStatus( false );
 		SessionManager.unloadSessionData_nConfigJson(); // Include config json unload
 

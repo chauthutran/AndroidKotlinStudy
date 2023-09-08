@@ -240,6 +240,14 @@ ConnManagerNew.runWhenSwitchedToOnline = function () {
 
 };
 
+ConnManagerNew.triggerOnSwitch_OnlineMode = function() {
+
+};
+
+ConnManagerNew.triggerOnSwitch_OfflineMode = function() {
+
+};
+
 
 ConnManagerNew.runSyncAll_ifOldLastSyncAll = function () {
 	try {

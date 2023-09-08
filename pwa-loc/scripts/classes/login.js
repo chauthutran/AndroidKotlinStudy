@@ -729,7 +729,7 @@ function Login() {
 	{
 		AppInfoLSManager.setUserName(userName);
 		SessionManager.setLoginStatus(true);
-		
+		BahmniService.syncDataProcessing = false;		
 
 		// gAnalytics Event
 		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);

@@ -336,6 +336,11 @@ BahmniService.syncDataRun = function ( option )
 							BahmniMsgManager.SyncMsg_InsertMsg( "Merge FINSIHED: " + mergedActivityLength + " activities, " + clientDwnLength + " patients." );
 							BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " patients, merged " + mergedActivityLength + " activities.");
 	
+	
+							// TODO: NEW: Call 'downloadStepsEval_OnFinal_ClientMerge' here?
+							BahmniService.syncDownStepsEval( "syncDownStepsEval_OnFinal_ClientMerge" );
+
+
 							// NOTE: If there was a new merge, for now, alert the user to reload the list?
 							if (changeOccurred_atMerge && !option.doNotOpenSummary ) 
 							{
@@ -377,6 +382,10 @@ BahmniService.syncDown = function (exeFunc)
 
 	const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
 
+	// NEW:
+	BahmniService.syncDownStepsEval( "syncDownStepsEval_OnBegin" );
+
+	
 	if (configSynDownList) 
 	{
 		BahmniService.syncDownProcessingTotal = configSynDownList.length;
@@ -495,6 +504,8 @@ BahmniService.getAppointmentDataList = function (appointmentIds, exeFunc)
 					// Create an activity for this Appointment
 					var activity = BahmniService.generateActivityAppointment(data, { formData: { sch_favId: 'followUp', fav_newAct: true } })
 					BahmniService.syncDownDataList.appointments.push(activity);
+
+					BahmniService.syncDownStepsEval( "syncDownStepsEval_OnSyncDownAppointment", { patientId: patientId, appointmentActivity: activity } );
 				}
 
 				if( BahmniService.syncDownAppointmentProcessing >= BahmniService.syncDownAppointmentTotal )
@@ -566,6 +577,43 @@ BahmniService.getConceptList = function (conceptIdList, exeFunc)
 		exeFunc();
 	}
 
+};
+
+
+// -------------------------
+
+BahmniService.syncDownStepsEval = function( syncDownName, option )
+{
+	if ( !option ) option = {};
+	// , { patientId: patientId, appointmentActivity: activity }
+
+	if ( syncDownName )
+	{
+		if ( syncDownName === "syncDownStepsEval_OnBegin" ) { }
+		else if ( syncDownName === "syncDownStepsEval_OnSyncDownAppointment" )
+		{
+			INFO.patientId = option.patientId;
+			INFO.appointmentActivity = option.appointmentActivity;
+		}	
+		else if ( syncDownName === "syncDownStepsEval_OnFinal_ClientMerge" )
+		{
+	
+		}	
+	
+		try 
+		{
+			var evalStr = ConfigManager.getSettingsBahmni()[ syncDownName ];
+	
+			if ( evalStr ) eval( Util.getEvalStr( evalStr ) );
+		}
+		catch (errMsg) 
+		{
+			var msgTemp = 'ERROR in BahmniService.syncDownStepsEval, ' + syncDownName + ': ' + errMsg;
+
+			MsgManager.msgAreaShow( msgTemp, 'ERROR');
+			console.log(msgTemp);
+		}
+	}
 };
 
 // -------------------------
