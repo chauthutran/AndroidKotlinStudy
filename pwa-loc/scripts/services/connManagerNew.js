@@ -210,16 +210,18 @@ ConnManagerNew.setAppMode = function (appModeNew, statusInfo) {
 
 			// When Switching From Offline -> Online, perform the runOnceOnline things..
 			// However, when WFA App start, 'online' set (forced) could call this.  To block that case, call this only if 'loggedIn'
-			if (ConnManagerNew.isAppMode_Online()) ConnManagerNew.runWhenSwitchedToOnline(); //ScheduleManager.runWhenSwitchedToOnline();
+			if ( ConnManagerNew.isAppMode_Online() ) ConnManagerNew.runWhenSwitchedToOnline(); //ScheduleManager.runWhenSwitchedToOnline();
+			else if ( ConnManagerNew.isAppMode_Offline() ) ConnManagerNew.runWhenSwitchedToOffline(); //ScheduleManager.runWhenSwitchedToOnline();
 		}
 	}
 };
 
 
+// When it gets switched from Offline Mode (Stable) to Online Mode, run this.
+ConnManagerNew.runWhenSwitchedToOnline = function () 
+{
+	console.log( '--> ConnManagerNew.runWhenSwitchedToOnline' );
 
-// TODO: CREATE BETTER TRIGGER METHODS
-
-ConnManagerNew.runWhenSwitchedToOnline = function () {
 	// 1. Run schedule specific tasks - that was added for this case.
 	ScheduleManager.runWhenSwitchedToOnline();
 
@@ -236,18 +238,19 @@ ConnManagerNew.runWhenSwitchedToOnline = function () {
 	// if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) {	SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
 	// SYNC ALL (ONLINE) Does call NewAppFile with delayed reload.
 
-	KeycloakManager.keycloakPart();
+	KeycloakManager.keycloakPart(); // For Offline KeyCloak?  If it was logged in with offline keycloak?
+};
+
+
+// When it gets switched from Offline Mode (Stable) to Online Mode, run this.
+ConnManagerNew.runWhenSwitchedToOffline = function () 
+{
+	console.log( '--> ConnManagerNew.runWhenSwitchedToOffline' );
 
 };
 
-ConnManagerNew.triggerOnSwitch_OnlineMode = function() {
 
-};
-
-ConnManagerNew.triggerOnSwitch_OfflineMode = function() {
-
-};
-
+// -----------------------------
 
 ConnManagerNew.runSyncAll_ifOldLastSyncAll = function () {
 	try {
