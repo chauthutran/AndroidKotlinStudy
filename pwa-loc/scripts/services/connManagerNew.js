@@ -115,7 +115,6 @@ ConnManagerNew.changeNetworkConnStableStatus = function (statusInfo, modeOnline,
 	// Do not need to anymore since 'Reqeust' is same as Set NOW!!!
 	ConnManagerNew.update_UI(statusInfo);
 
-
 	// If optional flag is to check server available immedicatley, perform it.
 	if (optionStr === 'startUp' || ConnManagerNew.efficiency.Immediate_wsAvailCheck) {
 		// Below only gets called (has checks inside) if stable online..
@@ -205,52 +204,58 @@ ConnManagerNew.setAppMode = function (appModeNew, statusInfo) {
 	if (statusInfo.appMode !== existingAppMode) {
 		ConnManagerNew.update_UI(statusInfo);
 
-		if (SessionManager.getLoginStatus()) {
-			SessionManager.cwsRenderObj.appModeSwitch_UIChanges();
+		if (SessionManager.getLoginStatus()) SessionManager.cwsRenderObj.appModeSwitch_UIChanges();
 
-			// When Switching From Offline -> Online, perform the runOnceOnline things..
-			// However, when WFA App start, 'online' set (forced) could call this.  To block that case, call this only if 'loggedIn'
-			if ( ConnManagerNew.isAppMode_Online() ) ConnManagerNew.runWhenSwitchedToOnline(); //ScheduleManager.runWhenSwitchedToOnline();
-			else if ( ConnManagerNew.isAppMode_Offline() ) ConnManagerNew.runWhenSwitchedToOffline(); //ScheduleManager.runWhenSwitchedToOnline();
-		}
+		// When Switching From Offline -> Online, perform the runOnceOnline things..
+		// However, when WFA App start, 'online' set (forced) could call this.  To block that case, call this only if 'loggedIn'
+		if (ConnManagerNew.isAppMode_Online()) ConnManagerNew.runWhenSwitchedToOnline(SessionManager.getLoginStatus()); //ScheduleManager.runWhenSwitchedToOnline();
+		else if (ConnManagerNew.isAppMode_Offline()) ConnManagerNew.runWhenSwitchedToOffline(SessionManager.getLoginStatus()); //ScheduleManager.runWhenSwitchedToOnline();
 	}
 };
 
 
-// When it gets switched from Offline Mode (Stable) to Online Mode, run this.
-ConnManagerNew.runWhenSwitchedToOnline = function () 
+
+// TODO: CREATE BETTER TRIGGER METHODS
+
+ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn ) 
 {
-	console.log( '--> ConnManagerNew.runWhenSwitchedToOnline' );
+	console.log( '----> ConnManagerNew.runWhenSwitchedToOnline' );
 
-	// 1. Run schedule specific tasks - that was added for this case.
-	ScheduleManager.runWhenSwitchedToOnline();
+	if ( loggedIn )
+	{
+		// 1. Run schedule specific tasks - that was added for this case.
+		ScheduleManager.runWhenSwitchedToOnline();
 
-	// 2. If lastSyncAllTime is quite old (6 hr or from config setting), perform syncAll...
-	ConnManagerNew.runSyncAll_ifOldLastSyncAll();
+		// 2. If lastSyncAllTime is quite old (6 hr or from config setting), perform syncAll...
+		ConnManagerNew.runSyncAll_ifOldLastSyncAll();
 
-	// 3. Send Google Anlytics Offline cached ones.
-	GAnalytics.offlineCacheSend();
+		// 3. Send Google Anlytics Offline cached ones.
+		GAnalytics.offlineCacheSend();
 
-	// 4. Send Matomo analytics - for firing all the offline queue to be sent (NEW)
-	MatomoHelper.processQueueList( 'From ConnManagerNew.runWhenSwitchedToOnline' );
+		// 4. Send Matomo analytics - for firing all the offline queue to be sent (NEW)
+		MatomoHelper.processQueueList( 'From ConnManagerNew.runWhenSwitchedToOnline' );
 
-	// 4. 'backgroundUpdateWhenOnline' enabled, perform app Update in background.
-	// if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) {	SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
-	// SYNC ALL (ONLINE) Does call NewAppFile with delayed reload.
-
-	KeycloakManager.keycloakPart(); // For Offline KeyCloak?  If it was logged in with offline keycloak?
+		// 4. 'backgroundUpdateWhenOnline' enabled, perform app Update in background.
+		// if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) {	SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
+		// SYNC ALL (ONLINE) Does call NewAppFile with delayed reload.
+	}
 };
 
-
-// When it gets switched from Offline Mode (Stable) to Online Mode, run this.
-ConnManagerNew.runWhenSwitchedToOffline = function () 
+ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn ) 
 {
-	console.log( '--> ConnManagerNew.runWhenSwitchedToOffline' );
+	if ( loggedIn )
+	{
 
+	}
+
+	console.log( '----> ConnManagerNew.runWhenSwitchedToOffline' );
+	if( KeycloakManager.startedUp )
+	{
+		KeycloakManager.keycloakPart();
+	}
 };
 
-
-// -----------------------------
+// -----------------------------------
 
 ConnManagerNew.runSyncAll_ifOldLastSyncAll = function () {
 	try {

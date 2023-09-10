@@ -38,6 +38,7 @@ App.run = function ()
 	function( paramObj ) 
 	{
 		// After Reload, Saved 'AuthChoice'/'AuthPage' will be used for setting LocalStorage
+		// Call Keycloak logout
 		DataManager2.deleteAllStorageData( () => 
 		{ 
 			console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 
@@ -89,8 +90,8 @@ App.run = function ()
 	
 		if ( App.getParamVal_ByName( App.paramName_keyCloakRemove, { deleteInLS: true } ) ) 
 		{ 
-			KeycloakManager.removeKeyCloakInUse(); 
-			KeycloakManager.localStorageRemove(); 
+			KeycloakLSManager.removeKeyCloakInUse(); 
+			KeycloakLSManager.localStorageRemove(); 
 		}
 	
 		// Service Worker Related Initial Setup
@@ -142,7 +143,7 @@ App.startAppProcess = function ()
 
 
 		// KeyCloak Run..
-		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart()
+		if ( KeycloakLSManager.removeKeyCloakInUse() ) KeycloakManager.keycloakPart()
 	}
 	catch (err) {
 		console.log('error starting App > startApp() error: ' + err);
@@ -425,6 +426,9 @@ App.authChiocePage_DataSet = function()
 		AppInfoLSManager.setAuthChoice( paramAuthChoice );
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		if ( paramAuthChoice.indexOf( 'kc_' ) === 0 ) AppInfoLSManager.setKeyCloakUse( 'Y' );
+
+		KeycloakManager.checkTokenAndLogin();
+
 		console.log( 'User Data has been removed..' );
 	}
 	else if ( paramAuthPage === 'Y' ) 
@@ -432,6 +436,9 @@ App.authChiocePage_DataSet = function()
 		AppInfoLSManager.setAuthChoice( '' );
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		AppInfoLSManager.setKeyCloakUse( '' );  // TODO: Should check if keyCloak is used and logOut if currently used?
+		
+		KeycloakLSManager.localStorageRemove();
+
 		console.log( 'User Data has been removed..' );
 	}
 };
