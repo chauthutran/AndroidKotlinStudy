@@ -435,7 +435,6 @@ App.authChiocePage_DataSet = function()
 		// Check if there is any token existing in LocalStorage.
 		if( KeycloakLSManager.getAccessToken() != undefined )
 		{
-			// KeycloakManager.KEYCLOAK_SERVER_URL = "http://localhost:8080/";
 			// Logout
 			KeycloakManager.tokenLogout(function(success){
 				KeycloakLSManager.localStorageRemove();
@@ -454,7 +453,15 @@ App.authChiocePage_DataSet = function()
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		AppInfoLSManager.setKeyCloakUse( '' );  // TODO: Should check if keyCloak is used and logOut if currently used?
 		
-		KeycloakLSManager.localStorageRemove();
+		// KeycloakManager.checkTokenAndLogin();
+		// Check if there is any token existing in LocalStorage.
+		if( KeycloakLSManager.getAccessToken() != undefined )
+		{
+			// Logout
+			KeycloakManager.tokenLogout(function(success){
+				KeycloakLSManager.localStorageRemove();
+			});
+		}
 
 		console.log( 'User Data has been removed..' );
 	}

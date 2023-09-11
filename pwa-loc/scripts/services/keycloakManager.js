@@ -36,8 +36,6 @@ KeycloakManager.startUp = function(realName)
 	realName = (realName) ? realName : AppInfoLSManager.getAuthChoice();
 	if( realName )
 	{
-		// KeycloakManager.KEYCLOAK_SERVER_URL = (WsCallManager.isLocalDevCase) ? "http://localhost:8080/" : "https://keycloak.psidigital.org/";
-		
 		realName = realName.replace("kc_", "").toUpperCase();
 		
 		keycloak =  new Keycloak({
@@ -453,32 +451,6 @@ KeycloakManager.tokenLogout = function( callFunc )
 				if( callFunc ) ( callFunc(false, {msg: errMsg}));
 			}
 		});
-
-
-		// $.ajax({
-		// 	url: url,
-		// 	type: "POST",
-		// 	headers: {
-		// 		client_id: "pwaapp",
-		// 		refresh_token: KeycloakLSManager.getRefreshToken()
-		// 	},
-		// 	// data: formData,
-		// 	success: function (response) 
-		// 	{
-		// 		KeycloakManager.eventMsg("Keycloak logout success");
-
-		// 		if( callFunc ) {
-		// 			KeycloakLSManager.localStorageRemove();
-		// 			callFunc(true, response);
-		// 		} 
-		// 	},
-		// 	error: function ( errMsg ) {
-		// 		KeycloakManager.eventMsg("Keycloak logout error");
-		// 		KeycloakManager.eventMsg(errMsg);
-
-		// 		if( callFunc ) ( callFunc(false, {msg: errMsg}));
-		// 	}
-		// });
 	}
 	else if( callFunc )
 	{
