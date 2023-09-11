@@ -10,7 +10,7 @@ var btnKeyCloakLogInInFormTag;
 var keycloakMsgTag;
 var timeSkew = 1;
 var accessTokenTimeoutObj;
-// var refreshTokenTimeoutObj;
+var refreshTokenTimeoutObj;
 var offlineExpiredInterval;
 
 var processingTask = "";
@@ -99,18 +99,14 @@ KeycloakManager.setForm_Online = function()
 		{
 			KeycloakManager.setUpForm_Online_TokenValid();
 		}
+		else if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
+		{
+			KeycloakManager.setUpForm_Online_AccessTokenExpired();
+		}
 		else 
 		{
 			KeycloakManager.setUpForm_Online_RefreshTokenExpired();
 		}
-		// else if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
-		// {
-		// 	KeycloakManager.setUpForm_Online_AccessTokenExpired();
-		// }
-		// else 
-		// {
-		// 	KeycloakManager.setUpForm_Online_RefreshTokenExpired();
-		// }
 	}
 	else
 	{
@@ -367,8 +363,8 @@ KeycloakManager.watchTokenStatus = function()
 	if( ConnManagerNew.isAppMode_Online() ) // ONLINE
 	{
 		const accessTokenParsed = KeycloakLSManager.getAccessTokenParsed();
-		// const refreshTokenParsed = KeycloakLSManager.getRefreshTokenParsed();
-		if( accessTokenParsed != null )
+		const refreshTokenParsed = KeycloakLSManager.getIdTokenParsed();
+		if( refreshTokenParsed != null )
 		{
 			var accessTokenExpiredSeconds = getTokenExpiredInMiniseconds( accessTokenParsed );
 			if( accessTokenExpiredSeconds > 0 )
@@ -378,13 +374,13 @@ KeycloakManager.watchTokenStatus = function()
 				}, accessTokenExpiredSeconds);
 			}
 
-			// var refreshTokenExpiredSeconds = getTokenExpiredInMiniseconds( refreshTokenParsed );
-			// if( refreshTokenExpiredSeconds > 0 )
-			// {
-			// 	refreshTokenTimeoutObj = setTimeout(() => {
-			// 		KeycloakManager.setUpForm_Online_RefreshTokenExpired();
-			// 	}, refreshTokenExpiredSeconds);
-			// }
+			var refreshTokenExpiredSeconds = getTokenExpiredInMiniseconds( refreshTokenParsed );
+			if( refreshTokenExpiredSeconds > 0 )
+			{
+				refreshTokenTimeoutObj = setTimeout(() => {
+					KeycloakManager.setUpForm_Online_RefreshTokenExpired();
+				}, refreshTokenExpiredSeconds);
+			}
 		}
 	}
 	else // OFFLINE
@@ -416,17 +412,13 @@ KeycloakManager.tokenLogout = function( callFunc )
 	if( KeycloakLSManager.getAccessToken() != null )
 	{
 		var logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/SWZ_PSI/protocol/openid-connect/logout`;
-		// var url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
-		// var formData = `client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}`;
+		var url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
+		var formData = `client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}`;
 		
 		$.ajax({
 			url: url,
 			type: "POST",
-			headers: {
-				client_id: "pwaapp",
-				refresh_token: KeycloakLSManager.getRefreshToken()
-			},
-			// data: formData,
+			data: formData,
 			success: function (response) 
 			{
 				KeycloakManager.eventMsg("Keycloak logout success");
@@ -476,8 +468,7 @@ KeycloakManager.getUserInfo = function()
 
 KeycloakManager.isTokenValid = function()
 {
-	// return ( !KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired() );
-	return ( !KeycloakManager.isAccessTokenExpired() );
+	return ( !KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired() );
 }
 
 KeycloakManager.isAccessTokenExpired = function()
@@ -489,7 +480,7 @@ KeycloakManager.isAccessTokenExpired = function()
 
 KeycloakManager.isRefreshTokenExpired = function()
 {
-	const refreshTokenParsed =  KeycloakLSManager.getRefreshTokenParsed();
+	const refreshTokenParsed =  KeycloakLSManager.getIdTokenParsed();
 	return checkTokenExpired(refreshTokenParsed);
 }
 
@@ -506,7 +497,7 @@ function getTokenExpiredInMiniseconds( tokenParsed ) {
 function clearCheckTokenTimeout()
 {
 	clearTimeout( accessTokenTimeoutObj );
-	// clearTimeout( refreshTokenTimeoutObj );
+	clearTimeout( refreshTokenTimeoutObj );
 	clearInterval( offlineExpiredInterval );
 }
 
