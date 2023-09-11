@@ -416,35 +416,63 @@ KeycloakManager.keycloakPart = function()
 
 KeycloakManager.tokenLogout = function( callFunc ) 
 {
+	// Only run properly when token is expired
 	if( KeycloakLSManager.getAccessToken() != undefined )
 	{
-		var logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/SWZ_PSI/protocol/openid-connect/logout`;
-		var url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
-		var formData = `client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}`;
-		
+		let logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/SWZ_PSI/protocol/openid-connect/logout`;
+		let url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
+		let formData = `client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}`;
 		$.ajax({
 			url: url,
 			type: "POST",
-			data: formData,
+			headers: {
+				client_id: "pwaapp",
+				refresh_token: KeycloakLSManager.getRefreshToken(),
+                scope: "openid offline_access"
+			},
+			 data: formData,
 			success: function (response) 
 			{
 				KeycloakManager.eventMsg("Keycloak logout success");
 
 				if( callFunc ) {
 					KeycloakLSManager.localStorageRemove();
-					var succecced = ( response.statusText == "OK ")
-					callFunc(succecced, response);
-				} 
+					callFunc(true, response);
+				}
 			},
 			error: function ( errMsg ) {
-				KeycloakLSManager.localStorageRemove();
-
 				KeycloakManager.eventMsg("Keycloak logout error");
 				KeycloakManager.eventMsg(errMsg);
 
 				if( callFunc ) ( callFunc(false, {msg: errMsg}));
 			}
 		});
+
+
+		// $.ajax({
+		// 	url: url,
+		// 	type: "POST",
+		// 	headers: {
+		// 		client_id: "pwaapp",
+		// 		refresh_token: KeycloakLSManager.getRefreshToken()
+		// 	},
+		// 	// data: formData,
+		// 	success: function (response) 
+		// 	{
+		// 		KeycloakManager.eventMsg("Keycloak logout success");
+
+		// 		if( callFunc ) {
+		// 			KeycloakLSManager.localStorageRemove();
+		// 			callFunc(true, response);
+		// 		} 
+		// 	},
+		// 	error: function ( errMsg ) {
+		// 		KeycloakManager.eventMsg("Keycloak logout error");
+		// 		KeycloakManager.eventMsg(errMsg);
+
+		// 		if( callFunc ) ( callFunc(false, {msg: errMsg}));
+		// 	}
+		// });
 	}
 	else if( callFunc )
 	{
