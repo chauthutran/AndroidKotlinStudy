@@ -49,7 +49,10 @@ KeycloakManager.startUp = function(realName)
 KeycloakManager.setUpEvents = function( kcObj ) 
 {
     kcObj.onAuthSuccess = () => KeycloakManager.eventMsg('Auth Success');    
-    kcObj.onAuthError = (errorData) => KeycloakManager.eventMsg("Auth Error: " + JSON.stringify(errorData) );
+    kcObj.onAuthError = (errorData) => {
+		KeycloakManager.eventMsg("Auth Error: " + JSON.stringify(errorData) );
+		// KeycloakManager.authenticate_WithoutToken();
+	}
     kcObj.onAuthRefreshSuccess = () => {
 		KeycloakManager.eventMsg('Auth Refresh Success');
 		// localStorage.setItem("accessToken", keycloak.token);
@@ -99,18 +102,18 @@ KeycloakManager.setForm_Online = function()
 		{
 			KeycloakManager.setUpForm_Online_TokenValid();
 		}
-		else
-		{
-			KeycloakManager.setUpForm_Online_AccessTokenExpired();
-		}
-		// else if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
+		// else
 		// {
 		// 	KeycloakManager.setUpForm_Online_AccessTokenExpired();
 		// }
-		// else 
-		// {
-		// 	KeycloakManager.setUpForm_Online_RefreshTokenExpired();
-		// }
+		else if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
+		{
+			KeycloakManager.setUpForm_Online_AccessTokenExpired();
+		}
+		else 
+		{
+			KeycloakManager.setUpForm_Online_RefreshTokenExpired();
+		}
 	}
 	else
 	{
@@ -442,6 +445,10 @@ KeycloakManager.tokenLogout = function( callFunc )
 				if( callFunc ) ( callFunc(false, {msg: errMsg}));
 			}
 		});
+	}
+	else if( callFunc )
+	{
+		callFunc();
 	}
 };
 
