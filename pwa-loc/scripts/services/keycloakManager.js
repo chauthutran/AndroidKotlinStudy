@@ -232,7 +232,7 @@ KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
 {
 	clearInterval(offlineExpiredInterval);
 
-console.log("=============  KeycloakManager.setUpForm_Offline_OfflineTimeExpired");
+// console.log("=============  KeycloakManager.setUpForm_Offline_OfflineTimeExpired");
 	// Enable the login form
 	enableLoginForm();
 
@@ -267,7 +267,7 @@ KeycloakManager.setUpForm_Offline_OfflineTimeValid = function()
 	offlineExpiredInterval = setInterval(() => {
 		var timeInfo = KeycloakManager.formatOfflineExpiredTime();
 		keycloakMsgTag.html("(Offline login time will expired in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss + ")" );
-console.log("------- setInterval");
+// console.log("------- setInterval");
 		KeycloakManager.setForm_Offline();
 	}, Util.MS_SEC);
 
