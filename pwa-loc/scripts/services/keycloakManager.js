@@ -70,10 +70,10 @@ KeycloakManager.setUpEvents = function( kcObj )
 	}
     kcObj.onTokenExpired = () => {
 		KeycloakManager.eventMsg('Token is expired.');
-		if( processingTask == "authenticate_WithToken" )
-		{
-			KeycloakManager.authenticate_WithoutToken();
-		}
+		// if( processingTask == "authenticate_WithToken" )
+		// {
+		// 	KeycloakManager.authenticate_WithoutToken();
+		// }
 	}
 
 	kcObj.onActionUpdate = function (status) {
@@ -102,10 +102,6 @@ KeycloakManager.setForm_Online = function()
 		{
 			KeycloakManager.setUpForm_Online_TokenValid();
 		}
-		// else
-		// {
-		// 	KeycloakManager.setUpForm_Online_AccessTokenExpired();
-		// }
 		else if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
 		{
 			KeycloakManager.setUpForm_Online_AccessTokenExpired();
@@ -202,14 +198,16 @@ KeycloakManager.setUpForm_Online_RefreshTokenExpired = function()
 
 	// Show "Login button" in the Login form
 	btnKeyCloakLogInInFormTag.css("background-color", "#008000").show().off("click").click( () => { 
-		KeycloakLSManager.localStorageRemove();
-		KeycloakManager.authenticate_WithoutToken();
+		KeycloakManager.tokenLogout(function(){
+			KeycloakManager.keycloakPart();
+		});
 	});
 
 	// Show "Login button" in the bottom
 	btnKeyCloakLogOutTag.html("Login").show().off("click").click( () => { 
-		KeycloakLSManager.localStorageRemove();
-		KeycloakManager.authenticate_WithoutToken();
+		KeycloakManager.tokenLogout(function(){
+			KeycloakManager.keycloakPart();
+		});
 	});
 
 	KeycloakManager.eventMsg( "RefreshToken is expired. Please login again.");
@@ -305,35 +303,35 @@ KeycloakManager.authenticate_WithoutToken = function(successFunc, errorFunc)
 	});
 }
 
-KeycloakManager.authenticate_WithToken = function(successFunc, errorFunc)
-{
-	const accessToken = KeycloakLSManager.getAccessToken();
-	const refreshToken = KeycloakLSManager.getRefreshToken();
-	const idToken = KeycloakLSManager.getIdToken();
+// KeycloakManager.authenticate_WithToken = function(successFunc, errorFunc)
+// {
+// 	const accessToken = KeycloakLSManager.getAccessToken();
+// 	const refreshToken = KeycloakLSManager.getRefreshToken();
+// 	const idToken = KeycloakLSManager.getIdToken();
 
-	keycloak.init({
-		onLoad: "login-required",
-		checkLoginIframe: false,
-		token: accessToken,
-		refreshToken: refreshToken,
-		idToken: idToken,
-		timeSkew: timeSkew
-	}).then(function(authenticated) {
-		console.log( 'authenticated: ', authenticated );
-		if( !authenticated ) {
-			KeycloakManager.authenticateFailure();
-		}
-		else {
-			KeycloakManager.authenticateSuccess();
-		}
+// 	keycloak.init({
+// 		onLoad: "login-required",
+// 		checkLoginIframe: false,
+// 		token: accessToken,
+// 		refreshToken: refreshToken,
+// 		idToken: idToken,
+// 		timeSkew: timeSkew
+// 	}).then(function(authenticated) {
+// 		console.log( 'authenticated: ', authenticated );
+// 		if( !authenticated ) {
+// 			KeycloakManager.authenticateFailure();
+// 		}
+// 		else {
+// 			KeycloakManager.authenticateSuccess();
+// 		}
 
-		if( successFunc) successFunc( authenticated );
-	})
-	.catch(function( errMsg ) {
-		KeycloakManager.authenticateFailure();
-		if(errorFunc) errorFunc( errMsg );
-	});
-}
+// 		if( successFunc) successFunc( authenticated );
+// 	})
+// 	.catch(function( errMsg ) {
+// 		KeycloakManager.authenticateFailure();
+// 		if(errorFunc) errorFunc( errMsg );
+// 	});
+// }
 
 KeycloakManager.authenticateSuccess = function()
 {
