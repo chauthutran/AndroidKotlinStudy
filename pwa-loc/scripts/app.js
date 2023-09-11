@@ -432,7 +432,7 @@ App.authChiocePage_DataSet = function()
 
 		// KeycloakManager.checkTokenAndLogin();
 		// Check if there is any token existing in LocalStorage.
-		if( KeycloakLSManager.getAccessToken() != null )
+		if( KeycloakLSManager.getAccessToken() != undefined )
 		{
 			// Logout
 			KeycloakManager.tokenLogout(function(success){
