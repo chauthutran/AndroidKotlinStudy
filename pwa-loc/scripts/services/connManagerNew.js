@@ -242,21 +242,24 @@ ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn )
 };
 
 ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn ) 
-{
+{		
+	console.log( '----> ConnManagerNew.runWhenSwitchedToOffline' );
 	if ( loggedIn )
 	{
 
 
 	}
 
-	console.log( '----> ConnManagerNew.runWhenSwitchedToOffline' );
-	if( KeycloakManager.isStartedUp )
+	else
 	{
-		// What is this case for?
-		// -- We check offline timeout
-		//  Checking The Offline timeout & Setform..
-		// KeycloakManager.setForm( {  });
-		KeycloakManager.keycloakPart();
+		if( KeycloakManager.isStartedUp )
+		{
+			// What is this case for?
+			// -- We check offline timeout
+			//  Checking The Offline timeout & Setform..
+			// KeycloakManager.setForm( {  });
+			KeycloakManager.setForm_Offline();
+		}
 	}
 };
 

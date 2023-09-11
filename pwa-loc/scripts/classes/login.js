@@ -373,7 +373,7 @@ function Login() {
 					MsgFormManager.appBlockTemplate('appLoad');
 
 					// NEW!! - When User Changing, if keycloak is in use, perform logout 1st..
-          // TODO: NOTE: WHY 'remove--' rather than 'is--'?
+          			// TODO: NOTE: WHY 'remove--' rather than 'is--'?
 					if ( KeycloakLSManager.isKeyCloakInUse() ) 
 					{
 						KeycloakManager.tokenLogout( function( isSuccess ) 
