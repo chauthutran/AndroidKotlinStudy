@@ -220,7 +220,7 @@ KeycloakManager.initWithToken = function(successFunc, errorFunc)
 	const idToken = KeycloakLSManager.getIdToken();
 
 	keycloak.init({
-		onLoad: "ogin-required",
+		onLoad: "login-required",
 		checkLoginIframe: false,
 		token: accessToken,
 		refreshToken: refreshToken,
@@ -251,8 +251,8 @@ KeycloakManager.watchTokenStatus = function()
 	if( ConnManagerNew.isAppMode_Online() ) // ONLINE
 	{
 		const accessTokenParsed = KeycloakLSManager.getAccessTokenParsed();
-		const refreshTokenParsed = KeycloakLSManager.getRefreshTokenParsed();
-		if( refreshTokenParsed != null )
+		// const refreshTokenParsed = KeycloakLSManager.getRefreshTokenParsed();
+		if( accessTokenParsed != null )
 		{
 			var accessTokenExpiredSeconds = getTokenExpiredInMiniseconds( accessTokenParsed );
 			if( accessTokenExpiredSeconds > 0 )
@@ -262,13 +262,13 @@ KeycloakManager.watchTokenStatus = function()
 				}, accessTokenExpiredSeconds);
 			}
 
-			var refreshTokenExpiredSeconds = getTokenExpiredInMiniseconds( refreshTokenParsed );
-			if( accessTokenExpiredSeconds > 0 )
-			{
-				refreshTokenTimeoutObj = setTimeout(() => {
-					KeycloakManager.setForm_TokenExpired();
-				}, refreshTokenExpiredSeconds);
-			}
+			// var refreshTokenExpiredSeconds = getTokenExpiredInMiniseconds( refreshTokenParsed );
+			// if( accessTokenExpiredSeconds > 0 )
+			// {
+			// 	refreshTokenTimeoutObj = setTimeout(() => {
+			// 		KeycloakManager.setForm_TokenExpired();
+			// 	}, refreshTokenExpiredSeconds);
+			// }
 		}
 	}
 	else // OFFLINE
@@ -304,17 +304,23 @@ KeycloakManager.setForm_TokenExpired = function()
 		$("#loginFormDiv").find(".loginBtn").off('click').css("background-color", "#eeeeee"); 
 		Login.loginInputDisable( true ); 
 		
-		// Show Login and Logout buttons
-		if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
+		// // Show Login and Logout buttons
+		if( KeycloakManager.isAccessTokenExpired())
 		{
-			KeycloakManager.authenticateWhenAccessTokenExpired();
+			KeycloakManager.authenticateWhenRefreshTokenExpired();
 			KeycloakManager.eventMsg("Access Token is expired.");
 		}
-		else if( KeycloakManager.isAccessTokenExpired() && KeycloakManager.isRefreshTokenExpired())
-		{		
-			KeycloakManager.authenticateWhenRefreshTokenExpired();
-			KeycloakManager.eventMsg( "RefreshToken is expired. Please login again.");
-		}
+
+		// if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
+		// {
+		// 	KeycloakManager.authenticateWhenAccessTokenExpired();
+		// 	KeycloakManager.eventMsg("Access Token is expired.");
+		// }
+		// else if( KeycloakManager.isAccessTokenExpired() && KeycloakManager.isRefreshTokenExpired())
+		// {		
+		// 	KeycloakManager.authenticateWhenRefreshTokenExpired();
+		// 	KeycloakManager.eventMsg( "RefreshToken is expired. Please login again.");
+		// }
 
 		keycloakMsgTag.html("(Token is expired. Please login again.)");
 		MsgManager.msgAreaShowOpt( "Token is expired. Please login again.", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
@@ -490,7 +496,8 @@ KeycloakManager.getUserInfo = function()
 
 KeycloakManager.isTokenValid = function()
 {
-	return ( !KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired() );
+	return (!KeycloakManager.isAccessTokenExpired());
+	// return ( !KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired() );
 }
 
 KeycloakManager.isAccessTokenExpired = function()
@@ -519,7 +526,7 @@ function getTokenExpiredInMiniseconds( tokenParsed ) {
 function clearCheckTokenTimeout()
 {
 	clearTimeout( accessTokenTimeoutObj );
-	clearTimeout( refreshTokenTimeoutObj );
+	// clearTimeout( refreshTokenTimeoutObj );
 	clearInterval( offlineExpiredInterval );
 }
 
