@@ -192,7 +192,7 @@ KeycloakManager.setUpForm_Online_AccessTokenExpired = function()
 	btnKeyCloakLogOutTag.show();
 
 	keycloakMsgTag.html("(Token is expired. Please login again.)");
-	MsgManager.msgAreaShowOpt( "Token is expired. Please login again.", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
+	MsgManager.msgAreaShowOpt( "Token is expired. Please login again.", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
 }
 
 KeycloakManager.setUpForm_Online_RefreshTokenExpired = function()
@@ -216,7 +216,7 @@ KeycloakManager.setUpForm_Online_RefreshTokenExpired = function()
 
 	KeycloakManager.eventMsg( "RefreshToken is expired. Please login again.");
 	keycloakMsgTag.html("(Token is expired. Please login again.)");
-	MsgManager.msgAreaShowOpt( "Token is expired. Please login again.", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
+	MsgManager.msgAreaShowOpt( "Token is expired. Please login again.", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
 }
 
 KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
@@ -354,7 +354,7 @@ KeycloakManager.authenticateSuccess = function()
 	Login.loginInputDisable( false ); 
 	
 
-	MsgManager.msgAreaShowOpt( "Login with Keycloak success !", { cssClasses: 'notifDark', hideTimeMs: 180000 } );
+	MsgManager.msgAreaShowOpt( "Login with Keycloak success !", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
 
 	KeycloakManager.watchTokenStatus();
 }
