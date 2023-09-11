@@ -6,34 +6,78 @@ function KeycloakLSManager() {}
 
 KeycloakLSManager.KEY_KEYCLOAK_INFO = "keycloakInfo";
 KeycloakLSManager.KEY_LOGIN_DATE = 'loginDate';
+KeycloakLSManager.KEY_ACCESS_TOKEN = 'accessToken';
+KeycloakLSManager.KEY_REFRESH_TOKEN = 'refreshToken';
+KeycloakLSManager.KEY_ID_TOKEN = 'idToken';
+KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED = 'accessTokenParsed';
+KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED = 'refreshTokenParsed';
+KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED = 'refreshTokenParsed';
+KeycloakLSManager.KEY_AUTH_KEYCLOAK_PENDING = 'authKeycloakPending';
 
-KeycloakLSManager.keycloakInfo_LS;
 
 // ---------------------------------------------------------------------------------------------
 
-KeycloakLSManager.setLastLoginDate = function( value )
+
+KeycloakLSManager.setLastLoginDate = function()
 {
-    KeycloakLSManager.updatePropertyValue( KeycloakLSManager.KEY_LOGIN_DATE, value );
+    updatePropertyValue( KeycloakLSManager.KEY_LOGIN_DATE, UtilDate.dateStr( "DATETIME" ) );
+}
+
+KeycloakLSManager.setKeycloakInfo = function( kcObj )
+{
+    updatePropertyValue( KeycloakLSManager.KEY_LOGIN_DATE, UtilDate.dateStr( "DATETIME" ) );
+    updatePropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN, kcObj.token );
+    updatePropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken );
+    updatePropertyValue( KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken );
+    updatePropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED, JSON.stringify(kcObj.tokenParsed) );
+    updatePropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED, JSON.stringify(kcObj.refreshTokenParsed) );
 }
 
 KeycloakLSManager.getLastLoginDate = function()
 {
-    return KeycloakLSManager.getPropertyValue( KeycloakLSManager.KEY_LOGIN_DATE );
+    return getPropertyValue( KeycloakLSManager.KEY_LOGIN_DATE );
 }
 
+KeycloakLSManager.getAccessToken = function()
+{
+    return getPropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN );
+}
 
+KeycloakLSManager.getRefreshToken = function()
+{
+    return getPropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN );
+}
+
+KeycloakLSManager.getIdToken = function()
+{
+    return getPropertyValue( KeycloakLSManager.KEY_ID_TOKEN );
+}
+
+KeycloakLSManager.getAccessTokenParsed = function()
+{
+    return getPropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED );
+}
+
+KeycloakLSManager.getRefreshTokenParsed = function()
+{
+    return getPropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED );
+}
+
+KeycloakLSManager.localStorageRemove = function() {
+    saveKeycloakInfoData( {} );
+};
 
 // ---------------------------------------------------------------------------------------------
 // Supportive methods
 
-KeycloakLSManager.getPropertyValue = function( key )
+function getPropertyValue( key )
 {
     var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);    
 
     return ( keycloakInfo == undefined ) ? undefined : keycloakInfo[key];
 };
 
-KeycloakLSManager.updatePropertyValue = function( key, value )
+function updatePropertyValue( key, value )
 {
     var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
     if( keycloakInfo == undefined )
@@ -43,7 +87,7 @@ KeycloakLSManager.updatePropertyValue = function( key, value )
     keycloakInfo[key] = value;
 
     // Update data in memory
-    KeycloakLSManager.saveKeycloakInfoData( keycloakInfo );
+    saveKeycloakInfoData( keycloakInfo );
 };
 
 KeycloakLSManager.removeProperty = function( key )
@@ -51,13 +95,25 @@ KeycloakLSManager.removeProperty = function( key )
     var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
     delete keycloakInfo[key];
 
-    KeycloakLSManager.saveKeycloakInfoData( keycloakInfo );  
+    saveKeycloakInfoData( keycloakInfo );  
 
 };
 
 // --------------------------------------------
+// TODO: NEED TO RELOCATE?  'AppInfoLSManager' used..
+KeycloakLSManager.isKeyCloakInUse = function() 
+{
+	return ( AppInfoLSManager.getKeyCloakUse() === 'Y' );
+};
 
-KeycloakLSManager.saveKeycloakInfoData = function( keycloakInfo )
+KeycloakLSManager.removeKeyCloakInUse = function() 
+{
+	AppInfoLSManager.setKeyCloakUse( '' );
+};
+
+// --------------------------------------------
+
+function saveKeycloakInfoData( keycloakInfo )
 {
     LocalStgMng.saveJsonData( KeycloakLSManager.KEY_KEYCLOAK_INFO, keycloakInfo );
 };

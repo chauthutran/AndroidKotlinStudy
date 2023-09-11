@@ -947,7 +947,9 @@
 	                            kc.onAuthSuccess && kc.onAuthSuccess();
 	                            initPromise.setSuccess();
 	                        }).catch(function(error) {
-	                            kc.onAuthError && kc.onAuthError();
+								console.log("============= processInit");
+								console.log(error);
+								 kc.onAuthError && kc.onAuthError();
 	                            if (initOptions.onLoad) {
 	                                onLoad();
 	                            } else {
@@ -1266,6 +1268,7 @@
 	            }
 	            expiresIn -= minValidity;
 	        }
+
 	        return expiresIn < 0;
 	    };
 
@@ -1400,6 +1403,9 @@
 	        if (error) {
 	            if (prompt != 'none') {
 	                var errorData = { error: error, error_description: oauth.error_description };
+					
+					console.log("============= processCallBack");
+					console.log(errorData);
 	                kc.onAuthError && kc.onAuthError(errorData);
 	                promise && promise.setError(errorData);
 	            } else {
@@ -1435,6 +1441,9 @@
 	                        authSuccess(tokenResponse['access_token'], tokenResponse['refresh_token'], tokenResponse['id_token'], kc.flow === 'standard');
 	                        scheduleCheckIframe();
 	                    } else {
+							
+					console.log("============= processCallBack");
+					console.log(req);
 	                        kc.onAuthError && kc.onAuthError();
 	                        promise && promise.setError();
 	                    }

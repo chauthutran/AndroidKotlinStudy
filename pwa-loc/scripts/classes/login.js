@@ -373,15 +373,16 @@ function Login() {
 					MsgFormManager.appBlockTemplate('appLoad');
 
 					// NEW!! - When User Changing, if keycloak is in use, perform logout 1st..
-					if ( KeycloakManager.isKeyCloakInUse() ) 
+          // TODO: NOTE: WHY 'remove--' rather than 'is--'?
+					if ( KeycloakLSManager.isKeyCloakInUse() ) 
 					{
 						KeycloakManager.tokenLogout( function( isSuccess ) 
 						{
 							if ( !isSuccess ) alert( 'Failed to perform KeyCloak Logout!' );
 							else 
 							{
-								//KeycloakManager.removeKeyCloakInUse(); // These 2 already done by 'tokenLogout' 
-								// KeycloakManager.localStorageRemove();	
+								//KeycloakLSManager.removeKeyCloakInUse(); // These 2 already done by 'tokenLogout' 
+								// KeycloakLSManager.localStorageRemove();	
 								AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");								
 							}
 						});
@@ -466,7 +467,7 @@ function Login() {
 		// keycloak setting..
 		if ( [ 'dev', 'test' ].indexOf( WsCallManager.stageName ) >= 0 )
 		{
-			if ( !KeycloakManager.isKeyCloakInUse() )
+			if ( !KeycloakLSManager.isKeyCloakInUse() )
 			{
 				// If emtpy case, show the 'k' button..
 				if ( !AppInfoLSManager.getUserName() ) {
@@ -554,7 +555,7 @@ function Login() {
 
 
 		// Also check online status:
-		if ( KeycloakManager.isKeyCloakInUse() ) 
+		if ( KeycloakLSManager.isKeyCloakInUse() ) 
 		{
 			SessionManager.checkOfflineDataExists( loginUserName, function (dataExists) 
 			{
@@ -903,7 +904,7 @@ function Login() {
 	// New 
 	me.checkKeyCloakPinValid_Online = function(userName, password, returnFunc)
 	{
-		if ( !KeycloakManager.isKeyCloakInUse() ) returnFunc( true, 'Not keycloak case' );  // Proceed with OnLing Login
+		if ( !KeycloakLSManager.isKeyCloakInUse() ) returnFunc( true, 'Not keycloak case' );  // Proceed with OnLing Login
 		else
 		{
 			// NEW KeyCloak Case:
@@ -1210,10 +1211,8 @@ Login.contentHtml = `
 						<div class="button-label">keyCloak Login</div>
 					</div>
 				</div>
-
+				<div id="keycloakMsg" style="font-style: italic; color: #f50b0b;"></div>
 				
-
-
 			</div>
 		</div>
 				
