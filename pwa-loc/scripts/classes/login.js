@@ -374,7 +374,7 @@ function Login() {
 
 					// NEW!! - When User Changing, if keycloak is in use, perform logout 1st..
           // TODO: NOTE: WHY 'remove--' rather than 'is--'?
-					if ( KeycloakLSManager.removeKeyCloakInUse() ) 
+					if ( KeycloakLSManager.isKeyCloakInUse() ) 
 					{
 						KeycloakManager.tokenLogout( function( isSuccess ) 
 						{
@@ -467,7 +467,7 @@ function Login() {
 		// keycloak setting..
 		if ( [ 'dev', 'test' ].indexOf( WsCallManager.stageName ) >= 0 )
 		{
-			if ( !KeycloakLSManager.removeKeyCloakInUse() )
+			if ( !KeycloakLSManager.isKeyCloakInUse() )
 			{
 				// If emtpy case, show the 'k' button..
 				if ( !AppInfoLSManager.getUserName() ) {
@@ -555,7 +555,7 @@ function Login() {
 
 
 		// Also check online status:
-		if ( KeycloakLSManager.removeKeyCloakInUse() ) 
+		if ( KeycloakLSManager.isKeyCloakInUse() ) 
 		{
 			SessionManager.checkOfflineDataExists( loginUserName, function (dataExists) 
 			{
@@ -904,7 +904,7 @@ function Login() {
 	// New 
 	me.checkKeyCloakPinValid_Online = function(userName, password, returnFunc)
 	{
-		if ( !KeycloakLSManager.removeKeyCloakInUse() ) returnFunc( true, 'Not keycloak case' );  // Proceed with OnLing Login
+		if ( !KeycloakLSManager.isKeyCloakInUse() ) returnFunc( true, 'Not keycloak case' );  // Proceed with OnLing Login
 		else
 		{
 			// NEW KeyCloak Case:

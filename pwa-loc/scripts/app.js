@@ -116,7 +116,7 @@ App.startAppProcess = function ()
 		ConnManagerNew.createNetworkConnListeners();
 		//App.App_UI_startUp_Progress('50%');
 
-		// KeyCloak Start Object + Param case removal
+		// MOVED: KeyCloak Start Object + Param case removal
 		KeycloakManager.startUp();
 
 
@@ -145,7 +145,7 @@ App.startAppProcess = function ()
 
 
 		// TODO: CHECK THIS.. KeyCloak Run..  - to log out?
-		if ( KeycloakLSManager.removeKeyCloakInUse() ) KeycloakManager.keycloakPart();
+		if ( KeycloakLSManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart();
 
 	}
 	catch (err) {

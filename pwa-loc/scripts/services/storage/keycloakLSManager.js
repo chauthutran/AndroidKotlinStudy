@@ -99,13 +99,16 @@ KeycloakLSManager.removeProperty = function( key )
 
 };
 
-
 // --------------------------------------------
-
-// TODO: NOTE: QUESTION: WHY 'remove---' rather than 'is---'?
-KeycloakLSManager.removeKeyCloakInUse = function() 
+// TODO: NEED TO RELOCATE?  'AppInfoLSManager' used..
+KeycloakLSManager.isKeyCloakInUse = function() 
 {
 	return ( AppInfoLSManager.getKeyCloakUse() === 'Y' );
+};
+
+KeycloakLSManager.removeKeyCloakInUse = function() 
+{
+	AppInfoLSManager.setKeyCloakUse( '' );
 };
 
 // --------------------------------------------
