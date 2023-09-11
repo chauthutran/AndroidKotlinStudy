@@ -91,7 +91,7 @@ KeycloakManager.setUpEvents = function( kcObj )
 KeycloakManager.setForm_Online = function()
 {	
 	const accessToken =  KeycloakLSManager.getAccessToken();
-	if( accessToken != null )
+	if( accessToken != undefined )
 	{
 		KeycloakManager.watchTokenStatus();
 
@@ -99,14 +99,18 @@ KeycloakManager.setForm_Online = function()
 		{
 			KeycloakManager.setUpForm_Online_TokenValid();
 		}
-		else if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
+		else
 		{
 			KeycloakManager.setUpForm_Online_AccessTokenExpired();
 		}
-		else 
-		{
-			KeycloakManager.setUpForm_Online_RefreshTokenExpired();
-		}
+		// else if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
+		// {
+		// 	KeycloakManager.setUpForm_Online_AccessTokenExpired();
+		// }
+		// else 
+		// {
+		// 	KeycloakManager.setUpForm_Online_RefreshTokenExpired();
+		// }
 	}
 	else
 	{
@@ -126,7 +130,7 @@ KeycloakManager.setForm_Offline = function()
 	// clearInterval(offlineExpiredInterval);
 	
 	const accessToken = KeycloakLSManager.getAccessToken();
-	if( accessToken != null )
+	if( accessToken != undefined )
 	{
 		var offlineExpiredTimeInfo = formatOfflineExpiredTime();
 		if( offlineExpiredTimeInfo.isExpired )
@@ -409,7 +413,7 @@ KeycloakManager.keycloakPart = function()
 
 KeycloakManager.tokenLogout = function( callFunc ) 
 {
-	if( KeycloakLSManager.getAccessToken() != null )
+	if( KeycloakLSManager.getAccessToken() != undefined )
 	{
 		var logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/SWZ_PSI/protocol/openid-connect/logout`;
 		var url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
@@ -430,6 +434,8 @@ KeycloakManager.tokenLogout = function( callFunc )
 				} 
 			},
 			error: function ( errMsg ) {
+				KeycloakLSManager.localStorageRemove();
+
 				KeycloakManager.eventMsg("Keycloak logout error");
 				KeycloakManager.eventMsg(errMsg);
 
