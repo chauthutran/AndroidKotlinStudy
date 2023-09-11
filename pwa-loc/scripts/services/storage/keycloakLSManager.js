@@ -12,7 +12,7 @@ KeycloakLSManager.KEY_ID_TOKEN = 'idToken';
 KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED = 'accessTokenParsed';
 KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED = 'refreshTokenParsed';
 KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED = 'refreshTokenParsed';
-KeycloakLSManager.KEY_AUTH_KEYCLOAK_PENDING = 'authKeycloakPending';
+KeycloakLSManager.KEY_REALM_NAME = 'realmName';
 
 
 // ---------------------------------------------------------------------------------------------
@@ -31,6 +31,8 @@ KeycloakLSManager.setKeycloakInfo = function( kcObj )
     updatePropertyValue( KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken );
     updatePropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED, JSON.stringify(kcObj.tokenParsed) );
     updatePropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED, JSON.stringify(kcObj.refreshTokenParsed) );
+    updatePropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED, JSON.stringify(kcObj.refreshTokenParsed) );
+    updatePropertyValue( KeycloakLSManager.KEY_REALM_NAME, JSON.stringify(kcObj.realm) );
 }
 
 KeycloakLSManager.getLastLoginDate = function()
@@ -61,6 +63,11 @@ KeycloakLSManager.getAccessTokenParsed = function()
 KeycloakLSManager.getRefreshTokenParsed = function()
 {
     return getPropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED );
+}
+
+KeycloakLSManager.getRealmName = function()
+{
+    return getPropertyValue( KeycloakLSManager.KEY_REALM_NAME );
 }
 
 KeycloakLSManager.localStorageRemove = function() {

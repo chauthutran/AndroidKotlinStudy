@@ -10,7 +10,7 @@ var btnKeyCloakLogInInFormTag;
 var keycloakMsgTag;
 var timeSkew = 1;
 var accessTokenTimeoutObj;
-// var refreshTokenTimeoutObj;
+var refreshTokenTimeoutObj;
 var offlineExpiredInterval;
 
 var processingTask = "";
@@ -99,18 +99,14 @@ KeycloakManager.setForm_Online = function()
 		{
 			KeycloakManager.setUpForm_Online_TokenValid();
 		}
+		else if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
+		{
+			KeycloakManager.setUpForm_Online_AccessTokenExpired();
+		}
 		else 
 		{
 			KeycloakManager.setUpForm_Online_RefreshTokenExpired();
 		}
-		// else if( KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired())
-		// {
-		// 	KeycloakManager.setUpForm_Online_AccessTokenExpired();
-		// }
-		// else 
-		// {
-		// 	KeycloakManager.setUpForm_Online_RefreshTokenExpired();
-		// }
 	}
 	else
 	{
@@ -367,8 +363,8 @@ KeycloakManager.watchTokenStatus = function()
 	if( ConnManagerNew.isAppMode_Online() ) // ONLINE
 	{
 		const accessTokenParsed = KeycloakLSManager.getAccessTokenParsed();
-		// const refreshTokenParsed = KeycloakLSManager.getRefreshTokenParsed();
-		if( accessTokenParsed != null )
+		const refreshTokenParsed = KeycloakLSManager.getRefreshTokenParsed();
+		if( refreshTokenParsed != null )
 		{
 			var accessTokenExpiredSeconds = getTokenExpiredInMiniseconds( accessTokenParsed );
 			if( accessTokenExpiredSeconds > 0 )
@@ -378,13 +374,13 @@ KeycloakManager.watchTokenStatus = function()
 				}, accessTokenExpiredSeconds);
 			}
 
-			// var refreshTokenExpiredSeconds = getTokenExpiredInMiniseconds( refreshTokenParsed );
-			// if( refreshTokenExpiredSeconds > 0 )
-			// {
-			// 	refreshTokenTimeoutObj = setTimeout(() => {
-			// 		KeycloakManager.setUpForm_Online_RefreshTokenExpired();
-			// 	}, refreshTokenExpiredSeconds);
-			// }
+			var refreshTokenExpiredSeconds = getTokenExpiredInMiniseconds( refreshTokenParsed );
+			if( refreshTokenExpiredSeconds > 0 )
+			{
+				refreshTokenTimeoutObj = setTimeout(() => {
+					KeycloakManager.setUpForm_Online_RefreshTokenExpired();
+				}, refreshTokenExpiredSeconds);
+			}
 		}
 	}
 	else // OFFLINE
@@ -501,7 +497,7 @@ function getTokenExpiredInMiniseconds( tokenParsed ) {
 function clearCheckTokenTimeout()
 {
 	clearTimeout( accessTokenTimeoutObj );
-	// clearTimeout( refreshTokenTimeoutObj );
+	clearTimeout( refreshTokenTimeoutObj );
 	clearInterval( offlineExpiredInterval );
 }
 

@@ -430,7 +430,18 @@ App.authChiocePage_DataSet = function()
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		if ( paramAuthChoice.indexOf( 'kc_' ) === 0 ) AppInfoLSManager.setKeyCloakUse( 'Y' );
 
-		KeycloakManager.checkTokenAndLogin();
+		// KeycloakManager.checkTokenAndLogin();
+		// Check if there is any token existing in LocalStorage.
+		if( KeycloakLSManager.getAccessToken() != null )
+		{
+			// Logout
+			KeycloakManager.tokenLogout(function(success){
+				// Remove Keycloak infor in localStorage
+				KeycloakLSManager.localStorageRemove();
+				// Start up again with new params
+				KeycloakLSManager.startUp();
+			})
+		}
 
 		console.log( 'User Data has been removed..' );
 	}
