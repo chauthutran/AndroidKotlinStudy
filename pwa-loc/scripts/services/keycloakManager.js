@@ -28,11 +28,12 @@ KeycloakManager.startUp = function(realName)
 	realName = (realName) ? realName : AppInfoLSManager.getAuthChoice();
 	if( realName )
 	{
-		//var url = (WsCallManager.isLocalDevCase) ? "http://localhost:8080/" : "https://keycloak.psidigital.org/";
+		var url = (WsCallManager.isLocalDevCase) ? "http://localhost:8080/" : "https://keycloak.psidigital.org/";
 		
 		realName = realName.replace("kc_", "").toUpperCase();
+		
 		keycloak =  new Keycloak({
-			url: 'http://localhost:8080/',
+			url: url, //'http://localhost:8080/',
 			realm: realName,
 			clientId: 'pwaapp'
 		});

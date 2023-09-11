@@ -246,11 +246,16 @@ ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn )
 	if ( loggedIn )
 	{
 
+
 	}
 
 	console.log( '----> ConnManagerNew.runWhenSwitchedToOffline' );
 	if( KeycloakManager.startedUp )
 	{
+		// What is this case for?
+		// -- We check offline timeout
+		//  Checking The Offline timeout & Setform..
+		// KeycloakManager.setForm( {  });
 		KeycloakManager.keycloakPart();
 	}
 };

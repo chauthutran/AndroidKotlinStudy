@@ -85,8 +85,6 @@ App.run = function ()
 		var paramMsg = App.getParamVal_ByName( 'msg', { deleteInLS: true } );
 		if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );
 	
-		// KeyCloak Start Object + Param case removal
-		KeycloakManager.startUp();
 	
 		if ( App.getParamVal_ByName( App.paramName_keyCloakRemove, { deleteInLS: true } ) ) 
 		{ 
@@ -118,6 +116,10 @@ App.startAppProcess = function ()
 		ConnManagerNew.createNetworkConnListeners();
 		//App.App_UI_startUp_Progress('50%');
 
+		// KeyCloak Start Object + Param case removal
+		KeycloakManager.startUp();
+
+
 		// --------------------
 		// 2. START PHASE
 		// EVENT SETUP - TODO: Could be placed in cwsRender <-- Or menu setup area..  Not here..
@@ -142,8 +144,9 @@ App.startAppProcess = function ()
 		App.App_UI_startUp_ready();
 
 
-		// KeyCloak Run..
-		if ( KeycloakLSManager.removeKeyCloakInUse() ) KeycloakManager.keycloakPart()
+		// TODO: CHECK THIS.. KeyCloak Run..  - to log out?
+		if ( KeycloakLSManager.removeKeyCloakInUse() ) KeycloakManager.keycloakPart();
+
 	}
 	catch (err) {
 		console.log('error starting App > startApp() error: ' + err);
