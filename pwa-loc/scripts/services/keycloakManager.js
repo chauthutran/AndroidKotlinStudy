@@ -416,13 +416,17 @@ KeycloakManager.tokenLogout = function( callFunc )
 	if( KeycloakLSManager.getAccessToken() != null )
 	{
 		var logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/SWZ_PSI/protocol/openid-connect/logout`;
-		var url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
-		var formData = `client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}`;
+		// var url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
+		// var formData = `client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}`;
 		
 		$.ajax({
 			url: url,
 			type: "POST",
-			data: formData,
+			headers: {
+				client_id: "pwaapp",
+				refresh_token: KeycloakLSManager.getRefreshToken()
+			},
+			// data: formData,
 			success: function (response) 
 			{
 				KeycloakManager.eventMsg("Keycloak logout success");
