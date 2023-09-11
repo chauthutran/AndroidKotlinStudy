@@ -472,7 +472,8 @@ KeycloakManager.getUserInfo = function()
 
 KeycloakManager.isTokenValid = function()
 {
-	return ( !KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired() );
+	// return ( !KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired() );
+	return ( !KeycloakManager.isAccessTokenExpired() );
 }
 
 KeycloakManager.isAccessTokenExpired = function()
