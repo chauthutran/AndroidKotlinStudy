@@ -367,11 +367,11 @@ KeycloakManager.watchTokenStatus = function()
 	if( ConnManagerNew.isAppMode_Online() ) // ONLINE
 	{
 		const accessTokenParsed = KeycloakLSManager.getAccessTokenParsed();
-		const refreshTokenParsed = KeycloakLSManager.getIdTokenParsed();
+		const refreshTokenParsed = KeycloakLSManager.getRefreshTokenParsed();
 		if( refreshTokenParsed != null )
 		{
 			var accessTokenExpiredSeconds = getTokenExpiredInMiniseconds( accessTokenParsed );
-			if( accessTokenExpiredSeconds > 0 )
+			if( accessTokenExpiredSeconds != undefined && accessTokenExpiredSeconds > 0 )
 			{
 				accessTokenTimeoutObj = setTimeout(() => {
 					KeycloakManager.setUpForm_Online_AccessTokenExpired();
@@ -379,7 +379,7 @@ KeycloakManager.watchTokenStatus = function()
 			}
 
 			var refreshTokenExpiredSeconds = getTokenExpiredInMiniseconds( refreshTokenParsed );
-			if( refreshTokenExpiredSeconds > 0 )
+			if( refreshTokenExpiredSeconds != undefined && refreshTokenExpiredSeconds > 0 )
 			{
 				refreshTokenTimeoutObj = setTimeout(() => {
 					KeycloakManager.setUpForm_Online_RefreshTokenExpired();
@@ -486,17 +486,21 @@ KeycloakManager.isAccessTokenExpired = function()
 
 KeycloakManager.isRefreshTokenExpired = function()
 {
-	const refreshTokenParsed =  KeycloakLSManager.getIdTokenParsed();
+	const refreshTokenParsed =  KeycloakLSManager.getRefreshTokenParsed();
 	return checkTokenExpired(refreshTokenParsed);
 }
 
 function checkTokenExpired( tokenParsed ) {
 	var expiresIn = getTokenExpiredInMiniseconds( tokenParsed );
-	return expiresIn <= 0;
+	return (expiresIn != undefined ) ? expiresIn <= 0 : false;
 };
 
 function getTokenExpiredInMiniseconds( tokenParsed ) {	
 	tokenParsed = JSON.parse( tokenParsed );
+	if( tokenParsed['exp'] == undefined )
+	{
+		return;
+	}
 	return Math.round((tokenParsed['exp'] - (new Date().getTime() / 1000) + timeSkew)  * 1000 );
 };
 
