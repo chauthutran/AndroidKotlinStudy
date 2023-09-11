@@ -73,6 +73,9 @@ App.run = function ()
 		PersisDataLSManager.initialDataLoad_LocalStorage();
 		AppInfoLSManager.initialDataLoad_LocalStorage();
 	
+		WsCallManager.setWsTarget();
+
+		
 		App.authChiocePage_DataSet(); // NEW: Save to AppInfoLS & PersisDataLS on 'authChoice/Page', 'keycloak'
 	
 	
@@ -111,8 +114,6 @@ App.startAppProcess = function ()
 	{
 		// --------------------
 		// 1. SET UP PHASE
-		WsCallManager.setWsTarget();
-
 		ConnManagerNew.createNetworkConnListeners();
 		//App.App_UI_startUp_Progress('50%');
 
