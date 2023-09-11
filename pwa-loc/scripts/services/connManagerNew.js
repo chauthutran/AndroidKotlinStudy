@@ -242,8 +242,7 @@ ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn )
 };
 
 ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn ) 
-{		
-	console.log( '----> ConnManagerNew.runWhenSwitchedToOffline' );
+{
 	if ( loggedIn )
 	{
 
