@@ -887,6 +887,10 @@ BahmniService.mergeDownloadedClients = function (clientList, processingInfo, dow
 					Util.copyProperties( downloadClient.date, existingClient.date, { exceptionCustom: { nameBeginWith: 'created' } } );
 					Util.copyProperties( downloadClient.clientDetails, existingClient.clientDetails, { exceptions: { activeUsers: true, creditedUsers: true, voucherCodes: true } } );
 
+					// NOTE: 'Util.copyProperties' copies from right to left!!  'downloadClient' -> 'existingClient'
+					if ( !downloadClient.clientConsent ) downloadClient.clientConsent = {};
+					if ( !existingClient.clientConsent ) existingClient.clientConsent = {};
+					Util.copyProperties( downloadClient.clientConsent, existingClient.clientConsent );
 
 					Util.appendArray(mergedActivities, addedActivities);
 					dataChangeOccurred = true;
