@@ -434,12 +434,14 @@ App.authChiocePage_DataSet = function()
 		// Check if there is any token existing in LocalStorage.
 		if( KeycloakLSManager.getAccessToken() != undefined )
 		{
+			// KeycloakManager.KEYCLOAK_SERVER_URL = "http://localhost:8080/";
 			// Logout
 			KeycloakManager.tokenLogout(function(success){
-				// Remove Keycloak infor in localStorage
 				KeycloakLSManager.localStorageRemove();
+				
 				// Start up again with new params
 				KeycloakManager.startUp();
+				KeycloakManager.keycloakPart();
 			})
 		}
 

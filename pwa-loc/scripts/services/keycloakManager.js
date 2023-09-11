@@ -19,6 +19,11 @@ var processingTask = "";
 // ======================================
 // === NEW KEYCLOAK ============
 
+KeycloakManager.setKeycloakServerUrl = function()
+{
+	KeycloakManager.KEYCLOAK_SERVER_URL = (WsCallManager.isLocalDevCase) ? "http://localhost:8080/" : "https://keycloak.psidigital.org/";
+}
+
 KeycloakManager.startUp = function(realName) 
 {
 	KeycloakManager.isStartedUp = false;
@@ -27,10 +32,11 @@ KeycloakManager.startUp = function(realName)
 	keycloakMsgTag = $("#keycloakMsg");
 	clearCheckTokenTimeout();
 
+	KeycloakManager.setKeycloakServerUrl();
 	realName = (realName) ? realName : AppInfoLSManager.getAuthChoice();
 	if( realName )
 	{
-		KeycloakManager.KEYCLOAK_SERVER_URL = (WsCallManager.isLocalDevCase) ? "http://localhost:8080/" : "https://keycloak.psidigital.org/";
+		// KeycloakManager.KEYCLOAK_SERVER_URL = (WsCallManager.isLocalDevCase) ? "http://localhost:8080/" : "https://keycloak.psidigital.org/";
 		
 		realName = realName.replace("kc_", "").toUpperCase();
 		
@@ -417,7 +423,9 @@ KeycloakManager.tokenLogout = function( callFunc )
 	// Only run properly when token is expired
 	if( KeycloakLSManager.getAccessToken() != undefined )
 	{
-		let logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/SWZ_PSI/protocol/openid-connect/logout`;
+		KeycloakManager.setKeycloakServerUrl();
+
+		let logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/${KeycloakLSManager.getRealmName()}/protocol/openid-connect/logout`;
 		let url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
 		let formData = `client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}`;
 		$.ajax({
