@@ -439,7 +439,7 @@ App.authChiocePage_DataSet = function()
 				// Remove Keycloak infor in localStorage
 				KeycloakLSManager.localStorageRemove();
 				// Start up again with new params
-				KeycloakLSManager.startUp();
+				KeycloakManager.startUp();
 			})
 		}
 
