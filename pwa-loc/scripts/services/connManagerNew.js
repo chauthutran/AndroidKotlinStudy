@@ -239,43 +239,25 @@ ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn )
 		// if ( ConfigManager.getAppUpdateSetting().backgroundUpdateWhenOnline ) {	SwManager.checkNewAppFile_OnlyOnline( undefined, { 'delayReload': true } ); 
 		// SYNC ALL (ONLINE) Does call NewAppFile with delayed reload.
 	}
-	else
-	{
-		var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
-		if( keyCloakInUse )
-		{
-			if( !KeycloakManager.isStartedUp )
-			{
-				KeycloakManager.startUp();
-			}
-			
-			KeycloakManager.setForm_Online();
-		}
-	}
 	
+	var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
+	if( keyCloakInUse )
+	{
+		if( !KeycloakManager.isStartedUp )
+		{
+			KeycloakManager.startUp();
+		}
+		
+		KeycloakManager.setForm_Online();
+	}
 };
 
 ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn ) 
 {
-	if ( loggedIn )
+	var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
+	if( keyCloakInUse )
 	{
-
-
-	}
-	else
-	{
-		var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
-		if( keyCloakInUse )
-		{
-		// if( KeycloakManager.isStartedUp )
-		// {
-			// What is this case for?
-			// -- We check offline timeout
-			//  Checking The Offline timeout & Setform..
-			// KeycloakManager.setForm( {  });
-			KeycloakManager.setForm_Offline();
-		// }
-		}
+		KeycloakManager.setForm_Offline();
 	}
 };
 
