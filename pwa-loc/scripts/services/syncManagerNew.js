@@ -827,7 +827,7 @@ SyncManagerNew.performSyncUp_Activity = function (activityId, afterDoneCall) {
 
 		if (!actProc) throw 'Activity.performSyncUp, activity.processing not available';
 		if ( !( actProc.url 
-				|| (actProc.eval && activityJson_Orig.subSourceType == 'bahmni' )
+				|| (actProc.eval && activityJson_Orig.subSourceType == BahmniService.BAHMNI_KEYWORD )
 		 		|| activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync ) 
 			) throw 'Activity.performSyncUp, activity.processing.url and activity.processing.eval not available';
 
