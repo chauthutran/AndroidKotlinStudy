@@ -431,19 +431,11 @@ App.authChiocePage_DataSet = function()
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		if ( paramAuthChoice.indexOf( 'kc_' ) === 0 ) AppInfoLSManager.setKeyCloakUse( 'Y' );
 
-		// KeycloakManager.checkTokenAndLogin();
 		// Check if there is any token existing in LocalStorage.
 		if( KeycloakLSManager.getAccessToken() != undefined )
 		{
 			// Logout
-			KeycloakManager.setKeycloakServerUrl();
-			KeycloakManager.tokenLogout(function(success){
-				KeycloakLSManager.localStorageRemove();
-				
-				// Start up again with new params
-				KeycloakManager.startUp();
-				KeycloakManager.keycloakPart();
-			})
+			KeycloakManager.tokenLogout();
 		}
 
 		console.log( 'User Data has been removed..' );
@@ -454,15 +446,10 @@ App.authChiocePage_DataSet = function()
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		AppInfoLSManager.setKeyCloakUse( '' );  // TODO: Should check if keyCloak is used and logOut if currently used?
 		
-		// KeycloakManager.checkTokenAndLogin();
 		// Check if there is any token existing in LocalStorage.
 		if( KeycloakLSManager.getAccessToken() != undefined )
 		{
-			KeycloakManager.setKeycloakServerUrl();
-			// Logout
-			KeycloakManager.tokenLogout(function(success){
-				KeycloakLSManager.localStorageRemove();
-			});
+			KeycloakManager.tokenLogout();
 		}
 
 		console.log( 'User Data has been removed..' );

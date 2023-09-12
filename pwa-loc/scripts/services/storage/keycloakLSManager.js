@@ -9,9 +9,6 @@ KeycloakLSManager.KEY_LOGIN_DATE = 'loginDate';
 KeycloakLSManager.KEY_ACCESS_TOKEN = 'accessToken';
 KeycloakLSManager.KEY_REFRESH_TOKEN = 'refreshToken';
 KeycloakLSManager.KEY_ID_TOKEN = 'idToken';
-KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED = 'accessTokenParsed';
-KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED = 'refreshTokenParsed';
-KeycloakLSManager.KEY_ID_TOKEN_PARSED = 'idTokenParsed';
 KeycloakLSManager.KEY_REALM_NAME = 'realmName';
 KeycloakLSManager.KEY_PROCESSING_ACTION = 'processingAction';
 
@@ -31,10 +28,10 @@ KeycloakLSManager.setKeycloakInfo = function( kcObj )
     updatePropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN, kcObj.token );
     updatePropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken );
     updatePropertyValue( KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken );
-    updatePropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED, JSON.stringify(kcObj.tokenParsed) );
-    updatePropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED, JSON.stringify(kcObj.refreshTokenParsed) );
-    updatePropertyValue( KeycloakLSManager.KEY_ID_TOKEN_PARSED, JSON.stringify(kcObj.idTokenParsed) );
-    updatePropertyValue( KeycloakLSManager.KEY_REALM_NAME, kcObj.realm );
+    // updatePropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED, JSON.stringify(kcObj.tokenParsed) );
+    // updatePropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED, JSON.stringify(kcObj.refreshTokenParsed) );
+    // updatePropertyValue( KeycloakLSManager.KEY_ID_TOKEN_PARSED, JSON.stringify(kcObj.idTokenParsed) );
+    // updatePropertyValue( KeycloakLSManager.KEY_REALM_NAME, kcObj.realm );
 }
 
 KeycloakLSManager.setProcessingAction = function( value )
@@ -68,28 +65,49 @@ KeycloakLSManager.getIdToken = function()
     return getPropertyValue( KeycloakLSManager.KEY_ID_TOKEN );
 }
 
+
+
 KeycloakLSManager.getAccessTokenParsed = function()
 {
-    return getPropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED );
+    var token = KeycloakLSManager.getAccessToken();
+    return decodeToken( token );
 }
 
 KeycloakLSManager.getRefreshTokenParsed = function()
 {
-    return getPropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED );
+    var token = KeycloakLSManager.getRefreshToken();
+    return decodeToken( token );
 }
 
 KeycloakLSManager.getIdTokenParsed = function()
 {
-    return getPropertyValue( KeycloakLSManager.KEY_ID_TOKEN_PARSED );
-}
-
-KeycloakLSManager.getRealmName = function()
-{
-    return getPropertyValue( KeycloakLSManager.KEY_REALM_NAME );
+    var token = KeycloakLSManager.getIdToken();
+    return decodeToken( token );
 }
 
 KeycloakLSManager.localStorageRemove = function() {
     saveKeycloakInfoData( {} );
+};
+
+KeycloakLSManager.removeProperty = function( key )
+{
+    var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
+    delete keycloakInfo[key];
+
+    saveKeycloakInfoData( keycloakInfo );  
+
+};
+
+// --------------------------------------------
+// TODO: NEED TO RELOCATE?  'AppInfoLSManager' used..
+KeycloakLSManager.isKeyCloakInUse = function() 
+{
+	return ( AppInfoLSManager.getKeyCloakUse() === 'Y' );
+};
+
+KeycloakLSManager.removeKeyCloakInUse = function() 
+{
+	AppInfoLSManager.setKeyCloakUse( '' );
 };
 
 // ---------------------------------------------------------------------------------------------
@@ -115,30 +133,32 @@ function updatePropertyValue( key, value )
     saveKeycloakInfoData( keycloakInfo );
 };
 
-KeycloakLSManager.removeProperty = function( key )
-{
-    var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
-    delete keycloakInfo[key];
-
-    saveKeycloakInfoData( keycloakInfo );  
-
-};
-
-// --------------------------------------------
-// TODO: NEED TO RELOCATE?  'AppInfoLSManager' used..
-KeycloakLSManager.isKeyCloakInUse = function() 
-{
-	return ( AppInfoLSManager.getKeyCloakUse() === 'Y' );
-};
-
-KeycloakLSManager.removeKeyCloakInUse = function() 
-{
-	AppInfoLSManager.setKeyCloakUse( '' );
-};
-
-// --------------------------------------------
 
 function saveKeycloakInfoData( keycloakInfo )
 {
     LocalStgMng.saveJsonData( KeycloakLSManager.KEY_KEYCLOAK_INFO, keycloakInfo );
 };
+
+function decodeToken(token) {
+	token = token.split('.')[1];
+
+	token = token.replace(/-/g, '+');
+	token = token.replace(/_/g, '/');
+	switch (token.length % 4) {
+		case 0:
+			break;
+		case 2:
+			token += '==';
+			break;
+		case 3:
+			token += '=';
+			break;
+		default:
+			throw 'Invalid token';
+	}
+
+	token = decodeURIComponent(escape(atob(token)));
+
+	token = JSON.parse(token);
+	return token;
+}

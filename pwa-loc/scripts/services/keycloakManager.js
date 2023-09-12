@@ -14,9 +14,8 @@ var refreshTokenTimeoutObj;
 var offlineExpiredInterval;
 
 var processingTask = "";
-// JSON.parse(decodeURIComponent(escape(atob(KeycloakLSManager.getAccessToken().split('.') [1]))))
 
-// ======================================
+// =======================================================================================================
 // === NEW KEYCLOAK ============
 
 KeycloakManager.setKeycloakServerUrl = function()
@@ -55,15 +54,9 @@ KeycloakManager.setUpEvents = function( kcObj )
     kcObj.onAuthSuccess = () => KeycloakManager.eventMsg('Auth Success');    
     kcObj.onAuthError = (errorData) => {
 		KeycloakManager.eventMsg("Auth Error: " + JSON.stringify(errorData) );
-		// KeycloakManager.authenticate_WithoutToken();
 	}
     kcObj.onAuthRefreshSuccess = () => {
 		KeycloakManager.eventMsg('Auth Refresh Success');
-		// localStorage.setItem("accessToken", keycloak.token);
-		// localStorage.setItem("refreshToken", keycloak.refreshToken);
-		// localStorage.setItem("idToken", keycloak.idToken);
-		// localStorage.setItem("accessTokenParsed", JSON.stringify(keycloak.tokenParsed)); 
-		// localStorage.setItem("realmName", keycloak.realm);
 	} 
     kcObj.onAuthRefreshError = (errorData) => {
 		var errorData = JSON.parse(errorData);
@@ -74,10 +67,6 @@ KeycloakManager.setUpEvents = function( kcObj )
 	}
     kcObj.onTokenExpired = () => {
 		KeycloakManager.eventMsg('Token is expired.');
-		// if( processingTask == "authenticate_WithToken" )
-		// {
-		// 	KeycloakManager.authenticate_WithoutToken();
-		// }
 	}
 
 	kcObj.onActionUpdate = function (status) {
@@ -126,9 +115,7 @@ KeycloakManager.setForm_Online = function()
 		KeycloakManager.authenticate_WithoutToken(function(auth){
 			// Show "Logout button" in the bottom
 			btnKeyCloakLogOutTag.html("Logout").show().off("click").click( () => { 
-				KeycloakManager.tokenLogout(function(){
-					KeycloakManager.keycloakPart();
-				});
+				KeycloakManager.tokenLogout();
 			});
 		});
 	}
@@ -136,8 +123,6 @@ KeycloakManager.setForm_Online = function()
 
 KeycloakManager.setForm_Offline = function()
 {	
-	// clearInterval(offlineExpiredInterval);
-	
 	const accessToken = KeycloakLSManager.getAccessToken();
 	if( accessToken != undefined )
 	{
@@ -158,6 +143,7 @@ KeycloakManager.setForm_Offline = function()
 }
 
 
+
 // This one is used for Access Token and Refresh Token are valid
 KeycloakManager.setUpForm_Online_TokenValid = function()
 {
@@ -169,9 +155,7 @@ KeycloakManager.setUpForm_Online_TokenValid = function()
 
 	// Add "logOut" event for "Lgout" button in the bottom
 	btnKeyCloakLogOutTag.html("Logout").show().off("click").click( () => { 
-		KeycloakManager.tokenLogout(function(){
-			KeycloakManager.keycloakPart();
-		});
+		KeycloakManager.tokenLogout();
 	});
 }
 
@@ -182,15 +166,11 @@ KeycloakManager.setUpForm_Online_AccessTokenExpired = function()
 	
 	// // Set up events for "Keycloak Login" buttons
 	btnKeyCloakLogInInFormTag.off("click").click( () => { 
-		KeycloakManager.tokenLogout(function(){
-			KeycloakManager.keycloakPart();
-		});
+		KeycloakManager.tokenLogout();
 	});
 
 	btnKeyCloakLogOutTag.html("Login").off("click").click( () => { 
-		KeycloakManager.tokenLogout(function(){
-			KeycloakManager.keycloakPart();
-		});
+		KeycloakManager.tokenLogout();
 	});
 
 	// Show "Keycloak Login" buttons
@@ -208,22 +188,20 @@ KeycloakManager.setUpForm_Online_RefreshTokenExpired = function()
 
 	// Show "Login button" in the Login form
 	btnKeyCloakLogInInFormTag.css("background-color", "#008000").show().off("click").click( () => { 
-		KeycloakManager.tokenLogout(function(){
-			KeycloakManager.keycloakPart();
-		});
+		KeycloakManager.tokenLogout();
 	});
 
 	// Show "Login button" in the bottom
 	btnKeyCloakLogOutTag.html("Login").show().off("click").click( () => { 
-		KeycloakManager.tokenLogout(function(){
-			KeycloakManager.keycloakPart();
-		});
+		KeycloakManager.tokenLogout();
 	});
 
 	KeycloakManager.eventMsg( "RefreshToken is expired. Please login again.");
 	keycloakMsgTag.html("(Token is expired. Please login again.)");
 	MsgManager.msgAreaShowOpt( "Token is expired. Please login again.", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
 }
+
+
 
 KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
 {
@@ -247,7 +225,6 @@ KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
 		keycloakMsgTag.html("(Offline login time expired)");
 	}
 }
-
 
 KeycloakManager.setUpForm_Offline_OfflineTimeValid = function()
 {
@@ -312,36 +289,6 @@ KeycloakManager.authenticate_WithoutToken = function(successFunc, errorFunc)
 		if(errorFunc) errorFunc( errMsg );
 	});
 }
-
-// KeycloakManager.authenticate_WithToken = function(successFunc, errorFunc)
-// {
-// 	const accessToken = KeycloakLSManager.getAccessToken();
-// 	const refreshToken = KeycloakLSManager.getRefreshToken();
-// 	const idToken = KeycloakLSManager.getIdToken();
-
-// 	keycloak.init({
-// 		onLoad: "login-required",
-// 		checkLoginIframe: false,
-// 		token: accessToken,
-// 		refreshToken: refreshToken,
-// 		idToken: idToken,
-// 		timeSkew: timeSkew
-// 	}).then(function(authenticated) {
-// 		console.log( 'authenticated: ', authenticated );
-// 		if( !authenticated ) {
-// 			KeycloakManager.authenticateFailure();
-// 		}
-// 		else {
-// 			KeycloakManager.authenticateSuccess();
-// 		}
-
-// 		if( successFunc) successFunc( authenticated );
-// 	})
-// 	.catch(function( errMsg ) {
-// 		KeycloakManager.authenticateFailure();
-// 		if(errorFunc) errorFunc( errMsg );
-// 	});
-// }
 
 KeycloakManager.authenticateSuccess = function()
 {
@@ -422,13 +369,22 @@ KeycloakManager.keycloakPart = function()
 	}
 };
 
-KeycloakManager.tokenLogout = function( callFunc ) 
+// After logout, PWA App is redirected.
+// --> The localStorage is removed 
+// --> The keycloak is authenticated again.
+KeycloakManager.tokenLogout = function() 
 {
 	KeycloakLSManager.setProcessingAction( KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT );
+	var accesstokenParsed = KeycloakLSManager.getAccessTokenParsed();
 
-	let logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/${KeycloakLSManager.getRealmName()}/protocol/openid-connect/logout`;
+	// accesstokenParsed.iss : "http://localhost:8080/realms/SWZ_PSI"
+	var logoutUrl = accesstokenParsed.iss + "/protocol/openid-connect/logout";
 	logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
 	window.location.replace(logoutUrl);
+
+	// let logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/${KeycloakLSManager.getRealmName()}/protocol/openid-connect/logout`;
+	// logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
+	// window.location.replace(logoutUrl);
 
 	// keycloak.logout().then( function() {
 	// 	console.log("logout success");
@@ -503,9 +459,6 @@ KeycloakManager.getUserInfo = function()
 	return userInfo;
 };
 
-// ====================================================================================================
-// Methods to check the token expires
-
 KeycloakManager.isTokenValid = function()
 {
 	return ( !KeycloakManager.isAccessTokenExpired() && !KeycloakManager.isRefreshTokenExpired() );
@@ -524,13 +477,16 @@ KeycloakManager.isRefreshTokenExpired = function()
 	return checkTokenExpired(refreshTokenParsed);
 }
 
+
+// ====================================================================================================
+// Suportive methods - Methods to check the token expires
+
 function checkTokenExpired( tokenParsed ) {
 	var expiresIn = getTokenExpiredInMiniseconds( tokenParsed );
 	return (expiresIn != undefined ) ? expiresIn <= 0 : false;
 };
 
 function getTokenExpiredInMiniseconds( tokenParsed ) {	
-	tokenParsed = JSON.parse( tokenParsed );
 	if( tokenParsed['exp'] == undefined )
 	{
 		return;
@@ -544,9 +500,6 @@ function clearCheckTokenTimeout()
 	clearTimeout( refreshTokenTimeoutObj );
 	clearInterval( offlineExpiredInterval );
 }
-
-// ====================================================================================================
-// Suportive methods
 
 function calculateOfflineExpiredTime()
 {
@@ -576,39 +529,7 @@ function formatOfflineExpiredTime()
 }
 
 // ====================================================================================================
-// Suportive methods
-
-KeycloakManager.checkTokenAndLogin = function()
-{
-
-	// var accessToken = localStorage.getItem("accessToken");
-	// if( accessToken != null )
-	// {
-	// 	if( KeycloakManager.isTokenExpired() )
-	// 	{
-	// 		KeycloakLSManager.localStorageRemove();
-
-	// 		KeycloakManager.startUp();
-	// 		KeycloakManager.authenticate_WithoutToken();
-	// 		KeycloakManager.keycloakPart();
-	// 	}
-	// 	else
-	// 	{
-	// 		var realmName = localStorage.getItem("realmName");
-	// 		KeycloakManager.startUp(realmName);
-	// 		KeycloakManager.authenticate_WithToken(function(){
-	// 			KeycloakManager.tokenLogout();
-	// 		});
-	// 	}
-	// }
-	// else
-	// {
-	// 	KeycloakManager.startUp();	
-	// 	KeycloakManager.authenticate_WithoutToken();
-	// 	KeycloakManager.keycloakPart();
-	// }
-}
-
+// Suportive methods - Enable/Disable Login form
 
 function enableLoginForm()
 {
@@ -617,7 +538,6 @@ function enableLoginForm()
 	$("#loginFormDiv").find(".loginBtn").on('click').css("background-color", "#F06D24"); 
 	Login.loginInputDisable( false ); 
 }
-
 
 function disableLoginForm()
 {
