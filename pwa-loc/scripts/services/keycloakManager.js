@@ -128,7 +128,7 @@ KeycloakManager.setForm_Online = function()
 	{
 		KeycloakManager.authenticate_WithoutToken(function(auth){
 			// Show "Logout button" in the bottom
-			btnKeyCloakLogOutTag.html("Logout").show().off("click").click( () => { 
+			btnKeyCloakLogOutTag.html("AuthOut").show().off("click").click( () => { 
 				KeycloakManager.tokenLogout();
 			});
 		});
@@ -168,7 +168,7 @@ KeycloakManager.setUpForm_Online_TokenValid = function()
 	btnKeyCloakLogInInFormTag.hide();
 
 	// Add "logOut" event for "Lgout" button in the bottom
-	btnKeyCloakLogOutTag.html("Logout").show().off("click").click( () => { 
+	btnKeyCloakLogOutTag.html("AuthOut").show().off("click").click( () => { 
 		KeycloakManager.tokenLogout();
 	});
 }
@@ -183,7 +183,7 @@ KeycloakManager.setUpForm_Online_AccessTokenExpired = function()
 		KeycloakManager.tokenLogout();
 	});
 
-	btnKeyCloakLogOutTag.show().html("Login").off("click").click( () => { 
+	btnKeyCloakLogOutTag.show().html("AuthIn").off("click").click( () => { 
 		KeycloakManager.tokenLogout();
 	});
 
@@ -376,13 +376,17 @@ KeycloakLSManager.removeOldVersionData = function()
 // --> The keycloak is authenticated again.
 KeycloakManager.tokenLogout = function() 
 {
-	KeycloakLSManager.setProcessingAction( KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT );
 	var accesstokenParsed = KeycloakLSManager.getAccessTokenParsed();
 
-	// accesstokenParsed.iss : "http://localhost:8080/realms/SWZ_PSI"
-	var logoutUrl = accesstokenParsed.iss + "/protocol/openid-connect/logout";
-	logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
-	window.location.replace(logoutUrl);
+	if ( accesstokenParsed )
+	{
+		KeycloakLSManager.setProcessingAction( KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT );
+
+		// accesstokenParsed.iss : "http://localhost:8080/realms/SWZ_PSI"
+		var logoutUrl = accesstokenParsed.iss + "/protocol/openid-connect/logout";
+		logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
+		window.location.replace(logoutUrl);	
+	}
 
 	// let logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/${KeycloakLSManager.getRealmName()}/protocol/openid-connect/logout`;
 	// logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`

@@ -116,8 +116,12 @@ function Login() {
 		// Move as function
 		me.spanAuthPageUseNoTag.off('click').click(() => 
 		{
-			PersisDataLSManager.setAuthPageUse( 'N' );
-			AppUtil.appReloadWtMsg("Reloading Page.  AuthPageUse Setting Changed..");			
+			DataManager2.deleteAllStorageData(function () 
+			{
+				PersisDataLSManager.setAuthPageUse( 'N' );
+				//KeycloakManager.tokenLogout();
+				AppUtil.appReloadWtMsg("Reloading Page.  AuthPageUse Setting Changed..");			
+			});
 		});
 
 	}
@@ -375,27 +379,16 @@ function Login() {
 					MsgFormManager.appBlockTemplate('appLoad');
 
 					// NEW!! - When User Changing, if keycloak is in use, perform logout 1st..
-          			// TODO: NOTE: WHY 'remove--' rather than 'is--'?
 					if ( KeycloakLSManager.isKeyCloakInUse() ) 
 					{
 						// Check if there is any token existing in LocalStorage.
+						// TODO: 
 						if( KeycloakLSManager.getAccessToken() != undefined )
 						{
 							KeycloakManager.tokenLogout();
 						}
 
 						AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");			
-
-						// KeycloakManager.tokenLogout( function( isSuccess ) 
-						// {
-						// 	if ( !isSuccess ) alert( 'Failed to perform KeyCloak Logout!' );
-						// 	else 
-						// 	{
-						// 		//KeycloakLSManager.removeKeyCloakInUse(); // These 2 already done by 'tokenLogout' 
-						// 		// KeycloakLSManager.localStorageRemove();	
-						// 		AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");								
-						// 	}
-						// });
 					}
 					else AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");
 				});
@@ -1273,7 +1266,7 @@ Login.contentHtml = `
 			</div>
 			<div id="divKeyCloakUse" style="display: none; text-align: left;">
 				<div id="divKeyCloakInfo" style="display:none;">
-					Keycloak: <button id="btnKeyCloakLogOut" style="display: none; font-size: 10px;">LogOut</button>
+					Keycloak: <button id="btnKeyCloakLogOut" style="display: none; font-size: 10px;">AuthOut</button>
 					<span id="divTokenInfo" style="font-size: 12px; display: none;"></span>
 				</div>
 			</div>
