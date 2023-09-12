@@ -142,6 +142,29 @@ UtilDate.timeCalculation = function( dtmNewer, dtmOlder )
 
 };
 
+
+UtilDate.getTimeDiff = function( fromDt, toDt, type )
+{
+	var output = 0;
+
+	try
+	{
+		var diffMs = ( new Date( toDt ).getTime()  - new Date( fromDt ).getTime() );
+
+		if ( type === 'second' ) output = diffMs / Util.MS_SEC;
+		else if ( type === 'minute' ) output = diffMs / Util.MS_MIN;
+		else if ( type === 'hour' ) output = diffMs / Util.MS_HR;
+		else if ( type === 'day' ) output = diffMs / Util.MS_DAY;
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in UtilDate.getTimeDiff, ' + errMsg );
+	}
+
+	return output;
+};
+
+
 UtilDate.getTimePassedMs = function( fromDtStr )
 {
 	var timePassedMs = -1;
