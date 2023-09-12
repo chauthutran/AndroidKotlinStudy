@@ -304,6 +304,7 @@ BahmniService.syncDataRun = function ( option )
 		{
 			// Sync Up activity to Bahmni server
 			BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncUp Started...");
+
 			BahmniService.syncUpAll( function () 
 			{
 				BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncUp Finished.");
@@ -772,11 +773,13 @@ BahmniService.syncUpAll = function ( exeFunc)
 
 	activityList.forEach(activityJson => 
 	{
-		// Bahmni Syncable condition - on activity..
-		if (activityJson.subSourceType === BahmniService.BAHMNI_KEYWORD && activityJson.processing
-			&& SyncManagerNew.isSyncReadyStatus(activityJson.processing.status)) {
-			actIdList.push(activityJson.id);
-		}
+		// Bahmni Syncable condition - on activity..  (But not readyToMongoSync, which is Mongo Sync time run..)
+		//  Do not use 'SyncManagerNew.syncUpReadyCheck()' since connection, etc are all different..
+		if (activityJson.subSourceType === BahmniService.BAHMNI_KEYWORD 
+			&& activityJson.subSyncStatus !== BahmniService.readyToMongoSync 
+			&& activityJson.processing
+			&& SyncManagerNew.isSyncReadyStatus( activityJson.processing.status )
+			) actIdList.push(activityJson.id);
 	});
 
 	var actCount = actIdList.length;
