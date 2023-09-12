@@ -97,6 +97,12 @@ KeycloakManager.setUpEvents = function( kcObj )
 
 KeycloakManager.setForm_Online = function()
 {	
+	const processingAction = KeycloakLSManager.getProcessingAction();
+	if( processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT )
+	{
+		KeycloakLSManager.localStorageRemove();
+	}
+
 	const accessToken =  KeycloakLSManager.getAccessToken();
 	if( accessToken != undefined )
 	{
@@ -418,44 +424,59 @@ KeycloakManager.keycloakPart = function()
 
 KeycloakManager.tokenLogout = function( callFunc ) 
 {
-	// Only run properly when token is expired
-	if( KeycloakLSManager.getAccessToken() != undefined )
-	{
-		KeycloakManager.setKeycloakServerUrl();
+	KeycloakLSManager.setProcessingAction( KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT );
 
-		let logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/${KeycloakLSManager.getRealmName()}/protocol/openid-connect/logout`;
-		let url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
-		let formData = `client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}`;
-		$.ajax({
-			url: url,
-			type: "POST",
-			headers: {
-				client_id: "pwaapp",
-				refresh_token: KeycloakLSManager.getRefreshToken(),
-                scope: "openid offline_access"
-			},
-			 data: formData,
-			success: function (response) 
-			{
-				KeycloakManager.eventMsg("Keycloak logout success");
+	let logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/${KeycloakLSManager.getRealmName()}/protocol/openid-connect/logout`;
+	logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
+	window.location.replace(logoutUrl);
 
-				if( callFunc ) {
-					KeycloakLSManager.localStorageRemove();
-					callFunc(true, response);
-				}
-			},
-			error: function ( errMsg ) {
-				KeycloakManager.eventMsg("Keycloak logout error");
-				KeycloakManager.eventMsg(errMsg);
+	// keycloak.logout().then( function() {
+	// 	console.log("logout success");
+	// })
+	// .catch(function( errMsg ) {
+		
+	// 	console.log("logout fail");
+	// 	console.log(errMsg);
+	// });
 
-				if( callFunc ) ( callFunc(false, {msg: errMsg}));
-			}
-		});
-	}
-	else if( callFunc )
-	{
-		callFunc();
-	}
+
+	// if( KeycloakLSManager.getAccessToken() != undefined )
+	// {
+	// 	KeycloakManager.setKeycloakServerUrl();
+
+	// 	let logoutUrl = `${KeycloakManager.KEYCLOAK_SERVER_URL}realms/${KeycloakLSManager.getRealmName()}/protocol/openid-connect/logout`;
+	// 	let url = WsCallManager.localhostProxyCaseHandle(logoutUrl);
+	// 	let formData = `client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`;
+	// 	$.ajax({
+	// 		url: url,
+	// 		type: "POST",
+	// 		headers: {
+	// 			client_id: "pwaapp",
+	// 			refresh_token: KeycloakLSManager.getRefreshToken(),
+    //             scope: "openid offline_access"
+	// 		},
+	// 		 data: formData,
+	// 		success: function (response) 
+	// 		{
+	// 			KeycloakManager.eventMsg("Keycloak logout success");
+
+	// 			if( callFunc ) {
+	// 				KeycloakLSManager.localStorageRemove();
+	// 				callFunc(true, response);
+	// 			}
+	// 		},
+	// 		error: function ( errMsg ) {
+	// 			KeycloakManager.eventMsg("Keycloak logout error");
+	// 			KeycloakManager.eventMsg(errMsg);
+
+	// 			if( callFunc ) ( callFunc(false, {msg: errMsg}));
+	// 		}
+	// 	});
+	// }
+	// else if( callFunc )
+	// {
+	// 	callFunc();
+	// }
 };
 
 KeycloakManager.eventMsg = function(event) {
