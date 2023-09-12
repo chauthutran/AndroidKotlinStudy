@@ -369,6 +369,25 @@ KeycloakManager.keycloakPart = function()
 	}
 };
 
+KeycloakLSManager.removeOldVersionData = function()
+{
+    var accessToken = localStorage.getItem("accessToken");
+	if( accessToken != null )
+	{
+		localStorage.removeItem("accessToken");
+		localStorage.removeItem("refreshToken");
+		localStorage.removeItem("idToken");
+		localStorage.removeItem("accessTokenParsed");
+		localStorage.removeItem("refreshTokenParsed");
+
+		var accessTokenParsed = KeycloakLSManager.decodeToken(accessToken);
+
+		var logoutUrl = accessTokenParsed.iss + "/protocol/openid-connect/logout";
+		logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
+		window.location.replace(logoutUrl);
+	}
+}
+
 // After logout, PWA App is redirected.
 // --> The localStorage is removed 
 // --> The keycloak is authenticated again.

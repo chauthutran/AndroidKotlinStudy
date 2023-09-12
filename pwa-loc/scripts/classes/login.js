@@ -376,7 +376,7 @@ function Login() {
           			// TODO: NOTE: WHY 'remove--' rather than 'is--'?
 					if ( KeycloakLSManager.isKeyCloakInUse() ) 
 					{
-						// KeycloakManager.tokenLogout();
+						KeycloakManager.tokenLogout();
 						// KeycloakManager.tokenLogout( function( isSuccess ) 
 						// {
 						// 	if ( !isSuccess ) alert( 'Failed to perform KeyCloak Logout!' );

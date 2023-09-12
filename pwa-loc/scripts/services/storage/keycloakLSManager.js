@@ -16,7 +16,6 @@ KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT = "logout";
 
 // ---------------------------------------------------------------------------------------------
 
-
 KeycloakLSManager.setLastLoginDate = function()
 {
     updatePropertyValue( KeycloakLSManager.KEY_LOGIN_DATE, UtilDate.dateStr( "DATETIME" ) );
@@ -70,19 +69,19 @@ KeycloakLSManager.getIdToken = function()
 KeycloakLSManager.getAccessTokenParsed = function()
 {
     var token = KeycloakLSManager.getAccessToken();
-    return decodeToken( token );
+    return KeycloakLSManager.decodeToken( token );
 }
 
 KeycloakLSManager.getRefreshTokenParsed = function()
 {
     var token = KeycloakLSManager.getRefreshToken();
-    return decodeToken( token );
+    return KeycloakLSManager.decodeToken( token );
 }
 
 KeycloakLSManager.getIdTokenParsed = function()
 {
     var token = KeycloakLSManager.getIdToken();
-    return decodeToken( token );
+    return KeycloakLSManager.decodeToken( token );
 }
 
 KeycloakLSManager.localStorageRemove = function() {
@@ -139,7 +138,7 @@ function saveKeycloakInfoData( keycloakInfo )
     LocalStgMng.saveJsonData( KeycloakLSManager.KEY_KEYCLOAK_INFO, keycloakInfo );
 };
 
-function decodeToken(token) {
+KeycloakLSManager.decodeToken = function(token) {
 	token = token.split('.')[1];
 
 	token = token.replace(/-/g, '+');
