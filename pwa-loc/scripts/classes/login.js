@@ -376,16 +376,17 @@ function Login() {
           			// TODO: NOTE: WHY 'remove--' rather than 'is--'?
 					if ( KeycloakLSManager.isKeyCloakInUse() ) 
 					{
-						KeycloakManager.tokenLogout( function( isSuccess ) 
-						{
-							if ( !isSuccess ) alert( 'Failed to perform KeyCloak Logout!' );
-							else 
-							{
-								//KeycloakLSManager.removeKeyCloakInUse(); // These 2 already done by 'tokenLogout' 
-								// KeycloakLSManager.localStorageRemove();	
-								AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");								
-							}
-						});
+						// KeycloakManager.tokenLogout();
+						// KeycloakManager.tokenLogout( function( isSuccess ) 
+						// {
+						// 	if ( !isSuccess ) alert( 'Failed to perform KeyCloak Logout!' );
+						// 	else 
+						// 	{
+						// 		//KeycloakLSManager.removeKeyCloakInUse(); // These 2 already done by 'tokenLogout' 
+						// 		// KeycloakLSManager.localStorageRemove();	
+						// 		AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");								
+						// 	}
+						// });
 					}
 					else AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");
 				});
