@@ -464,11 +464,11 @@ KeycloakManager.getUserInfo = function()
 
 	try
 	{
-		if ( keycloak )
+		var idTokenParsed = KeycloakLSManager.getIdTokenParsed();
+		if ( idTokenParsed && idTokenParsed.userGroupList )
 		{
-			var idData = keycloak.idTokenParsed;
-			if ( idData && idData.userGroupList ) userInfo.userGroup = idData.userGroupList;
-		}	
+			userInfo.userGroup = idTokenParsed.userGroupList;
+		}
 	}
 	catch ( errMsg )
 	{

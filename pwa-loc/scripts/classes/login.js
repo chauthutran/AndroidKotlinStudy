@@ -232,6 +232,7 @@ function Login() {
 			if ( loginUserNameVal == "" || loginUserPinVal == "" ) 
 			{
 				me.clearResetPasswords(me.loginPinDivTag);
+				me.clearResetPasswords(me.loginPinConfirmDivTag);
 				MsgManager.msgAreaShow('Please enter username / fill all pin', 'ERROR');
 			}
 			else 
@@ -245,6 +246,7 @@ function Login() {
 				me.processLogin(loginUserNameVal, loginUserPinVal, location.origin, $(this), function (success) {
 					
 					me.clearResetPasswords(me.loginPinDivTag);
+					me.clearResetPasswords(me.loginPinConfirmDivTag);
 					if (!success) $('.pin1').focus();
 
 					$('.pin_pw_loading').hide();

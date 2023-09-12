@@ -139,25 +139,29 @@ function saveKeycloakInfoData( keycloakInfo )
 };
 
 KeycloakLSManager.decodeToken = function(token) {
-	token = token.split('.')[1];
+    if( token != undefined )
+    {
+        token = token.split('.')[1];
 
-	token = token.replace(/-/g, '+');
-	token = token.replace(/_/g, '/');
-	switch (token.length % 4) {
-		case 0:
-			break;
-		case 2:
-			token += '==';
-			break;
-		case 3:
-			token += '=';
-			break;
-		default:
-			throw 'Invalid token';
-	}
-
-	token = decodeURIComponent(escape(atob(token)));
-
-	token = JSON.parse(token);
-	return token;
+        token = token.replace(/-/g, '+');
+        token = token.replace(/_/g, '/');
+        switch (token.length % 4) {
+            case 0:
+                break;
+            case 2:
+                token += '==';
+                break;
+            case 3:
+                token += '=';
+                break;
+            default:
+                throw 'Invalid token';
+        }
+    
+        token = decodeURIComponent(escape(atob(token)));
+    
+        token = JSON.parse(token);
+    }
+	
+    return token;
 }
