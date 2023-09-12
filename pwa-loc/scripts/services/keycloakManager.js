@@ -8,7 +8,7 @@ var keycloak;
 var btnKeyCloakLogOutTag;
 var btnKeyCloakLogInInFormTag;
 var keycloakMsgTag;
-var timeSkew = 1;
+var timeSkew = 10;
 var accessTokenTimeoutObj;
 var offlineExpiredInterval;
 
@@ -233,6 +233,7 @@ KeycloakManager.blockLoginForm = function(msg)
 
 KeycloakManager.authenticate_WithoutToken = function(successFunc, errorFunc)
 {
+	alert("KeycloakManager.authenticate_WithoutToken");
 	keycloak.init({ 
 		onLoad: 'login-required', 
 		checkLoginIframe: false, 

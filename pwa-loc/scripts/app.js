@@ -146,7 +146,11 @@ App.startAppProcess = function ()
 
 
 		// TODO: CHECK THIS.. KeyCloak Run..  - to log out?
-		if ( KeycloakLSManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart();
+		if ( KeycloakLSManager.isKeyCloakInUse() ){
+			setTimeout(() => {
+				KeycloakManager.keycloakPart();
+			}, 5000);
+		} 
 
 	}
 	catch (err) {
