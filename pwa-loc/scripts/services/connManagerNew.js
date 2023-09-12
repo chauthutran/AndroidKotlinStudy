@@ -110,7 +110,7 @@ ConnManagerNew.changeNetworkConnStableStatus = function (statusInfo, modeOnline,
 	statusInfo.networkConn.online_Stable = modeOnline;
 
 	// Trigger AppMode Check
-	ConnManagerNew.appModeSwitchRequest(statusInfo);
+	ConnManagerNew.appModeSwitchRequest(statusInfo, optionStr );
 	// update UI icons to reflect current network change
 	// Do not need to anymore since 'Reqeust' is same as Set NOW!!!
 	ConnManagerNew.update_UI(statusInfo);
@@ -182,10 +182,10 @@ ConnManagerNew.changeServerAvailableIfDiff = function (newAvailable, statusInfo)
 // --- App Mode Switch Related --------------------
 
 // TEMP: CHANGED the 'Request' to happen right away without prompt interaction..
-ConnManagerNew.appModeSwitchRequest = function (statusInfo) {
+ConnManagerNew.appModeSwitchRequest = function (statusInfo, optionStr) {
 	var appModeNew = ConnManagerNew.produceAppMode_FromStatusInfo(statusInfo);
 
-	ConnManagerNew.setAppMode(appModeNew, statusInfo); //, function( appModeChanged ) 
+	ConnManagerNew.setAppMode(appModeNew, statusInfo, optionStr); //, function( appModeChanged ) 
 };
 
 
@@ -194,7 +194,7 @@ ConnManagerNew.produceAppMode_FromStatusInfo = function (statusInfo) {
 };
 
 
-ConnManagerNew.setAppMode = function (appModeNew, statusInfo) {
+ConnManagerNew.setAppMode = function (appModeNew, statusInfo, optionStr) {
 	var existingAppMode = statusInfo.appMode;
 
 	// Set appMode
@@ -204,12 +204,13 @@ ConnManagerNew.setAppMode = function (appModeNew, statusInfo) {
 	if (statusInfo.appMode !== existingAppMode) {
 		ConnManagerNew.update_UI(statusInfo);
 
-		if (SessionManager.getLoginStatus()) SessionManager.cwsRenderObj.appModeSwitch_UIChanges();
+		var loginStatus = SessionManager.getLoginStatus();
+		if ( loginStatus ) SessionManager.cwsRenderObj.appModeSwitch_UIChanges();
 
 		// When Switching From Offline -> Online, perform the runOnceOnline things..
 		// However, when WFA App start, 'online' set (forced) could call this.  To block that case, call this only if 'loggedIn'
-		if (ConnManagerNew.isAppMode_Online()) ConnManagerNew.runWhenSwitchedToOnline(SessionManager.getLoginStatus()); //ScheduleManager.runWhenSwitchedToOnline();
-		else if (ConnManagerNew.isAppMode_Offline()) ConnManagerNew.runWhenSwitchedToOffline(SessionManager.getLoginStatus()); //ScheduleManager.runWhenSwitchedToOnline();
+		if ( ConnManagerNew.isAppMode_Online() ) ConnManagerNew.runWhenSwitchedToOnline( loginStatus, optionStr );
+		else if ( ConnManagerNew.isAppMode_Offline() ) ConnManagerNew.runWhenSwitchedToOffline( loginStatus, optionStr );
 	}
 };
 
@@ -217,7 +218,7 @@ ConnManagerNew.setAppMode = function (appModeNew, statusInfo) {
 
 // TODO: CREATE BETTER TRIGGER METHODS
 
-ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn ) 
+ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn, optionStr ) 
 {
 	console.log( '----> ConnManagerNew.runWhenSwitchedToOnline' );
 
@@ -240,24 +241,33 @@ ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn )
 		// SYNC ALL (ONLINE) Does call NewAppFile with delayed reload.
 	}
 	
-	var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
-	if( keyCloakInUse )
+	// NOTE: Whenever switched to 'Online' Mode, We perform 'setForm_Online' to make login page buttons/status/events
+	// For keycloak? <-- It actually calls KeyCloack Authentication...  on server..
+
+	if ( optionStr !== 'startUp' )
 	{
-		if( !KeycloakManager.isStartedUp )
+		var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
+		if( keyCloakInUse )
 		{
-			KeycloakManager.startUp();
-		}
-		
-		KeycloakManager.setForm_Online();
+			if( !KeycloakManager.isStartedUp )
+			{
+				KeycloakManager.startUp();
+			}
+			
+			KeycloakManager.setForm_Online();
+		}	
 	}
 };
 
-ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn ) 
+ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn, optionStr ) 
 {
-	var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
-	if( keyCloakInUse )
+	if ( optionStr !== 'startUp' )
 	{
-		KeycloakManager.setForm_Offline();
+		var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
+		if( keyCloakInUse )
+		{
+			KeycloakManager.setForm_Offline();
+		}
 	}
 };
 

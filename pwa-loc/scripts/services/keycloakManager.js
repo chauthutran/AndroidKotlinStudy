@@ -14,6 +14,16 @@ var offlineExpiredInterval;
 
 var processingTask = "";
 
+/*
+KeycloakManager.setUpClass = function()
+{
+	btnKeyCloakLogOutTag = $('#btnKeyCloakLogOut');
+	btnKeyCloakLogInInFormTag = $("#btnKeyCloakLogInInForm");
+	keycloakMsgTag = $("#keycloakMsg");	
+};
+*/
+
+
 // =======================================================================================================
 // === NEW KEYCLOAK ============
 
@@ -27,11 +37,12 @@ KeycloakManager.startUp = function(realName)
 	KeycloakManager.isStartedUp = false;
 	btnKeyCloakLogOutTag = $('#btnKeyCloakLogOut');
 	btnKeyCloakLogInInFormTag = $("#btnKeyCloakLogInInForm");
-	keycloakMsgTag = $("#keycloakMsg");
+	keycloakMsgTag = $("#keycloakMsg");	
 	clearCheckTokenTimeout();
 
 	KeycloakManager.setKeycloakServerUrl();
 	realName = (realName) ? realName : AppInfoLSManager.getAuthChoice();
+
 	if( realName )
 	{
 		realName = realName.replace("kc_", "").toUpperCase();
@@ -82,6 +93,14 @@ KeycloakManager.setUpEvents = function( kcObj )
 
 // -------------------------------------------------------------------------------------
 // Set up form with Token/Refresh Token status
+
+/*
+KeycloakManager.checkAccessTokenStatus( (isValid, ---) => {
+	if ( -- ) KeycloakManager.setLoginForm( 'acc' )}
+	if ( !isValid ) KeycloakManager.authenticate( );
+});
+*/
+
 
 KeycloakManager.setForm_Online = function()
 {	
@@ -233,7 +252,8 @@ KeycloakManager.blockLoginForm = function(msg)
 
 KeycloakManager.authenticate_WithoutToken = function(successFunc, errorFunc)
 {
-	alert("KeycloakManager.authenticate_WithoutToken");
+	// 	KeycloakManager.startUp();
+
 	keycloak.init({ 
 		onLoad: 'login-required', 
 		checkLoginIframe: false, 
