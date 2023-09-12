@@ -7,6 +7,7 @@ function DataManager2() {}
 DataManager2.StorageName_session = "session";
 DataManager2.StorageName_appInfo = "appInfo";
 DataManager2.StorageName_persisData = "persisData";
+DataManager2.StorageName_keycloakInfo = "keycloakInfo";
 
 DataManager2.StorageName_loginResp = "loginResp";
 DataManager2.StorageName_clientList = "clientList";
@@ -348,6 +349,7 @@ DataManager2.deleteAllStorageData = function( callBack )
 {
 	//LocalStgMng.clear();
 	LocalStgMng.deleteData( DataManager2.StorageName_appInfo );
+	LocalStgMng.deleteData( DataManager2.StorageName_keycloakInfo );
 	
 	StorageMng.clear( StorageMng.StorageType_IndexedDB, callBack );
 };

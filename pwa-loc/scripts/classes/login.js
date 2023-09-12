@@ -534,7 +534,7 @@ function Login() {
 	};
 
 	me.isAuthPageUse = function() { return ( PersisDataLSManager.getAuthPageUse() === 'Y' ) ? true: false; };
-	me.openAuthForm = function() { $( '.divAuthForm' ).show(); };
+	me.openAuthForm = function() {  $( '.divAuthForm' ).show();  };
 
 	me.openLoginForm = function() 
 	{
