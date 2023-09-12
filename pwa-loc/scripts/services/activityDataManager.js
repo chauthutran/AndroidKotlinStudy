@@ -714,7 +714,7 @@ ActivityDataManager.createNewPayloadActivity = function (actionUrl, blockId, for
 };
 
 
-ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, payloadTemplates )
+ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, payloadTemplates, option )
 {
 	if ( !apptAct.id ) {
 		var errMsg = 'ERROR in createActivity_BahmniAppointmentMsg - apptAct.id not available';
@@ -737,9 +737,24 @@ ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, pay
 
 	// Way to bypass the template and add 'captureVal/searchVal' directly..
 	// actionJson.activityJson = data.activityJson;
-	
+
+	// NEW: To be used with the payloadTemplate - to reference..  + on 'appStatus' eval..
+	INFO.bahmniClient = client;
+	INFO.bahmniActivity = apptAct;
+
 
 	var apptStatus = apptAct.originalData.status;
+
+	if ( !option ) option = {};
+	if ( option.statusEval ) 
+	{
+		try
+		{
+			var apptStatusTemp = eval( Util.getEvalStr( option.statusEval ) );
+			if ( apptStatusTemp ) apptStatus = apptStatusTemp;
+		}
+		catch( errMsg ) { console.log( 'ERROR in createActivity_BahmniAppointmentMsg statusEval, ' + errMsg ); }
+	}
 
 	if ( !apptStatus ) {
 		var errMsg = 'ERROR in createActivity_BahmniAppointmentMsg - Appointment Status not available';
@@ -762,6 +777,10 @@ ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, pay
    	}
    };
 
+
+	// NEW: To be used with the payloadTemplate - to reference..
+	//INFO.bahmniClient = client;
+	//INFO.bahmniActivity = apptAct;
 
 	// #1. Generete payload with 'capture/search' structure - by Template & form fields values.
 	var formsJsonActivityPayload = ActivityUtil.generateActivityPayload_byFormsJson( clickActionJson, $( '.emptyJQueryElement' ) );

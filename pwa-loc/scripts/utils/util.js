@@ -446,6 +446,14 @@ Util.copyProperties = function (source, dest, option) {
 	}
 };
 
+
+// 'Util.copyProperties' has opposite order of param..
+Util.copyProperties2 = function ( target, source, option) {
+
+	Util.copyProperties( source, target, option );
+};
+
+
 // Copy Content Json without overwriting the reference of original Json
 Util.overwriteJsonContent = function (origJson, newJson) {
 	if (origJson !== newJson) {
