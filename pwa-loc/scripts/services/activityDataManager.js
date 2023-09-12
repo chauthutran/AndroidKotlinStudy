@@ -793,7 +793,6 @@ ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, pay
 			, function( activity, client ) {
 				activity.subSyncStatus = BahmniService.readyToMongoSync;
 				ClientDataManager.saveCurrent_ClientsStore(); // Rather than this, Save the data in Config called place?
-				console.log( activity );				
 			});
 		}	
 	}
