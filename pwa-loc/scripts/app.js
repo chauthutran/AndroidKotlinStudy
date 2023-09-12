@@ -436,6 +436,7 @@ App.authChiocePage_DataSet = function()
 		if( KeycloakLSManager.getAccessToken() != undefined )
 		{
 			// Logout
+			KeycloakManager.setKeycloakServerUrl();
 			KeycloakManager.tokenLogout(function(success){
 				KeycloakLSManager.localStorageRemove();
 				
@@ -457,6 +458,7 @@ App.authChiocePage_DataSet = function()
 		// Check if there is any token existing in LocalStorage.
 		if( KeycloakLSManager.getAccessToken() != undefined )
 		{
+			KeycloakManager.setKeycloakServerUrl();
 			// Logout
 			KeycloakManager.tokenLogout(function(success){
 				KeycloakLSManager.localStorageRemove();
