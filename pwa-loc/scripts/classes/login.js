@@ -372,25 +372,15 @@ function Login() {
 		{
 			$('#accept').click(function () 
 			{
+				if ( KeycloakLSManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+
 				DataManager2.deleteAllStorageData(function () 
 				{
 					FormUtil.emptySheetBottomTag();
 
 					MsgFormManager.appBlockTemplate('appLoad');
 
-					// NEW!! - When User Changing, if keycloak is in use, perform logout 1st..
-					if ( KeycloakLSManager.isKeyCloakInUse() ) 
-					{
-						// Check if there is any token existing in LocalStorage.
-						// TODO: 
-						if( KeycloakLSManager.getAccessToken() != undefined )
-						{
-							KeycloakManager.tokenLogout();
-						}
-
-						AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");			
-					}
-					else AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");
+					AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");			
 				});
 			});
 

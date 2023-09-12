@@ -39,6 +39,8 @@ App.run = function ()
 	{
 		// After Reload, Saved 'AuthChoice'/'AuthPage' will be used for setting LocalStorage
 		// Call Keycloak logout
+		if ( KeycloakLSManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+
 		DataManager2.deleteAllStorageData( () => 
 		{ 
 			console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 
