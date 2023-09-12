@@ -378,7 +378,14 @@ function Login() {
           			// TODO: NOTE: WHY 'remove--' rather than 'is--'?
 					if ( KeycloakLSManager.isKeyCloakInUse() ) 
 					{
-						KeycloakManager.tokenLogout();
+						// Check if there is any token existing in LocalStorage.
+						if( KeycloakLSManager.getAccessToken() != undefined )
+						{
+							KeycloakManager.tokenLogout();
+						}
+
+						AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");			
+
 						// KeycloakManager.tokenLogout( function( isSuccess ) 
 						// {
 						// 	if ( !isSuccess ) alert( 'Failed to perform KeyCloak Logout!' );

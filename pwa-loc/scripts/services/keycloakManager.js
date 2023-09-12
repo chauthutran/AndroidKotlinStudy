@@ -160,17 +160,13 @@ KeycloakManager.setUpForm_Online_AccessTokenExpired = function()
 	disableLoginForm();
 	
 	// // Set up events for "Keycloak Login" buttons
-	btnKeyCloakLogInInFormTag.off("click").click( () => { 
+	btnKeyCloakLogInInFormTag.css("background-color", "#008000").show().off("click").click( () => { 
 		KeycloakManager.tokenLogout();
 	});
 
-	btnKeyCloakLogOutTag.html("Login").off("click").click( () => { 
+	btnKeyCloakLogOutTag.show().html("Login").off("click").click( () => { 
 		KeycloakManager.tokenLogout();
 	});
-
-	// Show "Keycloak Login" buttons
-	btnKeyCloakLogInInFormTag.css("background-color", "#008000").show(); // Set "green" color and show the button
-	btnKeyCloakLogOutTag.show();
 
 	keycloakMsgTag.html("(Token is expired. Please login again.)");
 	MsgManager.msgAreaShowOpt( "Token is expired. Please login again.", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
@@ -295,6 +291,8 @@ KeycloakManager.authenticateFailure = function()
 
 KeycloakManager.watchTokenStatus = function()
 {
+	clearCheckTokenTimeout();
+
 	if( ConnManagerNew.isAppMode_Online() ) // ONLINE
 	{
 		const accessTokenParsed = KeycloakLSManager.getAccessTokenParsed();
