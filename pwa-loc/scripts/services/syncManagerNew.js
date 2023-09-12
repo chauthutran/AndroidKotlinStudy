@@ -1161,6 +1161,9 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 		var processingInfo = ActivityDataManager.createProcessingInfo_Other(newStatus, errStatusCode, errMsgCatched);
 		ActivityDataManager.insertToProcessing(activityJson_Orig, processingInfo);
 
+		if ( errMsgCatched.toString().indexOf( 'found multiple existing matching client' ) >= 0 ) MsgManager.msgAreaShowErrOpt( 'ERROR: DUPLICATE DSDA PATIENT Exists In Mongo!!', { hideTimeMs: 20000 } );	
+
+
 		ClientDataManager.saveCurrent_ClientsStore(() => {
 			// Add activityJson processing
 			if (callBack) callBack(bOptResult, errMsgCatched, newStatus);
