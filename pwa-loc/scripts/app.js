@@ -120,8 +120,8 @@ App.startAppProcess = function ()
 		//App.App_UI_startUp_Progress('50%');
 
 		// MOVED: KeyCloak Start Object + Param case removal
-		// REQUIRE: KeycloakLSManager.getAuthChoice() ( ALSO can use KeyCloakUse? )
-		if ( KeycloakLSManager.getAuthChoice() ) KeycloakManager.clazzInitialSetup();
+		// REQUIRE: if ( KeycloakLSManager.getAuthChoice() ) ?  NOT ANYMORE
+		KeycloakManager.clazzInitialSetup();
 
 
 		// --------------------
@@ -152,8 +152,9 @@ App.startAppProcess = function ()
 		if ( KeycloakLSManager.getAuthChoice() ) KeycloakManager.keycloakPart();
 
 	}
-	catch (err) {
-		console.log('error starting App > startApp() error: ' + err);
+	catch ( errMsg ) {
+		console.log( 'ERROR on starting App > startApp() error: ' + errMsg );
+		MsgManager.msgAreaShowErrOpt( 'ERROR on App Starting: ' + errMsg );
 	}
 };
 
