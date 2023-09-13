@@ -131,6 +131,7 @@ KeycloakLSManager.getAuthChoice = function()
    return getPropertyValue( KeycloakLSManager.KEY_AUTH_CHOICE );
 };
 
+// REMOVAL METHOD -->  KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
 
 // ---------------------------------------------------------------------------------------------
 // Supportive methods

@@ -48,8 +48,8 @@ App.run = function ()
 			// 'App.authChiocePage_DataSet' call sets/clears all these on authPage = 'Y' match..
 
 			// Call Keycloak logout
-			// TODO: 'isKeyCloakInUse' & 'getAccessToken' need to be moved to PersisLSData..?
-			if ( KeycloakLSManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+			// TODO: 'getAuthChoice' & 'getAccessToken' need to be moved to PersisLSData..?
+			if ( KeycloakLSManager.getAuthChoice() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
 
 			AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
 		});
@@ -82,9 +82,13 @@ App.run = function ()
 	
 		WsCallManager.setWsTarget();
 
+
+		App.param_showMsg( 'msg' );
+		App.param_keyCloakUsage_ForceRemove( App.paramName_keyCloakRemove );
+		App.param_authChiocePage_DataSet( App.paramName_authPage, App.paramName_authChoice, function() {			
+			if( KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout(); // Check if there is any token existing in LocalStorage.
+		});
 		
-		App.authChiocePage_DataSet(); // NEW: Save to AppInfoLS & PersisDataLS on 'authChoice/Page', 'keycloak'
-	
 	
 		App.App_UI_startUp_loading(); // << should we move this into cwsRender?
 	
@@ -92,15 +96,6 @@ App.run = function ()
 		// By param 'debug' with pwd - uses AppInfoLSManager
 		DevHelper.checkNStartDebugConsole();
 	
-		var paramMsg = App.getParamVal_ByName( 'msg', { deleteInLS: true } );
-		if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );
-	
-	
-		if ( App.getParamVal_ByName( App.paramName_keyCloakRemove, { deleteInLS: true } ) ) 
-		{ 
-			KeycloakLSManager.removeKeyCloakInUse(); 
-			//KeycloakLSManager.localStorageRemove(); 
-		}
 	
 		// Service Worker Related Initial Setup
 		SwManager.initialSetup(function () 
@@ -125,7 +120,8 @@ App.startAppProcess = function ()
 		//App.App_UI_startUp_Progress('50%');
 
 		// MOVED: KeyCloak Start Object + Param case removal
-		KeycloakManager.startUp();
+		// REQUIRE: KeycloakLSManager.getAuthChoice() ( ALSO can use KeyCloakUse? )
+		if ( KeycloakLSManager.getAuthChoice() ) KeycloakManager.startUp();
 
 
 		// --------------------
@@ -153,7 +149,7 @@ App.startAppProcess = function ()
 
 
 		// TODO: CHECK THIS.. KeyCloak Run..  - to log out?
-		if ( KeycloakLSManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart();
+		if ( KeycloakLSManager.getAuthChoice() ) KeycloakManager.keycloakPart();
 
 	}
 	catch (err) {
@@ -426,12 +422,30 @@ App.getClientDirectId = function( actionParamName, clientParamName )
 };
 
 
+App.param_showMsg = function( paramName_Msg )
+{
+	var paramMsg = App.getParamVal_ByName( paramName_Msg, { deleteInLS: true } );
+	if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );	
+};
+
+
+// Force to not use KeyCloak anymore.  Even if the session is still alive.
+// --> Has issue with session Auth Out, though...
+App.param_keyCloakUsage_ForceRemove = function( paramName_keyCloakRemove )
+{
+	if ( App.getParamVal_ByName( paramName_keyCloakRemove, { deleteInLS: true } ) ) 
+	{ 
+		KeycloakLSManager.removeKeyCloakInUse(); 	
+		KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
+	}	
+};
+
 
 // AuthChoice/Page Related #2
-App.authChiocePage_DataSet = function()
+App.param_authChiocePage_DataSet = function( paramName_authPage, paramName_authChoice, runFunc )
 {
-	var paramAuthChoice = App.getParamVal_ByName( App.paramName_authChoice, { deleteInLS: true } );
-	var paramAuthPage = App.getParamVal_ByName( App.paramName_authPage, { deleteInLS: true } );
+	var paramAuthPage = App.getParamVal_ByName( paramName_authPage, { deleteInLS: true } );
+	var paramAuthChoice = App.getParamVal_ByName( paramName_authChoice, { deleteInLS: true } );
 
 	if ( paramAuthChoice ) 
 	{
@@ -439,32 +453,19 @@ App.authChiocePage_DataSet = function()
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		if ( paramAuthChoice.indexOf( 'kc_' ) === 0 ) KeycloakLSManager.setKeyCloakUse( 'Y' );
 
-		// Check if there is any token existing in LocalStorage.
-		if( KeycloakLSManager.getAccessToken() != undefined )
-		{
-			// Logout
-			KeycloakManager.tokenLogout();
-		}
-
-		console.log( 'User Data has been removed..' );
+		if ( runFunc ) runFunc();
 	}
 	else if ( paramAuthPage === 'Y' ) 
 	{
-		KeycloakLSManager.setAuthChoice( '' );
+		KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		KeycloakLSManager.removeKeyCloakInUse();  // TODO: NOTE!!!
 		//KeycloakLSManager.setKeyCloakUse( '' );  // TODO: Should check if keyCloak is used and logOut if currently used?
-		
-		// Check if there is any token existing in LocalStorage.
-		if( KeycloakLSManager.getAccessToken() != undefined )
-		{
-			KeycloakManager.tokenLogout();
-		}
 
-		console.log( 'User Data has been removed..' );
+		if ( runFunc ) runFunc();
 	}
 };
-	
+
 
 // ===========================
 // [JOB_AID]    
