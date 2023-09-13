@@ -136,7 +136,7 @@ function Login() {
 			
 			if ( authChoice )
 			{
-				AppInfoLSManager.setAuthChoice( authChoice );
+				KeycloakLSManager.setAuthChoice( authChoice );
 
 				// show the openLoginForm..
 				$( '.divAuthForm' ).hide();
@@ -372,10 +372,15 @@ function Login() {
 		{
 			$('#accept').click(function () 
 			{
-				if ( KeycloakLSManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
-
 				DataManager2.deleteAllStorageData(function () 
 				{
+					if ( KeycloakLSManager.isKeyCloakInUse() ) 
+					{
+						KeycloakLSManager.setAuthChoice( '' );
+						if ( KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+					}
+					// NOTE: If keycloak Access case, we will not run below!!!
+
 					FormUtil.emptySheetBottomTag();
 
 					MsgFormManager.appBlockTemplate('appLoad');
@@ -508,7 +513,7 @@ function Login() {
 		{
 			me.spanAuthPageUseTag.hide();
 			
-			var authChoice = AppInfoLSManager.getAuthChoice();
+			var authChoice = KeycloakLSManager.getAuthChoice();
 
 			if ( authChoice ) me.openLoginForm();
 			else me.openAuthForm();	
@@ -538,7 +543,7 @@ function Login() {
 		if ( me.isAuthPageUse() )
 		{
 			var authChoiceName = '';
-			var authChoice = AppInfoLSManager.getAuthChoice();
+			var authChoice = KeycloakLSManager.getAuthChoice();
 			if ( authChoice ) authChoiceName = me.selAuthChoiceTag.find( 'option[value="' + authChoice + '"]').text();			
 
 			$( '.divLoginWith' ).show();

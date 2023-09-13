@@ -26,7 +26,7 @@ App.paramsJson = {}; // Load all params data in here and get them from here.
 App.paramName_keyCloakRemove = 'keyCloakRemove';
 App.paramName_authPage = 'authPage';
 App.paramName_authChoice = 'authChoice';
-
+App.byPass_BrwsBackBtnActionBlock = false;
 // -------------------------------
 
 App.run = function () 
@@ -38,16 +38,19 @@ App.run = function ()
 	function( paramObj ) 
 	{
 		// After Reload, Saved 'AuthChoice'/'AuthPage' will be used for setting LocalStorage
-		// Call Keycloak logout
-
-		// TODO: 'isKeyCloakInUse' & 'getAccessToken' need to be moved to PersisLSData..?
-		// if ( KeycloakLSManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
-
 		DataManager2.deleteAllStorageData( () => 
 		{ 
 			console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 
-
 			LocalStgMng.saveJsonData( 'paramsLoad', paramObj );
+
+			// AuthChoice (already exist or not) should be deleted in 'AuthPage' param Redirect case.
+			//if ( paramObj[ App.paramName_authPage ] ) KeycloakLSManager.setAuthChoice( '' );
+			// 'App.authChiocePage_DataSet' call sets/clears all these on authPage = 'Y' match..
+
+			// Call Keycloak logout
+			// TODO: 'isKeyCloakInUse' & 'getAccessToken' need to be moved to PersisLSData..?
+			if ( KeycloakLSManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+
 			AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
 		});
 	}, 
@@ -96,7 +99,7 @@ App.run = function ()
 		if ( App.getParamVal_ByName( App.paramName_keyCloakRemove, { deleteInLS: true } ) ) 
 		{ 
 			KeycloakLSManager.removeKeyCloakInUse(); 
-			KeycloakLSManager.localStorageRemove(); 
+			//KeycloakLSManager.localStorageRemove(); 
 		}
 	
 		// Service Worker Related Initial Setup
@@ -189,24 +192,25 @@ App.windowEvent_BlockBackBtnAction = function () {
 	// Method 1
 	history.pushState(null, document.title, location.href);
 
-	window.addEventListener('popstate', function (event) {
-		history.pushState(null, document.title, location.href);
-
-		var backBtnTags = $('.btnBack:visible');
-
-		if (backBtnTags.length > 0) {
-			//backBtnTags.click();
-			backBtnTags.first().click();
-		}
-		else {
-			MsgManager.msgAreaShow('Back Button Click Blocked!!');
-		}
-
-	});
+	window.addEventListener('popstate', App.popStateCall );
 	// NEED TO WORK ON SCROLL DOWN TO REFRESH BLOCKING
 	// https://stackoverflow.com/questions/29008194/disabling-androids-chrome-pull-down-to-refresh-feature
 };
 
+App.popStateCall = function(event) 
+{
+	history.pushState(null, document.title, location.href);
+
+	var backBtnTags = $('.btnBack:visible');
+
+	if (backBtnTags.length > 0) {
+		//backBtnTags.click();
+		backBtnTags.first().click();
+	}
+	else {
+		MsgManager.msgAreaShow('Back Button Click Blocked!!');
+	}
+}
 
 App.detectStandAlone = function () {
 	if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -431,7 +435,7 @@ App.authChiocePage_DataSet = function()
 
 	if ( paramAuthChoice ) 
 	{
-		AppInfoLSManager.setAuthChoice( paramAuthChoice );
+		KeycloakLSManager.setAuthChoice( paramAuthChoice );
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		if ( paramAuthChoice.indexOf( 'kc_' ) === 0 ) KeycloakLSManager.setKeyCloakUse( 'Y' );
 
@@ -446,7 +450,7 @@ App.authChiocePage_DataSet = function()
 	}
 	else if ( paramAuthPage === 'Y' ) 
 	{
-		AppInfoLSManager.setAuthChoice( '' );
+		KeycloakLSManager.setAuthChoice( '' );
 		PersisDataLSManager.setAuthPageUse( 'Y' );
 		KeycloakLSManager.removeKeyCloakInUse();  // TODO: NOTE!!!
 		//KeycloakLSManager.setKeyCloakUse( '' );  // TODO: Should check if keyCloak is used and logOut if currently used?

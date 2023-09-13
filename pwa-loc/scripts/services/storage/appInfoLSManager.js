@@ -9,7 +9,6 @@ AppInfoLSManager.appInfo_LS;
 
 AppInfoLSManager.KEY_LASTLOGINDATA = "lastLoginData";
 AppInfoLSManager.KEY_SELECT_OPTIONS = "selectOptions";
-AppInfoLSManager.KEY_AUTH_CHOICE = "authChoice";
 
 AppInfoLSManager.KEY_USERNAME = "userName"; 
 AppInfoLSManager.KEY_CONFIGSOURCETYPE = "configSourceType"; 
@@ -451,19 +450,6 @@ AppInfoLSManager.getSelectOptions_Item = function( optionName)
 AppInfoLSManager.getSelectOptions = function()
 {
     return AppInfoLSManager.getKeyValue( AppInfoLSManager.KEY_SELECT_OPTIONS );
-};
-
-
-// ----------------------------------------------------
-//  Auth Choice (Very 1st Page/Selection - before login)
-AppInfoLSManager.setAuthChoice = function( authChoice )
-{
-    AppInfoLSManager.updateKey_StrValue( AppInfoLSManager.KEY_AUTH_CHOICE, authChoice );
-};
-
-AppInfoLSManager.getAuthChoice = function()
-{
-    return AppInfoLSManager.getKeyValue( AppInfoLSManager.KEY_AUTH_CHOICE );
 };
 
 

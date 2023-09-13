@@ -11,6 +11,7 @@ KeycloakLSManager.KEY_ID_TOKEN = 'idToken';
 KeycloakLSManager.KEY_REALM_NAME = 'realmName';
 KeycloakLSManager.KEY_PROCESSING_ACTION = 'processingAction';
 KeycloakLSManager.KEY_KEYCLOCK_USE = "keyClockUse"; 
+KeycloakLSManager.KEY_AUTH_CHOICE = "authChoice";
 
 
 KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT = "logout";
@@ -73,9 +74,7 @@ KeycloakLSManager.getIdTokenParsed = function () {
 	return KeycloakLSManager.decodeToken(token);
 }
 
-KeycloakLSManager.localStorageRemove = function () {
-	saveKeycloakInfoData({});
-};
+// KeycloakLSManager.localStorageRemove = function () {  saveKeycloakInfoData({});  };
 
 KeycloakLSManager.removeProperty = function (key) {
 	var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
@@ -83,6 +82,15 @@ KeycloakLSManager.removeProperty = function (key) {
 
 	saveKeycloakInfoData(keycloakInfo);
 
+};
+
+// ---------------------------------------------
+KeycloakLSManager.removeTokens_LoginDate = function()
+{
+	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_LOGIN_DATE );
+	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_ACCESS_TOKEN );
+	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_REFRESH_TOKEN );
+	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_ID_TOKEN );
 };
 
 // --------------------------------------------
@@ -105,6 +113,19 @@ KeycloakLSManager.getKeyCloakUse = function()
 KeycloakLSManager.setKeyCloakUse = function( useStrY )
 {
 	updatePropertyValue( KeycloakLSManager.KEY_KEYCLOCK_USE, useStrY );
+};
+
+
+// ----------------------------------------------------
+//  Auth Choice (Very 1st Page/Selection - before login)
+KeycloakLSManager.setAuthChoice = function( authChoice )
+{
+   updatePropertyValue( KeycloakLSManager.KEY_AUTH_CHOICE, authChoice );
+};
+
+KeycloakLSManager.getAuthChoice = function()
+{
+   return getPropertyValue( KeycloakLSManager.KEY_AUTH_CHOICE );
 };
 
 

@@ -21,6 +21,9 @@ AppUtil.appReloadWtMsg = function( optionalMsg )
 
 	AppUtil.appReloading = true;
 	//window.location.reload();
+
+	window.removeEventListener('popstate', App.popStateCall );
+
 	window.location = window.location.href.split("?")[0];	
 };
 

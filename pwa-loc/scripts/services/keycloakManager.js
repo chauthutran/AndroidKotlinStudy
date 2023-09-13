@@ -41,7 +41,7 @@ KeycloakManager.startUp = function(realName)
 	clearCheckTokenTimeout();
 
 	KeycloakManager.setKeycloakServerUrl();
-	realName = (realName) ? realName : AppInfoLSManager.getAuthChoice();
+	realName = (realName) ? realName : KeycloakLSManager.getAuthChoice();
 
 	if( realName )
 	{
@@ -107,7 +107,8 @@ KeycloakManager.setForm_Online = function()
 	const processingAction = KeycloakLSManager.getProcessingAction();
 	if( processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT )
 	{
-		KeycloakLSManager.localStorageRemove();
+		//KeycloakLSManager.localStorageRemove();
+		KeycloakLSManager.removeTokens_LoginDate();
 	}
 
 	const accessToken =  KeycloakLSManager.getAccessToken();
