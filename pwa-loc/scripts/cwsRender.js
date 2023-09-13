@@ -496,23 +496,16 @@ function cwsRender()
 		
 		ScheduleManager.stopSchedules_AfterLogOut();
 
-
 		me.logOutUI();
+	
+		me.jobAid_iFrameClose_WtMsg(); // JobAid iFrame close if currently on open state
 
-		if( KeycloakLSManager.isKeyCloakInUse() )
-		{
-			KeycloakManager.keycloakPart();
-		}
-		else
-		{
 
-			// JobAid iFrame close if currently on open state
-			me.jobAid_iFrameClose_WtMsg();
+		// NOTE: TODO: What is this for?  In What Case does it Change/AuthOut/Refersh?
+		if( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart();
 
-			SwManager.checkAppUpdate( '[AppUpdateCheck] - logOutProcess', { noMinTimeSkip: true } );
-			
-			SwManager.refreshForNewAppFile_IfAvailable();  // even on offline
-		}
+		SwManager.checkAppUpdate( '[AppUpdateCheck] - logOutProcess', { noMinTimeSkip: true } );			
+		SwManager.refreshForNewAppFile_IfAvailable();  // even on offline
 	};
 
 	me.logOutUI = function()

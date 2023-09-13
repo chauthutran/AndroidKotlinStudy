@@ -92,28 +92,6 @@ KeycloakLSManager.authOut_DataRemoval_wtTokens = function()
 	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_PROCESSING_ACTION );
 };
 
-// --------------------------------------------
-
-KeycloakLSManager.isKeyCloakInUse = function () {
-	return (KeycloakLSManager.getKeyCloakUse() === 'Y');
-};
-
-KeycloakLSManager.removeKeyCloakInUse = function () {
-	KeycloakLSManager.setKeyCloakUse('');
-};
-
-// TODO: Move entire Keycloak to 'PersisLS' Later(?)
-// -----------------------------
-KeycloakLSManager.getKeyCloakUse = function()
-{
-	return getPropertyValue( KeycloakLSManager.KEY_KEYCLOCK_USE );
-};
-
-KeycloakLSManager.setKeyCloakUse = function( useStrY )
-{
-	updatePropertyValue( KeycloakLSManager.KEY_KEYCLOCK_USE, useStrY );
-};
-
 
 // ----------------------------------------------------
 //  Auth Choice (Very 1st Page/Selection - before login)

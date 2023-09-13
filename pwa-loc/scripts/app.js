@@ -43,13 +43,9 @@ App.run = function ()
 			console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 
 			LocalStgMng.saveJsonData( 'paramsLoad', paramObj );
 
-			// AuthChoice (already exist or not) should be deleted in 'AuthPage' param Redirect case.
-			//if ( paramObj[ App.paramName_authPage ] ) KeycloakLSManager.setAuthChoice( '' );
 			// 'App.authChiocePage_DataSet' call sets/clears all these on authPage = 'Y' match..
-
 			// Call Keycloak logout
-			// TODO: 'getAuthChoice' & 'getAccessToken' need to be moved to PersisLSData..?
-			if ( KeycloakLSManager.getAuthChoice() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+			if ( KeycloakManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
 
 			AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
 		});
@@ -119,10 +115,7 @@ App.startAppProcess = function ()
 		ConnManagerNew.createNetworkConnListeners();
 		//App.App_UI_startUp_Progress('50%');
 
-		// MOVED: KeyCloak Start Object + Param case removal
-		// REQUIRE: if ( KeycloakLSManager.getAuthChoice() ) ?  NOT ANYMORE
 		KeycloakManager.clazzInitialSetup();
-
 
 		// --------------------
 		// 2. START PHASE
@@ -149,7 +142,7 @@ App.startAppProcess = function ()
 
 
 		// TODO: CHECK THIS.. KeyCloak Run..  - to log out?
-		if ( KeycloakLSManager.getAuthChoice() ) KeycloakManager.keycloakPart();
+		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart();
 
 	}
 	catch ( errMsg ) {
@@ -436,7 +429,6 @@ App.param_keyCloakUsage_ForceRemove = function( paramName_keyCloakRemove )
 {
 	if ( App.getParamVal_ByName( paramName_keyCloakRemove, { deleteInLS: true } ) ) 
 	{ 
-		KeycloakLSManager.removeKeyCloakInUse(); 	
 		KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
 	}	
 };
@@ -452,7 +444,6 @@ App.param_authChiocePage_DataSet = function( paramName_authPage, paramName_authC
 	{
 		KeycloakLSManager.setAuthChoice( paramAuthChoice );
 		PersisDataLSManager.setAuthPageUse( 'Y' );
-		if ( paramAuthChoice.indexOf( 'kc_' ) === 0 ) KeycloakLSManager.setKeyCloakUse( 'Y' );
 
 		if ( runFunc ) runFunc();
 	}
@@ -460,8 +451,6 @@ App.param_authChiocePage_DataSet = function( paramName_authPage, paramName_authC
 	{
 		KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
 		PersisDataLSManager.setAuthPageUse( 'Y' );
-		KeycloakLSManager.removeKeyCloakInUse();  // TODO: NOTE!!!
-		//KeycloakLSManager.setKeyCloakUse( '' );  // TODO: Should check if keyCloak is used and logOut if currently used?
 
 		if ( runFunc ) runFunc();
 	}

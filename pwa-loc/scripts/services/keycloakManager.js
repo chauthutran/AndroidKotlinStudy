@@ -16,6 +16,13 @@ KeycloakManager.offlineExpiredInterval;
 // ===================================
 // === NEW KEYCLOAK ============
 
+KeycloakManager.isKeyCloakInUse = function () 
+{
+	var authChoice = KeycloakLSManager.getAuthChoice();
+	return ( authChoice && authChoice.indexOf( 'kc_' ) === 0 ) ? true: false;
+};
+
+
 KeycloakManager.setKeycloakServerUrl = function()
 {
 	KeycloakManager.KEYCLOAK_SERVER_URL = (WsCallManager.isLocalDevCase) ? "http://localhost:8080/" : "https://keycloak.psidigital.org/";
@@ -202,7 +209,7 @@ KeycloakManager.authenticate = function(successFunc, errorFunc)
 	KeycloakManager.setKeycloakServerUrl();
 	var realName = KeycloakLSManager.getAuthChoice().replace("kc_", "").toUpperCase();
 		
-	KeycloakManager.keycloakObj =  new Keycloak({
+	KeycloakManager.keycloakObj = new Keycloak({
 		url: KeycloakManager.KEYCLOAK_SERVER_URL,
 		realm: realName,
 		clientId: 'pwaapp'
