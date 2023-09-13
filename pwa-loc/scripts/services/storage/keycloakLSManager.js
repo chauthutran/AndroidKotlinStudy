@@ -85,12 +85,15 @@ KeycloakLSManager.removeProperty = function (key) {
 };
 
 // ---------------------------------------------
-KeycloakLSManager.removeTokens_LoginDate = function()
+//KeycloakLSManager.removeTokens_LoginDate = function()
+KeycloakLSManager.authOut_DataRemoval_wtTokens = function()
 {
-	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_LOGIN_DATE );
 	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_ACCESS_TOKEN );
 	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_REFRESH_TOKEN );
 	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_ID_TOKEN );
+
+	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_LOGIN_DATE );
+	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_PROCESSING_ACTION );
 };
 
 // --------------------------------------------

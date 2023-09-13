@@ -108,7 +108,7 @@ KeycloakManager.setForm_Online = function()
 	if( processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT )
 	{
 		//KeycloakLSManager.localStorageRemove();
-		KeycloakLSManager.removeTokens_LoginDate();
+		KeycloakLSManager.authOut_DataRemoval_wtTokens();
 	}
 
 	const accessToken =  KeycloakLSManager.getAccessToken();
