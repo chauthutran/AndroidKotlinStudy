@@ -101,6 +101,8 @@ ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
 
 			// Add 'AppInfo' localStorage 'selectOptions'			
 			ConfigManager.combineDefinitionOptions_wtAppInfoOpts( ConfigManager.getConfigJson().definitionOptions, AppInfoLSManager.getSelectOptions() );
+
+			ConfigManager.setKeyCloakOfflineTimeout(); // For Keycloak, KeycloakManager.OFFLINE_TIMEOUT
 		}
 	}
 	catch (errMsg) {
@@ -728,6 +730,21 @@ ConfigManager.getActivitySch_favClickOpen = function () {
 ConfigManager.getSettingFHIR = function () 
 {
 	return ( ConfigManager.getSettings().FHIR ) ? ConfigManager.getSettings().FHIR: {};
+};
+
+ConfigManager.getSettings_KeyCloak = function () 
+{
+	return ( ConfigManager.getSettings().keyCloak ) ? ConfigManager.getSettings().keyCloak: {};
+};
+
+ConfigManager.setKeyCloakOfflineTimeout = function()
+{
+	var offTimeSec = ConfigManager.getSetting_KeyCloak().offlineTimeoutSec;
+
+	if ( offTimeSec ) {
+		KeycloakManager.OFFLINE_TIMEOUT = offTimeSec;
+		console.log( 'KeycloakManager.OFFLINE_TIMEOUT SET by Config: ' + offTimeSec + ' Seconds.' );
+	} 
 };
 
 ConfigManager.getSettingFHIRHeaderProfile = function () 
