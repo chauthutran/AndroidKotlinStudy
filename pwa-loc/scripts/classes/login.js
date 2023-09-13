@@ -142,9 +142,12 @@ function Login() {
 				$( '.divAuthForm' ).hide();
 				me.openLoginForm();	
 
+        // NOTE: CHANGED BY TRAN..
 				if ( authChoice === 'kc_swz_psi' || authChoice === 'kc_swz_psi_dev' ) {
-					$( 'img.imgKeyCloakUse' ).click();
-					KeycloakManager.startUp();
+					// $( 'img.imgKeyCloakUse' ).click();
+					KeycloakLSManager.setKeyCloakUse( 'Y' );
+					// AppUtil.appReloadWtMsg();
+					KeycloakManager.keycloakPart();
 				} 
 				else if ( authChoice === 'dhis2' )
 				{
@@ -374,9 +377,9 @@ function Login() {
 			{
 				DataManager2.deleteAllStorageData(function () 
 				{
-					if ( KeycloakLSManager.isKeyCloakInUse() ) 
+					if ( KeycloakLSManager.getAuthChoice() ) 
 					{
-						KeycloakLSManager.setAuthChoice( '' );
+						KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
 						if ( KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
 					}
 					// NOTE: If keycloak Access case, we will not run below!!!
@@ -465,13 +468,13 @@ function Login() {
 		// keycloak setting..
 		if ( [ 'dev', 'test' ].indexOf( WsCallManager.stageName ) >= 0 )
 		{
-			if ( !KeycloakLSManager.isKeyCloakInUse() )
+			if ( !KeycloakLSManager.getAuthChoice() )
 			{
 				// If emtpy case, show the 'k' button..
 				if ( !AppInfoLSManager.getUserName() ) {
 					//$( 'img.imgKeyCloakUse' ).show().off( 'click' ).click( () => { 
 					$( 'img.imgKeyCloakUse' ).off( 'click' ).click( () => { 
-						KeycloakLSManager.setKeyCloakUse( 'Y' );
+						//KeycloakLSManager.setKeyCloakUse( 'Y' );
 						AppUtil.appReloadWtMsg();	
 					});
 				}
@@ -552,8 +555,8 @@ function Login() {
 		else $( '.divLoginWith' ).hide();
 
 
-		// Also check online status:
-		if ( KeycloakLSManager.isKeyCloakInUse() ) 
+		// Also check online status:  <-- TODO: CHECK THIS!!!!
+		if ( KeycloakLSManager.getAuthChoice() ) 
 		{
 			SessionManager.checkOfflineDataExists( loginUserName, function (dataExists) 
 			{
@@ -902,7 +905,7 @@ function Login() {
 	// New 
 	me.checkKeyCloakPinValid_Online = function(userName, password, returnFunc)
 	{
-		if ( !KeycloakLSManager.isKeyCloakInUse() ) returnFunc( true, 'Not keycloak case' );  // Proceed with OnLing Login
+		if ( !KeycloakLSManager.getAuthChoice() ) returnFunc( true, 'Not keycloak case' );  // Proceed with OnLing Login
 		else
 		{
 			// NEW KeyCloak Case:

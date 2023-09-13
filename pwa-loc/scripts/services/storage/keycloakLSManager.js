@@ -27,10 +27,6 @@ KeycloakLSManager.setKeycloakInfo = function (kcObj) {
 	updatePropertyValue(KeycloakLSManager.KEY_ACCESS_TOKEN, kcObj.token);
 	updatePropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken);
 	updatePropertyValue(KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken);
-	// updatePropertyValue( KeycloakLSManager.KEY_ACCESS_TOKEN_PARSED, JSON.stringify(kcObj.tokenParsed) );
-	// updatePropertyValue( KeycloakLSManager.KEY_REFRESH_TOKEN_PARSED, JSON.stringify(kcObj.refreshTokenParsed) );
-	// updatePropertyValue( KeycloakLSManager.KEY_ID_TOKEN_PARSED, JSON.stringify(kcObj.idTokenParsed) );
-	// updatePropertyValue( KeycloakLSManager.KEY_REALM_NAME, kcObj.realm );
 }
 
 KeycloakLSManager.setProcessingAction = function (value) {
@@ -131,6 +127,7 @@ KeycloakLSManager.getAuthChoice = function()
    return getPropertyValue( KeycloakLSManager.KEY_AUTH_CHOICE );
 };
 
+// REMOVAL METHOD -->  KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
 
 // ---------------------------------------------------------------------------------------------
 // Supportive methods
