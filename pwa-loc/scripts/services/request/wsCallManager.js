@@ -184,7 +184,7 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
     requestOption.fhirPractitionerId = AppInfoLSManager.getFhirPractitionerId(); // If exists, add this
 
     // KeyCloak <-- 
-    if ( KeycloakLSManager.isKeyCloakInUse() ) requestOption.keycloakUserInfo = KeycloakManager.getUserInfo();
+    if ( KeycloakManager.isKeyCloakInUse() ) requestOption.keycloakUserInfo = KeycloakManager.getUserInfo();
 
 
     WsCallManager.requestPostDws( '/PWA.loginCheck', requestOption, loadingTag, function( success, returnJson )

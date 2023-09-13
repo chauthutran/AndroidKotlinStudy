@@ -246,11 +246,7 @@ ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn, optionStr )
 
 	if ( optionStr !== 'startUp' )
 	{
-		var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
-		if( keyCloakInUse )
-		{	
-			KeycloakManager.setForm_Online();
-		}	
+		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.setForm_Online();
 	}
 };
 
@@ -258,11 +254,7 @@ ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn, optionStr )
 {
 	if ( optionStr !== 'startUp' )
 	{
-		var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
-		if( keyCloakInUse )
-		{
-			KeycloakManager.setForm_Offline();
-		}
+		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.setForm_Offline();
 	}
 };
 

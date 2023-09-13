@@ -145,7 +145,7 @@ function Login() {
         // NOTE: CHANGED BY TRAN..
 				if ( authChoice === 'kc_swz_psi' || authChoice === 'kc_swz_psi_dev' ) {
 					// $( 'img.imgKeyCloakUse' ).click();
-					KeycloakLSManager.setKeyCloakUse( 'Y' );
+					// KeycloakLSManager.setKeyCloakUse( 'Y' );
 					// AppUtil.appReloadWtMsg();
 					KeycloakManager.keycloakPart();
 				} 
@@ -469,19 +469,7 @@ function Login() {
 		// keycloak setting..
 		if ( [ 'dev', 'test' ].indexOf( WsCallManager.stageName ) >= 0 )
 		{
-			if ( !KeycloakLSManager.getAuthChoice() )
-			{
-				// If emtpy case, show the 'k' button..
-				if ( !AppInfoLSManager.getUserName() ) {
-					//$( 'img.imgKeyCloakUse' ).show().off( 'click' ).click( () => { 
-					$( 'img.imgKeyCloakUse' ).off( 'click' ).click( () => { 
-						//KeycloakLSManager.setKeyCloakUse( 'Y' );
-						AppUtil.appReloadWtMsg();	
-					});
-				}
-				else $( 'img.imgKeyCloakUse' ).hide();
-			}
-			else
+			if ( KeycloakManager.isKeyCloakInUse() )
 			{
 				// In keycloak use case, display the keyCloak related parts..
 				divUseTag.show();
@@ -491,6 +479,16 @@ function Login() {
 				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
 	
 				// KeycloakManager.displayTokensInfo();
+			}
+			else
+			{
+				// If emtpy case, show the 'k' button..
+				if ( !AppInfoLSManager.getUserName() ) {
+					//$( 'img.imgKeyCloakUse' ).off( 'click' ).click( () => { 
+					//	AppUtil.appReloadWtMsg();	
+					//});
+				}
+				else $( 'img.imgKeyCloakUse' ).hide();
 			}
 		}
 	};
@@ -556,12 +554,13 @@ function Login() {
 		else $( '.divLoginWith' ).hide();
 
 
-		// Also check online status:  <-- TODO: CHECK THIS!!!!
-		if ( KeycloakLSManager.getAuthChoice() ) 
+		// For 'KeyCloack' case, If user data does not exist, set the form for entry.. with pin & confirm
+		// Should be Moved to 'KeyCloakManager'?  As a single method?
+		if ( KeycloakManager.isKeyCloakInUse() ) 
 		{
 			SessionManager.checkOfflineDataExists( loginUserName, function (dataExists) 
 			{
-				if (!dataExists)
+				if ( !dataExists )
 				{
 					me.needToSetPin = true;
 					me.loginBtnTag.hide();
@@ -735,7 +734,7 @@ function Login() {
 		BahmniService.syncDataProcessing = false;	
 		
 		// Remove setTimeout, setInterval to check the Access Token (for ONLINE case) OR Offline Time out (for OFFLINE case)
-		if( KeycloakLSManager.isKeyCloakInUse() )
+		if( KeycloakManager.isKeyCloakInUse() )
 		{
 			KeycloakManager.clearCheckTokenTimeout();
 		}
@@ -912,7 +911,7 @@ function Login() {
 	// New 
 	me.checkKeyCloakPinValid_Online = function(userName, password, returnFunc)
 	{
-		if ( !KeycloakLSManager.getAuthChoice() ) returnFunc( true, 'Not keycloak case' );  // Proceed with OnLing Login
+		if ( !KeycloakManager.isKeyCloakInUse() ) returnFunc( true, 'Not keycloak case' );  // Proceed with OnLing Login
 		else
 		{
 			// NEW KeyCloak Case:
