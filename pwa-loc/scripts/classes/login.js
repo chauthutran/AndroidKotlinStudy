@@ -254,6 +254,7 @@ function Login() {
 					
 					me.clearResetPasswords(me.loginPinDivTag);
 					me.clearResetPasswords(me.loginPinConfirmDivTag);
+					
 					if (!success) $('.pin1').focus();
 
 					$('.pin_pw_loading').hide();
@@ -485,7 +486,7 @@ function Login() {
 				// In keycloak use case, display the keyCloak related parts..
 				divUseTag.show();
 				divKeyCloakInfoTag.show();
-				Login.loginInputDisable( true ); // enable it when authenticated..
+				// Login.loginInputDisable( true ); // enable it when authenticated..
 	
 				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
 	
@@ -731,7 +732,13 @@ function Login() {
 	{
 		AppInfoLSManager.setUserName(userName);
 		SessionManager.setLoginStatus(true);
-		BahmniService.syncDataProcessing = false;		
+		BahmniService.syncDataProcessing = false;	
+		
+		// Remove setTimeout, setInterval to check the Access Token (for ONLINE case) OR Offline Time out (for OFFLINE case)
+		if( KeycloakLSManager.isKeyCloakInUse() )
+		{
+			KeycloakManager.clearCheckTokenTimeout();
+		}
 
 		// gAnalytics Event
 		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
@@ -1207,6 +1214,8 @@ Login.contentHtml = `
 					</div>
 				</div>
 
+				<div id="keycloakMsg" style="font-style: italic; color: #f50b0b;"></div>
+
 			</div>
 		</div>
 				
@@ -1261,6 +1270,7 @@ Login.contentHtml = `
 					<span id="divTokenInfo" style="font-size: 12px; display: none;"></span>
 				</div>
 			</div>
+
 		</div>
 	</div>
 

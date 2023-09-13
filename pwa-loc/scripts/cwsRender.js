@@ -496,14 +496,23 @@ function cwsRender()
 		
 		ScheduleManager.stopSchedules_AfterLogOut();
 
+
 		me.logOutUI();
 
-		// JobAid iFrame close if currently on open state
-		me.jobAid_iFrameClose_WtMsg();
+		if( KeycloakLSManager.isKeyCloakInUse() )
+		{
+			KeycloakManager.keycloakPart();
+		}
+		else
+		{
 
-		SwManager.checkAppUpdate( '[AppUpdateCheck] - logOutProcess', { noMinTimeSkip: true } );
-		
-		SwManager.refreshForNewAppFile_IfAvailable();  // even on offline
+			// JobAid iFrame close if currently on open state
+			me.jobAid_iFrameClose_WtMsg();
+
+			SwManager.checkAppUpdate( '[AppUpdateCheck] - logOutProcess', { noMinTimeSkip: true } );
+			
+			SwManager.refreshForNewAppFile_IfAvailable();  // even on offline
+		}
 	};
 
 	me.logOutUI = function()
