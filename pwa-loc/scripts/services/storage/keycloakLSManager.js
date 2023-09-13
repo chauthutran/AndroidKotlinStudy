@@ -10,6 +10,8 @@ KeycloakLSManager.KEY_REFRESH_TOKEN = 'refreshToken';
 KeycloakLSManager.KEY_ID_TOKEN = 'idToken';
 KeycloakLSManager.KEY_REALM_NAME = 'realmName';
 KeycloakLSManager.KEY_PROCESSING_ACTION = 'processingAction';
+KeycloakLSManager.KEY_KEYCLOCK_USE = "keyClockUse"; 
+
 
 KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT = "logout";
 
@@ -84,14 +86,27 @@ KeycloakLSManager.removeProperty = function (key) {
 };
 
 // --------------------------------------------
-// TODO: NEED TO RELOCATE?  'AppInfoLSManager' used..
+
 KeycloakLSManager.isKeyCloakInUse = function () {
-	return (AppInfoLSManager.getKeyCloakUse() === 'Y');
+	return (KeycloakLSManager.getKeyCloakUse() === 'Y');
 };
 
 KeycloakLSManager.removeKeyCloakInUse = function () {
-	AppInfoLSManager.setKeyCloakUse('');
+	KeycloakLSManager.setKeyCloakUse('');
 };
+
+// TODO: Move entire Keycloak to 'PersisLS' Later(?)
+// -----------------------------
+KeycloakLSManager.getKeyCloakUse = function()
+{
+	return getPropertyValue( KeycloakLSManager.KEY_KEYCLOCK_USE );
+};
+
+KeycloakLSManager.setKeyCloakUse = function( useStrY )
+{
+	updatePropertyValue( KeycloakLSManager.KEY_KEYCLOCK_USE, useStrY );
+};
+
 
 // ---------------------------------------------------------------------------------------------
 // Supportive methods

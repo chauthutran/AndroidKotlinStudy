@@ -347,10 +347,11 @@ DataManager2.saveData_LS_Str = function( key, strData )
 
 DataManager2.deleteAllStorageData = function( callBack ) 
 {
-	//LocalStgMng.clear();
+	// LocalStorage --> delete selected ones only, keep persisLS
 	LocalStgMng.deleteData( DataManager2.StorageName_appInfo );
-	LocalStgMng.deleteData( DataManager2.StorageName_keycloakInfo );
+	//LocalStgMng.deleteData( DataManager2.StorageName_keycloakInfo );
 	
+	// IndexDB - the big main stroage
 	StorageMng.clear( StorageMng.StorageType_IndexedDB, callBack );
 };
 

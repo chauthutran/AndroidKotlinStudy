@@ -39,7 +39,9 @@ App.run = function ()
 	{
 		// After Reload, Saved 'AuthChoice'/'AuthPage' will be used for setting LocalStorage
 		// Call Keycloak logout
-		if ( KeycloakLSManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+
+		// TODO: 'isKeyCloakInUse' & 'getAccessToken' need to be moved to PersisLSData..?
+		// if ( KeycloakLSManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
 
 		DataManager2.deleteAllStorageData( () => 
 		{ 
@@ -431,7 +433,7 @@ App.authChiocePage_DataSet = function()
 	{
 		AppInfoLSManager.setAuthChoice( paramAuthChoice );
 		PersisDataLSManager.setAuthPageUse( 'Y' );
-		if ( paramAuthChoice.indexOf( 'kc_' ) === 0 ) AppInfoLSManager.setKeyCloakUse( 'Y' );
+		if ( paramAuthChoice.indexOf( 'kc_' ) === 0 ) KeycloakLSManager.setKeyCloakUse( 'Y' );
 
 		// Check if there is any token existing in LocalStorage.
 		if( KeycloakLSManager.getAccessToken() != undefined )
@@ -446,7 +448,8 @@ App.authChiocePage_DataSet = function()
 	{
 		AppInfoLSManager.setAuthChoice( '' );
 		PersisDataLSManager.setAuthPageUse( 'Y' );
-		AppInfoLSManager.setKeyCloakUse( '' );  // TODO: Should check if keyCloak is used and logOut if currently used?
+		KeycloakLSManager.removeKeyCloakInUse();  // TODO: NOTE!!!
+		//KeycloakLSManager.setKeyCloakUse( '' );  // TODO: Should check if keyCloak is used and logOut if currently used?
 		
 		// Check if there is any token existing in LocalStorage.
 		if( KeycloakLSManager.getAccessToken() != undefined )

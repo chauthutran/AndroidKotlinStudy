@@ -466,7 +466,7 @@ function Login() {
 				if ( !AppInfoLSManager.getUserName() ) {
 					//$( 'img.imgKeyCloakUse' ).show().off( 'click' ).click( () => { 
 					$( 'img.imgKeyCloakUse' ).off( 'click' ).click( () => { 
-						AppInfoLSManager.setKeyCloakUse( 'Y' );
+						KeycloakLSManager.setKeyCloakUse( 'Y' );
 						AppUtil.appReloadWtMsg();	
 					});
 				}
