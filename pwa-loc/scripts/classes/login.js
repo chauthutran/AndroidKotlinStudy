@@ -142,10 +142,12 @@ function Login() {
 				$( '.divAuthForm' ).hide();
 				me.openLoginForm();	
 
+        // NOTE: CHANGED BY TRAN..
 				if ( authChoice === 'kc_swz_psi' || authChoice === 'kc_swz_psi_dev' ) {
-					$( 'img.imgKeyCloakUse' ).click();
+					// $( 'img.imgKeyCloakUse' ).click();
 					KeycloakLSManager.setKeyCloakUse( 'Y' );
-					KeycloakManager.startUp();
+					// AppUtil.appReloadWtMsg();
+					KeycloakManager.keycloakPart();
 				} 
 				else if ( authChoice === 'dhis2' )
 				{

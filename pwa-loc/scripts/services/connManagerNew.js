@@ -248,12 +248,7 @@ ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn, optionStr )
 	{
 		var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
 		if( keyCloakInUse )
-		{
-			if( !KeycloakManager.isStartedUp )
-			{
-				KeycloakManager.startUp();
-			}
-			
+		{	
 			KeycloakManager.setForm_Online();
 		}	
 	}

@@ -121,7 +121,7 @@ App.startAppProcess = function ()
 
 		// MOVED: KeyCloak Start Object + Param case removal
 		// REQUIRE: KeycloakLSManager.getAuthChoice() ( ALSO can use KeyCloakUse? )
-		if ( KeycloakLSManager.getAuthChoice() ) KeycloakManager.startUp();
+		if ( KeycloakLSManager.getAuthChoice() ) KeycloakManager.clazzInitialSetup();
 
 
 		// --------------------
