@@ -1170,9 +1170,9 @@ Login.contentHtml = `
 
 
 			<!-- CONFIM PIN -->
-			<div class="field pin loginPinConfirmDiv" style="display: none;">
-				<div class="field__label" style="display: none;">
-					<label term="login_password_confirm">CONFIRM</label><span>*</span>
+			<div class="field pin loginPinConfirmDiv" style="display: none; margin-top: -7px;">
+				<div class="field__label">
+					<label term="login_password_confirm">PIN CONFIRM</label><span>*</span>
 				</div>
 				<div class="field__controls">
 					<div class="field__left split_password pin_confirm" style="width: 100%;">
@@ -1234,7 +1234,7 @@ Login.contentHtml = `
 			</select>
 		</div>
 		<div style="margin-top: 10px; ">
-			<span class="spanAuthPageUseNo" title="Disable AuthPageUse" style="color: #AAA; font-weight: bold; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[NA]</span>
+			<span class="spanAuthPageUseNo" title="Disable AuthPageUse" style="color: #AAA; font-weight: bold; opacity: 0.7; cursor: pointer; font-size: 0.85rem; vertical-align: top; margin-left: 3px;">[AuthPage Disable]</span>
 		</div>
 
 	</div>
@@ -1273,16 +1273,12 @@ Login.contentHtml = `
 		</div>
 	</div>
 
-
-		
 	<div id="keycloackConfirmDialog" title="Keycloak Confirm">
 		<p>
 		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
 		<span id="keyclockConfirmMsg"></span>
 		</p>
 	</div>
-
-
 
 </div>
 `;
