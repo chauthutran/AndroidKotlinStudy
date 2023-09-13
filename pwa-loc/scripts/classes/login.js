@@ -1207,13 +1207,6 @@ Login.contentHtml = `
 					</div>
 				</div>
 
-				<div id="btnKeyCloakLogInInForm" class="button h-emphasis button-full_width mouseDown" tabindex="7" style="display: none; border-radius: 20px; background-color: green;">
-					<div class="button__container ">
-						<div class="button-label">keyCloak Login</div>
-					</div>
-				</div>
-				<div id="keycloakMsg" style="font-style: italic; color: #f50b0b;"></div>
-				
 			</div>
 		</div>
 				
@@ -1270,5 +1263,17 @@ Login.contentHtml = `
 			</div>
 		</div>
 	</div>
+
+
+		
+	<div id="keycloackConfirmDialog" title="Keycloak Confirm">
+		<p>
+		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+		<span id="keyclockConfirmMsg"></span>
+		</p>
+	</div>
+
+
+
 </div>
 `;
