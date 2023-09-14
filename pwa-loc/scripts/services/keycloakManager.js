@@ -4,6 +4,7 @@ function KeycloakManager() {};
 
 KeycloakManager.KEYCLOAK_SERVER_URL = "";
 KeycloakManager.OFFLINE_TIMEOUT = 10 * 60; // 10 min, Overwritten by Config 'offlineTimeoutSec'
+
 KeycloakManager.btnKeyCloakLogOutTag;
 KeycloakManager.keycloakMsgTag;
 
@@ -13,7 +14,7 @@ KeycloakManager.accessTokenTimeoutObj;
 KeycloakManager.offlineExpiredInterval;
 
 
-// ===================================
+// =======================================================================================================
 // === NEW KEYCLOAK ============
 
 KeycloakManager.isKeyCloakInUse = function () 
@@ -172,6 +173,8 @@ KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
 
 KeycloakManager.setUpForm_Offline_OfflineTimeValid = function()
 {
+	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
+	
 	clearInterval(KeycloakManager.offlineExpiredInterval);
 
 	KeycloakManager.offlineExpiredInterval = setInterval(() => {
@@ -462,23 +465,4 @@ KeycloakManager.formatOfflineExpiredTime = function()
 	if (seconds < 10) {seconds = "0" + seconds;}
 
 	return { isExpired, hh: hours, mm: minutes, ss: seconds, diffInSeconds: diffTimes };
-}
-
-// ====================================================================================================
-// Suportive methods - Enable/Disable Login form
-
-KeycloakManager.enableLoginForm = function()
-{
-	// Enable the login form
-	$("#loginFormDiv").find(".loginSetPinBtn").on('click').css("background-color", "#F06D24");
-	$("#loginFormDiv").find(".loginBtn").on('click').css("background-color", "#F06D24"); 
-	Login.loginInputDisable( false ); 
-}
-
-KeycloakManager.disableLoginForm = function()
-{
-	// Disable the login form
-	$("#loginFormDiv").find(".loginSetPinBtn").off('click').css("background-color", "#eeeeee");
-	$("#loginFormDiv").find(".loginBtn").off('click').css("background-color", "#eeeeee"); 
-	Login.loginInputDisable( true ); 
 }
