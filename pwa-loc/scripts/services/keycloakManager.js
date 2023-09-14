@@ -164,6 +164,8 @@ KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
 
 KeycloakManager.setUpForm_Offline_OfflineTimeValid = function()
 {
+	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
+	
 	clearInterval(KeycloakManager.offlineExpiredInterval);
 
 	KeycloakManager.offlineExpiredInterval = setInterval(() => {

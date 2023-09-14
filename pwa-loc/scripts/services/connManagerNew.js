@@ -248,7 +248,7 @@ ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn, optionStr )
 	{
 		var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
 		if( keyCloakInUse )
-		{	
+		{	alert("ConnManagerNew.runWhenSwitchedToOnline");
 			KeycloakManager.setForm_Online();
 		}	
 	}
@@ -260,7 +260,7 @@ ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn, optionStr )
 	{
 		var keyCloakInUse = KeycloakLSManager.isKeyCloakInUse();
 		if( keyCloakInUse )
-		{
+		{alert("ConnManagerNew.runWhenSwitchedToOffline");
 			KeycloakManager.setForm_Offline();
 		}
 	}
