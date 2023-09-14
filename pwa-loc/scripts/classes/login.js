@@ -734,7 +734,7 @@ function Login() {
 		BahmniService.syncDataProcessing = false;	
 		
 		// Remove setTimeout, setInterval to check the Access Token (for ONLINE case) OR Offline Time out (for OFFLINE case)
-		if( KeycloakLSManager.isKeyCloakInUse() )
+		if( KeycloakManager.isKeyCloakInUse() )
 		{
 			KeycloakManager.clearCheckTokenTimeout();
 		}
@@ -1273,13 +1273,28 @@ Login.contentHtml = `
 		</div>
 	</div>
 
-
-	<div id="keycloackConfirmDialog" title="Keycloak Confirm">
-		<p>
-		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
-		<span id="keyclockConfirmMsg"></span>
-		</p>
+	<dialog id="keycloackConfirmDialog">
+		<div class="dialog__title"><label class="title">Keycloak Warm</label></div>
+			<div class="dialog__text">
+				<div id="keyclockMsg"></div>
+			</div>
+			<div class="dialog__action">
+				<div id="okBtn" class="button-text primary">
+					<div class="button__container">
+						<div class="button-label">Ok</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
+  </dialog>
+
+	// <div id="keycloackConfirmDialog" title="Keycloak Confirm">
+	// 	<p>
+	// 		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
+	// 		<span id="keyclockConfirmMsg"></span>
+	// 	</p>
+	// </div>
 
 </div>
 `;

@@ -499,7 +499,7 @@ function cwsRender()
 
 		me.logOutUI();
 		
-		if( KeycloakLSManager.isKeyCloakInUse() )
+		if( KeycloakManager.isKeyCloakInUse() )
 		{
 			KeycloakManager.keycloakPart();
 		}
