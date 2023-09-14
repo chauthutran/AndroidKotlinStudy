@@ -76,6 +76,20 @@ KeycloakManager.setUpEvents = function( kcObj )
 	};
 };
 
+KeycloakManager.getStatus_AppMode_Token_OfflineTime = function()
+{
+	var isAppOnline = ConnManagerNew.isAppMode_Online();
+	var isLoginPage = !SessionManager.getLoginStatus();
+
+	var isTokenExist = ( KeycloakManager.getAccessToken() != undefined ) ? true : false;
+	var isTokenValid = ( isTokenExist ) ? KeycloakManager.isAccessTokenExpired() : false;
+
+	var isOfflineTimeExpired = KeycloakManager.formatOfflineExpiredTime().isExpired;
+	
+
+	return{ isAppOnline, isLoginPage, isTokenExist, isTokenValid, isOfflineTimeExpired };
+}
+
 // -------------------------------------------------------------------------------------
 // The Main Authentication Call
 
