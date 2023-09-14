@@ -81,6 +81,7 @@ KeycloakManager.setUpEvents = function( kcObj )
 
 KeycloakManager.keycloakPart = function()
 {
+	KeycloakManager.hideDialog();
 	KeycloakManager.keycloakMsgTag.html("");
 	
 	if(ConnManagerNew.isAppMode_Online()) // ONLINE
@@ -219,7 +220,14 @@ KeycloakManager.setUpForm_Offline_OfflineTimeValid = function()
 
 	KeycloakManager.offlineExpiredInterval = setInterval(() => {
 		var timeInfo = KeycloakManager.formatOfflineExpiredTime();
-		KeycloakManager.keycloakMsgTag.html("Offline login time will expired in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
+		if( timeInfo.isExpired )
+		{
+			KeycloakManager.setUpForm_Offline_OfflineTimeExpired();
+		}
+		else
+		{
+			KeycloakManager.keycloakMsgTag.html("Offline login time will expired in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
+		}
 	}, Util.MS_SEC);
 
 }
@@ -231,6 +239,13 @@ KeycloakManager.showDialog = function( msg, okExecFunc )
 	FormUtil.blockPage();
 	KeycloakManager.dialogTag.show();
 }
+
+KeycloakManager.hideDialog = function()
+{
+	FormUtil.unblockPage()
+	KeycloakManager.dialogTag.hide();
+}
+
 
 KeycloakManager.setUpDialog = function(msg, execFunc)
 {
