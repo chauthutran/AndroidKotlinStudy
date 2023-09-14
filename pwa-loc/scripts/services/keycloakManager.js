@@ -75,6 +75,42 @@ KeycloakManager.setUpEvents = function( kcObj )
 };
 
 // -------------------------------------------------------------------------------------
+// The Main Authentication Call
+
+KeycloakManager.keycloakPart = function()
+{
+	KeycloakManager.keycloakMsgTag.html("");
+	
+	if(ConnManagerNew.isAppMode_Online()) // ONLINE
+	{
+		KeycloakManager.setForm_Online();
+	}
+	else // OFFLINE
+	{
+		KeycloakManager.setForm_Offline();
+	}
+};
+
+KeycloakLSManager.removeOldVersionData = function()
+{
+    var accessToken = localStorage.getItem("accessToken");
+	if( accessToken != null )
+	{
+		localStorage.removeItem("accessToken");
+		localStorage.removeItem("refreshToken");
+		localStorage.removeItem("idToken");
+		localStorage.removeItem("accessTokenParsed");
+		localStorage.removeItem("refreshTokenParsed");
+
+		var accessTokenParsed = KeycloakLSManager.decodeToken(accessToken);
+
+		var logoutUrl = accessTokenParsed.iss + "/protocol/openid-connect/logout";
+		logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
+		window.location.replace(logoutUrl);
+	}
+}
+
+// -------------------------------------------------------------------------------------
 // Set up form with Token/Refresh Token status
 
 /*
@@ -231,7 +267,6 @@ KeycloakManager.authenticate = function(successFunc, errorFunc)
 			KeycloakManager.authenticateFailure();
 		} 
 		else {
-			KeycloakLSManager.setKeycloakInfo( KeycloakManager.keycloakObj );
 			KeycloakManager.authenticateSuccess();
 		}
 
@@ -250,22 +285,22 @@ KeycloakManager.authenticateSuccess = function()
 {
 	KeycloakManager.eventMsg('Authenticated.');
 
-	KeycloakLSManager.setLastLoginDate();
+	// Save tokens in Local Storage
+	KeycloakLSManager.setKeycloakInfo( KeycloakManager.keycloakObj );
 
 	// Save the username info..
 	var userName = KeycloakManager.keycloakObj.tokenParsed.preferred_username;
 	if ( userName ) AppInfoLSManager.setUserName( userName.toUpperCase() );
 	if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
 
-	// Enable the login form
-	$("#loginFormDiv").find(".loginSetPinBtn").on('click').css("background-color", "#F06D24");
-	$("#loginFormDiv").find(".loginBtn").on('click').css("background-color", "#F06D24"); 
-	Login.loginInputDisable( false ); 
-	
+
+	// Turn on the interval to check the Keycloak access token expired
+	KeycloakManager.watchTokenStatus_Online();
+
+	// Show "Logout button" in the bottom
+	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
 
 	MsgManager.msgAreaShowOpt( "Login with Keycloak success !", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
-
-	KeycloakManager.watchTokenStatus_Online();
 }
 
 KeycloakManager.authenticateFailure = function()
@@ -294,67 +329,6 @@ KeycloakManager.watchTokenStatus_Online = function()
 	}
 }
 
-
-// KeycloakManager.watchTokenStatus = function()
-// {
-// 	KeycloakManager.clearCheckTokenTimeout();
-
-// 	if( ConnManagerNew.isAppMode_Online() ) // ONLINE
-// 	{
-// 		const accessTokenParsed = KeycloakLSManager.getAccessTokenParsed();
-// 		if( accessTokenParsed != null )
-// 		{
-// 			var accessTokenExpiredSeconds = KeycloakManager.getTokenExpiredInMiniseconds( accessTokenParsed );
-// 			if( accessTokenExpiredSeconds != undefined && accessTokenExpiredSeconds > 0 )
-// 			{
-// 				KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
-// 					KeycloakManager.showDialog_Online_AccessTokenExpired();
-// 				}, accessTokenExpiredSeconds);
-// 			}
-// 		}
-// 	}
-// 	else // OFFLINE
-// 	{
-// 		KeycloakManager.setForm_Offline();
-// 	}
-// }
-
-
-// -------------------------------------------------------------------------------------
-// The Main Authentication Call
-
-KeycloakManager.keycloakPart = function()
-{
-	KeycloakManager.keycloakMsgTag.html("");
-	
-	if(ConnManagerNew.isAppMode_Online()) // ONLINE
-	{
-		KeycloakManager.setForm_Online();
-	}
-	else // OFFLINE
-	{
-		KeycloakManager.setForm_Offline();
-	}
-};
-
-KeycloakLSManager.removeOldVersionData = function()
-{
-    var accessToken = localStorage.getItem("accessToken");
-	if( accessToken != null )
-	{
-		localStorage.removeItem("accessToken");
-		localStorage.removeItem("refreshToken");
-		localStorage.removeItem("idToken");
-		localStorage.removeItem("accessTokenParsed");
-		localStorage.removeItem("refreshTokenParsed");
-
-		var accessTokenParsed = KeycloakLSManager.decodeToken(accessToken);
-
-		var logoutUrl = accessTokenParsed.iss + "/protocol/openid-connect/logout";
-		logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
-		window.location.replace(logoutUrl);
-	}
-}
 
 // After logout, PWA App is redirected.
 // --> The localStorage is removed 

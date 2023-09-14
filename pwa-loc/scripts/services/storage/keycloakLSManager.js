@@ -18,11 +18,8 @@ KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT = "logout";
 
 // ---------------------------------------------------------------------------------------------
 
-KeycloakLSManager.setLastLoginDate = function () {
-	updatePropertyValue(KeycloakLSManager.KEY_LOGIN_DATE, UtilDate.dateStr("DATETIME"));
-}
-
 KeycloakLSManager.setKeycloakInfo = function (kcObj) {
+	updatePropertyValue(KeycloakLSManager.KEY_LOGIN_DATE, UtilDate.dateStr("DATETIME"));
 	updatePropertyValue(KeycloakLSManager.KEY_LOGIN_DATE, UtilDate.dateStr("DATETIME"));
 	updatePropertyValue(KeycloakLSManager.KEY_ACCESS_TOKEN, kcObj.token);
 	updatePropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken);
