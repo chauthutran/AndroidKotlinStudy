@@ -315,7 +315,11 @@ BahmniService.syncDataRun = function ( option )
 				{
 					var clientList = responseBahmniData.data;
 					var clientDwnLength = clientList.length;
-	
+
+					// TODO: NEW: Eval on downloaded Clients
+					BahmniService.syncDownStepsEval( "syncDownStepsEval_OnDownClients", { downClientList: clientList } );
+
+
 					BahmniMsgManager.SyncMsg_InsertMsg("Bahmni SyncDown Finished.  Merging " + clientDwnLength + " Patients..." );
 	
 					// Download Down, Stop the SyncIconRotation
@@ -596,11 +600,13 @@ BahmniService.syncDownStepsEval = function( syncDownName, option )
 			INFO.patientId = option.patientId;
 			INFO.appointmentActivity = option.appointmentActivity;
 		}	
-		else if ( syncDownName === "syncDownStepsEval_OnFinal_ClientMerge" )
+		else if ( syncDownName === "syncDownStepsEval_OnDownClients" )
 		{
-	
+			INFO.downClientList = option.downClientList;
 		}	
+		else if ( syncDownName === "syncDownStepsEval_OnFinal_ClientMerge" ) { }	
 	
+
 		try 
 		{
 			var evalStr = ConfigManager.getSettingsBahmni()[ syncDownName ];
