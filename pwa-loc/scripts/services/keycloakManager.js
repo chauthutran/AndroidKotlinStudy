@@ -2,7 +2,6 @@ function KeycloakManager() {};
 
 // NOTE: Manual Offline Expire -->  KeycloakManager.setUpForm_Offline_OfflineTimeExpired();
 
-KeycloakManager.KEYCLOAK_SERVER_URL = "";
 KeycloakManager.OFFLINE_TIMEOUT = 10 * 60; // 10 min, Overwritten by Config 'offlineTimeoutSec'
 
 KeycloakManager.btnKeyCloakLogOutTag;
@@ -25,9 +24,9 @@ KeycloakManager.isKeyCloakInUse = function ()
 };
 
 
-KeycloakManager.setKeycloakServerUrl = function()
+KeycloakManager.getKeycloakServerUrl = function()
 {
-	KeycloakManager.KEYCLOAK_SERVER_URL = (WsCallManager.isLocalDevCase) ? "http://localhost:8080/" : "https://keycloak.psidigital.org/";
+	return (WsCallManager.isLocalDevCase) ? "http://localhost:8080/" : "https://keycloak.psidigital.org/";
 }
 
 KeycloakManager.clazzInitialSetup = function()
@@ -35,8 +34,6 @@ KeycloakManager.clazzInitialSetup = function()
 	KeycloakManager.btnKeyCloakLogOutTag = $('#btnKeyCloakLogOut');
 	KeycloakManager.keycloakMsgTag = $("#keycloakMsg");
 	KeycloakManager.dialogTag = $("#keycloackConfirmDialog");
-
-	KeycloakManager.setKeycloakServerUrl();
 };
 
 KeycloakManager.setUpEvents = function( kcObj ) 
@@ -81,13 +78,15 @@ KeycloakManager.getStatus_AppMode_Token_OfflineTime = function()
 	var isAppOnline = ConnManagerNew.isAppMode_Online();
 	var isLoginPage = !SessionManager.getLoginStatus();
 
-	var isTokenExist = ( KeycloakManager.getAccessToken() != undefined ) ? true : false;
-	var isTokenValid = ( isTokenExist ) ? KeycloakManager.isAccessTokenExpired() : false;
+	var isKeycloakAuth = ( KeycloakLSManager.getAccessToken() != undefined ) ? true : false;
+	var isTokenValid = ( isKeycloakAuth ) ? !KeycloakManager.isAccessTokenExpired() : undefined;
 
-	var isOfflineTimeExpired = KeycloakManager.formatOfflineExpiredTime().isExpired;
+	var hasProcessingAction =( KeycloakLSManager.getProcessingAction() != undefined );
+
+	var isOfflineTimeValid = !KeycloakManager.formatOfflineExpiredTime().isExpired;
 	
 
-	return{ isAppOnline, isLoginPage, isTokenExist, isTokenValid, isOfflineTimeExpired };
+	return{ isAppOnline, isLoginPage, isKeycloakAuth, isTokenValid, isOfflineTimeValid, hasProcessingAction };
 }
 
 // -------------------------------------------------------------------------------------
@@ -98,34 +97,17 @@ KeycloakManager.keycloakPart = function()
 	KeycloakManager.hideDialog();
 	KeycloakManager.keycloakMsgTag.html("");
 	
-	if(ConnManagerNew.isAppMode_Online()) // ONLINE
+	var status = KeycloakManager.getStatus_AppMode_Token_OfflineTime();
+	if(status.isAppOnline) // ONLINE
 	{
-		KeycloakManager.setForm_Online();
+		KeycloakManager.setLoginForm_Online();
 	}
 	else // OFFLINE
 	{
-		KeycloakManager.setForm_Offline();
+		KeycloakManager.setLoginForm_Offline();
 	}
 };
 
-KeycloakLSManager.removeOldVersionData = function()
-{
-    var accessToken = localStorage.getItem("accessToken");
-	if( accessToken != null )
-	{
-		localStorage.removeItem("accessToken");
-		localStorage.removeItem("refreshToken");
-		localStorage.removeItem("idToken");
-		localStorage.removeItem("accessTokenParsed");
-		localStorage.removeItem("refreshTokenParsed");
-
-		var accessTokenParsed = KeycloakLSManager.decodeToken(accessToken);
-
-		var logoutUrl = accessTokenParsed.iss + "/protocol/openid-connect/logout";
-		logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
-		window.location.replace(logoutUrl);
-	}
-}
 
 // -------------------------------------------------------------------------------------
 // Set up form with Token/Refresh Token status
@@ -138,100 +120,158 @@ KeycloakManager.checkAccessTokenStatus( (isValid, ---) => {
 */
 
 
-KeycloakManager.setForm_Online = function()
+KeycloakManager.setLoginForm_Online = function()
 {	
-	const processingAction = KeycloakLSManager.getProcessingAction();
-	if( processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT )
+	clearInterval( KeycloakManager.offlineExpiredInterval );
+
+	var appStatus = KeycloakManager.getStatus_AppMode_Token_OfflineTime();
+
+	if( appStatus.hasProcessingAction )
 	{
+		// Remove tokens and information related
 		KeycloakLSManager.authOut_DataRemoval_wtTokens();
+
+		// Authenticate Keycloak
+		KeycloakManager.authenticate();
 	}
-
-	const accessToken =  KeycloakLSManager.getAccessToken();
-	if( accessToken != undefined )
+	else if( !appStatus.isKeycloakAuth )
 	{
-		if( KeycloakManager.isTokenValid() )
+		KeycloakManager.authenticate();
+	}
+	else
+	{
+		if( appStatus.isTokenValid )
 		{
-			KeycloakManager.watchTokenStatus_Online();
+			KeycloakManager.startWatchTokenStatusExpired();
 
-			// Show the "Keyclock logout" button in the bottom
+			// Enable the "Keyclock logout" button in the bottom
 			KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
 		}
 		else
 		{
-			clearInterval( KeycloakManager.accessTokenTimeoutObj);
-			KeycloakManager.showDialog_Online_AccessTokenExpired();
+			KeycloakManager.stopWatchTokenStatusExpired_SetUpLoginForm();
+			
+			// clearInterval( KeycloakManager.accessTokenTimeoutObj);
+
+			// // Enable the "Keyclock logout" button in the bottom
+			// KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
+
+			// // Show dialog to inform use that "The keyclock token expired." to force users to login to Keycloak again.
+			// KeycloakManager.showDialog("The Token is expired. Please login again.", KeycloakManager.tokenLogout);
 		}
 	}
-	else
-	{
-		KeycloakManager.authenticate(function(auth){
-			// if success, 
+	
+	// // const processingAction = KeycloakLSManager.getProcessingAction();
+	// if( processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT )
+	// {
+	// 	KeycloakLSManager.authOut_DataRemoval_wtTokens();
+	// }
 
-			// // Turn on the interval to check the Keycloak access token expired
-			// KeycloakManager.watchTokenStatus_Online();
+	// const accessToken =  KeycloakLSManager.getAccessToken();
+	// if( accessToken != undefined )
+	// {
+	// 	if( KeycloakManager.isTokenValid() )
+	// 	{
+	// 		KeycloakManager.startWatchTokenStatusExpired();
 
-			// // Show "Logout button" in the bottom
-			// KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
-		});
-	}
+	// 		// Show the "Keyclock logout" button in the bottom
+	// 		KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
+	// 	}
+	// 	else
+	// 	{
+	// 		clearInterval( KeycloakManager.accessTokenTimeoutObj);
+	// 		KeycloakManager.showDialog_Online_AccessTokenExpired();
+	// 	}
+	// }
+	// else
+	// {
+	// 	KeycloakManager.authenticate(function(auth){
+	// 		// if success, 
+
+	// 		// // Turn on the interval to check the Keycloak access token expired
+	// 		// KeycloakManager.startWatchTokenStatusExpired();
+
+	// 		// // Show "Logout button" in the bottom
+	// 		// KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
+	// 	});
+	// }
 }
 
-KeycloakManager.setForm_Offline = function()
+KeycloakManager.setLoginForm_Offline = function()
 {	
-	const accessToken = KeycloakLSManager.getAccessToken();
-	if( accessToken != undefined )
+	clearTimeout( KeycloakManager.accessTokenTimeoutObj );
+
+	var appStatus = KeycloakManager.getStatus_AppMode_Token_OfflineTime();
+	if( appStatus.isKeycloakAuth )
 	{
-		var offlineExpiredTimeInfo = KeycloakManager.formatOfflineExpiredTime();
-		if( offlineExpiredTimeInfo.isExpired )
+		if( appStatus.isOfflineTimeValid )
 		{
-			KeycloakManager.setUpForm_Offline_OfflineTimeExpired();
+			// Disabled the "Logout button"
+			KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
+		
+			// Start interval time to show the offline expired time left.
+			// Also check if the oflline time expires
+			KeycloakManager.startWatchOfflineTimeExpired();
 		}
 		else
 		{
-			KeycloakManager.setUpForm_Offline_OfflineTimeValid();
+			KeycloakManager.setUpForm_Offline_OfflineTimeExpired();
+
+			// KeycloakManager.stopWatchOfflineTimeExpired();
+
+			// // Show, but disabled "Keycloak" buttons related 
+			// KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
+					
+			// var msg = ( appStatus.isTokenValid()) ? "Offline login time expired" : "The keyclock token expired. Please login again when it is online";
+			// MsgManager.msgAreaShowOpt( msg, { cssClasses: 'notifDark', hideTimeMs: 180000 } );
 		}
 	}
-	else
-	{
-		// KeycloakManager.showDialog_WithoutButton("Please connect internet to login in the first time.");
-		KeycloakManager.showDialog("Please connect internet to login in the first time.");
-	}
+	// const accessToken = KeycloakLSManager.getAccessToken();
+	// if( accessToken != undefined )
+	// {
+	// 	var offlineExpiredTimeInfo = KeycloakManager.formatOfflineExpiredTime();
+	// 	if( offlineExpiredTimeInfo.isExpired )
+	// 	{
+	// 		KeycloakManager.setUpForm_Offline_OfflineTimeExpired();
+	// 	}
+	// 	else
+	// 	{
+	// 		KeycloakManager.setUpForm_Offline_OfflineTimeValid();
+	// 	}
+	// }
+	// else
+	// {
+	// 	KeycloakManager.showDialog("Please connect internet to login in the first time.");
+	// }
 }
 
 
-
-KeycloakManager.showDialog_Online_AccessTokenExpired = function()
+KeycloakManager.startWatchTokenStatusExpired = function()
 {
+	var accessTokenParsed = KeycloakLSManager.getAccessTokenParsed();
+	var accessTokenExpiredSeconds = KeycloakManager.getTokenExpiredInMiniseconds( accessTokenParsed );
+	if( accessTokenExpiredSeconds != undefined && accessTokenExpiredSeconds > 0 )
+	{
+		KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
+			KeycloakManager.stopWatchTokenStatusExpired_SetUpLoginForm();
+		}, accessTokenExpiredSeconds);
+	}
+}
+
+KeycloakManager.stopWatchTokenStatusExpired_SetUpLoginForm = function()
+{
+	// Clear the checking token timeout
+	clearInterval( KeycloakManager.accessTokenTimeoutObj);
+
+	// Disabled the "Keyclock logout" button in the bottom
+	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
+
 	// Show dialog to inform use that "The keyclock token expired." to force users to login to Keycloak again.
 	KeycloakManager.showDialog("The Token is expired. Please login again.", KeycloakManager.tokenLogout);
 }
 
-KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
+KeycloakManager.startWatchOfflineTimeExpired = function()
 {
-	clearInterval(KeycloakManager.offlineExpiredInterval);
-
-	// Show, but disabled "Keycloak" buttons related 
-	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
-
-	if( KeycloakManager.isTokenValid())
-	{
-		KeycloakManager.keycloakMsgTag.html("Offline login time expired.");
- 
-		KeycloakManager.eventMsg('Offline login time expired. The expired time is set in ' + (KeycloakManager.OFFLINE_TIMEOUT/60) + ' minutes');
-		MsgManager.msgAreaShowOpt( "Offline login time expired. Please login again when it is online.", { cssClasses: 'notifDark', hideTimeMs: 180000 } );	
-	}
-	else
-	{
-		KeycloakManager.keycloakMsgTag.html("The keyclock token expired. Please login again when it is online");
-	}
-}
-
-KeycloakManager.setUpForm_Offline_OfflineTimeValid = function()
-{
-	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
-	
-	clearInterval(KeycloakManager.offlineExpiredInterval);
-
 	KeycloakManager.offlineExpiredInterval = setInterval(() => {
 		var timeInfo = KeycloakManager.formatOfflineExpiredTime();
 		if( timeInfo.isExpired )
@@ -243,60 +283,55 @@ KeycloakManager.setUpForm_Offline_OfflineTimeValid = function()
 			KeycloakManager.keycloakMsgTag.html("Offline login time will expired in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
 		}
 	}, Util.MS_SEC);
-
 }
 
-KeycloakManager.showDialog = function( msg, okExecFunc )
+KeycloakManager.stopWatchOfflineTimeExpired = function()
 {
-	KeycloakManager.setUpDialog(msg, okExecFunc);
-	
-	FormUtil.blockPage();
-	KeycloakManager.dialogTag.show();
+	clearInterval(KeycloakManager.offlineExpiredInterval);
 }
 
-KeycloakManager.hideDialog = function()
-{
-	FormUtil.unblockPage()
-	KeycloakManager.dialogTag.hide();
+// KeycloakManager.showDialog_Online_AccessTokenExpired = function()
+// {
+// 	// Show dialog to inform use that "The keyclock token expired." to force users to login to Keycloak again.
+// 	KeycloakManager.showDialog("The Token is expired. Please login again.", KeycloakManager.tokenLogout);
+// }
+
+KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
+{ 
+	KeycloakManager.stopWatchOfflineTimeExpired();
+
+	// Show, but disabled "Keycloak" buttons related 
+	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
+			
+	// Show message
+	var appStatus = KeycloakManager.getStatus_AppMode_Token_OfflineTime();
+	var msg = ( appStatus.isTokenValid) ? "Offline login time expired" : "The keyclock token expired. Please login again when it is online";
+	KeycloakManager.keycloakMsgTag.html(msg);
+	MsgManager.msgAreaShowOpt( msg, { cssClasses: 'notifDark', hideTimeMs: 2000 } );
 }
-
-
-KeycloakManager.setUpDialog = function(msg, execFunc)
-{
-	KeycloakManager.dialogTag.find("#keyclockMsg").html( msg );
-	var okBtnTag = KeycloakManager.dialogTag.find("#okBtn");
-
-	if( execFunc )
-	{
-		okBtnTag.show().off("click").click( () => { 
-			execFunc();
-		});
-	}
-	else
-	{
-		okBtnTag.hide();
-	}
-	
-}
-
-
 
 // -------------------------------------------------------------------------------------
 // Authenticate the keycloak client/Login
 
 KeycloakManager.authenticate = function(successFunc, errorFunc)
 {
-	KeycloakManager.setKeycloakServerUrl();
-	var realName = KeycloakLSManager.getAuthChoice().replace("kc_", "").toUpperCase();
-		
+	// Set the KeycloakServerUrl
+	var keycloackServerUrl = KeycloakManager.getKeycloakServerUrl();
+
+	// Get the realmName
+	var realmName = KeycloakLSManager.getAuthChoice().replace("kc_", "").toUpperCase();
+
+	// Create Keycloak Object
 	KeycloakManager.keycloakObj = new Keycloak({
-		url: KeycloakManager.KEYCLOAK_SERVER_URL,
-		realm: realName,
+		url: keycloackServerUrl,
+		realm: realmName,
 		clientId: 'pwaapp'
 	});
 
+	// Set up events for Keycloack Object
 	KeycloakManager.setUpEvents( KeycloakManager.keycloakObj );
 
+	// Authenticate
 	KeycloakManager.keycloakObj.init({ 
 		onLoad: 'login-required', 
 		checkLoginIframe: false, 
@@ -309,9 +344,10 @@ KeycloakManager.authenticate = function(successFunc, errorFunc)
 		} 
 		else {
 			KeycloakManager.authenticateSuccess();
+			if( successFunc) successFunc( authenticated );
 		}
 
-		if( successFunc) successFunc( authenticated );
+		// if( successFunc) successFunc( authenticated );
 	})
 	.catch(function( errMsg ) {
 		// This fail because of the "Offline user session not found" ( resfeshToken is expired ).
@@ -334,9 +370,8 @@ KeycloakManager.authenticateSuccess = function()
 	if ( userName ) AppInfoLSManager.setUserName( userName.toUpperCase() );
 	if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
 
-
 	// Turn on the interval to check the Keycloak access token expired
-	KeycloakManager.watchTokenStatus_Online();
+	KeycloakManager.startWatchTokenStatusExpired();
 
 	// Show "Logout button" in the bottom
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
@@ -347,27 +382,6 @@ KeycloakManager.authenticateSuccess = function()
 KeycloakManager.authenticateFailure = function()
 {
 	KeycloakManager.eventMsg('Login with Keycloak failure.');
-}
-
-// ---------------------------------------------------------------------------
-// Keycloak token status
-
-KeycloakManager.watchTokenStatus_Online = function()
-{
-	const accessTokenParsed = KeycloakLSManager.getAccessTokenParsed();
-	if( accessTokenParsed != null )
-	{
-		clearTimeout( KeycloakManager.accessTokenTimeoutObj );
-
-		var accessTokenExpiredSeconds = KeycloakManager.getTokenExpiredInMiniseconds( accessTokenParsed );
-		if( accessTokenExpiredSeconds != undefined && accessTokenExpiredSeconds > 0 )
-		{
-			KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
-				// Show dialog to inform use that "The keyclock token expired." to force users to login to Keycloak again.
-				KeycloakManager.showDialog("The Token is expired. Please login again.", KeycloakManager.tokenLogout);
-			}, accessTokenExpiredSeconds);
-		}
-	}
 }
 
 
@@ -480,4 +494,38 @@ KeycloakManager.formatOfflineExpiredTime = function()
 	if (seconds < 10) {seconds = "0" + seconds;}
 
 	return { isExpired, hh: hours, mm: minutes, ss: seconds, diffInSeconds: diffTimes };
+}
+
+
+KeycloakManager.showDialog = function( msg, okExecFunc )
+{
+	KeycloakManager.setUpDialog(msg, okExecFunc);
+	
+	FormUtil.blockPage();
+	KeycloakManager.dialogTag.show();
+}
+
+KeycloakManager.hideDialog = function()
+{
+	FormUtil.unblockPage()
+	KeycloakManager.dialogTag.hide();
+}
+
+
+KeycloakManager.setUpDialog = function(msg, execFunc)
+{
+	KeycloakManager.dialogTag.find("#keyclockMsg").html( msg );
+	var okBtnTag = KeycloakManager.dialogTag.find("#okBtn");
+
+	if( execFunc )
+	{
+		okBtnTag.show().off("click").click( () => { 
+			execFunc();
+		});
+	}
+	else
+	{
+		okBtnTag.hide();
+	}
+	
 }

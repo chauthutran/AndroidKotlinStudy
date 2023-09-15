@@ -1274,7 +1274,7 @@ Login.contentHtml = `
 	</div>
 
 	<dialog id="keycloackConfirmDialog">
-		<div class="dialog__title"><label class="title">Keycloak Warm</label></div>
+		<div class="dialog__title"><label class="title">Keycloak Warning</label></div>
 			<div class="dialog__text">
 				<div id="keyclockMsg"></div>
 			</div>
