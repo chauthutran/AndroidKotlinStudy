@@ -58,6 +58,8 @@ KeycloakManager.setUpEvents = function( kcObj )
 	}
     kcObj.onAuthLogout = () => {
 		KeycloakManager.eventMsg('Auth Logout');
+		// This function called when the refreshToken expires OR when the user is disabled, ....
+		KeycloakLSManager.setProcessingAction(KeycloakLSManager.KEY_PROCESSING_ACTION_USER_DISBLED);
 	}
     kcObj.onTokenExpired = () => {
 		KeycloakManager.eventMsg('Token is expired.');
@@ -84,12 +86,12 @@ KeycloakManager.getStatus_AppMode_Token_OfflineTime = function()
 	var isAccessTokenValid = ( isKeycloakAuth ) ? !KeycloakManager.isAccessTokenExpired() : undefined;
 	var isRefreshTokenValid = ( isKeycloakAuth ) ? !KeycloakManager.isRefreshTokenExpired() : undefined;
 
-	var hasProcessingAction =( KeycloakLSManager.getProcessingAction() != undefined );
+	var processingAction = KeycloakLSManager.getProcessingAction();
 
 	var isOfflineTimeValid = !KeycloakManager.formatOfflineExpiredTime().isExpired;
 	
 
-	return{ isAppOnline, isLoginPage, isKeycloakAuth, isAccessTokenValid, isRefreshTokenValid, isOfflineTimeValid, hasProcessingAction };
+	return{ isAppOnline, isLoginPage, isKeycloakAuth, isAccessTokenValid, isRefreshTokenValid, isOfflineTimeValid, processingAction };
 }
 
 KeycloakManager.updateToken = function()
@@ -129,17 +131,22 @@ KeycloakManager.keycloakPart = function()
 KeycloakManager.checkAccessTokenStatus( (isValid, ---) => {
 	if ( -- ) KeycloakManager.setLoginForm( 'acc' )}
 	if ( !isValid ) KeycloakManager.authenticate_WithoutToken( );
-});
+});    
 */
 
 
 KeycloakManager.setLoginForm_Online = function()
 {	
 	clearInterval( KeycloakManager.offlineExpiredInterval );
+	KeycloakManager.hideDialog(); // In case we have any dialog was shown when it is offline
 
 	var appStatus = KeycloakManager.getStatus_AppMode_Token_OfflineTime();
 
-	if( appStatus.hasProcessingAction )
+	if( appStatus.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_USER_DISBLED )
+	{
+		KeycloakManager.showDialog("This user is disabled. You can still work in offline mode. Please contact the admin for more details.")
+	}
+	else if( appStatus.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT )
 	{
 		// Remove tokens and information related
 		KeycloakLSManager.authOut_DataRemoval_wtTokens();
@@ -181,6 +188,8 @@ KeycloakManager.setLoginForm_Offline = function()
 	clearTimeout( KeycloakManager.refreshTokenTimeoutObj );
 
 	var appStatus = KeycloakManager.getStatus_AppMode_Token_OfflineTime();
+	KeycloakManager.hideDialog(); // In case we have any dialog was shown when it is online
+
 	if( appStatus.isKeycloakAuth )
 	{
 		if( appStatus.isOfflineTimeValid )
@@ -351,7 +360,7 @@ KeycloakManager.authenticate_WithToken = function(successFunc, errorFunc)
 	KeycloakManager.createKeycloakObj_Events();
 
 	KeycloakManager.keycloakObj.init({
-		onLoad: "login-required", // "check-sso"
+		onLoad: "check-sso", // "check-sso", "login-required"
 		checkLoginIframe: false,
 		token: accessToken,
 		refreshToken: refreshToken,
@@ -380,9 +389,11 @@ KeycloakManager.authenticate_WithToken = function(successFunc, errorFunc)
 KeycloakManager.authenticateSuccess = function()
 {
 	KeycloakManager.eventMsg('Authenticated.');
+	KeycloakLSManager.setProcessingAction("");
 
 	// Save tokens in Local Storage
 	KeycloakLSManager.setKeycloakInfo( KeycloakManager.keycloakObj );
+
 	// Turn on the interval to check the Keycloak access token expired
 	KeycloakManager.restartWatchTokenStatusExpired();
 
