@@ -213,7 +213,6 @@ KeycloakManager.restartWatchTokenStatusExpired = function()
 	if( accessTokenExpiredSeconds != undefined && accessTokenExpiredSeconds > 0 )
 	{
 		KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
-			// KeycloakManager.stopWatchTokenStatusExpired_SetUpLoginForm();
 
 			clearTimeout(KeycloakManager.accessTokenTimeoutObj);
 			clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
@@ -325,6 +324,7 @@ KeycloakManager.authenticate_WithoutToken = function(successFunc, errorFunc)
 			KeycloakManager.authenticateFailure();
 		} 
 		else {
+			MsgManager.msgAreaShowOpt( "Login with Keycloak success !", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
 			KeycloakManager.authenticateSuccess();
 
 			if( successFunc) successFunc( authenticated );
@@ -393,8 +393,6 @@ KeycloakManager.authenticateSuccess = function()
 
 	// Show "Logout button" in the bottom
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
-
-	MsgManager.msgAreaShowOpt( "Login with Keycloak success !", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
 }
 
 KeycloakManager.authenticateFailure = function()
