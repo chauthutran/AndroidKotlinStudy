@@ -201,6 +201,26 @@ Util.getArrayFromObjMap = function (objMapJson) {
 	Util.convertObjMapToArray(objMapJson);
 };
 
+Util.getJsonPropVal = function( objJson, name, option )
+{
+	var val = '';
+	if ( !option ) option = {};
+
+	try
+	{
+		if ( name && objJson && objJson[name] ) val = objJson[ name ];
+
+		if ( !val )
+		{
+			if ( option.defaultVal ) val = option.defaultVal;
+			else if ( option.defaultProp && objJson && objJson[ option.defaultProp ] ) val = objJson[ option.defaultProp ];
+		}
+	}
+	catch( errMsg ) { console.log( 'ERROR in Util.getJsonPropVal, ' + errMsg ); }
+
+	return val;
+};
+
 // ----------------------------------
 // Array Operation Related
 
