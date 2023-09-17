@@ -447,9 +447,11 @@ Util.copyProperties = function (source, dest, option) {
 	{
 		if ( source && dest )
 		{
-			var exceptions = (option && option.exceptions && Util.isTypeObject(option.exceptions)) ? option.exceptions : {};
-			var exceptionCustom = (option && option.exceptionCustom && Util.isTypeObject(option.exceptionCustom)) ? option.exceptionCustom : {};
-			var consoleLog = (option && option.consoleLog) ? option.consoleLog : false;
+			if ( !option ) option = {};
+
+			var exceptions = ( option.exceptions && Util.isTypeObject(option.exceptions)) ? option.exceptions : {};
+			var exceptionCustom = ( option.exceptionCustom && Util.isTypeObject(option.exceptionCustom)) ? option.exceptionCustom : {};
+			var consoleLog = ( option.consoleLog ) ? option.consoleLog : false;
 	
 			for (var key in source) 
 			{
@@ -457,7 +459,12 @@ Util.copyProperties = function (source, dest, option) {
 	
 				if ( exceptions[key] ) { }
 				else if ( exceptionCustom.nameBeginWith && key.indexOf( exceptionCustom.nameBeginWith ) === 0 ) { }
-				else dest[key] = source[key];
+				else {
+					if ( option.noOverwrite ) {  
+						if ( dest[key] === undefined ) dest[key] = source[key];
+					}
+					else dest[key] = source[key];
+				}
 			}	
 		}
 	}
@@ -965,6 +972,17 @@ Util.getCombinedArrays = function (arr1, arr2) {
 	return combinedArr;
 };
 
+Util.mergeArrayUnique = function ( arr1, arr2 )
+{
+	// returns new array with combined
+	if ( !arr1 ) arr1 = [];
+	if ( !arr2 ) arr2 = [];
+
+	return arr1.concat(arr2.filter(function (item) {
+		 return arr1.indexOf(item) === -1;
+	}));
+};
+
 Util.mergeJson = function (destObj, srcObj) {
 	if (srcObj) {
 		for (var key in srcObj) {
@@ -975,7 +993,10 @@ Util.mergeJson = function (destObj, srcObj) {
 	return destObj;
 };
 
-Util.mergeDeep = function (dest, obj, option) {
+Util.mergeDeep = function (dest, obj, option) 
+{
+	if ( !option ) option = {};
+
 	Object.keys(obj).forEach(key => {
 
 		var dVal = dest[key];

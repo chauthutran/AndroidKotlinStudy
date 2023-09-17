@@ -792,6 +792,7 @@ ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, pay
 			ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, actionJson, blockPassingData
 			, function( activity, client ) {
 				activity.subSyncStatus = BahmniService.readyToMongoSync;
+				if ( apptAct.originalData ) activity.originalData =  apptAct.originalData;
 				ClientDataManager.saveCurrent_ClientsStore(); // Rather than this, Save the data in Config called place?
 			});
 		}	
@@ -805,7 +806,7 @@ ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, pay
 ActivityDataManager.createActivity_BahmniClientUpdate = function( clientId, payloadTemplates, option )
 {
 	if ( !option ) option = {};
-	
+
 	var client = ClientDataManager.getClientById( clientId);	
 
 	if ( !client ) {

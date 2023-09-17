@@ -1001,12 +1001,18 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 	{
 		// MongoBahmniCase --> Check the 'activityJson_Orig.subSyncStatus' === 
 		var successCaseName = '';
+		var subSyncStatus = '';
 
 		if ( success && responseJson )
 		{
 			if ( responseJson.response && responseJson.response.resourceType === 'Bundle' && responseJson.response.entry ) successCaseName = 'fhirSyncSuccess';
-			else if ( responseJson.status === Constants.ws_status_success && activityJson_Orig.subSourceType === BahmniService.BAHMNI_KEYWORD ) {
-				if ( activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync ) successCaseName = 'mongoSyncSuccess';
+			else if ( responseJson.status === Constants.ws_status_success && activityJson_Orig.subSourceType === BahmniService.BAHMNI_KEYWORD ) 
+			{
+				if ( activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync ) 
+				{ 
+					successCaseName = 'mongoSyncSuccess'; 
+					subSyncStatus = BahmniService.readyToMongoSync;
+				}
 				else successCaseName = 'bahmniSyncSuccess';
 			}
 			else if ( responseJson.status === Constants.ws_status_success ) successCaseName = 'mongoSyncSuccess';
@@ -1041,7 +1047,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 			// On Merge, in this bahmniCase, existingClientCopy.activity gets added to original existingClient after removing the one.  Thus, we need to make changes on the copy one.
 
 
-			BahmniService.mergeDownloadedClients(clientList, processingInfo, { 'syncUpActivityId': activityId }, function (changeOccurred_atMerge, mergedActivities) 
+			BahmniService.mergeDownloadedClients(clientList, processingInfo, { syncUpActivityId: activityId, type: 'syncUp_Bahmni' }, function (changeOccurred_atMerge, mergedActivities) 
 			{
 				ClientDataManager.saveCurrent_ClientsStore(() => { if (callBack) callBack( bOptResult, undefined, Constants.status_submit ); });
 			});
@@ -1109,8 +1115,11 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 				ClientDataManager.setActivityDateLocal_client(clientJson);
 
 				// Removal of existing activity/client happends within 'mergeDownloadClients()'
-				ClientDataManager.mergeDownloadedClients({ 'clients': [clientJson], 'case': 'syncUpActivity', 'syncUpActivityId': activityId }, processingInfo, function () {
-					// 'mergeDownload' does saving if there were changes..  do another save?  for fix casese?  No Need?
+				ClientDataManager.mergeDownloadedClients({ clients: [clientJson], case: 'syncUpActivity', syncUpActivityId: activityId, subSyncStatus: subSyncStatus }, processingInfo, function (changeOccurred_atMerge, mergedActivities) 
+				{
+					// NEW: If afterSyncUp, 'afterSyncUp_localClientUpdate' perform if exists..
+					if ( mergedActivities.length > 0 ) SyncManagerNew.afterSyncUp_localClientUpdate( mergedActivities );
+
 					ClientDataManager.saveCurrent_ClientsStore(() => {
 						if (callBack) callBack(bOptResult, undefined, Constants.status_submit);
 					});
@@ -1169,6 +1178,28 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 			if (callBack) callBack(bOptResult, errMsgCatched, newStatus);
 		});		
 	}
+};
+
+SyncManagerNew.afterSyncUp_localClientUpdate = function( activities )
+{
+	if ( !activities ) activities = [];
+
+	activities.forEach( act => 
+	{
+		try
+		{
+			var clientUpdate = act.afterSyncUp_localClientUpdate;
+
+			if ( clientUpdate )
+			{
+				// Perform Deep Merge..
+				client = ClientDataManager.getClientByActivityId( act.id );
+	
+				if ( client ) Util.mergeDeep( client, clientUpdate );
+			}			
+		}
+		catch( errMsg ) {  console.log( 'ERROR in SyncManagerNew.afterSyncUp_localClientUpdate, ' + errMsg );  };
+	});
 };
 
 SyncManagerNew.deleteFixActivityRecord = function (activityId) {

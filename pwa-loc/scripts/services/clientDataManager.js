@@ -320,7 +320,8 @@ ClientDataManager.removeClientIndex = function (client) {
 // ======================================================
 // === MERGE RELATED =====================
 
-ClientDataManager.mergeDownloadedClients = function (downloadedData, processingInfo, callBack) {
+ClientDataManager.mergeDownloadedClients = function (downloadedData, processingInfo, callBack) 
+{
 	var dataChangeOccurred = false;
 	//var activityListChanged = false;
 	var case_dhis2RedeemMerge = false;
@@ -338,25 +339,40 @@ ClientDataManager.mergeDownloadedClients = function (downloadedData, processingI
 		{
 			var dwClient = downloadedData.clients[i];
 
-			try {
-				if (dwClient._id) {
+			try 
+			{
+				if (dwClient._id) 
+				{
 					var appClient = ClientDataManager.getClientById(dwClient._id);
 
 					// If matching client exists in App already.
-					if (appClient) {
+					if (appClient) 
+					{
 						var clientDateCheckPass = (case_dhis2RedeemMerge || case_noClientDateCheck) ? true : (ClientDataManager.getDateStr_LastUpdated(dwClient) > ClientDataManager.getDateStr_LastUpdated(appClient));
 
-						if (clientDateCheckPass) {
+						if (clientDateCheckPass) 
+						{
 							// Get activities in dwClient that does not exists...
 							var addedActivities = ActivityDataManager.mergeDownloadedActivities(dwClient.activities, appClient.activities, appClient, Util.cloneJson(processingInfo), downloadedData);
 
-							if (case_dhis2RedeemMerge) {
+							if ( BahmniService.isBahmniConfig() && ( appClient.patientId || dwClient.patientId ) )
+							{
+								// NEW: If Bahmni 'Mongo' sync case - Copy clientDetails properties without overwriting any existing val.
+								//		- Also, Merge 'voucherCodes'
+								if ( !dwClient.clientDetails ) dwClient.clientDetails = {};
+								if ( !appClient.clientDetails ) appClient.clientDetails = {};
+
+								Util.copyProperties( dwClient.clientDetails, appClient.clientDetails, { noOverwrite: true } );  //,  exceptions: { voucherCodes: true } } );
+								appClient.clientDetails.voucherCodes = Util.mergeArrayUnique( appClient.clientDetails.voucherCodes, dwClient.clientDetails.voucherCodes );
+							}
+							else if (case_dhis2RedeemMerge) {
 								// merge data..
 								Util.mergeJson(appClient.clientDetails, dwClient.clientDetails);
 								Util.mergeJson(appClient.clientConsent, dwClient.clientConsent);
 								Util.mergeJson(appClient.date, dwClient.date);
 							}
-							else {
+							else 
+							{
 								// Update clientDetail from dwClient - other than activities merge?
 								//appClient.clientDetails = dwClient.clientDetails; .date, .clientConsent, .relationships...
 								Util.copyProperties(dwClient, appClient, { 'exceptions': { 'activities': true, '_id': true } });

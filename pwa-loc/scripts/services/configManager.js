@@ -739,7 +739,7 @@ ConfigManager.getSettings_KeyCloak = function ()
 
 ConfigManager.setKeyCloakOfflineTimeout = function()
 {
-	var offTimeSec = ConfigManager.getSetting_KeyCloak().offlineTimeoutSec;
+	var offTimeSec = ConfigManager.getSettings_KeyCloak().offlineTimeoutSec;
 
 	if ( offTimeSec ) {
 		KeycloakManager.OFFLINE_TIMEOUT = offTimeSec;

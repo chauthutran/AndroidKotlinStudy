@@ -278,6 +278,9 @@ BahmniService.isBahmniActivity = function (activityJson) {
 	return (activityJson && activityJson.subSourceType === BahmniService.BAHMNI_KEYWORD) ? true : false;
 };
 
+BahmniService.isBahmniConfig = function () {
+	return ( ConfigManager.getConfigJson().subSourceType === BahmniService.BAHMNI_KEYWORD ) ? true : false;
+};
 
 // ==============================================================================
 // SyncUp / SyncDown - SyncAll
@@ -333,7 +336,7 @@ BahmniService.syncDataRun = function ( option )
 
 					var processingInfo = ActivityDataManager.createProcessingInfo_Success(Constants.status_downloaded, 'Downloaded and synced.');
 	
-					BahmniService.mergeDownloadedClients( clientList, processingInfo, {}, function (changeOccurred_atMerge, mergedActivities) 
+					BahmniService.mergeDownloadedClients( clientList, processingInfo, { type: 'syncDown_Bahmni' }, function (changeOccurred_atMerge, mergedActivities) 
 					{
 						if (responseBahmniData.status.status == "success") 
 						{
