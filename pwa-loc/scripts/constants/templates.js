@@ -541,7 +541,7 @@ Templates.Change_User_Form = `
   <label term="login_confirmDialogTitle">Confirmation dialog</label>
 </div>
 <div class="dialog__text" term="login_changeUserMsg">
-    Changing user will delete all data for the user, including any data not syncronized. 
+    'Forget User' will delete all data for the user, including any data not syncronized. 
     Are you sure that you want to delete the data for user and allow new user login ?
 </div>
 <div class="dialog__action"><div class="button-text warning" id="accept">

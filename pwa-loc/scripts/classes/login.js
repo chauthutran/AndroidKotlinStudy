@@ -1197,7 +1197,7 @@ Login.contentHtml = `
 			<div class="login_buttons__container">
 				<div class="button l-emphasis button-full_width btnChangeUser mouseDown" style="border: solid 1px #ccc; background-color: white; border-radius: 20px;">
 					<div class="button__container">
-						<div class="button-label" term="login_changeUserAdv" style="color: #999;">Change user</div>
+						<div class="button-label" term="login_changeUserAdv" style="color: #999;">Forget User</div>
 					</div>
 				</div>
 
