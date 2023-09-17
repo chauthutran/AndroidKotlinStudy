@@ -2252,3 +2252,22 @@ Util.formatFileSizeMB = function( val, option )
 
 	return resultStr;
 };
+
+Util.createJsonWithFields = function( option )
+{
+	var itemJson = {};
+	if ( !option ) option = {};
+
+	// { sourceJson: INFO.bahmniClient.clientDetails, fieldNames: INFO.clientUpdateFields } ) "
+
+	if ( option.sourceJson && option.fieldNames )
+	{
+		option.fieldNames.forEach( fldName => 
+		{
+			var val = option.sourceJson[ fldName ];
+			if ( val !== undefined ) itemJson[ fldName ] = val;
+		});
+	}
+
+	return itemJson;
+};

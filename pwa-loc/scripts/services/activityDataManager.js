@@ -802,6 +802,60 @@ ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, pay
 };
 
 
+ActivityDataManager.createActivity_BahmniClientUpdate = function( clientId, payloadTemplates, option )
+{
+	if ( !option ) option = {};
+	
+	var client = ClientDataManager.getClientById( clientId);	
+
+	if ( !client ) {
+		var errMsg = 'ERROR in createActivity_BahmniClientUpdate - client by clientId not available, ' + clientId;
+		MsgManager.msgAreaShowErrOpt( errMsg );
+		throw errMsg;
+	}
+
+	var actionUrl = INFO.bahmniMongoSyncUrl;
+	var blockId = undefined;
+	var actionJson = { underClient: true, clientId: client._id };
+	var blockPassingData = undefined;
+
+	// Way to bypass the template and add 'captureVal/searchVal' directly..
+	// actionJson.activityJson = data.activityJson;
+
+	// NEW: To be used with the payloadTemplate - to reference..  + on 'appStatus' eval..
+	INFO.bahmniClient = client;
+	INFO.bahmniActivity = apptAct;
+
+
+	var clickActionJson = { 
+		activityPayload: {
+			payload: { 
+				payloadTemplate: payloadTemplates,
+				payloadJson: client.clientDetails // <-- TODO: Get this from apptAct.transactions.dataValues
+			}
+   	}
+   };
+
+	// #1. Generete payload with 'capture/search' structure - by Template & form fields values.
+	var formsJsonActivityPayload = ActivityUtil.generateActivityPayload_byFormsJson( clickActionJson, $( '.emptyJQueryElement' ) );
+
+	try
+	{
+		if ( formsJsonActivityPayload.payload.captureValues.transactions.length > 0 )
+		{
+			ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, actionJson, blockPassingData
+			, function( activity, client ) {
+				activity.subSyncStatus = BahmniService.readyToMongoSync;
+				ClientDataManager.saveCurrent_ClientsStore(); // Rather than this, Save the data in Config called place?
+			});
+		}	
+	}
+	catch( errMsg ) {
+		console.log( 'ERROR - payload not having captureValues or transactions, ' + errMsg );
+	}
+};
+
+
 ActivityDataManager.activityPayload_ConvertForWsSubmit = function (activityJson, _version) {
 
 	if (!_version) _version = _ver;

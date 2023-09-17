@@ -1023,3 +1023,24 @@ ClientDataManager.olderVoucherActivity_Modify = function ( client, activityPaylo
 
 	return isOlder;
 };
+
+
+ClientDataManager.isDiff_ClientDetailFields = function ( dwnClient, localClient, clientFields )
+{
+	var isDiff = false; // Look for match that is diff
+
+	try
+	{
+		if ( dwnClient && dwnClient.clientDetails && localClient && localClient.clientDetails && clientFields && clientFields.length > 0 )
+		{
+			clientFields.forEach( fieldName => {
+				if ( dwnClient.clientDetails[ fieldName ] !== localClient.clientDetails[ fieldName ] ) isDiff = false;
+			});
+		}	
+	}
+	catch ( errMsg ) { console.log( 'ERROR in ClientDataManager.isNotMatch_ClientDetailFields, ' + errMsg ); }
+
+	return isDiff;
+};
+
+
