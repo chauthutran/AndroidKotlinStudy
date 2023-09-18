@@ -1050,7 +1050,7 @@ ClientDataManager.isDiff_ClientDetailFields = function ( dwnClient, localClient,
 		if ( dwnClient && dwnClient.clientDetails && localClient && localClient.clientDetails && clientFields && clientFields.length > 0 )
 		{
 			clientFields.forEach( fieldName => {
-				if ( dwnClient.clientDetails[ fieldName ] !== localClient.clientDetails[ fieldName ] ) isDiff = false;
+				if ( dwnClient.clientDetails[ fieldName ] !== localClient.clientDetails[ fieldName ] ) isDiff = true;
 			});
 		}	
 	}

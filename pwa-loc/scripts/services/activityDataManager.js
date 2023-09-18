@@ -716,7 +716,7 @@ ActivityDataManager.createNewPayloadActivity = function (actionUrl, blockId, for
 
 ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, payloadTemplates, option )
 {
-	if ( !apptAct.id ) {
+	if ( !apptAct || !apptAct.id ) {
 		var errMsg = 'ERROR in createActivity_BahmniAppointmentMsg - apptAct.id not available';
 		MsgManager.msgAreaShowErrOpt( errMsg );
 		throw errMsg;
@@ -787,10 +787,13 @@ ActivityDataManager.createActivity_BahmniAppointmentMsg = function( apptAct, pay
 
 	try
 	{
-		if ( formsJsonActivityPayload.payload.captureValues.transactions.length > 0 )
+		var capVals = formsJsonActivityPayload.payload.captureValues;
+
+		if ( capVals && capVals.transactions && capVals.transactions.length > 0 )
 		{
 			ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, actionJson, blockPassingData
-			, function( activity, client ) {
+			, ( activity, client ) =>
+			{
 				activity.subSyncStatus = BahmniService.readyToMongoSync;
 				if ( apptAct.originalData ) activity.originalData =  apptAct.originalData;
 				ClientDataManager.saveCurrent_ClientsStore(); // Rather than this, Save the data in Config called place?
@@ -825,8 +828,6 @@ ActivityDataManager.createActivity_BahmniClientUpdate = function( clientId, payl
 
 	// NEW: To be used with the payloadTemplate - to reference..  + on 'appStatus' eval..
 	INFO.bahmniClient = client;
-	INFO.bahmniActivity = apptAct;
-
 
 	var clickActionJson = { 
 		activityPayload: {
@@ -842,7 +843,9 @@ ActivityDataManager.createActivity_BahmniClientUpdate = function( clientId, payl
 
 	try
 	{
-		if ( formsJsonActivityPayload.payload.captureValues.transactions.length > 0 )
+		var capVals = formsJsonActivityPayload.payload.captureValues;
+
+		if ( capVals && capVals.transactions && capVals.transactions.length > 0 )
 		{
 			ActivityDataManager.createNewPayloadActivity( actionUrl, blockId, formsJsonActivityPayload, actionJson, blockPassingData
 			, function( activity, client ) {
