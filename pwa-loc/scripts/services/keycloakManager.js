@@ -336,18 +336,18 @@ KeycloakManager.authenticate_WithoutToken = function(successFunc, errorFunc)
 			var userName = KeycloakManager.keycloakObj.tokenParsed.preferred_username;
 			var preLoginUser = AppInfoLSManager.getUserName();
 			if ( userName != preLoginUser ) {
-				KeycloakManager.eventMsg("Username is changed !!!");
+				KeycloakManager.eventMsg("User Changed, Deleting previous user data.");
 				
 				DataManager2.deleteAllStorageData(function () 
 				{
-					console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 
+					KeycloakManager.eventMsg( 'User Changed, Deleted previous user data.' ); 
 					
 					// Save the new username
 					AppInfoLSManager.setUserName( userName.toUpperCase() );
 					if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
 
 
-					AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");			
+					AppUtil.appReloadWtMsg("User Change - Deleteting previous user data ..");			
 				});
 			}
 
