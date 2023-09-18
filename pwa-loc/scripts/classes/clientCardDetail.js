@@ -591,14 +591,14 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 								<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activity</span>
 							</li>
 
-							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
-								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
-								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
-							</li>
-
 							<li class="secondary" style="display:none" rel="tab_relationships">
 								<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
 								<span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+							</li>
+
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
 							</li>
 
 							<li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
@@ -614,6 +614,74 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 						</ul>
 					</li>
 
+
+					<li class="primary" rel="tab_clientActivities">
+						<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
+						<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
+
+						<ul class="secondary" style="display: none; z-index: 1;">
+
+							<li class="secondary" style="display:none" rel="tab_clientDetails">
+								<div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
+								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
+							</li>
+
+							<li class="secondary" style="display:none" rel="tab_relationships">
+								<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
+								<span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+							</li>
+														
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
+							</li>
+
+							<li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
+								<div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+								<span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+							</li>
+
+							<li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
+								<div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+								<span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
+							</li>
+
+						</ul>
+					</li>
+
+					<li class="primary" rel="tab_relationships">
+						<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
+						<span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+						<ul class="secondary" style="display: none; z-index: 1;">
+
+							<li class="secondary" style="display:none" rel="tab_clientDetails">
+								<div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
+								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
+							</li>
+
+							<li class="secondary" style="display:none" rel="tab_clientActivities">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
+								<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
+							</li>
+
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
+							</li>
+
+							<li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
+								<div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
+								<span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
+							</li>
+
+							<li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
+								<div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
+								<span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
+							</li>
+
+						</ul>
+					</li>
+					
 					<li class="primary" rel="tab_clientConversations">
 						<div class="tab_fs__head-icon i-details_24" rel="tab_clientConversations"></div>
 						<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversations</span>
@@ -647,77 +715,6 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 						</ul>
 					</li>
 
-
-					<li class="primary" rel="tab_clientActivities">
-						<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
-						<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
-
-						<ul class="secondary" style="display: none; z-index: 1;">
-
-							<li class="secondary" style="display:none" rel="tab_clientDetails">
-								<div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
-								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
-							</li>
-
-							
-							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
-								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
-								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
-							</li>
-
-
-							<li class="secondary" style="display:none" rel="tab_relationships">
-								<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
-								<span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
-							</li>
-
-							<li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
-								<div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
-								<span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
-							</li>
-
-							<li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
-								<div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-								<span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
-							</li>
-
-						</ul>
-					</li>
-
-					<li class="primary" rel="tab_relationships">
-						<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
-						<span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
-						<ul class="secondary" style="display: none; z-index: 1;">
-
-							<li class="secondary" style="display:none" rel="tab_clientDetails">
-								<div class="tab_fs__head-icon i-client" rel="tab_clientDetails"></div>
-								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
-							</li>
-
-							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
-								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
-								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
-							</li>
-
-							<li class="secondary" style="display:none" rel="tab_clientActivities">
-								<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
-								<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
-							</li>
-
-
-							<li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
-								<div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
-								<span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
-							</li>
-
-							<li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
-								<div class="tab_fs__head-icon i-details_24" rel="tab_optionalDev"></div>
-								<span term="clientDetail_tab_optionalDev" rel="tab_optionalDev">Dev</span>
-							</li>
-
-						</ul>
-					</li>
-
 					<li class="primary" rel="tab_previewPayload" style="display: none;">
 						<div class="tab_fs__head-icon i-payloads_24" rel="tab_previewPayload"></div>
 						<span term="clientDetail_tab_payload" rel="tab_previewPayload">Payload</span>
@@ -728,11 +725,6 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
 							</li>
 							
-							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
-								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
-								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
-							</li>
-
 							<li class="secondary" style="display:none" rel="tab_clientActivities">
 								<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
 								<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
@@ -741,6 +733,11 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 							<li class="secondary" style="display:none" rel="tab_relationships">
 								<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
 								<span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+							</li>
+
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
 							</li>
 
 							<li class="secondary tabHide" style="display:none" rel="tab_optionalDev">
@@ -761,11 +758,6 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 								<span term="clientDetail_tab_client" rel="tab_clientDetails">Client</span>
 							</li>
 
-							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
-								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
-								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
-							</li>
-
 							<li class="secondary" style="display:none" rel="tab_clientActivities">
 								<div class="tab_fs__head-icon i-activity" rel="tab_clientActivities"></div>
 								<span term="clientDetail_tab_activities" rel="tab_clientActivities">Activities</span>
@@ -774,6 +766,11 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 							<li class="secondary" style="display:none" rel="tab_relationships">
 								<div class="tab_fs__head-icon i-relationship " rel="tab_relationships"></div>
 								<span term="clientDetail_tab_relationships" rel="tab_relationships">Relationships</span>
+							</li>
+
+							<li class="secondary" style="display:none" rel="tab_clientConversations" id="tab_clientConversationsTitle">
+								<div class="tab_fs__head-icon i-activity" rel="tab_clientConversations"></div>
+								<span term="clientDetail_tab_conversation" rel="tab_clientConversations">Conversation</span>
 							</li>
 
 							<li class="secondary tabHide" style="display:none" rel="tab_previewPayload">
@@ -792,13 +789,13 @@ ClientCardDetail.cardFullScreen = `<div class="sheet_full-fs detailFullScreen">
 
 				<div class="tab_fs__container-content sheet_preview active" tabButtonId="tab_clientDetails" blockid="tab_clientDetails" style="overflow-x: hidden !important;" />
 
-				<div class="tab_fs__container-content sheet_preview chat" tabButtonId="tab_clientConversations" blockid="tab_clientConversations" style="display:none;" >
-					<div class="chat-history" style="width:100%;; height: 100%;"><ul style="padding-inline-start: 10px;"></ul></div>
-				</div>
-
 				<div class="tab_fs__container-content sheet_preview" tabButtonId="tab_clientActivities" blockid="tab_clientActivities" style="display:none;" />
 
 				<div class="tab_fs__container-content sheet_preview" tabButtonId="tab_relationships" blockid="tab_relationships" style="display:none;" />
+
+				<div class="tab_fs__container-content sheet_preview chat" tabButtonId="tab_clientConversations" blockid="tab_clientConversations" style="display:none;" >
+					<div class="chat-history" style="width:100%;; height: 100%;"><ul style="padding-inline-start: 10px;"></ul></div>
+				</div>
 
 				<div class="tab_fs__container-content sheet_preview" tabButtonId="tab_previewPayload" blockid="tab_previewPayload" style="display:none;">
 					<div class="payloadData"></div>
