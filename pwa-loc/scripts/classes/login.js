@@ -477,8 +477,6 @@ function Login() {
 				// Login.loginInputDisable( true ); // enable it when authenticated..
 	
 				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
-	
-				// KeycloakManager.displayTokensInfo();
 			}
 			else
 			{
@@ -733,11 +731,11 @@ function Login() {
 		SessionManager.setLoginStatus(true);
 		BahmniService.syncDataProcessing = false;	
 		
-		// Remove setTimeout, setInterval to check the Access Token (for ONLINE case) OR Offline Time out (for OFFLINE case)
-		if( KeycloakManager.isKeyCloakInUse() )
-		{
-			KeycloakManager.clearCheckTokenTimeout();
-		}
+		// // Remove setTimeout, setInterval to check the Access Token (for ONLINE case) OR Offline Time out (for OFFLINE case)
+		// if( KeycloakManager.isKeyCloakInUse() )
+		// {
+		// 	KeycloakManager.clearCheckTokenTimeout();
+		// }
 
 		// gAnalytics Event
 		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
