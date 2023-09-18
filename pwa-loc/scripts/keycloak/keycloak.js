@@ -947,8 +947,6 @@
 	                            kc.onAuthSuccess && kc.onAuthSuccess();
 	                            initPromise.setSuccess();
 	                        }).catch(function(error) {
-								console.log("============= processInit");
-								console.log(error);
 								 kc.onAuthError && kc.onAuthError();
 	                            if (initOptions.onLoad) {
 	                                onLoad();
@@ -1332,7 +1330,7 @@
 	                                    kc.clearToken();
 	                                }
 
-	                                kc.onAuthRefreshError && kc.onAuthRefreshError( req.responseText );
+	                                kc.onAuthRefreshError && kc.onAuthRefreshError();
 	                                for (var p = refreshQueue.pop(); p != null; p = refreshQueue.pop()) {
 	                                    p.setError(true);
 	                                }
@@ -1402,12 +1400,8 @@
 
 	        if (error) {
 	            if (prompt != 'none') {
-	                var errorData = { error: error, error_description: oauth.error_description };
-					
-					console.log("============= processCallBack");
-					console.log(errorData);
-	                kc.onAuthError && kc.onAuthError(errorData);
-	                promise && promise.setError(errorData);
+	                kc.onAuthError && kc.onAuthError();
+	                promise && promise.setError();
 	            } else {
 	                promise && promise.setSuccess();
 	            }
@@ -1441,9 +1435,6 @@
 	                        authSuccess(tokenResponse['access_token'], tokenResponse['refresh_token'], tokenResponse['id_token'], kc.flow === 'standard');
 	                        scheduleCheckIframe();
 	                    } else {
-							
-					console.log("============= processCallBack");
-					console.log(req);
 	                        kc.onAuthError && kc.onAuthError();
 	                        promise && promise.setError();
 	                    }

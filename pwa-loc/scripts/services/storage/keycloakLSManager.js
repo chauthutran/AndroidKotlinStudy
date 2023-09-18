@@ -15,7 +15,6 @@ KeycloakLSManager.KEY_AUTH_CHOICE = "authChoice";
 
 
 KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT = "logout";
-KeycloakLSManager.KEY_PROCESSING_ACTION_USER_DISBLED = "userDisabled";
 
 // ---------------------------------------------------------------------------------------------
 
