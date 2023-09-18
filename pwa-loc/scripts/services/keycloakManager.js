@@ -3,7 +3,7 @@ function KeycloakManager() {};
 // NOTE: Manual Offline Expire -->  KeycloakManager.setUpForm_Offline_OfflineTimeExpired();
 
 KeycloakManager.REFRESH_TOKEN_SECOND = 30; // 30s
-KeycloakManager.OFFLINE_TIMEOUT = 1 * 60; // 10 mins, Overwritten by Config 'offlineTimeoutSec'
+KeycloakManager.OFFLINE_TIMEOUT = 3 * 60; // 10 mins, Overwritten by Config 'offlineTimeoutSec'
 
 KeycloakManager.btnKeyCloakLogOutTag;
 KeycloakManager.keycloakMsgTag;
@@ -290,9 +290,32 @@ KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
 			
 	// Show message
 	var appStatus = KeycloakManager.getStatus_AppMode_Token_OfflineTime();
-	var msg = ( appStatus.isAccessTokenValid) ? "Offline login time expired" : "The keyclock token expired. Please login again when it is online";
-	KeycloakManager.keycloakMsgTag.html(msg);
-	MsgManager.msgAreaShowOpt( msg, { cssClasses: 'notifDark', hideTimeMs: 2000 } );
+	if( appStatus.isAccessTokenValid ) // Token is not expired, user can still use the app
+	{
+		KeycloakManager.keycloakMsgTag.html("Offline login time expired. But token is still valid.");
+		
+
+		// Start checking the Keycloak token timeout interval now
+		var accessTokenParsed = KeycloakLSManager.getAccessTokenParsed();
+		var accessTokenExpiredSeconds = KeycloakManager.getTokenExpiredInMiniseconds( accessTokenParsed );
+		
+		KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
+			clearTimeout(KeycloakManager.accessTokenTimeoutObj);
+			var msg = "The keyclock token expired. Please login again when it is online.";
+			KeycloakManager.keycloakMsgTag.html(msg);
+			KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess );
+		}, accessTokenExpiredSeconds);
+	}
+	else
+	{
+		var msg = "The keyclock token expired. Please login again when it is online.";
+		KeycloakManager.keycloakMsgTag.html(msg);
+		KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess );
+	}
+
+	// Force user to logout
+	// KeycloakManager.keycloakMsgTag.html(msg);
+	
 }
 
 // -------------------------------------------------------------------------------------
@@ -336,7 +359,7 @@ KeycloakManager.authenticate_WithoutToken = function(successFunc, errorFunc)
 			MsgManager.msgAreaShowOpt( "Login with Keycloak success !", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
 			
 			// Save the username info..
-			var userName = KeycloakManager.keycloakObj.tokenParsed.preferred_username;
+			var userName = KeycloakManager.keycloakObj.tokenParsed.preferred_username.toUpperCase();
 			var preLoginUser = AppInfoLSManager.getUserName();
 			if ( userName != preLoginUser ) {
 				KeycloakManager.eventMsg("User Changed, Deleting previous user data.");
@@ -346,20 +369,22 @@ KeycloakManager.authenticate_WithoutToken = function(successFunc, errorFunc)
 					KeycloakManager.eventMsg( 'User Changed, Deleted previous user data.' ); 
 					
 					// Save the new username
-					AppInfoLSManager.setUserName( userName.toUpperCase() );
+					AppInfoLSManager.setUserName(userName);
 					if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
 
+					KeycloakManager.authenticateSuccess();
+					if( successFunc) successFunc( authenticated );
 
 					AppUtil.appReloadWtMsg("User Change - Deleteting previous user data ..");			
 				});
 			}
+			else
+			{
+				KeycloakManager.authenticateSuccess();
+				if( successFunc) successFunc( authenticated );
+			}
 			
-			KeycloakManager.authenticateSuccess();
-
-			if( successFunc) successFunc( authenticated );
 		}
-
-		// if( successFunc) successFunc( authenticated );
 	})
 	.catch(function( errMsg ) {
 		// This fail because of the "Offline user session not found" ( resfeshToken is expired ).
