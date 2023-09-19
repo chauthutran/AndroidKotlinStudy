@@ -41,7 +41,7 @@ KeycloakManager.getStatusSummary = function()
 	statusJson.isAppOnline = ConnManagerNew.isAppMode_Online();
 
 	statusJson.isKeycloakAuth = ( KeycloakLSManager.getAccessToken() ) ? true: false;
-	if ( statusJson.isKCAuth )
+	if ( statusJson.isKeycloakAuth )
 	{
 		statusJson.isAccessTokenExpired = KeycloakManager.isAccessTokenExpired();
 		statusJson.isRefreshTokenExpired = KeycloakManager.isRefreshTokenExpired();	
@@ -90,7 +90,8 @@ KeycloakManager.setUpOnlineMode = function()
 	// clearInterval( KeycloakManager.offlineExpiredIntervalObj );
 
 	var statusJson = KeycloakManager.getStatusSummary();
-	if( statusJson.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT )
+	if( statusJson.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT 
+		|| statusJson.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_AUTHENTICATED )
 	{
 		// Remove tokens and information related
 		KeycloakLSManager.authOut_DataRemoval_wtTokens();
@@ -300,11 +301,13 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 	} 
     kcObj.onAuthRefreshError = () => {
 		KeycloakManager.eventMsg('Auth Refresh Error');
+		// // This function called when the refreshToken expires OR when the user is disabled, ....
+		// KeycloakManager.authenticateExpired();
 	}
     kcObj.onAuthLogout = () => {
 		KeycloakManager.eventMsg('Auth Logout');
-		// // This function called when the refreshToken expires OR when the user is disabled, ....
-		// KeycloakManager.authenticateExpired();
+		// This function called when the refreshToken expires OR when the user is disabled, ....
+		KeycloakManager.authenticateExpired();
 	}
     kcObj.onTokenExpired = () => {
 		KeycloakManager.eventMsg('Access token expired.');
@@ -428,17 +431,24 @@ KeycloakManager.renewAccessToken = function()
 
 KeycloakManager.authenticateExpired = function()
 {
-	// Stop services to check the tokens timeout
-	KeycloakManager.stopServiceToCheckTokensExpire();
+	var statusSummary = KeycloakManager.getStatusSummary();
+	if(statusSummary.processingAction != KeycloakLSManager.KEY_PROCESSING_ACTION_AUTHENTICATED)
+	{
+		KeycloakLSManager.setProcessingAction( KeycloakLSManager.KEY_PROCESSING_ACTION_AUTHENTICATED );
 
-	// Set the "logOut" flag in localStorage
-	KeycloakLSManager.setProcessingAction(KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT);
-
-	// Disabled the "Keyclock logout" button in the bottom
-	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
-
-	// Show dialog to inform the user and force the user to login to Keycloak again.
-	KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.logout);
+		// Stop services to check the tokens timeout
+		KeycloakManager.stopServiceToCheckTokensExpire();
+	
+		// // Set the "logOut" flag in localStorage
+		// KeycloakLSManager.setProcessingAction(KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT);
+	
+		// Disabled the "Keyclock logout" button in the bottom
+		KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
+	
+		// Show dialog to inform the user and force the user to login to Keycloak again.
+		// KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.logout);
+		KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.authenticate);
+	}
 }
 
 
