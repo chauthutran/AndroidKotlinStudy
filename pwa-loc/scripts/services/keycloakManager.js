@@ -15,6 +15,7 @@ KeycloakManager.accessTokenTimeoutObj;
 KeycloakManager.refreshTokenTimeoutObj;
 KeycloakManager.offlineExpiredInterval;
 
+KeycloakManager._AppBlocked = false; // Flag set when user disabled or session expired.  OfflineTimeExpire checks this to not show msg when this is true.
 
 // =======================================================================================================
 // === NEW KEYCLOAK ============
@@ -259,6 +260,7 @@ KeycloakManager.authenticateExpired = function()
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
 
 	// Show dialog to inform use that "The keyclock token expired." to force users to login to Keycloak again.
+	KeycloakManager._AppBlocked = true;
 	KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.tokenLogout);
 }
 
@@ -303,14 +305,17 @@ KeycloakManager.setUpForm_Offline_OfflineTimeExpired = function()
 			clearTimeout(KeycloakManager.accessTokenTimeoutObj);
 			var msg = "The keyclock token expired. Please login again when it is online.";
 			KeycloakManager.keycloakMsgTag.html(msg);
-			KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess );
+			if ( !KeycloakManager._AppBlocked ) KeycloakManager.showDialog(msg);
+			if ( SessionManager.getLoginStatus() ) SessionManager.cwsRenderObj.logOutProcess();
 		}, accessTokenExpiredSeconds);
 	}
 	else
 	{
+
 		var msg = "The keyclock token expired. Please login again when it is online.";
 		KeycloakManager.keycloakMsgTag.html(msg);
-		KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess );
+		if ( !KeycloakManager._AppBlocked ) KeycloakManager.showDialog( msg ); 
+		if ( SessionManager.getLoginStatus() ) SessionManager.cwsRenderObj.logOutProcess();
 	}
 
 	// Force user to logout
