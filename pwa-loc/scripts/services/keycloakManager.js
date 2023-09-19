@@ -13,6 +13,8 @@ KeycloakManager.accessTokenTimeoutObj;
 KeycloakManager.refreshTokenTimeoutObj;
 KeycloakManager.offlineExpiredIntervalObj;
 
+// Flag set when user disabled or session expired.  OfflineTimeExpire checks this to not show msg when this is true.
+KeycloakManager._AppBlocked = false; 
 
 // =======================================================================================================
 // === NEW KEYCLOAK ============
@@ -327,7 +329,7 @@ KeycloakManager.restartServiceToCheckTokensExpire = function()
 		KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
 			if( KeycloakManager.isRefreshTokenExpired() ) 
 			{
-				clearTimeout(KeycloakManager.accessTokenTimeoutObj);
+				KeycloakManager.stopServiceToCheckTokensExpire();
 				KeycloakManager.authenticateExpired();
 			}
 			else
@@ -372,12 +374,22 @@ KeycloakManager.restartServiceToCheckOfflineTimeout = function()
 			// Stop the service to check Offline Timeout
 			KeycloakManager.stopServiceToCheckOfflineTimeOut();
 			
-			// Show message
-			var msg = "Offline Usage Timed Out.";
-			KeycloakManager.keycloakMsgTag.html(msg);
-			KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess );
+			// Show message and force the user logouts ONLY WHEN the refresh Token doesn't expired / User is not disabled.
+			if( !KeycloakManager._AppBlocked )
+			{
+				var msg = "Offline Usage Timed Out.";
+				KeycloakManager.keycloakMsgTag.html(msg);
+				if( statusSummary.isLoggedIn )
+				{
+					KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess ); // Force the user to logout if the user logged
+				}
+				else
+				{
+					KeycloakManager.showDialog(msg); // Just need to show the message when the user in the login page
+				}
+			}
 		}
-		else if( !statusSummary.isAppOnline )
+		else if( !statusSummary.isAppOnline ) // For OFFLINE mode only
 		{
 			var timeInfo = KeycloakManager.formatOfflineTimeRemains();
 			KeycloakManager.keycloakMsgTag.html("Offline Usage time will expire in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
@@ -449,7 +461,7 @@ KeycloakManager.authenticateExpired = function()
 		KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
 	
 		// Show dialog to inform the user and force the user to login to Keycloak again.
-		// KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.logout);
+		KeycloakManager._AppBlocked = true;
 		KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.authenticate);
 	}
 }
