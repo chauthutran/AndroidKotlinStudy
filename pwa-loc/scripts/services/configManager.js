@@ -1040,8 +1040,11 @@ ConfigManager.runLoginTimeRuns = function () {
 					{
 						ClientDataManager.removeClientsByIdArr(clientIdsArr);
 						
-						ClientDataManager.saveCurrent_ClientsStore(() => {  
-							console.log( 'DELETED OLD RECORDS: ' + clientIdsArr.length );
+						ClientDataManager.saveCurrent_ClientsStore(() => 
+						{
+							var deleteMsgStr = clientIdsArr.length + ' CLIENTS got deleted - CleanUp on data older than ' + deleteLocalClients.daysOld + ' days.';
+							console.log( deleteMsgStr );
+							MsgFormManager.showFormMsg( { itemId: 'oldClientDataDeleteMsg', msgSpanTag: $( '<div></div>' ).append( deleteMsgStr ), width: '130px' } );				
 						});
 					}
 					catch (errMsg) { console.log('ERROR in ConfigManager.removeClientsByIdArr, ' + errMsg); }
