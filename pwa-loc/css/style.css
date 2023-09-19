@@ -4703,7 +4703,7 @@ only screen and (min-device-pixel-ratio: 1.5) {
 
 @media (orientation: portrait) and (min-width: 320px) {
 	.wrapper_login .login_data {
-		padding-top: 30%;
+		padding-top: 20%;
 	}
 }
 

@@ -663,6 +663,16 @@ ConfigManager.getActivityDef = function () {
 };
 
 
+ConfigManager.getNewActivityInsertPosition = function() 
+{
+	var positionStr = 'addToBottom';  // 'addToTop';
+	var configPosition = ConfigManager.getActivityDef().newActivityInsertPosition;
+
+	if ( configPosition ) positionStr = configPosition;
+
+	return positionStr;
+};
+
 ConfigManager.getActivityDetailTabContent = function () {
 	var activityDef = ConfigManager.getActivityDef();
 
