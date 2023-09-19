@@ -142,12 +142,13 @@ function Login() {
 				$( '.divAuthForm' ).hide();
 				me.openLoginForm();	
 
-        // NOTE: CHANGED BY TRAN..
+        		// NOTE: CHANGED BY TRAN..
 				if ( authChoice === 'kc_swz_psi' || authChoice === 'kc_swz_psi_dev' ) {
-					// $( 'img.imgKeyCloakUse' ).click();
-					// KeycloakLSManager.setKeyCloakUse( 'Y' );
-					// AppUtil.appReloadWtMsg();
-					KeycloakManager.keycloakPart();
+
+					// if ( KeycloakManagerNew.getStatusSummary().isKeycloakAuth ) KeycloakManagerNew.logout();
+					// else KeycloakManagerNew.authenticate();
+
+					KeycloakManager.setUpkeycloakPart();
 				} 
 				else if ( authChoice === 'dhis2' )
 				{
@@ -381,7 +382,7 @@ function Login() {
 					if ( KeycloakLSManager.getAuthChoice() ) 
 					{
 						KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
-						if ( KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+						KeycloakManager.checkAuthAndLogoutIfAble();
 					}
 					// NOTE: If keycloak Access case, we will not run below!!!
 
@@ -476,7 +477,7 @@ function Login() {
 				divKeyCloakInfoTag.show();
 				// Login.loginInputDisable( true ); // enable it when authenticated..
 	
-				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
+				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.setUpkeycloakPart(); });
 			}
 			else
 			{
@@ -731,12 +732,6 @@ function Login() {
 		SessionManager.setLoginStatus(true);
 		BahmniService.syncDataProcessing = false;	
 		
-		// // Remove setTimeout, setInterval to check the Access Token (for ONLINE case) OR Offline Time out (for OFFLINE case)
-		// if( KeycloakManager.isKeyCloakInUse() )
-		// {
-		// 	KeycloakManager.clearCheckTokenTimeout();
-		// }
-
 		// gAnalytics Event
 		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
 

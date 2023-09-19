@@ -45,7 +45,10 @@ App.run = function ()
 
 			// 'App.authChiocePage_DataSet' call sets/clears all these on authPage = 'Y' match..
 			// Call Keycloak logout
-			if ( KeycloakManager.isKeyCloakInUse() && KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+			if ( KeycloakManager.isKeyCloakInUse() )
+			{
+				KeycloakManager.checkAuthAndLogoutIfAble();
+			}
 
 			AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
 		});
@@ -82,7 +85,7 @@ App.run = function ()
 		App.param_showMsg( 'msg' );
 		App.param_keyCloakUsage_ForceRemove( App.paramName_keyCloakRemove );
 		App.param_authChiocePage_DataSet( App.paramName_authPage, App.paramName_authChoice, function() {			
-			if( KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout(); // Check if there is any token existing in LocalStorage.
+			KeycloakManager.checkAuthAndLogoutIfAble();
 		});
 		
 	
@@ -142,7 +145,7 @@ App.startAppProcess = function ()
 
 
 		// TODO: CHECK THIS.. KeyCloak Run..  - to log out?
-		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.keycloakPart();
+		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.setUpkeycloakPart();
 
 	}
 	catch ( errMsg ) {

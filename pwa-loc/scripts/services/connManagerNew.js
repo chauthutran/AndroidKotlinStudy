@@ -246,7 +246,7 @@ ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn, optionStr )
 
 	if ( optionStr !== 'startUp' )
 	{
-		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.setLoginForm_Online();
+		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.setUpOnlineMode();
 	}
 };
 
@@ -254,7 +254,7 @@ ConnManagerNew.runWhenSwitchedToOffline = function ( loggedIn, optionStr )
 {
 	if ( optionStr !== 'startUp' )
 	{
-		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.setLoginForm_Offline();
+		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.setUpOnlineMode();
 	}
 };
 
