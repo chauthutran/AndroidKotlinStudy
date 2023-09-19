@@ -83,10 +83,7 @@ KeycloakManager.setUpOnlineMode = function()
 	KeycloakManager.btnKeyCloakLogOutTag.html("AuthOut").show().off("click").click( () => { 
 		KeycloakManager.logout();
 	});
-
-	// // Stop the Timeout server which use to check the Offline Timeout
-	// clearInterval( KeycloakManager.offlineExpiredIntervalObj );
-
+	
 	var statusJson = KeycloakManager.getStatusSummary();
 	if( statusJson.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT 
 		|| statusJson.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_AUTHENTICATED )
