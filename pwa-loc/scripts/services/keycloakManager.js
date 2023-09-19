@@ -1,9 +1,7 @@
 function KeycloakManager() {};
 
-// NOTE: Manual Offline Expire -->  KeycloakManager.setUpForm_Offline_OfflineTimeExpired();
 
-KeycloakManager.REFRESH_TOKEN_SECOND = 30; // 30s
-KeycloakManager.OFFLINE_TIMEOUT = 3 * 60; // 10 mins, Overwritten by Config 'offlineTimeoutSec'
+KeycloakManager.OFFLINE_TIMEOUT = 3 * 60; // 3 mins, Overwritten by Config 'offlineTimeoutSec'
 
 KeycloakManager.btnKeyCloakLogOutTag;
 KeycloakManager.keycloakMsgTag;
@@ -116,6 +114,7 @@ KeycloakManager.setUpOnlineMode = function()
 		{
 			// Start service to check the Access Token and Refresh Token if they expire
 			KeycloakManager.restartServiceToCheckTokensExpire();
+			KeycloakManager.restartServiceToCheckOfflineTimeout();
 		}
 	}
 }
@@ -157,49 +156,17 @@ KeycloakManager.setUpOfflineMode = function()
 	// Disabled the "Logout button"
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
 
-	// Stop the services to check the Access Token timeout and Refresh Token timeout
+	// Stop the services to check the Access Token timeout / Refresh Token timeout And Offline timeout
 	KeycloakManager.stopServiceToCheckTokensExpire();
 	
 	var statusSummary = KeycloakManager.getStatusSummary();
 	if( statusSummary.isOfflineTimeOut )
-	{
-		// Start service to show how long the Offline Timeout remains.
-		KeycloakManager.restartServiceToCheckOfflineTimeout();
-	}
-	else
 	{
 		// Show message to force the user to logout
 		var msg = "Offline Usage Timed Out.";
 		KeycloakManager.keycloakMsgTag.html(msg);
 		KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess );
 	}
-}
-
-
-KeycloakManager.restartServiceToCheckOfflineTimeout = function()
-{
-	// Stop the service to check Offline Timeout if it is started before
-	clearInterval( KeycloakManager.offlineExpiredIntervalObj );
-
-	// Start service again
-	KeycloakManager.offlineExpiredIntervalObj = setInterval(() => {
-		var statusSummary = KeycloakManager.getStatusSummary();
-		if( statusSummary.isOfflineTimeOut )
-		{
-			// Stop the service to check Offline Timeout if it is started before
-			clearInterval(KeycloakManager.offlineExpiredIntervalObj);
-			
-			// Show message
-			var msg = "Offline Usage Timed Out.";
-			KeycloakManager.keycloakMsgTag.html(msg);
-			KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess );
-		}
-		else
-		{
-			var timeInfo = KeycloakManager.formatOfflineTimeRemains();
-			KeycloakManager.keycloakMsgTag.html("Offline Usage time will expire in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
-		}
-	}, Util.MS_SEC);
 }
 
 
@@ -256,7 +223,6 @@ KeycloakManager.authenticate = function()
 			else
 			{
 				KeycloakManager.authenticateSuccess();
-				// KeycloakManager.renewAccessToken();
 			}
 			
 		}
@@ -334,6 +300,9 @@ KeycloakManager.authenticateSuccess = function()
 	// Turn on services to check if the Keycloak Access Token and Refresh Token expire
 	KeycloakManager.restartServiceToCheckTokensExpire();
 
+	// Turn on services to check Offline timeout
+	KeycloakManager.restartServiceToCheckOfflineTimeout();
+
 	// Enable "Logout button" in the bottom
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
 }
@@ -347,6 +316,7 @@ KeycloakManager.authenticateFailure = function()
 // ---------------------------------------------------------------------------------------------------------
 // Services to check if tokens expire
 
+// For Keycloak Tokens service
 KeycloakManager.restartServiceToCheckTokensExpire = function()
 {
 	// Stop the timeout in case it was started before
@@ -379,6 +349,7 @@ KeycloakManager.restartServiceToCheckTokensExpire = function()
 	{
 		KeycloakManager.refreshTokenTimeoutObj = setTimeout(() => {
 			KeycloakManager.stopServiceToCheckTokensExpire();
+			KeycloakManager.stopServiceToCheckOfflineTimeOut();
 			KeycloakManager.authenticateExpired();
 		}, refreshTokenExpiredSeconds);
 	}
@@ -390,9 +361,43 @@ KeycloakManager.stopServiceToCheckTokensExpire = function()
 	clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
 }
 
+// For Offline Timeout service
+KeycloakManager.restartServiceToCheckOfflineTimeout = function()
+{
+	// Stop the service to check Offline Timeout if it is started before
+	KeycloakManager.stopServiceToCheckOfflineTimeOut();
+
+	// Start service again
+	KeycloakManager.offlineExpiredIntervalObj = setInterval(() => {
+		var statusSummary = KeycloakManager.getStatusSummary();
+		if( statusSummary.isOfflineTimeOut )
+		{
+			// Stop the service to check Offline Timeout
+			KeycloakManager.stopServiceToCheckOfflineTimeOut();
+			
+			// Show message
+			var msg = "Offline Usage Timed Out.";
+			KeycloakManager.keycloakMsgTag.html(msg);
+			KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess );
+		}
+		else if( !statusSummary.isAppOnline )
+		{
+			var timeInfo = KeycloakManager.formatOfflineTimeRemains();
+			KeycloakManager.keycloakMsgTag.html("Offline Usage time will expire in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
+		}
+	}, Util.MS_SEC);
+}
+
+
+KeycloakManager.stopServiceToCheckOfflineTimeOut = function()
+{
+	clearTimeout(KeycloakManager.accessTokenTimeoutObj);
+	clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
+	clearInterval(KeycloakManager.offlineExpiredIntervalObj);
+}
+
 // ==============================================================================
 // Renew Access Token
-
 
 KeycloakManager.renewAccessToken = function()
 {
@@ -438,6 +443,7 @@ KeycloakManager.authenticateExpired = function()
 
 		// Stop services to check the tokens timeout
 		KeycloakManager.stopServiceToCheckTokensExpire();
+		KeycloakManager.stopServiceToCheckOfflineTimeOut();
 	
 		// // Set the "logOut" flag in localStorage
 		// KeycloakLSManager.setProcessingAction(KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT);
@@ -520,7 +526,7 @@ KeycloakManager.getTokenExpiredInMiniseconds = function( tokenParsed )
 
 KeycloakManager.formatOfflineTimeRemains = function()
 {
-	var diffTimes = KeycloakManager.calculateOfflineExpiredTime()
+	var diffTimes = KeycloakManager.calculateOfflineTimeRemains()
 	diffTimes = Math.abs(diffTimes);
 
 	var hours = Math.floor(diffTimes / 3600); // round (down)
