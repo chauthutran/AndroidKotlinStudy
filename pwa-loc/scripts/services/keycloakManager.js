@@ -155,8 +155,8 @@ KeycloakManager.setUpOfflineMode = function()
 	// Disabled the "Logout button"
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
 
-	// Stop the services to check the Access Token timeout / Refresh Token timeout And Offline timeout
-	KeycloakManager.stopServiceToCheckTokensExpire();
+	// // Stop the services to check the Access Token timeout / Refresh Token timeout And Offline timeout
+	// KeycloakManager.stopServiceToCheckTokensExpire();
 	
 	var statusSummary = KeycloakManager.getStatusSummary();
 	if( statusSummary.isOfflineTimeOut )
@@ -222,6 +222,7 @@ KeycloakManager.authenticate = function()
 			else
 			{
 				KeycloakManager.authenticateSuccess();
+				// KeycloakManager.renewAccessToken();
 			}
 			
 		}
