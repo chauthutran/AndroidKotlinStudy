@@ -15,6 +15,7 @@ KeycloakManager.offlineExpiredIntervalObj;
 
 // Flag set when user disabled or session expired.  OfflineTimeExpire checks this to not show msg when this is true.
 KeycloakManager._AppBlocked = false; 
+KeycloakManager.errorTriggerCalled = false;
 
 // =======================================================================================================
 // === NEW KEYCLOAK ============
@@ -100,6 +101,7 @@ KeycloakManager.setUpOnlineMode = function()
 			}
 
 		});
+
 	}
 }
 
@@ -201,7 +203,6 @@ KeycloakManager.createKeycloakObj = function()
 
 	return keycloakObj;
 }
-KeycloakManager.errorTriggerCalled = false;
 
 KeycloakManager.setUpKeycloakObjEvents = function( kcObj ) 
 {
@@ -217,8 +218,8 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 			KeycloakManager.errorTriggerCalled = true;
 		}
 	}
+
 	
-	// This function called when the refreshToken expires OR when the user is disabled, ....
     kcObj.onAuthRefreshError = () => {
 		KeycloakManager.eventMsg('Auth Refresh Error');
 
@@ -232,6 +233,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 	}
     kcObj.onAuthLogout = () => {
 		KeycloakManager.eventMsg('Auth Logout');
+
 		KeycloakLSManager.setLastKeycloakEvent("onAuthLogout");
 		
 		if( !KeycloakManager.errorTriggerCalled )
@@ -239,6 +241,21 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 			KeycloakManager.showDialog("User needs to authenticate." );
 			KeycloakManager.errorTriggerCalled = true;
 		}
+	}
+
+
+	// ----------------------------------------
+	kcObj.onAuthSuccess = () => KeycloakManager.eventMsg('Auth Success');    
+
+	kcObj.onAuthRefreshSuccess = () => {
+		KeycloakManager.eventMsg('Auth Refresh Success');
+	} 
+
+   kcObj.onTokenExpired = () => {
+		KeycloakManager.eventMsg('onTokenExpired');
+
+		KeycloakManager.eventMsg('Access token expired. Creating new access token ...');
+		KeycloakManager.renewAccessToken();
 	}
 
 
