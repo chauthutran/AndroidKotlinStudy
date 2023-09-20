@@ -8,14 +8,13 @@ KeycloakLSManager.KEY_LOGIN_DATE = 'loginDate';
 KeycloakLSManager.KEY_ACCESS_TOKEN = 'accessToken';
 KeycloakLSManager.KEY_REFRESH_TOKEN = 'refreshToken';
 KeycloakLSManager.KEY_ID_TOKEN = 'idToken';
-KeycloakLSManager.KEY_REALM_NAME = 'realmName';
 KeycloakLSManager.KEY_PROCESSING_ACTION = 'processingAction';
 KeycloakLSManager.KEY_KEYCLOCK_USE = "keyClockUse"; 
 KeycloakLSManager.KEY_AUTH_CHOICE = "authChoice";
 
 
 KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT = "logout";
-KeycloakLSManager.KEY_PROCESSING_ACTION_AUTHENTICATED = "authenticated";
+KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS = "lastKeycloakEvents";
 
 // ---------------------------------------------------------------------------------------------
 
@@ -24,6 +23,20 @@ KeycloakLSManager.setKeycloakInfo = function (kcObj) {
 	updatePropertyValue(KeycloakLSManager.KEY_ACCESS_TOKEN, kcObj.token);
 	updatePropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken);
 	updatePropertyValue(KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken);
+}
+
+// Get the 3 latest Keycloak events
+KeycloakLSManager.setLastKeycloakEvent = function (value) {
+	var lastKeycloakEvents = KeycloakLSManager.getLastKeycloakEvents();
+	lastKeycloakEvents.unshift( value );
+	updatePropertyValue(KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS, lastKeycloakEvents.slice(0, 3) );
+}
+
+// This is an array
+KeycloakLSManager.getLastKeycloakEvents = function () {
+	var data = getPropertyValue(KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS);
+	if( !data ) return JSON.parse(data);
+	return [];
 }
 
 KeycloakLSManager.setProcessingAction = function (value) {
