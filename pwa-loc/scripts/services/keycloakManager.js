@@ -401,8 +401,6 @@ KeycloakManager.restartServiceToCheckOfflineTimeout = function()
 
 KeycloakManager.stopServiceToCheckOfflineTimeOut = function()
 {
-	clearTimeout(KeycloakManager.accessTokenTimeoutObj);
-	clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
 	clearInterval(KeycloakManager.offlineExpiredIntervalObj);
 }
 
