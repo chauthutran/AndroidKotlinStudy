@@ -673,7 +673,8 @@ ConfigManager.getNewActivityInsertPosition = function()
 	return positionStr;
 };
 
-ConfigManager.getActivityDetailTabContent = function () {
+ConfigManager.getActivityDetailTabContent = function () 
+{
 	var activityDef = ConfigManager.getActivityDef();
 
 	return (activityDef.detailTabContent) ? activityDef.detailTabContent : {};
