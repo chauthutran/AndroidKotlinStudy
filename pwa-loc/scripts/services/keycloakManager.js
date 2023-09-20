@@ -101,6 +101,8 @@ KeycloakManager.setUpOnlineMode = function()
 	}
 	else
 	{
+		// Authentication Data Exist 
+
 		if ( statusJson.isRefreshTokenExpired ) 
 		{
 			KeycloakManager.authenticateExpired();
@@ -258,24 +260,36 @@ KeycloakManager.createKeycloakObj = function()
 
 KeycloakManager.setUpKeycloakObjEvents = function( kcObj ) 
 {
-    kcObj.onAuthSuccess = () => KeycloakManager.eventMsg('Auth Success');    
+
+	// ----------------------------------------
+	// --- CASES TRIGGER/GOTO KeyCloak Authenticate Page(Server)
     kcObj.onAuthError = () => {
+		alert( 'AuthError' );
 		KeycloakManager.eventMsg("Auth Error");
 	}
-    kcObj.onAuthRefreshSuccess = () => {
-		KeycloakManager.eventMsg('Auth Refresh Success');
-	} 
+
     kcObj.onAuthRefreshError = () => {
+		alert( 'Auth Refresh Error' );
 		KeycloakManager.eventMsg('Auth Refresh Error');
 		// // This function called when the refreshToken expires OR when the user is disabled, ....
 		// KeycloakManager.authenticateExpired();
 	}
     kcObj.onAuthLogout = () => {
+		alert( 'Auth LogOut' );
 		KeycloakManager.eventMsg('Auth Logout');
 		// This function called when the refreshToken expires OR when the user is disabled, ....
 		KeycloakManager.authenticateExpired();
 	}
-    kcObj.onTokenExpired = () => {
+
+
+	// ----------------------------------------
+	kcObj.onAuthSuccess = () => KeycloakManager.eventMsg('Auth Success');    
+
+	kcObj.onAuthRefreshSuccess = () => {
+		KeycloakManager.eventMsg('Auth Refresh Success');
+	} 
+
+   kcObj.onTokenExpired = () => {
 		KeycloakManager.eventMsg('Access token expired.');
 	}
 
