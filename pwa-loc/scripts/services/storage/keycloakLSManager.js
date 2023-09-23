@@ -23,6 +23,8 @@ KeycloakLSManager.setKeycloakInfo = function (kcObj) {
 	updatePropertyValue(KeycloakLSManager.KEY_ACCESS_TOKEN, kcObj.token);
 	updatePropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken);
 	updatePropertyValue(KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken);
+
+	KeycloakLSManager.setProcessingAction("");
 }
 
 // Get the 3 latest Keycloak events

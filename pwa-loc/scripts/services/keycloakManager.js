@@ -76,35 +76,32 @@ KeycloakManager.setUpkeycloakPart = function()
 KeycloakManager.setUpOnlineMode = function()
 {
 	// Enable the "Keyclock logout" button in the bottom & Set "logout" function for click button
-	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
-	KeycloakManager.btnKeyCloakLogOutTag.html("AuthOut").show().off("click").click( () => { 
+	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false).html("AuthOut").show().off("click").click( () => { 
 		KeycloakManager.logout();
 	});
 
 	var statusJson = KeycloakManager.getStatusSummary();
 	// 	- If Not Authenticated, We can Authenticate..
-	if ( !statusJson.isKeycloakAuth 
-		|| statusJson.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT) 
+	if ( !statusJson.isKeycloakAuth ) KeycloakManager.authenticate();
+	else if ( statusJson.isKeycloakAuth )
 	{
-		KeycloakManager.authenticate();
-	}
-	else
-	{
-		KeycloakManager.renewAccessToken(function(auth, errMsg) {
-			if(auth)
+		// NOTE: On Manual KeyCloak 'logout' click, we use this - saving 'process_action_logout' in localStorage before refrehs Page.
+		//		- We do not delete the keycloak auth data on 'logout' click - because we want to delete after confirm logout in server.
+		//		- When we enter website with this 'action_logout', 
+		//			- We need to remove 'processingAction' in localStorage
+		//			- on Authenticate, 
+		if ( statusJson.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT ) KeycloakManager.authenticate();
+		else
+		{
+			KeycloakManager.renewAccessToken(function(auth, errMsg) 
 			{
-				KeycloakManager.authenticateSuccess();
-			}
-			else
-			{
-				KeycloakManager.logout();
-			}
+				if ( auth ) KeycloakManager.authenticateSuccessActions();
+				else KeycloakManager.logout(); // CASES: Disabled User, Session/RefreshToken Expired
+			});
 
-		});
-
+		}
 	}
 }
-
 
 // ---------------------------------------------------------------------------------------------------------
 // For OFFLINE appMode setup
@@ -128,6 +125,8 @@ KeycloakManager.setUpOfflineMode = function()
 // ---------------------------------------------------------------------------------------------------------
 // For Authenticating
 
+// This Reloads Page after it runs all .then methods - from library, trigger/timed
+//		- due to: onLoad: 'login-required'
 KeycloakManager.authenticate = function()
 {
 	KeycloakManager.keycloakObj = KeycloakManager.createKeycloakObj();
@@ -140,9 +139,10 @@ KeycloakManager.authenticate = function()
 		scope: 'openid offline_access',
 		adapter: 'default',
 		timeSkew: KeycloakManager.timeSkew
-	}).then( function(authenticated) {
+	}).then( function(authenticated) 
+	{
 		if( !authenticated ) {
-			KeycloakManager.authenticateFailure();
+			KeycloakManager.authenticateFailureActions();
 		} 
 		else {
 			KeycloakManager.eventMsg('Authenticated.');
@@ -152,7 +152,9 @@ KeycloakManager.authenticate = function()
 			// Save the username info..
 			var userName = KeycloakManager.keycloakObj.tokenParsed.preferred_username.toUpperCase();
 			var preLoginUser = AppInfoLSManager.getUserName();
-			if ( userName != preLoginUser ) {
+
+			if ( userName != preLoginUser ) 
+			{
 				KeycloakManager.eventMsg("User Changed, Deleting previous user data.");
 				
 				DataManager2.deleteAllStorageData(function () 
@@ -163,20 +165,20 @@ KeycloakManager.authenticate = function()
 					AppInfoLSManager.setUserName(userName);
 					if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
 
-					AppUtil.appReloadWtMsg("User Change - Deleteting previous user data ..");		
+					KeycloakManager.authenticateSuccessActions();
 
-					KeycloakManager.authenticateSuccess();
+					AppUtil.appReloadWtMsg("User Change - Deleteting previous user data ..");
 				});
 			}
 			else
 			{
-				KeycloakManager.authenticateSuccess();
+				KeycloakManager.authenticateSuccessActions();
 			}
 			
 		}
 	})
 	.catch(function( errMsg ) {
-		KeycloakManager.authenticateFailure();
+		KeycloakManager.authenticateFailureActions();
 	});
 };
 
@@ -275,7 +277,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 };
 
 
-KeycloakManager.authenticateSuccess = function()
+KeycloakManager.authenticateSuccessActions = function()
 {
 	// Save tokens in Local Storage
 	KeycloakLSManager.setKeycloakInfo( KeycloakManager.keycloakObj );
@@ -287,7 +289,7 @@ KeycloakManager.authenticateSuccess = function()
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
 }
 
-KeycloakManager.authenticateFailure = function()
+KeycloakManager.authenticateFailureActions = function()
 {
 	KeycloakManager.eventMsg('Login with Keycloak failure.');
 
