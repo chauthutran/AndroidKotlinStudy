@@ -18,6 +18,7 @@ KeycloakManager._AppBlocked = false;
 KeycloakManager.errorTriggerCalled = false;
 KeycloakManager.processingNewAccessToken = false;
 
+
 // =======================================================================================================
 // === NEW KEYCLOAK ============
 
@@ -138,18 +139,20 @@ KeycloakManager.authenticate = function()
 
 		// Authenticate
 		KeycloakManager.keycloakObj.init({ 
-			onLoad: 'login-required', // "check-sso", "login-required"
+			// onLoad: 'check-sso', // "check-sso", "login-required"
 			checkLoginIframe: false, 
 			scope: 'openid offline_access',
 			adapter: 'default',
 			timeSkew: KeycloakManager.timeSkew
 		}).then( function(authenticated) 
 		{
-			KeycloakLSManager.setLastKeycloakEvent("KeycloakManager.authenticate --- DONE");
 			if( !authenticated ) {
 				KeycloakManager.authenticateFailureActions();
+				KeycloakLSManager.setLastKeycloakEvent("KeycloakManager.authenticate --- False - Login now");
+				KeycloakManager.keycloakObj.login();
 			} 
 			else {
+				KeycloakLSManager.setLastKeycloakEvent("KeycloakManager.authenticate --- DONE");
 				KeycloakManager.eventMsg('Authenticated.');
 
 				MsgManager.msgAreaShowOpt( "Login with Keycloak success !", { cssClasses: 'notifDark', hideTimeMs: 2000 } );
@@ -224,7 +227,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 
 		if( !KeycloakManager.errorTriggerCalled )
 		{
-			KeycloakManager.showDialog("User needs to authenticate." );
+			KeycloakManager.showDialog("User needs to authenticate.", kcObj.login );
 			KeycloakManager.errorTriggerCalled = true;
 		}
 	}
@@ -236,7 +239,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 
 		if( !KeycloakManager.errorTriggerCalled )
 		{
-			KeycloakManager.showDialog("User needs to authenticate." );
+			KeycloakManager.showDialog("User needs to authenticate.", kcObj.login );
 			KeycloakManager.errorTriggerCalled = true;
 		}
 	}
@@ -246,7 +249,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 		
 		if( !KeycloakManager.errorTriggerCalled )
 		{
-			KeycloakManager.showDialog("User needs to authenticate." );
+			KeycloakManager.showDialog("User needs to authenticate.", kcObj.login );
 			KeycloakManager.errorTriggerCalled = true;
 		}
 	}
@@ -313,7 +316,7 @@ KeycloakManager.renewAccessToken = function(returnFunc)
 		KeycloakManager.setUpKeycloakObjEvents(KeycloakManager.keycloakObj);
 
 		KeycloakManager.keycloakObj.init({
-			onLoad: "check-sso", // "check-sso", "login-required"
+			// onLoad: "check-sso", // "check-sso", "login-required"
 			checkLoginIframe: false,
 			token: accessToken,
 			refreshToken: refreshToken,

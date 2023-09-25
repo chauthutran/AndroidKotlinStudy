@@ -84,7 +84,7 @@ App.run = function ()
 
 		App.param_showMsg( 'msg' );
 		App.param_keyCloakUsage_ForceRemove( App.paramName_keyCloakRemove );
-		App.param_authChiocePage_DataSet( App.paramName_authPage, App.paramName_authChoice, function() {			
+		App.param_authChiocePage_DataSet( App.paramName_authPage, App.paramName_authChoice, function() {
 			KeycloakManager.checkAuthAndLogoutIfAble();
 		});
 		
@@ -145,7 +145,9 @@ App.startAppProcess = function ()
 
 
 		// TODO: CHECK THIS.. KeyCloak Run..  - to log out?
-		if ( KeycloakManager.isKeyCloakInUse() ) KeycloakManager.setUpkeycloakPart();
+		if ( KeycloakManager.isKeyCloakInUse() ) {
+			KeycloakManager.setUpkeycloakPart();
+		}
 
 	}
 	catch ( errMsg ) {

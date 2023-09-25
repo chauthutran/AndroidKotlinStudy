@@ -153,10 +153,6 @@ function Login() {
 
         		// NOTE: CHANGED BY TRAN..
 				if ( authChoice === 'kc_swz_psi' || authChoice === 'kc_swz_psi_dev' ) {
-
-					// if ( KeycloakManagerNew.getStatusSummary().isKeycloakAuth ) KeycloakManagerNew.logout();
-					// else KeycloakManagerNew.authenticate();
-
 					KeycloakManager.setUpkeycloakPart();
 				} 
 				else if ( authChoice === 'dhis2' )
@@ -520,7 +516,9 @@ function Login() {
 				divKeyCloakInfoTag.show();
 				// Login.loginInputDisable( true ); // enable it when authenticated..
 	
-				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.setUpkeycloakPart(); });
+				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { 
+					KeycloakManager.setUpkeycloakPart(); 
+				});
 			}
 			else
 			{
