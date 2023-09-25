@@ -11,6 +11,7 @@ KeycloakLSManager.KEY_ID_TOKEN = 'idToken';
 KeycloakLSManager.KEY_PROCESSING_ACTION = 'processingAction';
 KeycloakLSManager.KEY_KEYCLOCK_USE = "keyClockUse"; 
 KeycloakLSManager.KEY_AUTH_CHOICE = "authChoice";
+// KeycloakLSManager.KEY_KEYCLOAK_OBJ_INIT = "kcObjInited";
 
 
 KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT = "logout";
@@ -24,25 +25,37 @@ KeycloakLSManager.setKeycloakInfo = function (kcObj) {
 	updatePropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken);
 	updatePropertyValue(KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken);
 
-	KeycloakLSManager.setProcessingAction("");
+	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_PROCESSING_ACTION );
 }
+
+
+// ----------------------------------------------------
+//  Auth Choice (Very 1st Page/Selection - before login)
 
 // Get the 3 latest Keycloak events
 KeycloakLSManager.setLastKeycloakEvent = function (value) {
 	var lastKeycloakEvents = KeycloakLSManager.getLastKeycloakEvents();
 	lastKeycloakEvents.unshift( value );
-	updatePropertyValue(KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS, lastKeycloakEvents.slice(0, 3) );
+	updatePropertyValue(KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS, lastKeycloakEvents );
+	// updatePropertyValue(KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS, lastKeycloakEvents.slice(0, 3) );
 }
 
 // This is an array
 KeycloakLSManager.getLastKeycloakEvents = function () {
 	var data = getPropertyValue(KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS);
-	if( !data ) return JSON.parse(data);
-	return [];
+	return ( data == undefined ) ? [] : data;
 }
 
 KeycloakLSManager.setProcessingAction = function (value) {
-	updatePropertyValue(KeycloakLSManager.KEY_PROCESSING_ACTION, value);
+	if( value == "")
+	{
+		KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_PROCESSING_ACTION );
+	}
+	else
+	{
+		updatePropertyValue(KeycloakLSManager.KEY_PROCESSING_ACTION, value);
+	}
+	
 }
 
 KeycloakLSManager.getProcessingAction = function () {
