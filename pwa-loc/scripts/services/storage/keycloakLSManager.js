@@ -70,10 +70,12 @@ KeycloakLSManager.getIdTokenParsed = function () {
 
 KeycloakLSManager.removeProperty = function (key) {
 	var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
-	delete keycloakInfo[key];
 
-	saveKeycloakInfoData(keycloakInfo);
-
+	if ( keycloakInfo )
+	{
+		delete keycloakInfo[key];
+		saveKeycloakInfoData(keycloakInfo);	
+	}
 };
 
 // ---------------------------------------------
