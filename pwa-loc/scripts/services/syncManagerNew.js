@@ -1118,7 +1118,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 				ClientDataManager.mergeDownloadedClients({ clients: [clientJson], case: 'syncUpActivity', syncUpActivityId: activityId, subSyncStatus: subSyncStatus }, processingInfo, function (changeOccurred_atMerge, mergedActivities) 
 				{
 					// NEW: If afterSyncUp, 'afterSyncUp_localClientUpdate' perform if exists..
-					if ( mergedActivities.length > 0 ) SyncManagerNew.afterSyncUp_localClientUpdate( mergedActivities );
+					if ( INFO.setMongoSync_afterSyncUp_localClientUpdate  ) SyncManagerNew.afterSyncUp_localClientUpdate( mergedActivities );
 
 					ClientDataManager.saveCurrent_ClientsStore(() => {
 						if (callBack) callBack(bOptResult, undefined, Constants.status_submit);

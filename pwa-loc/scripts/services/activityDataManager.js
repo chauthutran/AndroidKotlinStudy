@@ -135,7 +135,10 @@ ActivityDataManager.deleteExistingActivity_Indexed = function (activityId) {
 // ---------------------------------------
 // --- Insert Activity to client
 
-ActivityDataManager.insertActivitiesToClient = function (activities, client, option) {
+ActivityDataManager.insertActivitiesToClient = function (activities, client, option) 
+{
+	if ( !option ) option = {};
+
 	for (var i = 0; i < activities.length; i++) {
 		var activity = activities[i];
 
@@ -206,9 +209,13 @@ ActivityDataManager.updateClientActivityListIdx = function (client) {
 };
 
 
-ActivityDataManager.updateActivityIdx = function (activityId, activity, client, option) {
+ActivityDataManager.updateActivityIdx = function (activityId, activity, client, option) 
+{
+	if ( !option ) option = {};
+
 	// NOTE: Not deleting same 'activityId' activityJson from '_activityList'
-	if (option && option.addToTop) {
+	if ( option.insertNewPosition === 'addToTop' ) 
+	{
 		var position = -1;
 		// NOTE: When adding the activity to top of the list (beginning of activityList),
 		//   If the client is tempClient, add the activity after the client activities - add to position in acitivytList after that activity.
@@ -218,6 +225,7 @@ ActivityDataManager.updateActivityIdx = function (activityId, activity, client, 
 		//ActivityDataManager._activityList.unshift( activity );
 	}
 	else {
+		// 'addToBottom' or others..
 		ActivityDataManager._activityList.push(activity);
 	}
 
@@ -701,7 +709,8 @@ ActivityDataManager.createNewPayloadActivity = function (actionUrl, blockId, for
 
 		// TODO: When adding, check for 'c_reg' activity not yet synced case.  If so, add new activity on bottom..
 		// Better, yet, always add new activity to after unsynced activity postion on main activity List.
-		ActivityDataManager.insertActivitiesToClient([activityJson], client, { 'addToTop': true, 'newPayloadCase': true });
+
+		ActivityDataManager.insertActivitiesToClient([activityJson], client, { insertNewPosition: ConfigManager.getNewActivityInsertPosition() , 'newPayloadCase': true });
 
 		ClientDataManager.saveCurrent_ClientsStore(() => {
 			if (callBack) callBack(activityJson, client);

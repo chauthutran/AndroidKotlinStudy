@@ -355,7 +355,7 @@ ClientDataManager.mergeDownloadedClients = function (downloadedData, processingI
 							// Get activities in dwClient that does not exists...
 							var addedActivities = ActivityDataManager.mergeDownloadedActivities(dwClient.activities, appClient.activities, appClient, Util.cloneJson(processingInfo), downloadedData);
 
-							if ( BahmniService.isBahmniConfig() && ( appClient.patientId || dwClient.patientId ) )
+							if ( INFO.setMongoSync_MergeDisable && BahmniService.isBahmniConfig() && ( appClient.patientId || dwClient.patientId ) )
 							{
 								// NEW: If Bahmni 'Mongo' sync case - Copy clientDetails properties without overwriting any existing val.
 								//		- Also, Merge 'voucherCodes'
