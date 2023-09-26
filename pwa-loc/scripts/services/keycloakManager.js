@@ -259,7 +259,8 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 		}
 	}
 
-    kcObj.onAuthLogout = () => {
+	// This trigger is called when the user is disabled OR Session is expired (Token is not active), ....
+   kcObj.onAuthLogout = () => {
 		KeycloakManager.eventMsg('Auth Logout');
 		KeycloakLSManager.setLastKeycloakEvent("onAuthLogout");
 		
@@ -284,8 +285,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 	} 
 	
    kcObj.onTokenExpired = () => {
-		// It happens when the app is opened with tokens existed in the local storage.
-		// The method KeycloakManager.authenticate_WithToken is called and throw this message.
+		// It happens when the refresh token expired
 
 		KeycloakManager.eventMsg('Access token expired.');
 		KeycloakLSManager.setLastKeycloakEvent("onTokenExpired");
@@ -369,6 +369,11 @@ KeycloakManager.restartServiceToUpdateAccessToken = function()
 
 KeycloakManager.updateToken = function()
 {
+	/*** 
+	 * When an access token is re-newed, the expired time of the new access token is calculated based on SHORTER TIME between the Refresh Token expired time
+	 * and "Access Token Lifespan". So a re-newed access token is never longer than a Refresh Token
+	 *  ==> The trigger "onTokenExpired" will be called when the Refresh Token is expired
+	***/
 	KeycloakManager.keycloakObj.updateToken(-1).then(function(refreshed) {
 		if (refreshed) {
 			KeycloakLSManager.setKeycloakInfo( KeycloakManager.keycloakObj );
