@@ -1123,13 +1123,13 @@ Login.contentHtml = `
 	<div class="login_data divLoginForm" style="display:none;">
 		<div class="login_data__fields">
 
-			<div class="divLoginWith" style="display: none; text-align: left; padding: 8px; margin-bottom: -17px; margin-top: 10px;">
+			<div class="divLoginWith" style="display: none; text-align: left; padding: 8px; margin-top: 10px; margin-bottom: -7px;">
 				<span class="divLoginWith_lbl" style="font-size: 0.90rem; color: #777;">Log in with: </span>
 				<span class="divLoginWith_choice" style="font-size: 0.95rem; color: #333; margin-left: 4px;">Classic WFA auth (legacy)</span>
 			</div>
 
-			<h4 id="loginUserNameH4" style="display:none; text-align: left; margin-left: 10px;"></h4>
-			<div id="loginField" class="field" style="background-color: white;">
+			<h4 id="loginUserNameH4" style="display:none; text-align: left; margin-left: 10px; margin-bottom: 18px; margin-top: 20px;"></h4>
+			<div id="loginField" class="field" style="background-color: white; margin-top: 20px;">
 				<div class="field__label">
 					<label term="login_userName">User code</label><span>*</span>
 				</div>
