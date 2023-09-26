@@ -120,10 +120,11 @@ KeycloakLSManager.getAuthChoice = function()
 
 KeycloakLSManager.removeProperty = function (key) {
 	var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
-	delete keycloakInfo[key];
-
-	KeycloakLSManager.saveKeycloakInfoData(keycloakInfo);
-
+	if( keycloakInfo[key] != undefined )
+	{
+		delete keycloakInfo[key];
+		KeycloakLSManager.saveKeycloakInfoData(keycloakInfo);
+	}
 };
 
 KeycloakLSManager.getPropertyValue = function(key) {
