@@ -1124,8 +1124,8 @@ Login.contentHtml = `
 		<div class="login_data__fields">
 
 			<div class="divLoginWith" style="display: none; text-align: left; padding: 8px; margin-bottom: -17px; margin-top: 10px;">
-				<span class="divLoginWith_lbl" style="font-size: 0.75rem; color: #555;">Log in with: </span>
-				<span class="divLoginWith_choice" style="color: #555;">Classic WFA auth (legacy)</span>
+				<span class="divLoginWith_lbl" style="font-size: 0.90rem; color: #777;">Log in with: </span>
+				<span class="divLoginWith_choice" style="color: #222; margin-left: 4px;">Classic WFA auth (legacy)</span>
 			</div>
 
 			<h4 id="loginUserNameH4" style="display:none; text-align: left; margin-left: 10px;"></h4>
