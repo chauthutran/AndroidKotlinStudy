@@ -563,7 +563,8 @@ function Login() {
 					me.needToSetPin = true;
 					me.loginBtnTag.hide();
 					me.loginSetPinBtnTag.show();
-					me.loginPinConfirmDivTag.show();
+					Login.loginPinConfirmCase = true; // NEW
+					me.loginPinConfirmDivTag.show(); // Disable this..
 				}
 			});
 		}
@@ -1097,6 +1098,8 @@ function Login() {
 	me.initialize();
 };
 
+
+Login.loginPinConfirmCase = false;
 
 Login.loginInputDisable = function( disable )
 {

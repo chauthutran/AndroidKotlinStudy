@@ -3,7 +3,7 @@ function KeycloakManager() {};
 // NOTE: Manual Offline Expire -->  KeycloakManager.setUpForm_Offline_OfflineTimeExpired();
 
 KeycloakManager.REFRESH_TOKEN_SECOND = 30; // 30s
-KeycloakManager.OFFLINE_TIMEOUT = 3 * 60; // 10 mins, Overwritten by Config 'offlineTimeoutSec'
+KeycloakManager.OFFLINE_TIMEOUT = 604800; // 7 days: 60 * 60 * 24 * 7, Overwritten by Config 'offlineTimeoutSec'
 
 KeycloakManager.btnKeyCloakLogOutTag;
 KeycloakManager.keycloakMsgTag;

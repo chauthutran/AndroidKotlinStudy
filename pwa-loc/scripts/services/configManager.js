@@ -1319,40 +1319,43 @@ ConfigManager.getDefinitionFieldById = function (fieldId) {
 // ---------------------------------------------
 // ---- Statistic Related --------------------
 
-ConfigManager.getStatisticJson = function () {
+ConfigManager.getStatisticJson = function () 
+{
 	var configJson = ConfigManager.getConfigJson();
 	var login_UserRoles = ConfigManager.login_UserRoles;
 
 	var statisticJson = {};
 
-	if (configJson.settings) {
-		if (configJson.settings.statistics) {
-			var selectedRoleArrCount = 0;
+	if (configJson.settings) 
+	{
+		// single version statis..
+		if (configJson.settings.statistic) statisticJson = configJson.settings.statistic;
+		else if ( configJson.settings.statistics ) 
+		{
+			var stsList = configJson.settings.statistics;
 
 			// userRole based statistic info..
-			for (var i = 0; i < configJson.settings.statistics.length; i++) {
-				var statJson = configJson.settings.statistics[i];
+			for (var i = 0; i < stsList.length; i++) 
+			{
+				var statJson = stsList[i];
 
 				var statRoleArr = statJson.userRoles;
 
 				// If 'userRoles' is not defined or empty, assign as the base/default selection
-				if (!statRoleArr || statRoleArr.length === 0) {
-					selectedRoleArrCount = 0;
+				if (!statRoleArr || statRoleArr.length === 0) 
+				{					
 					statisticJson = statJson;
+					break;
 				}
-				else {
-					var checkRoleArrCount = statRoleArr.length;
-
-					if (checkRoleArrCount > selectedRoleArrCount
-						&& ConfigManager.hasAllRoles(statRoleArr, login_UserRoles)) {
+				else 
+				{
+					if ( ConfigManager.hasAnyRoles(statRoleArr, login_UserRoles) ) 
+					{
 						statisticJson = statJson;
-						selectedRoleArrCount = checkRoleArrCount;
-					}
+						break;
+					}	
 				}
 			}
-		}
-		else if (configJson.settings.statistic) {
-			statisticJson = configJson.settings.statistic;
 		}
 	}
 
@@ -1388,6 +1391,11 @@ ConfigManager.hasAllRoles = function (configRoleIds, login_UserRoles) {
 	}
 
 	return hasAllConfigRoles;
+};
+
+ConfigManager.hasAnyRoles = function (configRoleIds, login_UserRoles) 
+{
+	return ( login_UserRoles.filter( item => configRoleIds.indexOf( item ) >= 0 ).length > 0 ) ? true: false;
 };
 
 // ------------------------------------------------------

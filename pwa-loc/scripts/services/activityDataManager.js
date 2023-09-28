@@ -1422,13 +1422,25 @@ ActivityDataManager.getVoucherActivitiesData = function (activities, voucherCode
 
 	if (voucherCode && activities && Util.isTypeArray(activities)) {
 		// use 'capturedLoc'? (or 'capturedUTC'?) as main date to compare 
-		activities.forEach(activity => {
-			if (activity.transactions && Util.isTypeArray(activity.transactions)) {
-				activity.transactions.forEach(trans => {
-					try {
+		activities.forEach(activity => 
+		{
+			var case_v_rdx = false;
+			var case_voucher = false;
+
+			if (activity.transactions && Util.isTypeArray(activity.transactions)) 
+			{
+				activity.transactions.forEach(trans => 
+				{
+					try 
+					{
 						if ((trans.clientDetails && trans.clientDetails.voucherCode === voucherCode)
-							|| (trans.dataValues && trans.dataValues.voucherCode === voucherCode)) {
-							if (trans.type === 'v_iss') {
+							|| (trans.dataValues && trans.dataValues.voucherCode === voucherCode)) 
+						{
+							case_voucher = true;
+							if (trans.type.indexOf('v_rdx') === 0) case_v_rdx = true; //voucherData.rdxActList.push(activity);
+
+							if (trans.type === 'v_iss') 
+							{
 								voucherData.issuedUser = activity.activeUser;
 
 								if (activity.date) {
@@ -1439,15 +1451,15 @@ ActivityDataManager.getVoucherActivitiesData = function (activities, voucherCode
 									voucherData.v_issDateStr = activity.date.capturedLoc;
 								}
 							}
-
-							if (trans.type.indexOf('v_rdx') === 0) voucherData.rdxActList.push(activity);
-
-							voucherData.activities.push(activity);
 						}
 					}
 					catch (errMsg) { console.log('ERROR in ActivityDataManager.getVoucherActivitiesData.trans, voucherCode: ' + voucherCode + ', ' + errMsg); }
 				});
 			}
+
+
+			if ( case_v_rdx ) voucherData.rdxActList.push( activity );
+			if ( case_voucher ) voucherData.activities.push( activity );
 		});
 
 		// Sort by 'captureLoc' date
