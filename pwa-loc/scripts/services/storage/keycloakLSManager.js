@@ -8,48 +8,70 @@ KeycloakLSManager.KEY_LOGIN_DATE = 'loginDate';
 KeycloakLSManager.KEY_ACCESS_TOKEN = 'accessToken';
 KeycloakLSManager.KEY_REFRESH_TOKEN = 'refreshToken';
 KeycloakLSManager.KEY_ID_TOKEN = 'idToken';
-KeycloakLSManager.KEY_REALM_NAME = 'realmName';
 KeycloakLSManager.KEY_PROCESSING_ACTION = 'processingAction';
 KeycloakLSManager.KEY_KEYCLOCK_USE = "keyClockUse"; 
 KeycloakLSManager.KEY_AUTH_CHOICE = "authChoice";
+// KeycloakLSManager.KEY_KEYCLOAK_OBJ_INIT = "kcObjInited";
 
 
 KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT = "logout";
+KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS = "lastKeycloakEvents";
 
 // ---------------------------------------------------------------------------------------------
 
 KeycloakLSManager.setKeycloakInfo = function (kcObj) {
-	updatePropertyValue(KeycloakLSManager.KEY_LOGIN_DATE, UtilDate.dateStr("DATETIME"));
-	updatePropertyValue(KeycloakLSManager.KEY_ACCESS_TOKEN, kcObj.token);
-	updatePropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken);
-	updatePropertyValue(KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken);
+	KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_LOGIN_DATE, UtilDate.dateStr("DATETIME"));
+	KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_ACCESS_TOKEN, kcObj.token);
+	KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken);
+	KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken);
+
+	KeycloakLSManager.setProcessingAction("");
 }
 
+
+// ----------------------------------------------------
+//  Auth Choice (Very 1st Page/Selection - before login)
+
+// Get the 10 latest Keycloak events
+KeycloakLSManager.setLastKeycloakEvent = function (value) {
+	var lastKeycloakEvents = KeycloakLSManager.getLastKeycloakEvents();
+	lastKeycloakEvents.unshift( UtilDate.dateStr("DATETIME") + ":" + value );
+	KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS, lastKeycloakEvents.slice(0, 10) );
+}
+
+// This is an array
+KeycloakLSManager.getLastKeycloakEvents = function () {
+	var data = KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS);
+	return ( data == undefined ) ? [] : data;
+}
+
+
+
 KeycloakLSManager.setProcessingAction = function (value) {
-	updatePropertyValue(KeycloakLSManager.KEY_PROCESSING_ACTION, value);
+	if( value == "") KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_PROCESSING_ACTION );
+	else KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_PROCESSING_ACTION, value);
 }
 
 KeycloakLSManager.getProcessingAction = function () {
-	return getPropertyValue(KeycloakLSManager.KEY_PROCESSING_ACTION);
+	return KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_PROCESSING_ACTION);
 }
 
 
 KeycloakLSManager.getLastLoginDate = function () {
-	return getPropertyValue(KeycloakLSManager.KEY_LOGIN_DATE);
+	return KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_LOGIN_DATE);
 }
 
 KeycloakLSManager.getAccessToken = function () {
-	return getPropertyValue(KeycloakLSManager.KEY_ACCESS_TOKEN);
+	return KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_ACCESS_TOKEN);
 }
 
 KeycloakLSManager.getRefreshToken = function () {
-	return getPropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN);
+	return KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN);
 }
 
 KeycloakLSManager.getIdToken = function () {
-	return getPropertyValue(KeycloakLSManager.KEY_ID_TOKEN);
+	return KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_ID_TOKEN);
 }
-
 
 KeycloakLSManager.getAccessTokenParsed = function () {
 	var token = KeycloakLSManager.getAccessToken();
@@ -65,18 +87,6 @@ KeycloakLSManager.getIdTokenParsed = function () {
 	var token = KeycloakLSManager.getIdToken();
 	return KeycloakLSManager.decodeToken(token);
 }
-
-// KeycloakLSManager.localStorageRemove = function () {  saveKeycloakInfoData({});  };
-
-KeycloakLSManager.removeProperty = function (key) {
-	var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
-
-	if ( keycloakInfo )
-	{
-		delete keycloakInfo[key];
-		saveKeycloakInfoData(keycloakInfo);	
-	}
-};
 
 // ---------------------------------------------
 //KeycloakLSManager.removeTokens_LoginDate = function()
@@ -95,12 +105,12 @@ KeycloakLSManager.authOut_DataRemoval_wtTokens = function()
 //  Auth Choice (Very 1st Page/Selection - before login)
 KeycloakLSManager.setAuthChoice = function( authChoice )
 {
-   updatePropertyValue( KeycloakLSManager.KEY_AUTH_CHOICE, authChoice );
+   KeycloakLSManager.updatePropertyValue( KeycloakLSManager.KEY_AUTH_CHOICE, authChoice );
 };
 
 KeycloakLSManager.getAuthChoice = function()
 {
-   return getPropertyValue( KeycloakLSManager.KEY_AUTH_CHOICE );
+   return KeycloakLSManager.getPropertyValue( KeycloakLSManager.KEY_AUTH_CHOICE );
 };
 
 // REMOVAL METHOD -->  KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
@@ -108,13 +118,22 @@ KeycloakLSManager.getAuthChoice = function()
 // ---------------------------------------------------------------------------------------------
 // Supportive methods
 
-function getPropertyValue(key) {
+KeycloakLSManager.removeProperty = function (key) {
+	var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
+	if( keycloakInfo[key] != undefined )
+	{
+		delete keycloakInfo[key];
+		KeycloakLSManager.saveKeycloakInfoData(keycloakInfo);
+	}
+};
+
+KeycloakLSManager.getPropertyValue = function(key) {
 	var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
 
 	return (keycloakInfo == undefined) ? undefined : keycloakInfo[key];
 };
 
-function updatePropertyValue(key, value) {
+KeycloakLSManager.updatePropertyValue = function(key, value) {
 	var keycloakInfo = LocalStgMng.getJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO);
 	if (keycloakInfo == undefined) {
 		keycloakInfo = {};
@@ -122,11 +141,11 @@ function updatePropertyValue(key, value) {
 	keycloakInfo[key] = value;
 
 	// Update data in memory
-	saveKeycloakInfoData(keycloakInfo);
+	KeycloakLSManager.saveKeycloakInfoData(keycloakInfo);
 };
 
 
-function saveKeycloakInfoData(keycloakInfo) {
+KeycloakLSManager.saveKeycloakInfoData = function(keycloakInfo) {
 	LocalStgMng.saveJsonData(KeycloakLSManager.KEY_KEYCLOAK_INFO, keycloakInfo);
 };
 

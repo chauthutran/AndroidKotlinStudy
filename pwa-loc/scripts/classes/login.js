@@ -50,14 +50,23 @@ function Login() {
 		me.loginSetPinBtnTag = $('.loginSetPinBtn');
 		me.loginPinConfirmDivTag = $('.loginPinConfirmDiv');
 		me.splitPasswordConfirmTag = $(".pin_confirm");
+
 		me.loginPinConfirmClearTag = $("#loginPinConfirmClear");
+		me.showConfirmPasswordBtnTag = $('#showConfirmPwd');
+		me.hideConfirmPasswordBtnTag = $('#hideConfirmPwd');
 		
 		me.loginBtnTag = $('.loginBtn');
 		me.loginPinDivTag = $('.loginPinDiv');
 		me.loginUserNameTag = $('.loginUserName');
 		me.loginFormTag = $('div.login_data');
 		me.btnChangeUserTag = $('.btnChangeUser');	
+
 		me.loginPinClearTag = $('#loginPinClear');
+		me.showPasswordBtnTag = $('#showPwd');
+		me.hidePasswordBtnTag = $('#hidePwd');
+
+		
+
 		me.splitPasswordTag = $('.pin');
 		me.selAuthChoiceTag = $( '.selAuthChoice' );
 		me.spanAuthPageUseTag = $( '.spanAuthPageUse' );
@@ -142,12 +151,9 @@ function Login() {
 				$( '.divAuthForm' ).hide();
 				me.openLoginForm();	
 
-        // NOTE: CHANGED BY TRAN..
+        		// NOTE: CHANGED BY TRAN..
 				if ( authChoice === 'kc_swz_psi' || authChoice === 'kc_swz_psi_dev' ) {
-					// $( 'img.imgKeyCloakUse' ).click();
-					// KeycloakLSManager.setKeyCloakUse( 'Y' );
-					// AppUtil.appReloadWtMsg();
-					KeycloakManager.keycloakPart();
+					KeycloakManager.setUpkeycloakPart();
 				} 
 				else if ( authChoice === 'dhis2' )
 				{
@@ -362,6 +368,40 @@ function Login() {
 			me.clearResetPasswords(me.loginPinConfirmDivTag);
 			me.loginPinConfirmDivTag.find('.pin1').focus();
 		});
+
+
+		me.showPasswordBtnTag.off('click').click(function () {
+			me.loginPinDivTag.css("-webkit-text-security", "none");
+			me.loginPinDivTag.find(".pin_pw").css("-webkit-text-security", "none");
+			me.loginPinDivTag.find(".pin_pw").css("font-family", "Rubik");
+
+			me.showPasswordBtnTag.hide();
+			me.hidePasswordBtnTag.show();
+		});
+		me.hidePasswordBtnTag.off('click').click(function () {
+			me.loginPinDivTag.css("-webkit-text-security", "disc");
+			me.loginPinDivTag.find(".pin_pw").css("-webkit-text-security", "disc");
+			me.loginPinDivTag.find(".pin_pw").css("font-family", "text-security-disc");
+
+			me.showPasswordBtnTag.show();
+			me.hidePasswordBtnTag.hide();
+		});
+
+		
+		me.showConfirmPasswordBtnTag.off('click').click(function () {
+			me.loginPinConfirmDivTag.find(".pin_pw").css("-webkit-text-security", "none");
+			me.loginPinConfirmDivTag.find(".pin_pw").css("font-family", "Rubik");
+
+			me.showConfirmPasswordBtnTag.hide();
+			me.hideConfirmPasswordBtnTag.show();
+		});
+		me.hideConfirmPasswordBtnTag.off('click').click(function () {
+			me.loginPinConfirmDivTag.find(".pin_pw").css("-webkit-text-security", "disc");
+			me.loginPinConfirmDivTag.find(".pin_pw").css("font-family", "text-security-disc");
+			me.showConfirmPasswordBtnTag.show();
+			me.hideConfirmPasswordBtnTag.hide();
+		});
+		
 	};
 
 	// User Switch, User Remove / Clear
@@ -381,7 +421,7 @@ function Login() {
 					if ( KeycloakLSManager.getAuthChoice() ) 
 					{
 						KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
-						if ( KeycloakLSManager.getAccessToken() ) KeycloakManager.tokenLogout();
+						KeycloakManager.checkAuthAndLogoutIfAble();
 					}
 					// NOTE: If keycloak Access case, we will not run below!!!
 
@@ -476,7 +516,9 @@ function Login() {
 				divKeyCloakInfoTag.show();
 				// Login.loginInputDisable( true ); // enable it when authenticated..
 	
-				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { KeycloakManager.keycloakPart(); });
+				$( '#btnKeyCloakRun' ).off( 'click' ).click( () => { 
+					KeycloakManager.setUpkeycloakPart(); 
+				});
 			}
 			else
 			{
@@ -732,12 +774,6 @@ function Login() {
 		SessionManager.setLoginStatus(true);
 		BahmniService.syncDataProcessing = false;	
 		
-		// // Remove setTimeout, setInterval to check the Access Token (for ONLINE case) OR Offline Time out (for OFFLINE case)
-		// if( KeycloakManager.isKeyCloakInUse() )
-		// {
-		// 	KeycloakManager.clearCheckTokenTimeout();
-		// }
-
 		// gAnalytics Event
 		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
 
@@ -1159,7 +1195,9 @@ Login.contentHtml = `
 							<input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 						</div>
 						<div style="float: left;">
-							<button id="loginPinClear" class="cbtn mouseDown" term="login_passwordClear">clear</button>
+							<img id="loginPinClear" src="images/clear.png" style="cursor:pointer; width: 25px;height: 25px;" />
+							<img id="hidePwd" src="images/pwd_hide.png" style="display:none; cursor:pointer; width: 25px;height: 25px;" />
+							<img id="showPwd" src="images/pwd_visible.png" style="cursor:pointer;width: 25px;height: 25px;"/>
 						</div>
 						<div style="float: left;">
 							<img class="pin_pw_loading" src="images/loading_small2.svg" style="display:none; width:30px; height:30px; margin-left:10px; margin-top:10px;" />
@@ -1185,7 +1223,9 @@ Login.contentHtml = `
 							<input tabindex="5" class="onKeyboardOnOff confirmPin pin_pw pin4" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 						</div>
 						<div style="float: left;">
-							<button id="loginPinConfirmClear" class="cbtn mouseDown" term="login_passwordClear">clear</button>
+							<img id="loginPinConfirmClear" src="images/clear.png" style="cursor:pointer; width: 25px;height: 25px;" />
+							<img id="hideConfirmPwd" src="images/pwd_hide.png" style="display:none; cursor:pointer; width: 25px;height: 25px;" />
+							<img id="showConfirmPwd" src="images/pwd_visible.png" style="cursor:pointer;width: 25px;height: 25px;"/>
 						</div>
 					</div>
 					<div class="field__right"></div>
