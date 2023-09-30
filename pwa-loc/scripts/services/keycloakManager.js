@@ -13,8 +13,8 @@ KeycloakManager.accessTokenTimeoutObj;
 KeycloakManager.offlineExpiredIntervalObj;
 
 // Flag set when user disabled or session expired.  OfflineTimeExpire checks this to not show msg when this is true.
-KeycloakManager._AppBlocked = false; 
-KeycloakManager.errorTriggerCalled = false;
+KeycloakManager._AppBlocked = false; // Obsolete? - since logout process clears the offlineTimeout interval?
+KeycloakManager.logoutCalled = false;
 KeycloakManager.processingNewAccessToken = false;
 
 
@@ -40,22 +40,19 @@ KeycloakManager.getStatusSummary = function()
 {
 	var statusJson = {};
 
-	var processingAction = KeycloakLSManager.getProcessingAction();
-	statusJson.kcObjCreated = ( KeycloakManager.keycloakObj != undefined );
-	statusJson.isLSTokensExisted = ( KeycloakLSManager.getAccessToken() && processingAction != KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT ) ? true: false;
-
-	statusJson.processingAction = processingAction;
-
+	// --- App Status
 	statusJson.isAppOnline = ConnManagerNew.isAppMode_Online();
+	statusJson.isLoggedIn = SessionManager.getLoginStatus();	
 
+	// --- KeyCloak Status
+	statusJson.lastTimeAction = KeycloakLSManager.getLastTimeAction(); // TODO: Rename to 'LastTimeAction'?
+	statusJson.kcObjCreated = ( KeycloakManager.keycloakObj != undefined );
+	statusJson.isLSTokensExisted = ( KeycloakLSManager.getAccessToken() && statusJson.lastTimeAction !== KeycloakLSManager.KEY_LOGOUT ) ? true: false; // If in process of logout, consider as 'false'
 
-	// TODO: More to think about
 	statusJson.isOfflineTimeOut = KeycloakManager.isOfflineTimeout();
 
-	statusJson.isLoggedIn = SessionManager.getLoginStatus();
-
 	// keycloak information
-	statusJson.kc = {
+	var kc = {
 		accessToken: KeycloakLSManager.getAccessToken(),
 		accessTokenParsed: KeycloakLSManager.getAccessTokenParsed(),
 		accessTokenValidInSeconds: KeycloakManager.calculateTokenExpiredTimeRemains(KeycloakLSManager.getAccessTokenParsed()),
@@ -66,8 +63,18 @@ KeycloakManager.getStatusSummary = function()
 
 		idToken: KeycloakLSManager.getIdToken(),
 		idTokenParsed: KeycloakLSManager.getIdTokenParsed()
-
 	};
+
+	statusJson.kc = kc;
+
+	statusJson.remainTimeSEC_RefreshToken = kc.refreshTokenValidInSeconds;
+	statusJson.remainTimeSEC_AccessToken = kc.accessTokenValidInSeconds;
+	statusJson.remainTimeSEC_OfflineAccess = KeycloakManager.calculateOfflineTimeRemains();
+
+	statusJson.fullTimeSEC_OfflineAccess = KeycloakManager.OFFLINE_TIMEOUT;
+	statusJson.fullTimeSEC_SessionToken = ( kc.refreshTokenParsed ) ? kc.refreshTokenParsed.exp - kc.refreshTokenParsed.iat: 'NA';
+	statusJson.fullTimeSEC_AccessToken = ( kc.accessTokenParsed ) ? kc.accessTokenParsed.exp - kc.accessTokenParsed.iat: 'NA';
+
 	return statusJson;
 };
 
@@ -87,7 +94,6 @@ KeycloakManager.setUpkeycloakPart = function()
 };
 
 
-
 // ---------------------------------------------------------------------------------------------------------
 // For ONLINE appMode setup
 
@@ -101,7 +107,7 @@ KeycloakManager.setUpOnlineMode = function()
 	var statusJson = KeycloakManager.getStatusSummary();
 	if( !statusJson.kcObjCreated )
 	{
-		if( statusJson.processingAction == KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT )
+		if( statusJson.lastTimeAction === KeycloakLSManager.KEY_LOGOUT )
 		{
 			KeycloakManager.authenticate();
 		}
@@ -158,7 +164,7 @@ KeycloakManager.authenticate = function()
 		// Authenticate
 		KeycloakManager.keycloakObj.init({ 
 			checkLoginIframe: false, 
-			scope: 'openid offline_access',
+			scope: 'openid', //'openid offline_access',
 			adapter: 'default',
 			timeSkew: KeycloakManager.timeSkew
 		}).then( function(authenticated) 
@@ -239,23 +245,15 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 		KeycloakManager.eventMsg("Auth Error");
 		KeycloakLSManager.setLastKeycloakEvent("onAuthError");
 
-		if( !KeycloakManager.errorTriggerCalled )
-		{
-			KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.logout );
-			KeycloakManager.errorTriggerCalled = true;
-		}
+		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
 	}
 
 	
     kcObj.onAuthRefreshError = () => {
 		KeycloakManager.eventMsg('Auth Refresh Error');
 		KeycloakLSManager.setLastKeycloakEvent("onAuthRefreshError");
-
-		if( !KeycloakManager.errorTriggerCalled )
-		{
-			KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.logout );
-			KeycloakManager.errorTriggerCalled = true;
-		}
+		
+		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
 	}
 
 	// This trigger is called when the user is disabled OR Session is expired (Token is not active), ....
@@ -263,11 +261,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 		KeycloakManager.eventMsg('Auth Logout');
 		KeycloakLSManager.setLastKeycloakEvent("onAuthLogout");
 		
-		if( !KeycloakManager.errorTriggerCalled )
-		{
-			KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.logout );
-			KeycloakManager.errorTriggerCalled = true;
-		}
+		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
 	}
 
 
@@ -288,11 +282,8 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 
 		KeycloakManager.eventMsg('Access token expired.');
 		KeycloakLSManager.setLastKeycloakEvent("onTokenExpired");
-		if( !KeycloakManager.errorTriggerCalled )
-		{
-			KeycloakManager.showDialog("User needs to authenticate.", KeycloakManager.logout );
-			KeycloakManager.errorTriggerCalled = true;
-		}
+
+		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
 	}
 };
 
@@ -404,8 +395,17 @@ KeycloakManager.restartServiceToCheckOfflineTimeout = function()
 	KeycloakManager.stopServiceToCheckOfflineTimeOut();
 
 	// Start service again
-	KeycloakManager.offlineExpiredIntervalObj = setInterval(() => {
+	KeycloakManager.offlineExpiredIntervalObj = setInterval(() => 
+	{
+		// Always set the offline remaining time, but setting this part visible
+		//		will be decided by situation --> On Login Page, On Offline Status
+		var timeInfo = KeycloakManager.formatOfflineTimeRemains();
+
+		KeycloakManager.keycloakMsgTag.html("OFFLINE Expires in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
+
+
 		var statusSummary = KeycloakManager.getStatusSummary();
+
 		if( statusSummary.isOfflineTimeOut )
 		{
 			// Stop the service to check Offline Timeout
@@ -416,6 +416,7 @@ KeycloakManager.restartServiceToCheckOfflineTimeout = function()
 			{
 				var msg = "Offline Usage Timed Out.";
 				KeycloakManager.keycloakMsgTag.html(msg);
+
 				if( statusSummary.isLoggedIn )
 				{
 					KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess ); // Force the user to logout if the user logged
@@ -426,12 +427,18 @@ KeycloakManager.restartServiceToCheckOfflineTimeout = function()
 				}
 			}
 		}
-		else if( !statusSummary.isAppOnline ) // For OFFLINE mode only
+		else		
 		{
-			var timeInfo = KeycloakManager.formatOfflineTimeRemains();
-			KeycloakManager.keycloakMsgTag.html("Offline Usage time will expire in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
+			// If login page & 
+
+			if ( !statusSummary.isAppOnline ) // For OFFLINE mode only
+			{
+				var timeInfo = KeycloakManager.formatOfflineTimeRemains();
+
+				KeycloakManager.keycloakMsgTag.html("OFFLINE Expires in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
+			}
 		}
-	}, Util.MS_SEC);
+	}, Util.MS_SEC * 10 );
 }
 
 
@@ -444,28 +451,48 @@ KeycloakManager.stopServiceToCheckOfflineTimeOut = function()
 // ==============================================================================
 // Logout
 
+
+// TODO: This should be used?
 KeycloakManager.checkAuthAndLogoutIfAble = function()
 {
 	var statusSummary = KeycloakManager.getStatusSummary();
 	if( statusSummary.isLSTokensExisted ) KeycloakManager.logout();
 }
 
-KeycloakManager.logout = function()
+KeycloakManager.logout = function( option )
 {
+	if ( !option ) option = {};
+
 	// We shouldn't user the "logout" method what keyclock.js provides
 	// --- KeycloakManager.keycloakObj.logout({redirectUri: location.origin}); ---
 	// because in some place ( app.js ), we need to logout BUT we don't created Keycloak object 
 
-	var accesstokenParsed = KeycloakLSManager.getAccessTokenParsed();
-
-	if ( accesstokenParsed )
+	if ( KeycloakManager.logoutCalled ) console.log( 'logOut Called Already, Preventing Duplicate Calls..' );
+	else
 	{
-		KeycloakLSManager.setProcessingAction( KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT );
+		try
+		{
+			KeycloakManager.stopServiceToCheckOfflineTimeOut(); // Present Offline Timeout happending while waiting for user to accept the alert msg ..
 
-		// accesstokenParsed.iss : "http://localhost:8080/realms/SWZ_PSI"
-		var logoutUrl = accesstokenParsed.iss + "/protocol/openid-connect/logout";
-		logoutUrl +=  `?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`
-		window.location.replace(logoutUrl);	
+			if ( option.alertMsg ) alert( option.alertMsg );		
+		
+		
+			var accesstokenParsed = KeycloakLSManager.getAccessTokenParsed();
+		
+			if ( accesstokenParsed )
+			{
+				// 
+				KeycloakLSManager.setLastTimeAction( KeycloakLSManager.KEY_LOGOUT );
+		
+				// accesstokenParsed.iss : "http://localhost:8080/realms/SWZ_PSI"
+				var logoutUrl = accesstokenParsed.iss + `/protocol/openid-connect/logout?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`;
+	
+				window.location.replace( logoutUrl );	
+			}
+
+			KeycloakManager.logoutCalled = true;
+		}
+		catch( errMsg ) { console.log( 'ERROR in KeycloakManager.logout, ' + errMsg ); }
 	}
 };
 

@@ -8,13 +8,13 @@ KeycloakLSManager.KEY_LOGIN_DATE = 'loginDate';
 KeycloakLSManager.KEY_ACCESS_TOKEN = 'accessToken';
 KeycloakLSManager.KEY_REFRESH_TOKEN = 'refreshToken';
 KeycloakLSManager.KEY_ID_TOKEN = 'idToken';
-KeycloakLSManager.KEY_PROCESSING_ACTION = 'processingAction';
+KeycloakLSManager.KEY_LAST_TIME_ACTION = 'lastTimeAction';
 KeycloakLSManager.KEY_KEYCLOCK_USE = "keyClockUse"; 
 KeycloakLSManager.KEY_AUTH_CHOICE = "authChoice";
 // KeycloakLSManager.KEY_KEYCLOAK_OBJ_INIT = "kcObjInited";
 
 
-KeycloakLSManager.KEY_PROCESSING_ACTION_LOGOUT = "logout";
+KeycloakLSManager.KEY_LOGOUT = "logout";
 KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS = "lastKeycloakEvents";
 
 // ---------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ KeycloakLSManager.setKeycloakInfo = function (kcObj) {
 	KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken);
 	KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken);
 
-	KeycloakLSManager.setProcessingAction("");
+	KeycloakLSManager.setLastTimeAction("");
 }
 
 
@@ -45,15 +45,13 @@ KeycloakLSManager.getLastKeycloakEvents = function () {
 	return ( data == undefined ) ? [] : data;
 }
 
-
-
-KeycloakLSManager.setProcessingAction = function (value) {
-	if( value == "") KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_PROCESSING_ACTION );
-	else KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_PROCESSING_ACTION, value);
+KeycloakLSManager.setLastTimeAction = function (value) {
+	if( !value ) KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_LAST_TIME_ACTION );
+	else KeycloakLSManager.updatePropertyValue( KeycloakLSManager.KEY_LAST_TIME_ACTION, value );
 }
 
-KeycloakLSManager.getProcessingAction = function () {
-	return KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_PROCESSING_ACTION);
+KeycloakLSManager.getLastTimeAction = function () {
+	return KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_LAST_TIME_ACTION);
 }
 
 
@@ -97,7 +95,7 @@ KeycloakLSManager.authOut_DataRemoval_wtTokens = function()
 	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_ID_TOKEN );
 
 	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_LOGIN_DATE );
-	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_PROCESSING_ACTION );
+	KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_LAST_TIME_ACTION );
 };
 
 
@@ -155,7 +153,8 @@ KeycloakLSManager.decodeToken = function (token)
 
 	try 
 	{
-		if (token != undefined) {
+		if ( token ) 
+		{
 			token = token.split('.')[1];
 
 			token = token.replace(/-/g, '+');
@@ -180,5 +179,5 @@ KeycloakLSManager.decodeToken = function (token)
 	}
 	catch( errMsg ) {  console.log( 'ERROR in KeycloakLSManager.decodeToken' );  }
 
-    return output;
+   return output;
 }
