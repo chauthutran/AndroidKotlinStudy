@@ -350,6 +350,10 @@ KeycloakManager.restartServiceToUpdateAccessToken = function()
 			KeycloakManager.updateToken();
 		}, timeoutSeconds * 1000);
 	}
+	else
+	{
+		KeycloakManager.updateToken();
+	}
 };
 
 KeycloakManager.updateToken = function()
