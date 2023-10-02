@@ -332,6 +332,47 @@ UtilDate.getTimeFromMs = function( inputMsTime, toTimeName, optionalStr )
 	return ( optionalStr ) ? outputVal + optionalStr : outputVal;
 };
 
+UtilDate.getTimeStrFormatted = function( inputSec, option ) 
+{
+	var outputStr = '';
+	
+	if ( !option ) option = {};
+
+	try
+	{
+		if ( inputSec < 60 ) outputStr = inputSec + 'sec';
+		else if ( inputSec < 3600 ) outputStr = UtilDate.getNumberFixedStr( inputSec / 60 ) + 'min';
+		else if ( inputSec < 86400 ) outputStr = UtilDate.getNumberFixedStr( inputSec / 3600 ) + 'hr';
+		else outputStr = UtilDate.getNumberFixedStr( inputSec / 86400 ) + 'day';
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in UtilDate.getTimeStrFormatted, ' + errMsg );
+	}
+
+	return outputStr;
+};
+
+UtilDate.getNumberFixedStr = function( inputVal, option )
+{	
+	var outputVal = inputVal;
+
+	if ( !option ) option = {};
+
+	try
+	{
+		var val0 = inputVal.toFixed( 0 );
+		var val1 = inputVal.toFixed( 1 );
+	
+		outputVal = ( Number( val0 ) === Number( val1 ) ) ? val0 : val1;
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in UtilDate.getNumberFixedStr, ' + errMsg );
+	}
+
+	return outputVal;
+};
 
 UtilDate.getSecFromMiliSec = function( miliSec ) 
 {

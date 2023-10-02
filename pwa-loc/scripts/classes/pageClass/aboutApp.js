@@ -94,15 +94,34 @@ function aboutApp(cwsRender) {
 		// Dcd Config related data set
 
 		// Populate data
-		$('.aboutInfo_AppVersion').html($('#spanVersion').html());
-		$('.aboutInfo_dcdVersion').html(ConfigManager.getConfigInfo() );
+		$('.aboutInfo_AppVersion').html( $('#spanVersion').html() + ' / ' + ConfigManager.getConfigInfo() );
+
 		$('.aboutInfo_networkMode').html('<div>' + ConnManagerNew.statusInfo.appMode + '</div>');
-		
+
+		$('.aboutInfo_keyCloak').html( me.getKeyCloakSummaryStr() );
+
 		GeoLocUtil.showInAboutPage( $('.aboutInfo_geoLoc') ); // $('.aboutInfo_geoLoc').html
 
 		if ( !GeoLocUtil.geoLocCoordStr ) GeoLocUtil.refreshGeoLocation( function() {}, true );
 
 		me.displayDeviceInfo($('.aboutInfo_info'));
+	};
+
+	me.getKeyCloakSummaryStr = function()
+	{
+		var summaryStr = '';
+
+		try
+		{
+			var stats = KeycloakManager.getStatusSummary();
+
+			summaryStr = '[Session]: ' + UtilDate.getTimeStrFormatted( stats.remainTimeSEC_RefreshToken ) + ' / ' + UtilDate.getTimeStrFormatted( stats.fullTimeSEC_SessionToken ) + ', '
+			+ '[Offline]: ' + UtilDate.getTimeStrFormatted( stats.remainTimeSEC_OfflineAccess ) + ' / ' + UtilDate.getTimeStrFormatted( stats.fullTimeSEC_OfflineAccess ) + ', '
+			+ '[Access]: ' + UtilDate.getTimeStrFormatted( stats.fullTimeSEC_AccessToken );
+		}
+		catch( errMsg ) {  console.log( 'ERROR in aboutApp.getKeyCloakSummaryStr, ' + errMsg );  }
+
+		return summaryStr;
 	};
 
 	// -----------------------------------
@@ -175,16 +194,16 @@ aboutApp.contentHtml = `
 				<div class="principal_section__title">Workforce App</div>
 			</div>
 			<div class="field-read_only noMargin">
-				<div class="field-read_only__label"><label term="about_applicationVersion">Application version</label></div>
+				<div class="field-read_only__label"><label term="about_applicationVersion">Versions - App / Config</label></div>
 				<div class="field-read_only__text aboutInfo_AppVersion">release candidate version number</div>
-			</div>
-			<div class="field-read_only noMargin">
-				<div class="field-read_only__label"><label term="about_configVersion">Config version</label></div>
-				<div class="field-read_only__text aboutInfo_dcdVersion">13-lucky-number</div>
 			</div>
 			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_networkMode">Network mode</label></div>
 				<div class="field-read_only__text aboutInfo_networkMode">Online-are-you-sure</div>
+			</div>
+			<div class="field-read_only noMargin">
+				<div class="field-read_only__label"><label term="about_keyCloak">KeyCloak</label></div>
+				<div class="field-read_only__text aboutInfo_keyCloak">13-lucky-number</div>
 			</div>
 			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_geoLoc">GeoLocation</label></div>

@@ -268,7 +268,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 	}  
 
 	kcObj.onAuthRefreshSuccess = () => {
-		KeycloakManager.eventMsg('Auth Refresh Success');
+		//KeycloakManager.eventMsg('Auth Refresh Success - AccessToken Renew');
 		KeycloakLSManager.setLastKeycloakEvent("onAuthRefreshSuccess");
 	} 
 	
