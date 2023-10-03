@@ -10,6 +10,7 @@ KeycloakManager.dialogTag;
 KeycloakManager.keycloakObj;
 KeycloakManager.timeSkew = 1;
 KeycloakManager.accessTokenTimeoutObj;
+KeycloakManager.refreshTokenTimeoutObj;
 KeycloakManager.offlineExpiredIntervalObj;
 
 // Flag set when user disabled or session expired.  OfflineTimeExpire checks this to not show msg when this is true.
@@ -135,6 +136,10 @@ KeycloakManager.setUpOfflineMode = function()
 	// Disabled the "Logout button" - not that important..
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
 	
+	// Stop service to check offline mode
+	KeycloakManager.stopServiceToUpdateTokens();
+
+	KeycloakManager.clearTimeout
 	var statusSummary = KeycloakManager.getStatusSummary();
 	if( statusSummary.isOfflineTimeOut )
 	{
@@ -290,7 +295,7 @@ KeycloakManager.authenticateSuccessActions = function()
 	KeycloakLSManager.setKeycloakInfo( KeycloakManager.keycloakObj );
 
 	// Turn on server to update Access Token
-	KeycloakManager.restartServiceToUpdateAccessToken();
+	KeycloakManager.restartServiceToUpdateTokens();
 
 	// Turn on services to check Offline timeout
 	KeycloakManager.offlineTimeoutService();
@@ -335,26 +340,52 @@ KeycloakManager.authenticate_WithToken = function(returnFunc)
 	});
 };
 
-KeycloakManager.restartServiceToUpdateAccessToken = function()
+KeycloakManager.restartServiceToUpdateTokens = function()
 {
-	// Stop the service to check Offline Timeout if it is started before
-	clearTimeout(KeycloakManager.accessTokenTimeoutObj);
+	// Stop the service in cases it is started before
+	KeycloakManager.stopServiceToUpdateTokens();
 
-	// Start service again
+
+	// ----------------------------------------------------------------------
+	// Access token service
+
+	// Start service
 	var statusSummary = KeycloakManager.getStatusSummary();
-	var timeoutSeconds = statusSummary.kc.accessTokenValidInSeconds - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
-	
-	if( timeoutSeconds > 0 )
+	var refreshTokenTimeoutSeconds = statusSummary.kc.refreshTokenValidInSeconds;
+	if( refreshTokenTimeoutSeconds <= 0 )
 	{
-		KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
-			KeycloakManager.updateToken();
-		}, timeoutSeconds * 1000);
+		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
 	}
 	else
 	{
-		KeycloakManager.updateToken();
+		// Refresh token service
+		KeycloakManager.refreshTokenTimeoutObj = setTimeout(() => {
+			KeycloakManager.stopServiceToUpdateTokens();
+			KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
+		}, refreshTokenTimeoutSeconds * 1000);
+		
+		// Access token service
+		var accTknTimeoutSeconds = statusSummary.kc.accessTokenValidInSeconds - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
+		if( accTknTimeoutSeconds > 0 )
+		{
+			KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
+				KeycloakManager.updateToken();
+			}, accTknTimeoutSeconds * 1000);
+		}
+		else
+		{
+			KeycloakManager.updateToken();
+		}
 	}
+
 };
+
+
+KeycloakManager.stopServiceToUpdateTokens = function()
+{
+	clearTimeout(KeycloakManager.accessTokenTimeoutObj);
+	clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
+}
 
 KeycloakManager.updateToken = function()
 {
@@ -366,7 +397,7 @@ KeycloakManager.updateToken = function()
 	KeycloakManager.keycloakObj.updateToken(-1).then(function(refreshed) {
 		if (refreshed) {
 			KeycloakLSManager.setKeycloakInfo( KeycloakManager.keycloakObj );
-			KeycloakManager.restartServiceToUpdateAccessToken();
+			KeycloakManager.restartServiceToUpdateTokens();
 			KeycloakManager.eventMsg("Access token is updated.");
 		}
 		else
