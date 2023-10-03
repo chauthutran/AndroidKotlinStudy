@@ -115,7 +115,7 @@ KeycloakManager.setUpOnlineMode = function()
 			KeycloakManager.authenticate_WithToken(function(auth, errMsg) 
 			{
 				if ( auth ) {
-					KeycloakManager.eventMsg('Authenticated and Updated the access token.');
+					KeycloakManager.eventMsg('Authenticated and Updated tokens.');
 					KeycloakManager.authenticateSuccessActions();
 				}
 				else 
@@ -124,6 +124,10 @@ KeycloakManager.setUpOnlineMode = function()
 				}
 			});
 		}
+	}
+	else
+	{
+		KeycloakManager.restartServiceToUpdateTokens(); // This statement runs when the app mode switchs from OFFLINE to ONLINE
 	}
 }
 
@@ -347,12 +351,11 @@ KeycloakManager.restartServiceToUpdateTokens = function()
 
 
 	// ----------------------------------------------------------------------
-	// Access token service
+	// Check and start services
 
-	// Start service
 	var statusSummary = KeycloakManager.getStatusSummary();
 	var refreshTokenTimeoutSeconds = statusSummary.kc.refreshTokenValidInSeconds;
-	if( refreshTokenTimeoutSeconds <= 0 )
+	if( refreshTokenTimeoutSeconds <= 0 ) // Refresh token is expired ==> Need to logout
 	{
 		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
 	}
@@ -374,7 +377,7 @@ KeycloakManager.restartServiceToUpdateTokens = function()
 		}
 		else
 		{
-			KeycloakManager.updateToken();
+			KeycloakManager.updateToken(); // Access Token expires ==> Need to update
 		}
 	}
 
@@ -495,38 +498,42 @@ KeycloakManager.checkAuthAndLogoutIfAble = function()
 
 KeycloakManager.logout = function( option )
 {
-	if ( !option ) option = {};
-
-	// We shouldn't user the "logout" method what keyclock.js provides
-	// --- KeycloakManager.keycloakObj.logout({redirectUri: location.origin}); ---
-	// because in some place ( app.js ), we need to logout BUT we don't created Keycloak object 
-
-	if ( KeycloakManager.logoutCalled ) console.log( 'logOut Called Already, Preventing Duplicate Calls..' );
-	else
+	var statusSummary = KeycloakManager.getStatusSummary();
+	if(statusSummary.isAppOnline )
 	{
-		try
-		{
-			KeycloakManager.stopServiceToCheckOfflineTimeOut(); // Present Offline Timeout happending while waiting for user to accept the alert msg ..
+		if ( !option ) option = {};
 
-			if ( option.alertMsg ) alert( option.alertMsg );		
-		
-		
-			var accesstokenParsed = KeycloakLSManager.getAccessTokenParsed();
-		
-			if ( accesstokenParsed )
-			{
-				// 
-				KeycloakLSManager.setLastTimeAction( KeycloakLSManager.KEY_LOGOUT );
-		
-				// accesstokenParsed.iss : "http://localhost:8080/realms/SWZ_PSI"
-				var logoutUrl = accesstokenParsed.iss + `/protocol/openid-connect/logout?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`;
+		// We shouldn't user the "logout" method what keyclock.js provides
+		// --- KeycloakManager.keycloakObj.logout({redirectUri: location.origin}); ---
+		// because in some place ( app.js ), we need to logout BUT we don't created Keycloak object 
 	
-				window.location.replace( logoutUrl );	
+		if ( KeycloakManager.logoutCalled ) console.log( 'logOut Called Already, Preventing Duplicate Calls..' );
+		else
+		{
+			try
+			{
+				KeycloakManager.stopServiceToCheckOfflineTimeOut(); // Present Offline Timeout happending while waiting for user to accept the alert msg ..
+	
+				if ( option.alertMsg ) alert( option.alertMsg );		
+			
+			
+				var accesstokenParsed = KeycloakLSManager.getAccessTokenParsed();
+			
+				if ( accesstokenParsed )
+				{
+					// 
+					KeycloakLSManager.setLastTimeAction( KeycloakLSManager.KEY_LOGOUT );
+			
+					// accesstokenParsed.iss : "http://localhost:8080/realms/SWZ_PSI"
+					var logoutUrl = accesstokenParsed.iss + `/protocol/openid-connect/logout?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`;
+		
+					window.location.replace( logoutUrl );	
+				}
+	
+				KeycloakManager.logoutCalled = true;
 			}
-
-			KeycloakManager.logoutCalled = true;
+			catch( errMsg ) { console.log( 'ERROR in KeycloakManager.logout, ' + errMsg ); }
 		}
-		catch( errMsg ) { console.log( 'ERROR in KeycloakManager.logout, ' + errMsg ); }
 	}
 };
 
