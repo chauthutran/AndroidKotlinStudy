@@ -12,6 +12,7 @@ KeycloakManager.timeSkew = 1;
 KeycloakManager.accessTokenTimeoutObj;
 KeycloakManager.refreshTokenTimeoutObj;
 KeycloakManager.offlineExpiredIntervalObj;
+KeycloakManager.MAX_fullTimeSEC_SessionToken = 0;
 
 // Flag set when user disabled or session expired.  OfflineTimeExpire checks this to not show msg when this is true.
 KeycloakManager._AppBlocked = false; // Obsolete? - since logout process clears the offlineTimeout interval?
@@ -73,8 +74,15 @@ KeycloakManager.getStatusSummary = function()
 	statusJson.remainTimeSEC_OfflineAccess = KeycloakManager.calculateOfflineTimeRemains();
 
 	statusJson.fullTimeSEC_OfflineAccess = KeycloakManager.OFFLINE_TIMEOUT;
-	statusJson.fullTimeSEC_SessionToken = ( kc.refreshTokenParsed ) ? kc.refreshTokenParsed.exp - kc.refreshTokenParsed.iat: 'NA';
 	statusJson.fullTimeSEC_AccessToken = ( kc.accessTokenParsed ) ? kc.accessTokenParsed.exp - kc.accessTokenParsed.iat: 'NA';
+	statusJson.fullTimeSEC_SessionToken = ( kc.refreshTokenParsed ) ? kc.refreshTokenParsed.exp - kc.refreshTokenParsed.iat: 'NA';
+
+	if ( statusJson.fullTimeSEC_SessionToken != 'NA' )
+	{
+		// Due to Session FullTime changing (by accessToken Refresh time?), keep largest value..
+		if ( statusJson.fullTimeSEC_SessionToken > KeycloakManager.MAX_fullTimeSEC_SessionToken ) KeycloakManager.MAX_fullTimeSEC_SessionToken = statusJson.fullTimeSEC_SessionToken;
+		else statusJson.fullTimeSEC_SessionToken = KeycloakManager.MAX_fullTimeSEC_SessionToken;
+	}
 
 	return statusJson;
 };
@@ -82,12 +90,27 @@ KeycloakManager.getStatusSummary = function()
 
 KeycloakManager.setUpkeycloakPart = function()
 {
+	KeycloakManager.setOfflineTimeOut_FromPersisData();
+
 	var statusJson = KeycloakManager.getStatusSummary();
 
 	if ( statusJson.isAppOnline ) KeycloakManager.onlineAuthCheck();
 	else KeycloakManager.offlineAuthCheck();
 };
 
+
+KeycloakManager.setOfflineTimeOut_FromPersisData = function()
+{
+	try
+	{
+		var PS_OfflineTimeOut = PersisDataLSManager.getKeyCloakOfflineTimeOut();
+		if ( PS_OfflineTimeOut ) KeycloakManager.OFFLINE_TIMEOUT = Number( PS_OfflineTimeOut );	
+	}
+	catch( errMsg )
+	{
+		console.log( 'ERROR in KeycloakManager.setOfflineTimeOut_FromPersisData, ' + errMsg );
+	}
+};
 
 // ---------------------------------------------------------------------------------------------------------
 // For ONLINE appMode setup
@@ -440,8 +463,7 @@ KeycloakManager.offlineTimeoutService = function()
 
 		( statusSummary.isAppOnline ) ? KeycloakManager.keycloakOfflineMsgTag.hide() : KeycloakManager.keycloakOfflineMsgTag.show();
 
-		KeycloakManager.keycloakOfflineMsgTag.html("OFFLINE Expires in " + timeInfo.hh + ":" + timeInfo.mm + ":" + timeInfo.ss );
-
+		KeycloakManager.keycloakOfflineMsgTag.html( "OFFLINE Expires in " + UtilDate.getTimeStrFormatted( timeInfo.diffInSeconds, { sec: ' second', min: ' minute', hr: ' hour', day: ' day', plural: 's' } ) );
 
 		// If offline timed out, Do Action Below:
 
@@ -455,9 +477,6 @@ KeycloakManager.offlineTimeoutService = function()
 		{
 			// Stop the service to check Offline Timeout
 			KeycloakManager.stopServiceToCheckOfflineTimeOut();
-			
-			// Show message and force the user logouts ONLY WHEN the refresh Token doesn't expired / User is not disabled.
-			//if( !KeycloakManager._AppBlocked )
 			
 			var msg = "Offline Usage Timed Out.";
 			KeycloakManager.keycloakOfflineMsgTag.html(msg);
@@ -477,7 +496,7 @@ KeycloakManager.offlineTimeoutService = function()
 			}
 		}
 
-	}, Util.MS_SEC * 10 );
+	}, Util.MS_SEC * 2 );
 }
 
 

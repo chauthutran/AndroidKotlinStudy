@@ -754,6 +754,7 @@ ConfigManager.setKeyCloakOfflineTimeout = function()
 
 	if ( offTimeSec ) {
 		KeycloakManager.OFFLINE_TIMEOUT = offTimeSec;
+		PersisDataLSManager.setKeyCloakOfflineTimeOut( offTimeSec );
 		console.log( 'KeycloakManager.OFFLINE_TIMEOUT SET by Config: ' + offTimeSec + ' Seconds.' );
 	} 
 };

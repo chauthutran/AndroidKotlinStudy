@@ -11,6 +11,7 @@ PersisDataLSManager.KEY_JOB_FILING_STATUS = "jobFilingStatus";
 PersisDataLSManager.KEY_TRANSLATION = "translation"; 
 PersisDataLSManager.KEY_VOUCHER_CODES = "voucherCodes";
 PersisDataLSManager.KEY_AUTH_PAGE_USE = "authPageUse";
+PersisDataLSManager.KEY_KEYCLOAK_OFFLINE_TIMEOUT = "keyCloak_offlineTimeoutSec";
 
 // --- translation related..
 PersisDataLSManager.KEY_LANG_TERMS = "langTerms"; 
@@ -151,6 +152,18 @@ PersisDataLSManager.setAuthPageUse = function( strYN )
 PersisDataLSManager.getAuthPageUse = function()
 {
     return PersisDataLSManager.getKeyValue( PersisDataLSManager.KEY_AUTH_PAGE_USE );
+};
+
+// ----------------------------------------------
+
+PersisDataLSManager.setKeyCloakOfflineTimeOut = function( val )
+{
+    return PersisDataLSManager.updateKey_StrValue( PersisDataLSManager.KEY_KEYCLOAK_OFFLINE_TIMEOUT, val );
+};
+
+PersisDataLSManager.getKeyCloakOfflineTimeOut = function()
+{
+    return PersisDataLSManager.getKeyValue( PersisDataLSManager.KEY_KEYCLOAK_OFFLINE_TIMEOUT );
 };
 
 // ----------------------------------------------

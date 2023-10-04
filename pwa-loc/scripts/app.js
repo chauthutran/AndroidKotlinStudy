@@ -91,7 +91,6 @@ App.run = function ()
 	
 		App.App_UI_startUp_loading(); // << should we move this into cwsRender?
 	
-	
 		// By param 'debug' with pwd - uses AppInfoLSManager
 		DevHelper.checkNStartDebugConsole();
 	
@@ -131,7 +130,6 @@ App.startAppProcess = function ()
 		// Start the scheduling on app start
 		ScheduleManager.runSchedules_AppStart();
 
-		//App.App_UI_startUp_Progress('70%');
 
 		// --------------------
 		// 3. FINISH APP START PHASE

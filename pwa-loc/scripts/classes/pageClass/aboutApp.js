@@ -98,13 +98,31 @@ function aboutApp(cwsRender) {
 
 		$('.aboutInfo_networkMode').html('<div>' + ConnManagerNew.statusInfo.appMode + '</div>');
 
-		$('.aboutInfo_keyCloak').html( me.getKeyCloakSummaryStr() );
+		me.setIntervalData_keycloak( $('.aboutInfo_keyCloak') );
+
+		//$('.aboutInfo_keyCloak').html( me.getKeyCloakSummaryStr() );
 
 		GeoLocUtil.showInAboutPage( $('.aboutInfo_geoLoc') ); // $('.aboutInfo_geoLoc').html
 
 		if ( !GeoLocUtil.geoLocCoordStr ) GeoLocUtil.refreshGeoLocation( function() {}, true );
 
 		me.displayDeviceInfo($('.aboutInfo_info'));
+	};
+
+
+	me.setIntervalData_keycloak = function( keyCloakInfoTag )
+	{
+		clearInterval( aboutApp.intervalID_keyCloakInfo );
+
+		// Call once 1st..
+		keyCloakInfoTag.html( me.getKeyCloakSummaryStr() );
+
+		aboutApp.intervalID_keyCloakInfo = setInterval( function() 
+		{
+			if ( keyCloakInfoTag.is( ":visible" ) ) keyCloakInfoTag.html( me.getKeyCloakSummaryStr() );
+			else clearInterval( aboutApp.intervalID_keyCloakInfo );
+
+		}, 3000 );
 	};
 
 	me.getKeyCloakSummaryStr = function()
@@ -176,6 +194,8 @@ function aboutApp(cwsRender) {
 
 	me.initialize();
 };
+
+aboutApp.intervalID_keyCloakInfo;
 
 aboutApp.contentHtml = `
 <div class="wapper_card">

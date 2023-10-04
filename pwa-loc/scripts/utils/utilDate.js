@@ -337,13 +337,18 @@ UtilDate.getTimeStrFormatted = function( inputSec, option )
 	var outputStr = '';
 	
 	if ( !option ) option = {};
+	if ( !option.sec ) option.sec = 'sec';
+	if ( !option.min ) option.min = 'min';
+	if ( !option.hr ) option.hr = 'hr';
+	if ( !option.day ) option.day = 'day';
+	if ( !option.plural ) option.plural = '';
 
 	try
 	{
-		if ( inputSec < 60 ) outputStr = inputSec + 'sec';
-		else if ( inputSec < 3600 ) outputStr = UtilDate.getNumberFixedStr( inputSec / 60 ) + 'min';
-		else if ( inputSec < 86400 ) outputStr = UtilDate.getNumberFixedStr( inputSec / 3600 ) + 'hr';
-		else outputStr = UtilDate.getNumberFixedStr( inputSec / 86400 ) + 'day';
+		if ( inputSec < 60 ) outputStr = UtilDate.getNumberFixedStr( inputSec, { unitStr: option.sec, pluralStr: option.plural } );
+		else if ( inputSec < 3600 ) outputStr = UtilDate.getNumberFixedStr( inputSec / 60, { unitStr: option.min, pluralStr: option.plural } );
+		else if ( inputSec < 86400 ) outputStr = UtilDate.getNumberFixedStr( inputSec / 3600, { unitStr: option.hr, pluralStr: option.plural } );
+		else outputStr = UtilDate.getNumberFixedStr( inputSec / 86400, { unitStr: option.day, pluralStr: option.plural } );
 	}
 	catch( errMsg )
 	{
@@ -358,6 +363,8 @@ UtilDate.getNumberFixedStr = function( inputVal, option )
 	var outputVal = inputVal;
 
 	if ( !option ) option = {};
+	if ( !option.unitStr ) option.unitStr = '';
+	if ( !option.pluralStr ) option.pluralStr = '';
 
 	try
 	{
@@ -365,6 +372,11 @@ UtilDate.getNumberFixedStr = function( inputVal, option )
 		var val1 = inputVal.toFixed( 1 );
 	
 		outputVal = ( Number( val0 ) === Number( val1 ) ) ? val0 : val1;
+
+		outputVal += option.unitStr;
+
+		if ( val0 > 1 ) outputVal += option.pluralStr;
+
 	}
 	catch( errMsg )
 	{
