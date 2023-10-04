@@ -84,15 +84,16 @@ KeycloakManager.setUpkeycloakPart = function()
 {
 	var statusJson = KeycloakManager.getStatusSummary();
 
-	if ( statusJson.isAppOnline ) KeycloakManager.setUpOnlineMode();
-	else KeycloakManager.setUpOfflineMode();
+	if ( statusJson.isAppOnline ) KeycloakManager.onlineAuthCheck();
+	else KeycloakManager.offlineAuthCheck();
 };
 
 
 // ---------------------------------------------------------------------------------------------------------
 // For ONLINE appMode setup
 
-KeycloakManager.setUpOnlineMode = function()
+// 'onlineAuthCheck'?  'authOnlineCheck'?
+KeycloakManager.onlineAuthCheck = function()
 {
 	// Enable the "Keyclock logout" button in the bottom & Set "logout" function for click button
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false).html("AuthOut").show().off("click").click( () => { 
@@ -135,7 +136,8 @@ KeycloakManager.setUpOnlineMode = function()
 // For OFFLINE appMode setup
 
 // TODO: This need to be called?  logout? <-- This also gets called from network status switch.. as well as App starting point?
-KeycloakManager.setUpOfflineMode = function()
+// 'offlineAuthCheck'?  'authOfflineCheck'?
+KeycloakManager.offlineAuthCheck = function()
 {
 	// Disabled the "Logout button" - not that important..
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
