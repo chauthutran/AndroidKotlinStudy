@@ -513,7 +513,9 @@ KeycloakManager.logout = function( option )
 			try
 			{
 				KeycloakManager.stopServiceToCheckOfflineTimeOut(); // Present Offline Timeout happending while waiting for user to accept the alert msg ..
-	
+		
+				KeycloakManager.logoutCalled = true;
+
 				if ( option.alertMsg ) alert( option.alertMsg );		
 			
 			
@@ -529,8 +531,6 @@ KeycloakManager.logout = function( option )
 		
 					window.location.replace( logoutUrl );	
 				}
-	
-				KeycloakManager.logoutCalled = true;
 			}
 			catch( errMsg ) { console.log( 'ERROR in KeycloakManager.logout, ' + errMsg ); }
 		}
