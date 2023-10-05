@@ -379,14 +379,8 @@ KeycloakManager.restartServiceToUpdateTokens = function()
 	// Check and start services
 
 	var statusSummary = KeycloakManager.getStatusSummary();
-	console.log(statusSummary);
 	var refreshTokenTimeoutSeconds = statusSummary.kc.refreshTokenValidInSeconds;
-	// if( refreshTokenTimeoutSeconds <= 0 ) // Refresh token is expired ==> Need to logout
-	// {
-	// 	KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
-	// }
-	// else
-	// {
+	
 	if( refreshTokenTimeoutSeconds > 0 ) {
 		// Refresh token service
 		KeycloakManager.refreshTokenTimeoutObj = setTimeout(() => {
@@ -403,11 +397,6 @@ KeycloakManager.restartServiceToUpdateTokens = function()
 				KeycloakManager.updateToken();
 			}, accTknTimeoutSeconds * 1000);
 		}
-		// else
-		// {
-		// 	KeycloakManager.updateToken(); // Access Token expires ==> Need to update
-		// }
-	// }
 	}
 
 };
