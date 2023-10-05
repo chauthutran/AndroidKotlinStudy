@@ -47,9 +47,8 @@ KeycloakManager.getStatusSummary = function()
 	statusJson.isLoggedIn = SessionManager.getLoginStatus();	
 
 	// --- KeyCloak Status
-	statusJson.lastTimeAction = KeycloakLSManager.getLastTimeAction(); // TODO: Rename to 'LastTimeAction'?
 	statusJson.kcObjCreated = ( KeycloakManager.keycloakObj != undefined );
-	statusJson.isLSTokensExisted = ( KeycloakLSManager.getAccessToken() && statusJson.lastTimeAction !== KeycloakLSManager.KEY_LOGOUT ) ? true: false; // If in process of logout, consider as 'false'
+	statusJson.isLSTokensExisted = ( KeycloakLSManager.getAccessToken() ) ? true: false; // If in process of logout, consider as 'false'
 
 	statusJson.isOfflineTimeOut = KeycloakManager.isOfflineTimeout();
 
@@ -134,11 +133,7 @@ KeycloakManager.onlineAuthCheck = function()
 	if( statusJson.kcObjCreated ) KeycloakManager.tokenStatusCheckService_Start(); // App mode switchs from OFFLINE to ONLINE
 	else
 	{
-		if( statusJson.lastTimeAction === KeycloakLSManager.KEY_LOGOUT )
-		{
-			KeycloakManager.authenticate();
-		}
-		else if ( !statusJson.isLSTokensExisted )
+		if ( !statusJson.isLSTokensExisted )
 		{
 			KeycloakManager.authenticate();
 		}
@@ -541,14 +536,15 @@ KeycloakManager.logout = function( option )
 				var accesstokenParsed = KeycloakLSManager.getAccessTokenParsed();
 			
 				if ( accesstokenParsed )
-				{
-					// 
-					KeycloakLSManager.setLastTimeAction( KeycloakLSManager.KEY_LOGOUT );
+				{ 
 			
+					var idToken = KeycloakLSManager.getIdToken();
+					KeycloakLSManager.authOut_DataRemoval_wtTokens();
+
 					// accesstokenParsed.iss : "http://localhost:8080/realms/SWZ_PSI"
-					var logoutUrl = accesstokenParsed.iss + `/protocol/openid-connect/logout?client_id=pwaapp&id_token_hint=${KeycloakLSManager.getIdToken()}&post_logout_redirect_uri=${location.origin}`;
-		
-					window.location.replace( logoutUrl );	
+					var logoutUrl = accesstokenParsed.iss + `/protocol/openid-connect/logout?client_id=pwaapp&id_token_hint=${idToken}&post_logout_redirect_uri=${location.origin}`;
+					window.location.replace( logoutUrl );
+					// window.location.href = 	logoutUrl;
 				}
 			}
 			catch( errMsg ) { console.log( 'ERROR in KeycloakManager.logout, ' + errMsg ); }

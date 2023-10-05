@@ -14,7 +14,6 @@ KeycloakLSManager.KEY_AUTH_CHOICE = "authChoice";
 // KeycloakLSManager.KEY_KEYCLOAK_OBJ_INIT = "kcObjInited";
 
 
-KeycloakLSManager.KEY_LOGOUT = "logout";
 KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS = "lastKeycloakEvents";
 
 // ---------------------------------------------------------------------------------------------
@@ -25,7 +24,7 @@ KeycloakLSManager.setKeycloakInfo = function (kcObj) {
 	KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_REFRESH_TOKEN, kcObj.refreshToken);
 	KeycloakLSManager.updatePropertyValue(KeycloakLSManager.KEY_ID_TOKEN, kcObj.idToken);
 
-	KeycloakLSManager.setLastTimeAction("");
+	KeycloakLSManager.removeProperty(KeycloakLSManager.KEY_LAST_KEYCLOAK_EVENTS);
 }
 
 
@@ -45,14 +44,14 @@ KeycloakLSManager.getLastKeycloakEvents = function () {
 	return ( data == undefined ) ? [] : data;
 }
 
-KeycloakLSManager.setLastTimeAction = function (value) {
-	if( !value ) KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_LAST_TIME_ACTION );
-	else KeycloakLSManager.updatePropertyValue( KeycloakLSManager.KEY_LAST_TIME_ACTION, value );
-}
+// KeycloakLSManager.setLastTimeAction = function (value) {
+// 	if( !value ) KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_LAST_TIME_ACTION );
+// 	else KeycloakLSManager.updatePropertyValue( KeycloakLSManager.KEY_LAST_TIME_ACTION, value );
+// }
 
-KeycloakLSManager.getLastTimeAction = function () {
-	return KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_LAST_TIME_ACTION);
-}
+// KeycloakLSManager.getLastTimeAction = function () {
+// 	return KeycloakLSManager.getPropertyValue(KeycloakLSManager.KEY_LAST_TIME_ACTION);
+// }
 
 
 KeycloakLSManager.getLastLoginDate = function () {
