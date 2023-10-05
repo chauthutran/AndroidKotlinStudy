@@ -14,7 +14,6 @@ function Login() {
 	me.loginBtnTag;
 	me.loginSetPinBtnTag;
 	me.loginPinConfirmDivTag;
-	//me.passRealTag;
 	me.loginUserNameTag;
 	me.loginFormTag;
 	me.btnChangeUserTag;
@@ -23,6 +22,7 @@ function Login() {
 	me.selAuthChoiceTag;
 	me.spanAuthPageUseTag;
 	me.spanAuthPageUseNoTag;
+	me.hasPinAlertShown = false;
 	
 	// ------------
 
@@ -135,6 +135,51 @@ function Login() {
 
 	}
 
+	
+	// =============================================
+	// For seting up Pin fields
+
+	me.checkAndHideConfirmPin = function()
+	{
+		var isShowed = false;
+		if( me.needToSetPin )
+		{
+			var pinSettingConfig = Login.PIN_SETUP_JSON;
+			var hideConfirmPin = pinSettingConfig.hideConfirmPin;
+			isShowed = ( !Util.checkDefined(hideConfirmPin ) || !eval(hideConfirmPin) ) // show the confirm form in the first time
+		}
+
+		(isShowed) ? me.loginPinConfirmDivTag.show() : me.loginPinConfirmDivTag.hide();
+	}
+
+	me.checkAndShowPinSetupMsg = function(inputValue)
+	{
+		if( me.needToSetPin )
+		{
+			var pinSetupMsg = Login.PIN_SETUP_JSON.onPinSetupMsg;
+			if( Util.checkValue(pinSetupMsg) && !Util.checkValue(inputValue) && !me.hasPinAlertShown )
+			{
+				me.hasPinAlertShown = true;
+				alert(pinSetupMsg);
+				// MsgManager.msgAreaShowOpt( pinSetupMsg, { cssClasses: 'notifDark', hideTimeMs: 2000 } );
+			}
+		}
+	}
+
+	me.checkAndShowConfirmPinSetupMsg = function(inputValue)
+	{
+		if( me.needToSetPin )
+		{
+			var confirmPinSetupMsg = Login.PIN_SETUP_JSON.onConfirmPinSetupMsg;
+			if( Util.checkValue(confirmPinSetupMsg) && !Util.checkValue(inputValue) && !me.hasPinAlertShown) 
+			{
+				me.hasPinAlertShown = true;
+				alert(confirmPinSetupMsg);
+				// MsgManager.msgAreaShowOpt( confirmPinSetupMsg, { cssClasses: 'notifDark', hideTimeMs: 2000 } );
+			}
+		}
+	}
+
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
 
@@ -199,6 +244,7 @@ function Login() {
 		return "";
 	}
 
+
 	me.setLoginEvents = function () {
 		// Save userName that user has entered - to restore when App refreshed by appUpdate
 		me.loginUserNameTag.keyup(function () {
@@ -208,7 +254,6 @@ function Login() {
 		me.splitPasswordTag.find('.pin1').focus(function () {
 			SwManager.checkAppUpdate('[AppUpdateCheck] - PassCode Pin 1');
 		});
-
 
 		me.loginSetPinBtnTag.off( 'click' ).click(function () 
 		{
@@ -221,7 +266,10 @@ function Login() {
 				if( ok ) me.loginBtnTag.click();
 				else
 				{
+					me.hasPinAlertShown = true;
 					me.loginPinConfirmClearTag.click();
+
+					me.hasPinAlertShown = false;
 					me.loginPinClearTag.click();
 			
 					MsgManager.msgAreaShowOpt( 'Pin cancelled.' );
@@ -242,8 +290,7 @@ function Login() {
 
 			var loginUserNameVal = me.loginUserNameTag.val();
 			var loginUserPinVal = me.getPinVal( me.splitPasswordTag );
-
-			if ( loginUserNameVal == "" || loginUserPinVal == "" ) 
+			if ( loginUserNameVal == "" || loginUserPinVal == "" )
 			{
 				me.clearResetPasswords(me.loginPinDivTag);
 				me.clearResetPasswords(me.loginPinConfirmDivTag);
@@ -255,14 +302,16 @@ function Login() {
 
 				// NOTE: On login button click, also check app update..
 				SwManager.checkAppUpdate('[AppUpdateCheck] - Login Processing', { noMinTimeSkip: true });
-
+	
 				// Main Login Processing
 				me.processLogin(loginUserNameVal, loginUserPinVal, location.origin, $(this), function (success) {
 					
 					me.clearResetPasswords(me.loginPinDivTag);
 					me.clearResetPasswords(me.loginPinConfirmDivTag);
 					
-					if (!success) $('.pin1').focus();
+					if (!success) {
+						$('.pin1').focus();
+					}
 
 					$('.pin_pw_loading').hide();
 				});
@@ -279,6 +328,24 @@ function Login() {
 			if( !me.needToSetPin )
 			{
 				me.loginBottomButtonsVisible(false);
+			}
+			else
+			{
+				if( $(this).hasClass("pin1") )
+				{
+					if( $(this).hasClass("confirmPin") )
+					{
+						me.checkAndShowConfirmPinSetupMsg();
+					}
+					else
+					{
+						me.checkAndShowPinSetupMsg();
+					}
+				}
+				else
+				{
+					me.hasPinAlertShown = false;
+				}
 			}
 		});
 
@@ -298,25 +365,36 @@ function Login() {
 			var hasVal = (tagVal.length > 0);
 
 			if (isDeleteKey) {
+				me.hasPinAlertShown = false;
 				if (!hasVal) {
 					// go to previous pin tag.
 					var prevTag = tag.prev('.pin_pw');
-					if (prevTag) prevTag.focus();
+					if( prevTag.length == 0 ) // Cursor is in the first input tag
+					{
+						// tag.focus();
+					}
+					else
+					{
+						prevTag.focus();
+					}
 				}
 			}
 			else 
 			{
 				if (hasVal) //== this.maxLength ) 
 				{
+					me.hasPinAlertShown = false;
 					me.lastPinTrigger = false; 
-					var confirmCase = me.loginPinConfirmDivTag.is( ':visible' );
+					// var confirmCase = me.loginPinConfirmDivTag.is( ':visible' );
+
 					var loginUserNameSet = ( Util.trim( me.loginUserNameTag.val() ).length > 0 );
 
 					if ( tag.hasClass( 'pin4' ) ) 
 					{
 						// If Confirm Pin case, either move to next row or click login button
-						if ( confirmCase )
+						if ( me.needToSetPin )
 						{
+							me.loginPinConfirmDivTag.show();
 							if ( tag.hasClass( 'confirmPin' ) )
 							{
 								if ( loginUserNameSet ) {
@@ -360,10 +438,10 @@ function Login() {
 		me.loginPinClearTag.off('click').click(function () {
 			me.clearResetPasswords(me.loginPinDivTag);
 			me.loginPinDivTag.find('.pin1').focus();
-
 			// NOTE: We also need to cancel the current login process..
 		});
 
+		
 		
 		me.loginPinConfirmClearTag.off('click').click(function () {
 			me.clearResetPasswords(me.loginPinConfirmDivTag);
@@ -574,6 +652,7 @@ function Login() {
 		me.loginBtnTag.show();
 		me.loginSetPinBtnTag.hide();
 		me.loginPinConfirmDivTag.hide();
+
 		me.needToSetPin = false;
 
 
@@ -607,15 +686,16 @@ function Login() {
 					me.loginBtnTag.hide();
 					me.loginSetPinBtnTag.show();
 					Login.loginPinConfirmCase = true; // NEW
-					me.loginPinConfirmDivTag.show(); // Disable this..
+					
+					me.checkAndHideConfirmPin();
 				}
 			});
 		}
 
 
 		// Reset vals and set focus
-		me.clearResetPasswords(me.loginPinDivTag);
 		me.clearResetPasswords(me.loginPinConfirmDivTag);
+		me.clearResetPasswords(me.loginPinDivTag);
 
 		me.loginBottomButtonsVisible(true);
 	};
@@ -1135,6 +1215,12 @@ function Login() {
 	me.initialize();
 };
 
+Login.PIN_SETUP_JSON = {
+	"onPinSetupMsg": "Please set pin",
+	"onConfirmPinSetupMsg": "Please set confirm pin that matches the pin",
+	"hideConfirmPin": "false",
+	"pinPatternRestriction": [ "4SequentialNumber", "4SameNumber" ]
+  }
 
 Login.loginPinConfirmCase = false;
 

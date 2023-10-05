@@ -748,6 +748,7 @@ ConfigManager.getSettings_KeyCloak = function ()
 	return ( ConfigManager.getSettings().keyCloak ) ? ConfigManager.getSettings().keyCloak: {};
 };
 
+
 ConfigManager.setKeyCloakOfflineTimeout = function()
 {
 	var offTimeSec = ConfigManager.getSettings_KeyCloak().offlineTimeoutSec;
