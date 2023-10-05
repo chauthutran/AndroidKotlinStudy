@@ -385,7 +385,6 @@ function Login() {
 				{
 					me.hasPinAlertShown = false;
 					me.lastPinTrigger = false; 
-					// var confirmCase = me.loginPinConfirmDivTag.is( ':visible' );
 
 					var loginUserNameSet = ( Util.trim( me.loginUserNameTag.val() ).length > 0 );
 
