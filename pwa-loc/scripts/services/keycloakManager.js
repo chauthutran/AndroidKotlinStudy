@@ -123,8 +123,16 @@ KeycloakManager.onlineAuthCheck = function()
 		KeycloakManager.logout();
 	});
 
+	// Depending on the status (online), 
+	//		If 'kcObjCreated' exists, we assume this went to Offline (& stopped tokenCheckService) & came back to Online.  
+	//			Thus, start the token checking service again..
+	//		OR perform 'auth' (go to keycloak server page for auth) 
+	//		OR 'auth_with existing token'
+	//		OR logout <-- last action before page refresh 
 	var statusJson = KeycloakManager.getStatusSummary();
-	if( !statusJson.kcObjCreated )
+
+	if( statusJson.kcObjCreated ) KeycloakManager.tokenStatusCheckService_Start(); // App mode switchs from OFFLINE to ONLINE
+	else
 	{
 		if( statusJson.lastTimeAction === KeycloakLSManager.KEY_LOGOUT )
 		{
@@ -149,10 +157,6 @@ KeycloakManager.onlineAuthCheck = function()
 			});
 		}
 	}
-	else
-	{
-		KeycloakManager.restartServiceToUpdateTokens(); // This statement runs when the app mode switchs from OFFLINE to ONLINE
-	}
 }
 
 // ---------------------------------------------------------------------------------------------------------
@@ -166,17 +170,10 @@ KeycloakManager.offlineAuthCheck = function()
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
 	
 	// Stop service to check offline mode
-	KeycloakManager.stopServiceToUpdateTokens();
+	KeycloakManager.tokenStatusCheckService_Stop();
 
-	KeycloakManager.clearTimeout
-	var statusSummary = KeycloakManager.getStatusSummary();
-	if( statusSummary.isOfflineTimeOut )
-	{
-		// Show message to force the user to logout
-		var msg = "Offline Usage Timed Out.";
-		KeycloakManager.keycloakOfflineMsgTag.html(msg).show();
-		KeycloakManager.showDialog(msg, SessionManager.cwsRenderObj.logOutProcess );
-	}
+
+	KeycloakManager.offlineTimeOutCheck_Operation();
 }
 
 
@@ -274,7 +271,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 		KeycloakManager.eventMsg("Auth Error");
 		KeycloakLSManager.setLastKeycloakEvent("onAuthError");
 
-		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
+		KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "KcEvent_onAuthError" } );
 	}
 
 	
@@ -282,7 +279,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 		KeycloakManager.eventMsg('Auth Refresh Error');
 		KeycloakLSManager.setLastKeycloakEvent("onAuthRefreshError");
 		
-		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
+		KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "KcEvent_onAuthRefreshError" } );
 	}
 
 	// This trigger is called when the user is disabled OR Session is expired (Token is not active), ....
@@ -290,7 +287,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 		KeycloakManager.eventMsg('Auth Logout');
 		KeycloakLSManager.setLastKeycloakEvent("onAuthLogout");
 		
-		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
+		KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "KcEvent_onAuthLogout" } );
 	}
 
 
@@ -312,7 +309,7 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 		KeycloakManager.eventMsg('Access token expired.');
 		KeycloakLSManager.setLastKeycloakEvent("onTokenExpired");
 
-		KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
+		KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "KcEvent_onTokenExpired" } );
 	}
 };
 
@@ -324,7 +321,7 @@ KeycloakManager.authenticateSuccessActions = function()
 	KeycloakLSManager.setKeycloakInfo( KeycloakManager.keycloakObj );
 
 	// Turn on server to update Access Token
-	KeycloakManager.restartServiceToUpdateTokens();
+	KeycloakManager.tokenStatusCheckService_Start();
 
 	// Turn on services to check Offline timeout
 	KeycloakManager.offlineTimeoutService();
@@ -369,25 +366,31 @@ KeycloakManager.authenticate_WithToken = function(returnFunc)
 	});
 };
 
-KeycloakManager.restartServiceToUpdateTokens = function()
+KeycloakManager.tokenStatusCheckService_Start = function()
 {
 	// Stop the service in cases it is started before
-	KeycloakManager.stopServiceToUpdateTokens();
-
+	KeycloakManager.tokenStatusCheckService_Stop();
 
 	// ----------------------------------------------------------------------
 	// Check and start services
-
 	var statusSummary = KeycloakManager.getStatusSummary();
 	var refreshTokenTimeoutSeconds = statusSummary.kc.refreshTokenValidInSeconds;
-	
-	if( refreshTokenTimeoutSeconds > 0 ) {
+
+	// Refresh token is expired ==> Need to logout
+	// if( refreshTokenTimeoutSeconds <= 0 ) KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
+
+	// ?? Above is removed due to conflict with KeyCloak Event & this below TimeOut?
+	//		- Need to clearly mention the logic between this timeout & KeyCloak Library Events
+
+	if( refreshTokenTimeoutSeconds > 0 ) 
+	{
 		// Refresh token service
 		KeycloakManager.refreshTokenTimeoutObj = setTimeout(() => {
-			KeycloakManager.stopServiceToUpdateTokens();
-			KeycloakManager.logout( { alertMsg: "User needs to authenticate." } );
+			KeycloakManager.tokenStatusCheckService_Stop();
+			KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "AppTimeOut_refreshTokenTimeout" } );
 		}, refreshTokenTimeoutSeconds * 1000);
 		
+
 		// Access token service
 		var accTknTimeoutSeconds = statusSummary.kc.accessTokenValidInSeconds - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
 		
@@ -402,7 +405,7 @@ KeycloakManager.restartServiceToUpdateTokens = function()
 };
 
 
-KeycloakManager.stopServiceToUpdateTokens = function()
+KeycloakManager.tokenStatusCheckService_Stop = function()
 {
 	clearTimeout(KeycloakManager.accessTokenTimeoutObj);
 	clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
@@ -418,7 +421,7 @@ KeycloakManager.updateToken = function()
 	KeycloakManager.keycloakObj.updateToken(-1).then(function(refreshed) {
 		if (refreshed) {
 			KeycloakLSManager.setKeycloakInfo( KeycloakManager.keycloakObj );
-			KeycloakManager.restartServiceToUpdateTokens();
+			KeycloakManager.tokenStatusCheckService_Start();
 			KeycloakManager.eventMsg("Access token is updated.");
 		}
 		else
@@ -448,55 +451,46 @@ KeycloakManager.offlineTimeoutService = function()
 	// Start service again
 	KeycloakManager.offlineExpiredIntervalObj = setInterval(() => 
 	{
-		var statusSummary = KeycloakManager.getStatusSummary();
-		var timeInfo = KeycloakManager.formatOfflineTimeRemains();
-
-		// Always set the offline remaining time, but setting this part visible
-		//		will be decided by situation --> On Login Page, On Offline Status
-
-		( statusSummary.isAppOnline ) ? KeycloakManager.keycloakOfflineMsgTag.hide() : KeycloakManager.keycloakOfflineMsgTag.show();
-
-		KeycloakManager.keycloakOfflineMsgTag.html( "OFFLINE Expires in " + UtilDate.getTimeStrFormatted( timeInfo.diffInSeconds, { sec: ' second', min: ' minute', hr: ' hour', day: ' day', plural: 's' } ) );
-
-		// If offline timed out, Do Action Below:
-
-		//		--> If offline status, 
-		//				- if in login status, we simply logout..  with msg..
-		//				- if not login, we alert msg..
-
-		//		--> If online, we do nothing?  authenticate with keycloak? (X)
-		
-		if( statusSummary.isOfflineTimeOut )
-		{
-			// Stop the service to check Offline Timeout
-			KeycloakManager.stopServiceToCheckOfflineTimeOut();
-			
-			var msg = "Offline Usage Timed Out.";
-			KeycloakManager.keycloakOfflineMsgTag.html(msg);
-
-			if ( statusSummary.isAppOnline ) console.log( 'Offline Timed out, but network is online mode.. Do nothing..' );
-			else
-			{
-				if( statusSummary.isLoggedIn )
-				{
-					KeycloakManager.showDialog( msg );
-					SessionManager.cwsRenderObj.logOutProcess(); // Force the user to logout if the user logged
-				}
-				else
-				{
-					KeycloakManager.showDialog(msg); // Just need to show the message when the user in the login page
-				}	
-			}
-		}
-
+		KeycloakManager.offlineTimeOutCheck_Operation();
 	}, Util.MS_SEC * 2 );
-}
+};
+
+
+KeycloakManager.offlineTimeOutCheck_Operation = function()
+{
+	var statusSummary = KeycloakManager.getStatusSummary();
+	var timeInfo = KeycloakManager.formatOfflineTimeRemains();
+
+	// Set the Offline remaining time on tag & only display it if 'Offline' mode.
+	( statusSummary.isAppOnline ) ? KeycloakManager.keycloakOfflineMsgTag.hide() : KeycloakManager.keycloakOfflineMsgTag.show();
+	KeycloakManager.keycloakOfflineMsgTag.html( "OFFLINE Expires in " + UtilDate.getTimeStrFormatted( timeInfo.diffInSeconds, { sec: ' second', min: ' minute', hr: ' hour', day: ' day', plural: 's' } ) );
+
+	// If offline timed out, Do Action Below:
+	//		--> If offline status, show with msg & App LogOut if logged in.
+	//		--> If online, do nothing - session would have expired with online check..
+	if( statusSummary.isOfflineTimeOut )
+	{
+		// Stop the service to check Offline Timeout
+		KeycloakManager.stopServiceToCheckOfflineTimeOut();
+		
+		var msg = "Offline Usage Timed Out.";
+		KeycloakManager.keycloakOfflineMsgTag.html(msg);
+
+		// If 'Online' mode, do nothing.  If 'Offline' mode, show msg & App move to login page.. (logout)
+		if ( statusSummary.isAppOnline ) console.log( 'Offline Timed out, but network is online mode.. Do nothing..' );
+		else
+		{
+			KeycloakManager.showDialog( msg );
+			if( statusSummary.isLoggedIn ) SessionManager.cwsRenderObj.logOutProcess(); // Force the user to logout if the user logged
+		}
+	}
+};
 
 
 KeycloakManager.stopServiceToCheckOfflineTimeOut = function()
 {
 	clearInterval(KeycloakManager.offlineExpiredIntervalObj);
-}
+};
 
 
 // ==============================================================================
@@ -513,6 +507,9 @@ KeycloakManager.checkAuthAndLogoutIfAble = function()
 KeycloakManager.logout = function( option )
 {
 	var statusSummary = KeycloakManager.getStatusSummary();
+
+
+	// Only perform this 'Online' mode
 	if(statusSummary.isAppOnline )
 	{
 		if ( !option ) option = {};
@@ -520,14 +517,18 @@ KeycloakManager.logout = function( option )
 		// We shouldn't user the "logout" method what keyclock.js provides
 		// --- KeycloakManager.keycloakObj.logout({redirectUri: location.origin}); ---
 		// because in some place ( app.js ), we need to logout BUT we don't created Keycloak object 
-	
+		if ( option.case ) {
+			console.log( option.case );
+		}
+
+		
 		if ( KeycloakManager.logoutCalled ) console.log( 'logOut Called Already, Preventing Duplicate Calls..' );
 		else
 		{
 			try
-			{
+			{		
 				KeycloakManager.stopServiceToCheckOfflineTimeOut(); // Present Offline Timeout happending while waiting for user to accept the alert msg ..
-		
+
 				KeycloakManager.logoutCalled = true;
 
 				if ( option.alertMsg ) alert( option.alertMsg );		
