@@ -458,30 +458,34 @@ KeycloakManager.offlineTimeoutService = function()
 
 KeycloakManager.offlineTimeOutCheck_Operation = function()
 {
-	var statusSummary = KeycloakManager.getStatusSummary();
-	var timeInfo = KeycloakManager.formatOfflineTimeRemains();
-
-	// Set the Offline remaining time on tag & only display it if 'Offline' mode.
-	( statusSummary.isAppOnline ) ? KeycloakManager.keycloakOfflineMsgTag.hide() : KeycloakManager.keycloakOfflineMsgTag.show();
-	KeycloakManager.keycloakOfflineMsgTag.html( "OFFLINE Expires in " + UtilDate.getTimeStrFormatted( timeInfo.diffInSeconds, { sec: ' second', min: ' minute', hr: ' hour', day: ' day', plural: 's' } ) );
-
-	// If offline timed out, Do Action Below:
-	//		--> If offline status, show with msg & App LogOut if logged in.
-	//		--> If online, do nothing - session would have expired with online check..
-	if( statusSummary.isOfflineTimeOut )
+	if ( KeycloakManager.logoutCalled ) console.log( 'logOut Already called case, No need to handle offlineTimeOut operation..' );
+	else
 	{
-		// Stop the service to check Offline Timeout
-		KeycloakManager.stopServiceToCheckOfflineTimeOut();
-		
-		var msg = "Offline Usage Timed Out.";
-		KeycloakManager.keycloakOfflineMsgTag.html(msg);
-
-		// If 'Online' mode, do nothing.  If 'Offline' mode, show msg & App move to login page.. (logout)
-		if ( statusSummary.isAppOnline ) console.log( 'Offline Timed out, but network is online mode.. Do nothing..' );
-		else
+		var statusSummary = KeycloakManager.getStatusSummary();
+		var timeInfo = KeycloakManager.formatOfflineTimeRemains();
+	
+		// Set the Offline remaining time on tag & only display it if 'Offline' mode.
+		( statusSummary.isAppOnline ) ? KeycloakManager.keycloakOfflineMsgTag.hide() : KeycloakManager.keycloakOfflineMsgTag.show();
+		KeycloakManager.keycloakOfflineMsgTag.html( "OFFLINE Expires in " + UtilDate.getTimeStrFormatted( timeInfo.diffInSeconds, { sec: ' second', min: ' minute', hr: ' hour', day: ' day', plural: 's' } ) );
+	
+		// If offline timed out, Do Action Below:
+		//		--> If offline status, show with msg & App LogOut if logged in.
+		//		--> If online, do nothing - session would have expired with online check..
+		if( statusSummary.isOfflineTimeOut )
 		{
-			KeycloakManager.showDialog( msg );
-			if( statusSummary.isLoggedIn ) SessionManager.cwsRenderObj.logOutProcess(); // Force the user to logout if the user logged
+			// Stop the service to check Offline Timeout
+			KeycloakManager.stopServiceToCheckOfflineTimeOut();
+			
+			var msg = "Offline Usage Timed Out.";
+			KeycloakManager.keycloakOfflineMsgTag.html(msg);
+	
+			// If 'Online' mode, do nothing.  If 'Offline' mode, show msg & App move to login page.. (logout)
+			if ( statusSummary.isAppOnline ) console.log( 'Offline Timed out, but network is online mode.. Do nothing..' );
+			else
+			{
+				KeycloakManager.showDialog( msg );
+				if( statusSummary.isLoggedIn ) SessionManager.cwsRenderObj.logOutProcess(); // Force the user to logout if the user logged
+			}
 		}
 	}
 };
