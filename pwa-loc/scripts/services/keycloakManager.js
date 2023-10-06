@@ -167,6 +167,9 @@ KeycloakManager.offlineAuthCheck = function()
 	// Stop service to check offline mode
 	KeycloakManager.tokenStatusCheckService_Stop();
 
+	// KC Event stop as well..
+
+
 
 	KeycloakManager.offlineTimeOutCheck_Operation();
 }

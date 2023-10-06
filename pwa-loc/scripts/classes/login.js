@@ -919,9 +919,11 @@ function Login() {
 	{
 		if ( !returnFunc ) returnFunc = function() { };
 
-		if( KeycloakManager.isKeyCloakInUse() && statusSummary.isOfflineTimeOut )
+		var statusJson = KeycloakManager.getStatusSummary();
+
+		if( KeycloakManager.isKeyCloakInUse() && statusJson.isOfflineTimeOut )
 		{
-			MsgManager.msgAreaShow( 'Can Not Login!  KeyCloak Offline Timed Out Case.  Go Online to unlock this.', 'ERROR');
+			MsgManager.msgAreaShowErrOpt( 'Can Not Login!  KeyCloak Offline Timed Out.  Go Online To Unlock This.' );
 			returnFunc(false);
 		}
 		else
