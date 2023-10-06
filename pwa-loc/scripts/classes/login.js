@@ -919,30 +919,43 @@ function Login() {
 	{
 		if ( !returnFunc ) returnFunc = function() { };
 
-		// On Offline Login case, check if the password(PIN) can decript the storage in IDB properly
-		me.checkUserName_Pin_ByStorage(userName, password, ( bPassed, caseStr, errMsg ) =>
+		var canLogIn = true;
+		if( KeycloakManager.isKeyCloakInUse() ) {
+			var statusSummary = KeycloakManager.getStatusSummary();
+			if( statusSummary.isOfflineTimeOut && !statusSummary.isLoggedIn )
+			{
+				canLogIn = false;
+				alert("You cannot use the app anymore.");
+			}
+		}
+		
+		if(canLogIn)
 		{
-			if ( bPassed )
+			// On Offline Login case, check if the password(PIN) can decript the storage in IDB properly
+			me.checkUserName_Pin_ByStorage(userName, password, ( bPassed, caseStr, errMsg ) =>
 			{
-				SessionManager.getLoginRespData_IDB(userName, password, (loginResp) =>
+				if ( bPassed )
 				{
-					if (SessionManager.checkLoginOfflineData(loginResp)) 
+					SessionManager.getLoginRespData_IDB(userName, password, (loginResp) =>
 					{
-						// load to session
-						SessionManager.loadSessionData_nConfigJson(userName, password, loginResp);
-						GAnalytics.setEvent('LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1);
+						if (SessionManager.checkLoginOfflineData(loginResp)) 
+						{
+							// load to session
+							SessionManager.loadSessionData_nConfigJson(userName, password, loginResp);
+							GAnalytics.setEvent('LoginOffline', GAnalytics.PAGE_LOGIN, 'login Offline Try', 1);
 
-						AppInfoManager.loadData_AfterLogin( () => returnFunc(true, loginResp) );
-					}
-					else returnFunc(false);
-				});
-			}
-			else
-			{
-				MsgManager.msgAreaShow( errMsg, 'ERROR');
-				returnFunc(false);
-			}
-		});
+							AppInfoManager.loadData_AfterLogin( () => returnFunc(true, loginResp) );
+						}
+						else returnFunc(false);
+					});
+				}
+				else
+				{
+					MsgManager.msgAreaShow( errMsg, 'ERROR');
+					returnFunc(false);
+				}
+			});
+		}
 	};
 
 	// ---------------------------------------
