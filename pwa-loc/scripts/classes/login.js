@@ -424,13 +424,17 @@ function Login() {
 						KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
 						KeycloakManager.checkAuthAndLogoutIfAble();
 					}
-					// NOTE: If keycloak Access case, we will not run below!!!
+					else
+					{
+						// NOTE: If keycloak Access case, we will not run below!!!
 
-					FormUtil.emptySheetBottomTag();
+						FormUtil.emptySheetBottomTag();
 
-					MsgFormManager.appBlockTemplate('appLoad');
+						MsgFormManager.appBlockTemplate('appLoad');
 
-					AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");			
+						AppUtil.appReloadWtMsg("User Change - Deleteting Existing Data..");	
+					}
+							
 				});
 			});
 
