@@ -919,17 +919,12 @@ function Login() {
 	{
 		if ( !returnFunc ) returnFunc = function() { };
 
-		var canLogIn = true;
-		if( KeycloakManager.isKeyCloakInUse() ) {
-			var statusSummary = KeycloakManager.getStatusSummary();
-			if( statusSummary.isOfflineTimeOut && !statusSummary.isLoggedIn )
-			{
-				canLogIn = false;
-				alert("You cannot use the app anymore.");
-			}
+		if( KeycloakManager.isKeyCloakInUse() && statusSummary.isOfflineTimeOut )
+		{
+			MsgManager.msgAreaShow( 'Can Not Login!  KeyCloak Offline Timed Out Case.  Go Online to unlock this.', 'ERROR');
+			returnFunc(false);
 		}
-		
-		if(canLogIn)
+		else
 		{
 			// On Offline Login case, check if the password(PIN) can decript the storage in IDB properly
 			me.checkUserName_Pin_ByStorage(userName, password, ( bPassed, caseStr, errMsg ) =>
