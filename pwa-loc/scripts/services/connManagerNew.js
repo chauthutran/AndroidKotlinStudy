@@ -215,7 +215,6 @@ ConnManagerNew.setAppMode = function (appModeNew, statusInfo, optionStr) {
 };
 
 
-
 // TODO: CREATE BETTER TRIGGER METHODS
 
 ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn, optionStr ) 
@@ -246,7 +245,10 @@ ConnManagerNew.runWhenSwitchedToOnline = function ( loggedIn, optionStr )
 
 	if ( optionStr !== 'startUp' )
 	{
-		if ( KeycloakManager.isKeyCloakInUse() ) {
+		// Switch from 'Offline' to 'Online' CASE:
+		if ( KeycloakManager.isKeyCloakInUse() ) 
+		{
+			// if ( KeycloakManager.getStatusSummary().isOfflineTimedOut ) KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "App_OfflineToOnlineSwitch" } );
 			KeycloakManager.onlineAuthCheck();
 		}
 	}

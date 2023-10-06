@@ -50,7 +50,7 @@ KeycloakManager.getStatusSummary = function()
 	statusJson.kcObjCreated = ( KeycloakManager.keycloakObj != undefined );
 	statusJson.isLSTokensExisted = ( KeycloakLSManager.getAccessToken() ) ? true: false; // If in process of logout, consider as 'false'
 
-	statusJson.isOfflineTimeOut = KeycloakManager.isOfflineTimeout();
+	statusJson.isOfflineTimedOut = KeycloakManager.isOfflineTimeout();
 
 	// keycloak information
 	var kc = {
@@ -130,7 +130,16 @@ KeycloakManager.onlineAuthCheck = function()
 	//		OR logout <-- last action before page refresh 
 	var statusJson = KeycloakManager.getStatusSummary();
 
-	if( statusJson.kcObjCreated ) KeycloakManager.tokenStatusCheckService_Start(); // App mode switchs from OFFLINE to ONLINE
+	if( statusJson.kcObjCreated ) 
+	{
+		// If session timed out, log out..
+		var statusSummary = KeycloakManager.getStatusSummary(); //if ( statusSummary.isOfflineTimedOut ) 
+		var refreshTokenTimeoutSeconds = statusSummary.kc.refreshTokenValidInSeconds;
+
+		// Refresh token is expired ==> Need to logout
+		if( refreshTokenTimeoutSeconds <= 0 ) KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "App_OfflinetoOnlineSwitch" } );
+		else KeycloakManager.tokenStatusCheckService_Start(); // App mode switchs from OFFLINE to ONLINE
+	} 
 	else
 	{
 		if ( !statusJson.isLSTokensExisted )
@@ -159,19 +168,18 @@ KeycloakManager.onlineAuthCheck = function()
 
 // TODO: This need to be called?  logout? <-- This also gets called from network status switch.. as well as App starting point?
 // 'offlineAuthCheck'?  'authOfflineCheck'?
+// If App is 'Offline' mode, call this method to set offline settings..
 KeycloakManager.offlineAuthCheck = function()
 {
 	// Disabled the "Logout button" - not that important..
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
 	
-	// Stop service to check offline mode
+	// Stop service for token timeout (app service)
 	KeycloakManager.tokenStatusCheckService_Stop();
 
-	// KC Event stop as well..
-
-
-
-	KeycloakManager.offlineTimeOutCheck_Operation();
+	// On App Offline Start Case & Switch to Offline Case - If 'OfflintTimeoutService' is stopped, start it again.
+	KeycloakManager.offlineTimeoutService();
+	// KeycloakManager.offlineTimeOutCheck_Operation();
 }
 
 
@@ -444,18 +452,26 @@ KeycloakManager.calculateTokenExpiredTimeRemains = function(tokenParsed)
 KeycloakManager.offlineTimeoutService = function()
 {
 	// Stop the service to check Offline Timeout if it is started before
-	KeycloakManager.stopServiceToCheckOfflineTimeOut();
+	KeycloakManager.offlineTimeoutService_Stop();
 
-	// Start service again
-	KeycloakManager.offlineExpiredIntervalObj = setInterval(() => 
+	// Run status once 1st before interval wait..
+	var isOfflineTimedOut = KeycloakManager.offlineTimeOutCheck_Operation();
+
+	if ( !isOfflineTimedOut )
 	{
-		KeycloakManager.offlineTimeOutCheck_Operation();
-	}, Util.MS_SEC * 2 );
+		// Start service again
+		KeycloakManager.offlineExpiredIntervalObj = setInterval(() => 
+		{
+			KeycloakManager.offlineTimeOutCheck_Operation();
+		}, Util.MS_SEC * 2 );
+	}
 };
 
 
 KeycloakManager.offlineTimeOutCheck_Operation = function()
 {
+	var isOfflineTimedOut = false;
+
 	if ( KeycloakManager.logoutCalled ) console.log( 'logOut Already called case, No need to handle offlineTimeOut operation..' );
 	else
 	{
@@ -469,10 +485,12 @@ KeycloakManager.offlineTimeOutCheck_Operation = function()
 		// If offline timed out, Do Action Below:
 		//		--> If offline status, show with msg & App LogOut if logged in.
 		//		--> If online, do nothing - session would have expired with online check..
-		if( statusSummary.isOfflineTimeOut )
+		if( statusSummary.isOfflineTimedOut )
 		{
+			isOfflineTimedOut = true;
+
 			// Stop the service to check Offline Timeout
-			KeycloakManager.stopServiceToCheckOfflineTimeOut();
+			KeycloakManager.offlineTimeoutService_Stop();
 			
 			var msg = "Offline Usage Timed Out.";
 			KeycloakManager.keycloakOfflineMsgTag.html(msg);
@@ -486,10 +504,12 @@ KeycloakManager.offlineTimeOutCheck_Operation = function()
 			}
 		}
 	}
+
+	return isOfflineTimedOut;
 };
 
 
-KeycloakManager.stopServiceToCheckOfflineTimeOut = function()
+KeycloakManager.offlineTimeoutService_Stop = function()
 {
 	clearInterval(KeycloakManager.offlineExpiredIntervalObj);
 };
@@ -529,7 +549,7 @@ KeycloakManager.logout = function( option )
 		{
 			try
 			{		
-				KeycloakManager.stopServiceToCheckOfflineTimeOut(); // Present Offline Timeout happending while waiting for user to accept the alert msg ..
+				KeycloakManager.offlineTimeoutService_Stop(); // Present Offline Timeout happending while waiting for user to accept the alert msg ..
 
 				KeycloakManager.logoutCalled = true;
 

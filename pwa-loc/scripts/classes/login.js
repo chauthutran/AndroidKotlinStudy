@@ -921,7 +921,7 @@ function Login() {
 
 		var statusJson = KeycloakManager.getStatusSummary();
 
-		if( KeycloakManager.isKeyCloakInUse() && statusJson.isOfflineTimeOut )
+		if( KeycloakManager.isKeyCloakInUse() && statusJson.isOfflineTimedOut )
 		{
 			MsgManager.msgAreaShowErrOpt( 'Can Not Login!  KeyCloak Offline Timed Out.  Go Online To Unlock This.' );
 			returnFunc(false);
@@ -1268,11 +1268,10 @@ Login.contentHtml = `
 						<div class="button-label" term="login_btn_setPin">Set PIN & Login</div>
 					</div>
 				</div>
-
-				<div id="keycloakOfflineMsg" style="font-style: italic; color: #f50b0b;"></div>
-
 			</div>
 		</div>
+
+		<div id="keycloakOfflineMsg" style="display:none; font-style: italic; color: #f50b0b;"></div>
 				
 	</div>
 
