@@ -323,6 +323,10 @@ function ActivityCardDetail( activityId, isRestore )
 
 				if( editable ) 
 				{
+					var activityEditing_ButtonHide_InDefault = ConfigManager.getActivityDef().activityEditing_ButtonHide_InDefault;
+
+					// checkBlockActivityEdit can be set.. as well
+
 					if ( me.checkBlockActivityEdit_Limit( formData, activityJson, infoTag ) )
 					{
 						activityEditBtnTag.show();
@@ -345,10 +349,11 @@ function ActivityCardDetail( activityId, isRestore )
 
 	me.checkBlockActivityEdit_Limit = function( formData, activityJson, infoTag )
 	{
-		var info_pre = 'activityEdit not available: ';
+		var info_pre = 'activityEdit not available: '; // TODO: This could be translatable text with some termId..
 
 		try
 		{
+			// not having 'formData', 'blockJson' can be moved to common one..
 			if ( !formData ) 
 			{
 				infoTag.attr( 'title', info_pre + 'formData does not exist.' ).show();
