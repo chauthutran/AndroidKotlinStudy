@@ -133,7 +133,7 @@ function Login() {
 			});
 		});
 
-	}
+	};
 
 	// =============================================
 	// === EVENT HANDLER METHODS ===================
@@ -152,8 +152,10 @@ function Login() {
 				me.openLoginForm();	
 
         		// NOTE: CHANGED BY TRAN..
-				if ( authChoice === 'kc_swz_psi' || authChoice === 'kc_swz_psi_dev'
-						|| authChoice === 'kc_swz_psi_dev_2' ) {
+				if ( authChoice === 'kc_swz_psi' 
+					|| authChoice === 'kc_swz_psi_dev'
+					|| authChoice === 'kc_swz_psi_dev_2' ) 
+				{
 					KeycloakManager.setUpkeycloakPart();
 				} 
 				else if ( authChoice === 'dhis2' )
