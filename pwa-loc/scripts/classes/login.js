@@ -153,8 +153,9 @@ function Login() {
 
         		// NOTE: CHANGED BY TRAN..
 				if ( authChoice === 'kc_swz_psi' 
-					|| authChoice === 'kc_swz_psi_dev'
-					|| authChoice === 'kc_swz_psi_dev_2' ) 
+				|| authChoice === 'kc_swz_psi_staging'
+				|| authChoice === 'kc_swz_psi_dev'
+				|| authChoice === 'kc_swz_psi_dev_2' ) 
 				{
 					KeycloakManager.setUpkeycloakPart();
 				} 
@@ -1284,8 +1285,9 @@ Login.contentHtml = `
 			<select class="selAuthChoice" style="color: #555; border: solid 1px gray; padding: 5px; width: fit-content; background-color: powderblue;">
 				<option value="">SELECT ONE</option>
 				<option value="dhis2">Classic WFA auth (legacy)</option>
-				<option value="kc_swz_psi_dev">Eswatini - PSI (DEV)</option>
-				<option value="kc_swz_psi_dev_2">Eswatini - PSI (DEV 2)</option>
+				<option value="kc_swz_psi_staging">Eswatini - PSI (STAGE)</option>
+				<option value="kc_swz_psi_dev">Eswatini - PSI (STAGE OLD)</option>
+				<option value="kc_swz_psi_dev_2">Eswatini - PSI (DEV)</option>
 				<option value="kc_swz_psi">Eswatini - PSI</option>
 				<option value="kc_sw_moh">Eswatini - MoH</option>
 				<option value="kc_ke_moh">Kenya - MoH</option>
