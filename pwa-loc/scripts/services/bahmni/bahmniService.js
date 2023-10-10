@@ -1,18 +1,23 @@
-function BahmniService() { };
-
 // ---------------------------------
 function BahmniUtil() {}; // Temp Relay Method <-- Remove soon
 BahmniUtil.getFormMetadata = function (formName, formVersion, keyword, propertyName) {
 	return BahmniService.getFormMetadata(formName, formVersion, keyword, propertyName);
 };
 BahmniUtil.generateActivityFormData = function (formData, type, formNameId) {
-	return BahmniService.generateActivityFormData( formData, type, formNameId );
+	return BahmniService.generateActivityFormData(formData, type, formNameId);
 };
+
+
+function BahmniService() { };
+
 // ---------------------------------
 
 BahmniService.BAHMNI_KEYWORD = "bahmni";
 BahmniService.readyToMongoSync = "readyToMongoSync";
 BahmniService.OPENMRS_URL = "/openmrs/";
+BahmniService.FORM_NAME_DEFAULT = "default";
+BahmniService.FORM_NAME_NO_SUPPORTED = "noSupported";
+
 
 BahmniService.interval_syncData = Util.MS_SEC * 2;
 BahmniService.syncDataProcessing = false;
@@ -25,6 +30,8 @@ BahmniService.syncDownPatientDataProcessingIdx = 0;
 BahmniService.syncDownPatientDataTotal = 0;
 BahmniService.syncDownAppointmentProcessing = 0;
 BahmniService.syncDownAppointmentTotal = 0;
+BahmniService.syncDownFormMetaDataProcessingIdx = 0;
+BahmniService.syncDownFormMetaDataTotal = 0;
 BahmniService.syncDownDataList = {};
 
 BahmniService.syncDataStatus = { status: "success" };
@@ -435,7 +442,9 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 		var conceptIds = [];
 		var patientIds = [];
 		var appointmentIds = [];
-		var appointments = [];
+		// var formData = {"Assessment and Plan": [], "Referrals Template": [] };
+		var formData = [];
+		var formVersionData = {};
 		const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
 
 		for (var i = 0; i < configSynDownList.length; i++) 
@@ -450,12 +459,15 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 				if ( data.conceptIds ) conceptIds = Util.makeUniqueList( conceptIds.concat(data.conceptIds) );
 				if ( data.patientIds ) patientIds = Util.makeUniqueList( patientIds.concat(data.patientIds) );
 				if ( data.appointmentIds ) appointmentIds = Util.makeUniqueList( appointmentIds.concat(data.appointmentIds) );
+				
+				if ( data.formName ) formVersionData[data.formName] = data.formVersions;
 
-				if ( data.appointments ) appointments = appointments.concat( data.appointments );
+				if ( data.formData ) formData = formData.concat( data.formData );
+				
 			}
 		}
 
-		BahmniService.syncDownDataList = { conceptIds, patientIds, appointmentIds, appointments, patients: [], concepts: [] };
+		BahmniService.syncDownDataList = { conceptIds, patientIds, appointmentIds, formData, appointments: [], patients: [], concepts: [], formVersionData };
 
 		if( BahmniService.syncDownProcessingTotal == 0 )
 		{
@@ -463,19 +475,25 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 		}
 		else
 		{
-			BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Concepts: " + conceptIds.length + " items.." );
-			BahmniService.getConceptList( conceptIds, function () 
-			{
-				BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Appointments: " + appointmentIds.length + " items.." );
-				BahmniService.getAppointmentDataList( appointmentIds, function () 
+			
+			BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Form meta data .." );
+			BahmniService.getFormMetadataList(BahmniService.syncDownDataList.formVersionData, function(){
+
+				BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Concepts: " + conceptIds.length + " items.." );
+				BahmniService.getConceptList( conceptIds, function () 
 				{
-					BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Patients: " + BahmniService.syncDownDataList.patientIds.length + " items.." );
-					BahmniService.getPatientDataList( BahmniService.syncDownDataList.patientIds, function () 
+					BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Appointments: " + appointmentIds.length + " items.." );
+					BahmniService.getAppointmentDataList( appointmentIds, function () 
 					{
-						BahmniMsgManager.SyncMsg_InsertMsg( "After SyncDownAll Processing.." );
-						BahmniService.afterSyncDownAll( function()
+						BahmniMsgManager.SyncMsg_InsertMsg( "Retrieving Patients: " + BahmniService.syncDownDataList.patientIds.length + " items.." );
+						BahmniService.getPatientDataList( BahmniService.syncDownDataList.patientIds, function () 
 						{
-							exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
+							// TODO : BahmniService.getFormMetadataList
+							BahmniMsgManager.SyncMsg_InsertMsg( "After SyncDownAll Processing.." );
+							BahmniService.afterSyncDownAll( function()
+							{
+								exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
+							});
 						});
 					});
 				})
@@ -552,6 +570,76 @@ BahmniService.getPatientDataList = function (patientIds, exeFunc)
 		exeFunc();
 	}
 };
+
+/***
+ * @params formVersionData { "Referrals Template", [<version>, <version>, ... ], "Assessment and Plan": [<version>, <version>, ... ] }
+ */
+BahmniService.getFormMetadataList = function (formVersionData, execFunc) 
+{
+	// Get total of the versions we have ( from "Referrals Template" and "Assessment and Plan")
+	BahmniService.syncDownFormMetaDataProcessingIdx = 0;
+	BahmniService.syncDownFormMetaDataTotal = 0;
+	for (var formName in formVersionData) 
+	{
+		BahmniService.syncDownFormMetaDataTotal += formVersionData[formName].length;
+	}
+
+
+	if( BahmniService.syncDownFormMetaDataTotal > 0 )
+	{
+		for (var formName in formVersionData) 
+		{
+			var formVersions = formVersionData[formName];
+			for (var i = 0; i < formVersions.length; i++) 
+			{
+				var formVersion = formVersions[i];
+				// Get the configuration of a form by formName and formVersion in Config file and in the LocalStorage
+				var found = BahmniService.getFormMetadataByVersion(formName, formVersion);
+				if( Object.keys(found).length == 0 ) // If the config doesn't exist
+				{
+					// Because the config doesn't exist, download this form metadata from Bahmni server
+					BahmniService.retrieveFormMetadata( formName, formVersion, function(response) {
+						if( response.status == "success" )
+						{	
+							var responseData = response.data;
+							var resFormName = responseData.name;
+							var resFormVersion = response.urlInfo.searchParams.get("formVersion");
+
+							// Get DEFAULT meta data of the form "formName"
+							var defaultFormDataConfig = BahmniService.getFormMetadataByVersion(resFormName, BahmniService.FORM_NAME_DEFAULT );
+
+							// Check if meta data of "default" form is match with the meta data from Banhmi server.
+							// Also create form meta data by using responData with structure {"fileReport": "uuid", "xxxxx", "name": "yyyyy", "id": "zzzzz"}, ... }
+							var formData = BahmniService.checkAndCreateFormMedataByServerData(responseData, defaultFormDataConfig );
+							if( formData )
+							{
+								// If the responData is match with default meta data, create "metadata" info and add into the result ( formData )
+								formData.metadata = {"uuid": responseData.uuid, isLocalStorage: true};
+								// Save new form meta data in localStorage ( AppInfoLSManager )
+								AppInfoLSManager.setBahmniFormMetaData_ByVersion( resFormName, resFormVersion, formData );
+							}
+						}
+						
+						BahmniService.syncDownFormMetaDataProcessingIdx ++;
+						if( BahmniService.syncDownFormMetaDataProcessingIdx >= BahmniService.syncDownFormMetaDataTotal ) execFunc();
+					});
+				}
+				else
+				{
+					BahmniService.syncDownFormMetaDataProcessingIdx ++;
+					if( BahmniService.syncDownFormMetaDataProcessingIdx >= BahmniService.syncDownFormMetaDataTotal ) execFunc();
+				}
+				
+			}
+		}
+	}
+	else
+	{
+		execFunc();
+	}
+	
+};
+
 
 BahmniService.getConceptList = function (conceptIdList, exeFunc) 
 {
@@ -643,6 +731,18 @@ BahmniService.afterSyncDownAll = function (exeFunc)
 	}
 	// Override the options of concepts in "definitionOptions" of the configuration file 
 	BahmniService.updateOptionsChanges();
+
+	// -------------------------------------------------------------------------------------------------------------
+	// Resolve "Follow-Up" activities.
+	// There are some activities which has "sch_favId" are not existing in config File.
+	// So we need to look for it in localStorage AppInfoLSManager.BAHMNI_FORM_META_DATA
+	// and change the "sch_favId" to "default" so that when users click on "Follow-Up" button, the "default" form is showed.
+	var formData = BahmniService.syncDownDataList.formData;
+	for (var i = 0; i < formData.length; i++) 
+	{
+		var activity = BahmniService.generateActivityFormData( formData[i], formData[i].formName);
+		BahmniService.syncDownDataList.appointments.push( activity );
+	}
 
 	// -------------------------------------------------------------------------------------------------------------
 	// Add all activities for patients based on patienId
@@ -768,6 +868,10 @@ BahmniService.retrieveConceptDetails = function (conceptId, exeFunc) {
 	BahmniRequestService.sendGetRequest(conceptId, url, exeFunc);
 };
 
+BahmniService.retrieveFormMetadata = function (formName, formVersion, exeFunc) {
+	var url = `${INFO.bahmni_domain}/openmrs/ws/rest/v1/wfa/integration/get/formMetadata?formName=${formName}&formVersion=${formVersion}`;
+	BahmniRequestService.sendGetRequest(formName + "_" + formVersion, url, exeFunc);
+};
 
 // ==============================================================================
 // SyncUp 
@@ -1024,8 +1128,7 @@ BahmniService.generateActivityAppointment = function (data, options) {
 	return activity;
 };
 
-
-BahmniService.generateActivityFormData = function (formData, type, formNameId) {
+BahmniService.generateActivityFormData = function (formData, type) {
 	const patientId = formData.patientUuid;
 
 	var dataValues = {
@@ -1034,10 +1137,32 @@ BahmniService.generateActivityFormData = function (formData, type, formNameId) {
 		visitUuid: formData.visitUuid,
 		formVersion: formData.formVersion
 	};
-
+	
+	var formNameId = BahmniService.getConfigFormNameId( formData ) ;
 	var activityId = formData.encounterUuid + "--" + BahmniService.getFormMetadata(formData.formName, formData.formVersion, BahmniService.KEY_FD_META_DATA, "uuid");
 	return { id: activityId, subSourceType: BahmniService.BAHMNI_KEYWORD, transactions: [{ dataValues, type }], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: formData, date: BahmniService.generateJsonDate(), patientId: patientId };
 };
+
+/***
+ * 
+ */
+BahmniService.getConfigFormNameId = function( formData )
+{
+	var formName = formData.formName;
+	var formVersion = formData.formVersion;
+	var formIdKeyword = formData.formIdKeyword;
+
+	// STEP 1. Get config form meta data from Config file and localStorage ( AppLSManager )
+	var configData = BahmniService.getFormMetadataByVersion( formName, formVersion );
+	// STEP 2. If a config data is found, we need to check this config is gotten from the config file or from LocalStorage
+	// If it comes from the LocalStorage, return "formNameId"( sch_favId) as "<formIdKeyword>_default" form
+	if (Object.keys(configData).length > 0 && configData.metadata.isLocalStorage )  return formIdKeyword + "_" + BahmniService.FORM_NAME_DEFAULT;
+	// If it comes from the Config file, return "formNameId"( sch_favId) as "<formIdKeyword>_v<formVersion>" form
+	if (Object.keys(configData).length > 0 )  return formIdKeyword + "_v" + formVersion;
+	
+	// If no config data is found, then returns "<formIdKeyword>_noSupported>"
+	return formIdKeyword + "_" + BahmniService.FORM_NAME_NO_SUPPORTED;
+}
 
 BahmniService.generateJsonDate = function ( originalDateStr ) 
 {
@@ -1088,7 +1213,12 @@ BahmniService.getFormMetadata = function (formName, formVersion, keyword, proper
 
 	// NOTE: CHANGED!!
 	try {
-		var metadata = INFO.formMetadata[formName][formVersion][keyword];
+		// Get the Form Metadata configuration
+		var formMetaDataConfig = BahmniService.getFormMetadataByVersion(formName, formVersion);
+		if(formMetaDataConfig == undefined ) return "null";
+		
+		// Get property value
+		var metadata = formMetaDataConfig[keyword];
 		var value = (metadata) ? metadata[propertyName] : undefined;
 		returnVal = (value) ? metadata[propertyName] : "null";
 	}
@@ -1097,8 +1227,24 @@ BahmniService.getFormMetadata = function (formName, formVersion, keyword, proper
 	return returnVal;
 }
 
+BahmniService.getFormMetadataByVersion = function (formName, formVersion) {
+	/*** 
+	 * Check the formMetadata if it exists in the config file or not.
+	 * If it exist in config file, return it.
+	 * ***/
+	var formDataConfig = INFO.formMetadata[formName][formVersion];
+	if( formDataConfig != undefined ) return formDataConfig;
+	
+	// if it doesn't exist in the config file, get it from the localStorage
+	formDataConfig = AppInfoLSManager.getBahmniFormMetaData_ByVersion(formName, formVersion);
+	if( formDataConfig != undefined ) return formDataConfig;
+
+	// If no configuration is found, then return empty
+	return;
+}
+
 BahmniService.getActivityInfo = function (activity) {
-	let activityType = activity.type;  // INFO.activity.type; 
+	let activityType = activity.type;
 	let activityFormVersion = ActivityDataManager.getTransDataValue(activity.transactions, 'formVersion');
 	if (activityFormVersion) {
 		let matadataFormVersion = (INFO.formMetadata[activityType]) ? INFO.formMetadata[activityType][activityFormVersion] : '';
@@ -1126,3 +1272,71 @@ BahmniService.getDiffBetweenCurrentMinutes = function (startDateObj) {
 	var diff = UtilDate.timeCalculation((new Date()).getTime(), startDateObj.getTime());
 	return eval(diff.mm);
 };
+
+
+
+// -----------------------------------------------
+// Methods for getting / finding concepts of Form Metadata ( "Referrals Template" Form and "Assessment And Plan" Form )
+
+BahmniService.getConcepts_FromFormMetaData = function (serverFormMetadata) {
+	var conceptDataList = [];
+	return BahmniService.getConcepts_FromFormMetaData_Operation(serverFormMetadata, conceptDataList);
+}
+
+BahmniService.checkAndCreateFormMedataByServerData = function(serverFormMetadata, configFileFormMetadata )
+{
+	var conceptList = BahmniService.getConcepts_FromFormMetaData(serverFormMetadata);
+	var result = {};
+	var matched = true;
+
+	for( var key in configFileFormMetadata )
+	{
+		var configValue = configFileFormMetadata[key].uuid;
+		var found = BahmniService.findConceptData(conceptList, configValue);
+		if( found )
+		{
+			result[key] =  { "uuid": found.concept.uuid, "id": found.id, "name": found.concept.name };
+		}
+		else
+		{
+			matched = false;
+			break;
+		}
+		
+	}
+	return (matched) ? result : undefined;
+}
+
+
+BahmniService.findConceptData = function (list, value) {
+	var item;
+
+	if (list) {
+		for (i = 0; i < list.length; i++) {
+			var listItem = list[i];
+
+			if (listItem.concept && listItem.concept.uuid === value) {
+				item = listItem;
+				break;
+			}
+		}
+	}
+
+	return item;
+};
+
+
+BahmniService.getConcepts_FromFormMetaData_Operation = function (jsonData, conceptDataList = []) {
+	if (jsonData != null && typeof (jsonData) === 'object' && !Array.isArray(jsonData)) {
+		if (jsonData.concept != undefined) conceptDataList.push(jsonData);
+
+		if (jsonData.controls != undefined) BahmniService.getConcepts_FromFormMetaData_Operation(jsonData.controls, conceptDataList);
+
+	} else if (Array.isArray(jsonData)) {
+		for (var i = 0; i < jsonData.length; i++) {
+			BahmniService.getConcepts_FromFormMetaData_Operation(jsonData[i], conceptDataList);
+		}
+	}
+
+	return conceptDataList;
+}

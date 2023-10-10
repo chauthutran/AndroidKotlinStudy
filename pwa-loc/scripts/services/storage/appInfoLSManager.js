@@ -9,6 +9,7 @@ AppInfoLSManager.appInfo_LS;
 
 AppInfoLSManager.KEY_LASTLOGINDATA = "lastLoginData";
 AppInfoLSManager.KEY_SELECT_OPTIONS = "selectOptions";
+AppInfoLSManager.BAHMNI_FORM_META_DATA = "bahmniFormData";
 
 AppInfoLSManager.KEY_USERNAME = "userName"; 
 AppInfoLSManager.KEY_CONFIGSOURCETYPE = "configSourceType"; 
@@ -452,6 +453,28 @@ AppInfoLSManager.getSelectOptions = function()
     return AppInfoLSManager.getKeyValue( AppInfoLSManager.KEY_SELECT_OPTIONS );
 };
 
+
+// ----------------------------------------------------
+//  Bahmni Form Meta data
+
+AppInfoLSManager.setBahmniFormMetaData_ByVersion = function( formName, formVersion, formData )
+{
+    var metadataConfig = AppInfoLSManager.getBahmniFormMetaData(formName);
+    metadataConfig[formVersion] = formData;
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.BAHMNI_FORM_META_DATA, formName, metadataConfig );
+};
+
+AppInfoLSManager.getBahmniFormMetaData_ByVersion = function( formName, formVersion )
+{
+   var configData = AppInfoLSManager.getBahmniFormMetaData(formName);
+   return (configData[formVersion] != undefined) ? configData[formVersion] : {};
+};
+
+AppInfoLSManager.getBahmniFormMetaData = function( formName )
+{
+   var configData = AppInfoLSManager.getPropertyValue( AppInfoLSManager.BAHMNI_FORM_META_DATA, formName );
+   return (configData != undefined) ? configData : {};
+};
 
 // -----------------------------
 // networkSync
