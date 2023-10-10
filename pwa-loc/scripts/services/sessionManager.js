@@ -62,7 +62,8 @@ SessionManager.loadSessionData_nConfigJson = function( userName, password, login
 	var configJson = ConfigManager.setConfigJson( loginData );
 
 	// After ConfigManager is loaded & bahmni (if bahmni case) INFO variables are loaded.
-	SessionManager.setBahmniAgent_domainINFO( loginData.orgUnitData );
+	var facilityId = SessionManager.setBahmniAgent_domainINFO( loginData.orgUnitData );
+	SessionManager.setBahmniAgent_PatientAttributeListINFO( facilityId );
 
 	return configJson;
 };
@@ -70,35 +71,68 @@ SessionManager.loadSessionData_nConfigJson = function( userName, password, login
 
 SessionManager.setBahmniAgent_domainINFO = function( orgUnitData )
 {
-	var ouAttrVals = orgUnitData.ouAttrVals;
+	var facilityId = '';
 
-	if ( ouAttrVals && ouAttrVals.XQOOFWUwwyP && ouAttrVals.XQOOFWUwwyP.indexOf( 'bahmniPatient_' ) === 0 ) 
+	try
 	{
-		var bahmniAgentUUID = '';
-		var facilityId = '';
-		var connectDomain = '';
+		var ouAttrVals = orgUnitData.ouAttrVals;
 
-		var altCode = Util.trim( ouAttrVals.XQOOFWUwwyP );
-		var altCodeArr = altCode.split( '_' );
-
-		if ( altCodeArr[0] === 'bahmniPatient' && altCodeArr.length >= 2 )
+		if ( ouAttrVals && ouAttrVals.XQOOFWUwwyP && ouAttrVals.XQOOFWUwwyP.indexOf( 'bahmniPatient_' ) === 0 ) 
 		{
-			bahmniAgentUUID = altCodeArr[1];
-			if ( altCodeArr.length >= 3 ) facilityId = altCodeArr[2];
-			if ( !facilityId || facilityId === 'STG' || facilityId === 'stg' ) facilityId = 'stage'; // FacilityId is only prod..?  staging one is default, but should use diff ..
+			var bahmniAgentUUID = '';
+			var connectDomain = '';
+	
+			var altCode = Util.trim( ouAttrVals.XQOOFWUwwyP );
+			var altCodeArr = altCode.split( '_' );
+	
+			if ( altCodeArr[0] === 'bahmniPatient' && altCodeArr.length >= 2 )
+			{
+				bahmniAgentUUID = altCodeArr[1];
+				if ( altCodeArr.length >= 3 ) facilityId = altCodeArr[2];
+				if ( !facilityId || facilityId === 'STG' || facilityId === 'stg' ) facilityId = 'stage'; // FacilityId is only prod..?  staging one is default, but should use diff ..
+			}
+	
+			InfoDataManager.setINFOdata( 'bahmniAgentUUID', bahmniAgentUUID );
+	
+			facilityId = facilityId.toLowerCase();
+	
+			if ( facilityId === 'stage' ) connectDomain = INFO.bahmni_domain_stage;
+			else {
+				connectDomain = INFO.bahmni_domain_prod;
+				connectDomain = connectDomain.replace( '[NNN]', facilityId ); // facilityId.toLowerCase() );
+				console.log( 'INFO.bahmni_domain set to ' + connectDomain );			
+			}
+
+			InfoDataManager.setINFOdata( 'bahmni_domain', connectDomain );
 		}
+	}
+	catch( errMsg )
+	{
+		MsgManager.msgAreaShowErrOpt( 'ERROR During BahmniAgent Domain INFO SetUp - ' + errMsg );
+	}
 
-		InfoDataManager.setINFOdata( 'bahmniAgentUUID', bahmniAgentUUID );
+	return facilityId;
+};
 
+SessionManager.setBahmniAgent_PatientAttributeListINFO = function( facilityId )
+{
+	try
+	{
+		if ( !facilityId ) throw "facilityId not available";
 
-		if ( facilityId === 'stage' ) connectDomain = INFO.bahmni_domain_stage;
-		else {
-			connectDomain = INFO.bahmni_domain_prod;
-			connectDomain = connectDomain.replace( '[NNN]', facilityId.toLowerCase() );
-			console.log( 'INFO.bahmni_domain set to ' + connectDomain );
-		}
+		// Bahmni Patient Attributes JSON SETUP/Populate - Diff Server has Diff AttributeType UUID
+		if ( !INFO.bahmni_PatientAttributes || !INFO.bahmni_PatientAttributes.CURRENT ) throw "INFO bahmni_PatientAttributes or .CURRENT not setup properly";
 
-		InfoDataManager.setINFOdata( 'bahmni_domain', connectDomain );
+		var patientAttributesJson = INFO.bahmni_PatientAttributes[ facilityId ];
+
+		if ( !patientAttributesJson ) throw "Bahmni Patient Attributes Populate Failed";
+		else INFO.bahmni_PatientAttributes.CURRENT = patientAttributesJson;
+
+		if ( Object.keys( INFO.bahmni_PatientAttributes.CURRENT ).length <= 0 ) throw "INFO.bahmni_PatientAttributes.CURRENT not populated properly ";
+	}
+	catch( errMsg )
+	{
+		MsgManager.msgAreaShowErrOpt( 'ERROR During Bahmni Patient AttributeList SetUp - ' + errMsg );
 	}
 };
 
