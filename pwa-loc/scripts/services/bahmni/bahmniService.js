@@ -442,7 +442,6 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 		var conceptIds = [];
 		var patientIds = [];
 		var appointmentIds = [];
-		// var formData = {"Assessment and Plan": [], "Referrals Template": [] };
 		var formData = [];
 		var formVersionData = {};
 		const configSynDownList = ConfigManager.getSettingsBahmni().syncDownList;
