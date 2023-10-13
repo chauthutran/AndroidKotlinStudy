@@ -446,23 +446,6 @@ KeycloakManager.accessTokenStatusCheckService_Start = function()
 				}
 			}, KeycloakManager.MS_24_DAYS);
 		}
-
-		// if( accTknTimeoutSeconds < KeycloakManager.MS_24_DAYS )
-		// {
-		// 	KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
-		// 		KeycloakManager.updateToken();
-		// 	}, accTknTimeoutSeconds * 1000);
-		// }
-		// else
-		// {
-		// 	KeycloakManager.accessTokenIntervalObj = setInterval(() => {
-		// 		var accessTokenRemainTime = KeycloakManager.getStatusSummary().remainTimeSEC_AccessToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
-		// 		if( accessTokenRemainTime <= 0 )
-		// 		{
-		// 			KeycloakManager.updateToken();
-		// 		}
-		// 	}, KeycloakManager.MS_1_DAYS);
-		// }
 	}
 }
 
