@@ -10,7 +10,8 @@ KeycloakManager.dialogTag;
 KeycloakManager.keycloakObj;
 KeycloakManager.timeSkew = 1;
 KeycloakManager.accessTokenTimeoutObj;
-KeycloakManager.refreshTokenTimeoutObj;
+// KeycloakManager.refreshTokenTimeoutObj
+KeycloakManager.refreshTokenIntervalObj;
 KeycloakManager.offlineExpiredIntervalObj;
 KeycloakManager.MAX_fullTimeSEC_SessionToken = 0;
 
@@ -391,11 +392,20 @@ KeycloakManager.tokenStatusCheckService_Start = function()
 	if( refreshTokenTimeoutSeconds > 0 ) 
 	{
 		// Refresh token service
-		KeycloakManager.refreshTokenTimeoutObj = setTimeout(() => {
-			KeycloakManager.tokenStatusCheckService_Stop();
-			KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "AppTimeOut_refreshTokenTimeout" } );
-		}, refreshTokenTimeoutSeconds * 1000);
+		// KeycloakManager.refreshTokenTimeoutObj = setTimeout(() => {
+		// 	KeycloakManager.tokenStatusCheckService_Stop();
+		// 	KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "AppTimeOut_refreshTokenTimeout" } );
+		// }, refreshTokenTimeoutSeconds * 1000);
 		
+		KeycloakManager.refreshTokenIntervalObj = setInterval(() => {
+			var refreshTokenRemainTime = KeycloakManager.getStatusSummary().remainTimeSEC_RefreshToken;
+			if( refreshTokenRemainTime <= 0 )
+			{
+				KeycloakManager.tokenStatusCheckService_Stop();
+				KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "AppTimeOut_refreshTokenTimeout" } );
+			}
+		}, Util.MS_SEC * 1000);
+
 
 		// Access token service
 		var accTknTimeoutSeconds = statusSummary.kc.accessTokenValidInSeconds - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
@@ -414,7 +424,8 @@ KeycloakManager.tokenStatusCheckService_Start = function()
 KeycloakManager.tokenStatusCheckService_Stop = function()
 {
 	clearTimeout(KeycloakManager.accessTokenTimeoutObj);
-	clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
+	// clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
+	clearInterval(KeycloakManager.refreshTokenIntervalObj);
 }
 
 KeycloakManager.updateToken = function()
