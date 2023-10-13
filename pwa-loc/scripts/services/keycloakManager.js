@@ -322,13 +322,17 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 		 * To solve the issue that when initilized timeout is over 24.8 days, I want to check when this method "onTokenExpired" is called,
 		 * the token really expires or just because of the  initilized timeout issue.
 		 * */
-		var accessTokenRemaninTime = KeycloakManager.getStatusSummary().remainTimeSEC_AccessToken;
-		if( accessTokenRemaninTime<=0 )
+		var refreshTokenRemainTime = KeycloakManager.getStatusSummary().remainTimeSEC_RefreshToken;
+		if( refreshTokenRemainTime <= 0 )
 		{
-			KeycloakManager.eventMsg('Access token expired.');
+			KeycloakManager.eventMsg('Refresh token expired.');
 			KeycloakLSManager.setLastKeycloakEvent("onTokenExpired");
 
 			KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "KcEvent_onTokenExpired" } );
+		}
+		else
+		{
+			KeycloakManager.updateToken();
 		}
 	}
 };
@@ -389,7 +393,7 @@ KeycloakManager.authenticate_WithToken = function(returnFunc)
 KeycloakManager.refreshTokenStatusCheckService_Start = function()
 {
 	var statusSummary = KeycloakManager.getStatusSummary();
-	var refreshTokenTimeoutSeconds = statusSummary.kc.refreshTokenValidInSeconds;
+	var refreshTokenTimeoutSeconds = statusSummary.remainTimeSEC_RefreshToken;
 
 	if( refreshTokenTimeoutSeconds > 0 )
 	{
@@ -422,7 +426,7 @@ KeycloakManager.refreshTokenStatusCheckService_Start = function()
 KeycloakManager.accessTokenStatusCheckService_Start = function()
 {
 	var statusSummary = KeycloakManager.getStatusSummary();
-	var accTknTimeoutSeconds = statusSummary.kc.remainTimeSEC_AccessToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
+	var accTknTimeoutSeconds = statusSummary.remainTimeSEC_AccessToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
 		
 	if( accTknTimeoutSeconds > 0 )
 	{
@@ -435,7 +439,7 @@ KeycloakManager.accessTokenStatusCheckService_Start = function()
 		else
 		{
 			KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
-				var accTknRemainTime = statusSummary.kc.remainTimeSEC_AccessToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
+				var accTknRemainTime = statusSummary.remainTimeSEC_AccessToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
 				if( accTknRemainTime <= 0 )
 				{
 					KeycloakManager.updateToken();
