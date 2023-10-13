@@ -2,6 +2,9 @@ function KeycloakManager() {};
 
 KeycloakManager.OFFLINE_TIMEOUT = 604800; // 7 days: 60 * 60 * 24 * 7, Overwritten by Config 'offlineTimeoutSec'
 KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME = 5; // seconds
+KeycloakManager.MS_24_DAYS = 24 * 24 * 60 * 60;
+KeycloakManager.MS_1_DAYS = 1 * 24 * 60 * 60;
+			
 
 KeycloakManager.btnKeyCloakLogOutTag;
 KeycloakManager.keycloakOfflineMsgTag;
@@ -10,7 +13,8 @@ KeycloakManager.dialogTag;
 KeycloakManager.keycloakObj;
 KeycloakManager.timeSkew = 1;
 KeycloakManager.accessTokenTimeoutObj;
-// KeycloakManager.refreshTokenTimeoutObj
+KeycloakManager.accessTokenIntervalObj;
+KeycloakManager.refreshTokenTimeoutObj
 KeycloakManager.refreshTokenIntervalObj;
 KeycloakManager.offlineExpiredIntervalObj;
 KeycloakManager.MAX_fullTimeSEC_SessionToken = 0;
@@ -311,12 +315,21 @@ KeycloakManager.setUpKeycloakObjEvents = function( kcObj )
 	} 
 	
    kcObj.onTokenExpired = () => {
-		// It happens when the refresh token expired
+		/*** 
+		 * In the Keycloak JS Adapter, the setTimeout function which uses to check the access token expires,
+		 * this setTimeout method will run the statement right away if the remain time is 0 OR the initilized timeout is over 24.8 days
+		 * 
+		 * To solve the issue that when initilized timeout is over 24.8 days, I want to check when this method "onTokenExpired" is called,
+		 * the token really expires or just because of the  initilized timeout issue.
+		 * */
+		var accessTokenRemaninTime = KeycloakManager.getStatusSummary().remainTimeSEC_AccessToken;
+		if( accessTokenRemaninTime<=0 )
+		{
+			KeycloakManager.eventMsg('Access token expired.');
+			KeycloakLSManager.setLastKeycloakEvent("onTokenExpired");
 
-		KeycloakManager.eventMsg('Access token expired.');
-		KeycloakLSManager.setLastKeycloakEvent("onTokenExpired");
-
-		KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "KcEvent_onTokenExpired" } );
+			KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "KcEvent_onTokenExpired" } );
+		}
 	}
 };
 
@@ -373,6 +386,86 @@ KeycloakManager.authenticate_WithToken = function(returnFunc)
 	});
 };
 
+KeycloakManager.refreshTokenStatusCheckService_Start = function()
+{
+	var statusSummary = KeycloakManager.getStatusSummary();
+	var refreshTokenTimeoutSeconds = statusSummary.kc.refreshTokenValidInSeconds;
+
+	if( refreshTokenTimeoutSeconds > 0 )
+	{
+		if( refreshTokenTimeoutSeconds <= KeycloakManager.MS_24_DAYS )
+		{
+			KeycloakManager.refreshTokenTimeoutObj = setTimeout(() => {
+				KeycloakManager.tokenStatusCheckService_Stop();
+				KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "AppTimeOut_refreshTokenTimeout" } );
+			}, refreshTokenTimeoutSeconds * 1000);
+		}
+		else
+		{
+			KeycloakManager.refreshTokenTimeoutObj = setTimeout(() => {
+				var refreshTokenRemainTime = KeycloakManager.getStatusSummary().remainTimeSEC_RefreshToken;
+				if( refreshTokenRemainTime <= 0 )
+				{
+					KeycloakManager.tokenStatusCheckService_Stop();
+					KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "AppTimeOut_refreshTokenTimeout" } );
+				}
+				else
+				{
+					KeycloakManager.refreshTokenStatusCheckService_Start();
+				}
+			}, KeycloakManager.MS_24_DAYS);
+		}
+	}
+}
+
+// Access token service
+KeycloakManager.accessTokenStatusCheckService_Start = function()
+{
+	var statusSummary = KeycloakManager.getStatusSummary();
+	var accTknTimeoutSeconds = statusSummary.kc.remainTimeSEC_AccessToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
+		
+	if( accTknTimeoutSeconds > 0 )
+	{
+		if( accTknTimeoutSeconds <= KeycloakManager.MS_24_DAYS )
+		{
+			KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
+				KeycloakManager.updateToken();
+			}, accTknTimeoutSeconds * 1000);
+		}
+		else
+		{
+			KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
+				var accTknRemainTime = statusSummary.kc.remainTimeSEC_AccessToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
+				if( accTknRemainTime <= 0 )
+				{
+					KeycloakManager.updateToken();
+				}
+				else
+				{
+					KeycloakManager.accessTokenStatusCheckService_Start();
+				}
+			}, KeycloakManager.MS_24_DAYS);
+		}
+
+		// if( accTknTimeoutSeconds < KeycloakManager.MS_24_DAYS )
+		// {
+		// 	KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
+		// 		KeycloakManager.updateToken();
+		// 	}, accTknTimeoutSeconds * 1000);
+		// }
+		// else
+		// {
+		// 	KeycloakManager.accessTokenIntervalObj = setInterval(() => {
+		// 		var accessTokenRemainTime = KeycloakManager.getStatusSummary().remainTimeSEC_AccessToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
+		// 		if( accessTokenRemainTime <= 0 )
+		// 		{
+		// 			KeycloakManager.updateToken();
+		// 		}
+		// 	}, KeycloakManager.MS_1_DAYS);
+		// }
+	}
+}
+
 KeycloakManager.tokenStatusCheckService_Start = function()
 {
 	// Stop the service in cases it is started before
@@ -392,30 +485,32 @@ KeycloakManager.tokenStatusCheckService_Start = function()
 	if( refreshTokenTimeoutSeconds > 0 ) 
 	{
 		// Refresh token service
-		// KeycloakManager.refreshTokenTimeoutObj = setTimeout(() => {
-		// 	KeycloakManager.tokenStatusCheckService_Stop();
-		// 	KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "AppTimeOut_refreshTokenTimeout" } );
-		// }, refreshTokenTimeoutSeconds * 1000);
-		
-		KeycloakManager.refreshTokenIntervalObj = setInterval(() => {
-			var refreshTokenRemainTime = KeycloakManager.getStatusSummary().remainTimeSEC_RefreshToken;
-			if( refreshTokenRemainTime <= 0 )
-			{
-				KeycloakManager.tokenStatusCheckService_Stop();
-				KeycloakManager.logout( { alertMsg: "User needs to authenticate.", case: "AppTimeOut_refreshTokenTimeout" } );
-			}
-		}, Util.MS_SEC * 1000);
+		KeycloakManager.refreshTokenStatusCheckService_Start();
 
 
 		// Access token service
-		var accTknTimeoutSeconds = statusSummary.kc.accessTokenValidInSeconds - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
+		KeycloakManager.accessTokenStatusCheckService_Start();
+		// var accTknTimeoutSeconds = statusSummary.kc.accessTokenValidInSeconds - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
 		
-		if( accTknTimeoutSeconds > 0 )
-		{
-			KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
-				KeycloakManager.updateToken();
-			}, accTknTimeoutSeconds * 1000);
-		}
+		// if( accTknTimeoutSeconds > 0 )
+		// {
+		// 	if( accTknTimeoutSeconds < KeycloakManager.MS_24_DAYS )
+		// 	{
+		// 		KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
+		// 			KeycloakManager.updateToken();
+		// 		}, accTknTimeoutSeconds * 1000);
+		// 	}
+		// 	else
+		// 	{
+		// 		KeycloakManager.accessTokenIntervalObj = setInterval(() => {
+		// 			var accessTokenRemainTime = KeycloakManager.getStatusSummary().remainTimeSEC_RefreshToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
+		// 			if( accessTokenRemainTime <= 0 )
+		// 			{
+		// 				KeycloakManager.updateToken();
+		// 			}
+		// 		}, KeycloakManager.MS_1_DAYS);
+		// 	}
+		// }
 	}
 
 };
@@ -424,7 +519,9 @@ KeycloakManager.tokenStatusCheckService_Start = function()
 KeycloakManager.tokenStatusCheckService_Stop = function()
 {
 	clearTimeout(KeycloakManager.accessTokenTimeoutObj);
-	// clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
+	clearInterval(KeycloakManager.accessTokenIntervalObj);
+
+	clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
 	clearInterval(KeycloakManager.refreshTokenIntervalObj);
 }
 
