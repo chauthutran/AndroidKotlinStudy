@@ -13,9 +13,7 @@ KeycloakManager.dialogTag;
 KeycloakManager.keycloakObj;
 KeycloakManager.timeSkew = 1;
 KeycloakManager.accessTokenTimeoutObj;
-KeycloakManager.accessTokenIntervalObj;
-KeycloakManager.refreshTokenTimeoutObj
-KeycloakManager.refreshTokenIntervalObj;
+KeycloakManager.refreshTokenTimeoutObj;
 KeycloakManager.offlineExpiredIntervalObj;
 KeycloakManager.MAX_fullTimeSEC_SessionToken = 0;
 
@@ -474,30 +472,8 @@ KeycloakManager.tokenStatusCheckService_Start = function()
 		// Refresh token service
 		KeycloakManager.refreshTokenStatusCheckService_Start();
 
-
 		// Access token service
 		KeycloakManager.accessTokenStatusCheckService_Start();
-		// var accTknTimeoutSeconds = statusSummary.kc.accessTokenValidInSeconds - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
-		
-		// if( accTknTimeoutSeconds > 0 )
-		// {
-		// 	if( accTknTimeoutSeconds < KeycloakManager.MS_24_DAYS )
-		// 	{
-		// 		KeycloakManager.accessTokenTimeoutObj = setTimeout(() => {
-		// 			KeycloakManager.updateToken();
-		// 		}, accTknTimeoutSeconds * 1000);
-		// 	}
-		// 	else
-		// 	{
-		// 		KeycloakManager.accessTokenIntervalObj = setInterval(() => {
-		// 			var accessTokenRemainTime = KeycloakManager.getStatusSummary().remainTimeSEC_RefreshToken - KeycloakManager.RENEW_ACCESS_TOKEN_BEFORE_EXPIRED_TIME;
-		// 			if( accessTokenRemainTime <= 0 )
-		// 			{
-		// 				KeycloakManager.updateToken();
-		// 			}
-		// 		}, KeycloakManager.MS_1_DAYS);
-		// 	}
-		// }
 	}
 
 };
@@ -506,10 +482,7 @@ KeycloakManager.tokenStatusCheckService_Start = function()
 KeycloakManager.tokenStatusCheckService_Stop = function()
 {
 	clearTimeout(KeycloakManager.accessTokenTimeoutObj);
-	clearInterval(KeycloakManager.accessTokenIntervalObj);
-
 	clearTimeout(KeycloakManager.refreshTokenTimeoutObj);
-	clearInterval(KeycloakManager.refreshTokenIntervalObj);
 }
 
 KeycloakManager.updateToken = function()
