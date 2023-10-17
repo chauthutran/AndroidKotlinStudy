@@ -62,8 +62,11 @@ SessionManager.loadSessionData_nConfigJson = function( userName, password, login
 	var configJson = ConfigManager.setConfigJson( loginData );
 
 	// After ConfigManager is loaded & bahmni (if bahmni case) INFO variables are loaded.
-	var facilityId = SessionManager.setBahmniAgent_domainINFO( loginData.orgUnitData );
-	SessionManager.setBahmniAgent_PatientAttributeListINFO( facilityId );
+	if( ConfigManager.isBahmniSubSourceType() )
+	{
+		var facilityId = SessionManager.setBahmniAgent_domainINFO( loginData.orgUnitData );
+		SessionManager.setBahmniAgent_PatientAttributeListINFO( facilityId );
+	}
 
 	return configJson;
 };
