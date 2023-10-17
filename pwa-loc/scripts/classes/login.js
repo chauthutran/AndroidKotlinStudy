@@ -1232,8 +1232,8 @@ function Login() {
 };
 
 Login.PIN_SETUP_JSON = {
-	"onPinSetupMsg": "Please set pin",
-	"onConfirmPinSetupMsg": "Please set confirm pin that matches the pin",
+	"onPinSetupMsg": "Please Set Up 4 Number Pin!",
+	"onConfirmPinSetupMsg": "Please Enter Confirm Pin Number",
 	"hideConfirmPin": "false",
 	"pinPatternRestriction": [ "4SequentialNumber", "4SameNumber" ]
   }
