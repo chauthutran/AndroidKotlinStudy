@@ -12,11 +12,13 @@
 */
 function InputUtil() {};
 
-InputUtil.inputMonLogoutTimer;
+InputUtil.TimeoutObj_inputMonLogoutTimer;
+InputUtil.CurrentTime_inputMonLogoutTimer;
 
 InputUtil.updateLogoutTimer = function() {
 
-	if (InputUtil.inputMonLogoutTimer) clearInterval(InputUtil.inputMonLogoutTimer);
+	if (InputUtil.TimeoutObj_inputMonLogoutTimer) clearInterval(InputUtil.TimeoutObj_inputMonLogoutTimer);
+	InputUtil.CurrentTime_inputMonLogoutTimer = '';
 
 	if (SessionManager.getLoginStatus()) 
 	{
@@ -24,8 +26,12 @@ InputUtil.updateLogoutTimer = function() {
 		var logOutDelayMin = ConfigManager.staticData.logoutDelay;
 		var logOutDelayMs = ConfigManager.staticData.logoutDelayMs;
 
-		InputUtil.inputMonLogoutTimer = setTimeout(function () {
-			if (SessionManager.getLoginStatus()) {
+		InputUtil.CurrentTime_inputMonLogoutTimer = new Date().getTime();
+		
+		InputUtil.TimeoutObj_inputMonLogoutTimer = setTimeout(function () 
+		{
+			if (SessionManager.getLoginStatus()) 
+			{
 				console.log('Auto LogOut performed due to inactivity of ' + logOutDelayMin + ' minutes.');
 				SessionManager.cwsRenderObj.logOutProcess();
 			}

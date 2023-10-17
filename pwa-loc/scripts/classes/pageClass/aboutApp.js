@@ -98,6 +98,8 @@ function aboutApp(cwsRender) {
 
 		$('.aboutInfo_networkMode').html('<div>' + ConnManagerNew.statusInfo.appMode + '</div>');
 
+		me.display_autoLogout( $('.aboutInfo_autoLogout') );
+
 		me.setIntervalData_keycloak( $('.aboutInfo_keyCloak') );
 
 		//$('.aboutInfo_keyCloak').html( me.getKeyCloakSummaryStr() );
@@ -109,6 +111,47 @@ function aboutApp(cwsRender) {
 		me.displayDeviceInfo($('.aboutInfo_info'));
 	};
 
+	// ---------------------------------------------------
+
+	me.display_autoLogout = function( autoLogoutTag )
+	{
+		clearInterval( aboutApp.intervalID_autoLogout );
+
+		// Call once 1st..
+		autoLogoutTag.html( me.getAutoLogoutStr() );
+
+		aboutApp.intervalID_autoLogout = setInterval( function() 
+		{
+			if ( autoLogoutTag.is( ":visible" ) ) autoLogoutTag.html( me.getAutoLogoutStr() );
+			else clearInterval( aboutApp.intervalID_autoLogout );
+
+		}, 3000 );
+
+	};
+
+	me.getAutoLogoutStr = function()
+	{
+		var summaryStr = '';
+
+		try
+		{
+			var logOutDelaySEC = ConfigManager.staticData.logoutDelayMs / 1000;
+			var remainSec = 0;
+
+			if ( InputUtil.CurrentTime_inputMonLogoutTimer )
+			{
+				var remainMs = new Date().getTime() - InputUtil.CurrentTime_inputMonLogoutTimer;
+				remainSec = remainMs / 1000;
+			}
+
+			summaryStr = '' + UtilDate.getTimeStrFormatted( remainSec ) + ' / ' + UtilDate.getTimeStrFormatted( logOutDelaySEC );
+		}
+		catch( errMsg ) {  console.log( 'ERROR in aboutApp.getAutoLogoutStr, ' + errMsg );  }
+
+		return summaryStr;
+	};
+
+	// ------
 
 	me.setIntervalData_keycloak = function( keyCloakInfoTag )
 	{
@@ -195,6 +238,7 @@ function aboutApp(cwsRender) {
 	me.initialize();
 };
 
+aboutApp.intervalID_autoLogout;
 aboutApp.intervalID_keyCloakInfo;
 
 aboutApp.contentHtml = `
@@ -224,6 +268,10 @@ aboutApp.contentHtml = `
 			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_keyCloak">KeyCloak</label></div>
 				<div class="field-read_only__text aboutInfo_keyCloak">13-lucky-number</div>
+			</div>
+			<div class="field-read_only noMargin">
+				<div class="field-read_only__label"><label term="about_autoLogout">Auto Logout</label></div>
+				<div class="field-read_only__text aboutInfo_autoLogout">13-lucky-number</div>
 			</div>
 			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_geoLoc">GeoLocation</label></div>

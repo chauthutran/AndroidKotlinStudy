@@ -345,6 +345,8 @@ UtilDate.getTimeStrFormatted = function( inputSec, option )
 
 	try
 	{
+		if ( !inputSec ) inputSec = 0;
+
 		if ( inputSec < 60 ) outputStr = UtilDate.getNumberFixedStr( inputSec, { unitStr: option.sec, pluralStr: option.plural } );
 		else if ( inputSec < 3600 ) outputStr = UtilDate.getNumberFixedStr( inputSec / 60, { unitStr: option.min, pluralStr: option.plural } );
 		else if ( inputSec < 86400 ) outputStr = UtilDate.getNumberFixedStr( inputSec / 3600, { unitStr: option.hr, pluralStr: option.plural } );
