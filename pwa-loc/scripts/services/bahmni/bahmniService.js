@@ -1080,6 +1080,8 @@ BahmniService.generateClientData = function (patientData, option) {
 
 	if ( patientData.identifiers )
 	{
+		resolveData.clientDetails.identifiers = patientData.identifiers;
+
 		patientData.identifiers.forEach( iden => 
 		{
 			if ( iden.identifierType )
