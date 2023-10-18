@@ -100,9 +100,13 @@ function aboutApp(cwsRender) {
 
 		me.display_autoLogout( $('.aboutInfo_autoLogout') );
 
-		me.setIntervalData_keycloak( $('.aboutInfo_keyCloak') );
+		if ( KeycloakManager.isKeyCloakInUse() && KeycloakLSManager.getAuthChoice() )
+		{
+			$( 'div.divAboutKeyCloak' ).show();
+			me.setIntervalData_keycloak( $('.aboutInfo_keyCloak') );
+		}
+		else $( 'div.divAboutKeyCloak' ).hide();
 
-		//$('.aboutInfo_keyCloak').html( me.getKeyCloakSummaryStr() );
 
 		GeoLocUtil.showInAboutPage( $('.aboutInfo_geoLoc') ); // $('.aboutInfo_geoLoc').html
 
@@ -140,8 +144,9 @@ function aboutApp(cwsRender) {
 
 			if ( InputUtil.CurrentTime_inputMonLogoutTimer )
 			{
-				var remainMs = new Date().getTime() - InputUtil.CurrentTime_inputMonLogoutTimer;
-				remainSec = remainMs / 1000;
+				var passedMs = new Date().getTime() - InputUtil.CurrentTime_inputMonLogoutTimer;
+				var passedSec = passedMs / 1000;
+				remainSec = logOutDelaySEC - passedSec;
 			}
 
 			summaryStr = '' + UtilDate.getTimeStrFormatted( remainSec ) + ' / ' + UtilDate.getTimeStrFormatted( logOutDelaySEC );
@@ -266,12 +271,12 @@ aboutApp.contentHtml = `
 				<div class="field-read_only__text aboutInfo_networkMode">Online-are-you-sure</div>
 			</div>
 			<div class="field-read_only noMargin">
-				<div class="field-read_only__label"><label term="about_keyCloak">KeyCloak</label></div>
-				<div class="field-read_only__text aboutInfo_keyCloak">13-lucky-number</div>
-			</div>
-			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_autoLogout">Auto Logout</label></div>
 				<div class="field-read_only__text aboutInfo_autoLogout">13-lucky-number</div>
+			</div>
+			<div class="field-read_only noMargin divAboutKeyCloak" style="display: none;">
+				<div class="field-read_only__label"><label term="about_keyCloak">KeyCloak</label></div>
+				<div class="field-read_only__text aboutInfo_keyCloak">13-lucky-number</div>
 			</div>
 			<div class="field-read_only noMargin">
 				<div class="field-read_only__label"><label term="about_geoLoc">GeoLocation</label></div>
