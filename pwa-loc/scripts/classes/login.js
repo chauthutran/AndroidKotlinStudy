@@ -202,7 +202,15 @@ function Login() {
 				|| authChoice === 'kc_swz_psi_dev'
 				|| authChoice === 'kc_swz_psi_dev_2' ) 
 				{
-					KeycloakManager.setUpkeycloakPart();
+					Util.modifyUrl('origin', location.origin);
+					var statusSummary = KeycloakManager.getStatusSummary();
+					if( statusSummary.isLSTokensExisted ) {
+						KeycloakManager.logout();
+					}
+					else
+					{
+						KeycloakManager.setUpkeycloakPart();
+					}
 				} 
 				else if ( authChoice === 'dhis2' )
 				{

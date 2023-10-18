@@ -1527,7 +1527,15 @@ Util.getParamObj = function (urlStr )
 	return obj;
 };
 
-
+Util.modifyUrl = function(title, url) {
+	if (typeof (history.pushState) != "undefined") {
+		var obj = {
+		Title: title,
+		Url: url
+		};
+		history.pushState(obj, obj.Title, obj.Url);
+	}
+}
 
 Util.getParameterByName = function (name, url) {
 	try
