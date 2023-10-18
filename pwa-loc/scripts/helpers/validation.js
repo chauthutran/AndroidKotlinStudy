@@ -67,6 +67,9 @@ Validation.checkValidations = function (tag) {
 
 				// Default Universal checks..
 				Validation.performValidationCheck(tag, 'doubleQuote', divErrorMsgTargetTag, true);
+
+				// Maybe all DHIS2 sourceType should have this by default?
+				if ( ConfigManager.getSettings().inputVal_singleQuoteValidate ) Validation.performValidationCheck(tag, 'singleQuote', divErrorMsgTargetTag, true);
 			}
 
 			// If not valid, set the background color.
@@ -133,6 +136,7 @@ Validation.performValidationCheck = function (tag, type, divTag, alwaysRun) {
 		else if (type == 'customEvalRuleIds') valid = Validation.checkValue_customEvalRuleIds(tag, divTag, type);
 
 		else if (type == 'doubleQuote') valid = Validation.checkValue_DoubleQuote(tag, divTag, type);
+		else if (type == 'singleQuote') valid = Validation.checkValue_SingleQuote(tag, divTag, type);
 
 		if (!valid) tag.attr('valid', false);
 	}
@@ -513,6 +517,20 @@ Validation.checkValue_DoubleQuote = function (inputTag, divTag, type) {
 	return valid;
 };
 
+
+Validation.checkValue_SingleQuote = function (inputTag, divTag, type) {
+	var valid = true;
+	var value = inputTag.val();
+
+	if (value && value.indexOf("'") >= 0) {
+		var message = Validation.getMessage(type, 'Please do not enter single quote in value');
+		divTag.append(Validation.getErrorSpanTag(message, 'validationMsg_' + type));
+
+		valid = false;
+	}
+
+	return valid;
+};
 
 Validation.phoneNumberValidation = function (phoneVal) {
 	var success = false;
