@@ -860,43 +860,70 @@ function Login() {
 
 	me.loginSuccessProcess = function (userName, password, loginData, runAfterFunc) 
 	{
-		AppInfoLSManager.setUserName(userName);
-		SessionManager.setLoginStatus(true);
-		BahmniService.syncDataProcessing = false;	
-		
-		// gAnalytics Event
-		GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
-
-		// Matomo Submit - Check current network status rather than stable one - ConnManagerNew.isAppMode_Online
-		if ( navigator.onLine ) MatomoHelper.processQueueList( 'From Login.loginSuccessProcess' );
-
-		// Load config and continue the CWS App process
-		if (!loginData.dcdConfig || loginData.dcdConfig.ERROR) MsgManager.msgAreaShow('<span term="msgNotif_loginSuccess_noConfig">Login Success, but country config not available.</span> <span>Msg: ' + loginData.dcdConfig.ERROR + '</span>', 'ERROR');
-		else {
-			// Block with loading msg
-			MsgFormManager.appBlockTemplate('loginAfterLoad');
-
-			// Load Activities
-			SessionManager.cwsRenderObj.loadActivityListData_AfterLogin(function () {
-				me.showHideUi_SetVals_AfterLogin(userName);
-
-				// Unblock with loading msg
-				MsgFormManager.appUnblock('loginAfterLoad');
-
-				// Some eval opereations or other operations to run after login
-				me.operationsAfterLogin(userName);
-
-
-				// call CWS start with this config data.. - Block Start
-				SessionManager.cwsRenderObj.startWithConfigLoad(runAfterFunc);
-
-				// "SCH_SyncDown_RunOnce", "SCH_FixOper_RunOnce", "SCH_SyncAll_Background"
-				ScheduleManager.runSchedules_AfterLogin(SessionManager.cwsRenderObj);
-
-				// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.  For availableType 'v2' only.
-				ConnManagerNew.checkNSet_ServerAvailable();
-			});
+		// NEW: DisableUsers List - in config..
+		if ( me.disableUsersCheck( userName ) ) 
+		{
+			SessionManager.cwsRenderObj.logOutProcess();
 		}
+		else
+		{
+			AppInfoLSManager.setUserName(userName);
+			SessionManager.setLoginStatus(true);
+			BahmniService.syncDataProcessing = false;	
+			
+			// gAnalytics Event
+			GAnalytics.setEvent("Login Process", "Login Button Clicked", "Successful", 1);
+	
+			// Matomo Submit - Check current network status rather than stable one - ConnManagerNew.isAppMode_Online
+			if ( navigator.onLine ) MatomoHelper.processQueueList( 'From Login.loginSuccessProcess' );
+	
+			// Load config and continue the CWS App process
+			if (!loginData.dcdConfig || loginData.dcdConfig.ERROR) MsgManager.msgAreaShow('<span term="msgNotif_loginSuccess_noConfig">Login Success, but country config not available.</span> <span>Msg: ' + loginData.dcdConfig.ERROR + '</span>', 'ERROR');
+			else 
+			{
+				// Block with loading msg
+				MsgFormManager.appBlockTemplate('loginAfterLoad');
+	
+				// Load Activities
+				SessionManager.cwsRenderObj.loadActivityListData_AfterLogin(function () {
+					me.showHideUi_SetVals_AfterLogin(userName);
+	
+					// Unblock with loading msg
+					MsgFormManager.appUnblock('loginAfterLoad');
+	
+					// Some eval opereations or other operations to run after login
+					me.operationsAfterLogin(userName);
+	
+	
+					// call CWS start with this config data.. - Block Start
+					SessionManager.cwsRenderObj.startWithConfigLoad(runAfterFunc);
+	
+					// "SCH_SyncDown_RunOnce", "SCH_FixOper_RunOnce", "SCH_SyncAll_Background"
+					ScheduleManager.runSchedules_AfterLogin(SessionManager.cwsRenderObj);
+	
+					// Call server available check again <-- since the dhis2 sourceType of user could have been loaded at this point.  For availableType 'v2' only.
+					ConnManagerNew.checkNSet_ServerAvailable();
+				});
+			}
+		}
+	};
+
+	me.disableUsersCheck = function( userName )
+	{
+		var disableCase = false;
+
+		var disableUsers = ConfigManager.getSettings().disableUsers;
+
+		if ( disableUsers && disableUsers.userList && disableUsers.userList.indexOf( userName ) >= 0 )
+		{
+			disableCase = true;
+
+			var msg = ( disableUsers.msg ) ? disableUsers.msg: 'The user has been disabled.';
+
+			MsgManager.msgAreaShowErrOpt( msg );
+		}
+
+		return disableCase;
 	};
 
 
