@@ -1057,7 +1057,9 @@ ConfigManager.runLoginTimeRuns = function () {
 						{
 							var deleteMsgStr = clientIdsArr.length + ' CLIENTS got deleted - CleanUp on data older than ' + deleteLocalClients.daysOld + ' days.';
 							console.log( deleteMsgStr );
-							// MsgFormManager.showFormMsg( { itemId: 'oldClientDataDeleteMsg', msgSpanTag: $( '<div></div>' ).append( deleteMsgStr ), width: '130px' } );				
+
+							// Also, we could use 'msgShow', less intrusive messaging
+							if ( deleteLocalClients.afterDeleteMsgShow ) MsgFormManager.showFormMsg( { itemId: 'oldClientDataDeleteMsg', msgSpanTag: $( '<div></div>' ).append( deleteMsgStr ), width: '130px' } );
 						});
 					}
 					catch (errMsg) { console.log('ERROR in ConfigManager.removeClientsByIdArr, ' + errMsg); }
