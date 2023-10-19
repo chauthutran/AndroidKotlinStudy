@@ -588,10 +588,23 @@ KeycloakManager.offlineTimeoutService_Stop = function()
 
 
 // TODO: This should be used?
-KeycloakManager.checkAuthAndLogoutIfAble = function()
+KeycloakManager.logoutOrAuth = function()
 {
+	// var statusSummary = KeycloakManager.getStatusSummary();
+	// if( statusSummary.isLSTokensExisted ) KeycloakManager.logout();
+
+	Util.modifyUrl('origin', location.origin);
 	var statusSummary = KeycloakManager.getStatusSummary();
-	if( statusSummary.isLSTokensExisted ) KeycloakManager.logout();
+	if( statusSummary.isAppOnline )
+	{
+		if( statusSummary.isLSTokensExisted ) {
+			KeycloakManager.logout();
+		}
+		else
+		{
+			KeycloakManager.authenticate();
+		}
+	}
 }
 
 KeycloakManager.logout = function( option )
@@ -635,7 +648,6 @@ KeycloakManager.logout = function( option )
 					// accesstokenParsed.iss : "http://localhost:8080/realms/SWZ_PSI"
 					var logoutUrl = accesstokenParsed.iss + `/protocol/openid-connect/logout?client_id=pwaapp&id_token_hint=${idToken}&post_logout_redirect_uri=${location.origin}`;
 					window.location.replace( logoutUrl );
-					// window.location.href = 	logoutUrl;
 				}
 			}
 			catch( errMsg ) { console.log( 'ERROR in KeycloakManager.logout, ' + errMsg ); }

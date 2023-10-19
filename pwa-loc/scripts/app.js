@@ -47,7 +47,7 @@ App.run = function ()
 			// Call Keycloak logout
 			if ( KeycloakManager.isKeyCloakInUse() )
 			{
-				KeycloakManager.checkAuthAndLogoutIfAble();
+				KeycloakManager.logoutOrAuth();
 			}
 
 			AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
@@ -84,8 +84,8 @@ App.run = function ()
 
 		App.param_showMsg( 'msg' );
 		App.param_keyCloakUsage_ForceRemove( App.paramName_keyCloakRemove );
-		App.param_authChiocePage_DataSet( App.paramName_authPage, App.paramName_authChoice, function() {
-			KeycloakManager.checkAuthAndLogoutIfAble();
+		App.param_authChiocePage_DataSet( App.paramName_authPage, App.paramName_authChoice, function() {					
+			KeycloakManager.logoutOrAuth();
 		});
 		
 	
@@ -144,7 +144,15 @@ App.startAppProcess = function ()
 
 		// TODO: CHECK THIS.. KeyCloak Run..  - to log out?
 		if ( KeycloakManager.isKeyCloakInUse() ) {
-			KeycloakManager.setUpkeycloakPart();
+			var paramObj = Util.getParamObj( location.href );
+			if( paramObj.authChoice != undefined )
+			{
+				KeycloakManager.logoutOrAuth();
+			}
+			else
+			{
+				KeycloakManager.setUpkeycloakPart();
+			}
 		}
 
 	}
