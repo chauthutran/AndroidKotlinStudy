@@ -204,15 +204,7 @@ function Login() {
 				|| authChoice === 'kc_swz_psi_dev'
 				|| authChoice === 'kc_swz_psi_dev_2' ) 
 				{
-					Util.modifyUrl('origin', location.origin);
-					var statusSummary = KeycloakManager.getStatusSummary();
-					if( statusSummary.isLSTokensExisted ) {
-						KeycloakManager.logout();
-					}
-					else
-					{
-						KeycloakManager.setUpkeycloakPart();
-					}
+					KeycloakManager.logoutOrAuth();
 				} 
 				else if ( authChoice === 'dhis2' )
 				{
@@ -513,7 +505,7 @@ function Login() {
 					if ( KeycloakLSManager.getAuthChoice() ) 
 					{
 						KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
-						KeycloakManager.checkAuthAndLogoutIfAble();
+						KeycloakManager.logoutOrAuth();
 					}
 					else
 					{
