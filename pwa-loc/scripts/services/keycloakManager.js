@@ -227,9 +227,9 @@ KeycloakManager.authenticate = function()
 						
 						// Save the new username
 						AppInfoLSManager.setUserName(userName);
-						if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
+						Login.loadSavedUserName();
 
-						AppUtil.appReloadWtMsg("User Change - Deleteting previous user data ..");
+						AppUtil.appReloadWtMsg("User Changed - Deleteting previous user data ..");
 					});
 				}
 				else
@@ -237,9 +237,10 @@ KeycloakManager.authenticate = function()
 					KeycloakManager.authenticateSuccessActions();
 
 					// Save the new username - in case preLoginUser is undefined
-					if ( preLoginUser == undefined ){
+					if ( preLoginUser == undefined )
+					{
 						AppInfoLSManager.setUserName(userName);
-						if ( SessionManager.cwsRenderObj ) SessionManager.cwsRenderObj.loadSavedUserName();
+						Login.loadSavedUserName();
 					}
 				}
 			}
@@ -350,7 +351,34 @@ KeycloakManager.authenticateSuccessActions = function()
 
 	// Enable "Logout button" in the bottom
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', false);
+
+
+	// If country group information is missing, alert it?  or display error msg?
+	// KeycloakManager.keycloakObj.tokenParsed.userGroupList - ['/country_T_SW', '/ougId_zP2HxAVKRH8']
+	if ( !KeycloakManager.hasUserGroup_Country( KeycloakManager.keycloakObj ) ) 
+	{
+		MsgManager.msgAreaShowOptErr( 'The user in KeyCloak is missing country group setting!' );
+	}
 }
+
+KeycloakManager.hasUserGroup_Country = function( keycloakObj )
+{
+	var hasGroup = false;
+
+	try
+	{
+		keycloakObj.tokenParsed.userGroupList.forEach( ug => {
+			if ( ug.indexOf( 'country_' ) >= 0 ) hasGroup = true;
+		});
+	}
+	catch ( errMsg )
+	{
+		console.log( 'ERROR in KeycloakManager.checkUserGroupCountry, ' + errMsg );
+	}
+
+	return hasGroup;
+};
+
 
 KeycloakManager.authenticateFailureActions = function()
 {

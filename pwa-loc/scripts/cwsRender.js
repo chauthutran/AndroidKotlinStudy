@@ -58,7 +58,7 @@ function cwsRender()
 
 	me.render = function()
 	{
-		me.loadSavedUserName();		
+		// me.loadSavedUserName();  <-- Moved to Login.loadSavedUserName();
 
 		me.loginObj.render(); // Open Log Form
 
@@ -417,36 +417,6 @@ function cwsRender()
 
 	// ----------------------------------------------
 	// ----------- Render called method -------------
-
-	me.loadSavedUserName = function()
-	{
-		// TODO: Use Session Manager?
-		// TODO: MOVE THIS TO login page..
-		var loginUserNameH4Tag = $( '#loginUserNameH4' );
-
-		loginUserNameH4Tag.hide();
-
-		var userName = AppInfoLSManager.getUserName();
-
-		if ( userName )
-		{
-			// Div (Input) part of Login UserName
-			$( '#loginField' ).hide();
-
-			// input parts..  Below will be hidden, though...
-			$( 'input.loginUserName' ).val( userName );	
-			$( 'input.loginUserName' ).attr( 'readonly',true );
-
-			// Display login name as Big text part - if we already have user..
-			loginUserNameH4Tag.text( userName ).show();
-		}
-		else
-		{
-			//me.advanceOptionLoginBtnTag.removeClass( 'l-emphasis' ).addClass( 'dis' );
-		}
-	};
-
-	// ----------------------------------------------
 
 	// ----------------------------------------------
 	// ----------- Area Render called method -------------

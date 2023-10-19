@@ -86,6 +86,8 @@ function Login() {
 
 		me.appVersionInfoDisplay();
 
+		Login.loadSavedUserName();
+
 		me.openForm();  // with reset Val
 
 		// Translate the page..
@@ -273,9 +275,10 @@ function Login() {
 
 			if( pin == pinConfirm )
 			{
-				var ok = confirm("Pin confirm checked. Are you sure you want to set this as pin?");
-				if( ok ) me.loginBtnTag.click();
-				else
+				// var ok = confirm("Pin confirm checked. Are you sure you want to set this as pin?");
+				
+				me.loginBtnTag.click();
+				/*else
 				{
 					me.hasPinAlertShown = true;
 					me.loginPinConfirmClearTag.click();
@@ -284,7 +287,7 @@ function Login() {
 					me.loginPinClearTag.click();
 			
 					MsgManager.msgAreaShowOpt( 'Pin cancelled.' );
-				}
+				}*/
 			}
 			else
 			{
@@ -669,13 +672,8 @@ function Login() {
 
 		me.needToSetPin = false;
 
-
-		// loginUserName Related 
-		var loginUserName = me.loginUserNameTag.val();
-		if ( !loginUserName ) me.loginUserNameTag.focus();
-
-
-		// Auth choice display
+		
+		// 'LoginWith' - Auth choice display
 		if ( me.isAuthPageUse() )
 		{
 			var authChoiceName = '';
@@ -686,6 +684,11 @@ function Login() {
 			$( '.divLoginWith_choice' ).text( authChoiceName );
 		}
 		else $( '.divLoginWith' ).hide();
+
+
+		// loginUserName Related 
+		var loginUserName = me.loginUserNameTag.val();
+		if ( !loginUserName ) me.loginUserNameTag.focus();
 
 
 		// For 'KeyCloack' case, If user data does not exist, set the form for entry.. with pin & confirm
@@ -1262,6 +1265,36 @@ Login.loginInputDisable = function( disable )
 		inputUserNameTag.prop( 'disabled', false ).css( 'background-color', '' );
 	}
 };
+
+
+Login.loadSavedUserName = function()
+{
+	// TODO: Use Session Manager?
+	// TODO: MOVE THIS TO login page..
+	var loginUserNameH4Tag = $( '#loginUserNameH4' );
+
+	loginUserNameH4Tag.hide();
+
+	var userName = AppInfoLSManager.getUserName();
+
+	if ( userName )
+	{
+		// Div (Input) part of Login UserName
+		$( '#loginField' ).hide();
+
+		// input parts..  Below will be hidden, though...
+		$( 'input.loginUserName' ).val( userName );	
+		$( 'input.loginUserName' ).attr( 'readonly',true );
+
+		// Display login name as Big text part - if we already have user..
+		loginUserNameH4Tag.text( userName ).show();
+	}
+	else
+	{
+		//me.advanceOptionLoginBtnTag.removeClass( 'l-emphasis' ).addClass( 'dis' );
+	}
+};
+
 
 Login.contentHtml = `
 <div class="wrapper_login">
