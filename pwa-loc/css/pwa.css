@@ -582,6 +582,19 @@ ul.jobContextMenuItems li.context-menu-item:last-child {
 	/* margin-bottom: 20px; */
 }
 
+.pinRightIcons {
+	cursor:pointer; 
+	width: 25px;
+	height: 25px;
+	margin-top: 3px;
+	opacity: 0.6;
+}
+
+.pinRightIcons:hover {
+	opacity: 1;
+}
+
+
 /* 2. logo greyscale for offline/online */
 .logoOffline {
 	-webkit-filter: grayscale(1);

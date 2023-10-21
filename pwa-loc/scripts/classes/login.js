@@ -162,8 +162,7 @@ function Login() {
 			if( Util.checkValue(pinSetupMsg) && !Util.checkValue(inputValue) && !me.hasPinAlertShown )
 			{
 				me.hasPinAlertShown = true;
-				alert(pinSetupMsg);
-				// MsgManager.msgAreaShowOpt( pinSetupMsg, { cssClasses: 'notifDark', hideTimeMs: 2000 } );
+				MsgManager.msgAreaShowOpt( pinSetupMsg, { cssClasses: 'notifBlue', hideTimeMs: 3000 } );
 			}
 		}
 	}
@@ -176,8 +175,7 @@ function Login() {
 			if( Util.checkValue(confirmPinSetupMsg) && !Util.checkValue(inputValue) && !me.hasPinAlertShown) 
 			{
 				me.hasPinAlertShown = true;
-				alert(confirmPinSetupMsg);
-				// MsgManager.msgAreaShowOpt( confirmPinSetupMsg, { cssClasses: 'notifDark', hideTimeMs: 2000 } );
+				MsgManager.msgAreaShowOpt( confirmPinSetupMsg, { cssClasses: 'notifBlue', hideTimeMs: 3000 } );
 			}
 		}
 	}
@@ -204,7 +202,18 @@ function Login() {
 				|| authChoice === 'kc_swz_psi_dev'
 				|| authChoice === 'kc_swz_psi_dev_2' ) 
 				{
-					KeycloakManager.logoutOrAuth();
+					var statusSummary = KeycloakManager.getStatusSummary();
+					if( statusSummary.isAppOnline )
+					{
+						if( statusSummary.isLSTokensExisted )
+						{
+							KeycloakManager.logout();
+						}
+						else
+						{
+							KeycloakManager.setUpkeycloakPart();
+						}
+					}
 				} 
 				else if ( authChoice === 'dhis2' )
 				{
@@ -504,8 +513,16 @@ function Login() {
 				{
 					if ( KeycloakLSManager.getAuthChoice() ) 
 					{
-						KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
-						KeycloakManager.logoutOrAuth();
+						var statusSummary = KeycloakManager.getStatusSummary();
+						if( statusSummary.isAppOnline )
+						{
+							KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
+							KeycloakManager.setUpkeycloakPart();
+						}
+						else
+						{
+							alert("(KC) The application is offline now. You can not change to another user.");
+						}
 					}
 					else
 					{
@@ -1350,7 +1367,7 @@ Login.contentHtml = `
 				</div>
 				<div class="field__controls">
 					<div class="field__left split_password pin" style="width: 100%;">
-						<div class="loginPinDiv" style="float: left;">
+						<div class="loginPinDiv" style="float: left; margin-right: 5px;">
 							<input type="password" class="loginUserPin" name="pass" data-ng-minlength="4" maxlength="4" autocomplete="new-password" mandatory="true" />
 							<input tabindex="2" class="onKeyboardOnOff pin_pw pin1" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 							<input tabindex="3" class="onKeyboardOnOff pin_pw pin2" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
@@ -1358,9 +1375,9 @@ Login.contentHtml = `
 							<input tabindex="5" class="onKeyboardOnOff pin_pw pin4" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 						</div>
 						<div style="float: left;">
-							<img id="loginPinClear" src="images/clear.png" style="cursor:pointer; width: 25px;height: 25px;" />
-							<img id="hidePwd" src="images/pwd_hide.png" style="display:none; cursor:pointer; width: 25px;height: 25px;" />
-							<img id="showPwd" src="images/pwd_visible.png" style="cursor:pointer;width: 25px;height: 25px;"/>
+							<img id="loginPinClear" class="pinRightIcons mouseDown" src="images/clear.png" title="Clear" />
+							<img id="hidePwd" class="pinRightIcons mouseDown" src="images/pwd_hide.png" style="display:none;" title="Hide" />
+							<img id="showPwd" class="pinRightIcons mouseDown" src="images/pwd_visible.png" title="Show" />
 						</div>
 						<div style="float: left;">
 							<img class="pin_pw_loading" src="images/loading_small2.svg" style="display:none; width:30px; height:30px; margin-left:10px; margin-top:10px;" />
@@ -1378,17 +1395,17 @@ Login.contentHtml = `
 				</div>
 				<div class="field__controls">
 					<div class="field__left split_password pin_confirm" style="width: 100%;">
-						<div class="loginPinConfirmFields" style="float: left;">
+						<div class="loginPinConfirmFields" style="float: left; margin-right: 5px;">
 							<input type="password" class="loginUserPin" name="pass" data-ng-minlength="4" maxlength="4" autocomplete="new-password" mandatory="true" />
-							<input tabindex="2" class="onKeyboardOnOff confirmPin pin_pw pin1" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
-							<input tabindex="3" class="onKeyboardOnOff confirmPin pin_pw pin2" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
-							<input tabindex="4" class="onKeyboardOnOff confirmPin pin_pw pin3" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
-							<input tabindex="5" class="onKeyboardOnOff confirmPin pin_pw pin4" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="6" class="onKeyboardOnOff confirmPin pin_pw pin1" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="7" class="onKeyboardOnOff confirmPin pin_pw pin2" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="8" class="onKeyboardOnOff confirmPin pin_pw pin3" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
+							<input tabindex="9" class="onKeyboardOnOff confirmPin pin_pw pin4" type="number" maxlength="1" autocomplete="new-password" pattern="[0-9]*" inputmode="numeric" />
 						</div>
 						<div style="float: left;">
-							<img id="loginPinConfirmClear" src="images/clear.png" style="cursor:pointer; width: 25px;height: 25px;" />
-							<img id="hideConfirmPwd" src="images/pwd_hide.png" style="display:none; cursor:pointer; width: 25px;height: 25px;" />
-							<img id="showConfirmPwd" src="images/pwd_visible.png" style="cursor:pointer;width: 25px;height: 25px;"/>
+							<img id="loginPinConfirmClear" class="pinRightIcons mouseDown" src="images/clear.png" title="Clear" />
+							<img id="hideConfirmPwd" class="pinRightIcons mouseDown" src="images/pwd_hide.png" style="display:none;" title="Hide" />
+							<img id="showConfirmPwd" class="pinRightIcons mouseDown" src="images/pwd_visible.png" title="Show" />
 						</div>
 					</div>
 					<div class="field__right"></div>
@@ -1405,13 +1422,13 @@ Login.contentHtml = `
 					</div>
 				</div>
 
-				<div class="button h-emphasis button-full_width loginBtn mouseDown" tabindex="6" style="border-radius: 20px; background-color: #F06D24;;">
+				<div class="button h-emphasis button-full_width loginBtn mouseDown" tabindex="10" style="border-radius: 20px; background-color: #F06D24;;">
 					<div class="button__container ">
 						<div class="button-label" term="login_btn_login">Log in</div>
 					</div>
 				</div>
 
-				<div class="button h-emphasis button-full_width loginSetPinBtn mouseDown" tabindex="7" style="display: none; border-radius: 20px; background-color: #F06D24;">
+				<div class="button h-emphasis button-full_width loginSetPinBtn mouseDown" tabindex="11" style="display: none; border-radius: 20px; background-color: #F06D24;">
 					<div class="button__container ">
 						<div class="button-label" term="login_btn_setPin">Set PIN & Login</div>
 					</div>

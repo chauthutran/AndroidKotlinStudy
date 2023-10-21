@@ -42,15 +42,11 @@ App.run = function ()
 		{ 
 			console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 
 			LocalStgMng.saveJsonData( 'paramsLoad', paramObj );
+			
+			// Need to log out Keycloack if there is any authentication before
+			KeycloakManager.checkAndLogout(true);
 
-			// 'App.authChiocePage_DataSet' call sets/clears all these on authPage = 'Y' match..
-			// Call Keycloak logout
-			if ( KeycloakManager.isKeyCloakInUse() )
-			{
-				KeycloakManager.logoutOrAuth();
-			}
-
-			AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
+			// AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
 		});
 	}, 
 	function( paramsJson ) 
@@ -84,9 +80,11 @@ App.run = function ()
 
 		App.param_showMsg( 'msg' );
 		App.param_keyCloakUsage_ForceRemove( App.paramName_keyCloakRemove );
-		App.param_authChiocePage_DataSet( App.paramName_authPage, App.paramName_authChoice, function() {					
-			KeycloakManager.logoutOrAuth();
-		});
+		App.param_authChiocePage_DataSet( App.paramName_authPage, App.paramName_authChoice, function() {
+			// In the "exec_AuthChoicePageCase" function, we did run KeycloakManager.checkAndLogout(),
+			// so we don't need to run one more time here
+			// KeycloakManager.checkAndLogout();
+		}); 
 		
 	
 		App.App_UI_startUp_loading(); // << should we move this into cwsRender?
@@ -141,20 +139,10 @@ App.startAppProcess = function ()
 
 		App.App_UI_startUp_ready();
 
-
-		// TODO: CHECK THIS.. KeyCloak Run..  - to log out?
+		// Do Keycloak authentication here
 		if ( KeycloakManager.isKeyCloakInUse() ) {
-			var paramObj = Util.getParamObj( location.href );
-			if( paramObj.authChoice != undefined )
-			{
-				KeycloakManager.logoutOrAuth();
-			}
-			else
-			{
-				KeycloakManager.setUpkeycloakPart();
-			}
+			KeycloakManager.setUpkeycloakPart();
 		}
-
 	}
 	catch ( errMsg ) {
 		console.log( 'ERROR on starting App > startApp() error: ' + errMsg );

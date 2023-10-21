@@ -619,23 +619,33 @@ KeycloakManager.offlineTimeoutService_Stop = function()
 
 
 // TODO: This should be used?
-KeycloakManager.logoutOrAuth = function()
+KeycloakManager.checkAndLogout = function(forceToLogout)
 {
-	// var statusSummary = KeycloakManager.getStatusSummary();
-	// if( statusSummary.isLSTokensExisted ) KeycloakManager.logout();
+	forceToLogout = ( forceToLogout == undefined ) ? false : true;
 
-	Util.modifyUrl('origin', location.origin);
+	// Util.modifyUrl('origin', location.origin);
+
 	var statusSummary = KeycloakManager.getStatusSummary();
-	if( statusSummary.isAppOnline )
+	if( ( statusSummary.isAppOnline || forceToLogout ) && statusSummary.isLSTokensExisted )
 	{
-		if( statusSummary.isLSTokensExisted ) {
-			KeycloakManager.logout();
-		}
-		else
-		{
-			KeycloakManager.authenticate();
-		}
+		KeycloakManager.logout();
 	}
+
+	// // var statusSummary = KeycloakManager.getStatusSummary();
+	// // if( statusSummary.isLSTokensExisted ) KeycloakManager.logout();
+
+	// // Util.modifyUrl('origin', location.origin);
+	// var statusSummary = KeycloakManager.getStatusSummary();
+	// if( statusSummary.isAppOnline )
+	// {
+	// 	if( statusSummary.isLSTokensExisted ) {
+	// 		KeycloakManager.logout();
+	// 	}
+	// 	// else
+	// 	// {
+	// 	// 	KeycloakManager.authenticate();
+	// 	// }
+	// }
 }
 
 KeycloakManager.logout = function( option )
