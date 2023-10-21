@@ -355,11 +355,14 @@ KeycloakManager.authenticateSuccessActions = function()
 
 	// If country group information is missing, alert it?  or display error msg?
 	// KeycloakManager.keycloakObj.tokenParsed.userGroupList - ['/country_T_SW', '/ougId_zP2HxAVKRH8']
-	// /if ( !KeycloakManager.hasUserGroup_Country( KeycloakManager.keycloakObj ) ) 
-	//{
-	//	MsgManager.msgAreaShowOptErr( 'The user in KeyCloak is missing country group setting!' );
-	//}
-}
+	if ( !KeycloakManager.hasUserGroup_Country( KeycloakManager.keycloakObj ) ) 
+	{
+		// Also, userGroup checking - hard code?  or country config?  How to put this?  the KeyCloak groups conflicts?
+		MsgManager.msgAreaShowErrOpt( 'The user in KeyCloak is missing country group setting!' );
+
+		// Or set msg from country config?
+	}
+};
 
 KeycloakManager.hasUserGroup_Country = function( keycloakObj )
 {
@@ -386,7 +389,7 @@ KeycloakManager.authenticateFailureActions = function()
 
 	// Disable "Logout button" in the bottom
 	KeycloakManager.btnKeyCloakLogOutTag.prop('disabled', true);
-}
+};
 
 // ---------------------------------------------------------------------------------------------------------
 // For renew Token
