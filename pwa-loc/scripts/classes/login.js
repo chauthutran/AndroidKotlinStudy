@@ -1170,21 +1170,22 @@ function Login() {
 				}
 			}
 			else {
-				var errDetail = '';
+				var errDetail = ( loginData && loginData.errMsg ) ? loginData.errMsg: ' - Error occurred with Login Process';
 
 				// NEW: Save 'blackListing' case to localStorage offline user data..  CREATE CLASS?  OTHER THAN appInfo?
-				if (loginData && loginData.blackListing) {
+				if ( loginData && loginData.blackListing )
+				{
 					AppInfoLSManager.setBlackListed(true);
 					errDetail = me.ERR_MSG_blackListing;
-				}
-				else if (loginData && loginData.returnCode === 502) errDetail = ' - Server not available';
+				}				
 
 				// MISSING TRANSLATION
-				MsgManager.msgAreaShow(me.getLoginFailedMsgSpan() + ' ' + errDetail, 'ERROR');
+				MsgManager.msgAreaShowErrOpt( me.getLoginFailedMsgSpan() + ' ' + errDetail );
 				callBack(false);
 			}
 		}
-		catch (errMsg) {
+		catch (errMsg) 
+		{
 			MsgManager.msgAreaShow('ERROR during login data check: ' + errMsg, 'ERROR');
 			callBack(false);
 		}

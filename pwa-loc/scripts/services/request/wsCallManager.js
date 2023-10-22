@@ -184,6 +184,7 @@ WsCallManager.submitLogin = function( userName, password, loadingTag, returnFunc
     requestOption.fhirPractitionerId = AppInfoLSManager.getFhirPractitionerId(); // If exists, add this
 
     // KeyCloak <-- 
+    if ( INFO.keycloakUserInfo ) requestOption.keycloakUserInfo = INFO.keycloakUserInfo; // Temporary 'keycloakUserInfo' set - for testing..
     if ( KeycloakManager.isKeyCloakInUse() ) requestOption.keycloakUserInfo = KeycloakManager.getUserInfo();
 
 
