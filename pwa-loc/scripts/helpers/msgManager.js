@@ -59,6 +59,7 @@ MsgManager.msgAreaShow = function (msg, type, optClasses, hideTimeMs, options) {
 	try {
 		if ( !options ) options = {};
 
+		if ( options.clearAllMsg ) MsgManager.msgAreaClearAll(); // Clear All Previous existing msg..
 		if ( options.type ) type = options.type;
 		if ( options.optClasses ) optClasses = options.optClasses;
 

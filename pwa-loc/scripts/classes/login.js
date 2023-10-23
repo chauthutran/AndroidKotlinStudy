@@ -295,7 +295,7 @@ function Login() {
 				me.loginPinConfirmClearTag.click();
 				me.loginPinClearTag.click();
 
-				MsgManager.msgAreaShow('Pin confirmation is not match. Please enter again.', 'ERROR');
+				MsgManager.msgAreaShowErrOpt('Pin confirmation is not match. Please enter again.', { clearAllMsg: true });
 			}
 		});
 
@@ -937,7 +937,7 @@ function Login() {
 
 			var msg = ( disableUsers.msg ) ? disableUsers.msg: 'The user has been disabled.';
 
-			MsgManager.msgAreaShowErrOpt( msg );
+			MsgManager.msgAreaShowErrOpt( msg, { clearAllMsg: true } );
 		}
 
 		return disableCase;
@@ -1052,7 +1052,7 @@ function Login() {
 
 		if( KeycloakManager.isKeyCloakInUse() && statusJson.isOfflineTimedOut )
 		{
-			MsgManager.msgAreaShowErrOpt( 'Can Not Login!  KeyCloak Offline Timed Out.  Go Online To Unlock This.' );
+			MsgManager.msgAreaShowErrOpt( 'Can Not Login!  KeyCloak Offline Timed Out.  Go Online To Unlock This.', { clearAllMsg: true } );
 			returnFunc(false);
 		}
 		else
@@ -1135,15 +1135,15 @@ function Login() {
 		try {
 			if (success) {
 				if (!loginData) {
-					MsgManager.msgAreaShow('ERROR - login success, but loginData Empty!', 'ERROR');
+					MsgManager.msgAreaShowErrOpt('ERROR - login success, but loginData Empty!', { clearAllMsg: true } );
 					callBack(false);
 				}
 				else if (!loginData.orgUnitData) {
-					MsgManager.msgAreaShow('ERROR - login success, but loginData orgUnitData Empty!', 'ERROR');
+					MsgManager.msgAreaShowErrOpt('ERROR - login success, but loginData orgUnitData Empty!', { clearAllMsg: true } );
 					callBack(false);
 				}
 				else if (!loginData.dcdConfig) {
-					MsgManager.msgAreaShow('ERROR - login success, but dcdConfig Empty!', 'ERROR');
+					MsgManager.msgAreaShowErrOpt('ERROR - login success, but dcdConfig Empty!', { clearAllMsg: true } );
 					callBack(false);
 				}
 				else if (!loginData.dcdConfig.sourceType) {
@@ -1154,7 +1154,7 @@ function Login() {
 					SessionManager.getLoginRespData_IDB(userName, password, function (loginResp) {
 						if (!loginResp) // offline/previous login data not available - 1st time login, but server response not have dcdConfig
 						{
-							MsgManager.msgAreaShow('ERROR - login success, but country config not retrieved, and offline replacement also not available!', 'ERROR');
+							MsgManager.msgAreaShowErrOpt('ERROR - login success, but country config not retrieved, and offline replacement also not available!', { clearAllMsg: true } );
 							callBack(false);
 						}
 						else {
@@ -1180,13 +1180,13 @@ function Login() {
 				}				
 
 				// MISSING TRANSLATION
-				MsgManager.msgAreaShowErrOpt( me.getLoginFailedMsgSpan() + ' ' + errDetail );
+				MsgManager.msgAreaShowErrOpt( me.getLoginFailedMsgSpan() + ' ' + errDetail, { clearAllMsg: true } );
 				callBack(false);
 			}
 		}
 		catch (errMsg) 
 		{
-			MsgManager.msgAreaShow('ERROR during login data check: ' + errMsg, 'ERROR');
+			MsgManager.msgAreaShowErrOpt('ERROR during login data check: ' + errMsg, { clearAllMsg: true } );
 			callBack(false);
 		}
 	};
