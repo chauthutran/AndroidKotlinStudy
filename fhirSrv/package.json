@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node fhirSrv.js"
   },
   "engines": {
     "node": "^16.18.1",
@@ -13,9 +13,11 @@
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "node-fetch": "^2.6.11"
+    "node-fetch": "^2.6.11",
+    "dotenv": "^10.0.0"
   },
   "devDependencies": {
-    "prettier": "^1.17.1"
+    "prettier": "^1.17.1",
+    "qunit": "^2.10.0"
   }
 }

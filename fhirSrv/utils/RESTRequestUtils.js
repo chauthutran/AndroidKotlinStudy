@@ -1,28 +1,26 @@
 
 const fetch = require("node-fetch");
+const { _FHIR_USR, _FHIR_PWD, _FHIR_PROJECT } = require('./../config');
 
-class Utils {
-	sendGetRequest(url, exeFunc) {};
-	sendPostRequest(url, data, exeFunc) {};
-}
-  
-class RequestUtils extends Utils {
+
+class RESTRequestUtils {
 
 	constructor() {
-		super();
+	
 	};
 
     sendGetRequest = function( url, exeFunc ) {
         console.log(url);
 
         fetch(url, {
-            method:'GET', 
-            headers: {'Authorization': 'Basic ' + btoa('superman:Nuchange123')}})
+            method:'GET',
+            headers: {"Content-Type": "application/json", "project": _FHIR_PROJECT, "Authorization": "Basic " + btoa(_FHIR_USR + ':' + _FHIR_PWD)}})
             .then(response => response.json())
             .then((result) => {
-                exeFunc({status: "success", data: result});
+                exeFunc({status: "success", data: result, url: url});
             }).catch((error) => {
-                exeFunc({status: "error", data: error});
+                console.log("error: " + error);
+                exeFunc({status: "error", data: error, url: url});
             });
 	};
 
@@ -31,7 +29,7 @@ class RequestUtils extends Utils {
         
         fetch(url, {
             method: "POST",
-            headers: { "Content-Type": "application/json", 'Authorization': 'Basic ' + btoa('superman:Nuchange123') },
+            headers: {"Content-Type": "application/json", "project": _FHIR_PROJECT, "Authorization": "Basic " + btoa(_FHIR_USR + ':' + _FHIR_PWD)},
             body: JSON.stringify(data)
         })
         .then((response) => response.json())
@@ -51,6 +49,6 @@ class RequestUtils extends Utils {
 }
 
 module.exports = {
-    RequestUtils
+    RESTRequestUtils
 };
   
