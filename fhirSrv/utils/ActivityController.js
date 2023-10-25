@@ -1,4 +1,6 @@
-const fetch = require("node-fetch");
+
+const { Blob } = require('node:buffer');
+
 const {
 	_FHIR_HOST,
 	_PRACTITIONER_LIST
@@ -12,9 +14,12 @@ const utils = new Utils();
 
 class ActivityController {
 
-	constructor() {};
+	constructor() {
+		this.headers = ["qrId", "patientId", "firstName", "lastName", "activityId", "trxType", "activityType", 
+				"voucherCodes", "referralDate", "clinicReferred", "dateCaptured", "orginalData"];
+	};
 
-	loadActivities = function (exeFunc) {
+	loadActivities = function (type, exeFunc) {
 		var me = this;
 
 		me.getPractitionersByIds(function (response) {
@@ -35,13 +40,30 @@ class ActivityController {
 							var activityType = me.getInfoFromExtension(item, "http://sample.info/activityType");
 							var voucherCodes = me.getInfoFromItem(item, "voucherCode");
 							var referralDate = me.getInfoFromItem(item, "referralDate");
-							var clinicReferredTo = me.getInfoFromItem(item, "referral");
+							var clinicReferred = me.getInfoFromItem(item, "referral");
+							var dateCaptured = item.authored;
 
-							// , Date captured, client names.
-							resultData.push({id: qrId, patientId, firstName, lastName, activityId, trxType, activityType, voucherCodes, referralDate, clinicReferredTo });
+							resultData.push({qrId: qrId, patientId, firstName, lastName, activityId, dateCaptured, trxType, activityType, voucherCodes, referralDate, clinicReferred, orginalData: item });
 						}
 
-						exeFunc({status: "success", data: resultData});
+						if( type == "csv" )
+						{
+							if( resultData.length > 0 )
+							{
+								var headers = Object.keys(resultData[0]);
+								// exeFunc(me.exportCSVFile(headers, resultData));
+
+								exeFunc({status: "success", data: me.convertToCSV(headers, resultData)});
+							}
+							else
+							{
+								exeFunc({status: "success", data: ""});
+							}
+						}
+						else
+						{
+							exeFunc({status: "success", data: resultData});
+						}
 					}
 					else
 					{
@@ -59,8 +81,58 @@ class ActivityController {
 	getInfoFromExtension = function( data, urlVal )
 	{
 		var found = utils.findItemFromList(data.extension, urlVal, "url");
-		return (found) ? found.value : "";
+		return (found) ? found.valueString : "";
 	};
+
+	getQRsByPractitionerIds = function (ids, exeFunc) {
+
+		if( ids.length > 0 )
+		{
+			var url = _FHIR_HOST + "QuestionnaireResponse?subject:Patient.general-practitioner=" + ids.join(",")
+			requestUtils.sendGetRequest(url, function (response) {
+				exeFunc(response);
+			});
+		}
+		else
+		{
+			exeFunc({status: "success", data: []});
+		}
+	};
+
+	
+	
+	exportCSVFile = function(headers, jsonList, fileTitle) {
+		if (headers) {
+			jsonList.unshift(headers);
+		}
+
+		// Convert Object to JSON
+		// var jsonObject = JSON.stringify(jsonList);
+
+		var csv = this.convertToCSV(headers, jsonList);
+
+		var exportedFilenmae = fileTitle + '.csv' || 'export.csv';
+
+		var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+		if (navigator.msSaveBlob) { // IE 10+
+			navigator.msSaveBlob(blob, exportedFilenmae);
+		} else {
+			var link = document.createElement("a");
+			if (link.download !== undefined) { // feature detection
+				// Browsers that support HTML5 download attributef
+				var url = URL.createObjectURL(blob);
+				link.setAttribute("href", url);
+				link.setAttribute("download", exportedFilenmae);
+				link.style.visibility = 'hidden';
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			}
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+	// Supportive methods
 
 	getInfoFromItem = function( data, propValue )
 	{
@@ -92,20 +164,37 @@ class ActivityController {
 		});
 	};
 
-	getQRsByPractitionerIds = function (ids, exeFunc) {
+	convertToCSV = function( headers, list )
+	{
+		console.log(headers);
+		var me = this;
+		var csv = list.map(function(row){
+			return headers.map(function(fieldName){
+				return JSON.stringify(row[fieldName]).split(",").join("###COMMA###");
+			}).join(',')
+		});
 
-		if( ids.length > 0 )
-		{
-			var url = _FHIR_HOST + "QuestionnaireResponse?subject:Patient.general-practitioner=" + ids.join(",")
-			requestUtils.sendGetRequest(url, function (response) {
-				exeFunc(response);
-			});
-		}
-		else
-		{
-			exeFunc({status: "success", data: []});
-		}
+		csv.unshift(headers.join(',')) // add header column
+		csv = csv.join('\r\n'); // break into separate lines
+
+		return csv;
 	};
+
+	replacerValue = function( key, value)
+	{
+		console.log(key + ": " + value);
+		if(key=="orginalData" ) console.log(value);
+
+		if( value == null ) return "";
+
+		if(key=="orginalData" ) {
+			console.log();
+			return "\\" + JSON.stringify(value).replace( /\\"/g , "\"\"" ) + "\\";
+		}
+
+		return value;
+	}
+
 }
 
 module.exports = {
