@@ -29,13 +29,16 @@ class ActivityController {
 					{
 						var resultData = [];
 						var list = qrResponse.data.fhirResult.entry;
+						var patientNames = me.getPatientNameList(list);
+
 						for (var i = 0; i < list.length; i++) {
 							var item = list[i].resource;
 							var qrId = item.id;
 							var patientId = item.subject.reference.replace("Patient/",""); // NEED to add info of firstName, lastName
-							var firstName = me.getInfoFromItem(item, "firstName");
-							var lastName = me.getInfoFromItem(item, "lastName");
-							var activityId = me.getInfoFromExtension(item, "http://sample.info/activityId"); // OR should I get it from item[x].linkId = "activityid"
+							var firstName = patientNames[patientId].firstName;
+							var lastName = patientNames[patientId].lastName;
+							// var activityId = me.getInfoFromExtension(item, "http://sample.info/activityId"); // OR should I get it from item[x].linkId = "activityid"
+							var activityId = item.identifier.value;
 							var trxType = me.getInfoFromExtension(item, "http://sample.info/transType");
 							var activityType = me.getInfoFromExtension(item, "http://sample.info/activityType");
 							var voucherCodes = me.getInfoFromItem(item, "voucherCode");
@@ -86,7 +89,7 @@ class ActivityController {
 
 		if( ids.length > 0 )
 		{
-			var url = _FHIR_HOST + "QuestionnaireResponse?subject:Patient.general-practitioner=" + ids.join(",")
+			var url = _FHIR_HOST + "QuestionnaireResponse?_count=1000&subject:Patient.general-practitioner=" + ids.join(",")
 			requestUtils.sendGetRequest(url, function (response) {
 				exeFunc(response);
 			});
@@ -96,6 +99,25 @@ class ActivityController {
 			exeFunc({status: "success", data: []});
 		}
 	};
+
+	getPatientNameList = function(itemList)
+	{
+		var result = {};
+		for( var i=0; i<itemList.length; i++ )
+		{
+			var item = itemList[i].resource;
+			var patientId = item.subject.reference.replace("Patient/",""); // NEED to add info of firstName, lastName
+			var firstName = this.getInfoFromItem(item, "firstName");
+			var lastName = this.getInfoFromItem(item, "lastName");
+
+			if( result[patientId] == undefined && ( firstName != "" || lastName !== "" ) )
+			{
+				result[patientId] = {firstName, lastName};
+			}
+		}
+
+		return result;
+	}
 
 
 	convertToCSV = function( headers, list )
