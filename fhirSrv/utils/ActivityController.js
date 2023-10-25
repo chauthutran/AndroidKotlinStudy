@@ -40,7 +40,7 @@ class ActivityController {
 							var activityType = me.getInfoFromExtension(item, "http://sample.info/activityType");
 							var voucherCodes = me.getInfoFromItem(item, "voucherCode");
 							var referralDate = me.getInfoFromItem(item, "referralDate");
-							var clinicReferred = me.getInfoFromItem(item, "referral");
+							var clinicReferred = me.getInfoFromItem(item, "referredTo");
 							var dateCaptured = item.authored;
 
 							resultData.push({qrId: qrId, patientId, firstName, lastName, activityId, dateCaptured, trxType, activityType, voucherCodes, referralDate, clinicReferred, orginalData: item });
