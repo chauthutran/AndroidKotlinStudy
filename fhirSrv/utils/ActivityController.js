@@ -100,11 +100,15 @@ class ActivityController {
 
 	convertToCSV = function( headers, list )
 	{
-		console.log(headers);
 		var me = this;
 		var csv = list.map(function(row){
 			return headers.map(function(fieldName){
-				return JSON.stringify(row[fieldName]).split(",").join("###COMMA###");
+				var value = JSON.stringify(row[fieldName]);
+				if( value.indexOf(",") >= 0 )
+				{
+					value = '"' + value.split('"').join('""') + '"';
+				}
+				return value;
 			}).join(',')
 		});
 
@@ -113,7 +117,7 @@ class ActivityController {
 
 		return csv;
 	};
-	
+
 	// --------------------------------------------------------------------------------
 	// Supportive methods
 
