@@ -39,16 +39,29 @@ class ActivityController {
 							var lastName = patientNames[patientId].lastName;
 							// var activityId = me.getInfoFromExtension(item, "http://sample.info/activityId"); // OR should I get it from item[x].linkId = "activityid"
 							var activityId = item.identifier.value;
+
+							var activeUser = me.getInfoFromExtension(item, "http://sample.info/activeUser");
 							var trxType = me.getInfoFromExtension(item, "http://sample.info/transType");
 							var activityType = me.getInfoFromExtension(item, "http://sample.info/activityType");
-							var voucherCodes = me.getInfoFromItem(item, "voucherCode");
+							var voucherCode = me.getInfoFromItem(item, "voucherCode");
 							var referralDate = me.getInfoFromItem(item, "referralDate");
 							var clinicReferred = me.getInfoFromItem(item, "referredTo");
 							var dateCaptured = item.authored;
 
 
+							var origItemJson = {};
 
-							resultData.push({qrId: qrId, patientId, firstName, lastName, activityId, dateCaptured, trxType, activityType, voucherCodes, referralDate, clinicReferred, orginalData: {} });
+							if ( item.item ) {
+								item.item.forEach( obj => {
+									var name = obj.linkId;
+									if ( obj.answer && obj.answer.length > 0 && name && name != 'location' ) origItemJson[ obj.linkId ] = obj.answer[0].valueString;
+								});
+							}
+
+
+							resultData.push({dateCaptured: dateCaptured, activeUser, patient_fName: firstName, patient_lName: lastName, patientId, activityId, activityType, trxType, voucherCode, referralDate, clinicReferred, qrId, orginalQR_Item: origItemJson });
+
+							//resultData.push({qrId: qrId, patientId, firstName, lastName, activityId, dateCaptured, trxType, activityType, voucherCodes, referralDate, clinicReferred, orginalData: {} });
 						}
 
 						if( type == "csv" )
@@ -91,7 +104,7 @@ class ActivityController {
 
 		if( ids.length > 0 )
 		{
-			var url = _FHIR_HOST + "QuestionnaireResponse?_count=1000&subject:Patient.general-practitioner=" + ids.join(",")
+			var url = _FHIR_HOST + "QuestionnaireResponse?_count=1000&subject:Patient.general-practitioner=" + ids.join(",");
 			requestUtils.sendGetRequest(url, function (response) {
 				exeFunc(response);
 			});
