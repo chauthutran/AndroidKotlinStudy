@@ -43,7 +43,9 @@ class ActivityController {
 							var clinicReferred = me.getInfoFromItem(item, "referredTo");
 							var dateCaptured = item.authored;
 
-							resultData.push({qrId: qrId, patientId, firstName, lastName, activityId, dateCaptured, trxType, activityType, voucherCodes, referralDate, clinicReferred, orginalData: item });
+
+
+							resultData.push({qrId: qrId, patientId, firstName, lastName, activityId, dateCaptured, trxType, activityType, voucherCodes, referralDate, clinicReferred, orginalData: {} });
 						}
 
 						if( type == "csv" )
@@ -86,7 +88,7 @@ class ActivityController {
 
 		if( ids.length > 0 )
 		{
-			var url = _FHIR_HOST + "QuestionnaireResponse?subject:Patient.general-practitioner=" + ids.join(",")
+			var url = _FHIR_HOST + "QuestionnaireResponse?_count=1000&subject:Patient.general-practitioner=" + ids.join(",");
 			requestUtils.sendGetRequest(url, function (response) {
 				exeFunc(response);
 			});
