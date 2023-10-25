@@ -32,8 +32,6 @@ app.get("/export", cors(), (req, res) => {
     activityController.loadActivities(type, function(responseData) {
         if( type == "csv")
         {
-            // res.set('Content-Type', 'application/octet-stream');
-            // res.send(<your data>);
             var curDate = (new Date()).toISOString();
             var fileName = `export_${curDate}.csv`;
             res.set('Content-disposition', 'attachment; filename=' + fileName );

@@ -51,8 +51,6 @@ class ActivityController {
 							if( resultData.length > 0 )
 							{
 								var headers = Object.keys(resultData[0]);
-								// exeFunc(me.exportCSVFile(headers, resultData));
-
 								exeFunc({status: "success", data: me.convertToCSV(headers, resultData)});
 							}
 							else
@@ -99,38 +97,23 @@ class ActivityController {
 		}
 	};
 
+
+	convertToCSV = function( headers, list )
+	{
+		console.log(headers);
+		var me = this;
+		var csv = list.map(function(row){
+			return headers.map(function(fieldName){
+				return JSON.stringify(row[fieldName]).split(",").join("###COMMA###");
+			}).join(',')
+		});
+
+		csv.unshift(headers.join(',')) // add header column
+		csv = csv.join('\r\n'); // break into separate lines
+
+		return csv;
+	};
 	
-	
-	exportCSVFile = function(headers, jsonList, fileTitle) {
-		if (headers) {
-			jsonList.unshift(headers);
-		}
-
-		// Convert Object to JSON
-		// var jsonObject = JSON.stringify(jsonList);
-
-		var csv = this.convertToCSV(headers, jsonList);
-
-		var exportedFilenmae = fileTitle + '.csv' || 'export.csv';
-
-		var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-		if (navigator.msSaveBlob) { // IE 10+
-			navigator.msSaveBlob(blob, exportedFilenmae);
-		} else {
-			var link = document.createElement("a");
-			if (link.download !== undefined) { // feature detection
-				// Browsers that support HTML5 download attributef
-				var url = URL.createObjectURL(blob);
-				link.setAttribute("href", url);
-				link.setAttribute("download", exportedFilenmae);
-				link.style.visibility = 'hidden';
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
-			}
-		}
-	}
-
 	// --------------------------------------------------------------------------------
 	// Supportive methods
 
@@ -163,37 +146,6 @@ class ActivityController {
 			}
 		});
 	};
-
-	convertToCSV = function( headers, list )
-	{
-		console.log(headers);
-		var me = this;
-		var csv = list.map(function(row){
-			return headers.map(function(fieldName){
-				return JSON.stringify(row[fieldName]).split(",").join("###COMMA###");
-			}).join(',')
-		});
-
-		csv.unshift(headers.join(',')) // add header column
-		csv = csv.join('\r\n'); // break into separate lines
-
-		return csv;
-	};
-
-	replacerValue = function( key, value)
-	{
-		console.log(key + ": " + value);
-		if(key=="orginalData" ) console.log(value);
-
-		if( value == null ) return "";
-
-		if(key=="orginalData" ) {
-			console.log();
-			return "\\" + JSON.stringify(value).replace( /\\"/g , "\"\"" ) + "\\";
-		}
-
-		return value;
-	}
 
 }
 
