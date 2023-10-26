@@ -510,14 +510,14 @@ function Login() {
 			$('#accept').click(function () 
 			{
 				DataManager2.deleteAllStorageData(function () 
-				{
+				{ 
 					if ( KeycloakLSManager.getAuthChoice() ) 
 					{
 						var statusSummary = KeycloakManager.getStatusSummary();
 						if( statusSummary.isAppOnline )
 						{
 							KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
-							KeycloakManager.setUpkeycloakPart();
+							KeycloakManager.checkAndLogout();
 						}
 						else
 						{
