@@ -485,6 +485,7 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 
 	me.createLabelFieldTag = function (fieldDef) {
 		var divInputFieldTag = $(Templates.labelField);
+		if( fieldDef.id ) divInputFieldTag.attr('name', fieldDef.id);
 
 		divInputFieldTag.html(fieldDef.defaultName).attr('term', fieldDef.term);
 

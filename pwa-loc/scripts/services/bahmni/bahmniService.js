@@ -609,13 +609,18 @@ BahmniService.getFormMetadataList = function (formVersionData, execFunc)
 
 							// Check if meta data of "default" form is match with the meta data from Banhmi server.
 							// Also create form meta data by using responData with structure {"fileReport": "uuid", "xxxxx", "name": "yyyyy", "id": "zzzzz"}, ... }
-							var formData = BahmniService.checkAndCreateFormMedataByServerData(responseData, defaultFormDataConfig );
-							if( formData )
+							var foundConfigFormData = BahmniService.checkAndCreateFormMedataByServerData(responseData, defaultFormDataConfig );
+							if( foundConfigFormData.matched )
 							{
+								var formData = foundConfigFormData.metadata;
 								// If the responData is match with default meta data, create "metadata" info and add into the result ( formData )
 								formData.metadata = {"uuid": responseData.uuid, isLocalStorage: true};
 								// Save new form meta data in localStorage ( AppInfoLSManager )
 								AppInfoLSManager.setBahmniFormMetaData_ByVersion( resFormName, resFormVersion, formData );
+							}
+							else
+							{
+								AppInfoLSManager.setBahmniUnsupportedFormMetaData_ByVersion( resFormName, resFormVersion, foundConfigFormData.metadata );
 							}
 						}
 						
@@ -1152,12 +1157,14 @@ BahmniService.getConfigFormNameId = function( formData )
 	var formName = formData.formName;
 	var formVersion = formData.formVersion;
 	var formIdKeyword = formData.formIdKeyword;
-
+	
 	// STEP 1. Get config form meta data from Config file and localStorage ( AppLSManager )
 	var configData = BahmniService.getFormMetadataByVersion( formName, formVersion );
+
 	// STEP 2. If a config data is found, we need to check this config is gotten from the config file or from LocalStorage
 	// If it comes from the LocalStorage, return "formNameId"( sch_favId) as "<formIdKeyword>_default" form
 	if (Object.keys(configData).length > 0 && configData.metadata.isLocalStorage )  return formIdKeyword + "_" + BahmniService.FORM_NAME_DEFAULT;
+	
 	// If it comes from the Config file, return "formNameId"( sch_favId) as "<formIdKeyword>_v<formVersion>" form
 	if (Object.keys(configData).length > 0 )  return formIdKeyword + "_v" + formVersion;
 	
@@ -1287,25 +1294,29 @@ BahmniService.getConcepts_FromFormMetaData = function (serverFormMetadata) {
 BahmniService.checkAndCreateFormMedataByServerData = function(serverFormMetadata, configFileFormMetadata )
 {
 	var conceptList = BahmniService.getConcepts_FromFormMetaData(serverFormMetadata);
-	var result = {};
+	var foundConfigFields = {};
+	var missedConfigFields = {};
 	var matched = true;
 
 	for( var key in configFileFormMetadata )
 	{
-		var configValue = configFileFormMetadata[key].uuid;
-		var found = BahmniService.findConceptData(conceptList, configValue);
+		var searchUUID = configFileFormMetadata[key].uuid;
+		var found = BahmniService.findConceptData(conceptList, searchUUID);
 		if( found )
 		{
-			result[key] =  { "uuid": found.concept.uuid, "id": found.id, "name": found.concept.name };
+			foundConfigFields[key] =  { "uuid": found.concept.uuid, "id": found.id, "name": found.concept.name };
 		}
 		else
 		{
 			matched = false;
-			break;
+			missedConfigFields[key] = configFileFormMetadata[key];
 		}
 		
 	}
-	return (matched) ? result : undefined;
+	return {
+		matched: matched,
+		metadata: (matched) ? foundConfigFields : missedConfigFields
+	}
 }
 
 
@@ -1340,4 +1351,8 @@ BahmniService.getConcepts_FromFormMetaData_Operation = function (jsonData, conce
 	}
 
 	return conceptDataList;
+}
+
+BahmniService.getUnsupportedFormMetaData_byVersion = function( formName, formVersion) {
+	return AppInfoLSManager.getBahmniUnsupportedFormMetaData_byVersion(formName, formVersion);
 }

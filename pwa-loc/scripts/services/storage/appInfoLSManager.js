@@ -10,6 +10,7 @@ AppInfoLSManager.appInfo_LS;
 AppInfoLSManager.KEY_LASTLOGINDATA = "lastLoginData";
 AppInfoLSManager.KEY_SELECT_OPTIONS = "selectOptions";
 AppInfoLSManager.BAHMNI_FORM_META_DATA = "bahmniFormData";
+AppInfoLSManager.BAHMNI_UNSUPPORTED_FORM_META_DATA = "bahmniUnsupportedFormData";
 
 AppInfoLSManager.KEY_USERNAME = "userName"; 
 AppInfoLSManager.KEY_CONFIGSOURCETYPE = "configSourceType"; 
@@ -473,6 +474,27 @@ AppInfoLSManager.getBahmniFormMetaData_ByVersion = function( formName, formVersi
 AppInfoLSManager.getBahmniFormMetaData = function( formName )
 {
    var configData = AppInfoLSManager.getPropertyValue( AppInfoLSManager.BAHMNI_FORM_META_DATA, formName );
+   return (configData != undefined) ? configData : {};
+};
+
+
+// Get FormData - Details of missed fields
+AppInfoLSManager.setBahmniUnsupportedFormMetaData_ByVersion = function( formName, formVersion, missedConfigFields )
+{
+    var missedMetadataConfig = AppInfoLSManager.getBahmniUnsupportedFormMetaData(formName);
+    missedMetadataConfig[formVersion] = missedConfigFields;
+    AppInfoLSManager.updatePropertyValue( AppInfoLSManager.BAHMNI_UNSUPPORTED_FORM_META_DATA, formName, missedMetadataConfig );
+};
+
+AppInfoLSManager.getBahmniUnsupportedFormMetaData_byVersion = function( formName, formVersion )
+{
+    var configData = AppInfoLSManager.getBahmniUnsupportedFormMetaData(formName);
+    return (configData[formVersion] != undefined) ? configData[formVersion] : {};
+};
+
+AppInfoLSManager.getBahmniUnsupportedFormMetaData = function( formName )
+{
+   var configData = AppInfoLSManager.getPropertyValue( AppInfoLSManager.BAHMNI_UNSUPPORTED_FORM_META_DATA, formName );
    return (configData != undefined) ? configData : {};
 };
 
