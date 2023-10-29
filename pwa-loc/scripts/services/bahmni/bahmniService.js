@@ -762,11 +762,57 @@ BahmniService.afterSyncDownAll = function (exeFunc)
 		item.activities = activities;
 		//activities.forEach( app => usedAppointIds.push( app.id ) );
 	}
-
+	
+	
 	// BahmniService.otherPatientAppointments_Processing( usedAppointIds );
+	
+	// // -------------------------------------------------------------------------------------------------------------
+	// // For each patient, ONLY allow the latest of Appoiment activity, Referrals Template activity and Assessment And Plan
+	// // activity to create a Follow Up activity. Old activities cannot create Follow-Up activity
+	// var clientList = ClientDataManager.getClientList();
+	// for( var i=0; i<clientList.length; i++ )
+	// {
+	// 	var patient = clientList[i];
+	// 	var latestAppoiment = BahmniService.getLatestActivityByType( patient, "Appointment" );
+	// 	var latestRefTemplateActivity = BahmniService.getLatestActivityByType( patient, "Referrals Template" );
+	// 	var latestAssPlanActivity = BahmniService.getLatestActivityByType( patient, "Assessment and Plan" );
+
+	// 	// Remove formData property of other activities so that user cannot create any Follow-Up activities
+	// 	var activities = patient.activities;
+	// 	for( var i=0; i<activities.length; i++ )
+	// 	{
+	// 		var activity = activities[i];
+	// 		if( activity.id != latestAppoiment.id && activity.id != latestRefTemplateActivity.id && activity.id != latestAssPlanActivity.id )
+	// 		{
+	// 			delete activity.formData;
+	// 		}
+	// 	}
+
+	// 	// ClientDataManager.updateClient_wtActivityReload(patient._id, patient);
+	// }
 
 	exeFunc();
 };
+
+
+BahmniService.getLatestActivityByType = function( patient, activityType )
+{
+	var activities = patient.activities;
+	var latestDate;
+	var latestActivity;
+	for( var i=0; i<activities.length; i++ )
+	{
+		var activity = activities[i];
+		var date = activity.date.updatedUTC;
+		if( activity.type == activityType && ( latestDate == undefined || latestDate < date ) )
+		{
+			latestDate = date;
+			latestActivity = activity;
+		}
+	}
+
+	return latestActivity;
+}
 
 // ------------------------------
 
@@ -1322,7 +1368,6 @@ BahmniService.checkAndCreateFormMedataByServerData = function(serverFormMetadata
 
 BahmniService.findConceptData = function (list, value) {
 	var item;
-
 	if (list) {
 		for (i = 0; i < list.length; i++) {
 			var listItem = list[i];
@@ -1333,7 +1378,6 @@ BahmniService.findConceptData = function (list, value) {
 			}
 		}
 	}
-
 	return item;
 };
 
