@@ -172,7 +172,7 @@ DevHelper.setGeoLocRepeat = function( isSet, seconds )
 
 DevHelper.checkNStartDebugConsole = function()
 {
-    if ( App.getParamVal_ByName( 'debug', { deleteInLS: true } ) === Constants.debugConsolePwd ) 
+    if ( AppUtil.getParamVal_ByName( 'debug', { deleteInLS: true } ) === Constants.debugConsolePwd ) 
     {
         DevHelper.debugConsoleMode = true;
         ConsoleCustomLog.debugConsoleStart();

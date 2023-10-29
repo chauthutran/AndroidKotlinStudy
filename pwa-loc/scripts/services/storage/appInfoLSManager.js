@@ -61,7 +61,8 @@ AppInfoLSManager.initialDataLoad_LocalStorage = function()
 
     AppInfoLSManager.appInfo_LS = appInfo_LS;
 
-    // Data Migration: check if new data not exits, but old ones do, copy over.  
+    // Data Migration: check if new data not exits, but old ones do, copy over. 
+    // NOTE: THIS IS OBSOLETE NOW? 
     AppInfoLSManager.migrateData( appInfo_LS );
 };
 
