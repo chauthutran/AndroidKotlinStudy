@@ -63,9 +63,9 @@ App.run = function ()
 			{ 
 				console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 				
 	
-				KeycloakManager.checkAndLogout( true ); // LogOut if keycloak related info exists.
+				var logoutCase = KeycloakManager.checkAndLogout( true ); // LogOut if keycloak related info exists.
 
-				AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..', { timeout: 1000 } );
+				if ( !logoutCase ) AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
 			});
 		}
 		else AppUtil.appReloadWtMsg( 'Reloading For Params Removal From URL..' );
