@@ -18,6 +18,12 @@ BahmniService.OPENMRS_URL = "/openmrs/";
 BahmniService.FORM_NAME_DEFAULT = "default";
 BahmniService.FORM_NAME_NO_SUPPORTED = "noSupported";
 
+BahmniService.ACTIVITY_TYPE_APPOINTMENT = "Appointment";
+BahmniService.ACTIVITY_TYPE_FU_APPOINTMENT =  "Follow Up Appointment";
+BahmniService.ACTIVITY_TYPE_REFERRALS_TEMPLATE = "Referrals Template";
+BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE = "Follow Up Referrals Template Form";
+BahmniService.ACTIVITY_TYPE_ASSESSMENT_AND_PLAN = "Assessment and Plan";
+BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN = "Follow Up Assessment and Plan";
 
 BahmniService.interval_syncData = Util.MS_SEC * 2;
 BahmniService.syncDataProcessing = false;
@@ -763,50 +769,65 @@ BahmniService.afterSyncDownAll = function (exeFunc)
 		//activities.forEach( app => usedAppointIds.push( app.id ) );
 	}
 	
-	
 	// BahmniService.otherPatientAppointments_Processing( usedAppointIds );
-	
-	// // -------------------------------------------------------------------------------------------------------------
-	// // For each patient, ONLY allow the latest of Appoiment activity, Referrals Template activity and Assessment And Plan
-	// // activity to create a Follow Up activity. Old activities cannot create Follow-Up activity
-	// var clientList = ClientDataManager.getClientList();
-	// for( var i=0; i<clientList.length; i++ )
-	// {
-	// 	var patient = clientList[i];
-	// 	var latestAppoiment = BahmniService.getLatestActivityByType( patient, "Appointment" );
-	// 	var latestRefTemplateActivity = BahmniService.getLatestActivityByType( patient, "Referrals Template" );
-	// 	var latestAssPlanActivity = BahmniService.getLatestActivityByType( patient, "Assessment and Plan" );
-
-	// 	// Remove formData property of other activities so that user cannot create any Follow-Up activities
-	// 	var activities = patient.activities;
-	// 	for( var i=0; i<activities.length; i++ )
-	// 	{
-	// 		var activity = activities[i];
-	// 		if( activity.id != latestAppoiment.id && activity.id != latestRefTemplateActivity.id && activity.id != latestAssPlanActivity.id )
-	// 		{
-	// 			delete activity.formData;
-	// 		}
-	// 	}
-
-	// 	// ClientDataManager.updateClient_wtActivityReload(patient._id, patient);
-	// }
 
 	exeFunc();
 };
 
-
-BahmniService.getLatestActivityByType = function( patient, activityType )
+BahmniService.canCreateFUActivity = function( activityId, activityType )
 {
-	var activities = patient.activities;
+	var clientJson = ClientDataManager.getClientByActivityId( activityId );
+	var latestActivity = BahmniService.getLatestActivityByType( clientJson, activityType )
+	if( latestActivity != undefined && latestActivity.id == activityId ) {
+		return true;
+	}
+	
+	var hasFollowUpActivity = false;
+	var activityList = clientJson.activities;
+	for( var i=0; i<activityList.length; i++ )
+	{
+		var activity = activityList[i];
+		var syncUpData = activity.syncUp;
+		if( syncUpData )
+		{
+			if( activityType == BahmniService.ACTIVITY_TYPE_APPOINTMENT 
+				&& activity.type == BahmniService.ACTIVITY_TYPE_FU_APPOINTMENT && activityId == syncUpData.uuid )
+			{
+				hasFollowUpActivity = true;
+				break;
+			}
+			else if( ( activityType == BahmniService.ACTIVITY_TYPE_REFERRALS_TEMPLATE && activity.type == BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE )
+				|| ( activityType == BahmniService.ACTIVITY_TYPE_ASSESSMENT_AND_PLAN && activity.type == BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN ) )
+			{
+				var checkedActivityId = BahmniService.generateActivityFormData_ActivityId( syncUpData.encounterUuid, syncUpData.formUuid);
+				if( activityId == checkedActivityId )
+				{
+					hasFollowUpActivity = true;
+					break;
+				}
+			}
+		}
+	}
+	
+	return !hasFollowUpActivity;
+
+}
+
+BahmniService.getLatestActivityByType = function( clientJson, activityType )
+{
+	var activities = clientJson.activities;
 	var latestDate;
 	var latestActivity;
 	for( var i=0; i<activities.length; i++ )
 	{
 		var activity = activities[i];
-		var date = activity.date.updatedUTC;
-		if( activity.type == activityType && ( latestDate == undefined || latestDate < date ) )
+		var visitDate;
+		if ( activity.type === 'Appointment' ) visitDate = new Date( activity.originalData.startDateTime );
+        else if ( [ 'Referrals Template', 'Assessment and Plan' ].indexOf( activity.type ) >= 0 ) visitDate = activity.originalData.visitStartDateTime;
+
+		if( activity.type == activityType && ( latestDate == undefined || latestDate < visitDate ) )
 		{
-			latestDate = date;
+			latestDate = visitDate;
 			latestActivity = activity;
 		}
 	}
@@ -1191,9 +1212,14 @@ BahmniService.generateActivityFormData = function (formData, type) {
 	};
 	
 	var formNameId = BahmniService.getConfigFormNameId( formData ) ;
-	var activityId = formData.encounterUuid + "--" + BahmniService.getFormMetadata(formData.formName, formData.formVersion, BahmniService.KEY_FD_META_DATA, "uuid");
+	var activityId = BahmniService.generateActivityFormData_ActivityId(formData.encounterUuid, BahmniService.getFormMetadata(formData.formName, formData.formVersion, BahmniService.KEY_FD_META_DATA, "uuid"));
 	return { id: activityId, subSourceType: BahmniService.BAHMNI_KEYWORD, transactions: [{ dataValues, type }], type: type, formData: { sch_favId: formNameId, fav_newAct: true }, originalData: formData, date: BahmniService.generateJsonDate(), patientId: patientId };
 };
+
+BahmniService.generateActivityFormData_ActivityId = function (encounterUuid, formUuid)
+{
+	return encounterUuid + "--" + formUuid;
+}
 
 /***
  * 
