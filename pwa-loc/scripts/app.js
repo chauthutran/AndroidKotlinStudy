@@ -22,10 +22,6 @@ function App() { };
 App.appInstallBtnTag;
 App.ver14 = false;
 
-App.paramsJson = {}; // Load all params data in here and get them from here.
-App.paramName_keyCloakRemove = 'keyCloakRemove';
-App.paramName_authPage = 'authPage';
-App.paramName_authChoice = 'authChoice';
 App.byPass_BrwsBackBtnActionBlock = false;
 // -------------------------------
 
@@ -33,65 +29,74 @@ App.run = function ()
 {
 	App.appInstallBtnTag = $('.appInstall');
 
-	// NEW: After Param data handling, proceed with normal app start process.
-	App.paramsHandler_ReloadApp( window.location.href, 
-	function( paramObj ) 
-	{
-		// After Reload, Saved 'AuthChoice'/'AuthPage' will be used for setting LocalStorage
-		DataManager2.deleteAllStorageData( () => 
-		{ 
-			console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 
-			LocalStgMng.saveJsonData( 'paramsLoad', paramObj );
-			
-			// Need to log out Keycloack if there is any authentication before
-			KeycloakManager.checkAndLogout(true);
+	// --------------------------
+	// Default Behavior Modify
+	App.windowEvent_BlockBackBtnAction();
+	window.addEventListener('error', App.catchErrorInCustomLog);
+	window.addEventListener('beforeinstallprompt', App.beforeinstallprompt);
+	if (App.isMobileDevice()) App.mobileUISetup();
 
-			// AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
-		});
-	}, 
-	function( paramsJson ) 
-	{
-		// Normal Flow
-		App.paramsJson = paramsJson;
+	InfoDataManager.setDeviceInfo_OnStart( AppUtil.checkDeviceMinSpec );
+	InfoDataManager.setAppStartData();
+	
+	// Setup Static Classes
+	MsgManager.initialSetup();
 
-		if ( App.getParamVal_ByName( 'ver', { deleteInLS: true } ) === '1.4' ) App.ver14 = true;
+
+	// [NEW, MOVED]  --- LocalStorage Class Initialize
+	PersisDataLSManager.initialDataLoad_LocalStorage();
+	AppInfoLSManager.initialDataLoad_LocalStorage();
+
+
+	// --- Param Handling ( Get params from url, save it on LocalStorage(Persist), remove from url, reload if needed )
+	var paramObj = Util.getParamObj( window.location.href );
+	AppUtil.paramsJson = AppUtil.saveMerge_LSParamsLoad( paramObj ); // CleanUp Url (remove params), & Reload Page
+
+
+	// TODO: Move this part / Hide this part into other Class/Method..
+	if ( AppUtil.paramsJson.pageReloadCase )
+	{
+		// If 'AuthChoice' or 'AuthPage' Case, perform KeyCloak Auth 'Check & LogOut'?
+		if ( AppUtil.paramsJson.AuthChoiceCase || AppUtil.paramsJson.AuthPageCase )
+		{
+			DataManager2.deleteAllStorageData( () => 
+			{ 
+				console.log( 'Delete Existing Data - due to authChoice/authPage param in url.' ); 				
 	
-		// --------------------------
-		// Default Behavior Modify
-		App.windowEvent_BlockBackBtnAction();
-		window.addEventListener('error', App.catchErrorInCustomLog);
-		window.addEventListener('beforeinstallprompt', App.beforeinstallprompt);
-		if (App.isMobileDevice()) App.mobileUISetup();
+				var logoutCase = KeycloakManager.checkAndLogout( true ); // LogOut if keycloak related info exists.
+
+				if ( !logoutCase ) AppUtil.appReloadWtMsg( 'Reloading For AuthPage/AuthChoice - After Deleting Current Data..' );
+			});
+		}
+		else AppUtil.appReloadWtMsg( 'Reloading For Params Removal From URL..' );
+	}
+	else
+	{
+		// 'action': 'clientDirect' & 'client' will be used in later phase - opening client when rendering.
+		// In here, simply show msg.
+		if ( AppUtil.paramsJson.action === 'clientDirect' && AppUtil.paramsJson.client ) MsgManager.msgAreaShowOpt( 'ClientDirect URL Param Used: ' + AppUtil.paramsJson.client, { hideTimeMs: 7000, styles: 'background-color: green;' } );
+
+		if ( AppUtil.getParamVal_ByName( 'ver', { deleteInLS: true } ) === '1.4' ) App.ver14 = true;
 	
-		InfoDataManager.setDeviceInfo_OnStart( App.checkDeviceMinSpec );
-		InfoDataManager.setAppStartData();
-		
-		// Setup Static Classes
-		MsgManager.initialSetup();
 	
 		// Instantiate Classes
 		SessionManager.cwsRenderObj = new cwsRender();  // Global Reference to cwsRenderObj..
 	
-		PersisDataLSManager.initialDataLoad_LocalStorage();
-		AppInfoLSManager.initialDataLoad_LocalStorage();
-	
 		WsCallManager.setWsTarget();
 
 
-		App.param_showMsg( 'msg' );
-		App.param_keyCloakUsage_ForceRemove( App.paramName_keyCloakRemove );
-		App.param_authChiocePage_DataSet( App.paramName_authPage, App.paramName_authChoice, function() {
+		AppUtil.param_showMsg( 'msg' );
+		AppUtil.param_keyCloakUsage_ForceRemove( AppUtil.paramName_keyCloakRemove );
+		AppUtil.param_authChiocePage_DataSet( AppUtil.paramName_authPage, AppUtil.paramName_authChoice, function() {
 			// In the "exec_AuthChoicePageCase" function, we did run KeycloakManager.checkAndLogout(),
 			// so we don't need to run one more time here
 			// KeycloakManager.checkAndLogout();
 		}); 
 		
-	
 		App.App_UI_startUp_loading(); // << should we move this into cwsRender?
 	
 		// By param 'debug' with pwd - uses AppInfoLSManager
 		DevHelper.checkNStartDebugConsole();
-	
 	
 		// Service Worker Related Initial Setup
 		SwManager.initialSetup(function () 
@@ -102,7 +107,7 @@ App.run = function ()
 			console.log( 'AppStart statusInfo.appMode: ' + ConnManagerNew.statusInfo.appMode );
 			SwManager.checkAppUpdate( '[AppUpdateCheck] - App startUp' );
 		});		
-	});
+	}
 };
 
 // ----------------------------------------------------
@@ -181,25 +186,11 @@ App.windowEvent_BlockBackBtnAction = function () {
 	// Method 1
 	history.pushState(null, document.title, location.href);
 
-	window.addEventListener('popstate', App.popStateCall );
+	window.addEventListener('popstate', AppUtil.popStateCall );
 	// NEED TO WORK ON SCROLL DOWN TO REFRESH BLOCKING
 	// https://stackoverflow.com/questions/29008194/disabling-androids-chrome-pull-down-to-refresh-feature
 };
 
-App.popStateCall = function(event) 
-{
-	history.pushState(null, document.title, location.href);
-
-	var backBtnTags = $('.btnBack:visible');
-
-	if (backBtnTags.length > 0) {
-		//backBtnTags.click();
-		backBtnTags.first().click();
-	}
-	else {
-		MsgManager.msgAreaShow('Back Button Click Blocked!!');
-	}
-}
 
 App.detectStandAlone = function () {
 	if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -288,171 +279,6 @@ App.browserResizeHandle = function () {
 
 		}
 	});
-};
-
-
-App.checkDeviceMinSpec = function( info )
-{
-	try
-	{
-		if ( info.storage )
-		{
-			var notPass = false;
-	
-			var minSpec = InfoDataManager.INFO.deviceMinSpec;  // Only test this once...
-			//var currSpec = { memory: info.memory, storage: App.getStorageGB() };
-			
-			if ( info.memory < minSpec.memory ) 
-			{
-				notPass = true;
-			}
-	
-			if ( info.storage.quota < ( minSpec.storage * 1000000000 ) )
-			{
-				notPass = true;
-			}
-	
-			if ( notPass )
-			{
-				// If POTerm exists (in local storage), translate it..
-				detectIncognito().then(function(result) 
-				{
-					if (result.isPrivate) console.log( '-- In Incognito Mode --' );
-					else {
-						var msg = 'This device is in either Incognito Mode, \n OR does not meet the minimum spec. \n [Min: ' + JSON.stringify( minSpec ) 
-						+ ', Curr: { memory: ' + info.memory + ', storage: ' + AppUtil.getStorageGBStr( info.storage.quota ) + ' }]';		
-						alert( msg );
-					}
-				}).catch(function(error) {  console.log(error);  });
-			}
-		}	
-	}
-	catch( errMsg )
-	{
-		console.log( 'ERROR in InfoDataManager.setDeviceInfo_OnStart, ', errMsg );
-	}
-};
-
-
-// ------------------------
-// -- Param Related
-
-App.paramsHandler_ReloadApp = function( urlStr, exec_AuthChoicePageCase, func_NormalCase )
-{
-	var paramsLoadJson = {};
-
-	// If param exists, save it on oneTime storage and reload the app..
-	var paramObj = Util.getParamObj( urlStr );
-
-
-	// CASE 1. If Params exists in url, store in LS, and reload app.
-	if ( Object.keys( paramObj ).length > 0 )
-	{
-		var existingParamJson = LocalStgMng.getJsonData( 'paramsLoad' );
-		if ( !existingParamJson ) existingParamJson = {};
-
-		var noReload = ( paramObj[ App.paramName_keyCloakRemove ] === 'Y' ) ? true: false;
-
-		Util.mergeJson( paramObj, existingParamJson );
-
-		// If 'authChoice' or 'authPage' was passed, delete all storage & reload
-		var paramAuthChoice = paramObj[ App.paramName_authChoice ];
-		var paramAuthPage = paramObj[ App.paramName_authPage ];
-		if ( paramAuthChoice || paramAuthPage ) exec_AuthChoicePageCase( paramObj );
-		else
-		{
-			LocalStgMng.saveJsonData( 'paramsLoad', paramObj );
-				
-			if ( noReload ) console.log( 'url param reload skipped' ); 
-			else AppUtil.appReloadWtMsg( 'Reloading For Params Removal From URL..' );
-		}
-	}
-
-
-	// CASE 2. If LS has 'paramsLoad', save it on paramsObj
-	if ( LocalStgMng.getJsonData( 'paramsLoad' ) )
-	{
-		paramsLoadJson = LocalStgMng.getJsonData( 'paramsLoad' );
-
-		if ( paramsLoadJson.action === 'clientDirect' && paramsLoadJson.client ) MsgManager.msgAreaShowErrOpt( 'ClientDirect URL Param Used: ' + paramsLoadJson.client, { hideTimeMs: 7000, styles: 'background-color: green;' } );
-	}
-
-	func_NormalCase( paramsLoadJson );
-	//return paramsLoadJson;
-};
-
-App.getParamVal_ByName = function( name, option )
-{
-	if ( !option ) option = {};
-	if ( option.deleteInLS ) App.delete_ParamsInLS( name );
-
-	return ( App.paramsJson && App.paramsJson[ name ] ) ? App.paramsJson[ name ]: undefined;
-};
-
-App.delete_ParamsInLS = function( propName )
-{
-	var existingParamJson = LocalStgMng.getJsonData( 'paramsLoad' );
-	if ( !existingParamJson ) existingParamJson = {};
-
-	if ( existingParamJson[ propName ] )
-	{
-		delete existingParamJson[ propName ];
-		LocalStgMng.saveJsonData( 'paramsLoad', existingParamJson );
-	}
-};
-
-
-App.getClientDirectId = function( actionParamName, clientParamName )
-{
-	var clientDirectId = '';
-
-   if ( App.getParamVal_ByName( actionParamName ) === 'clientDirect' )
-	{
-		clientDirectId = App.getParamVal_ByName( clientParamName );
-	}
-
-	return clientDirectId;
-};
-
-
-App.param_showMsg = function( paramName_Msg )
-{
-	var paramMsg = App.getParamVal_ByName( paramName_Msg, { deleteInLS: true } );
-	if ( paramMsg ) MsgManager.msgAreaShowOpt( paramMsg, { hideTimeMs: 4000 } );	
-};
-
-
-// Force to not use KeyCloak anymore.  Even if the session is still alive.
-// --> Has issue with session Auth Out, though...
-App.param_keyCloakUsage_ForceRemove = function( paramName_keyCloakRemove )
-{
-	if ( App.getParamVal_ByName( paramName_keyCloakRemove, { deleteInLS: true } ) ) 
-	{ 
-		KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
-	}	
-};
-
-
-// AuthChoice/Page Related #2
-App.param_authChiocePage_DataSet = function( paramName_authPage, paramName_authChoice, runFunc )
-{
-	var paramAuthPage = App.getParamVal_ByName( paramName_authPage, { deleteInLS: true } );
-	var paramAuthChoice = App.getParamVal_ByName( paramName_authChoice, { deleteInLS: true } );
-
-	if ( paramAuthChoice ) 
-	{
-		KeycloakLSManager.setAuthChoice( paramAuthChoice );
-		PersisDataLSManager.setAuthPageUse( 'Y' );
-
-		if ( runFunc ) runFunc();
-	}
-	else if ( paramAuthPage === 'Y' ) 
-	{
-		KeycloakLSManager.removeProperty( KeycloakLSManager.KEY_AUTH_CHOICE );
-		PersisDataLSManager.setAuthPageUse( 'Y' );
-
-		if ( runFunc ) runFunc();
-	}
 };
 
 

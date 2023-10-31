@@ -328,7 +328,7 @@ function cwsRender()
 	me.checkNPerform_ClientDirectParam = function()
 	{			
 		// If 'client' exists with 'action' 'clientDirect', try to load the client 
-		var clientDirectId = App.getClientDirectId( 'action', 'client' );
+		var clientDirectId = AppUtil.getClientDirectId( 'action', 'client' );
 	
 		if ( clientDirectId ) 
 		{
@@ -338,8 +338,8 @@ function cwsRender()
 				MsgManager.msgAreaShowOpt( 'ClientDirect Request Found.  Processing..',{ hideTimeMs: 2000, styles: 'background-color: blue;', group: 'clientDirect' } );
 
 				// Delete the params val in LocalStorage
-				App.delete_ParamsInLS( 'action' );
-				App.delete_ParamsInLS( 'client' );
+				AppUtil.delete_ParamsInLS( 'action' );
+				AppUtil.delete_ParamsInLS( 'client' );
 
 				// Create one 'action' in config?
 				var actionObj = SessionManager.cwsRenderObj.getActionObj( {} );

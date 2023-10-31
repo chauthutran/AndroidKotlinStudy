@@ -621,43 +621,28 @@ KeycloakManager.offlineTimeoutService_Stop = function()
 // TODO: This should be used?
 KeycloakManager.checkAndLogout = function(forceToLogout)
 {
-	forceToLogout = ( forceToLogout == undefined ) ? false : true;
-
-	// Util.modifyUrl('origin', location.origin);
+	var logoutCase;
 
 	var statusSummary = KeycloakManager.getStatusSummary();
 	if( ( statusSummary.isAppOnline || forceToLogout ) && statusSummary.isLSTokensExisted )
 	{
-		KeycloakManager.logout();
+		logoutCase = true;
+		KeycloakManager.logout( { forceToLogout: forceToLogout } );
 	}
 
-	// // var statusSummary = KeycloakManager.getStatusSummary();
-	// // if( statusSummary.isLSTokensExisted ) KeycloakManager.logout();
-
-	// // Util.modifyUrl('origin', location.origin);
-	// var statusSummary = KeycloakManager.getStatusSummary();
-	// if( statusSummary.isAppOnline )
-	// {
-	// 	if( statusSummary.isLSTokensExisted ) {
-	// 		KeycloakManager.logout();
-	// 	}
-	// 	// else
-	// 	// {
-	// 	// 	KeycloakManager.authenticate();
-	// 	// }
-	// }
-}
+	return logoutCase;
+};
 
 KeycloakManager.logout = function( option )
 {
+	if ( !option ) option = {};
+
 	var statusSummary = KeycloakManager.getStatusSummary();
 
 
 	// Only perform this 'Online' mode
-	if(statusSummary.isAppOnline )
+	if( statusSummary.isAppOnline || option.forceToLogout )
 	{
-		if ( !option ) option = {};
-
 		// We shouldn't user the "logout" method what keyclock.js provides
 		// --- KeycloakManager.keycloakObj.logout({redirectUri: location.origin}); ---
 		// because in some place ( app.js ), we need to logout BUT we don't created Keycloak object 

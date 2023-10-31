@@ -13,6 +13,9 @@ PersisDataLSManager.KEY_VOUCHER_CODES = "voucherCodes";
 PersisDataLSManager.KEY_AUTH_PAGE_USE = "authPageUse";
 PersisDataLSManager.KEY_KEYCLOAK_OFFLINE_TIMEOUT = "keyCloak_offlineTimeoutSec";
 
+PersisDataLSManager.KEY_PARAMS_LOAD = "paramsLoad";
+
+
 // --- translation related..
 PersisDataLSManager.KEY_LANG_TERMS = "langTerms"; 
 PersisDataLSManager.KEY_LANG_CODE = "langCode";
