@@ -470,7 +470,13 @@ FavIcons.populateFavItemIcon = function( favItemTag, favItemJson )
     favItemTag.attr( 'favName', favItemJson.name );
 
     // svg icon setup - if available (by local file path reference)
-    FavIcons.generateSvgIconFromPath( favItemJson, activityTypeDef, favItemTag );        
+    FavIcons.generateSvgIconFromPath( favItemJson, activityTypeDef, favItemTag );
+    if(favItemJson.itemEval)
+    {
+        var iconTag = favItemTag;
+        eval( Util.getEvalStr(favItemJson.itemEval) );
+    }
+
 };
 
 

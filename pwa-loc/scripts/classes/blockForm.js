@@ -1984,7 +1984,7 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 			for (var i = 0; i < idList.length; i++) {
 				var idStr = idList[i];
 				var targetInputTag = me.getMatchingInputTag(formDivSecTag, idStr);
-				var targetInputDivTag = targetInputTag.closest('div.fieldBlock');
+				var targetInputDivTag = targetInputTag.closest('.fieldBlock');
 
 				// NOTE: after show/hide of a field, also run 'evalActions' of that field to trigger dependency show/hide.
 				if (visible) {
