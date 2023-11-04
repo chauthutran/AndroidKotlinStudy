@@ -476,9 +476,9 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
 
         if ( favItemJson )
         {
-            FavIcons.populateFavItemIcon( favIconTag, favItemJson );
-            favIconTag.show();
             favIconTag.attr( 'activityId', activityId );
+            FavIcons.populateActivityFavItemIcon( favIconTag, favItemJson );
+            favIconTag.show();
 
             // OPEN FavId As New Activity Entry: Different btw Activity vs ClientDetail opening.
             if ( option.clientCardId )

@@ -818,6 +818,7 @@ BahmniService.getLatestActivityByType = function( clientJson, activityType )
 	var activities = clientJson.activities;
 	var latestDate;
 	var latestActivity;
+
 	for( var i=0; i<activities.length; i++ )
 	{
 		var activity = activities[i];

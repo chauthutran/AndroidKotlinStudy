@@ -461,7 +461,7 @@ FavIcons.getActivityTypeByRef = function( prop, activityType )
 };
 
 
-FavIcons.populateFavItemIcon = function( favItemTag, favItemJson )
+FavIcons.populateActivityFavItemIcon = function( favItemTag, favItemJson )
 {
     var activityTypeDef = ( favItemJson.activityType ) ? FavIcons.getActivityTypeByRef( 'name', favItemJson.activityType ) : undefined;
 
@@ -471,12 +471,23 @@ FavIcons.populateFavItemIcon = function( favItemTag, favItemJson )
 
     // svg icon setup - if available (by local file path reference)
     FavIcons.generateSvgIconFromPath( favItemJson, activityTypeDef, favItemTag );
-    if(favItemJson.itemEval)
-    {
-        var iconTag = favItemTag;
-        eval( Util.getEvalStr(favItemJson.itemEval) );
-    }
+    
+    try
+    {        
+        var activityFavIconEval = '';
+        if ( favItemJson.itemEval ) activityFavIconEval = Util.getEvalStr( favItemJson.itemEval ); // Obsolete
+        else if ( favItemJson.activityFavIconEval ) activityFavIconEval = Util.getEvalStr( favItemJson.activityFavIconEval );
 
+        if ( activityFavIconEval )
+        {
+            var iconTag = favItemTag; // used in config eval
+            eval( activityFavIconEval );
+        }
+    }
+    catch ( errMsg )
+    {
+        console.log( 'ERROR During FavIcons.populateActivityFavItemIcon, ' + errMsg );
+    }
 };
 
 
