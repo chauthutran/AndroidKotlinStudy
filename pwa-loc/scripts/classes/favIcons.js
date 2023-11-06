@@ -494,8 +494,6 @@ FavIcons.runActivityFavIconEval = function( activityId, favItemTag, favItemJson 
 };
 
 
-
-
 FavIcons.getFavListByType = function( favType )
 {
     var favList = ConfigManager.getConfigJson().favList;
