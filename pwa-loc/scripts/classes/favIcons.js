@@ -489,7 +489,7 @@ FavIcons.runActivityFavIconEval = function( activityId, favItemTag, favItemJson 
     }
     catch ( errMsg )
     {
-        console.log( 'ERROR During FavIcons.populateActivityFavItemIcon, ' + errMsg );
+        console.log( 'ERROR During FavIcons.runActivityFavIconEval, ' + errMsg );
     }
 };
 
