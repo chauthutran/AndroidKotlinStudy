@@ -542,7 +542,7 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
                 }
             }
 
-            // QUESTION: Any reason to put this at the bottom?
+            // QUESTION: Any reason to put this at the bottom? - For click Event Removal?
             FavIcons.runActivityFavIconEval( activityId, favIconTag, favItemJson );
         }
     }
