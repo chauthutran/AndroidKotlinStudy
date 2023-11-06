@@ -541,6 +541,8 @@ ActivityCard.setupFavIconBtn = function( favIconTag, activityId, option )
                     } );
                 }
             }
+
+            FavIcons.runActivityFavIconEval( activityId, favIconTag, favItemJson );
         }
     }
 };

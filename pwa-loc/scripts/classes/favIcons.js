@@ -471,7 +471,10 @@ FavIcons.populateActivityFavItemIcon = function( favItemTag, favItemJson )
 
     // svg icon setup - if available (by local file path reference)
     FavIcons.generateSvgIconFromPath( favItemJson, activityTypeDef, favItemTag );
-    
+};
+
+FavIcons.runActivityFavIconEval = function( activityId, favItemTag, favItemJson )
+{
     try
     {        
         var activityFavIconEval = '';
@@ -480,7 +483,7 @@ FavIcons.populateActivityFavItemIcon = function( favItemTag, favItemJson )
 
         if ( activityFavIconEval )
         {
-            var iconTag = favItemTag; // used in config eval
+            // activityId, favItemTag are used in config file
             eval( activityFavIconEval );
         }
     }
@@ -489,6 +492,8 @@ FavIcons.populateActivityFavItemIcon = function( favItemTag, favItemJson )
         console.log( 'ERROR During FavIcons.populateActivityFavItemIcon, ' + errMsg );
     }
 };
+
+
 
 
 FavIcons.getFavListByType = function( favType )
