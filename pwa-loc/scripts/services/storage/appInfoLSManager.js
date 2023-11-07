@@ -459,6 +459,12 @@ AppInfoLSManager.getSelectOptions = function()
 // ----------------------------------------------------
 //  Bahmni Form Meta data
 
+AppInfoLSManager.clearBahmniFormMetaRelatedData = function()
+{
+    AppInfoLSManager.removeData( AppInfoLSManager.BAHMNI_FORM_META_DATA );
+    AppInfoLSManager.removeData( AppInfoLSManager.BAHMNI_UNSUPPORTED_FORM_META_DATA );
+};
+
 AppInfoLSManager.setBahmniFormMetaData_ByVersion = function( formName, formVersion, formData )
 {
     var metadataConfig = AppInfoLSManager.getBahmniFormMetaData(formName);
