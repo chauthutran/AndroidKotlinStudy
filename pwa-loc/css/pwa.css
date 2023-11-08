@@ -2898,6 +2898,105 @@ body {
 }
 
 /****************************************/
+/** CHAT Dialog */
+.dialog {
+	border: none !important;
+    border-radius: calc(5px * 0.25em);
+    box-shadow: 0 0 #0000, 0 0 #0000, 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    padding: 1.6rem;
+    max-width: 400px;
+    border-radius: 10px !important;
+    background-color: #fff;
+}
+
+.dialog_title {
+	margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.dialog_description {
+	color: #6b7280;
+    letter-spacing: 0.025em;
+    line-height: 2;
+	width: 500px;
+}
+
+.flex {
+	display: flex;
+  flex-wrap: wrap;
+}
+
+
+.flex.flex-space-between {
+	justify-content: space-between;
+	margin-top: 10px;
+}
+
+.flex .dialogBtn {
+	margin: 8px auto;
+}
+.dialogBtn {
+	display: block;
+	margin-top: 2rem;
+	width: calc(44px * 3.74);
+	height: 44px;
+	border-radius: calc(3px * 3.74);
+	border: none;
+	letter-spacing: ccalc(3 * 0.025em);
+	font-family: inherit;
+	color: #6b7280;
+	background-color: #eef1f7;
+	font-size: large;
+	font-weight: 700;
+}
+
+.dialogBtn:focus {
+	outline: none;
+	border: 0.0625rem solid transparent;
+	box-shadow: 0 0 0 0.125rem #fff, 0 0 0 0.2rem #374151;
+}
+
+.cta {
+	background-color:#2E86C1;
+	color: white;
+}
+  
+.cta:focus {
+	box-shadow: 0 0 0 0.125rem #fff, 0 0 0 0.2rem #4753a3;
+}
+  
+.div-table {
+	display: table;         
+	width: 100%;                  
+	border-spacing: 5px;
+}
+.div-table-row {
+	display: table-row;
+	width: auto;
+	clear: both;
+}
+.div-table-col {
+	float: left; /* fix for  buggy browsers */
+	display: table-column;         
+	width: 50%;         
+}
+
+.div-table-col input {
+	width: 100%;
+    padding: 12px 20px;
+    display: inline-block;
+    border-radius: 4px;
+    box-sizing: border-box;
+    border: thin solid #b9b4b4;
+}
+
+.div-table-col input:focus {
+border-color: green;
+  outline: 1px dotted #000
+}
+
+/****************************************/
 
 .curUsserDiv {
 	margin-bottom: 30px;

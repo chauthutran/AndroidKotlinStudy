@@ -29,7 +29,7 @@ function ChatApp(username) {
 	me.userListTag;
 
 	me.logoutBtnTag;
-	me.addUserBtnTag;
+	me.showAddUserFormBtnTag;
 	me.emojjiDashboardTag;
 	me.showEmojiDashboardTag;
 
@@ -41,6 +41,12 @@ function ChatApp(username) {
 	me.chatHistoryTag;
 	me.chatHistoryMsgNoTag;
 
+	me.addUserFormTag;
+	me.addUserForm_UsernameTag;
+	me.addUserForm_wtsaTag;
+	me.addUserForm_AddUserBtnTag;
+	me.addUserForm_CancelBtnTag;
+
 	// ------------------------------------------------------------------------
 	// INIT method
 
@@ -51,7 +57,9 @@ function ChatApp(username) {
 		console.log( 'me.chatServerURL: ' + me.chatServerURL );
 
 		// Set HTML & values related
-		me.chatDivTag.html('').append(ChatApp.contentHtml);
+		me.chatDivTag.html('');
+		me.chatDivTag.append(ChatApp.newUserForm);
+		me.chatDivTag.append(ChatApp.contentHtml);
 
 
 		me.btnChatBackBtnTag = $(".btnChatBack");
@@ -68,7 +76,7 @@ function ChatApp(username) {
 		me.userListTag = $("#users");
 
 		me.logoutBtnTag = $('#logOutBtn');
-		me.addUserBtnTag = $("#addUserBtn");
+		me.showAddUserFormBtnTag = $("#showAddUserFormBtn");
 		me.emojjiDashboardTag = $(".emoji-dashboard");
 		me.showEmojiDashboardTag = $("#showEmojiDashboard");
 
@@ -81,6 +89,13 @@ function ChatApp(username) {
 		me.chatHistoryTag = $('.chat-history');
 		me.chatHistoryMsgNoTag = $(".chat-num-messages");
 
+		me.addUserFormTag = $(".addUserForm");
+		me.addUserForm_UsernameTag = me.addUserFormTag.find('.username');
+		me.addUserForm_wtsaTag = me.addUserFormTag.find('.wtsa');
+		me.addUserForm_FullNameTag = me.addUserFormTag.find('.fullName');
+		me.addUserForm_AddUserBtnTag = me.addUserFormTag.find('.addUserBtn');
+		me.addUserForm_CancelBtnTag = me.addUserFormTag.find('.cancelBtn');
+		
 
 		// ------------------------
 
@@ -138,7 +153,7 @@ function ChatApp(username) {
 		// Init Chat form
 		me.editContactListTag.attr("mode", "hide");
 		me.searchContactNameTag.val("");
-		me.addUserBtnTag.hide();
+		me.showAddUserFormBtnTag.hide();
 
 
 		me.setUp_Events();
@@ -298,14 +313,18 @@ function ChatApp(username) {
 			me.setUserStatus(user);
 		});
 
-		me.socket.on('new_user_created', (userData) => {
-			const found = Utils.findItemFromList(userData.contacts, me.curUser.username, "contactName");
-			if (found) {
-				me.curUser.contacts.push({ contactName: userData.username, hasNewMessages: found.hasNewMessages });
-				me.appendUserInContactList(userData);
-			}
+		me.socket.on('new_user_created', (userList) => {
+			// Update the current user with new contact list
+			var tempUserList = JSON.parse(JSON.stringify(userList));
+			me.curUser = tempUserList.filter(function(item) { return item.username == me.curUser.username} )[0];
+
+			// Refresh the contact list with new contacts
+			me.updateContactList( userList );
 		});
 
+		me.socket.on('new_user_created_error', (errorMsg) => {
+			alert(errorMsg);
+		});
 		me.socket.on('contact_removed', (contactName) => {
 			me.curUser.contacts = Utils.removeFromArray(me.curUser.contacts, contactName, "contactName");
 			me.userListTag.find(`li[username="${contactName}"]`).remove();
@@ -330,6 +349,8 @@ function ChatApp(username) {
 
 		me.socket.on("receive_message", ({ userData, newContact }) => {
 			const contactList = userData.contacts;
+
+			// TODO: Why do we need to set "curUser" again
 			if (me.curUser.username == userData.username) {
 				me.curUser = userData;
 			}
@@ -447,9 +468,37 @@ function ChatApp(username) {
 			me.searchContactUsers();
 		});
 
-		me.addUserBtnTag.off("click").on("click", function () {
-			me.socket.emit("create_new_user", { username1: me.curUser.username, username2: me.searchContactNameTag.val() });
+		me.showAddUserFormBtnTag.off("click").on("click", function () {
+			me.addUserFormTag.find("input").val("");
+			me.addUserForm_UsernameTag.val(me.searchContactNameTag.val());
+			me.addUserFormTag.show();
 		});
+
+		me.addUserForm_AddUserBtnTag.off("click").on("click", function () {
+			me.addUserForm_UsernameTag.css("background-color", "");
+			me.addUserForm_FullNameTag.css("background-color", "");
+
+			var username = me.addUserForm_UsernameTag.val();
+			var fullName = me.addUserForm_FullNameTag.val();
+			var wtsa = me.addUserForm_wtsaTag.val();
+			if( username != "" && fullName!= "" )
+			{
+				var jsonUser = {username, fullName, wtsa };
+				me.socket.emit("create_new_user", [me.curUser, jsonUser]);
+			}
+			else
+			{
+				if( username == "" ) me.addUserForm_UsernameTag.css("background-color", "#dd6363");
+				if( fullName == "" ) me.addUserForm_FullNameTag.css("background-color", "#dd6363");
+				
+				alert("Please enter values in red fields");
+			}
+		});
+
+		me.addUserForm_CancelBtnTag.off("click").on("click", function () {
+			me.addUserFormTag.hide();
+		});
+
 
 		me.editContactListTag.off("click").on("click", function () {
 			const mode = $(this).attr("mode")
@@ -570,15 +619,15 @@ function ChatApp(username) {
 			});
 
 			if (canAddNew) {
-				me.addUserBtnTag.show();
+				me.showAddUserFormBtnTag.show();
 			}
 			else {
-				me.addUserBtnTag.hide();
+				me.showAddUserFormBtnTag.hide();
 			}
 		}
 		else {
 			me.userListTag.find("li").show();
-			me.addUserBtnTag.hide();
+			me.showAddUserFormBtnTag.hide();
 		}
 	}
 
@@ -613,6 +662,22 @@ function ChatApp(username) {
 			}
 
 		});
+	}
+
+	me.updateContactList = function( userList )
+	{
+		// Add the proper list here
+		for( var i=0; i<userList.length; i++ )
+		{
+			var userData = userList[i];
+			if( userData.username != me.curUser.username )
+			{
+				const contactName = userData.username;
+				if (me.userListTag.find(`[username='${contactName}']`).length == 0 ) { // Didn't add in the contact list
+					me.appendUserInContactList(userData, false); // Add this contact name in the top of the contact list
+				}
+			}
+		}
 	}
 
 	me.appendUserInContactList = function (userData, isAppend) {
@@ -862,7 +927,7 @@ ChatApp.contentHtml = `
 
 					<div class="searchForm">
 						<input class="nosubmit search" id="searchContactName" placeholder="Search..." style="background-color: white;" />
-						<div class="add-user-btn" id="addUserBtn" style="display:none;">Add</div>
+						<div class="add-user-btn" id="showAddUserFormBtn" style="display:none;">Add</div>
 					</div>
 					<ul id="users">
 					</ul>
@@ -899,5 +964,34 @@ ChatApp.contentHtml = `
 			</div>
 		</div>
 	</div>
+</div>
+`;
+
+ChatApp.newUserForm = `
+<div class="mddtp-picker dialog addUserForm" style="display:none">
+	<h2 class="dialog_title">New user</h2>
+	
+	<div class="dialog_description">
+		<div class="div-table">
+			<div class="div-table-row">
+				<div class="div-table-col">User name <span style='color:red'>*</span>:</div>
+				<div class="div-table-col"><input class="username"></div>
+			</div>
+			<div class="div-table-row">
+				<div class="div-table-col">Full name <span style='color:red'>*</span>:</div>
+				<div class="div-table-col"><input class="fullName"></div>
+			</div>
+			<div class="div-table-row">
+				<div class="div-table-col">WhatsApp Phone number:</div>
+				<div class="div-table-col"><input class="wtsa"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="flex flex-space-between"">
+		<button class="cancelBtn dialogBtn ">Cancel</button>
+		<button class="addUserBtn dialogBtn cta">Add User</button> 
+	</div>
+
 </div>
 `;
