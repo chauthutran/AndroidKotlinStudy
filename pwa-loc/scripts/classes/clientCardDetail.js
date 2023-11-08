@@ -220,13 +220,19 @@ function ClientCardDetail(clientId) {
 					}, 'mainFavClickPost': function (blockTag) { 					
 						var mainBlockTag = blockTag.find('div.block:first');
 						mainBlockTag.css('width', '100%'); 
-						mainBlockTag.prepend( `
-						<div class="divBackClientActivity mouseDown" style="background-color: skyblue; display: inline-block; padding: 1px 6px 0px 4px; opacity: 0.8;">
-							<img src="images/arrow_back.svg" class="imgBackClientActivity" style="width: 18px;">
-							<span class="spanBackClientActivity" term="" style="vertical-align: top; font-size: 15px;">Back</span>
-						</div>` );
 
-						mainBlockTag.find( '.divBackClientActivity' ).click( () => {  $( 'li.primary[rel=tab_clientActivities]').attr( 'forceClick', 'Y' ).click(); } );
+						var backBtnConfig = ConfigManager.getClientDef().clientActivityTab_NewFormBackButton;
+						if ( backBtnConfig )
+						{
+							var btnLabel = ( backBtnConfig.btnLabel ) ? backBtnConfig.btnLabel: 'Back';
+							mainBlockTag.prepend( `
+							<div class="divBackClientActivity mouseDown" style="background-color: skyblue; display: inline-block; padding: 1px 6px 0px 4px; opacity: 0.8;">
+								<img src="images/arrow_back.svg" class="imgBackClientActivity" style="width: 18px;">
+								<span class="spanBackClientActivity" term="" style="vertical-align: top; font-size: 15px;">${ btnLabel }</span>
+							</div>` );
+	
+							mainBlockTag.find( '.divBackClientActivity' ).click( () => {  $( 'li.primary[rel=tab_clientActivities]').attr( 'forceClick', 'Y' ).click(); } );
+						}
 					}
 				});
 			var favListArr = favIconsObj.render();
