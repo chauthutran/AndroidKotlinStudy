@@ -64,6 +64,16 @@ WsCallManager.timeOut_DwsAvailabilityCheck = 10000; // timeout number used for '
 
 WsCallManager.mockDelayTimeMS = Util.MS_SEC; // default delay time in milliseconds - 1000ms = 1 sec
 
+// Override temporarily for fixing the issue..
+WsCallManager.availabilityOverride = {
+    "REPLICA": { "isAvailable": true, "responseTime": "0ms", "lastChecked": "-", "lastAvailable": "-" },
+    "DHIS2": { "isAvailable": true, "responseTime": "0ms", "lastChecked": "-", "lastAvailable": "-" },
+    "LEGACY": { "isAvailable": true, "responseTime": "0ms", "lastChecked": "-", "lastAvailable": "-" },
+    "POEDITOR": { "isAvailable": true, "responseTime": "0ms", "lastChecked": "-", "lastAvailable": "-" },
+    "MONGO": { "isAvailable": true, "responseTime": "0ms", "lastChecked": "-", "lastAvailable": "-" }
+};
+
+
 // ============================================
 // Setup / Set on Start of App Related ========
 
@@ -262,6 +272,11 @@ WsCallManager.getDataServerAvailable = function( returnFunc )
     WsCallManager.requestGetDws( WsCallManager.available_PWAAvailable + '?sourceType=' + sourceTypeParam, { 'timeOut': WsCallManager.timeOut_AvailableCheck }, undefined, returnFunc );
 };
 
+WsCallManager.availabilityOverrideApply = function()
+{
+    INFO.availabilityOverride = WsCallManager.availabilityOverride;
+};
+
 
 WsCallManager.dwsAvailabilityCheck = function( sourceType, returnFunc )
 {
@@ -274,6 +289,12 @@ WsCallManager.dwsAvailabilityCheck = function( sourceType, returnFunc )
 
         try 
         {
+            // NEW - availability overridde..
+            if ( INFO.availabilityOverride ) {
+                success = true;
+                returnJson = INFO.availabilityOverride;             
+            }
+
             if ( success && returnJson )
             {
                 if ( sourceType === ConfigManager.KEY_SourceType_Mongo )
