@@ -320,14 +320,11 @@ function ChatApp(username) {
 
 			// Refresh the contact list with new contacts
 			me.updateContactList( userList );
-
-			// const found = Utils.findItemFromList(userData.contacts, me.curUser.username, "contactName");
-			// if (found) {
-				// me.curUser.contacts.push({ contactName: userData.username, hasNewMessages: found.hasNewMessages });
-				// me.appendUserInContactList(userData);
-			// }
 		});
 
+		me.socket.on('new_user_created_error', (errorMsg) => {
+			alert(errorMsg);
+		});
 		me.socket.on('contact_removed', (contactName) => {
 			me.curUser.contacts = Utils.removeFromArray(me.curUser.contacts, contactName, "contactName");
 			me.userListTag.find(`li[username="${contactName}"]`).remove();
@@ -478,8 +475,24 @@ function ChatApp(username) {
 		});
 
 		me.addUserForm_AddUserBtnTag.off("click").on("click", function () {
-			var jsonUser = {username: me.addUserForm_UsernameTag.val(), wtsa: me.addUserForm_wtsaTag.val(), fullName: me.addUserForm_FullNameTag.val()};
-			me.socket.emit("create_new_user", [me.curUser, jsonUser]);
+			me.addUserForm_UsernameTag.css("background-color", "");
+			me.addUserForm_FullNameTag.css("background-color", "");
+
+			var username = me.addUserForm_UsernameTag.val();
+			var fullName = me.addUserForm_FullNameTag.val();
+			var wtsa = me.addUserForm_wtsaTag.val();
+			if( username != "" && fullName!= "" )
+			{
+				var jsonUser = {username, fullName, wtsa };
+				me.socket.emit("create_new_user", [me.curUser, jsonUser]);
+			}
+			else
+			{
+				if( username == "" ) me.addUserForm_UsernameTag.css("background-color", "#dd6363");
+				if( fullName == "" ) me.addUserForm_FullNameTag.css("background-color", "#dd6363");
+				
+				alert("Please enter values in red fields");
+			}
 		});
 
 		me.addUserForm_CancelBtnTag.off("click").on("click", function () {
@@ -961,16 +974,16 @@ ChatApp.newUserForm = `
 	<div class="dialog_description">
 		<div class="div-table">
 			<div class="div-table-row">
-				<div class="div-table-col">User name:</div>
+				<div class="div-table-col">User name <span style='color:red'>*</span>:</div>
 				<div class="div-table-col"><input class="username"></div>
+			</div>
+			<div class="div-table-row">
+				<div class="div-table-col">Full name <span style='color:red'>*</span>:</div>
+				<div class="div-table-col"><input class="fullName"></div>
 			</div>
 			<div class="div-table-row">
 				<div class="div-table-col">WhatsApp Phone number:</div>
 				<div class="div-table-col"><input class="wtsa"></div>
-			</div>
-			<div class="div-table-row">
-				<div class="div-table-col">Full name:</div>
-				<div class="div-table-col"><input class="fullName"></div>
 			</div>
 		</div>
 	</div>
