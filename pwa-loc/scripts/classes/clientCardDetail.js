@@ -226,7 +226,7 @@ function ClientCardDetail(clientId) {
 							<span class="spanBackClientActivity" term="" style="vertical-align: top; font-size: 15px;">Back</span>
 						</div>` );
 
-						mainBlockTag.find( '.divBackClientActivity' ).click( () => {  $( 'li.primary[rel=tab_clientActivities]').click(); } );
+						mainBlockTag.find( '.divBackClientActivity' ).click( () => {  $( 'li.primary[rel=tab_clientActivities]').attr( 'forceClick', 'Y' ).click(); } );
 					}
 				});
 			var favListArr = favIconsObj.render();

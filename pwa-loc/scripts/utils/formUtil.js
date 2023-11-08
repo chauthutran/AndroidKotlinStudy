@@ -1066,18 +1066,20 @@ FormUtil.setUpEntryTabClick = function (tag, targetOff, eventName, openingTabCal
 		var Secondary = selLiTag.hasClass('secondary');
 		var ulOptionsPopup = selLiTag.find('ul');
 		var openingClick = false;
+		var forceClick = false;
 
-		/*
-		if (selLiTag.attr('openingClick') === 'Y') {
-			openingClick = true;
-			selLiTag.attr('openingClick', '');
-		}*/
+		// For reloading, For mobile(or not), force click action (callback), instead of show/hide the list
+		if (selLiTag.attr('forceClick') === 'Y') {
+			selLiTag.attr('forceClick', '');
+			forceClick = true;
+		}
 
 		// If portrait mode small screen, (which has fullTab on click dropdown show)
 		//   - On Small Screen Case, Show the dropdown (collapsed tab list)
 		if (FormUtil.orientation() === 'portrait'
 			&& $(window).width() <= 558
-			&& selLiTag.hasClass('active')) // class 'active' will always be li.primary
+			&& selLiTag.hasClass('active')
+			&& !forceClick ) // class 'active' will always be li.primary
 		{
 			// If dropdown is shown, hide it.
 			if (ulOptionsPopup.is(':visible')) {
@@ -1085,8 +1087,9 @@ FormUtil.setUpEntryTabClick = function (tag, targetOff, eventName, openingTabCal
 				selLiTag.find('li').css('display', 'none');	
 			}
 			else {
-				// TODO: or reloading..  do not show the dropdown..
 
+				// TODO: 'openingClick' & 'reloading' - move to top & use variable & check here?
+				// 	OLD: or reloading..  do not show the dropdown..
 				if (selLiTag.attr('openingClick') === 'Y') selLiTag.attr('openingClick', '');
 				else if (selLiTag.attr('reloading') === 'Y') selLiTag.attr('reloading', '');
 				else {
@@ -1133,7 +1136,8 @@ FormUtil.setUpEntryTabClick = function (tag, targetOff, eventName, openingTabCal
 
 		}
 
-		// After all operation, clear the one off temporary attribute values.
+		// TODO: move this on top?  Need to test 'reloading' & 'openingClick' feature.  
+		//		After all operation, clear the one off temporary attribute values.
 		selLiTag.attr('reloading', '').attr('openingClick', '');
 	});
 };
