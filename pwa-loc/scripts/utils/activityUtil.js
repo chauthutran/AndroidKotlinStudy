@@ -52,6 +52,9 @@ ActivityUtil.generateActivityPayload_byFormsJson = function (actionDefJson, form
 	else if (actionDefJson.payloadJson) {
 		// New Dev mode in client details, adding activity payload json mamually
 		payload = actionDefJson.payloadJson;
+
+		// NEW - remove specific trans type data if exists..
+		ActivityUtil.removeTrans_disableTransTypes( ConfigManager.getSettings().disableTransTypes, payload );
 	}
 	else {
 		// no structure base ones..
@@ -160,7 +163,7 @@ ActivityUtil.isHoliday = function (sDate, scheduleDateAdjust) {
 
 // 'payloadDefJson' and 'actionDefJson' could be same or different.
 ActivityUtil.generateFormsJsonData_ByType = function (payloadDefJson, actionDefJson, formDivSecTag) {
-	var formsJson = {};
+	var formsJson = {};  /// Should be named 'payloadJson'?
 	var formsJsonGroup = {};
 
 	if (payloadDefJson) 
@@ -186,11 +189,33 @@ ActivityUtil.generateFormsJsonData_ByType = function (payloadDefJson, actionDefJ
 			var createdDT = new Date();		// Should we match this with activityDataManager.generatePayload...
 			formsJson = PayloadTemplateHelper.generatePayload(createdDT, formsJson, formsJsonGroup, blockInfo, payloadDefJson.payloadTemplate, payloadDefJson.INFO_Var);
 		}
+
+		// NEW - remove specific trans type data if exists..
+		ActivityUtil.removeTrans_disableTransTypes( ConfigManager.getSettings().disableTransTypes, formsJson );
 	}
 
 	return formsJson;
 };
 
+
+ActivityUtil.removeTrans_disableTransTypes = function( disableTransTypes, payload )
+{
+	try
+	{
+		if ( disableTransTypes && disableTransTypes.length > 0 && payload ) 
+		{
+			var activityJson = payload.captureValues;
+
+			if ( activityJson && activityJson.transactions )
+			{
+				activityJson.transactions = activityJson.transactions.filter( trans => ( disableTransTypes.indexOf( trans.type ) === -1 ) );
+			}
+		}
+	}
+	catch ( errMsg ) {
+		console.log( 'ERROR in ActivityUtil.removeTrans_disableTransTypes, ' + errMsg );
+	}
+};
 
 // 'payloadDefJson' and 'actionDefJson' could be same or different.
 ActivityUtil.generateFormsJsonArr = function (formDivSecTag) {
