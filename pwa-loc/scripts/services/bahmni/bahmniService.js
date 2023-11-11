@@ -19,11 +19,14 @@ BahmniService.FORM_NAME_DEFAULT = "default";
 BahmniService.FORM_NAME_NO_SUPPORTED = "noSupported";
 
 BahmniService.ACTIVITY_TYPE_APPOINTMENT = "Appointment";
-BahmniService.ACTIVITY_TYPE_FU_APPOINTMENT =  "Follow Up Appointment";
 BahmniService.ACTIVITY_TYPE_REFERRALS_TEMPLATE = "Referrals Template";
-BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE = "Follow Up Referrals Template Form";
 BahmniService.ACTIVITY_TYPE_ASSESSMENT_AND_PLAN = "Assessment and Plan";
+BahmniService.ACT_TYPES = [ BahmniService.ACTIVITY_TYPE_APPOINTMENT, BahmniService.ACTIVITY_TYPE_REFERRALS_TEMPLATE, BahmniService.ACTIVITY_TYPE_ASSESSMENT_AND_PLAN ];
+
+BahmniService.ACTIVITY_TYPE_FU_APPOINTMENT =  "Follow Up Appointment";
+BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE = "Follow Up Referrals Template Form";
 BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN = "Follow Up Assessment and Plan";
+BahmniService.ACT_FU_TYPES = [ BahmniService.ACTIVITY_TYPE_FU_APPOINTMENT, BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE, BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN ];
 
 BahmniService.interval_syncData = Util.MS_SEC * 2;
 BahmniService.syncDataProcessing = false;
@@ -83,6 +86,71 @@ BahmniService.connStatusData = { stableConn: BahmniService.VAL_DISCONNECTED, act
 BahmniService.debug_forceDisconnect = false;
 
 // ==============================================================================
+
+
+BahmniService.populateFollowUpSourceActId = function( clientJson )
+{
+	try
+	{
+		var followUpActs = clientJson.activities.filter( act => BahmniService.ACT_FU_TYPES.indexOf( act.type ) >= 0 );
+	
+		followUpActs.forEach( act => {
+			// find the Source Act by uudi?
+			var syncUpData = act.syncUp;
+			if ( syncUpData )
+			{
+				if ( syncUpData.encounterUuid ) act.followUp_SourceId = BahmniService.generateActivityFormData_ActivityId( syncUpData.encounterUuid, syncUpData.formUuid);
+				else if ( syncUpData.uuid ) act.followUp_SourceId = syncUpData.uuid;
+				else act.followUp_SourceId = '';
+			}
+		});
+	}
+	catch ( errMsg ) { 
+		console.log( 'ERROR in BahmniService.populateFollowUpSourceActId', errMsg ); 
+	}
+};
+
+
+BahmniService.setCaptureLoc_fromVisitDate = function( clientJson )
+{
+	try
+	{
+		// populate visitDate in 'date' from originalData.. or followUp_SourceId
+		// also, populate captureDate with visitDate <-- if exists..
+	
+		clientJson.activities.forEach( act => 
+		{
+			var visitDateInt = '';
+			var visitDateStr = '';
+
+			try
+			{
+				var srcAct = ( act.followUp_SourceId ) ? ActivityDataManager.getActivityById( act.followUp_SourceId ) : undefined;
+
+				if ( act.type === BahmniService.ACTIVITY_TYPE_APPOINTMENT ) visitDateInt = act.originalData.startDateTime;
+				else if ( act.type === BahmniService.ACTIVITY_TYPE_REFERRALS_TEMPLATE ) visitDateInt = act.originalData.visitStartDateTime;
+				else if ( act.type === BahmniService.ACTIVITY_TYPE_ASSESSMENT_AND_PLAN ) visitDateInt = act.originalData.visitStartDateTime;
+	
+				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_APPOINTMENT ) visitDateStr = act.syncUp.startDateTime;
+				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE ) visitDateInt = ( srcAct ) ? srcAct.originalData.visitStartDateTime: '';
+				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN ) visitDateInt = ( srcAct ) ? srcAct.originalData.visitStartDateTime: '';
+	
+	
+				if ( !visitDateStr && visitDateInt ) visitDateStr = UtilDate.dateStr( "DT", new Date( visitDateInt ) );
+			}
+			catch ( errMsg ) { }
+
+			if ( visitDateStr ) act.date.capturedLoc = visitDateStr; // Also, set capturedUTC?
+
+			act.date.visitDateLoc = visitDateStr;
+			if ( act.date.visitDateLoc ) UtilDate.setDate_LocToUTC( act.date, 'visitDateLoc' );
+		});
+	}
+	catch ( errMsg ) { 
+		console.log( 'ERROR in BahmniService.setCaptureLoc_fromVisitDate', errMsg ); 
+	}
+};
+
 
 BahmniService.serviceStartUp = function () 
 {
@@ -1186,13 +1254,13 @@ BahmniService.generateClientData = function (patientData, option) {
 BahmniService.generateActivityAppointment = function (data, options) {
 	if (!options) options = {};
 
-	const type = "Appointment";
-	let dataValues = { ...data };
+	var type = BahmniService.ACTIVITY_TYPE_APPOINTMENT;
+	var dataValues = { ...data };
 	dataValues.startDateTime = UtilDate.dateStr("DT", new Date(dataValues.startDateTime)); // Format the 'startDateTime'
 	dataValues.endDateTime = UtilDate.dateStr("DT", new Date(dataValues.endDateTime)); //  Format the 'endDateTime'
-	const serviceKeys = Object.keys(data.service);
+	var serviceKeys = Object.keys(data.service);
 	for (var i = 0; i < serviceKeys.length; i++) {
-		const key = serviceKeys[i];
+		var key = serviceKeys[i];
 		dataValues["service_" + key] = data.service[key];
 	}
 
@@ -1220,7 +1288,7 @@ BahmniService.generateActivityFormData = function (formData, type) {
 BahmniService.generateActivityFormData_ActivityId = function (encounterUuid, formUuid)
 {
 	return encounterUuid + "--" + formUuid;
-}
+};
 
 /***
  * 

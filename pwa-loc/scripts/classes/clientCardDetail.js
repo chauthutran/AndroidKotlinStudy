@@ -200,6 +200,10 @@ function ClientCardDetail(clientId) {
 				var divLatestVoucherTag = me.displayLatestVoucherInfo(clientJson, activityListDivTag); // only if there is vouchers..
 				if (ConfigManager.switchLatestVoucher() && divLatestVoucherTag) me.setSwitchLatestVoucher(clientJson, divLatestVoucherTag, activityTabTag);
 
+				// Only for 'Bahmni' sourceType, make sure the 'followUp' activities has proper 'followUp_SourceId'
+				// MOVE to Configuration - "clientActivity" > "listFilterEval": 
+				// if ( ConfigManager.isBahmniSubSourceType() ) BahmniService.populateFollowUpSourceActId( clientJson );
+
 				var filteredActivities = ClientDataManager.getActivities_EP_Filtered(clientJson);  // clientJson.activities
 
 				// NEW - Activity list filter by eval
@@ -284,7 +288,6 @@ function ClientCardDetail(clientId) {
 	};
 
 
-	// me.filterActList( list, ConfigManager.getClientActivityFilterEval() )
 	me.filterActList = function ( actList, configFilterEvalStr ) 
 	{
 		var filteredData = actList;
