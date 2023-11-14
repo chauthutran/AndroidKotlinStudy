@@ -41,7 +41,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 		me.setInitialData();				
 	}
 
-	me.render = function( areaType )
+	me.render = function()
 	{
 		// Form BlockTag generate/assign
 		//me.clearClassTag( me.blockId, me.parentTag );
@@ -59,7 +59,7 @@ function Block( cwsRenderObj, blockDefJson, blockId, parentTag, passedData, opti
 			{
 				// TODO: me.blockFormObj should be change to var blockFormObj = new --
 				me.blockFormObj = new BlockForm( me.cwsRenderObj, me, me.actionJson );
-				me.blockFormObj.render( me.blockDefJson.form, me.blockTag, me.passedData );
+				me.blockFormObj.render( me.blockDefJson.form, me.blockTag, me.passedData, me.options );
 			}
 			
 			//me.blockListObj = new BlockList( me.cwsRenderObj, me, me.blockDefJson );

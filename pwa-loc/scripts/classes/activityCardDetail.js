@@ -427,25 +427,26 @@ function ActivityCardDetail( activityId, isRestore )
 
 			var passedData = { showCase: editForm.showCase, hideCase: editForm.hideCase, formDataArr: fieldDataArr };
 
-			var blockObj = FormUtil.renderBlockByBlockId( editForm.blockId, SessionManager.cwsRenderObj, payloadTabTag, passedData, undefined, undefined, 'blockList');
-			var blockTag = blockObj.blockTag;
-
-			// NOTE: Bottom Padding is done by display: flex , which is defined by class 'sheet_preview'
-
-			if ( activityJson ) 
+			var blockObj = FormUtil.renderBlockByBlockId( editForm.blockId, SessionManager.cwsRenderObj, payloadTabTag, passedData, { runAfterFieldGen: ( blockTag ) => 
 			{
-				ActivityDataManager.setEditModeActivityId_blockTag( blockTag, activityJson.id );
-				
-				// nonEditable fields disable/readOnly
-				if ( blockJson.activityEdit_Limit && blockJson.activityEdit_Limit.nonEditableFields )
-				{		
-					blockJson.activityEdit_Limit.nonEditableFields.forEach( fieldName => 
-					{
-						var fieldTags = FormUtil.getFieldTagsByName( fieldName, blockTag );
-						FormUtil.disableFieldTags( fieldTags );
-					});
-				}				
-			}
+				// NOTE: Bottom Padding is done by display: flex , which is defined by class 'sheet_preview'
+				if ( activityJson ) 
+				{
+					ActivityDataManager.setEditModeActivityId_blockTag( blockTag, activityJson.id );
+					
+					// nonEditable fields disable/readOnly
+					if ( blockJson.activityEdit_Limit && blockJson.activityEdit_Limit.nonEditableFields )
+					{		
+						blockJson.activityEdit_Limit.nonEditableFields.forEach( fieldName => 
+						{
+							var fieldTags = FormUtil.getFieldTagsByName( fieldName, blockTag );
+							FormUtil.disableFieldTags( fieldTags );
+						});
+					}				
+				}
+	
+			} }, undefined, 'blockList');
+			//var blockTag = blockObj.blockTag;
 		}
 		else {
 			alert("Cannot find block with id '" + editForm.blockId + "'");

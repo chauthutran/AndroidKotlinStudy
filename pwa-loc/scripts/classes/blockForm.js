@@ -32,10 +32,9 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 
 	// NOTE: render() should do - clear previous tags, and create tags newly.
 	//	- All the tag html should be placed on top as tagTemplate (See 'blockList.js' as example )
-	me.render = function (formId, blockTag, passedData) {
-
-		// TODO:
-		// 		ADD FORM FIELDS ARRAY COMBINING HERE!!
+	me.render = function (formId, blockTag, passedData, options ) 
+	{
+		if ( !options ) options = {};
 
 		// 1. Set formDefinition variables (from Config)
 		var formDef_fieldsArr_Temp = FormUtil.getObjFromDefinition(formId, ConfigManager.getConfigJson().definitionForms);
@@ -84,19 +83,27 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 			});
 
 
+			// NOTE: Above Generates the form & input tags..
+			//		Below Populates data, Run 'evalActions', Validations..
+			if ( options.runAfterFieldGen ) try { options.runAfterFieldGen( blockTag ); } catch (errMsg) { console.log( 'ERROR in runAfterFieldGen, ' + errMsg ); }
+
+
 			// STEP #2. Value populate to field, set validation event, trigger change for fields with value, viewOnlyMode
-			Validation.disableValidation(function () {
-				me.populateFormData(passedData, formTag);
+			Validation.disableValidation(function () 
+			{
+
+				me.populateFormData(passedData, formTag); // 1. pouplate data, 2. perform 'evalActions'
+
+
 				me.formGroupTitleDisplaySet(formTag);
+
 
 				// NOTE: TRAN VALIDATION
 				Validation.setUp_Events(formTag);
 
 				//NOTE (Greg): 500ms DELAY SOLVES PROBLEM OF CALCULATED DISPLAY VALUES BASED ON FORM:XXX VALUES
 				//NOTE (2020/07/22): added sort logic to underlying calculationEval so that 'complex' formulas run last
-				setTimeout(function () {
-					me.defaultValEval(formTag, me.evalFunctionsToProcess);
-				}, 500);
+				setTimeout(function () {  me.defaultValEval(formTag, me.evalFunctionsToProcess);  }, 500);
 
 
 				// Run change event of dataValue tag in case there are some default Values which can required to show/hide some fields in form				
