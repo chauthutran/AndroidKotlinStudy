@@ -81,17 +81,54 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
 
             if ( operationType === 'localDownload' )
             {
+                //var itemList = [];
+                var downloadInfo = { downloadNeeded: false }; // clientInLocal: false, relationsInLocal: false, 
+                var downloadText = {
+                    "InLocal": { "title": "In Local", "term": "" },
+                    "NotDownloaded": { "title": "Not Downloaded", "term": "" },
+                    "RelNotDownloaded": { "title": "Rel Not Downloaded", "term": "" }
+                };
+
+                var txtInConfig = ConfigManager.getClientDef().clientSearchDownloadText;
+                if ( txtInConfig ) Util.mergeJson( downloadText, txtInConfig );
+
+
                 if ( me.hasMatchingLocalData( itemId ) )
+                {
+                    downloadInfo.clientInLocal = true;
+
+                    // Check if relation clients all are in local
+                    if ( itemJson.rlClientList && itemJson.rlClientList.length > 0 )
+                    {
+                        var rlNotInLocalList = itemJson.rlClientList.filter( item => !me.hasMatchingLocalData( item._id ) );
+
+                        if ( rlNotInLocalList.length > 0 )
+                        {
+                            divStatusTextTag.html( downloadText.RelNotDownloaded.title ).attr( 'term', downloadText.RelNotDownloaded.title );
+                            downloadInfo.downloadNeeded = true;
+                        }
+                        else divStatusTextTag.html( downloadText.InLocal.title ).attr( 'term', downloadText.InLocal.term );
+                    }
+                    else divStatusTextTag.html( downloadText.InLocal.title ).attr( 'term', downloadText.InLocal.term );
+                }
+                else
+                {
+                    divStatusTextTag.html( downloadText.NotDownloaded.title ).attr( 'term', downloadText.NotDownloaded.term );
+                    downloadInfo.downloadNeeded = true;
+                }
+
+
+                if( !downloadInfo.downloadNeeded )
                 {
                     // Icon / Label
                     ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_downloaded );
-                    divStatusTextTag.html( 'In Local' ).attr( 'term', '' );
+                    // divStatusTextTag.html( 'In Local' ).attr( 'term', '' );
                 }
                 else
                 {
                     // Icon / Label
                     ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_queued );
-                    divStatusTextTag.html( 'Not downloaded' ).attr( 'term', '' );
+                    // divStatusTextTag.html( 'Not downloaded' ).attr( 'term', '' );
     
                     // On click, remove the icon/text and allow to load..
                     divStatusIconTag.off( 'click' ).click( function() 
@@ -100,7 +137,11 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
 
                         var processingInfo = ActivityDataManager.createProcessingInfo_Success( Constants.status_downloaded, 'Downloaded and stored.' );
     
-                        ClientDataManager.mergeDownloadedClients( { 'clients': [ itemJson ] }, processingInfo, function() 
+                        var itemList = [ itemJson ];
+                        if( itemJson.rlClientList ) itemList = itemList.concat( itemJson.rlClientList );
+ 
+                        // ClientDataManager.mergeDownloadedClients( { 'clients': [ itemJson ] }, processingInfo, function() 
+                        ClientDataManager.mergeDownloadedClients( { 'clients': itemList }, processingInfo, function() 
                         {
                             MsgManager.msgAreaShow( '<span term="msg_clientDownloaded">The client downloaded and stored.</span>' )
     
@@ -183,6 +224,22 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
         return ClientDataManager.getClientById( itemId );
     };
 
+    // NEED CHANGES
+    me.foundAllInLocalData = function( itemJson )
+    {
+        var foundInLS = me.hasMatchingLocalData( itemJson._id);
+        if( foundInLS && itemJson.rlClientList )
+        {
+            var rlClientList = itemJson.rlClientList;
+            for( var i=0; i<rlClientList.length; i++ )
+            {
+                foundInLS = me.hasMatchingLocalData( rlClientList[i]._id);
+                if( !foundInLS ) break;
+            }
+        }
+
+        return foundInLS;
+    }
 
     me.itemContentClick_FullView = function( itemContentTag, itemId )
     {

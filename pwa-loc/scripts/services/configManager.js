@@ -799,7 +799,7 @@ ConfigManager.getClientDef = function () {
 
 	var clientDef = {};
 
-	// ClientDef could be settings itself or within 'clientDef'
+	// ClientDef could be settings itself (Really??) or within 'clientDef'
 	if (configJson.settings) {
 		if (configJson.settings.clientDef) clientDef = configJson.settings.clientDef;
 		else clientDef = configJson.settings;
