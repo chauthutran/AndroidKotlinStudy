@@ -82,7 +82,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
             if ( operationType === 'localDownload' )
             {
                 //var itemList = [];
-                var downloadInfo = { downloadNeeded: false }; // clientInLocal: false, relationsInLocal: false, 
+                var downloadInfo = { downloadNeeded: false, clientInLocal: false, relationsNotInLocal: false };
                 var downloadText = {
                     "InLocal": { "title": "In Local", "term": "" },
                     "NotDownloaded": { "title": "Not Downloaded", "term": "" },
@@ -104,16 +104,13 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
 
                         if ( rlNotInLocalList.length > 0 )
                         {
-                            divStatusTextTag.html( downloadText.RelNotDownloaded.title ).attr( 'term', downloadText.RelNotDownloaded.title );
                             downloadInfo.downloadNeeded = true;
+                            downloadInfo.relationsNotInLocal = true;
                         }
-                        else divStatusTextTag.html( downloadText.InLocal.title ).attr( 'term', downloadText.InLocal.term );
                     }
-                    else divStatusTextTag.html( downloadText.InLocal.title ).attr( 'term', downloadText.InLocal.term );
                 }
                 else
                 {
-                    divStatusTextTag.html( downloadText.NotDownloaded.title ).attr( 'term', downloadText.NotDownloaded.term );
                     downloadInfo.downloadNeeded = true;
                 }
 
@@ -122,14 +119,16 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
                 {
                     // Icon / Label
                     ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_downloaded );
-                    // divStatusTextTag.html( 'In Local' ).attr( 'term', '' );
+                    divStatusTextTag.html( downloadText.InLocal.title ).attr( 'term', downloadText.InLocal.term );
                 }
                 else
                 {
                     // Icon / Label
                     ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_queued );
-                    // divStatusTextTag.html( 'Not downloaded' ).attr( 'term', '' );
-    
+                    if ( downloadInfo.relationsNotInLocal ) divStatusTextTag.html( downloadText.RelNotDownloaded.title ).attr( 'term', downloadText.RelNotDownloaded.title );
+                    else divStatusTextTag.html( downloadText.NotDownloaded.title ).attr( 'term', downloadText.NotDownloaded.term );
+
+
                     // On click, remove the icon/text and allow to load..
                     divStatusIconTag.off( 'click' ).click( function() 
                     {
