@@ -2996,6 +2996,11 @@ border-color: green;
   outline: 1px dotted #000
 }
 
+.dialog .error {
+	color:red;
+	font-style:italic;
+}
+
 /****************************************/
 
 .curUsserDiv {

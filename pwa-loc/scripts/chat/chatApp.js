@@ -153,7 +153,8 @@ function ChatApp(username) {
 		// Init Chat form
 		me.editContactListTag.attr("mode", "hide");
 		me.searchContactNameTag.val("");
-		me.showAddUserFormBtnTag.hide();
+		// me.showAddUserFormBtnTag.hide();
+		me.showAddUserFormBtnTag.show();
 
 
 		me.setUp_Events();
@@ -320,6 +321,9 @@ function ChatApp(username) {
 
 			// Refresh the contact list with new contacts
 			me.updateContactList( userList );
+			me.addUserFormTag.hide();
+
+			alert("The new user is created !");
 		});
 
 		me.socket.on('new_user_created_error', (errorMsg) => {
@@ -475,23 +479,51 @@ function ChatApp(username) {
 		});
 
 		me.addUserForm_AddUserBtnTag.off("click").on("click", function () {
-			me.addUserForm_UsernameTag.css("background-color", "");
-			me.addUserForm_FullNameTag.css("background-color", "");
-
 			var username = me.addUserForm_UsernameTag.val();
 			var fullName = me.addUserForm_FullNameTag.val();
 			var wtsa = me.addUserForm_wtsaTag.val();
-			if( username != "" && fullName!= "" )
+
+			me.socket.emit("create_new_user", [me.curUser, {username, fullName, wtsa }]);
+		});
+
+		me.addUserForm_UsernameTag.off("keyup").on("keyup", function () {
+			var colTag = me.addUserForm_UsernameTag.closest("div");
+			colTag.find(".error").remove(); // Remove the error message if any
+
+			var username = $(this).val();
+			if( username != "" )
 			{
-				var jsonUser = {username, fullName, wtsa };
-				me.socket.emit("create_new_user", [me.curUser, jsonUser]);
+				var list = me.curUser.contacts.filter(function(contact){ return contact.contactName == username });
+			
+				if( list.length > 0 )
+				{
+					colTag.append("<span class='error'>This username is not available</span>");
+					me.disableAddUserBtn( true ); // Disable "Add User" button
+				}
+				else if( me.addUserFormTag.find(".error").length == 0) // In case we have Error in "username" field
+				{
+					me.disableAddUserBtn( false ); // Enable "Add User" button
+				}
 			}
 			else
 			{
-				if( username == "" ) me.addUserForm_UsernameTag.css("background-color", "#dd6363");
-				if( fullName == "" ) me.addUserForm_FullNameTag.css("background-color", "#dd6363");
-				
-				alert("Please enter values in red fields");
+				me.addUserForm_UsernameTag.after("<span class='error'>Please enter username</span>");
+				me.disableAddUserBtn( true ); // Disable "Add User" button
+			}
+		});
+
+		me.addUserForm_FullNameTag.off("keyup").on("keyup", function () {
+			var colTag = me.addUserForm_FullNameTag.closest("div");
+			colTag.find(".error").remove(); // Remove the error message if any
+			
+			if( $(this).val() == "" )
+			{
+				colTag.append("<span class='error'>Please enter full name</span>");
+				me.disableAddUserBtn(true);
+			}
+			else if( me.addUserFormTag.find(".error").length == 0 ) // In case we have Error in "username" field
+			{
+				me.disableAddUserBtn(false);
 			}
 		});
 
@@ -588,6 +620,11 @@ function ChatApp(username) {
 
 	}
 
+	me.disableAddUserBtn = function(isDisabled )
+	{
+		if( isDisabled ) me.addUserForm_AddUserBtnTag.prop( "disabled", true ).css("background-color","#c3c0c0"); // Disable "Add User" button
+		else me.addUserForm_AddUserBtnTag.prop( "disabled", false ).css("background-color",""); // Enable "Add User" button
+	}
 	me.moveContactOnTop = function (contactName) {
 		// Re-order the contact list
 		const userTag = me.userListTag.find(`[username='${contactName}']`);
@@ -605,29 +642,29 @@ function ChatApp(username) {
 		var searchText = me.searchContactNameTag.val().toUpperCase();
 
 		if (searchText != "") {
-			let canAddNew = true;
+			// let canAddNew = true;
 			me.userListTag.find("li").each(function () {
-				var fullName = $(this).html();
-				var userName = $(this).attr("user");
-				if (fullName.toUpperCase().indexOf(searchText) >= 0 || userName.toUpperCase().indexOf(searchText) >= 0) {
+				// var fullName = $(this).html();
+				var userInfo = JSON.parse($(this).attr("user"));
+				if (userInfo.fullName.toUpperCase().indexOf(searchText) >= 0 || userInfo.userName.toUpperCase().indexOf(searchText) >= 0) {
 					$(this).show();
 
-					if (fullName.toUpperCase() == searchText || userName.toUpperCase() == searchText) {
-						canAddNew = false;
-					}
+					// if (userInfo.fullName.toUpperCase() == searchText || userInfo.userName.toUpperCase() == searchText) {
+					// 	canAddNew = false;
+					// }
 				}
 			});
 
-			if (canAddNew) {
-				me.showAddUserFormBtnTag.show();
-			}
-			else {
-				me.showAddUserFormBtnTag.hide();
-			}
+			// if (canAddNew) {
+			// 	me.showAddUserFormBtnTag.show();
+			// }
+			// else {
+			// 	me.showAddUserFormBtnTag.hide();
+			// }
 		}
 		else {
 			me.userListTag.find("li").show();
-			me.showAddUserFormBtnTag.hide();
+			// me.showAddUserFormBtnTag.hide();
 		}
 	}
 
@@ -927,7 +964,7 @@ ChatApp.contentHtml = `
 
 					<div class="searchForm">
 						<input class="nosubmit search" id="searchContactName" placeholder="Search..." style="background-color: white;" />
-						<div class="add-user-btn" id="showAddUserFormBtn" style="display:none;">Add</div>
+						<div class="add-user-btn" id="showAddUserFormBtn" style="display:none; width: 25px;"><img src='images/user.png'></div>
 					</div>
 					<ul id="users">
 					</ul>
