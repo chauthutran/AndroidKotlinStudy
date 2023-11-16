@@ -85,6 +85,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
                 var downloadInfo = { downloadNeeded: false, clientInLocal: false, relationsNotInLocal: false };
                 var downloadText = {
                     "InLocal": { "title": "In Local", "term": "" },
+                    "UpdateFound": { "title": "Update Found", "term": "" }, // TODO
                     "NotDownloaded": { "title": "Not Downloaded", "term": "" },
                     "RelNotDownloaded": { "title": "Rel Not Downloaded", "term": "" }
                 };
@@ -97,10 +98,15 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
                 {
                     downloadInfo.clientInLocal = true;
 
+                    // TODO - "date.updatedUTC": <-- Check for update on Client
+
+
                     // Check if relation clients all are in local
                     if ( itemJson.rlClientList && itemJson.rlClientList.length > 0 )
                     {
                         var rlNotInLocalList = itemJson.rlClientList.filter( item => !me.hasMatchingLocalData( item._id ) );
+
+                        // TODO - "date.updatedUTC": <-- Check for update on Rel Clients..
 
                         if ( rlNotInLocalList.length > 0 )
                         {
