@@ -808,6 +808,21 @@ ConfigManager.getClientDef = function () {
 	return clientDef;
 };
 
+ConfigManager.getClientActivity = function () {
+
+	var clientDef = ConfigManager.getClientDef();
+
+	return ( clientDef.clientActivity ) ? clientDef.clientActivity: {};
+};
+
+
+ConfigManager.getClientActivityFilterEval = function () {
+
+	var filterEval = ConfigManager.getClientActivity().listFilterEval;
+
+	return ( filterEval ) ? Util.getEvalStr( filterEval ): '';
+};
+
 
 ConfigManager.getClientDisplayBase = function () {
 	var displayBase = ConfigManager.defaultClient_DisplayBase;
@@ -890,19 +905,6 @@ ConfigManager.getClientActivityCardDefDisplaySettings = function () {
 	}
 
 	return displaySettings;
-};
-
-
-ConfigManager.getClientActivityFilterEval = function () {
-	var filterEval = '';
-
-	var clientDef = ConfigManager.getClientDef();
-
-	if (clientDef.clientActivity && clientDef.clientActivity.listFilterEval) {
-		filterEval = Util.getEvalStr( clientDef.clientActivity.listFilterEval );
-	}
-
-	return filterEval;
 };
 
 

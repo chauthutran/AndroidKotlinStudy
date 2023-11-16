@@ -100,6 +100,25 @@
 	margin-bottom: 8px;
 }
 
+.actFilter {
+	display: inline-block;
+    background-color: #dcdcad;
+    font-size: 13px;
+    height: fit-content;
+}
+
+.actFilter label {
+	font-weight: 500;
+    padding-left: 10px;
+}
+
+.actFilter select {
+	width: auto;
+    border: 1px solid #b2a0a0;
+    border-radius: 5px;
+	 padding-right: 23px;
+}
+
 /* ===== Job Aid Releated =========================== */
 
 ul.jobContextMenuItems .context-menu-item:active {

@@ -210,6 +210,9 @@ function ClientCardDetail(clientId) {
 				filteredActivities = me.filterActList( filteredActivities, ConfigManager.getClientActivityFilterEval() );
 
 				me.populateActivityCardList(filteredActivities, activityListDivTag);
+
+				// NEW - Add filter for activity
+				if ( ConfigManager.getClientActivity().showUIFilterSelect_ByType ) me.createActivityFilterOptions( filteredActivities, activityListDivTag );
 			}
 
 			// ClientActivity FavList render
@@ -307,6 +310,44 @@ function ClientCardDetail(clientId) {
 		}
 
 		return filteredData;
+	};
+
+	me.createActivityFilterOptions = function(actList, activityListDivTag)
+	{
+		var types = [...new Set(actList.map(function(act){ return act.type }))];
+
+		var filterSelectorTag = $("<select></select>");
+		filterSelectorTag.append(`<option value="all">All</option>`);
+		for( var i=0; i<types.length; i++ )
+		{
+			var type = types[i];
+			filterSelectorTag.append(`<option value="${type}">${type}</option>`);
+		}
+
+		filterSelectorTag.change(function(){
+			var actType = $(this).val();
+			
+			if( actType == "all" )
+			{
+				activityListDivTag.find(`div.activity[itemid]`).show();
+			}
+			else
+			{
+				// Hide all items first
+				activityListDivTag.find(`div.activity[itemid]`).hide();
+
+				// Show items with type as "actType"
+				var filteredList = actList.filter(function(item){ return item.type == actType });
+				var filteredItemTagIds = filteredList.map(function(item){ return `div.activity[itemId='${item.id}']`}).join(",");
+				activityListDivTag.find(`${filteredItemTagIds}`).show();
+			}
+		});
+
+
+		var divTag = $("<div class='actFilter'><label>Filter: </label></div>").append(filterSelectorTag);
+		activityListDivTag.prepend(divTag);
+
+		return divTag;
 	};
 
 	// ---------------------------------------------
