@@ -314,15 +314,20 @@ function ClientCardDetail(clientId) {
 
 	me.createActivityFilterOptions = function(actList, activityListDivTag)
 	{
-		var types = [...new Set(actList.map(function(act){ return act.type }))];
+		var typeList = [...new Set(actList.map(function(act){ return act.type }))].sort();
+
+		// NOTE: Can optionally use config settings to manipulate the 'typeList'
+		//  - And also override the 'change' event to handle special type listing..
+		var clientActJson = ConfigManager.getClientActivity();
+		if ( clientActJson.UIFilterSelect_sortEval ) eval( Util.getEvalStr( clientActJson.UIFilterSelect_sortEval ) );
 
 		var filterSelectorTag = $("<select></select>");
 		filterSelectorTag.append(`<option value="all">All</option>`);
-		for( var i=0; i<types.length; i++ )
-		{
-			var type = types[i];
+
+		typeList.forEach( type => {
 			filterSelectorTag.append(`<option value="${type}">${type}</option>`);
-		}
+		});
+
 
 		filterSelectorTag.change(function(){
 			var actType = $(this).val();
@@ -346,6 +351,9 @@ function ClientCardDetail(clientId) {
 
 		var divTag = $("<div class='actFilter'><label>Filter: </label></div>").append(filterSelectorTag);
 		activityListDivTag.prepend(divTag);
+
+		// Optional tagEval - for overriding 'change' event..
+		if ( clientActJson.UIFilterSelect_tagEval ) eval( Util.getEvalStr( clientActJson.UIFilterSelect_tagEval ) );
 
 		return divTag;
 	};
