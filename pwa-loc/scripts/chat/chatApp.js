@@ -153,8 +153,8 @@ function ChatApp(username) {
 		// Init Chat form
 		me.editContactListTag.attr("mode", "hide");
 		me.searchContactNameTag.val("");
-		// me.showAddUserFormBtnTag.hide();
-		me.showAddUserFormBtnTag.show();
+		me.showAddUserFormBtnTag.hide();
+		// me.showAddUserFormBtnTag.show();
 
 
 		me.setUp_Events();
@@ -646,7 +646,7 @@ function ChatApp(username) {
 			me.userListTag.find("li").each(function () {
 				// var fullName = $(this).html();
 				var userInfo = JSON.parse($(this).attr("user"));
-				if (userInfo.fullName.toUpperCase().indexOf(searchText) >= 0 || userInfo.userName.toUpperCase().indexOf(searchText) >= 0) {
+				if (userInfo.fullName.toUpperCase().indexOf(searchText) >= 0 ) {
 					$(this).show();
 
 					// if (userInfo.fullName.toUpperCase() == searchText || userInfo.userName.toUpperCase() == searchText) {
@@ -964,7 +964,7 @@ ChatApp.contentHtml = `
 
 					<div class="searchForm">
 						<input class="nosubmit search" id="searchContactName" placeholder="Search..." style="background-color: white;" />
-						<div class="add-user-btn" id="showAddUserFormBtn" style="display:none; width: 25px;"><img src='images/user.png'></div>
+						<div class="add-user-btn" id="showAddUserFormBtn" style="display:none; width: 25px;"><img src='images/user.png' style="width:25px"></div>
 					</div>
 					<ul id="users">
 					</ul>
