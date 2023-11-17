@@ -2938,7 +2938,9 @@ body {
 	color: #6b7280;
     letter-spacing: 0.025em;
     line-height: 2;
-	width: 500px;
+    width: 500px;
+    border: 1px solid #d9cccc;
+    padding: 10px 0px;
 }
 
 .flex {
@@ -2990,15 +2992,26 @@ body {
 	width: 100%;                  
 	border-spacing: 5px;
 }
+
 .div-table-row {
 	display: table-row;
 	width: auto;
 	clear: both;
+	line-height: 50px;
 }
+
+.div-table-row:nth-child(even) {
+    background-color: #e7e8e9;
+}
+
 .div-table-col {
 	float: left; /* fix for  buggy browsers */
 	display: table-column;         
-	width: 50%;         
+	width: 40%;         
+}
+
+.div-table-col:nth-child(3) {
+    width: 10%;
 }
 
 .div-table-col input {

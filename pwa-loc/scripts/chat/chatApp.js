@@ -29,7 +29,7 @@ function ChatApp(username) {
 	me.userListTag;
 
 	me.logoutBtnTag;
-	me.showAddUserFormBtnTag;
+	me.showClientSearchResultFormBtnTag;
 	me.emojjiDashboardTag;
 	me.showEmojiDashboardTag;
 
@@ -41,11 +41,8 @@ function ChatApp(username) {
 	me.chatHistoryTag;
 	me.chatHistoryMsgNoTag;
 
-	me.addUserFormTag;
-	me.addUserForm_UsernameTag;
-	me.addUserForm_wtsaTag;
-	me.addUserForm_AddUserBtnTag;
-	me.addUserForm_CancelBtnTag;
+	me.clientSearchResultFormTag;
+	me.clientSearchResultForm_CancelBtnTag;
 
 	// ------------------------------------------------------------------------
 	// INIT method
@@ -76,7 +73,7 @@ function ChatApp(username) {
 		me.userListTag = $("#users");
 
 		me.logoutBtnTag = $('#logOutBtn');
-		me.showAddUserFormBtnTag = $("#showAddUserFormBtn");
+		me.showClientSearchResultFormBtnTag = $("#showAddUserFormBtn");
 		me.emojjiDashboardTag = $(".emoji-dashboard");
 		me.showEmojiDashboardTag = $("#showEmojiDashboard");
 
@@ -89,12 +86,9 @@ function ChatApp(username) {
 		me.chatHistoryTag = $('.chat-history');
 		me.chatHistoryMsgNoTag = $(".chat-num-messages");
 
-		me.addUserFormTag = $(".addUserForm");
-		me.addUserForm_UsernameTag = me.addUserFormTag.find('.username');
-		me.addUserForm_wtsaTag = me.addUserFormTag.find('.wtsa');
-		me.addUserForm_FullNameTag = me.addUserFormTag.find('.fullName');
-		me.addUserForm_AddUserBtnTag = me.addUserFormTag.find('.addUserBtn');
-		me.addUserForm_CancelBtnTag = me.addUserFormTag.find('.cancelBtn');
+		me.clientSearchResultFormTag = $(".clientSearchResultForm");
+		me.clientSearchResultForm_ContentTag =  me.clientSearchResultFormTag.find(".dialog_description");
+		me.clientSearchResultForm_CancelBtnTag = me.clientSearchResultFormTag.find('.cancelBtn');
 		
 
 		// ------------------------
@@ -153,8 +147,8 @@ function ChatApp(username) {
 		// Init Chat form
 		me.editContactListTag.attr("mode", "hide");
 		me.searchContactNameTag.val("");
-		me.showAddUserFormBtnTag.hide();
-		// me.showAddUserFormBtnTag.show();
+		me.showClientSearchResultFormBtnTag.hide();
+		// me.showClientSearchResultFormBtnTag.show();
 
 
 		me.setUp_Events();
@@ -321,7 +315,7 @@ function ChatApp(username) {
 
 			// Refresh the contact list with new contacts
 			me.updateContactList( userList );
-			me.addUserFormTag.hide();
+			me.clientSearchResultFormTag.hide();
 
 			alert("The new user is created !");
 		});
@@ -472,66 +466,6 @@ function ChatApp(username) {
 			me.searchContactUsers();
 		});
 
-		me.showAddUserFormBtnTag.off("click").on("click", function () {
-			me.addUserFormTag.find("input").val("");
-			me.addUserForm_UsernameTag.val(me.searchContactNameTag.val());
-			me.addUserFormTag.show();
-		});
-
-		me.addUserForm_AddUserBtnTag.off("click").on("click", function () {
-			var username = me.addUserForm_UsernameTag.val();
-			var fullName = me.addUserForm_FullNameTag.val();
-			var wtsa = me.addUserForm_wtsaTag.val();
-
-			me.socket.emit("create_new_user", [me.curUser, {username, fullName, wtsa }]);
-		});
-
-		me.addUserForm_UsernameTag.off("keyup").on("keyup", function () {
-			var colTag = me.addUserForm_UsernameTag.closest("div");
-			colTag.find(".error").remove(); // Remove the error message if any
-
-			var username = $(this).val();
-			if( username != "" )
-			{
-				var list = me.curUser.contacts.filter(function(contact){ return contact.contactName == username });
-			
-				if( list.length > 0 )
-				{
-					colTag.append("<span class='error'>This username is not available</span>");
-					me.disableAddUserBtn( true ); // Disable "Add User" button
-				}
-				else if( me.addUserFormTag.find(".error").length == 0) // In case we have Error in "username" field
-				{
-					me.disableAddUserBtn( false ); // Enable "Add User" button
-				}
-			}
-			else
-			{
-				me.addUserForm_UsernameTag.after("<span class='error'>Please enter username</span>");
-				me.disableAddUserBtn( true ); // Disable "Add User" button
-			}
-		});
-
-		me.addUserForm_FullNameTag.off("keyup").on("keyup", function () {
-			var colTag = me.addUserForm_FullNameTag.closest("div");
-			colTag.find(".error").remove(); // Remove the error message if any
-			
-			if( $(this).val() == "" )
-			{
-				colTag.append("<span class='error'>Please enter full name</span>");
-				me.disableAddUserBtn(true);
-			}
-			else if( me.addUserFormTag.find(".error").length == 0 ) // In case we have Error in "username" field
-			{
-				me.disableAddUserBtn(false);
-			}
-		});
-
-		me.addUserForm_CancelBtnTag.off("click").on("click", function () {
-			me.addUserFormTag.hide();
-		});
-
-
 		me.editContactListTag.off("click").on("click", function () {
 			const mode = $(this).attr("mode")
 			if (mode == "hide") {
@@ -618,6 +552,19 @@ function ChatApp(username) {
 		//     }
 		// })
 
+		
+		me.showClientSearchResultFormBtnTag.off("click").on("click", function () {
+			// Search Clients by fullName and Show the matched result
+			var searchKey = me.searchContactNameTag.val();
+			var searchClientResultTag = me.searchClientsByFullname(searchKey);
+			me.clientSearchResultForm_ContentTag.html("").append( searchClientResultTag );
+			me.clientSearchResultFormTag.show();
+		});
+		
+		me.clientSearchResultForm_CancelBtnTag.off("click").on("click", function () {
+			me.clientSearchResultFormTag.hide();
+		});
+
 	}
 
 	me.disableAddUserBtn = function(isDisabled )
@@ -642,31 +589,70 @@ function ChatApp(username) {
 		var searchText = me.searchContactNameTag.val().toUpperCase();
 
 		if (searchText != "") {
-			// let canAddNew = true;
+			// Show the match contacts
 			me.userListTag.find("li").each(function () {
-				// var fullName = $(this).html();
 				var userInfo = JSON.parse($(this).attr("user"));
 				if (userInfo.fullName.toUpperCase().indexOf(searchText) >= 0 ) {
 					$(this).show();
-
-					// if (userInfo.fullName.toUpperCase() == searchText || userInfo.userName.toUpperCase() == searchText) {
-					// 	canAddNew = false;
-					// }
 				}
 			});
-
-			// if (canAddNew) {
-			// 	me.showAddUserFormBtnTag.show();
-			// }
-			// else {
-			// 	me.showAddUserFormBtnTag.hide();
-			// }
+			me.showClientSearchResultFormBtnTag.show();
 		}
 		else {
 			me.userListTag.find("li").show();
-			// me.showAddUserFormBtnTag.hide();
+			me.showClientSearchResultFormBtnTag.hide();
 		}
 	}
+
+	me.searchClientsByFullname = function( searchKey ){
+		var searchResultTag = $("<div class='div-table'></div>");
+
+		searchKey = searchKey.toUpperCase();
+		var clientList = ClientDataManager.getClientList();
+		var hasClientFound = false;
+
+		for( var i=0; i<clientList.length; i++ )
+		{
+			var clientJson = clientList[i];
+			var clientDetails = clientJson.clientDetails;
+
+			var fullName = clientDetails.firstName + " " + clientDetails.lastName;
+			fullName = fullName.toUpperCase();
+			if( fullName.indexOf(searchKey) >= 0 )
+			{
+				hasClientFound = true;
+
+				// Create a table row
+				var rowTag = $(`<div class="div-table-row"></div>`);
+
+				// Add full name
+				rowTag.append(`<div class="div-table-col">${fullName}</div>`);
+
+				// Add the Whatsapp Phonenumber if any
+				var wtsa = clientDetails.phoneNumber_whatsApp;
+				if( wtsa )
+				{ 
+					var addBtnTag = $(`<button class="addBtn">Add</button>`);
+
+					rowTag.append(`<div class="div-table-col">${wtsa}</div>`);
+					rowTag.append(`<div class="div-table-col"></div>`).append(addBtnTag);
+
+					// Add the button "Click" event
+					addBtnTag.click(function(){
+						me.socket.emit("create_new_user", [me.curUser, {username:clientJson._id, fullName, wtsa }]);
+					});
+				}
+
+				searchResultTag.append(rowTag);
+			}
+		}
+
+		if( !hasClientFound )
+		{
+			searchResultTag.append(`<div class="div-table-row"><div class="div-table-col">No client found !</div></div>`);
+		}
+		return searchResultTag;
+	};
 
 	me.setCurrentUserInfo = function () {
 		me.curUserDivTag.attr(`username="${me.curUser.username}"`);
@@ -1005,25 +991,10 @@ ChatApp.contentHtml = `
 `;
 
 ChatApp.newUserForm = `
-<div class="mddtp-picker dialog addUserForm" style="display:none">
-	<h2 class="dialog_title">New user</h2>
+<div class="mddtp-picker dialog clientSearchResultForm" style="display:none">
+	<h2 class="dialog_title">Search Client List</h2>
 	
-	<div class="dialog_description">
-		<div class="div-table">
-			<div class="div-table-row">
-				<div class="div-table-col">User name <span style='color:red'>*</span>:</div>
-				<div class="div-table-col"><input class="username"></div>
-			</div>
-			<div class="div-table-row">
-				<div class="div-table-col">Full name <span style='color:red'>*</span>:</div>
-				<div class="div-table-col"><input class="fullName"></div>
-			</div>
-			<div class="div-table-row">
-				<div class="div-table-col">WhatsApp Phone number:</div>
-				<div class="div-table-col"><input class="wtsa"></div>
-			</div>
-		</div>
-	</div>
+	<div class="dialog_description"></div>
 
 	<div class="flex flex-space-between"">
 		<button class="cancelBtn dialogBtn ">Cancel</button>
