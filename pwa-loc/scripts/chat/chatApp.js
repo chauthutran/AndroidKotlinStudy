@@ -556,8 +556,7 @@ function ChatApp(username) {
 		me.showClientSearchResultFormBtnTag.off("click").on("click", function () {
 			// Search Clients by fullName and Show the matched result
 			var searchKey = me.searchContactNameTag.val();
-			var searchClientResultTag = me.searchClientsByFullname(searchKey);
-			me.clientSearchResultForm_ContentTag.html("").append( searchClientResultTag );
+			me.searchAndPopualteClientsByFullname(searchKey);
 			me.clientSearchResultFormTag.show();
 		});
 		
@@ -604,8 +603,10 @@ function ChatApp(username) {
 		}
 	}
 
-	me.searchClientsByFullname = function( searchKey ){
-		var searchResultTag = $("<div class='div-table'></div>");
+	me.searchAndPopualteClientsByFullname = function( searchKey ){
+		// var searchResultTag = $("<div class='div-table'></div>");
+		var searchResultTag = me.clientSearchResultForm_ContentTag;
+		searchResultTag.find(".data").remove();
 
 		searchKey = searchKey.toUpperCase();
 		var clientList = ClientDataManager.getClientList();
@@ -616,34 +617,42 @@ function ChatApp(username) {
 			var clientJson = clientList[i];
 			var clientDetails = clientJson.clientDetails;
 
-			var fullName = clientDetails.firstName + " " + clientDetails.lastName;
-			fullName = fullName.toUpperCase();
-			if( fullName.indexOf(searchKey) >= 0 )
+			//  Make sure In search result, we don't add the existed clients which existed in contact list of current user.
+			var existedContactUser = me.curUser.contacts.filter(function(item){ return item.contactName == clientJson._id });
+			if( existedContactUser.length == 0)
 			{
-				hasClientFound = true;
+				var fullName = clientDetails.firstName + " " + clientDetails.lastName;
+				fullName = fullName.toUpperCase();
+				if( fullName.indexOf(searchKey) >= 0 )
+				{
+					hasClientFound = true;
 
-				// Create a table row
-				var rowTag = $(`<div class="div-table-row"></div>`);
+					// Create a table row
+					var rowTag = $(`<div class="div-table-row data"></div>`);
 
-				// Add full name
-				rowTag.append(`<div class="div-table-col">${fullName}</div>`);
+					// Add full name
+					rowTag.append(`<div class="div-table-col">${fullName}</div>`);
 
-				// Add the Whatsapp Phonenumber if any
-				var wtsa = clientDetails.phoneNumber_whatsApp;
-				if( wtsa )
-				{ 
-					var addBtnTag = $(`<button class="addBtn">Add</button>`);
+					// Add the Whatsapp Phonenumber if any
+					var wtsa = clientDetails.phoneNumber_whatsApp;
+					if( wtsa )
+					{ 
+						var userData = {username:clientJson._id, fullName, wtsa};
 
-					rowTag.append(`<div class="div-table-col">${wtsa}</div>`);
-					rowTag.append(`<div class="div-table-col"></div>`).append(addBtnTag);
+						rowTag.append(`<div class="div-table-col">${wtsa}</div>`);
+						rowTag.append(`<div class="div-table-col"><button class="addBtn">Add</button></div>`)
 
-					// Add the button "Click" event
-					addBtnTag.click(function(){
-						me.socket.emit("create_new_user", [me.curUser, {username:clientJson._id, fullName, wtsa }]);
-					});
+						// Add the button "Click" event
+						me.setUpEvents_AddNewUser( rowTag.find(".addBtn"), userData );
+					}
+					else
+					{
+						rowTag.append(`<div class="div-table-col"></div>`);
+						rowTag.append(`<div class="div-table-col"></div>`);
+					}
+
+					searchResultTag.append(rowTag);
 				}
-
-				searchResultTag.append(rowTag);
 			}
 		}
 
@@ -654,13 +663,20 @@ function ChatApp(username) {
 		return searchResultTag;
 	};
 
+	me.setUpEvents_AddNewUser = function( addBtnTag, userData )
+	{
+		addBtnTag.click(function(e, clientData){
+			// me.socket.emit("create_new_user", [me.curUser, JSON.parse($(this).attr("clientJson"))]);
+			me.socket.emit("create_new_user", [me.curUser, userData]);
+		});
+	}
+
 	me.setCurrentUserInfo = function () {
 		me.curUserDivTag.attr(`username="${me.curUser.username}"`);
 		me.curUsernameTag.html(me.curUser.fullName);
 
 		// For curUser icon background-color
 		me.curUserIconTag.html(me.curUser.fullName.substring(0, 2).toUpperCase());
-		// me.curUserIconTag.css("backgroundColor", "#" + randomColor);
 		me.curUserIconTag.css("color", "#" + Utils.stringToDarkColour(me.curUser.username));
 		me.curUserIconTag.css("backgroundColor", Utils.stringToLightColour(me.curUser.username));
 	}
@@ -993,13 +1009,15 @@ ChatApp.contentHtml = `
 ChatApp.newUserForm = `
 <div class="mddtp-picker dialog clientSearchResultForm" style="display:none">
 	<h2 class="dialog_title">Search Client List</h2>
-	
-	<div class="dialog_description"></div>
-
+	<div class='div-table dialog_description'>
+		<div class="div-table-row header">
+			<div class="div-table-col">Full Mame</div>
+			<div class="div-table-col">Whatsapp Phone Number</div>
+			<div class="div-table-col">#</div>
+		</div>
+	</div>
 	<div class="flex flex-space-between"">
 		<button class="cancelBtn dialogBtn ">Cancel</button>
-		<button class="addUserBtn dialogBtn cta">Add User</button> 
 	</div>
-
 </div>
 `;
