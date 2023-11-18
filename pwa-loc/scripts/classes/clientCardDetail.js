@@ -200,10 +200,6 @@ function ClientCardDetail(clientId) {
 				var divLatestVoucherTag = me.displayLatestVoucherInfo(clientJson, activityListDivTag); // only if there is vouchers..
 				if (ConfigManager.switchLatestVoucher() && divLatestVoucherTag) me.setSwitchLatestVoucher(clientJson, divLatestVoucherTag, activityTabTag);
 
-				// Only for 'Bahmni' sourceType, make sure the 'followUp' activities has proper 'followUp_SourceId'
-				// MOVE to Configuration - "clientActivity" > "listFilterEval": 
-				// if ( ConfigManager.isBahmniSubSourceType() ) BahmniService.populateFollowUpSourceActId( clientJson );
-
 				var filteredActivities = ClientDataManager.getActivities_EP_Filtered(clientJson);  // clientJson.activities
 
 				// NEW - Activity list filter by eval
@@ -212,7 +208,8 @@ function ClientCardDetail(clientId) {
 				me.populateActivityCardList(filteredActivities, activityListDivTag);
 
 				// NEW - Add filter for activity
-				if ( ConfigManager.getClientActivity().showUIFilterSelect_ByType ) me.createActivityFilterOptions( filteredActivities, activityListDivTag );
+				var cActConfig = ConfigManager.getClientActivity();
+				if ( cActConfig.showUIFilterSelect_ByType || cActConfig.UIFilterSelect_show ) me.createActivityFilterOptions( filteredActivities, activityListDivTag );
 			}
 
 			// ClientActivity FavList render
@@ -312,14 +309,14 @@ function ClientCardDetail(clientId) {
 		return filteredData;
 	};
 
-	me.createActivityFilterOptions = function(actList, activityListDivTag)
+	me.createActivityFilterOptions = function(filteredActivities, activityListDivTag)
 	{
-		var typeList = [...new Set(actList.map(function(act){ return act.type }))].sort();
+		var typeList = [...new Set(filteredActivities.map(function(act){ return act.type }))].sort();
 
 		// NOTE: Can optionally use config settings to manipulate the 'typeList'
 		//  - And also override the 'change' event to handle special type listing..
 		var clientActJson = ConfigManager.getClientActivity();
-		if ( clientActJson.UIFilterSelect_sortEval ) eval( Util.getEvalStr( clientActJson.UIFilterSelect_sortEval ) );
+		if ( clientActJson.UIFilterSelect_listEval ) eval( Util.getEvalStr( clientActJson.UIFilterSelect_listEval ) );
 
 		var filterSelectorTag = $("<select></select>");
 		filterSelectorTag.append(`<option value="all">All</option>`);
@@ -329,22 +326,27 @@ function ClientCardDetail(clientId) {
 		});
 
 
-		filterSelectorTag.change(function(){
+		filterSelectorTag.change(function()
+		{
 			var actType = $(this).val();
 			
-			if( actType == "all" )
-			{
-				activityListDivTag.find(`div.activity[itemid]`).show();
-			}
+			if( actType === "all" ) activityListDivTag.find( 'div.activity[itemid]' ).filter( '[hideFromAll!=Y]' ).show();
 			else
 			{
 				// Hide all items first
-				activityListDivTag.find(`div.activity[itemid]`).hide();
+				activityListDivTag.find( 'div.activity[itemid]' ).hide();
 
-				// Show items with type as "actType"
-				var filteredList = actList.filter(function(item){ return item.type == actType });
-				var filteredItemTagIds = filteredList.map(function(item){ return `div.activity[itemId='${item.id}']`}).join(",");
-				activityListDivTag.find(`${filteredItemTagIds}`).show();
+				if ( INFO.actTypeClick && INFO.actTypeClick[ actType ] ) INFO.actTypeClick[ actType ]();
+				else
+				{
+					// Show items with type as "actType"
+					filteredActivities.filter( act => act.type === actType ).forEach( act => {
+						activityListDivTag.find( 'div.activity[itemid=' + act.id + ']' ).show();
+					});
+
+					//var filteredItemTagIds = filteredList.map(function(item){ return `div.activity[itemId='${item.id}']`}).join(",");
+					//activityListDivTag.find(`${filteredItemTagIds}`).show();
+				}
 			}
 		});
 
