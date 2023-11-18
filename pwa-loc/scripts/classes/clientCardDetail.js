@@ -193,6 +193,7 @@ function ClientCardDetail(clientId) {
 
 			activityTabBodyDivTag.html('<div class="activityList tabContentList"></div>').show();
 			var activityListDivTag = activityTabBodyDivTag.find('.activityList');
+			INFO.activityListDivTag = activityListDivTag;
 
 			var clientJson = ClientDataManager.getClientById(clientId); // for changed client data?
 			if (clientJson) {
@@ -204,8 +205,9 @@ function ClientCardDetail(clientId) {
 
 				// NEW - Activity list filter by eval
 				filteredActivities = me.filterActList( filteredActivities, ConfigManager.getClientActivityFilterEval() );
+				INFO.filteredActivities = filteredActivities;
 
-				me.populateActivityCardList(filteredActivities, activityListDivTag);
+				me.populateActivityCardList( filteredActivities, activityListDivTag );
 
 				// NEW - Add filter for activity
 				var cActConfig = ConfigManager.getClientActivity();
@@ -309,9 +311,9 @@ function ClientCardDetail(clientId) {
 		return filteredData;
 	};
 
-	me.createActivityFilterOptions = function(filteredActivities, activityListDivTag)
+	me.createActivityFilterOptions = function( filteredActivities, activityListDivTag )
 	{
-		var typeList = [...new Set(filteredActivities.map(function(act){ return act.type }))].sort();
+		var typeList = [...new Set( filteredActivities.map(function(act){ return act.type }) ) ].sort();
 
 		// NOTE: Can optionally use config settings to manipulate the 'typeList'
 		//  - And also override the 'change' event to handle special type listing..
