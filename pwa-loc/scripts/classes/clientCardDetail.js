@@ -211,7 +211,7 @@ function ClientCardDetail(clientId) {
 
 
 				// 3. Activity list filter (dataFilter) by eval ('listFilterEval')
-				filteredActivities = me.filterActList( filteredActivities, Util.getEvalStr( clientActConfig.listFilterEval ) );
+				filteredActivities = me.filterActList( filteredActivities, clientActConfig.listFilterEval );
 				INFO.filteredActivities = filteredActivities;
 
 
@@ -300,22 +300,22 @@ function ClientCardDetail(clientId) {
 	};
 
 
-	me.filterActList = function ( actList, configFilterEvalStr ) 
+	me.filterActList = function ( actList, listFilterEval ) 
 	{
 		var filteredData = actList;
 
-		if ( configFilterEvalStr )
+		if ( listFilterEval )
 		{
-			try {
-				InfoDataManager.setINFOdata('activityList', actList);
-				filteredData = eval(configFilterEvalStr);
-			} 
-			catch (errMsg) { console.log('ClientCardDetail.filterActList, ' + errMsg); }
-			
-			//actList.forEach( act => { InfoDataManager.setINFOdata('activity', act);
-			//		if (configFilterEvalStr) returnVal = eval(configFilterEvalStr);
-			//		if (returnVal === true) filteredData.push(client);
-			// try .. catch (errMsg) { console.log('ClientCardDetail.filterActList, ' + errMsg); }
+			var evalStr = Util.getEvalStr( listFilterEval );
+
+			if ( evalStr && Util.trim( evalStr ).length > 0 )
+			{
+				try {
+					InfoDataManager.setINFOdata('activityList', actList);
+					filteredData = eval(configFilterEvalStr);
+				} 
+				catch (errMsg) { console.log('ClientCardDetail.filterActList, ' + errMsg); }	
+			}			
 		}
 
 		return filteredData;
@@ -353,11 +353,8 @@ function ClientCardDetail(clientId) {
 				{
 					// Show items with type as "actType"
 					filteredActivities.filter( act => act.type === actType ).forEach( act => {
-						activityListDivTag.find( 'div.activity[itemid=' + act.id + ']' ).show();
+						activityListDivTag.find( 'div.activity[itemid=' + act.id + '][hideFromAll!=Y]' ).show();
 					});
-
-					//var filteredItemTagIds = filteredList.map(function(item){ return `div.activity[itemId='${item.id}']`}).join(",");
-					//activityListDivTag.find(`${filteredItemTagIds}`).show();
 				}
 			}
 		});
