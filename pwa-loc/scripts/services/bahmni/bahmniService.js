@@ -113,41 +113,51 @@ BahmniService.populateFollowUpSourceActId = function( clientJson )
 
 BahmniService.setCaptureLoc_fromVisitDate = function( clientJson )
 {
+	BahmniService.orderDateSet_fromVisitDate( clientJson, 'capturedLoc' );
+};
+
+
+BahmniService.orderDateSet_fromVisitDate = function( clientJson, dateField )
+{
 	try
 	{
-		// populate visitDate in 'date' from originalData.. or followUp_SourceId
-		// also, populate captureDate with visitDate <-- if exists..
-	
+		// Populate 'visitDate' in 3 type bahmni activity.  And FollowUp activities set visitDate with their source activity visitDate.
+		// Set 'captureDate' (captureLoc?) with visitDate.
+
+		// NOTE: 
+		//		- This does not guarantee next to each other.. PUT name at the end?  Or use this type name in sort <-- 2nd sort?
+
 		clientJson.activities.forEach( act => 
 		{
-			var visitDateInt = '';
+			var visitDateNumeric = ''; // date.getTime() <-- miliseconds in numeric 
 			var visitDateStr = '';
 
 			try
 			{
+				// Set 'srcAct' (Source Activity) for FollowUp activity referencing the source activity.
 				var srcAct = ( act.followUp_SourceId ) ? ActivityDataManager.getActivityById( act.followUp_SourceId ) : undefined;
 
-				if ( act.type === BahmniService.ACTIVITY_TYPE_APPOINTMENT ) visitDateInt = act.originalData.startDateTime;
-				else if ( act.type === BahmniService.ACTIVITY_TYPE_REFERRALS_TEMPLATE ) visitDateInt = act.originalData.visitStartDateTime;
-				else if ( act.type === BahmniService.ACTIVITY_TYPE_ASSESSMENT_AND_PLAN ) visitDateInt = act.originalData.visitStartDateTime;
+				if ( act.type === BahmniService.ACTIVITY_TYPE_APPOINTMENT ) visitDateNumeric = act.originalData.startDateTime;
+				else if ( act.type === BahmniService.ACTIVITY_TYPE_REFERRALS_TEMPLATE ) visitDateNumeric = act.originalData.visitStartDateTime;
+				else if ( act.type === BahmniService.ACTIVITY_TYPE_ASSESSMENT_AND_PLAN ) visitDateNumeric = act.originalData.visitStartDateTime;
 	
 				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_APPOINTMENT ) visitDateStr = act.syncUp.startDateTime;
-				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE ) visitDateInt = ( srcAct ) ? srcAct.originalData.visitStartDateTime: '';
-				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN ) visitDateInt = ( srcAct ) ? srcAct.originalData.visitStartDateTime: '';
+				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE ) visitDateNumeric = ( srcAct ) ? srcAct.originalData.visitStartDateTime: '';
+				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN ) visitDateNumeric = ( srcAct ) ? srcAct.originalData.visitStartDateTime: '';
 	
 	
-				if ( !visitDateStr && visitDateInt ) visitDateStr = UtilDate.dateStr( "DT", new Date( visitDateInt ) );
+				if ( !visitDateStr && visitDateNumeric ) visitDateStr = UtilDate.dateStr( "DT", new Date( visitDateNumeric ) );
 			}
 			catch ( errMsg ) { }
 
-			if ( visitDateStr ) act.date.capturedLoc = visitDateStr; // Also, set capturedUTC?
+			if ( visitDateStr ) act.date[ dateField ] = visitDateStr; // Also, set capturedUTC?
 
 			act.date.visitDateLoc = visitDateStr;
 			if ( act.date.visitDateLoc ) UtilDate.setDate_LocToUTC( act.date, 'visitDateLoc' );
 		});
 	}
 	catch ( errMsg ) { 
-		console.log( 'ERROR in BahmniService.setCaptureLoc_fromVisitDate', errMsg ); 
+		console.log( 'ERROR in BahmniService.orderDateSet_fromVisitDate', errMsg ); 
 	}
 };
 

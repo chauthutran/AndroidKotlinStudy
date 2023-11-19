@@ -196,22 +196,32 @@ function ClientCardDetail(clientId) {
 			INFO.activityListDivTag = activityListDivTag;
 
 			var clientJson = ClientDataManager.getClientById(clientId); // for changed client data?
-			if (clientJson) {
-				// NEW - switchLatestVoucherRoles
+			if (clientJson) 
+			{
+				var clientActConfig = ConfigManager.getClientActivity();
+
+				// 1. NEW - switchLatestVoucherRoles
 				var divLatestVoucherTag = me.displayLatestVoucherInfo(clientJson, activityListDivTag); // only if there is vouchers..
 				if (ConfigManager.switchLatestVoucher() && divLatestVoucherTag) me.setSwitchLatestVoucher(clientJson, divLatestVoucherTag, activityTabTag);
 
 				var filteredActivities = ClientDataManager.getActivities_EP_Filtered(clientJson);  // clientJson.activities
 
-				// NEW - Activity list filter by eval
-				filteredActivities = me.filterActList( filteredActivities, ConfigManager.getClientActivityFilterEval() );
+				// 2. NEW - Run Eval on activity listing
+				if ( clientActConfig.runOnListingEval ) eval( Util.getEvalStr( clientActConfig.runOnListingEval ) );
+
+
+				// 3. Activity list filter (dataFilter) by eval ('listFilterEval')
+				filteredActivities = me.filterActList( filteredActivities, Util.getEvalStr( clientActConfig.listFilterEval ) );
 				INFO.filteredActivities = filteredActivities;
 
+
+				// 4. Main Activity Card Listing Population Method
 				me.populateActivityCardList( filteredActivities, activityListDivTag );
 
-				// NEW - Add filter for activity
-				var cActConfig = ConfigManager.getClientActivity();
-				if ( cActConfig.showUIFilterSelect_ByType || cActConfig.UIFilterSelect_show ) me.createActivityFilterOptions( filteredActivities, activityListDivTag );
+
+				// 5. NEW - UI activity filter (switch UI filter) (could make 'listFilterEval')
+				//		- After listing tags population, set up UI switching the list by show/hide
+				if ( clientActConfig.showUIFilterSelect_ByType || clientActConfig.UIFilterSelect_show ) me.createActivityFilterOptions( filteredActivities, activityListDivTag );
 			}
 
 			// ClientActivity FavList render

@@ -589,8 +589,11 @@ Util.getEvalStr = function (evalObj) {
 	var evalStr = '';
 
 	try {
-		if (Util.isTypeString(evalObj)) evalStr = evalObj;
-		else if (Util.isTypeArray(evalObj)) evalStr = evalObj.join('\r\n');
+		if ( evalObj )
+		{
+			if (Util.isTypeString(evalObj)) evalStr = Util.trim( evalObj );
+			else if (Util.isTypeArray(evalObj)) evalStr = Util.trim( evalObj.join('\r\n') );	
+		}
 	}
 	catch (errMsg) {
 		console.log('ERROR in blockForm.getEvalStr, errMsg: ' + errMsg);

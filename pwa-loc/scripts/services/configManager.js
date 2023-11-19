@@ -818,9 +818,7 @@ ConfigManager.getClientActivity = function () {
 
 ConfigManager.getClientActivityFilterEval = function () {
 
-	var filterEval = ConfigManager.getClientActivity().listFilterEval;
-
-	return ( filterEval ) ? Util.getEvalStr( filterEval ): '';
+	return Util.getEvalStr( ConfigManager.getClientActivity().listFilterEval );
 };
 
 
