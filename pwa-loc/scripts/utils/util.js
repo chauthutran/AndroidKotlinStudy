@@ -1178,11 +1178,12 @@ Util.sortByKey_Reverse = function (array, key) {
 };
 
 Util.evalSort = function (fieldName, list, orderStr) {
-	try {
+	try 
+	{
 		if( list.length > 1 )
 		{
 			var isDescending = (orderStr === 'desc');
-			var sortEvalStr = 'Util.sortCompare( a.' + fieldName + ', b.' + fieldName + ')';
+			var sortEvalStr = 'Util.sortCompare( a.' + fieldName + ', b.' + fieldName + ')';			
 
 			if (!isDescending) list.sort(function (a, b) { return eval(sortEvalStr); });
 			else list.sort(function (b, a) { return eval(sortEvalStr); });
@@ -1190,6 +1191,29 @@ Util.evalSort = function (fieldName, list, orderStr) {
 	}
 	catch (errMsg) {
 		console.log('ERROR in Util.evalSort, ' + errMsg);
+	}
+};
+
+
+// Example: Util.evalSort2( list, 'Util.sortCompare( a.date.capturedLoc + Util.getStr( a.sortType ),  b.date.capturedLoc + Util.getStr( b.sortType ) )', { sortOrder: 'desc' } );
+Util.evalSort2 = function ( list, sortEvalStr, option ) {
+	try 
+	{
+		if ( !option ) option = {};
+
+		if( list.length > 1 && sortEvalStr )
+		{			
+			orderStr = '';
+			if ( option.sortOrder ) orderStr = option.sortOrder;
+
+			var isDescending = (orderStr === 'desc');
+
+			if (!isDescending) list.sort(function (a, b) { return eval(sortEvalStr); } );
+			else list.sort(function (b, a) { return eval(sortEvalStr); } );
+		}
+	}
+	catch (errMsg) {
+		console.log('ERROR in Util.evalSort2, ' + errMsg);
 	}
 };
 
