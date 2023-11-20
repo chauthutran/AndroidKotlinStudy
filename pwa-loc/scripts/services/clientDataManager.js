@@ -103,7 +103,8 @@ ClientDataManager.insertClient = function (client) {
 	InfoDataManager.setINFOdata('client_sort', client);
 
 	if (!ConfigManager.activitySorting_EvalRun("insertClient")) {
-		// NOTE: TODO: this cause issues...  
+		// For Client listing, we need to keep the activities with ascending order, so that
+		//	registration, and other things can go in that order
 		try {
 			Util.evalSort('date.createdLoc', client.activities, 'asc');
 		}

@@ -577,7 +577,7 @@ function ClientCardDetail(clientId) {
 			InfoDataManager.setINFOdata('actList_sort', actList_sort);
 			if (!ConfigManager.activitySorting_EvalRun("populateActivityCardList")) {
 				Util.evalSort('date.capturedLoc', actList_sort, 'desc');
-				Util.evalSort('date.capturedLoc', actList_sort, 'asc');
+				// Util.evalSort('date.capturedLoc', actList_sort, 'asc');
 			}
 
 			for (var i = actList_sort.length - 1; i >= 0; i--) {

@@ -160,6 +160,8 @@ ActivityDataManager.insertActivitiesToClient = function (activities, client, opt
 	if (!ConfigManager.activitySorting_EvalRun("insertActivity")) {
 		// NOTE: TODO: this cause issues...  
 		try {
+			// For Client listing, we need to keep the activities with ascending order, so that
+			//	registration, and other things can go in that order
 			Util.evalSort('date.createdLoc', client.activities, 'asc');
 		}
 		catch (errMsg) {
