@@ -117,10 +117,11 @@ BahmniService.setCaptureLoc_fromVisitDate = function( clientJson )
 };
 
 
-BahmniService.orderDateSet_fromVisitDate = function( clientJson, dateField )
+BahmniService.orderDateSet_fromVisitDate = function( clientJson, dateField, option )
 {
 	try
 	{
+		if ( !option ) option = {};
 		// Populate 'visitDate' in 3 type bahmni activity.  And FollowUp activities set visitDate with their source activity visitDate.
 		// Set 'captureDate' (captureLoc?) with visitDate.
 
@@ -145,8 +146,9 @@ BahmniService.orderDateSet_fromVisitDate = function( clientJson, dateField )
 				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE ) visitDateNumeric = ( srcAct ) ? srcAct.originalData.visitStartDateTime: '';
 				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN ) visitDateNumeric = ( srcAct ) ? srcAct.originalData.visitStartDateTime: '';
 	
-	
 				if ( !visitDateStr && visitDateNumeric ) visitDateStr = UtilDate.dateStr( "DT", new Date( visitDateNumeric ) );
+
+				BahmniService.populateSortType( act, option.visitSortTypes );
 			}
 			catch ( errMsg ) { }
 
@@ -161,6 +163,23 @@ BahmniService.orderDateSet_fromVisitDate = function( clientJson, dateField )
 	}
 };
 
+BahmniService.populateSortType = function ( act, sortTypes )
+{
+	var sortType = '';
+
+	if ( act && sortTypes )
+	{
+		if ( act.type === BahmniService.ACTIVITY_TYPE_APPOINTMENT && sortTypes.length > 0 ) sortType = sortTypes[0];
+		else if ( act.type === BahmniService.ACTIVITY_TYPE_REFERRALS_TEMPLATE && sortTypes.length > 1 ) sortType = sortTypes[1];
+		else if ( act.type === BahmniService.ACTIVITY_TYPE_ASSESSMENT_AND_PLAN && sortTypes.length > 2 ) sortType = sortTypes[2];
+
+		else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_APPOINTMENT && sortTypes.length > 3 ) sortType = sortTypes[3];
+		else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_REFERRALS_TEMPLATE && sortTypes.length > 4 ) sortType = sortTypes[4];
+		else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN && sortTypes.length > 5 ) sortType = sortTypes[5];
+	}
+
+	if ( sortType ) act.sortType = sortType;
+}
 
 BahmniService.serviceStartUp = function () 
 {
