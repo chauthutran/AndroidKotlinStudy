@@ -18,6 +18,33 @@
 
 function App() { };
 
+App.hrefBase = Util.removeLastMatchChar( window.location.href.split("?")[0], '/' );
+App.paramObj = Util.getParamObj( window.location.href );
+App.blockMultipleUsageMsg = 'Another Brower Tab is already using this app, ' + App.hrefBase + '.  Multiple tab usage is blocked for this app.';
+
+if ( App.paramObj[ 'blockMultipleUsage' ] !== 'Y' )
+{
+	const bc = new BroadcastChannel( App.hrefBase );
+
+	bc.onmessage = (event) => {
+	if (event.data === 'CheckDuplicateTabCase' ) {
+		bc.postMessage('FoundAlreadyExitingTab');
+		console.log(`Another tab of this site just got opened`);
+	}
+	if (event.data === 'FoundAlreadyExitingTab' ) 
+	{
+			if ( App.paramObj[ 'blockMultipleUsage' ] !== 'Y' )
+			{
+				alert( App.blockMultipleUsageMsg );
+				window.location = App.hrefBase + '?blockMultipleUsage=Y';	
+			}
+	}
+	};
+
+	bc.postMessage('CheckDuplicateTabCase');
+}
+
+
 //App.username = "";
 App.appInstallBtnTag;
 App.ver14 = false;
@@ -27,6 +54,16 @@ App.byPass_BrwsBackBtnActionBlock = false;
 
 App.run = function () 
 {
+	if ( App.paramObj[ 'blockMultipleUsage' ] === 'Y' )
+	{
+		console.log( App.blockMultipleUsageMsg );
+		var issueDivTag = $( '<div class="msg" style="padding: 15px; font-size: 19px;"></div>' );
+		issueDivTag.text( App.blockMultipleUsageMsg );
+		$( 'body' ).prepend( issueDivTag );		
+
+		return;
+	}
+
 	App.appInstallBtnTag = $('.appInstall');
 
 	// --------------------------
@@ -49,8 +86,8 @@ App.run = function ()
 
 
 	// --- Param Handling ( Get params from url, save it on LocalStorage(Persist), remove from url, reload if needed )
-	var paramObj = Util.getParamObj( window.location.href );
-	AppUtil.paramsJson = AppUtil.saveMerge_LSParamsLoad( paramObj ); // CleanUp Url (remove params), & Reload Page
+
+	AppUtil.paramsJson = AppUtil.saveMerge_LSParamsLoad( App.paramObj ); // CleanUp Url (remove params), & Reload Page
 
 
 	// TODO: Move this part / Hide this part into other Class/Method..

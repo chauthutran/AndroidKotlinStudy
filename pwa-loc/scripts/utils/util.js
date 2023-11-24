@@ -1625,6 +1625,12 @@ Util.getUrlLastName = function (url) {
 	return url.substring(url.lastIndexOf('/') + 1);
 };
 
+Util.removeLastMatchChar = function ( url, charToMatch ) 
+{
+	if ( url.substr( url.length -1, 1 ) === charToMatch ) url = url.substr( 0, url.length - 1 );
+	return url;
+};
+
 // --------------------------------------------
 
 Util.getObjPropertyCount = function (list) {
