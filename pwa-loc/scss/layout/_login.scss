@@ -70,8 +70,9 @@
             }
 
             @include l-device($breakpoint_598) {
-                padding: 7% 0 8% 16px;
+                /* padding: 7% 0 8% 16px; */
                 font-size: 150%;
+                margin: 30px 0px 0px 16px;
             }
         }
     }
