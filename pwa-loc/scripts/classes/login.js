@@ -695,9 +695,10 @@ function Login() {
 		else $( '.divLoginWith' ).hide();
 
 
-		// loginUserName Related 
+		// On Login Page - Focus Related, including loginUserName Related 
 		var loginUserName = me.loginUserNameTag.val();
 		if ( !loginUserName ) me.loginUserNameTag.focus();
+		else $('.pin1').focus();
 
 
 		// For 'KeyCloack' case, If user data does not exist, set the form for entry.. with pin & confirm

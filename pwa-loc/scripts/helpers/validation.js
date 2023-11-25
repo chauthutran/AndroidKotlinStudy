@@ -66,10 +66,12 @@ Validation.checkValidations = function (tag) {
 				});
 
 				// Default Universal checks..
+				// Double Quote usage block
 				Validation.performValidationCheck(tag, 'doubleQuote', divErrorMsgTargetTag, true);
 
-				// Maybe all DHIS2 sourceType should have this by default?
-				if ( ConfigManager.getSettings().inputVal_singleQuoteValidate ) Validation.performValidationCheck(tag, 'singleQuote', divErrorMsgTargetTag, true);
+				// Maybe all DHIS2 sourceType should have this by default? // inputVal_singleQuoteValidate
+				// Single Quote usage blocked in Dhis2 sourceType
+				if ( ConfigManager.isSourceTypeDhis2() ) Validation.performValidationCheck(tag, 'singleQuote', divErrorMsgTargetTag, true);
 			}
 
 			// If not valid, set the background color.
