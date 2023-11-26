@@ -4439,8 +4439,9 @@ textarea {
 
 @media (orientation: landscape) and (min-width: 598px) {
   .wrapper_login .login_header .login_title {
-    padding: 7% 0 8% 16px;
+    /* padding: 7% 0 8% 16px; */
     font-size: 150%;
+    margin: 30px 0px 0px 16px;
   }
 }
 

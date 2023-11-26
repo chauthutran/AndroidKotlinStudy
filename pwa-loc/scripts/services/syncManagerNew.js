@@ -1022,6 +1022,9 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
     	// NEW - Bahmni
 		if( successCaseName === 'bahmniSyncSuccess' )
 		{
+			// Bahmni 'FollowUp' cases bahmni synce success would come here.
+			//		- And after sync, it would trigger at here..
+
 			var clientList = [];
 
 			// 'syncedUp' processing data - OPTIONALLY, We could preserve 'failed' history...
@@ -1043,7 +1046,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 			// Set Flag - Set for mongo bahmni sync
 			activityJson_Orig.subSyncStatus = BahmniService.readyToMongoSync;
-			existingClientCopy.activities.filter( act => act.id === activityJson_Orig.id ).forEach( act => act.subSyncStatus = BahmniService.readyToMongoSync );
+			existingClientCopy.activities.filter( act => act.id === activityJson_Orig.id ).forEach( act => { act.subSyncStatus = BahmniService.readyToMongoSync; } );
 			// On Merge, in this bahmniCase, existingClientCopy.activity gets added to original existingClient after removing the one.  Thus, we need to make changes on the copy one.
 
 

@@ -451,6 +451,16 @@ BahmniService.syncDataRun = function ( option )
 						if (responseBahmniData.status.status == "success") 
 						{
 							var mergedActivityLength = mergedActivities.length;
+
+							// NEW - if activity were merged, set for Mongo Sync and save to database.
+							if ( mergedActivityLength > 0 )
+							{
+								mergedActivities.forEach( act => { act.subSyncStatus = BahmniService.readyToMongoSync; } );
+
+								ClientDataManager.saveCurrent_ClientsStore();
+							}
+
+							
 							BahmniMsgManager.SyncMsg_InsertMsg( "Merge FINSIHED: " + mergedActivityLength + " activities, " + clientDwnLength + " patients." );
 							BahmniMsgManager.SyncMsg_InsertSummaryMsg("Downloaded " + clientDwnLength + " patients, merged " + mergedActivityLength + " activities.");
 	
@@ -464,7 +474,8 @@ BahmniService.syncDataRun = function ( option )
 							{
 								var btnRefresh = $('<a style="color: blue !important; cursor: pointer;" term="">REFRESH </a>').click(() => { SessionManager.cwsRenderObj.renderArea1st(); });
 								MsgManager.msgAreaShowOpt( 'Bahmni SyncDown data found', { hideTimeMs: 10000, styles: 'background-color: orange;', actionButton: btnRefresh } );
-							}
+							}							
+							
 						}
 						else BahmniMsgManager.SyncMsg_InsertSummaryMsg("Sync Data Failed.");
 	
@@ -509,7 +520,7 @@ BahmniService.syncDown = function (exeFunc)
 		BahmniService.syncDownProcessingTotal = configSynDownList.length;
 		BahmniService.syncDownProcessingIdx = 0;
 
-		// NOTE #1. Runs Multiple Async Calls and 'afterSyncDown' detects the last response to run follow up process
+		// NOTE #1. Runs Multiple Async Calls and 'syncDown_ProcessResponse' detects the last response to run follow up process
 		for (var i = 0; i < configSynDownList.length; i++) 
 		{
 			var configSynDownData = JSON.parse(JSON.stringify(configSynDownList[i]));
@@ -520,13 +531,13 @@ BahmniService.syncDown = function (exeFunc)
 				Util.traverseEval(configSynDownData.payload, InfoDataManager.getINFO(), 0, 50);
 
 				BahmniRequestService.sendPostRequest(configSynDownData.id, url, configSynDownData.payload, function (response) {
-					BahmniService.afterSyncDown(response, exeFunc);
+					BahmniService.syncDown_ProcessResponse(response, exeFunc);
 				})
 			}
 			else if (configSynDownData.method.toUpperCase() == "GET") 
 			{
 				BahmniRequestService.sendGetRequest(configSynDownData.id, url, function (response) {
-					BahmniService.afterSyncDown(response, exeFunc);
+					BahmniService.syncDown_ProcessResponse(response, exeFunc);
 				});
 			}
 		}
@@ -534,7 +545,11 @@ BahmniService.syncDown = function (exeFunc)
 };
 
 
-BahmniService.afterSyncDown = function (response, exeFunc) 
+// After each individual syncDown, store them, and check the required/related other resource downloads - options, patient, metadata, etc..
+//		- When all of each individual syncDown has been reached, call 'syncDown_AfterAllDownloaded'
+//		- This will also process some data (final patient list, etc..) and return to perform final run..
+//		- On return 'exec', 'mergeDownloadedClients' happens..
+BahmniService.syncDown_ProcessResponse = function (response, exeFunc) 
 {
 	BahmniService.syncDownProcessingIdx++;
 	BahmniService.setResponseErrorIfAny(response);
@@ -592,7 +607,7 @@ BahmniService.afterSyncDown = function (response, exeFunc)
 						{
 							// TODO : BahmniService.getFormMetadataList
 							BahmniMsgManager.SyncMsg_InsertMsg( "After SyncDownAll Processing.." );
-							BahmniService.afterSyncDownAll( function()
+							BahmniService.syncDown_AfterAllDownloaded( function()
 							{
 								exeFunc({ status: BahmniService.syncDataStatus, data: BahmniService.syncDownDataList.patients });
 							});
@@ -823,7 +838,7 @@ BahmniService.syncDownStepsEval = function( syncDownName, option )
 
 // -------------------------
 
-BahmniService.afterSyncDownAll = function (exeFunc) 
+BahmniService.syncDown_AfterAllDownloaded = function (exeFunc) 
 {
 	// -------------------------------------------------------------------------------------------------------------
 	// Set conceps in AppInfo localStorage
@@ -1145,7 +1160,7 @@ BahmniService.mergeDownloadedClients = function (clientList, processingInfo, dow
 
 	if (!downloadedData) downloadedData = {};
 
-	// 1. Compare Client List.  If matching '_id' exists, perform merge,  Otherwise, add straight to clientList.
+	// 1. Compare Client List by 'patient'.  If exists, perform merge.  Otherwise, add straight to clientList.
 	if (clientList && Util.isTypeArray(clientList)) 
 	{
 		for (var i = 0; i < clientList.length; i++) 

@@ -356,12 +356,21 @@ ActivityDataManager.mergeDownloadedActivities = function (downActivities, appCli
 				else if ( BahmniService.isBahmniActivity( dwActivity ) )
 				{
 					// In 'bahmni' activity SyncDown case, only replace the activity if it was downloaded in later time
-					if ( dwActivity.date && dwActivity.date.updatedUTC && appClientActivity.date && appClientActivity.date.updatedUTC
-						&& dwActivity.date.updatedUTC > appClientActivity.date.updatedUTC )
+					// If 'date.updatedUTC' exists in both, compare & only merge if the downloaded one is later one
+					if ( dwActivity.date && dwActivity.date.updatedUTC && appClientActivity.date && appClientActivity.date.updatedUTC )
+					{
+						if ( dwActivity.date.updatedUTC > appClientActivity.date.updatedUTC )
 						{
 							ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
-							newActivities.push(dwActivity);		
+							newActivities.push(dwActivity);	
 						}
+					}
+					else
+					{
+						// If 'date' or comparison field 'updatedUTC' does not exist, then, simply set to merge/set for the later one.
+						ActivityDataManager.insertToProcessing(dwActivity, processingInfo);
+						newActivities.push(dwActivity);						
+					}
 				}
 				// NOTE: For other activities downloaded and existing, we should not merge it? - Do not add to activity?
 				//  <-- On Mongo case, we should update it..  I think..
