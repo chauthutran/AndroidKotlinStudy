@@ -100,7 +100,7 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
                     downloadInfo.clientInLocal = true;
 
                     // TODO - "date.updatedUTC": <-- Check for update on Client
-                    if ( localClient.date.updatedUTC < itemJson.date.updatedUTC )
+                    if ( me.isItemDateLater( localClient, itemJson ) )
                     {
                         downloadInfo.updatesAvailable = true;
                         downloadInfo.downloadNeeded = true;
@@ -219,8 +219,6 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
         }
     };
 
-
-
     me.itemIconClick_displayInfo = function( itemIconTag, itemJson )
     {
         itemIconTag.off( 'click' ).click( function( e ) 
@@ -228,6 +226,18 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
             e.stopPropagation();  // Stops calling parent tags event calls..
             console.log( itemJson );
         });
+    };
+
+    me.isItemDateLater = function( localClient, itemJson )
+    {
+        var isLater = false;
+
+        try {
+            if ( localClient.date.updatedUTC < itemJson.date.updatedUTC ) isLater = true;    
+        }
+        catch( errMsg ) {  console.log( 'ERROR in ItemCard.isItemDateLater, ' + errMsg );  }
+
+        return isLater;
     };
 
     me.hasMatchingLocalData = function( itemId )
