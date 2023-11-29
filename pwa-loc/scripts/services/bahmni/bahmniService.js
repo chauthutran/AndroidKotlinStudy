@@ -122,22 +122,30 @@ BahmniService.orderDateSet_fromVisitDate = function( clientJson, dateField, opti
 	try
 	{
 		if ( !option ) option = {};
+
 		// Populate 'visitDate' in 3 type bahmni activity.  And FollowUp activities set visitDate with their source activity visitDate.
 		// Set 'captureDate' (captureLoc?) with visitDate.
+		clientJson.activities.forEach( act => {  BahmniService.setActivity_VisitDate( act, dateField, option );  });
+	}
+	catch ( errMsg ) {  console.log( 'ERROR in BahmniService.orderDateSet_fromVisitDate', errMsg );  }
+};
 
-		// NOTE: 
-		//		- This does not guarantee next to each other.. PUT name at the end?  Or use this type name in sort <-- 2nd sort?
+BahmniService.setActivity_VisitDate = function( act, dateField, option )
+{
+	try
+	{
+		if ( !option ) option = {};
 
-		clientJson.activities.forEach( act => 
+		if ( act )
 		{
 			var visitDateNumeric = ''; // date.getTime() <-- miliseconds in numeric 
 			var visitDateStr = '';
-
+	
 			try
 			{
 				// Set 'srcAct' (Source Activity) for FollowUp activity referencing the source activity.
 				var srcAct = ( act.followUp_SourceId ) ? ActivityDataManager.getActivityById( act.followUp_SourceId ) : undefined;
-
+	
 				if ( act.type === BahmniService.ACTIVITY_TYPE_APPOINTMENT ) visitDateNumeric = act.originalData.startDateTime;
 				else if ( act.type === BahmniService.ACTIVITY_TYPE_REFERRALS_TEMPLATE ) visitDateNumeric = act.originalData.visitStartDateTime;
 				else if ( act.type === BahmniService.ACTIVITY_TYPE_ASSESSMENT_AND_PLAN ) visitDateNumeric = act.originalData.visitStartDateTime;
@@ -147,21 +155,23 @@ BahmniService.orderDateSet_fromVisitDate = function( clientJson, dateField, opti
 				else if ( act.type === BahmniService.ACTIVITY_TYPE_FU_ASSESSMENT_AND_PLAN ) visitDateNumeric = ( srcAct ) ? srcAct.originalData.visitStartDateTime: '';
 	
 				if ( !visitDateStr && visitDateNumeric ) visitDateStr = UtilDate.dateStr( "DT", new Date( visitDateNumeric ) );
-
+	
 				BahmniService.populateSortType( act, option.visitSortTypes );
 			}
 			catch ( errMsg ) { }
-
+	
 			if ( visitDateStr ) act.date[ dateField ] = visitDateStr; // Also, set capturedUTC?
-
+	
 			act.date.visitDateLoc = visitDateStr;
 			if ( act.date.visitDateLoc ) UtilDate.setDate_LocToUTC( act.date, 'visitDateLoc' );
-		});
+
+		}
 	}
 	catch ( errMsg ) { 
-		console.log( 'ERROR in BahmniService.orderDateSet_fromVisitDate', errMsg ); 
+		console.log( 'ERROR in BahmniService.setActivity_VisitDate', errMsg ); 
 	}
 };
+
 
 BahmniService.populateSortType = function ( act, sortTypes )
 {
@@ -466,7 +476,7 @@ BahmniService.syncDataRun = function ( option )
 	
 	
 							// TODO: NEW: Call 'downloadStepsEval_OnFinal_ClientMerge' here?
-							BahmniService.syncDownStepsEval( "syncDownStepsEval_OnFinal_ClientMerge" );
+							BahmniService.syncDownStepsEval( "syncDownStepsEval_OnFinal_ClientMerge", { mergedActivities: mergedActivities } );
 
 
 							// NOTE: If there was a new merge, for now, alert the user to reload the list?
@@ -817,7 +827,9 @@ BahmniService.syncDownStepsEval = function( syncDownName, option )
 		{
 			INFO.downClientList = option.downClientList;
 		}	
-		else if ( syncDownName === "syncDownStepsEval_OnFinal_ClientMerge" ) { }	
+		else if ( syncDownName === "syncDownStepsEval_OnFinal_ClientMerge" ) { 
+			INFO.mergedActivities = option.mergedActivities;
+		}	
 	
 
 		try 

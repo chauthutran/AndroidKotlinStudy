@@ -1087,6 +1087,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 
 			// Remove Flag - Remove flag for mongo bahmni sync
 			if ( activityJson_Orig.subSyncStatus === BahmniService.readyToMongoSync ) delete activityJson_Orig.subSyncStatus;
+			// set this 'subSyncStatus' as '' rather than delete property?
 
 			// [NOTE: STILL USED?]  If this is 'fixActivityCase' request success result, remove the flag on 'processing' & delete the record in database.
 			if (processingInfo.fixActivityCase) { delete processingInfo.fixActivityCase;  SyncManagerNew.deleteFixActivityRecord(activityId); }
@@ -1109,6 +1110,7 @@ SyncManagerNew.syncUpResponseHandle = function (activityJson_Orig, activityId, s
 				ClientDataManager.removeClient(clientJson);
 
 				var extraData = { removedClientId: clientJson._id };
+				console.log( 'removedClient_bySwitchUser Case on SyncManagerNew.syncUpResponseHandle' );
 
 				ClientDataManager.saveCurrent_ClientsStore(() => {
 					if (callBack) callBack(bOptResult, undefined, Constants.status_submit, extraData);
