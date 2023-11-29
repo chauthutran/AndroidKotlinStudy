@@ -462,13 +462,13 @@ BahmniService.syncDataRun = function ( option )
 						{
 							var mergedActivityLength = mergedActivities.length;
 
+							// Place these on config syncDownStepsEval
 							// NEW - if activity were merged, set for Mongo Sync and save to database.
-							if ( mergedActivityLength > 0 )
-							{
-								mergedActivities.forEach( act => { act.subSyncStatus = BahmniService.readyToMongoSync; } );
-
-								ClientDataManager.saveCurrent_ClientsStore();
-							}
+							//if ( mergedActivityLength > 0 && INFO.setBahmniVisitsDownloads_MongoSync )
+							//{
+							//	mergedActivities.forEach( act => { act.subSyncStatus = BahmniService.readyToMongoSync; } );
+							//	ClientDataManager.saveCurrent_ClientsStore();
+							//}
 
 							
 							BahmniMsgManager.SyncMsg_InsertMsg( "Merge FINSIHED: " + mergedActivityLength + " activities, " + clientDwnLength + " patients." );
