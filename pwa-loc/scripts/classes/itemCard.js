@@ -82,24 +82,29 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
             if ( operationType === 'localDownload' )
             {
                 //var itemList = [];
-                var downloadInfo = { downloadNeeded: false, clientInLocal: false, relationsNotInLocal: false };
+                var downloadInfo = { downloadNeeded: false, clientInLocal: false, relationsNotInLocal: false, updatesAvailable: false };
                 var downloadText = {
                     "InLocal": { "title": "In Local", "term": "" },
-                    "UpdateFound": { "title": "Update Found", "term": "" }, // TODO
                     "NotDownloaded": { "title": "Not Downloaded", "term": "" },
-                    "RelNotDownloaded": { "title": "Rel Not Downloaded", "term": "" }
+                    "RelNotDownloaded": { "title": "Rel Not Downloaded", "term": "" },
+                    "UpdatesAvailable": { "title": "Updates Available", "term": "" } // TODO
                 };
 
                 var txtInConfig = ConfigManager.getClientDef().clientSearchDownloadText;
                 if ( txtInConfig ) Util.mergeJson( downloadText, txtInConfig );
 
+                var localClient = ClientDataManager.getClientById( itemId );
 
-                if ( me.hasMatchingLocalData( itemId ) )
+                if ( localClient )
                 {
                     downloadInfo.clientInLocal = true;
 
                     // TODO - "date.updatedUTC": <-- Check for update on Client
-
+                    if ( localClient.date.updatedUTC < itemJson.date.updatedUTC )
+                    {
+                        downloadInfo.updatesAvailable = true;
+                        downloadInfo.downloadNeeded = true;
+                    }
 
                     // Check if relation clients all are in local
                     if ( itemJson.rlClientList && itemJson.rlClientList.length > 0 )
@@ -131,7 +136,8 @@ function ItemCard( itemJson, parentTag, blockDefJson, blockObj, itemClickFunc )
                 {
                     // Icon / Label
                     ActivitySyncUtil.displayStatusLabelIcon( divStatusIconTag, divStatusTextTag, Constants.status_queued );
-                    if ( downloadInfo.relationsNotInLocal ) divStatusTextTag.html( downloadText.RelNotDownloaded.title ).attr( 'term', downloadText.RelNotDownloaded.title );
+                    if ( downloadInfo.relationsNotInLocal ) divStatusTextTag.html( downloadText.RelNotDownloaded.title ).attr( 'term', downloadText.RelNotDownloaded.term );
+                    else if ( downloadInfo.updatesAvailable ) divStatusTextTag.html( downloadText.UpdatesAvailable.title ).attr( 'term', downloadText.UpdatesAvailable.term );                    
                     else divStatusTextTag.html( downloadText.NotDownloaded.title ).attr( 'term', downloadText.NotDownloaded.term );
 
 
