@@ -21,11 +21,10 @@ function ChatApp(username) {
 	me.curUsernameTag;
 	me.curUserIconTag;
 	me.editContactListTag;
-	me.textMsgDivTag;
-	me.templateDivTag;
 	me.templateListTag;
+	me.showTextMsgBtnTag;
+	me.showTemplateBtnTag;
 	me.sendBtnTag;
-	me.templateBtnTag;
 	me.msgTag;
 	me.searchContactNameTag;
 	me.uploadInputTag;
@@ -69,11 +68,10 @@ function ChatApp(username) {
 		me.curUsernameTag = $("#curUsername");
 		me.curUserIconTag = $("#curUserIcon");
 		me.editContactListTag = $("#editContactList");
-		me.textMsgDivTag = $(".textMsgDiv");
-		me.templateDivTag = $(".templateDiv");
+		me.showTextMsgBtnTag = $(".showTextMsgBtn");
+		me.showTemplateBtnTag = $(".showTemplateBtn");
 		me.templateListTag = $(".templateList");
 		me.sendBtnTag = $(".sendBtn");
-		me.templateBtnTag = $(".templateBtn");
 		me.msgTag = $("#msg");
 		me.searchContactNameTag = $("#searchContactName");
 		me.uploadInputTag = $("#upload_input");
@@ -104,8 +102,10 @@ function ChatApp(username) {
 		//FormUtil.blockPage();
 		me.chatViewTag.hide();
 		me.initChatMsgTag.show().html(`Loading chat info ...`);
-		me.textMsgDivTag.show();
-		me.templateDivTag.hide();
+		me.showTextMsgBtnTag.hide();
+		me.showTemplateBtnTag.show();
+		me.msgTag.show();
+		me.templateListTag.hide();
 
 
 		// ------------------------
@@ -163,8 +163,6 @@ function ChatApp(username) {
 		me.editContactListTag.attr("mode", "hide");
 		me.searchContactNameTag.val("");
 		me.showClientSearchResultFormBtnTag.hide();
-		// me.showClientSearchResultFormBtnTag.show();
-
 
 		me.setUp_Events();
 
@@ -176,6 +174,7 @@ function ChatApp(username) {
 		me.templateListTag.find("option").remove();
 
 		var templateConfig = ConfigManager.getSettingsChatTemplate();
+		me.templateListTag.append(`<option value="">[Please select a template message]</option>`);
 		if( templateConfig.length > 0 )
 		{
 			for (let i = 0; i < templateConfig.length; i++) {
@@ -183,11 +182,11 @@ function ChatApp(username) {
 				me.templateListTag.append(`<option value="${item.name}">${item.value}</option>`);
 			}
 
-			me.templateBtnTag.show();
+			me.showTemplateBtnTag.show();
 		}
 		else
 		{
-			me.templateBtnTag.hide();
+			me.showTemplateBtnTag.hide();
 		}
 	};
 
@@ -486,29 +485,38 @@ function ChatApp(username) {
 	// HTML Tags's events
 
 	me.setUp_Events = function () {
+
 		me.sendBtnTag.off("click").on("click", function (e) {
 			me.submitChatMessage(e);
 		});
 
-		me.templateBtnTag.off("click").on("click", function (e) {
-			var mode = $(this).attr("mode"); // mode="text" or "template"
-			if( mode == "text" ) // Show Template list
-			{
-				me.templateDivTag.show();
-				me.textMsgDivTag.hide();
-			}
-			else // Show TEXT message
-			{
-				me.msgTag.val("");
-				me.templateDivTag.hide();
-				me.textMsgDivTag.show();
-			}
+		me.showTemplateBtnTag.off("click").on("click", function (e) {
+			me.msgTag.val("");
+			me.msgTag.hide();
+			me.templateListTag.show();
+
+			me.showTemplateBtnTag.hide();
+			me.showTextMsgBtnTag.show();
 		});
 
+		
+		me.showTextMsgBtnTag.off("click").on("click", function (e) {
+			me.msgTag.val("");
+			me.msgTag.show();
+			me.templateListTag.hide();
+
+			me.showTemplateBtnTag.show();
+			me.showTextMsgBtnTag.hide();
+		});
+		
+
 		me.templateListTag.off("change").on("change", function (e) {
-			var selectedOptTag = $(this).find("option:select");
-			var value = `[${selectedOptTag.val()}] - ${selectedOptTag.text()}`;
-			me.msgTag.val( value );
+			var selectedOptTag = $(this).find("option:selected");
+			if( selectedOptTag.val() != "" )
+			{
+				var value = `[${selectedOptTag.val()}] - ${selectedOptTag.text()}`;
+				me.msgTag.val( value );
+			}
 		});
 
 		me.msgTag.off("keypress").on("keypress", function (e) {
@@ -1042,20 +1050,18 @@ ChatApp.contentHtml = `
 					<div class="chat-history"><ul></ul></div>
 
 					<div class="chat-message clearfix chat-form">
-						<div class="textMsgDiv">
-							<input id="msg" type="text" class="message-text" placeholder="Enter Message" required="" autocomplete="off"/>
-							<img id="showEmojiDashboard" src="images/smile.png" style="width: 16px; opacity: 0.4; cursor: pointer;" />
-							<label>
-								<input type="file" id="upload_input" multiple style="display:none" />
-								<img src="images/file-icon.png" style="width: 13px; opacity: 0.4; margin-left: 10px; cursor: pointer;" />
-							</label>
-						</div>
-						<div class="templateDiv" style="display:none;">
-							<select class="message-text templateList"></select>
-						</div>
-
+						<input id="msg" type="text" class="message-text" placeholder="Enter Message" required="" autocomplete="off"/>
+						<select class="message-text templateList" style="display:none;"></select>
+					
+						<img id="showEmojiDashboard" src="images/smile.png" style="width: 16px; opacity: 0.4; cursor: pointer;" />
+						<label>
+							<input type="file" id="upload_input" multiple style="display:none" />
+							<img src="images/file-icon.png" style="width: 13px; opacity: 0.4; margin-left: 10px; cursor: pointer;" />
+						</label>
+						<img class="showTemplateBtn" src="../images/chat-template.png" style="opacity:0.5;margin-left: 8px;width:20px;height:20px;"/>
+						<img class="showTextMsgBtn" src="../images/chat-text.png" style="display:none;opacity:0.5;margin-left: 8px;width:20px;height:20px;" />
+						
 						<button class="btn sendBtn">Send</button>
-						<button class="btn templateBtn" mode="text">Template</button>
 
 						<div class="emoji-dashboard" style="display:none"><ul></ul></div>
 					</div>
