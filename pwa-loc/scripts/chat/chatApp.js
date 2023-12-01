@@ -179,7 +179,7 @@ function ChatApp(username) {
 		{
 			for (let i = 0; i < templateConfig.length; i++) {
 				const item = templateConfig[i];
-				me.templateListTag.append(`<option value="${item.name}">${item.value}</option>`);
+				me.templateListTag.append(item);
 			}
 
 			me.showTemplateBtnTag.show();
