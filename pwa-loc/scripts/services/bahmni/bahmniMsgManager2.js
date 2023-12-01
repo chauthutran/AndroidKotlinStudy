@@ -126,7 +126,7 @@ BahmniMsgManager.SyncMsg_InsertMsg = function (msgStr, type) {
 	try {
 		var realType = ( type == undefined ) ? BahmniMsgManager.MESSAGE_TYPE_DEFAULT : type;
 		var newMsgJson = { "msg": msgStr, "datetime": UtilDate.formatDateTime(new Date(), Util.dateType_DATETIME_s1), type: realType };
-		BahmniMsgManager.SyncMsg_Get().msgList.push(newMsgJson);
+		BahmniMsgManager.SyncMsg_Get().msgList.unshift(newMsgJson);
 	}
 	catch (errMsg) {
 		console.log('Error BahmniMsgManager.SyncMsg_InsertMsg, errMsg: ' + errMsg);
@@ -139,7 +139,7 @@ BahmniMsgManager.SyncMsg_InsertSummaryMsg = function (summaryMsgStr) {
 	if (syncMsgJson) {
 		var newSummaryMsgJson = { "msg": summaryMsgStr };
 
-		syncMsgJson.summaryList.push(newSummaryMsgJson);
+		syncMsgJson.summaryList.unshift(newSummaryMsgJson);
 	}
 	else {
 		//console.log( 'Error BahmniMsgManager.SyncMsg_InsertMsg, syncMsgJson undefined.' );
