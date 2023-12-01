@@ -64,7 +64,6 @@ SyncManagerNew.syncAll = function (cwsRenderObj, runType, callBack) {
 
 		var resultData = { 'success': 0, 'failure': 0 };
 
-
 		// NEW: Other operations to run on SyncAll Online Time: voucherCodeQueue & appUpdate
 		SyncManagerNew.syncAll_OtherOperations();
 
@@ -72,6 +71,8 @@ SyncManagerNew.syncAll = function (cwsRenderObj, runType, callBack) {
 		// During the 'sync', it updates the activity list..  
 		// Thus, we get below list for just list of activityId..  Copy of the original list. 
 		var activityIdCopyList = ActivityDataManager.getActivityIdCopyList();
+
+		console.log( '[SyncUp Progress] Total Count: ' + activityIdCopyList.length );
 
 		// NOTE: CHECK ONLINE is done within syncUpItem_RecursiveProcess
 		SyncManagerNew.syncUpItem_RecursiveProcess(activityIdCopyList, 0, cwsRenderObj, resultData, function () {
@@ -407,6 +408,8 @@ SyncManagerNew.syncUpItem_RecursiveProcess = function (activityIdCopyList, i, cw
 		else {
 			var activityId = activityIdCopyList[i];
 
+			console.log( '[SyncUp Progress] ' + ( i + 1 ) + ' of ' + activityIdCopyList.length );
+
 			SyncManagerNew.syncUpActivity(activityId, resultData, function (syncReadyJson, syncUpSuccess) {
 				// Update on progress bar
 				FormUtil.updateProgressWidth(((i + 1) / activityIdCopyList.length * 100).toFixed(1) + '%');
@@ -695,7 +698,6 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function () {
 								SessionManager.cwsRenderObj.renderArea1st();
 								// If this is activity list, we should refresh the activityDetail? <-- only if already in 'activity' tab
 								// Also, we can refresh the client card, no?
-
 							});
 
 							MsgManager.notificationMessage('SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false);
@@ -706,7 +708,6 @@ SyncManagerNew.setAppTopSyncAllBtnClick = function () {
 					SyncManagerNew.SyncMsg_ShowBottomMsg();
 				});
 			}
-
 
 			// 2. SyncUp All
 			SyncManagerNew.syncAll(SessionManager.cwsRenderObj, 'Manual', function (success) {
@@ -927,7 +928,8 @@ SyncManagerNew.getBahmniMongo_ReqPayload = function( activityId, activityJson_Or
 		appVersion: _ver, 
 		payload: { 
 			searchValues: { 'patientId': clientJson.patientId }, 
-			captureValues: activityJson_Copy 
+			captureValues: activityJson_Copy,
+			updateIfExists: true	// NEW - In [s] bahmni mongo sync, update the activity if already exists
 		},
 		historyData: ActivityDataManager.getHistoryShortenData( activityJson_Orig.processing.historyData )
 	};
