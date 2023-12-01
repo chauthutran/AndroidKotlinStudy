@@ -21,7 +21,11 @@ function ChatApp(username) {
 	me.curUsernameTag;
 	me.curUserIconTag;
 	me.editContactListTag;
+	me.textMsgDivTag;
+	me.templateDivTag;
+	me.templateListTag;
 	me.sendBtnTag;
+	me.templateBtnTag;
 	me.msgTag;
 	me.searchContactNameTag;
 	me.uploadInputTag;
@@ -65,7 +69,11 @@ function ChatApp(username) {
 		me.curUsernameTag = $("#curUsername");
 		me.curUserIconTag = $("#curUserIcon");
 		me.editContactListTag = $("#editContactList");
-		me.sendBtnTag = $("#sendBtn");
+		me.textMsgDivTag = $(".textMsgDiv");
+		me.templateDivTag = $(".templateDiv");
+		me.templateListTag = $(".templateList");
+		me.sendBtnTag = $(".sendBtn");
+		me.templateBtnTag = $(".templateBtn");
 		me.msgTag = $("#msg");
 		me.searchContactNameTag = $("#searchContactName");
 		me.uploadInputTag = $("#upload_input");
@@ -96,6 +104,13 @@ function ChatApp(username) {
 		//FormUtil.blockPage();
 		me.chatViewTag.hide();
 		me.initChatMsgTag.show().html(`Loading chat info ...`);
+		me.textMsgDivTag.show();
+		me.templateDivTag.hide();
+
+
+		// ------------------------
+		me.setUpAndPopulateTemplateList();
+
 
 		// Add Emoji in Emoji Dashboard
 		for (var i = 0; i < emojiCodes.length; i++) {
@@ -155,7 +170,26 @@ function ChatApp(username) {
 
 		me.chatDivTag.show();
 	};
+	
+	me.setUpAndPopulateTemplateList = function()
+	{
+		me.templateListTag.find("option").remove();
 
+		var templateConfig = ConfigManager.getSettingsChatTemplate();
+		if( templateConfig.length > 0 )
+		{
+			for (let i = 0; i < templateConfig.length; i++) {
+				const item = templateConfig[i];
+				me.templateListTag.append(`<option value="${item.name}">${item.value}</option>`);
+			}
+
+			me.templateBtnTag.show();
+		}
+		else
+		{
+			me.templateBtnTag.hide();
+		}
+	};
 
 	// =====================================================================
 	// For Socket
@@ -453,12 +487,33 @@ function ChatApp(username) {
 
 	me.setUp_Events = function () {
 		me.sendBtnTag.off("click").on("click", function (e) {
-			me.submitChatMessage(e)
+			me.submitChatMessage(e);
+		});
+
+		me.templateBtnTag.off("click").on("click", function (e) {
+			var mode = $(this).attr("mode"); // mode="text" or "template"
+			if( mode == "text" ) // Show Template list
+			{
+				me.templateDivTag.show();
+				me.textMsgDivTag.hide();
+			}
+			else // Show TEXT message
+			{
+				me.msgTag.val("");
+				me.templateDivTag.hide();
+				me.textMsgDivTag.show();
+			}
+		});
+
+		me.templateListTag.off("change").on("change", function (e) {
+			var selectedOptTag = $(this).find("option:select");
+			var value = `[${selectedOptTag.val()}] - ${selectedOptTag.text()}`;
+			me.msgTag.val( value );
 		});
 
 		me.msgTag.off("keypress").on("keypress", function (e) {
 			if (e.key === "Enter") {
-				me.submitChatMessage(e)
+				me.submitChatMessage(e);
 			}
 		});
 
@@ -987,14 +1042,20 @@ ChatApp.contentHtml = `
 					<div class="chat-history"><ul></ul></div>
 
 					<div class="chat-message clearfix chat-form">
-						<input id="msg" type="text" class="message-text" placeholder="Enter Message" required="" autocomplete="off"/>
-						<img id="showEmojiDashboard" src="images/smile.png" style="width: 16px; opacity: 0.4; cursor: pointer;" />
-						<label>
-							<input type="file" id="upload_input" multiple style="display:none" />
-							<img src="images/file-icon.png" style="width: 13px; opacity: 0.4; margin-left: 10px; cursor: pointer;" />
-						</label>
+						<div class="textMsgDiv">
+							<input id="msg" type="text" class="message-text" placeholder="Enter Message" required="" autocomplete="off"/>
+							<img id="showEmojiDashboard" src="images/smile.png" style="width: 16px; opacity: 0.4; cursor: pointer;" />
+							<label>
+								<input type="file" id="upload_input" multiple style="display:none" />
+								<img src="images/file-icon.png" style="width: 13px; opacity: 0.4; margin-left: 10px; cursor: pointer;" />
+							</label>
+						</div>
+						<div class="templateDiv" style="display:none;">
+							<select class="message-text templateList"></select>
+						</div>
 
-						<button class="btn" id="sendBtn">Send</button>
+						<button class="btn sendBtn">Send</button>
+						<button class="btn templateBtn" mode="text">Template</button>
 
 						<div class="emoji-dashboard" style="display:none"><ul></ul></div>
 					</div>

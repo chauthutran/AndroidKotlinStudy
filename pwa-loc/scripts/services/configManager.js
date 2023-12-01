@@ -600,6 +600,22 @@ ConfigManager.getSettingsTermId = function (termName) {
 	return termId;
 };
 
+// Chat related
+
+ConfigManager.getSettingsChat = function () {
+
+	var settingsChat = ConfigManager.getSettings().chat;
+
+	return ( settingsChat ) ? settingsChat: {};
+};
+
+ConfigManager.getSettingsChatTemplate = function () {
+
+	var templateListChat = ConfigManager.getSettingsChat().template;
+
+	return ( templateListChat ) ? templateListChat : [];
+};
+
 
 
 // Bahmni Related:
