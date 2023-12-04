@@ -721,7 +721,7 @@ function ChatApp(username) {
 
 		if( !hasClientFound )
 		{
-			searchResultTag.append(`<div class="div-table-row"><div class="div-table-col">No client found !</div></div>`);
+			searchResultTag.append(`<div class="div-table-row data"><div class="div-table-col">No client found !</div></div>`);
 		}
 		return searchResultTag;
 	};
@@ -1029,7 +1029,7 @@ ChatApp.contentHtml = `
 
 					<div class="searchForm">
 						<input class="nosubmit search" id="searchContactName" placeholder="Search..." style="background-color: white;" />
-						<div class="add-user-btn" id="showAddUserFormBtn" style="display:none; width: 25px;"><img src='images/user.png' style="width:25px"></div>
+						<div class="add-user-btn" id="showAddUserFormBtn" style="display:none; width: 25px;"><img src='images/search_user.svg' style="width:25px"></div>
 					</div>
 					<ul id="users">
 					</ul>
@@ -1053,7 +1053,7 @@ ChatApp.contentHtml = `
 						<input id="msg" type="text" class="message-text" placeholder="Enter Message" required="" autocomplete="off"/>
 						<select class="message-text templateList" style="display:none;"></select>
 					
-						<img id="showEmojiDashboard" src="images/smile.png" style="width: 16px; opacity: 0.4; cursor: pointer;" />
+						<img id="showEmojiDashboard" src="images/smile.svg" style="width: 16px; opacity: 0.4; cursor: pointer;" />
 						<label>
 							<input type="file" id="upload_input" multiple style="display:none" />
 							<img src="images/file-icon.png" style="width: 13px; opacity: 0.4; margin-left: 10px; cursor: pointer;" />
