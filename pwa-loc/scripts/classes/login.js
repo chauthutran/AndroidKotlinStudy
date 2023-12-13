@@ -1497,7 +1497,7 @@ Login.contentHtml = `
 		</div>
 	</div>
 
-	<dialog id="keycloackConfirmDialog">
+	<dialog id="keycloackConfirmDialog" style="display: none; ">
 		<div class="dialog__title"><label class="title">Keycloak Warning</label></div>
 			<div class="dialog__text">
 				<div id="keyclockMsg"></div>
@@ -1512,13 +1512,6 @@ Login.contentHtml = `
 		</div>
 	</div>
   </dialog>
-
-	// <div id="keycloackConfirmDialog" title="Keycloak Confirm">
-	// 	<p>
-	// 		<span class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
-	// 		<span id="keyclockConfirmMsg"></span>
-	// 	</p>
-	// </div>
 
 </div>
 `;
