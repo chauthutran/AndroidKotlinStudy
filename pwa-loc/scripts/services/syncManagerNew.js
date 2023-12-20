@@ -675,44 +675,50 @@ SyncManagerNew.SyncMsg_createSectionTag = function (sectionTitle, callBack) {
 // ===================================================
 // === Sync All Button (App Top) Click =============
 
-SyncManagerNew.setAppTopSyncAllBtnClick = function () {
-	$(SyncManagerNew.imgAppSyncActionButtonId).off('click').click(() => {
+SyncManagerNew.setAppTopSyncAllBtnClick = function () 
+{
+	$(SyncManagerNew.imgAppSyncActionButtonId).off('click').click(() => 
+	{
 		// if already running, just show message..
 		// if offline, also, no message in this case about offline...              
-		if (SyncManagerNew.isSyncAll_Running()) {
-			SyncManagerNew.SyncMsg_ShowBottomMsg();
-		}
+		if (SyncManagerNew.isSyncAll_Running()) SyncManagerNew.SyncMsg_ShowBottomMsg();
 		else {
-			// 1. SyncDown
-			if (ConfigManager.getSyncDownSetting().enable && ConnManagerNew.isAppMode_Online()) {
-				SyncManagerNew.syncDown('manualClick_syncAll', function (success, changeOccurred, errMsg) {
-					if (success) {
-						// NOTE: If there was a new merge, for now, alert the user to reload the list?
-						if (changeOccurred) {
-							// Display the summary of 'syncDown'.  However, this could be a bit confusing
-							//SyncManagerNew.SyncMsg_ShowBottomMsg();
+			if ( ConnManagerNew.isAppMode_Offline() ) MsgManager.msgAreaShowErrOpt( 'Currently in offline mode.  Sync disabled.', { hideTimeMs: 1000 } );
+			else
+			{
+				// 1. SyncDown
+				if (ConfigManager.getSyncDownSetting().enable ) 
+				{
+					SyncManagerNew.syncDown('manualClick_syncAll', function (success, changeOccurred, errMsg) {
+						if (success) {
+							// NOTE: If there was a new merge, for now, alert the user to reload the list?
+							if (changeOccurred) {
+								// Display the summary of 'syncDown'.  However, this could be a bit confusing
+								//SyncManagerNew.SyncMsg_ShowBottomMsg();
 
-							var btnRefresh = $('<a class="notifBtn" term=""> REFRESH </a>');
+								var btnRefresh = $('<a class="notifBtn" term=""> REFRESH </a>');
 
-							$(btnRefresh).click(() => {
-								SessionManager.cwsRenderObj.renderArea1st();
-								// If this is activity list, we should refresh the activityDetail? <-- only if already in 'activity' tab
-								// Also, we can refresh the client card, no?
-							});
+								$(btnRefresh).click(() => {
+									SessionManager.cwsRenderObj.renderArea1st();
+									// If this is activity list, we should refresh the activityDetail? <-- only if already in 'activity' tab
+									// Also, we can refresh the client card, no?
+								});
 
-							MsgManager.notificationMessage('SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false);
+								MsgManager.notificationMessage('SyncDown data found', 'notifBlue', btnRefresh, '', 'right', 'top', 10000, false);
+							}
 						}
-					}
-					else { } // Already displayed the error message in MsgManager.showMsg..
+						else { } // Already displayed the error message in MsgManager.showMsg..
 
+						SyncManagerNew.SyncMsg_ShowBottomMsg();
+					});
+				}
+
+				// 2. SyncUp All
+				SyncManagerNew.syncAll(SessionManager.cwsRenderObj, 'Manual', function (success) {
 					SyncManagerNew.SyncMsg_ShowBottomMsg();
 				});
-			}
 
-			// 2. SyncUp All
-			SyncManagerNew.syncAll(SessionManager.cwsRenderObj, 'Manual', function (success) {
-				SyncManagerNew.SyncMsg_ShowBottomMsg();
-			});
+			}
 		}
 	});
 };

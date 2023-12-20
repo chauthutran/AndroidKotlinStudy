@@ -311,7 +311,10 @@ WsCallManager.dwsAvailabilityCheck = function( sourceType, returnFunc )
 
                 // REPLICA/POEDITOR availability record
                 ConnManagerNew.REPLICA_Available = ( returnJson.REPLICA && returnJson.REPLICA.isAvailable );
-                ConnManagerNew.POEDITOR_Available = ( returnJson.POEDITOR && returnJson.POEDITOR.isAvailable );                
+                ConnManagerNew.POEDITOR_Available = ( returnJson.POEDITOR && returnJson.POEDITOR.isAvailable );
+
+                // NEW - If replica is not available, force WFA to offline mode
+                if ( !ConnManagerNew.REPLICA_Available || INFO.REPLICA_Available_Offline ) bCheck = false;
             }
         }
         catch( errMsg )

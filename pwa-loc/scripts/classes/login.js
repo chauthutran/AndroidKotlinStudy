@@ -824,8 +824,8 @@ function Login() {
 
 
 		// ONLINE vs OFFLINE HANDLING
-		// Also, if replica login server is not available, use offline process to login.
-		if ( !ConnManagerNew.REPLICA_Available || ConnManagerNew.isAppMode_Offline() ) 
+		//   - 'isAppMode_Offline()' also checks server unavailable (including Replica service)
+		if ( ConnManagerNew.isAppMode_Offline() ) // || !ConnManagerNew.statusInfo.serverAvailable
 		{
 			me.loginOffline(userName, password, function (isSuccess, offlineUserData) 
 			{
@@ -852,6 +852,11 @@ function Login() {
 				MsgManager.msgAreaShowErrOpt( '<span term="login_msg_connectionTempOff">Network connection temporarily off detected.  Please Try again after a couple seconds.</span>', { closeNextMarked: true } );
 				if (callAfterDone) callAfterDone( false );
 			}
+			else if ( !ConnManagerNew.statusInfo.serverAvailable ) // Stable Online still, but currently connection lost case - not stable
+			{
+				MsgManager.msgAreaShowErrOpt( '<span term="login_msg_serverNA">Server services are not available currently.  Please Try again when it becomes available again.</span>', { closeNextMarked: true } );
+				if (callAfterDone) callAfterDone( false );
+			}			
 			else
 			{
 				var loadingTag = FormUtil.generateLoadingTag(btnTag.find('.button-label'));

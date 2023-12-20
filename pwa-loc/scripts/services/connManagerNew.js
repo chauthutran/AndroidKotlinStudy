@@ -199,6 +199,7 @@ ConnManagerNew.setAppMode = function (appModeNew, statusInfo, optionStr) {
 
 	// Set appMode
 	if (statusInfo.manual_Offline.enabled) statusInfo.appMode = ConnManagerNew.OFFLINE;  // THIS NEVER GETS CALLED PROPERLY?
+	else if ( !statusInfo.serverAvailable ) statusInfo.appMode = ConnManagerNew.OFFLINE;  // THIS NEVER GETS CALLED PROPERLY?	
 	else statusInfo.appMode = appModeNew;
 
 	if (statusInfo.appMode !== existingAppMode) {
@@ -290,7 +291,8 @@ ConnManagerNew.runSyncAll_ifOldLastSyncAll = function () {
 // ---- Status Check Related ----------
 
 ConnManagerNew.isAppMode_Online = function () {
-	return (ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE);
+	// return (ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE);
+	return ( ConnManagerNew.statusInfo.appMode === ConnManagerNew.ONLINE && ConnManagerNew.statusInfo.serverAvailable );
 };
 
 ConnManagerNew.isAppMode_Offline = function () {
