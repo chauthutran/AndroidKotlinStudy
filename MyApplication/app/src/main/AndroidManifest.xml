@@ -13,15 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CustomListView"
         tools:targetApi="31">
-<!--        <meta-data-->
-<!--            android:name="com.google.android.actions"-->
-<!--            android:resource="@xml/ic_launcher_background" />-->
-
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.PatientDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PatientListActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.CustomListView">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
