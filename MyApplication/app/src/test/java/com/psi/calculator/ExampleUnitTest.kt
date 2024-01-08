@@ -1,4 +1,4 @@
-package com.psi.fhir
+package com.psi.calculator
 
 import org.junit.Test
 
