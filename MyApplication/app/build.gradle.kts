@@ -60,6 +60,7 @@ android {
 dependencies {
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
     implementation("androidx.core:core-ktx:1.12.0")

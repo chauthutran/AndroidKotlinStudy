@@ -19,15 +19,4 @@ class AppFhirSyncWorker(private val appContext: Context, workerParams: WorkerPar
 
     override fun getFhirEngine() = FhirApplication.fhirEngine(applicationContext)
 
-//    override fun getConflictResolver(): ConflictResolver {
-//        return AcceptLocalConflictResolver
-//    }
-//
-//    override fun getDownloadWorkManager(): DownloadWorkManager {
-//        return DownloadWorkManagerImpl()
-//    }
-//
-//    override fun getFhirEngine(): FhirEngine {
-//        return FhirApplication.fhirEngine(appContext)
-//    }
 }

@@ -2,4 +2,18 @@
     <string name="app_name">FHIR TEST</string>
     <string name="sync">Sync</string>
     <string name="update">Update</string>
+
+
+    <string name="edit_patient">Edit Patient</string>
+    <string name="add_patient">Add Patient</string>
+    <string name="inputs_missing">Inputs missing</string>
+    <string name="message_patient_updated">Patient is updated</string>
+
+
+    <string name="last_sync">Last sync</string>
+    <string name="sync_menu">Sync</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+
 </resources>
