@@ -387,12 +387,18 @@ ActivitySyncUtil.displayActivitySyncStatus = function( activityId )
         
 				ActivitySyncUtil.displayStatusLabelIcon( divSyncIconTag, divSyncStatusTextTag, statusVal );
 	
-				// NEW - Update Client Sync Status - for each activity status update.
+
+				// We need to display activity
+
+
+
+				// NOT USED --> Update Client Sync Status - for each activity status update.
 				if ( ConfigManager.isClientSync_ClientLevel() ) 
 				{
 					var client = ClientDataManager.getClientByActivityId( activityId );	
 					ActivitySyncUtil.displayStatusLabelIcon_ClientCard( client );
 				}
+
 
             // If the SyncUp is in Cooldown time range, display the FadeIn UI with left time
             if ( SyncManagerNew.isSyncReadyStatus( statusVal ) ) ActivitySyncUtil.syncUpCoolDownTime_CheckNProgressSet( activityId, divSyncIconTag );
@@ -559,7 +565,12 @@ ActivitySyncUtil.displayStatusLabelIcon_ClientCard = function( client )
 // SHOULD BE OBSOLETE
 ActivitySyncUtil.getSyncButtonDivTag = function( activityId )
 {
-	return $( 'div.activityStatusIcon[activityId="' + activityId + '"]' );
+	var selectorStr = 'div.activityStatusIcon[activityId="' + activityId + '"]'; // activityCard selectors..
+
+	var client = ClientDataManager.getClientByActivityId( activityId );
+	if ( client ) selectorStr += ',div.activityStatusIcon[clientId="' + client._id + '"]' // clientCard
+
+	return $( selectorStr );
 };
 
 

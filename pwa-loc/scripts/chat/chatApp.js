@@ -175,12 +175,18 @@ function ChatApp(username) {
 
 		var templateConfig = ConfigManager.getSettingsChatTemplate();
 		me.templateListTag.append(`<option value="">[Please select a template message]</option>`);
-		if( templateConfig.length > 0 )
+
+		if( templateConfig )
 		{
-			for (let i = 0; i < templateConfig.length; i++) {
-				const item = templateConfig[i];
-				me.templateListTag.append(item);
-			}
+			templateConfig.forEach( opt => me.templateListTag.append( opt ) );
+
+			//for (let i = 0; i < templateConfig.length; i++) {
+				// var optionTag = $( templateConfig[i] );
+				// optionTag.text( TranslationManager.translateText( optionTag.text(), optionTag.attr( 'term' ) ) );
+				// me.templateListTag.append( templateConfig[i] );
+			// }
+
+			TranslationManager.translatePage( me.templateListTag );
 
 			me.showTemplateBtnTag.show();
 		}

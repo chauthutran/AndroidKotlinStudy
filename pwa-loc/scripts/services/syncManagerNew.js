@@ -287,6 +287,9 @@ SyncManagerNew.syncUpActivity = function (activityId, resultData, returnFunc)
 				ActivityCard.reRenderAllById(activityId); // ActivityCard.reRenderActivityDiv();
 				ActivityCard.highlightActivityDiv(activityId, false);
 
+
+				// NEW - BELOW - PERFORM BELOW ONLY IF THE sync Was Success??
+
 				// Rerender the client card that holds this activity as well. - if new client case, the id is tempClient, yet.
 				var clientId_after = ClientDataManager.getClientByActivityId(activityId)._id;
 

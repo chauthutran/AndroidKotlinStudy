@@ -945,6 +945,7 @@ ConfigManager.getClientSyncType = function () {
 	return ConfigManager.getClientSyncBtnSetting().syncType;
 };
 
+// NEW Client Level Sync Status (has 2 status only - 'synced' / 'pending') <-- Not used much..  Only on GT2_TEST_IPC
 ConfigManager.isClientSync_ClientLevel = function () {
 	return (ConfigManager.getClientSyncType() === ConfigManager.KEY_ClientSyncType_ClientLevel);
 };
