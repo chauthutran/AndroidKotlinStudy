@@ -327,19 +327,25 @@ AppInfoLSManager.setBahmni_lastSyncedDatetime = function( value )
     AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME, value );
 };
 
-AppInfoLSManager.getBahmni_lastSyncedDatetime = function( overrideVal )
+AppInfoLSManager.getBahmni_lastSyncedDatetime = function( option )
 {
-    var dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME );
+    if ( !option ) option = {};
+    if ( !option.defaultVal ) option.defaultVal = "1900-01-01T00:00:00.000Z";
 
-    // OLD Obsolete ONE
-    if ( !dateTimeStr ) dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME_OLD );
-
-    if ( !dateTimeStr ) {
-        dateTimeStr = "1900-01-01T00:00:00";
-        AppInfoLSManager.setBahmni_lastSyncedDatetime ( dateTimeStr );
+    if ( option.defaultValEval ) {
+        try {
+            option.defaultVal = eval( Util.getEvalStr( option.defaultValEval ) );
+        } catch ( errMsg ) { console.log( 'ERROR in AppInfoLSManager.getBahmni_lastSyncedDatetime, defaultValEval: ' + errMsg ); }
     }
 
-    if ( overrideVal ) dateTimeStr = overrideVal;  // Ex. INFO.Bahmni_LastSyncedDateTime <-- if passed as 'overrideVal
+    var dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME );
+    // OLD Obsolete ONE  -- // if ( !dateTimeStr ) dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME_OLD );
+
+    if ( !dateTimeStr ) {
+        dateTimeStr = option.defaultVal;
+        AppInfoLSManager.setBahmni_lastSyncedDatetime ( option.defaultVal );
+    }
+    // if ( overrideVal ) dateTimeStr = overrideVal;  // Ex. INFO.Bahmni_LastSyncedDateTime <-- if passed as 'overrideVal
 
     return dateTimeStr;
 };
