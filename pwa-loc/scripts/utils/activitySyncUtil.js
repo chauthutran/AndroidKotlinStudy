@@ -567,8 +567,9 @@ ActivitySyncUtil.getSyncButtonDivTag = function( activityId )
 {
 	var selectorStr = 'div.activityStatusIcon[activityId="' + activityId + '"]'; // activityCard selectors..
 
-	var client = ClientDataManager.getClientByActivityId( activityId );
-	if ( client ) selectorStr += ',div.activityStatusIcon[clientId="' + client._id + '"]' // clientCard
+	// NEW - #1 Apply this by config setting/flag..
+	// var client = ClientDataManager.getClientByActivityId( activityId );
+	// if ( client ) selectorStr += ',div.activityStatusIcon[clientId="' + client._id + '"]' // clientCard
 
 	return $( selectorStr );
 };
