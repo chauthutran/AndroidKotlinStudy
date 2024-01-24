@@ -93,6 +93,8 @@ function ChatApp(username) {
 		me.chatHistoryMsgNoTag = $(".chat-num-messages");
 
 		me.clientSearchResultFormTag = $(".clientSearchResultForm");
+		me.searchClienstByNameTag = me.clientSearchResultFormTag.find("#searchClientsByNameField");
+		me.seachClientsByNameBtnTag = me.clientSearchResultFormTag.find("#seachClientsByNameBtn");
 		me.clientSearchResultForm_ContentTag =  me.clientSearchResultFormTag.find(".dialog_description");
 		me.clientSearchResultForm_CancelBtnTag = me.clientSearchResultFormTag.find('.cancelBtn');
 		
@@ -579,56 +581,21 @@ function ChatApp(username) {
 			me.emojjiDashboardTag.slideUp('fast');
 		});
 
-
-		// me.uploadInputTag.off("change").on("change", function(event){
-		// 	me.socket.emit("upload", event.target.files[0], (status) => {
-		// 		console.log(status);
-		// 	});
-		// })
-
-		// me.uploadInputTag.off("change").on("change", function(event){
-		//     var files = event.target.files;
-		//     if( ( files != undefined || files != null ) && files.length > 0 )
-		//     {
-		//         const file = files[0];
-		// 		const reader = new FileReader();
-		// 		reader.addEventListener( "load", () => {
-		// 			const type = ( file.type.indexOf("image/") == 0 ) ? "IMAGE" : "FILE";
-		//             const data = Utils.formatMessage( me.curUser.username, me.selectedUser.username, reader.result, type, file.name );
-
-		//             if( !me.socket.connected )
-		//             {
-		//                 saveOfflineMessage( data );
-		//             }
-		//             else
-		//             {
-		//                 me.socket.emit("private_message", data );
-		//             }
-
-		// 			// Re-order the contact list
-		// 			me.moveContactOnTop( me.selectedUser.username );
-
-		// 			// const userTag = me.userListTag.find(`[username='${me.selectedUser.username}']`);
-		// 			// const contactData = JSON.parse( userTag.attr("user") );
-		// 			// userTag.remove();
-		// 			// me.appendUserInContactList( contactData, false );
-
-
-		// 			me.outputMessage( data );
-		// 		});
-
-		// 		reader.readAsDataURL( file );
-		//     }
-		// })
-
-		
 		me.showClientSearchResultFormBtnTag.off("click").on("click", function () {
 			// Search Clients by fullName and Show the matched result
 			var searchKey = me.searchContactNameTag.val();
+			me.searchClienstByNameTag.val( searchKey );
 			me.searchAndPopualteClientsByFullname(searchKey);
 			me.clientSearchResultFormTag.show();
 		});
-		
+
+		me.seachClientsByNameBtnTag.off("click").on("click", function () {
+			// Search Clients by fullName and Show the matched result
+			var searchKey = me.searchClienstByNameTag.val();
+			me.searchAndPopualteClientsByFullname(searchKey);
+		});
+
+		me.searchC
 		me.clientSearchResultForm_CancelBtnTag.off("click").on("click", function () {
 			me.clientSearchResultFormTag.hide();
 		});
@@ -1082,7 +1049,18 @@ ChatApp.contentHtml = `
 ChatApp.newUserForm = `
 <div class="mddtp-picker dialog clientSearchResultForm" style="display:none">
 	<h2 class="dialog_title">Search Client List</h2>
+
+	<div class="div-table-row">
+		<div class="div-table-col">
+			<input class="nosubmit search" id="searchClientsByNameField" placeholder="Search..." style="color: #000;">
+		</div>
+		<div class="div-table-col">
+			<button id="seachClientsByNameBtn">Search</button>
+		</div>
+	</div>
+
 	<div class='div-table dialog_description'>
+	
 		<div class="div-table-row header">
 			<div class="div-table-col">Full Mame</div>
 			<div class="div-table-col">Whatsapp Phone Number</div>
