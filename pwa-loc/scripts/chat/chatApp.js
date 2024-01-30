@@ -1026,13 +1026,15 @@ ChatApp.contentHtml = `
 						<input id="msg" type="text" class="message-text" placeholder="Enter Message" required="" autocomplete="off"/>
 						<select class="message-text templateList" style="display:none;"></select>
 					
-						<img id="showEmojiDashboard" src="images/smile.svg" style="width: 16px; opacity: 0.4; cursor: pointer;" />
+						<img id="showEmojiDashboard" src="images/smile.svg" style="width: 20px; opacity: 0.4; cursor: pointer;" />
+
 						<label>
 							<input type="file" id="upload_input" multiple style="display:none" />
-							<img src="images/file-icon.png" style="width: 13px; opacity: 0.4; margin-left: 10px; cursor: pointer;" />
+							<img src="images/file-icon.png" style="width: 17px; opacity: 0.4; margin-left: 14px; cursor: pointer;" />
 						</label>
-						<img class="showTemplateBtn" src="../images/chat-template.png" style="opacity:0.5;margin-left: 8px;width:20px;height:20px;"/>
-						<img class="showTextMsgBtn" src="../images/chat-text.png" style="display:none;opacity:0.5;margin-left: 8px;width:20px;height:20px;" />
+
+						<img class="showTemplateBtn" src="../images/chat-template.png" style="opacity:0.5;margin-left: 14px;width:20px;height:20px;"/>
+						<img class="showTextMsgBtn" src="../images/chat-text.png" style="display:none;opacity:0.5;margin-left: 14px;width:20px;height:20px;" />
 						
 						<button class="btn sendBtn">Send</button>
 
