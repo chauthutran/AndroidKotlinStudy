@@ -164,7 +164,6 @@ function ChatApp(username) {
 		// Init Chat form
 		me.editContactListTag.attr("mode", "hide");
 		me.searchContactNameTag.val("");
-		me.showClientSearchResultFormBtnTag.hide();
 
 		me.setUp_Events();
 
@@ -631,11 +630,9 @@ function ChatApp(username) {
 					$(this).show();
 				}
 			});
-			me.showClientSearchResultFormBtnTag.show();
 		}
 		else {
 			me.userListTag.find("li").show();
-			me.showClientSearchResultFormBtnTag.hide();
 		}
 	}
 
@@ -645,6 +642,9 @@ function ChatApp(username) {
 		searchResultTag.find(".data").remove();
 
 		searchKey = searchKey.toUpperCase();
+
+		if(searchKey == "" ) return;
+
 		var clientList = ClientDataManager.getClientList();
 		var hasClientFound = false;
 
@@ -1002,7 +1002,7 @@ ChatApp.contentHtml = `
 
 					<div class="searchForm">
 						<input class="nosubmit search" id="searchContactName" placeholder="Search..." style="background-color: white;" />
-						<div class="add-user-btn" id="showAddUserFormBtn" style="display:none; width: 25px;"><img src='images/search_user.svg' style="width:25px"></div>
+						<div class="add-user-btn" id="showAddUserFormBtn" style=" width: 25px;"><img src='images/search_user.svg' style="width:25px"></div>
 					</div>
 					<ul id="users">
 					</ul>
