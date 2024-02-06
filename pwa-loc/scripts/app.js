@@ -152,6 +152,22 @@ App.startAppProcess = function ()
 {
 	try 
 	{
+		INFO.AppChangeDeploy = [ 
+			{ 	id: "MongoUpgradeMsg", startDT_UTC: "2024-02-06T05:45:19.668Z", endDT_UTC: "2024-02-18T23:59:59.668Z",
+				atLoginFormOpen: [ 
+					" var tag = $( '#login_inform_msg' ); ",
+					" var msg = 'During Feb 17 (Sat) ~ Feb 18 (Sun), due to mongoDB upgrade, WFA App will only operate in offline mode.'; ",
+					" tag.text( msg ).show(); ",
+
+					" var msgDivTag = $( '<div></div>' ).append( msg ); ",
+					//" setTimeout( () => { MsgFormManager.showFormMsg( { itemId: 'atAppStartMsg', msgSpanTag: msgDivTag, width: '130px' } ); }, 1000 ); "
+
+					" MsgManager.msgAreaShowOpt( msg, { hideTimeMs: 36000000, styles: 'background-color: orange;' }); "
+		 		] 
+			} 
+		];
+
+
 		// --------------------
 		// 1. SET UP PHASE
 		ConnManagerNew.createNetworkConnListeners();
@@ -185,6 +201,13 @@ App.startAppProcess = function ()
 		if ( KeycloakManager.isKeyCloakInUse() ) {
 			KeycloakManager.setUpkeycloakPart();
 		}
+
+
+		// --------------------
+		// 4. TEST INFO
+
+		// Run AppChangeDeploy - 'atAppStartEval'  
+		AppUtil.runAppChangeDeploy( 'atAppStartEval' );
 	}
 	catch ( errMsg ) {
 		console.log( 'ERROR on starting App > startApp() error: ' + errMsg );

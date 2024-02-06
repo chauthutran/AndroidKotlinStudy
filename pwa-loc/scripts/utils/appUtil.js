@@ -286,3 +286,31 @@ AppUtil.checkDeviceMinSpec = function( info )
 	}
 };
 
+// ----------------------------
+
+AppUtil.runAppChangeDeploy = function( runType )
+{
+	if ( INFO.AppChangeDeploy )
+	{
+		INFO.AppChangeDeploy.forEach( item => 
+		{
+			try
+			{
+				var itemRunTypeEval = item[ runType ];
+	
+				if ( itemRunTypeEval ) 
+				{
+					var currDate = new Date();
+					if ( ( !item.startDT_UTC || new Date( item.startDT_UTC ) <= currDate )
+						&& ( !item.endDT_UTC || new Date( item.endDT_UTC ) >= currDate ) )
+					{
+						eval( Util.getEvalStr( itemRunTypeEval ) );
+					}
+				}	
+			}
+			catch( errMsg ) {
+				console.log( 'ERROR in AppUtil.runAppChangeDeploy, ' + errMsg );
+			}		
+		});		
+	}
+};

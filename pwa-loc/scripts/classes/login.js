@@ -666,11 +666,19 @@ function Login() {
 			else me.openAuthForm();	
 		}
 		else me.openLoginForm();
+
+
+		// Run AppChangeDeploy - 'atLoginFormOpen'  
+		AppUtil.runAppChangeDeploy( 'atLoginFormOpen' );
+
 	};
 
+
 	me.isAuthPageUse = function() { return ( PersisDataLSManager.getAuthPageUse() === 'Y' ) ? true: false; };
+
 	me.openAuthForm = function() {  $( '.divAuthForm' ).show();  };
 
+	
 	me.openLoginForm = function() 
 	{
 		$( '.divLoginForm' ).show();
@@ -1445,6 +1453,8 @@ Login.contentHtml = `
 
 		<div id="keycloakOfflineMsg" style="display:none; font-style: italic; color: #f50b0b;"></div>
 				
+		<div id="login_inform_msg" style="color: tomato; font-style: italic; display: none;">TEST</div>
+
 	</div>
 
 	<div class="divAuthForm" style="display:none; text-align: center; ">
