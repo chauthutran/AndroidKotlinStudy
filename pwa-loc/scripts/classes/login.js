@@ -1453,7 +1453,7 @@ Login.contentHtml = `
 
 		<div id="keycloakOfflineMsg" style="display:none; font-style: italic; color: #f50b0b;"></div>
 				
-		<div id="login_inform_msg" style="color: tomato; font-style: italic; display: none;">TEST</div>
+		<div id="login_inform_msg" style="color: tomato; font-style: italic; display: none;"></div>
 
 	</div>
 

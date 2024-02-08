@@ -60,6 +60,23 @@ ConfigManager.KEY_ClientSyncType_ClientLevel = 'ClientLevel';
 // ==== Methods ======================
 
 // ---------------------------------
+// --- Some StartUp Settings
+
+ConfigManager.setSourceType_fromAppInfoLS = function ()
+{
+	try 
+	{
+		var appInfoSourceType = AppInfoLSManager.getConfigSourceType();
+
+		if ( appInfoSourceType ) ConfigManager.getConfigJson().sourceType = appInfoSourceType;
+	}
+	catch (errMsg) {
+		console.log('Error in ConfigManager.setSourceType_fromAppInfoLS, errMsg: ' + errMsg);
+	}
+};
+
+
+// ---------------------------------
 // --- Initial Set (called from session?)
 
 ConfigManager.setConfigJson = function (loginData, userRolesOverrides) {
@@ -390,12 +407,14 @@ ConfigManager.notMatch_UserRole = function (item, loginUserRoles) {
 // ---------------------------------
 // --- reset / clear configJson
 
-ConfigManager.resetConfigJson = function (userRolesOverrides) {
-	ConfigManager.setConfigJson(ConfigManager.loginData_Original, userRolesOverrides);
-};
+// 	- Reset to Original Download config value?
+// ConfigManager.resetConfigJson = function (userRolesOverrides) {  ConfigManager.setConfigJson(ConfigManager.loginData_Original, userRolesOverrides); };
+
 
 ConfigManager.clearConfigJson = function () {
 	ConfigManager.configJson = {};
+
+	ConfigManager.setSourceType_fromAppInfoLS();	// Set the initial
 };
 
 // ------------------------------------

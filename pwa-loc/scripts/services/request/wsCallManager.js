@@ -238,9 +238,8 @@ WsCallManager.serverAvailable = function( callBack )
             }
             else if ( WsCallManager.availableCheckType === 'v2' )
             {
-                // If  configManager configJson.souceType is available (after login), use it.  Otherwise (on not login), get localStorage data.                
-                var configJson = ConfigManager.getConfigJson();
-                var sourceType = ( configJson.sourceType ) ? configJson.sourceType : AppInfoLSManager.getConfigSourceType();
+                // NOTE: configJson.sourceType using AppInfoLS is set in very beginning of app Start (App.--)  // If configManager configJson.souceType is available (after login), use it.  Otherwise (on not login), get localStorage data.                
+                var sourceType = ConfigManager.getConfigJson().sourceType; // ( configJson.sourceType ) ? configJson.sourceType : AppInfoLSManager.getConfigSourceType();
 
                 if ( sourceType === ConfigManager.KEY_SourceType_Fhir ) sourceType = ConfigManager.KEY_SourceType_Mongo;
                 else if ( sourceType !== ConfigManager.KEY_SourceType_Mongo ) sourceType = ConfigManager.KEY_SourceType_Dhis2;
@@ -307,7 +306,7 @@ WsCallManager.dwsAvailabilityCheck = function( sourceType, returnFunc )
                     bCheck = ( returnJson.DHIS2 && returnJson.DHIS2.isAvailable 
                         && returnJson.LEGACY && returnJson.LEGACY.isAvailable );
                 }
-                // TODO: FHIR availability implement/use
+                // TODO: FHIR availability implement/use - using mongo.  Switch set from calling method of this method.
 
                 // REPLICA/POEDITOR availability record
                 ConnManagerNew.REPLICA_Available = ( returnJson.REPLICA && returnJson.REPLICA.isAvailable );

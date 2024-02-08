@@ -84,11 +84,11 @@ App.run = function ()
 	PersisDataLSManager.initialDataLoad_LocalStorage();
 	AppInfoLSManager.initialDataLoad_LocalStorage();
 
+	ConfigManager.setSourceType_fromAppInfoLS(); // Used by 'WsCallManager.serverAvailable()' which starts from	'ScheduleManager.runSchedules_AppStart()' at below steps.
+
 
 	// --- Param Handling ( Get params from url, save it on LocalStorage(Persist), remove from url, reload if needed )
-
 	AppUtil.paramsJson = AppUtil.saveMerge_LSParamsLoad( App.paramObj ); // CleanUp Url (remove params), & Reload Page
-
 
 	// TODO: Move this part / Hide this part into other Class/Method..
 	if ( AppUtil.paramsJson.pageReloadCase )
@@ -156,13 +156,14 @@ App.startAppProcess = function ()
 			{ 	id: "MongoUpgradeMsg", startDT_UTC: "2024-02-06T05:45:19.668Z", endDT_UTC: "2024-02-18T23:59:59.668Z",
 				atLoginFormOpen: [ 
 					" var tag = $( '#login_inform_msg' ); ",
-					" var msg = 'During Feb 17 (Sat) ~ Feb 18 (Sun), due to mongoDB upgrade, WFA App will only operate in offline mode.'; ",
-					" tag.text( msg ).show(); ",
 
-					" var msgDivTag = $( '<div></div>' ).append( msg ); ",
-					//" setTimeout( () => { MsgFormManager.showFormMsg( { itemId: 'atAppStartMsg', msgSpanTag: msgDivTag, width: '130px' } ); }, 1000 ); "
-
-					" MsgManager.msgAreaShowOpt( msg, { hideTimeMs: 36000000, styles: 'background-color: orange;' }); "
+					" if ( ConfigManager.isSourceTypeMongoOrFhir() ) ", 
+					" { ",
+					"   var msg = 'During Feb 17 (Sat) ~ Feb 18 (Sun), due to mongoDB upgrade, WFA App will only operate in offline mode.'; ",
+					"   tag.text( msg ).show(); ",
+					"   MsgManager.msgAreaShowOpt( msg, { hideTimeMs: 36000000, styles: 'background-color: orange;' }); ",
+					" } ",
+					" else tag.text( '' ).hide(); "
 		 		] 
 			} 
 		];
