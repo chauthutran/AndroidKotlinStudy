@@ -327,7 +327,7 @@ AppInfoLSManager.setBahmni_lastSyncedDatetime = function( value )
     AppInfoLSManager.updatePropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME, value );
 };
 
-AppInfoLSManager.getBahmni_lastSyncedDatetime = function( option )
+AppInfoLSManager.getBahmni_lastSyncedDatetimeNew = function( option )
 {
     if ( !option ) option = {};
     if ( !option.defaultVal ) option.defaultVal = "1900-01-01T00:00:00.000Z";
@@ -335,7 +335,7 @@ AppInfoLSManager.getBahmni_lastSyncedDatetime = function( option )
     if ( option.defaultValEval ) {
         try {
             option.defaultVal = eval( Util.getEvalStr( option.defaultValEval ) );
-        } catch ( errMsg ) { console.log( 'ERROR in AppInfoLSManager.getBahmni_lastSyncedDatetime, defaultValEval: ' + errMsg ); }
+        } catch ( errMsg ) { console.log( 'ERROR in AppInfoLSManager.getBahmni_lastSyncedDatetimeNew, defaultValEval: ' + errMsg ); }
     }
 
     var dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME );
@@ -346,6 +346,24 @@ AppInfoLSManager.getBahmni_lastSyncedDatetime = function( option )
         AppInfoLSManager.setBahmni_lastSyncedDatetime ( option.defaultVal );
     }
     // if ( overrideVal ) dateTimeStr = overrideVal;  // Ex. INFO.Bahmni_LastSyncedDateTime <-- if passed as 'overrideVal
+
+    return dateTimeStr;
+};
+
+// Obsolete - should be changed after a while.
+AppInfoLSManager.getBahmni_lastSyncedDatetime = function( overrideVal )
+{
+    var dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME );
+
+    // OLD Obsolete ONE
+    if ( !dateTimeStr ) dateTimeStr = AppInfoLSManager.getPropertyValue( AppInfoLSManager.KEY_LASTLOGINDATA, AppInfoLSManager.KEY_BAHMNI_LAST_SYNCED_DATE_TIME_OLD );
+
+    if ( !dateTimeStr ) {
+        dateTimeStr = "1900-01-01T00:00:00";
+        AppInfoLSManager.setBahmni_lastSyncedDatetime ( dateTimeStr );
+    }
+
+    if ( overrideVal ) dateTimeStr = overrideVal;  // Ex. INFO.Bahmni_LastSyncedDateTime <-- if passed as 'overrideVal
 
     return dateTimeStr;
 };

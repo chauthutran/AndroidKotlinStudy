@@ -33,7 +33,9 @@ Util.dateType_DATETIME_s1 = "MMM dd - HH:mm:ss";
 
 Util.KEY_TEMPLATE_ADD = '[TMPL_ADD]';
 Util.KEY_TEMPLATE_ADD_ARR = '[TMPL_ADD_ARR]';
+Util.KEY_CONDITION_TEMPLATE_ADD = '[COND_TMPL_ADD]';
 Util.KEY_CONDITION_CHECK = '[COND_CHECK]';
+Util.KEY_RUN_EVAL = '[RUN_EVAL]';
 Util.KEY_PROPERTY_REMOVE = '[PROP_REMOVE]';
 Util.KEY_OBJECT_REMOVE = '[OBJ_REMOVE]';
 
@@ -681,9 +683,25 @@ Util.trvEval_INSERT_SUBTEMPLATES = function (obj, INFO, defPTemplates, iDepth, l
 		{
 			var key = keyArr[i];
 			var propVal = obj[key];
+			
+			if ( key.indexOf( Util.KEY_CONDITION_TEMPLATE_ADD ) === 0 ) 
+			{
+				var templateName = Util.evalTryCatch( propVal );
 
-			//if ( key === Util.KEY_TEMPLATE_ADD ) 
-			if (key.indexOf(Util.KEY_TEMPLATE_ADD) === 0) {
+				if ( templateName && Util.isTypeString( templateName ) )
+				{
+					var templateObj = defPTemplates[templateName];
+
+					if (templateObj) {
+						var subTemplate = Util.cloneJson(templateObj);
+						Util.mergeDeep(obj, subTemplate, { keepTargetVal: true } );
+					}	
+				}
+
+				delete obj[key];
+			}
+			else if (key.indexOf(Util.KEY_TEMPLATE_ADD) === 0) 
+			{
 				var templateObj = defPTemplates[propVal];
 
 				if (templateObj) {
@@ -738,11 +756,15 @@ Util.trvEval_TEMPLATE = function (obj, INFO, defPTemplates, iDepth, limit) {
 			var key = keyArr[i];
 			var propVal = obj[key];
 
-			if (key === Util.KEY_CONDITION_CHECK) {
+			if ( key === Util.KEY_RUN_EVAL ) {
+				Util.evalTryCatch( propVal );
+				delete obj[key];
+			}
+			else if (key === Util.KEY_CONDITION_CHECK) {
 				try {
 					// If condition pass (as 'true'), remove this condition check property and simply move on.
 					// Otherwise, return with this object remove marking..
-					if (eval(propVal) === true) delete obj[key];
+					if ( eval( Util.getEvalStr( propVal ) ) === true ) delete obj[key];
 					else {
 						obj[key] = Util.KEY_OBJECT_REMOVE;
 						return Util.KEY_OBJECT_REMOVE;

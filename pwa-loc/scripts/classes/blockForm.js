@@ -2037,7 +2037,10 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 				//me.populateFormData_ObjByName( -- - - -);
 
 				// Dhis2 Search result styel data - 'displayData' - we are assuming this is single list... (could be 2 dimensional array)
-				if (passedData.displayData) me.populateFormData_ArrayDataByUid(formDivSecTag, passedData.displayData);
+				if (passedData.displayData) {
+					INFO.passedData_displayData = passedData.displayData;
+					me.populateFormData_ArrayDataByUid(formDivSecTag, passedData.displayData);
+				}
 			}
 			else if (passedData.formsJson) me.populateFieldsData(formDivSecTag, passedData.formsJson);
 			else if (passedData.formDataArr) me.populateFormData_ArrayDataByUid(formDivSecTag, passedData.formDataArr);
@@ -2149,6 +2152,9 @@ function BlockForm(cwsRenderObj, blockObj, actionJson) {
 
 	me.populateFieldsData = function (formDivSecTag, dataJson) {
 		if (dataJson) {
+
+			INFO.formSourceDataJson = dataJson; // NEW
+
 			// Need to confirm with Tran/Greg with getting right input control
 			var inputTags = formDivSecTag.find('input.dataValue, select.dataValue');
 

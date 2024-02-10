@@ -2348,3 +2348,46 @@ FormUtil.matchValueLVL1 = function (inputVal, dataVal) {
 
 	return bMatch;
 };
+
+// ---------------------------
+
+// NEED TO PROPERLY IMPLEMENT THIS!!
+//	 - If all the 'prop' val in 'option' matches data in 'INFO.formSourceDataJson', return that value..
+//		<-- what if that value is '0' or 'false'?
+FormUtil.getFormSourceData = function ( dataJson, option ) 
+{
+	var val = '';
+
+	try 
+	{
+		if ( dataJson && option && option.id && option.source )
+		{
+			var foundItem = dataJson.find( item => item.entity === option.source && item.id === option.id );
+
+			if ( foundItem ) val = foundItem.value;
+		}
+	}
+	catch (errMsg) {
+		console.log('ERROR in FormUtil.getFormSourceData, ' + errMsg);
+	}
+
+	return val;
+};
+
+
+FormUtil.getNotifType = function ( notifJson ) 
+{
+	var type = '';
+
+	try 
+	{
+		// if ( notifJson.consentService ) <-- For now, disabled..		
+		if ( notifJson.fbId ) type = 'facebook';
+		else if ( notifJson.phoneNumber ) type = 'sms';
+	}
+	catch (errMsg) {
+		console.log('ERROR in FormUtil.getNotifType, ' + errMsg);
+	}
+
+	return type;
+};
